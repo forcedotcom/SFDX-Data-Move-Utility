@@ -1,9 +1,9 @@
 {
   "name": "sfdmu",
   "description": "SFDX Plugin to populate your org (scratch/development/sandbox/production) with data imported from another org. Supports delete,insert,update,upsert and more operations for multiple related sObjects.",
-  "version": "1.30.1",
-  "author": "haim.knokh@gmail.com",
-  "bugs": "https://github.com/hknokh/sf-data-move-utility/issues",
+  "version": "2.0.0",
+  "author": "hknokh@salesforce.com",
+  "bugs": "https://github.com/forcedotcom/sf-data-move-utility/issues",
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
@@ -49,11 +49,11 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/hknokh/sf-data-move-utility",
+  "homepage": "https://github.com/forcedotcom/sf-data-move-utility",
   "keywords": [
     "sfdx-plugin"
   ],
-  "license": "Apache License 2.0",
+  "license": "BSD-3-Clause",
   "oclif": {
     "commands": "./lib/commands",
     "bin": "sfdx",
@@ -66,7 +66,7 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "hknokh/sf-data-move-utility",
+  "repository": "forcedotcom/sf-data-move-utility",
   "scripts": {
     "postpack": "del -f oclif.manifest.json",
     "posttest": "tslint -p test -t stylish",
