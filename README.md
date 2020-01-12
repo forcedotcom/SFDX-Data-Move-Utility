@@ -30,7 +30,7 @@ It provides easiest way to export data from multiple related sObjects between di
 
 - **It does not require a special ExternalId** **field for update / upsert** operations to bind related SObjects. Any field with unique values, such as a Name, can be used as External Id. The plugin internally compares the records from the source and target organizations based on the specified field and performs the necessary CRUD operations on the target.
 - **Handles circular references between SObjects**, for example when Object1 has a child relationship to Object2, then the Object2 has a child relationship to Object3 and the Object3 has a parent relationship back to the Object1.
-- **Supports data migration ** **preserving Record Type** for each record.
+- **Supports data migration preserving Record Type** for each record.
 - **Auto-number field, formula field and even multiple combined fields can be used as external ID.**
 - **Handles** **self-referenced fields**, like Account.ParentId. 
 - **Supports**  **record** **owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
