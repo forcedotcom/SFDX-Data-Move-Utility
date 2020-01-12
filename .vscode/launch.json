@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Remote",
+            "address": "127.0.0.1",
+            "port": 9229,
+            "localRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Unit Tests",
+            "type": "node",
+            "request": "launch",
+            "protocol": "inspector",
+            "program": "${workspaceRoot}/node_modules/.bin/_mocha",
+            "args": [
+                "--require", "test/helpers/init.js",
+                "--require", "ts-node/register",
+                "--require", "source-map-support/register",
+                "--recursive",
+                "--reporter", "spec",
+                "test/**/*.test.ts"
+            ],
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}

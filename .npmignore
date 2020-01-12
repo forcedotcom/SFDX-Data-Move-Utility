@@ -1,0 +1,16 @@
+*-debug.log
+*-error.log
+/.nyc_output
+/dist
+/lib
+/package-lock.json
+/tmp
+node_modules
+/export*.json
+/__Data
+/sf-data-move-utility
+._*
+.DS_Store
+/_TEMP
+/OLD!!!!
+/bin

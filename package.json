@@ -1,0 +1,77 @@
+{
+  "name": "sfdmu",
+  "description": "SFDX Plugin to populate your org (scratch/development/sandbox/production) with data imported from another org. Supports delete,insert,update,upsert and more operations for multiple related sObjects.",
+  "version": "1.30.1",
+  "author": "haim.knokh@gmail.com",
+  "bugs": "https://github.com/hknokh/sf-data-move-utility/issues",
+  "dependencies": {
+    "@oclif/command": "^1",
+    "@oclif/config": "^1",
+    "@oclif/errors": "^1",
+    "@salesforce/command": "^1.4.1",
+    "@salesforce/core": "^1.3.2",
+    "@salesforce/dev-config": "^1.5.0",
+    "casual": "^1.6.2",
+    "class-transformer": "^0.2.3",
+    "csv-parse": "^4.4.7",
+    "csv-writer": "^1.5.0",
+    "deep.clone": "^2.1.2",
+    "es6-shim": "^0.35.5",
+    "glob": "^7.1.4",
+    "jsforce": "^1.9.3",
+    "linq.ts": "^1.0.0",
+    "reflect-metadata": "^0.1.13",
+    "simple-crypto-js": "^2.2.0",
+    "soql-parser-js": "^1.2.1",
+    "tslib": "^1"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.22.2",
+    "@oclif/plugin-help": "^2",
+    "@oclif/test": "^1.2.5",
+    "@types/chai": "^4",
+    "@types/mocha": "^5",
+    "@types/node": "^10.14.14",
+    "chai": "^4",
+    "globby": "^8",
+    "mocha": "^5",
+    "nyc": "^14.1.1",
+    "ts-node": "^8",
+    "tslint": "^5",
+    "typescript": "~3.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/lib",
+    "/messages",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/hknokh/sf-data-move-utility",
+  "keywords": [
+    "sfdx-plugin"
+  ],
+  "license": "Apache License 2.0",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "sfdx",
+    "topics": {
+      "sfdm": {
+        "description": "SFDX Plugin to populate your org (scratch/dev/sandbox) with data imported from another org. Supports imsert/update/upsert operations for multiple related sObjects."
+      }
+    },
+    "devPlugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "hknokh/sf-data-move-utility",
+  "scripts": {
+    "postpack": "del -f oclif.manifest.json",
+    "posttest": "tslint -p test -t stylish",
+    "prepack": "del -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md"
+  }
+}
