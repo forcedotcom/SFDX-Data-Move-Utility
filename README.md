@@ -223,7 +223,7 @@ sfdx sfdmu:move --sourceusername source@name.com --targetusername file --passwor
 
 #### Combined External Id keys.
 
-This is useful feature that allows you to bind source and target records by creating "virtual" external Id field that is a combination of multiple field values. For example, there is Description object that has two parent objects called Article and Language and there is no unique field defined in Description object.
+This is useful feature that allows you to bind source and target records by creating "virtual" external Id field which is a combination of multiple field values. For example, there is Description object that has two parent objects called Article and Language and there is no unique field defined in Description object.
 Each Article has several Descriptions with different Languages. Each Language and Article have unique Names. 
 Assume you want to execute Upsert operation on the Description object.  In this case you cannot bind Description records directly, you only can bind them via their both parents objects. So you can define the Description object in the script like this:
 
