@@ -32,7 +32,7 @@ It provides easiest way to export data from multiple related sObjects between Sa
 - **Handles circular references between SObjects**, for example when Object1 has a child relationship to Object2, then the Object2 has a child relationship to Object3 and the Object3 has a parent relationship back to the Object1.
 - **Supports data migration preserving Record Type** for each record.
 - **Auto-number field, formula field and even multiple combined fields can be used as external ID.**
-- **Handles** **self-referenced fields**, like Account.ParentId. 
+- **Handles** **self-referenced fields**, i.e Account.ParentId. 
 - **Supports**  **record** **owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
 - **Supports** **export / import records to / from CSV files.**
 - **Supports data masking** (mocking feature) during record insert / update.
