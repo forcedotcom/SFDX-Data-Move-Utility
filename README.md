@@ -10,21 +10,21 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
 
 ### Use case
 
-Creating of a scratch org, dev org or even a sandbox today is a pretty fast and simple action. But in other side the newly created organization has only metadata ready-to-use, but it completely empty and has no real data that is always strongly required to develop and debug any Salesforce application. It makes no sense to manually create data for each new org. Because the data easily can be taken in whole or in part from the production or from the sandbox and imported into the new organization. 
+Creating of a scratch org, dev org or even a sandbox today is a pretty fast and simple action. On the other hand the newly created organization has only metadata ready-to-use, has no real data that is always strongly required to develop and debug any Salesforce application. It makes no sense to manually create or load data traditional way(dataloader) for each new org because the data easily can be taken in whole or in part from  production or from the sandbox and imported into the new organization. 
 
 In some cases we already have the data, but it's only required to modify particular records or even fields without touching others. When a date model is complex and contains a large number of dependencies, it becomes a very hard and annoying task. 
 
-Also there is a situation when you client want to keep the data model clean and don't want to have extra external ID fields in the SObject, even so your goal is to find some workaround to update records in your developer org from the existing source without adding new fields. 
+Also there is a situation when as client you would like to keep the data model clean without creating external ID fields in the SObject, therefore your goal is to find some workaround to update records in your developer org from the existing source without adding new fields. 
 
-Population of the RecordtypeId field is another quite difficult task.
+Population of the RecordtypeId field is another quite difficult task, when ids are not consistant between environment.
 
-At the current moment, there was no effective tool for both inserting and updating dependent objects based on any unique field used as External Id.  In most cases people use Excel spreadsheets to build source tables and try to mix between them to get proper values for the lookup or master-detail fields. So filling out even a small number of objects turns into a huge pain...
+At current moment, there is no effective tool for both inserting and updating dependent objects based on any unique field used as External Id.  In most cases people use Excel spreadsheets to build source tables and try to mix between them to get proper values for the lookup or master-detail fields. So filling out even a small number of objects turns into a huge pain...
 
 ### The solution
 
-**The SFDMU Plugin is the good and convenient solution for the problem above.**
+**The SFDMU Plugin is suitable and convenient solution for the problem above.**
 
-It provides easiest way to export data from multiple related sObjects between different even unlinked Salesforce orgs. Unlike other similar tools it can perform all important operations like <u>Insert</u> / <u>Update</u> / <u>Upsert</u> / Delete.
+It provides easiest way to export data from multiple related sObjects between Salesforce orgs(even unlinked). Unlike other similar tools it can perform all important operations like <u>Insert</u> / <u>Update</u> / <u>Upsert</u> / Delete.
 
 **<u>In addition this plugin has an amount  of very useful advantages,  for example:</u>**
 
