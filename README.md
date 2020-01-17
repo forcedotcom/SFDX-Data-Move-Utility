@@ -351,19 +351,20 @@ Available values for the step parameter are:
 
 ## Notes
 
-* For the External Id field of auto-number type you can only use "Insert" operation.
-  
-
-
-* By default the owner of new record is the user under which you are running the data migration.
-  In order to make different record owner assignment you simply need to add **OwnerId** field to the SObject's query.  This will tell to the plugin to assign the target record to the user with the same Name as in the source. To get this feature work you must ensure that you have users with the same Names in the both Orgs.
-* If you want to export record by preserving RecordType just include RecordTypeId field in the query and the plugin will do the rest. 
-  
-* If you have previously exported source data into CSV files and then want to import it from the files into another Org you need to use export.json file that has the same configuration like when you have created the CSVs.
 * You can use record Id field and autonumber fields as external Id key for Insert operation.
   You can still have external Id field of formula type for all operations including Upsert.
 
 
+* By default the owner of new record is the user under which you are running the data migration.
+  In order to make different record owner assignment you simply need to add **OwnerId** field to the SObject's query.  This will tell to the plugin to assign the target record to the user with the same Name as in the source. To get this feature work you must ensure that you have users with the same Names in the both Orgs.
+  
+* If you want to export record by preserving RecordType just include RecordTypeId field in the query and the plugin will do the rest. 
+  
+* If you have previously exported source data into CSV files and then want to import it from the files into another Org you need to use export.json file that has the same configuration like when you have created the CSVs.
+
+* The file Import / Export feature supports standard Salesforce data loader file format.
+
+  
 
 ## License
 
