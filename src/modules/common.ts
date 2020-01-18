@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import path = require('path');
 import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
+
 const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
@@ -327,7 +328,7 @@ export class CommonUtils {
 
 
     public static decryptRecords(records: Array<object>, password?: string): Array<object> {
-        if (!password)
+        if (!password || records.length == 0)
             return records;
         var simpleCrypto = new SimpleCrypto(password);
         let keys = [...Object.keys(records[0])];
@@ -347,16 +348,15 @@ export class CommonUtils {
 
 
     public static encryptRecords(records: Array<object>, password?: string): Array<object> {
-        if (!password)
+        if (!password || records.length == 0)
             return records;
         var simpleCrypto = new SimpleCrypto(password);
         let keys = [...Object.keys(records[0])];
         records.forEach(record => {
             keys.forEach(key => {
                 if (key) {
-                    let v = record[key] ? simpleCrypto.encrypt(record[key]) : record[key];
-                    if (v)
-                        record[key] = v;
+                    let v = record[key] != null && typeof record[key] != "undefined" ? simpleCrypto.encrypt(record[key]) : record[key];
+                    record[key] = v;
                 }
             });
         });
