@@ -132,7 +132,6 @@ export class Task {
         });
     }
 
-
     createQuery(fields: Array<string> = undefined, removeLimits: boolean = false, parsedQuery?: Query): string {
 
         parsedQuery = parsedQuery || this.scriptObject.parsedQuery;
@@ -154,7 +153,6 @@ export class Task {
 
         return composeQuery(tempQuery);
     }
-
 
     createDeleteQuery() {
         if (!this.scriptObject.parsedDeleteQuery) {

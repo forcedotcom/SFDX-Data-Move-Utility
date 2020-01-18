@@ -364,6 +364,8 @@ Available values for the step parameter are:
 
 * The file Import / Export feature supports standard Salesforce data loader file format.
 
+* Migration of User object currently is NOT supported.
+
   
 
 ## License

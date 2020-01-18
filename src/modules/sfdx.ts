@@ -343,8 +343,12 @@ export class SfdxUtils {
             return ret;
         }
 
+        
         if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && useNonOrgMedia) {
             let name = /FROM\s([\w\d_]+)/gi.exec(soql)[1];
+            if (name == "Group" || name == "User"){
+                name = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;
+            }
             let filename = `${name}.csv`;
             let filepath = path.join(sOrg.basePath, filename);
             if (!fs.existsSync(filepath)) {

@@ -104,7 +104,9 @@ export let CONSTANTS = {
 
     COMPLEX_FIELDS_SEPARATOR: ';',
 
-    FIELD_NOT_FOR_EXTERNAL_ID: ["OwnerId"]
+    FIELD_NOT_FOR_EXTERNAL_ID: ["OwnerId"],
+
+    USER_AND_GROUP_FILE_NAME: 'UserAndGroup'
 
 };
 

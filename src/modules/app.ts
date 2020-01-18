@@ -289,23 +289,6 @@ export class Application {
             this.script.objectsMap.set(rtObject.name, rtObject);
         }
 
-        // Add Profile object if mssing & needed
-        if (this.script.objects.filter(x => x.parsedQuery.fields.filter(x1 => (<SOQLField>x1).field == "ProfileId").length > 0).length > 0
-            && this.script.objects.filter(x => x.name == "Profile").length == 0) {
-            let rtObject: SfdmModels.ScriptObject = new SfdmModels.ScriptObject({
-                name: "Profile",
-                externalId: "Name",
-                isExtraObject: true,
-                allRecords: true,
-                fieldsMap: new Map<string, ScriptField>(),
-                query: "SELECT Id FROM Profile",
-                operation: SfdmModels.Enums.OPERATION.Readonly
-            });
-            this.script.objects.push(rtObject);
-            rtObject.parsedQuery = parseQuery(rtObject.query);
-            this.script.objectsMap.set(rtObject.name, rtObject);
-        }
-
 
         var recordTypeSObjectTypes: List<string> = new List<string>();
         var recordTypeScriptObject: SfdmModels.ScriptObject;
@@ -361,7 +344,7 @@ export class Application {
 
         // Analysing relationships and building script data
         this.uxLog("Analysing relationships...");
-        
+
         for (let i = 0; i < this.script.objects.length; i++) {
 
             let object: SfdmModels.ScriptObject = this.script.objects[i];
@@ -443,14 +426,6 @@ export class Application {
                     scriptFieldsList.Add(<SOQLField>f);
                 }
             }
-
-            // Construct Profile object
-            if (object.name == "Profile") {
-                object.allRecords = true; // Always query for ALL data for Profile
-                object.isExtraObject = true;
-                object.operation = SfdmModels.Enums.OPERATION.Readonly; // Always readonly for Profile
-            }
-
         }
 
         for (let i = 0; i < this.script.objects.length; i++) {
@@ -475,13 +450,13 @@ export class Application {
                 field.sFieldDescribe = object.sObjectDescribe.fieldsMap.get(field.name);
                 if (field.sFieldDescribe == null /*&& !field.isComplexField*/) {
                     throw new SfdmModels.MetadataError(`Missing field ${object.name + '.' + field.name} the Source`);
-                } 
+                }
 
                 // Validate target object metadata
                 field.sFieldDescribeTarget = object.sObjectDescribeTarget.fieldsMap.get(field.name);
                 if (field.sFieldDescribeTarget == null /* && !field.isComplexField*/) {
                     throw new SfdmModels.MetadataError(`Missing field ${object.name + '.' + field.name} in the Target`);
-                } 
+                }
 
                 // Build references
                 if (field.sFieldDescribe.isReference) {
@@ -602,7 +577,7 @@ export class Application {
             // (without referenced fields)
             task.createOriginalTaskFields();
 
-            if (object.name == "RecordType" || object.name == "Profile") {
+            if (object.name == "RecordType") {
                 // Record type task must be always in the top
                 this.job.tasks.Insert(0, task);
             } else if (this.job.tasks.Count() == 0) {
@@ -1124,12 +1099,22 @@ export class Application {
 
             if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
                 // WRITE to FILE
-                this.uxLog(`Write to file ${task.sObjectName} started`);
-                await SfdxUtils.writeCsvFileAsync(task.sObjectName,
+                let objectNameToWrite = task.sObjectName;
+                if (objectNameToWrite == "Group") {
+                    objectNameToWrite = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;
+                } else if (objectNameToWrite == "User") {
+                    if (this.job.tasks.Any(x => x.sObjectName == "Group")) {
+                        continue;
+                    } else {
+                        objectNameToWrite = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;    
+                    }
+                }
+                this.uxLog(`Write to file ${objectNameToWrite} started`);
+                await SfdxUtils.writeCsvFileAsync(objectNameToWrite,
                     sourceRecords.ToArray(),
                     this.targetOrg,
                     this.script.encryptDataFiles ? this.password : null);
-                this.uxLog(`Write to file ${task.sObjectName} completed`);
+                this.uxLog(`Write to file ${objectNameToWrite} completed`);
                 continue;
             }
 
