@@ -165,6 +165,16 @@ export class CommonUtils {
      */
     public static async readCsvFile(fileName: string, getSpecificLinesAmount: number = 0): Promise<Array<object>> {
 
+        function csvCast(value, context) {
+            if (!value)
+                return null;
+            if (value == "TRUE")
+                return true;
+            if (value == "FALSE")
+                return false;
+            return value;
+        }
+
         return new Promise<Array<object>>(resolve => {
 
             if (!fs.existsSync(fileName)) {
@@ -177,11 +187,7 @@ export class CommonUtils {
                 const records = parse(input, {
                     columns: true,
                     skip_empty_lines: true,
-                    cast: function (value, context) {
-                        if (!value)
-                            return null;
-                        return value;
-                    }
+                    cast: csvCast
                 });
                 resolve([...records]);
             } else {
@@ -212,7 +218,8 @@ export class CommonUtils {
                     let input = wantedLines.join('\n');
                     const records = parse(input, {
                         columns: true,
-                        skip_empty_lines: true
+                        skip_empty_lines: true,
+                        cast: csvCast
                     });
                     resolve([...records]);
                 });
@@ -235,6 +242,38 @@ export class CommonUtils {
             path: fileName
         });
         return csvWriter.writeRecords(data);
+    }
+
+
+    public static async mergeCsvFiles(fileName1: string, fileName2: string, fileName: string, deleteSourceFiles: boolean, ...columns: Array<string>) {
+
+        let totalRows: Array<object> = new Array<object>();
+
+        async function addRowsFromFile(file: string) {
+            if (fs.existsSync(file)) {
+                let rows = await CommonUtils.readCsvFile(file);
+                rows.forEach(row => {
+                    let thisRow = columns.reduce((acc, column) => {
+                        if (typeof row[column] != "undefined") {
+                            acc[column] = row[column];
+                        } else {
+                            acc[column] = null;
+                        }
+                        return acc;
+                    }, {});
+                    totalRows.push(thisRow);
+                });
+                if (deleteSourceFiles) {
+                    fs.unlinkSync(file);
+                }
+            }
+        }
+
+        await addRowsFromFile(fileName1);
+        await addRowsFromFile(fileName2);
+
+        await this.writeCsvFile(fileName, totalRows);
+
     }
 
 

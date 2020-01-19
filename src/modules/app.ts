@@ -662,8 +662,17 @@ export class Application {
 
         if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
 
-            this.uxLog("Validating source CSV files.");
+            this.uxLog("Validating and converting source CSV files.");
 
+            // Merge User / Group into UserAndGroup
+            let filepath1 = path.join(this.sourceOrg.basePath, "User.csv");
+            let filepath2 = path.join(this.sourceOrg.basePath, "Group.csv");
+            let filepath3 = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME + ".csv");
+            await CommonUtils.mergeCsvFiles(filepath1, filepath2, filepath3, true, "Id", "Name");
+
+
+            // Add missing referenced lookup fields
+            // TODO: Add support for $$combined fields$$
             let csvData: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
 
             for (let i = 0; i < this.job.tasks.Count(); i++) {
@@ -724,7 +733,7 @@ export class Application {
                             let values = [...rows.values()];
                             values.forEach(value => {
                                 let id = value[lookupFieldName];
-                                let extIdValue = undefined;
+                                let extIdValue;
                                 if (id && refRows.get(id)) {
                                     extIdValue = refRows.get(id)[refObjectExternalIdFieldName];
                                 }
