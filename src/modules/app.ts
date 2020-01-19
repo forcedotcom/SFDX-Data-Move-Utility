@@ -653,10 +653,108 @@ export class Application {
         this.uxLog("Running...");
         let _app: Application = this;
 
+        // ---------------------------------
+        // ---------------------------------
+        // ---------------------------------
+        // ---------------------------------
+        // 0 step. Prerequisites
+        // Validate and prepare raw CSV source files ********************************
+
+        if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
+
+            this.uxLog("Validating source CSV files.");
+
+            let csvData: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
+
+            for (let i = 0; i < this.job.tasks.Count(); i++) {
+
+                let task = this.job.tasks.ElementAt(i);
+
+                // Scan csv filed and add lookup referenced fields by target object's external id to the CSVs if missing *****************
+                let filepath = path.join(this.sourceOrg.basePath, task.sObjectName);
+                if (task.sObjectName == "User" || task.sObjectName == "Group") {
+                    filepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
+                }
+                filepath += ".csv";
+
+                for (let j = 0; j < task.taskFields.Count(); j++) {
+
+                    const taskField = task.taskFields.ElementAt(j);
+
+                    if (taskField.isReference && !taskField.isOriginalField) {
+                        
+                        let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);                        
+
+                        let refObjectName = taskField.originalScriptField.referencedSObjectType;
+                        let refObjectExternalIdFieldName = taskField.originalScriptField.externalId;
+
+                        let columnName = taskField.name;
+                        let lookupFieldName = taskField.originalScriptField.name;
+
+                        if (csvColumnsRow.length > 0 && !csvColumnsRow[0].hasOwnProperty(columnName)) {
+
+                            // Lookup column does not exist
+                            let m: Map<string, any> = csvData.get(task.sObjectName);
+                            if (!m) {
+                                let csvRows = await CommonUtils.readCsvFile(filepath);
+                                m = new Map<string, any>();
+                                csvRows.forEach(row => {
+                                    m.set(row["Id"], row);
+                                });
+                                csvData.set(task.sObjectName, m);
+                            }
+
+                            m = csvData.get(refObjectName);
+                            if (!m) {
+                                let refFilepath = path.join(this.sourceOrg.basePath, refObjectName);
+                                if (refObjectName == "User" || refObjectName == "Group") {
+                                    refFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
+                                }
+                                refFilepath += ".csv";
+                                let csvRows = await CommonUtils.readCsvFile(refFilepath);
+                                m = new Map<string, any>();
+                                csvRows.forEach(row => {
+                                    m.set(row["Id"], row);
+                                });
+                                csvData.set(refObjectName, m);
+                            }
+
+                            let rows: Map<string, any> = csvData.get(task.sObjectName);
+                            let refRows: Map<string, any> = csvData.get(refObjectName);
+                            let values = [...rows.values()];
+                            values.forEach(value => {
+                                let id = value[lookupFieldName];
+                                let extIdValue = undefined;
+                                if (id && refRows.get(id)) {
+                                    extIdValue = refRows.get(id)[refObjectExternalIdFieldName];
+                                }
+                                if (typeof extIdValue != "undefined") {
+                                    value[columnName] = extIdValue;
+                                } else {
+                                    value[columnName] = null;
+                                }
+                            });
+
+                            await CommonUtils.writeCsvFile(filepath, values);
+
+                        }
+                    }
+                }
+                // ****************************************************************************************************
+
+            }
+        }
+
+
+
+
+
 
         // ---------------------------------
+        // ---------------------------------
+        // ---------------------------------
+        // ---------------------------------
         // 1 step. Delete old target records    
-
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
 
             this.uxLog("Deleting old data started.");
@@ -736,10 +834,17 @@ export class Application {
         }
 
 
+
+
+
+
+        // ---------------------------------
+        // ---------------------------------
+        // ---------------------------------
         // ---------------------------------
         // 2 step. Retrieve source & target records      
+        // PASS 1 **************************
         this.uxLog("Retrieve data started. Pass 1.");
-
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
@@ -918,11 +1023,16 @@ export class Application {
 
 
         }
-
         this.uxLog("Retrieve data pass 1 completed");
 
-        this.uxLog("Retrieve data started. Pass 2.");
 
+
+
+
+
+
+        // PASS 2 **************************
+        this.uxLog("Retrieve data started. Pass 2.");
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
@@ -1063,16 +1173,19 @@ export class Application {
                     targetExtIdMap[record[task.scriptObject.externalId]] = record["Id"];
             });
         }
-
         this.uxLog("Retrieve data pass 2 completed");
 
 
 
 
+
+
+        // ---------------------------------
+        // ---------------------------------
+        // ---------------------------------
         // ---------------------------------
         // 3 step. Update target records - forward order
         this.uxLog("Updating data. Pass #1 started.");
-
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
@@ -1106,7 +1219,7 @@ export class Application {
                     if (this.job.tasks.Any(x => x.sObjectName == "Group")) {
                         continue;
                     } else {
-                        objectNameToWrite = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;    
+                        objectNameToWrite = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;
                     }
                 }
                 this.uxLog(`Write to file ${objectNameToWrite} started`);
@@ -1290,16 +1403,22 @@ export class Application {
                 this.uxLog(`${strOper}ing target ${task.sObjectName} finished, total processed ${updatedRecords.Count()} records`);
             }
         }
-
         this.uxLog("Updating data. Pass #1 finished.");
 
 
+
+
+
+
+
+        // ---------------------------------
+        // ---------------------------------
+        // ---------------------------------
         // ---------------------------------
         // 4 step. Update target records - backward order
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
 
             this.uxLog("Updating data. Pass #2 started.");
-
             for (let i = 0; i < this.job.tasks.Count(); i++) {
 
                 let task = this.job.tasks.ElementAt(i);
@@ -1406,9 +1525,10 @@ export class Application {
                 }
 
             }
-
             this.uxLog("Updating data. Pass #2 finished.");
+
         }
+
 
     }
 
