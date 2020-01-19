@@ -672,7 +672,6 @@ export class Application {
 
 
             // Add missing referenced lookup fields
-            // TODO: Add support for $$combined fields$$
             let csvData: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
 
             for (let i = 0; i < this.job.tasks.Count(); i++) {
@@ -691,8 +690,8 @@ export class Application {
                     const taskField = task.taskFields.ElementAt(j);
 
                     if (taskField.isReference && !taskField.isOriginalField) {
-                        
-                        let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);                        
+
+                        let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
 
                         let refObjectName = taskField.originalScriptField.referencedSObjectType;
                         let refObjectExternalIdFieldName = taskField.originalScriptField.externalId;
@@ -700,7 +699,9 @@ export class Application {
                         let columnName = taskField.name;
                         let lookupFieldName = taskField.originalScriptField.name;
 
-                        if (csvColumnsRow.length > 0 && !csvColumnsRow[0].hasOwnProperty(columnName)) {
+                        if (csvColumnsRow.length > 0 && !csvColumnsRow[0].hasOwnProperty(columnName)
+                            // TODO: Add support for $$combined fields$$
+                            && !taskField.originalScriptField.isComplexExternalId) {
 
                             // Lookup column does not exist
                             let m: Map<string, any> = csvData.get(task.sObjectName);

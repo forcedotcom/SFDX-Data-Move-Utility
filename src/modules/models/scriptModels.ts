@@ -375,4 +375,8 @@ export class ScriptField {
         return this.name.startsWith("_");
     }
 
+    get isComplexExternalId(): boolean {
+        return this.externalId && this.externalId.startsWith(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
+    }
+
 }
