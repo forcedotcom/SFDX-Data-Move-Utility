@@ -1327,7 +1327,7 @@ export class Application {
                                     /*&& (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert
                                         || isRecordTypeField)*/
                                 ) {
-                                    this.uxLog(`WARNING!  Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required value "${record[taskField.name]}"`);
+                                    this.uxLog(`WARNING!  Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required external Id value "${record[taskField.name]}"`);
                                 }
                                 /*if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert
                                     || isRecordTypeField) {*/
@@ -1477,7 +1477,7 @@ export class Application {
                                     if (!missingParentValueOnTagetErrors.get(taskField.name)
                                         /*&& task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert*/
                                     ) {
-                                        this.uxLog(`WARNING! Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required value "${record[taskField.name]}"`);
+                                        this.uxLog(`WARNING! Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing required external Id value "${record[taskField.name]}"`);
                                     }
                                     /*if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert) {*/
                                     missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
