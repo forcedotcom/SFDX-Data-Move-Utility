@@ -383,8 +383,20 @@ Available values for the step parameter are:
 
   
 
+
+
+## Demo Video
+
+Running the Plugin from the command console / terminal:
+
+![SFDMU DEMO](https://img.youtube.com/vi/KI_1vD93prA/hqdefault.jpg)
+( https://www.youtube.com/watch?v=KI_1vD93prA )
+
+
+
+
+
 ## License
 
-This product is licensed under the BSD-3-Clause - see the [LICENSE.txt](LICENSE.txt) file for details
-
+This product is licensed under the BSD-3-Clause - see the [LICENSE.txt](LICENSE.txt) file for details.
 
