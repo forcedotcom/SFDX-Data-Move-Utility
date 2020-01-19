@@ -68,6 +68,21 @@ sfdx plugins:install sfdmu
 2. Install from the git repository:
 
 ```bash
+If you already have previous version of the Plugin installed from the current git source, first you need to unlink (uninstall) it from the Salesforce CLI.
+
+1. Go to the directory contains the Plugin files and type:
+sfdx plugins:unlink
+
+2. Update the files to the newest version.
+git pull origin master
+
+3. Link the Plugin back to the Salesforce CLI: 
+sfdx plugins:link
+
+
+
+If currently there is no Plugin installed on your machine, then skip previous steps and make as below.
+
 1. Clone git repository: 
 git clone https://github.com/forcedotcom/sf-data-move-utility
 
@@ -77,7 +92,7 @@ cd sf-data-move-utility
 3. Install npm modules: 
 npm install
 
-4. Link the plugin to the Salesforce CLI: 
+4. Link the Plugin to the Salesforce CLI: 
 sfdx plugins:link
 
 ```
