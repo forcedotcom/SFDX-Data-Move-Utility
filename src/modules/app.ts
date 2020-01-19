@@ -1346,7 +1346,7 @@ export class Application {
                 if (missingParentValueOnTagetErrors.size > 0) {
 
                     [...missingParentValueOnTagetErrors.keys()].forEach(key => {
-                        this.uxLog(`Total number of records with missing parent data for the field ${key} is: (${missingParentValueOnTagetErrors.get(key)} of ${sourceRecords.Count()})`);
+                        this.uxLog(`Amount of missing parent records for the field ${key}: ${missingParentValueOnTagetErrors.get(key)} of total ${sourceRecords.Count()} records`);
                     });
 
                     if (this.script.promptOnMissingParentObjects) {
@@ -1494,7 +1494,7 @@ export class Application {
                     // Prompt to stop the entire job
                     if (missingParentValueOnTagetErrors.size > 0) {
                         [...missingParentValueOnTagetErrors.keys()].forEach(key => {
-                            this.uxLog(`Total number of records with missing parent data for the field ${key} is: (${missingParentValueOnTagetErrors.get(key)} of ${sourceRecords.Count()})`);
+                            this.uxLog(`Amount of missing parent records for the field ${key}: ${missingParentValueOnTagetErrors.get(key)} of total ${sourceRecords.Count()} records`);
                         });
                         if (this.script.promptOnMissingParentObjects) {
                             var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
