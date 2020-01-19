@@ -162,6 +162,14 @@ So you can export all records with preserving relationships between the objects 
 
 If you want to utilize the org credentials that were previously stored in your system using *sfdx force:auth:web:login*  or another authentication sfdx command you can simply omit the *orgs* section from the script, then the Plugin will try to retrieve access token from the SFDX local storage.
 
+##### Watch the demo
+
+Running the Plugin from the command console / terminal:
+
+![SFDMU DEMO](https://img.youtube.com/vi/KI_1vD93prA/hqdefault.jpg)
+
+( https://www.youtube.com/watch?v=KI_1vD93prA )
+
 
 
 #### Full list of the JSON parameters.
@@ -381,17 +389,6 @@ Available values for the step parameter are:
 
 * Migration of User object currently is NOT supported.
 
-  
-
-
-
-## Demo Video
-
-Running the Plugin from the command console / terminal:
-
-![SFDMU DEMO](https://img.youtube.com/vi/KI_1vD93prA/hqdefault.jpg)
-
-( https://www.youtube.com/watch?v=KI_1vD93prA )
 
 
 
