@@ -1323,10 +1323,15 @@ export class Application {
                         } else {
                             var value = !isRecordTypeField ? extIdMap[record[taskField.name]] : extIdMap[task.sObjectName + ";" + record[taskField.name]];
                             if (!value) {
-                                if (!missingParentValueOnTagetErrors.get(taskField.name)) {
-                                    this.uxLog(`Warning! Some parent records were not found for the ${task.sObjectName} in the target org. The possible reason is an external id key mismatch between the source and the target records of the parent SObject. The example is: record #id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required value "${record[taskField.name]}"`);
+                                if (!missingParentValueOnTagetErrors.get(taskField.name)
+                                    && (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert
+                                        || isRecordTypeField)) {
+                                    this.uxLog(`WARNING!  Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required value "${record[taskField.name]}"`);
                                 }
-                                missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
+                                if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert
+                                    || isRecordTypeField) {
+                                    missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
+                                }
                                 delete record[fieldToUpdate];
                             }
                             else {
@@ -1468,14 +1473,18 @@ export class Application {
                             } else {
                                 var value = extIdMap[record[taskField.name]];
                                 if (!value) {
-                                    if (!missingParentValueOnTagetErrors.get(taskField.name)) {
-                                        this.uxLog(`Warning! Some parent records were not found for the ${task.sObjectName} in the target org. The possible reason is an external id key mismatch between the source and the target records of the parent SObject. The example is: record #id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required value "${record[taskField.name]}"`);
+                                    if (!missingParentValueOnTagetErrors.get(taskField.name)
+                                        && task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert) {
+                                        this.uxLog(`WARNING! Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required value "${record[taskField.name]}"`);
                                     }
-                                    missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
+                                    if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert) {
+                                        missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
+                                    }
                                     delete record[fieldToUpdate];
                                 }
-                                else
+                                else {
                                     record[fieldToUpdate] = value;
+                                }
                             }
                         });
                     }
