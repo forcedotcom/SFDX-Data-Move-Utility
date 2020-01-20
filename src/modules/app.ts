@@ -22,7 +22,7 @@ import { SfdxUtils } from "./sfdx";
 import { CommonUtils } from "./common";
 import SimpleCrypto from "simple-crypto-js";
 import { ScriptField } from "./models/index";
-import { string } from "@oclif/command/lib/flags";
+
 
 
 
@@ -455,6 +455,7 @@ export class Application {
 
                 // Validate target object metadata
                 field.sFieldDescribeTarget = object.sObjectDescribeTarget.fieldsMap.get(field.name);
+
                 if (field.sFieldDescribeTarget == null /* && !field.isComplexField*/) {
                     throw new SfdmModels.MetadataError(`Missing field ${object.name + '.' + field.name} in the Target`);
                 }
@@ -669,6 +670,7 @@ export class Application {
             let filepath1 = path.join(this.sourceOrg.basePath, "User.csv");
             let filepath2 = path.join(this.sourceOrg.basePath, "Group.csv");
             let filepath3 = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME + ".csv");
+
             await CommonUtils.mergeCsvFiles(filepath1, filepath2, filepath3, true, "Id", "Name");
 
 
@@ -690,7 +692,8 @@ export class Application {
                 let task = this.job.tasks.ElementAt(i);
 
                 if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
-                     || task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
+                    || task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete)
+                    continue;
 
                 // Scan csv filed and add lookup referenced fields by target object's external id to the CSVs if missing *****************
                 let filepath = path.join(this.sourceOrg.basePath, task.sObjectName);
@@ -702,6 +705,8 @@ export class Application {
                 for (let j = 0; j < task.taskFields.Count(); j++) {
 
                     const taskField = task.taskFields.ElementAt(j);
+
+                    let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
 
                     if (taskField.isReference && !taskField.isOriginalField) {
 
@@ -716,8 +721,6 @@ export class Application {
                             });
                             break;
                         }
-
-                        let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
 
                         let refSObjectName = taskField.originalScriptField.referencedSObjectType;
                         let refSObjectExternalIdFieldName = taskField.originalScriptField.externalId;
@@ -799,6 +802,32 @@ export class Application {
                             await CommonUtils.writeCsvFile(filepath, values);
 
                         }
+
+                    } else {
+                        // TODO: !!!
+                        // let columnName = Object.keys(csvColumnsRow[0]).filter(key => {
+                        //     return key == taskField.name || key.indexOf(`.${taskField.name}`) >= 0;
+                        // })[0];
+                        // if (!columnName) {
+                        //     // Column does not exist => Add empty column
+                        //     let csvRows = await CommonUtils.readCsvFile(filepath);
+                        //     csvRows.forEach(row=>{
+                        //         row[columnName] = null;
+                        //     });
+                        //     await CommonUtils.writeCsvFile(filepath, csvRows);
+                            
+                        // } else if (columnName.indexOf('.') >= 0) {
+                        //     // External id column => Add fake lookup column
+                        //     let lookupField = columnName.split('.')[0];
+                        //     let extIdField = columnName.split('.')[1];
+                        //     let csvRows = await CommonUtils.readCsvFile(filepath);
+                        //     csvRows.forEach(row=>{
+                        //         row[lookupField] = '0011p00002Zh1kr'; // Fake id
+                        //         row[extIdField] = row[columnName];
+                        //         delete row[columnName];
+                        //     });
+                        //     await CommonUtils.writeCsvFile(filepath, csvRows);
+                        // }
                     }
                 }
                 // ****************************************************************************************************
@@ -813,7 +842,7 @@ export class Application {
                     "Parent sObject name": null,
                     "Parent sObject external Id field name": null,
                     "Parent record Id": null,
-                    "Error description" : "No errors found during the last scan"
+                    "Error description": "No errors found during the last scan"
                 });
                 await CommonUtils.writeCsvFile(csvErrorsFilepath, csvErrors);
             } else {
@@ -833,7 +862,7 @@ export class Application {
                 this.uxLog(`${formattedFilesFlag.size} files were formatted.`);
             }
 
-            
+
             // Only csv validation
             if (this.script.validateCSVFilesOnly)
                 return;
