@@ -664,7 +664,7 @@ export class Application {
 
         if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && !this.script.encryptDataFiles) {
 
-            this.uxLog("Validating and formatting source CSV files.");
+            this.uxLog("Validating and formatting source CSV files started.");
 
 
             // A. Merge User / Group into UserAndGroup ----------------------//
@@ -674,7 +674,6 @@ export class Application {
             let filepath3 = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME + ".csv");
 
             await CommonUtils.mergeCsvFiles(filepath1, filepath2, filepath3, true, "Id", "Name");
-
 
 
 
@@ -691,9 +690,7 @@ export class Application {
                 "Error description": string
             }> = new Array<any>();
 
-            let formattedFilesFlag: Map<number, boolean> = new Map<number, boolean>();
             let csvFilePathsToUpdate: Array<string> = new Array<string>();
-
 
             async function readCsvFile(filepath: string): Promise<Map<string, any>> {
                 let m: Map<string, any> = csvData.get(filepath);
@@ -758,11 +755,6 @@ export class Application {
                         if (!csvColumnsRow[0].hasOwnProperty(columnName)
                             // TODO: Add support for $$combined fields$$
                             && !taskField.originalScriptField.isComplexExternalId) {
-
-                            if (!formattedFilesFlag.get(i)) {
-                                this.ux.log(`Adding lookup references to ${filepath}.`);
-                            }
-                            formattedFilesFlag.set(i, true);
 
                             // Read child CSV file (current)
                             let m: Map<string, any> = await readCsvFile(filepath);
@@ -920,10 +912,10 @@ export class Application {
             }
 
             // Format report
-            this.uxLog("Validating and formatting source CSV files completed.");
-            if (formattedFilesFlag.size > 0) {
-                this.uxLog(`${formattedFilesFlag.size} files were formatted.`);
+            if (csvFilePathsToUpdate.length > 0) {
+                this.uxLog(`${csvFilePathsToUpdate.length} files were updated.`);
             }
+            this.uxLog("Validating and formatting source CSV files completed.");
 
 
             // Only csv validation
