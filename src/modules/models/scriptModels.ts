@@ -70,6 +70,13 @@ export class Script {
 
 
     /**
+     * If true and the source is FILE so it will only performs validation and formatting of the raw source CSV files
+     * and produces error report.
+     */
+    validateCSVFilesOnly : boolean = false;
+
+
+    /**
      * When using file as source or target => turns onn/off
      * encryption of data before I/O to the file
      * using the provided password

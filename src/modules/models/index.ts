@@ -106,7 +106,9 @@ export let CONSTANTS = {
 
     FIELD_NOT_FOR_EXTERNAL_ID: ["OwnerId"],
 
-    USER_AND_GROUP_FILE_NAME: 'UserAndGroup'
+    USER_AND_GROUP_FILE_NAME: 'UserAndGroup',
+
+    CSV_LOOKUP_ERRORS_FILE_NAME: 'MissingLookups.csv'
 
 };
 

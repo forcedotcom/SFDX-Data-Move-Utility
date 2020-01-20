@@ -22,6 +22,7 @@ import { SfdxUtils } from "./sfdx";
 import { CommonUtils } from "./common";
 import SimpleCrypto from "simple-crypto-js";
 import { ScriptField } from "./models/index";
+import { string } from "@oclif/command/lib/flags";
 
 
 
@@ -660,9 +661,9 @@ export class Application {
         // 0 step. Prerequisites
         // Validate and prepare raw CSV source files ********************************
 
-        if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
+        if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && !this.script.encryptDataFiles) {
 
-            this.uxLog("Validating and converting source CSV files.");
+            this.uxLog("Validating and formatting source CSV files.");
 
             // Merge User / Group into UserAndGroup
             let filepath1 = path.join(this.sourceOrg.basePath, "User.csv");
@@ -673,6 +674,15 @@ export class Application {
 
             // Add missing referenced lookup fields
             let csvData: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
+            let csvLookupErrors: Array<{
+                "Child sObject name": string,
+                "Child lookup field name": string,
+                "Parent record Id": string,
+                "Parent sObject name": string,
+                "Parent sObject external Id field name": string
+            }> = new Array<any>();
+
+            let formattedFilesFlag: Map<number, boolean> = new Map<number, boolean>();
 
             for (let i = 0; i < this.job.tasks.Count(); i++) {
 
@@ -693,8 +703,8 @@ export class Application {
 
                         let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
 
-                        let refObjectName = taskField.originalScriptField.referencedSObjectType;
-                        let refObjectExternalIdFieldName = taskField.originalScriptField.externalId;
+                        let refSObjectName = taskField.originalScriptField.referencedSObjectType;
+                        let refSObjectExternalIdFieldName = taskField.originalScriptField.externalId;
 
                         let columnName = taskField.name;
                         let lookupFieldName = taskField.originalScriptField.name;
@@ -702,6 +712,12 @@ export class Application {
                         if (csvColumnsRow.length > 0 && !csvColumnsRow[0].hasOwnProperty(columnName)
                             // TODO: Add support for $$combined fields$$
                             && !taskField.originalScriptField.isComplexExternalId) {
+
+
+                            if (!formattedFilesFlag.get(i)) {
+                                this.ux.log(`${filepath} file is in a raw format. Adding lookup references...`);
+                            }
+                            formattedFilesFlag.set(i, true);
 
                             // Lookup column does not exist
                             let m: Map<string, any> = csvData.get(task.sObjectName);
@@ -714,10 +730,10 @@ export class Application {
                                 csvData.set(task.sObjectName, m);
                             }
 
-                            m = csvData.get(refObjectName);
+                            m = csvData.get(refSObjectName);
                             if (!m) {
-                                let refFilepath = path.join(this.sourceOrg.basePath, refObjectName);
-                                if (refObjectName == "User" || refObjectName == "Group") {
+                                let refFilepath = path.join(this.sourceOrg.basePath, refSObjectName);
+                                if (refSObjectName == "User" || refSObjectName == "Group") {
                                     refFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
                                 }
                                 refFilepath += ".csv";
@@ -726,21 +742,28 @@ export class Application {
                                 csvRows.forEach(row => {
                                     m.set(row["Id"], row);
                                 });
-                                csvData.set(refObjectName, m);
+                                csvData.set(refSObjectName, m);
                             }
 
                             let rows: Map<string, any> = csvData.get(task.sObjectName);
-                            let refRows: Map<string, any> = csvData.get(refObjectName);
+                            let refRows: Map<string, any> = csvData.get(refSObjectName);
                             let values = [...rows.values()];
                             values.forEach(value => {
                                 let id = value[lookupFieldName];
                                 let extIdValue;
                                 if (id && refRows.get(id)) {
-                                    extIdValue = refRows.get(id)[refObjectExternalIdFieldName];
+                                    extIdValue = refRows.get(id)[refSObjectExternalIdFieldName];
                                 }
                                 if (typeof extIdValue != "undefined") {
                                     value[columnName] = extIdValue;
                                 } else {
+                                    csvLookupErrors.push({
+                                        "Child sObject name": task.sObjectName,
+                                        "Child lookup field name": lookupFieldName,
+                                        "Parent sObject name": refSObjectName,
+                                        "Parent sObject external Id field name": refSObjectExternalIdFieldName,
+                                        "Parent record Id": id
+                                    });
                                     value[columnName] = null;
                                 }
                             });
@@ -751,8 +774,41 @@ export class Application {
                     }
                 }
                 // ****************************************************************************************************
-
             }
+
+            // Write to lookup errors file
+            let csvLookupErrorsFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
+            if (csvLookupErrors.length == 0) {
+                csvLookupErrors.push({
+                    "Child sObject name": "No missing lookups found during the last scan",
+                    "Child lookup field name": null,
+                    "Parent sObject name": null,
+                    "Parent sObject external Id field name": null,
+                    "Parent record Id": null
+                });
+                await CommonUtils.writeCsvFile(csvLookupErrorsFilepath, csvLookupErrors);
+            } else {
+                await CommonUtils.writeCsvFile(csvLookupErrorsFilepath, csvLookupErrors);
+                this.uxLog(`WARNING! During the validation of the source CSV files ${csvLookupErrors.length} missing parent lookups were found. See ${SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME} file for the complete list of the missing values.`);
+                if (this.script.promptOnMissingParentObjects) {
+                    var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
+                    if (ans != 'y' && ans != 'yes') {
+                        throw new SfdmModels.JobAbortedByUser("Missing parent records");
+                    }
+                }
+            }
+
+            // Format report
+            this.uxLog("Validating and formatting source CSV files completed.");
+            if (formattedFilesFlag.size > 0) {
+                this.uxLog(`${formattedFilesFlag.size} files were formatted.`);
+            }
+
+            
+            // Only csv validation
+            if (this.script.validateCSVFilesOnly)
+                return;
+
         }
 
 
@@ -1311,28 +1367,22 @@ export class Application {
                 for (let i = 0, count = backwardsReferencedTaskFields.Count(); i < count; i++) {
                     let taskField = backwardsReferencedTaskFields.ElementAt(i);
                     let fieldToUpdate = taskField.originalScriptField.name;
-                    let extIdMap = taskField.parentTaskField.task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.ExtIdMap).ElementAt(0);
+                    let targetExtIdMap = taskField.parentTaskField.task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.ExtIdMap).ElementAt(0);
                     let isRecordTypeField = taskField.parentTaskField.task.sObjectName == "RecordType";
                     let nullValue = null;
                     if (isRecordTypeField) {
-                        nullValue = extIdMap[Object.keys(extIdMap).filter(key => key.startsWith(task.sObjectName))[0]];
+                        nullValue = targetExtIdMap[Object.keys(targetExtIdMap).filter(key => key.startsWith(task.sObjectName))[0]];
                     }
                     sourceRecords.ForEach(record => {
                         if (record.hasOwnProperty(taskField.name) && !record[taskField.name]) {
                             record[fieldToUpdate] = nullValue;
                         } else {
-                            var value = !isRecordTypeField ? extIdMap[record[taskField.name]] : extIdMap[task.sObjectName + ";" + record[taskField.name]];
+                            var value = !isRecordTypeField ? targetExtIdMap[record[taskField.name]] : targetExtIdMap[task.sObjectName + ";" + record[taskField.name]];
                             if (!value) {
-                                if (!missingParentValueOnTagetErrors.get(taskField.name)
-                                    /*&& (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert
-                                        || isRecordTypeField)*/
-                                ) {
+                                if (!missingParentValueOnTagetErrors.get(taskField.name)) {
                                     this.uxLog(`WARNING!  Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required external Id value "${record[taskField.name]}"`);
                                 }
-                                /*if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert
-                                    || isRecordTypeField) {*/
                                 missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
-                                /*}*/
                                 delete record[fieldToUpdate];
                             }
                             else {
@@ -1466,22 +1516,18 @@ export class Application {
                     for (let i = 0, count = forwardsReferencedTaskFields.Count(); i < count; i++) {
                         let taskField = forwardsReferencedTaskFields.ElementAt(i);
                         let fieldToUpdate = taskField.originalScriptField.name;
-                        let extIdMap = taskField.parentTaskField.task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.ExtIdMap).ElementAt(0);
+                        let targetExtIdMap = taskField.parentTaskField.task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.ExtIdMap).ElementAt(0);
                         let nullValue = null;
                         sourceRecords.ForEach(record => {
                             if (record.hasOwnProperty(taskField.name) && !record[taskField.name]) {
                                 record[fieldToUpdate] = nullValue;
                             } else {
-                                var value = extIdMap[record[taskField.name]];
+                                var value = targetExtIdMap[record[taskField.name]];
                                 if (!value) {
-                                    if (!missingParentValueOnTagetErrors.get(taskField.name)
-                                        /*&& task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert*/
-                                    ) {
+                                    if (!missingParentValueOnTagetErrors.get(taskField.name)) {
                                         this.uxLog(`WARNING! Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing required external Id value "${record[taskField.name]}"`);
                                     }
-                                    /*if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert) {*/
                                     missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
-                                    /*}*/
                                     delete record[fieldToUpdate];
                                 }
                                 else {
