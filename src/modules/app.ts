@@ -674,12 +674,13 @@ export class Application {
 
             // Add missing referenced lookup fields
             let csvData: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
-            let csvLookupErrors: Array<{
+            let csvErrors: Array<{
                 "Child sObject name": string,
                 "Child lookup field name": string,
                 "Parent record Id": string,
                 "Parent sObject name": string,
-                "Parent sObject external Id field name": string
+                "Parent sObject external Id field name": string,
+                "Error description": string
             }> = new Array<any>();
 
             let formattedFilesFlag: Map<number, boolean> = new Map<number, boolean>();
@@ -687,6 +688,9 @@ export class Application {
             for (let i = 0; i < this.job.tasks.Count(); i++) {
 
                 let task = this.job.tasks.ElementAt(i);
+
+                if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
+                     || task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
 
                 // Scan csv filed and add lookup referenced fields by target object's external id to the CSVs if missing *****************
                 let filepath = path.join(this.sourceOrg.basePath, task.sObjectName);
@@ -700,6 +704,18 @@ export class Application {
                     const taskField = task.taskFields.ElementAt(j);
 
                     if (taskField.isReference && !taskField.isOriginalField) {
+
+                        if (!fs.existsSync(filepath)) {
+                            csvErrors.push({
+                                "Child sObject name": task.sObjectName,
+                                "Child lookup field name": null,
+                                "Parent sObject name": null,
+                                "Parent sObject external Id field name": null,
+                                "Parent record Id": null,
+                                "Error description": "Missing source CSV file"
+                            });
+                            break;
+                        }
 
                         let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
 
@@ -737,6 +753,17 @@ export class Application {
                                     refFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
                                 }
                                 refFilepath += ".csv";
+                                if (!fs.existsSync(refFilepath)) {
+                                    csvErrors.push({
+                                        "Child sObject name": task.sObjectName,
+                                        "Child lookup field name": lookupFieldName,
+                                        "Parent sObject name": refSObjectName,
+                                        "Parent sObject external Id field name": refSObjectExternalIdFieldName,
+                                        "Parent record Id": null,
+                                        "Error description": "Missing source CSV file for the parent sObject"
+                                    });
+                                    continue;
+                                }
                                 let csvRows = await CommonUtils.readCsvFile(refFilepath);
                                 m = new Map<string, any>();
                                 csvRows.forEach(row => {
@@ -757,12 +784,13 @@ export class Application {
                                 if (typeof extIdValue != "undefined") {
                                     value[columnName] = extIdValue;
                                 } else {
-                                    csvLookupErrors.push({
+                                    csvErrors.push({
                                         "Child sObject name": task.sObjectName,
                                         "Child lookup field name": lookupFieldName,
                                         "Parent sObject name": refSObjectName,
                                         "Parent sObject external Id field name": refSObjectExternalIdFieldName,
-                                        "Parent record Id": id
+                                        "Parent record Id": id,
+                                        "Error description": "Missing parent lookup record"
                                     });
                                     value[columnName] = null;
                                 }
@@ -777,23 +805,24 @@ export class Application {
             }
 
             // Write to lookup errors file
-            let csvLookupErrorsFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
-            if (csvLookupErrors.length == 0) {
-                csvLookupErrors.push({
-                    "Child sObject name": "No missing lookups found during the last scan",
+            let csvErrorsFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
+            if (csvErrors.length == 0) {
+                csvErrors.push({
+                    "Child sObject name": null,
                     "Child lookup field name": null,
                     "Parent sObject name": null,
                     "Parent sObject external Id field name": null,
-                    "Parent record Id": null
+                    "Parent record Id": null,
+                    "Error description" : "No errors found during the last scan"
                 });
-                await CommonUtils.writeCsvFile(csvLookupErrorsFilepath, csvLookupErrors);
+                await CommonUtils.writeCsvFile(csvErrorsFilepath, csvErrors);
             } else {
-                await CommonUtils.writeCsvFile(csvLookupErrorsFilepath, csvLookupErrors);
-                this.uxLog(`WARNING! During the validation of the source CSV files ${csvLookupErrors.length} missing parent lookups were found. See ${SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME} file for the complete list of the missing values.`);
+                await CommonUtils.writeCsvFile(csvErrorsFilepath, csvErrors);
+                this.uxLog(`WARNING! During the validation of the source CSV files found ${csvErrors.length} errors. See ${SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME} file for the complete list.`);
                 if (this.script.promptOnMissingParentObjects) {
                     var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
                     if (ans != 'y' && ans != 'yes') {
-                        throw new SfdmModels.JobAbortedByUser("Missing parent records");
+                        throw new SfdmModels.JobAbortedByUser("CSV files errors found");
                     }
                 }
             }

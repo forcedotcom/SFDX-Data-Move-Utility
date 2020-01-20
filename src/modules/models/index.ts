@@ -108,7 +108,7 @@ export let CONSTANTS = {
 
     USER_AND_GROUP_FILE_NAME: 'UserAndGroup',
 
-    CSV_LOOKUP_ERRORS_FILE_NAME: 'MissingLookups.csv'
+    CSV_LOOKUP_ERRORS_FILE_NAME: 'CSVErrorsReport.csv'
 
 };
 
