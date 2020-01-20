@@ -666,7 +666,9 @@ export class Application {
 
             this.uxLog("Validating and formatting source CSV files.");
 
-            // Merge User / Group into UserAndGroup
+
+            // A. Merge User / Group into UserAndGroup ----------------------//
+
             let filepath1 = path.join(this.sourceOrg.basePath, "User.csv");
             let filepath2 = path.join(this.sourceOrg.basePath, "Group.csv");
             let filepath3 = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME + ".csv");
@@ -674,7 +676,11 @@ export class Application {
             await CommonUtils.mergeCsvFiles(filepath1, filepath2, filepath3, true, "Id", "Name");
 
 
-            // Add missing referenced lookup fields
+
+
+
+            // B. Add missing referenced lookup fields and process external id columns ----------------------//
+
             let csvData: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
             let csvErrors: Array<{
                 "Child sObject name": string,
@@ -686,6 +692,24 @@ export class Application {
             }> = new Array<any>();
 
             let formattedFilesFlag: Map<number, boolean> = new Map<number, boolean>();
+            let csvFilePathsToUpdate: Array<string> = new Array<string>();
+
+
+            async function readCsvFile(filepath: string): Promise<Map<string, any>> {
+                let m: Map<string, any> = csvData.get(filepath);
+                if (!m) {
+                    if (!fs.existsSync(filepath)) {
+                        return null;
+                    }
+                    let csvRows = await CommonUtils.readCsvFile(filepath);
+                    m = new Map<string, any>();
+                    csvRows.forEach(row => {
+                        m.set(row["Id"], row);
+                    });
+                    csvData.set(filepath, m);
+                }
+                return m;
+            }
 
             for (let i = 0; i < this.job.tasks.Count(); i++) {
 
@@ -695,32 +719,35 @@ export class Application {
                     || task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete)
                     continue;
 
-                // Scan csv filed and add lookup referenced fields by target object's external id to the CSVs if missing *****************
                 let filepath = path.join(this.sourceOrg.basePath, task.sObjectName);
                 if (task.sObjectName == "User" || task.sObjectName == "Group") {
                     filepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
                 }
                 filepath += ".csv";
 
+                // Check the source CSV file for this task
+                let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
+                if (csvColumnsRow.length == 0) {
+                    csvErrors.push({
+                        "Child sObject name": task.sObjectName,
+                        "Child lookup field name": null,
+                        "Parent sObject name": null,
+                        "Parent sObject external Id field name": null,
+                        "Parent record Id": null,
+                        "Error description": "Source CSV file is empty or does not exist"
+                    });
+                    continue;
+                }
+
                 for (let j = 0; j < task.taskFields.Count(); j++) {
 
                     const taskField = task.taskFields.ElementAt(j);
 
-                    let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
-
                     if (taskField.isReference && !taskField.isOriginalField) {
 
-                        if (!fs.existsSync(filepath)) {
-                            csvErrors.push({
-                                "Child sObject name": task.sObjectName,
-                                "Child lookup field name": null,
-                                "Parent sObject name": null,
-                                "Parent sObject external Id field name": null,
-                                "Parent record Id": null,
-                                "Error description": "Missing source CSV file"
-                            });
-                            break;
-                        }
+
+                        // Add missing reference lookup columns *************************
+                        // *****************************************************************************
 
                         let refSObjectName = taskField.originalScriptField.referencedSObjectType;
                         let refSObjectExternalIdFieldName = taskField.originalScriptField.externalId;
@@ -728,59 +755,47 @@ export class Application {
                         let columnName = taskField.name;
                         let lookupFieldName = taskField.originalScriptField.name;
 
-                        if (csvColumnsRow.length > 0 && !csvColumnsRow[0].hasOwnProperty(columnName)
+                        if (!csvColumnsRow[0].hasOwnProperty(columnName)
                             // TODO: Add support for $$combined fields$$
                             && !taskField.originalScriptField.isComplexExternalId) {
 
-
                             if (!formattedFilesFlag.get(i)) {
-                                this.ux.log(`${filepath} file is in a raw format. Adding lookup references...`);
+                                this.ux.log(`Adding lookup references to ${filepath}.`);
                             }
                             formattedFilesFlag.set(i, true);
 
-                            // Lookup column does not exist
-                            let m: Map<string, any> = csvData.get(task.sObjectName);
+                            // Read child CSV file (current)
+                            let m: Map<string, any> = await readCsvFile(filepath);
+
+                            let refFilepath = path.join(this.sourceOrg.basePath, refSObjectName);
+                            if (refSObjectName == "User" || refSObjectName == "Group") {
+                                refFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
+                            }
+                            refFilepath += ".csv";
+
+                            // Read parent CSV file
+                            m = await readCsvFile(refFilepath);
                             if (!m) {
-                                let csvRows = await CommonUtils.readCsvFile(filepath);
-                                m = new Map<string, any>();
-                                csvRows.forEach(row => {
-                                    m.set(row["Id"], row);
+                                csvErrors.push({
+                                    "Child sObject name": task.sObjectName,
+                                    "Child lookup field name": lookupFieldName,
+                                    "Parent sObject name": refSObjectName,
+                                    "Parent sObject external Id field name": refSObjectExternalIdFieldName,
+                                    "Parent record Id": null,
+                                    "Error description": "Missing source CSV file for the parent sObject"
                                 });
-                                csvData.set(task.sObjectName, m);
+                                continue;
                             }
 
-                            m = csvData.get(refSObjectName);
-                            if (!m) {
-                                let refFilepath = path.join(this.sourceOrg.basePath, refSObjectName);
-                                if (refSObjectName == "User" || refSObjectName == "Group") {
-                                    refFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
-                                }
-                                refFilepath += ".csv";
-                                if (!fs.existsSync(refFilepath)) {
-                                    csvErrors.push({
-                                        "Child sObject name": task.sObjectName,
-                                        "Child lookup field name": lookupFieldName,
-                                        "Parent sObject name": refSObjectName,
-                                        "Parent sObject external Id field name": refSObjectExternalIdFieldName,
-                                        "Parent record Id": null,
-                                        "Error description": "Missing source CSV file for the parent sObject"
-                                    });
-                                    continue;
-                                }
-                                let csvRows = await CommonUtils.readCsvFile(refFilepath);
-                                m = new Map<string, any>();
-                                csvRows.forEach(row => {
-                                    m.set(row["Id"], row);
-                                });
-                                csvData.set(refSObjectName, m);
-                            }
+                            // Mark current CSV file for further update
+                            csvFilePathsToUpdate.push(filepath);
 
-                            let rows: Map<string, any> = csvData.get(task.sObjectName);
-                            let refRows: Map<string, any> = csvData.get(refSObjectName);
+                            let rows: Map<string, any> = csvData.get(filepath);
+                            let refRows: Map<string, any> = csvData.get(refFilepath);
                             let values = [...rows.values()];
                             values.forEach(value => {
                                 let id = value[lookupFieldName];
-                                let extIdValue;
+                                let extIdValue: any;
                                 if (id && refRows.get(id)) {
                                     extIdValue = refRows.get(id)[refSObjectExternalIdFieldName];
                                 }
@@ -799,39 +814,95 @@ export class Application {
                                 }
                             });
 
-                            await CommonUtils.writeCsvFile(filepath, values);
-
                         }
 
-                    } else {
-                        // TODO: !!!
-                        // let columnName = Object.keys(csvColumnsRow[0]).filter(key => {
-                        //     return key == taskField.name || key.indexOf(`.${taskField.name}`) >= 0;
-                        // })[0];
-                        // if (!columnName) {
-                        //     // Column does not exist => Add empty column
-                        //     let csvRows = await CommonUtils.readCsvFile(filepath);
-                        //     csvRows.forEach(row=>{
-                        //         row[columnName] = null;
-                        //     });
-                        //     await CommonUtils.writeCsvFile(filepath, csvRows);
+                    } else if (!taskField.isReference
+                        && taskField.isOriginalField
+                        && !taskField.name.startsWith(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX)) {
 
-                        // } else if (columnName.indexOf('.') >= 0) {
-                        //     // External id column => Add fake lookup column
-                        //     let lookupField = columnName.split('.')[0];
-                        //     let extIdField = columnName.split('.')[1];
-                        //     let csvRows = await CommonUtils.readCsvFile(filepath);
-                        //     csvRows.forEach(row=>{
-                        //         row[lookupField] = '0011p00002Zh1kr'; // Fake id
-                        //         row[extIdField] = row[columnName];
-                        //         delete row[columnName];
-                        //     });
-                        //     await CommonUtils.writeCsvFile(filepath, csvRows);
-                        // }
+                        // Process external Id columns coming from the external system *************************
+                        // *****************************************************************************
+
+                        let columnName = Object.keys(csvColumnsRow[0]).filter(key => {
+                            return key == taskField.name || key.indexOf(`.${taskField.name}`) >= 0;
+                        })[0];
+
+                        if (!columnName) {
+                            // Column does not exist => Add empty column
+                            let m: Map<string, any> = await readCsvFile(filepath);
+                            [...m.values()].forEach(row => {
+                                row[columnName] = null;
+                            });
+
+                            // Mark current CSV file for further update                            
+                            csvFilePathsToUpdate.push(filepath);
+
+                        } else if (columnName.indexOf('.') >= 0) {
+
+                            // External id column => Add fake lookup column
+                            let lookupField = columnName.split('.')[0];
+                            let tempExtIdField = columnName.split('.')[1];
+
+                            let m: Map<string, any> = await readCsvFile(filepath);
+
+                            let lookupTaskField = task.taskFields.Where(x => x.name == lookupField);
+                            let tempExtIdTaskField = task.taskFields.Where(x => x.name == tempExtIdField);
+
+                            if (lookupTaskField.Count() == 0) {
+                                csvErrors.push({
+                                    "Child sObject name": task.sObjectName,
+                                    "Child lookup field name": null,
+                                    "Parent sObject name": null,
+                                    "Parent sObject external Id field name": null,
+                                    "Parent record Id": null,
+                                    "Error description": `${lookupTaskField} is missing in the script`
+                                });
+                            }
+
+                            if (tempExtIdTaskField.Count() == 0) {
+                                csvErrors.push({
+                                    "Child sObject name": task.sObjectName,
+                                    "Child lookup field name": null,
+                                    "Parent sObject name": null,
+                                    "Parent sObject external Id field name": null,
+                                    "Parent record Id": null,
+                                    "Error description": `${tempExtIdTaskField} is missing in the script`
+                                });
+                            }
+
+                            if (lookupTaskField.Count() == 0 || tempExtIdTaskField.Count() == 0) {
+                                continue;
+                            }
+
+                            let extIdField = lookupTaskField.ElementAt(0).externalIdTaskField.name;
+                            let csvRows = [...m.values()];                            
+
+                             csvRows.forEach(row => {
+                                 row[lookupField] = '0011p00002Zh1kr'; // Fake id
+                                 row[extIdField] = row[columnName];
+                                 row[tempExtIdField] = row[columnName];
+                                 delete row[columnName];
+                             });
+
+                            // Mark current CSV file for further update                            
+                            csvFilePathsToUpdate.push(filepath);
+
+                        }
                     }
                 }
                 // ****************************************************************************************************
             }
+
+            // Write to all changed csv files
+            let csvFilePaths = [...csvData.keys()];
+            for (let index = 0; index < csvFilePaths.length; index++) {
+                let csvFilePath = csvFilePaths[index];
+                if (csvFilePathsToUpdate.indexOf(csvFilePath) >= 0) {
+                    let values = [...csvData.get(csvFilePath).values()];
+                    await CommonUtils.writeCsvFile(csvFilePath, values);
+                }
+            }
+
 
             // Write to lookup errors file
             let csvErrorsFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);

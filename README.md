@@ -57,14 +57,21 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfd
 
 ### Installing
 
+<!-->
 There are two ways to install the SFDMU
 
 1. Install as SFDX Plugin:
+-->
 
 ```bash
+# If you already have previous version of the Plugin installed on your local machine and want to update it, first uninstall the previous version:
+sfdx plugins:uninstall sfdmu
+
+# Install the latest version of the Plugin:
 sfdx plugins:install sfdmu
 ```
 
+<!-- 
 2. Install from the git repository:
 
 ```bash
@@ -96,7 +103,7 @@ npm install
 sfdx plugins:link
 
 ```
-
+-->
 
 
 
