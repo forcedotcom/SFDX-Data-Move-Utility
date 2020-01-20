@@ -794,23 +794,25 @@ export class Application {
                             let refRows: Map<string, any> = csvData.get(refFilepath);
                             let values = [...rows.values()];
                             values.forEach(value => {
-                                let id = value[lookupFieldName];
-                                let extIdValue: any;
-                                if (id && refRows.get(id)) {
-                                    extIdValue = refRows.get(id)[refSObjectExternalIdFieldName];
-                                }
-                                if (typeof extIdValue != "undefined") {
-                                    value[columnName] = extIdValue;
-                                } else {
-                                    csvErrors.push({
-                                        "Child sObject name": task.sObjectName,
-                                        "Child lookup field name": lookupFieldName,
-                                        "Parent sObject name": refSObjectName,
-                                        "Parent sObject external Id field name": refSObjectExternalIdFieldName,
-                                        "Parent record Id": id,
-                                        "Error description": "Missing parent lookup record"
-                                    });
-                                    value[columnName] = null;
+                                if (typeof value[columnName] == "undefined") {
+                                    let id = value[lookupFieldName];
+                                    let extIdValue: any;
+                                    if (id && refRows.get(id)) {
+                                        extIdValue = refRows.get(id)[refSObjectExternalIdFieldName];
+                                    }
+                                    if (typeof extIdValue != "undefined") {
+                                        value[columnName] = extIdValue;
+                                    } else {
+                                        csvErrors.push({
+                                            "Child sObject name": task.sObjectName,
+                                            "Child lookup field name": lookupFieldName,
+                                            "Parent sObject name": refSObjectName,
+                                            "Parent sObject external Id field name": refSObjectExternalIdFieldName,
+                                            "Parent record Id": id,
+                                            "Error description": "Missing parent lookup record"
+                                        });
+                                        value[columnName] = null;
+                                    }
                                 }
                             });
 
@@ -824,24 +826,14 @@ export class Application {
                         // *****************************************************************************
 
                         let columnName = Object.keys(csvColumnsRow[0]).filter(key => {
-                            return key == taskField.name || key.indexOf(`.${taskField.name}`) >= 0;
+                            return key.indexOf(`${SfdmModels.CONSTANTS.COMPLEX_FIELDS_SEPARATOR}${taskField.name}`) >= 0;
                         })[0];
 
-                        if (!columnName) {
-                            // Column does not exist => Add empty column
-                            let m: Map<string, any> = await readCsvFile(filepath);
-                            [...m.values()].forEach(row => {
-                                row[columnName] = null;
-                            });
-
-                            // Mark current CSV file for further update                            
-                            csvFilePathsToUpdate.push(filepath);
-
-                        } else if (columnName.indexOf('.') >= 0) {
+                        if (columnName) {
 
                             // External id column => Add fake lookup column
-                            let lookupField = columnName.split('.')[0];
-                            let tempExtIdField = columnName.split('.')[1];
+                            let lookupField = columnName.split(SfdmModels.CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0];
+                            let tempExtIdField = columnName.split(SfdmModels.CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[1];
 
                             let m: Map<string, any> = await readCsvFile(filepath);
 
@@ -875,14 +867,14 @@ export class Application {
                             }
 
                             let extIdField = lookupTaskField.ElementAt(0).externalIdTaskField.name;
-                            let csvRows = [...m.values()];                            
+                            let csvRows = [...m.values()];
 
-                             csvRows.forEach(row => {
-                                 row[lookupField] = '0011p00002Zh1kr'; // Fake id
-                                 row[extIdField] = row[columnName];
-                                 row[tempExtIdField] = row[columnName];
-                                 delete row[columnName];
-                             });
+                            csvRows.forEach(row => {
+                                row[lookupField] = '0011p00002Zh1kr'; // Fake id
+                                row[extIdField] = row[columnName];
+                                row[tempExtIdField] = row[columnName];
+                                delete row[columnName];
+                            });
 
                             // Mark current CSV file for further update                            
                             csvFilePathsToUpdate.push(filepath);
