@@ -815,7 +815,7 @@ export class Application {
                         //         row[columnName] = null;
                         //     });
                         //     await CommonUtils.writeCsvFile(filepath, csvRows);
-                            
+
                         // } else if (columnName.indexOf('.') >= 0) {
                         //     // External id column => Add fake lookup column
                         //     let lookupField = columnName.split('.')[0];
