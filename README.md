@@ -57,7 +57,7 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfd
 
 ### Installing
 
-<!-->
+<!--
 There are two ways to install the SFDMU
 
 1. Install as SFDX Plugin:
