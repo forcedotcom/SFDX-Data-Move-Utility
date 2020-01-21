@@ -690,7 +690,7 @@ export class Application {
                 "Error description": string
             }> = new Array<any>();
 
-            let csvFilePathsToUpdate: Array<string> = new Array<string>();
+            let csvFilePathsToUpdate: Set<string> = new Set<string>();
 
             async function readCsvFile(filepath: string): Promise<Map<string, any>> {
                 let m: Map<string, any> = csvData.get(filepath);
@@ -780,7 +780,7 @@ export class Application {
                             }
 
                             // Mark current CSV file for further update
-                            csvFilePathsToUpdate.push(filepath);
+                            csvFilePathsToUpdate.add(filepath);
 
                             let rows: Map<string, any> = csvData.get(filepath);
                             let refRows: Map<string, any> = csvData.get(refFilepath);
@@ -818,19 +818,19 @@ export class Application {
                         // *****************************************************************************
 
                         let columnName = Object.keys(csvColumnsRow[0]).filter(key => {
-                            return key.indexOf(`${SfdmModels.CONSTANTS.COMPLEX_FIELDS_SEPARATOR}${taskField.name}`) >= 0;
+                            return key.toLowerCase().indexOf(`${SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR}${taskField.name.toLowerCase()}`) >= 0;
                         })[0];
 
                         if (columnName) {
 
                             // External id column => Add fake lookup column
-                            let lookupField = columnName.split(SfdmModels.CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0];
-                            let tempExtIdField = columnName.split(SfdmModels.CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[1];
+                            let lookupField = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR)[0].toLowerCase();
+                            let tempExtIdField = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR)[1].toLowerCase();
 
                             let m: Map<string, any> = await readCsvFile(filepath);
 
-                            let lookupTaskField = task.taskFields.Where(x => x.name == lookupField);
-                            let tempExtIdTaskField = task.taskFields.Where(x => x.name == tempExtIdField);
+                            let lookupTaskField = task.taskFields.Where(x => x.name.toLowerCase() == lookupField);
+                            let tempExtIdTaskField = task.taskFields.Where(x => x.name.toLowerCase() == tempExtIdField);
 
                             if (lookupTaskField.Count() == 0) {
                                 csvErrors.push({
@@ -841,6 +841,8 @@ export class Application {
                                     "Parent record Id": null,
                                     "Error description": `${lookupTaskField} is missing in the script`
                                 });
+                            } else {
+                                lookupField = lookupTaskField.ElementAt(0).name;
                             }
 
                             if (tempExtIdTaskField.Count() == 0) {
@@ -852,6 +854,8 @@ export class Application {
                                     "Parent record Id": null,
                                     "Error description": `${tempExtIdTaskField} is missing in the script`
                                 });
+                            } else {
+                                tempExtIdField = tempExtIdTaskField.ElementAt(0).name;
                             }
 
                             if (lookupTaskField.Count() == 0 || tempExtIdTaskField.Count() == 0) {
@@ -862,14 +866,14 @@ export class Application {
                             let csvRows = [...m.values()];
 
                             csvRows.forEach(row => {
-                                row[lookupField] = '0011p00002Zh1kr'; // Fake id
+                                row[lookupField] =  row[lookupField] || '0011p00002Zh1kr'; // Fake id
                                 row[extIdField] = row[columnName];
                                 row[tempExtIdField] = row[columnName];
                                 delete row[columnName];
                             });
 
                             // Mark current CSV file for further update                            
-                            csvFilePathsToUpdate.push(filepath);
+                            csvFilePathsToUpdate.add(filepath);
 
                         }
                     }
@@ -881,8 +885,9 @@ export class Application {
             let csvFilePaths = [...csvData.keys()];
             for (let index = 0; index < csvFilePaths.length; index++) {
                 let csvFilePath = csvFilePaths[index];
-                if (csvFilePathsToUpdate.indexOf(csvFilePath) >= 0) {
+                if (csvFilePathsToUpdate.has(csvFilePath)) {
                     let values = [...csvData.get(csvFilePath).values()];
+                    this.uxLog(`Updating file ${csvFilePath}`);
                     await CommonUtils.writeCsvFile(csvFilePath, values);
                 }
             }
@@ -912,8 +917,8 @@ export class Application {
             }
 
             // Format report
-            if (csvFilePathsToUpdate.length > 0) {
-                this.uxLog(`${csvFilePathsToUpdate.length} files were updated.`);
+            if (csvFilePathsToUpdate.size > 0) {
+                this.uxLog(`${csvFilePathsToUpdate.size} file(s) were updated.`);
             }
             this.uxLog("Validating and formatting source CSV files completed.");
 
