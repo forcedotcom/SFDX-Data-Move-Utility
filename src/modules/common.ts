@@ -163,17 +163,44 @@ export class CommonUtils {
      * Reads csv files
      * Can read or entire file or wanted amount of lines
      */
-    public static async readCsvFile(fileName: string, getSpecificLinesAmount: number = 0): Promise<Array<object>> {
+    public static async readCsvFile(fileName: string, getSpecificLinesAmount: number = 0, fieldsTypeMap?: Map<string, string>): Promise<Array<object>> {
+
+        let headerRow = [];
 
         function csvCast(value, context) {
-            if (!value)
-                return null;
+            if (context.header) {
+                headerRow.push(value);
+                return value;
+            }
             if (value == "TRUE")
                 return true;
             if (value == "FALSE")
                 return false;
+            let headerRowValue = headerRow[context.index];
+            let fieldType = fieldsTypeMap && fieldsTypeMap.get(headerRowValue);
+            if (fieldType == "boolean") {
+                if (value == "1")
+                    return true;
+                else
+                    return false;
+            }
+            if (!value)
+                return null;
             return value;
         }
+
+        function columns(header) {
+            if (!fieldsTypeMap) {
+                return header;
+            }
+            return header.map(column => {
+                if (column.indexOf('.') >= 0)
+                    return column;
+                return fieldsTypeMap.has(column) ? column : undefined;
+            });
+        }
+
+
 
         return new Promise<Array<object>>(resolve => {
 
@@ -185,7 +212,7 @@ export class CommonUtils {
             if (getSpecificLinesAmount == 0) {
                 let input = fs.readFileSync(fileName, 'utf8');
                 const records = parse(input, {
-                    columns: true,
+                    columns: columns,
                     skip_empty_lines: true,
                     cast: csvCast
                 });
@@ -400,6 +427,17 @@ export class CommonUtils {
             });
         });
         return records;
+    }
+
+
+    public static makeId(length: Number = 10) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
     }
 
 }

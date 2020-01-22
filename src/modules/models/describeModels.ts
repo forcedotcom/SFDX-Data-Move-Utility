@@ -114,6 +114,7 @@ export class SFieldDescribe {
     }
 
     name: string;
+    type: string;
     label: string;
     updateable: boolean;
     creatable: boolean;
@@ -135,6 +136,10 @@ export class SFieldDescribe {
 
     get isReadonly() {
         return !(this.creatable && !this.isFormula && !this.autoNumber);
+    }
+
+    get isBoolean(){
+        return this.type == "boolean";
     }
 
 }

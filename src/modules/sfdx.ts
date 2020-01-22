@@ -19,7 +19,8 @@ import {
     LogicalOperator,
     getComposedField,
     composeQuery,
-    Field as SOQLField
+    Field as SOQLField,
+    FieldType
 } from 'soql-parser-js';
 import * as deepClone from "deep.clone";
 import { CommonUtils } from "./common";
@@ -180,6 +181,7 @@ export class SfdxUtils {
         describe.fields.forEach(field => {
             let f = new SfdmModels.SFieldDescribe();
             f.name = field.name;
+            f.type = field.type;
             f.label = field.label;
             f.custom = field.custom;
             f.isReference = field.referenceTo != null;
@@ -327,6 +329,18 @@ export class SfdxUtils {
     public static async queryAndParseAsync(soql: string, sOrg: SfdmModels.SOrg, useNonOrgMedia: boolean = false, password?: string): Promise<List<object>> {
 
         let _this = this;
+        let parsedQuery: Query = parseQuery(soql);
+        let name = parsedQuery.sObject;
+        let queryFields = new List<FieldType>(parsedQuery.fields).Cast<SOQLField>();
+        let fieldsTypeMap: Map<string, string> = new Map<string, string>();
+        let fieldsMap = sOrg.sObjectsMap.get(name).fieldsMap;
+        queryFields.ForEach(field => {
+            let descr = fieldsMap.get(field.field);
+            fieldsTypeMap.set(field.field, descr && descr.type || "unknown");
+        });
+
+
+        //let name = /FROM\s([\w\d_]+)/gi.exec(soql)[1];
 
         async function getRecords(soql: string, sOrg: SfdmModels.SOrg): Promise<List<object>> {
             let ret: List<object> = new List<object>();
@@ -343,10 +357,9 @@ export class SfdxUtils {
             return ret;
         }
 
-        
+
         if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && useNonOrgMedia) {
-            let name = /FROM\s([\w\d_]+)/gi.exec(soql)[1];
-            if (name == "Group" || name == "User"){
+            if (name == "Group" || name == "User") {
                 name = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;
             }
             let filename = `${name}.csv`;
@@ -354,7 +367,7 @@ export class SfdxUtils {
             if (!fs.existsSync(filepath)) {
                 return new List<object>();
             }
-            let data = await CommonUtils.readCsvFile(filepath);
+            let data = await CommonUtils.readCsvFile(filepath, 0, fieldsTypeMap);
             if (data.length == 0) {
                 return new List<object>(data);
             }
@@ -517,6 +530,11 @@ export class SfdxUtils {
 
                 batch.on("queue", function (batchInfo) {
                     batch.poll(sOrg.pollingIntervalMs, SfdmModels.CONSTANTS.POLL_TIMEOUT);
+                    if (pollCallback) {
+                        pollCallback("", {
+                            message : `Insert job# [${job.id}] started.`
+                        });
+                    }
                     t = setInterval(function () {
                         cn.bulk.job(job.id).batch(batch.id).check((err, results) => {
                             if (pollCallback) {

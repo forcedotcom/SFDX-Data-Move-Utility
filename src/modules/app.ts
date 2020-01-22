@@ -701,6 +701,9 @@ export class Application {
                     let csvRows = await CommonUtils.readCsvFile(filepath);
                     m = new Map<string, any>();
                     csvRows.forEach(row => {
+                        if (!row["Id"]){
+                            row["Id"] = CommonUtils.makeId(18);
+                        }
                         m.set(row["Id"], row);
                     });
                     csvData.set(filepath, m);
@@ -1498,7 +1501,7 @@ export class Application {
                             var value = !isRecordTypeField ? targetExtIdMap[record[taskField.name]] : targetExtIdMap[task.sObjectName + ";" + record[taskField.name]];
                             if (!value) {
                                 if (!missingParentValueOnTagetErrors.get(taskField.name)) {
-                                    this.uxLog(`WARNING!  Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required external Id value "${record[taskField.name]}"`);
+                                    this.uxLog(`NOTE!  Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required external Id value "${record[taskField.name]}"`);
                                 }
                                 missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                 delete record[fieldToUpdate];
@@ -1643,7 +1646,7 @@ export class Application {
                                 var value = targetExtIdMap[record[taskField.name]];
                                 if (!value) {
                                     if (!missingParentValueOnTagetErrors.get(taskField.name)) {
-                                        this.uxLog(`WARNING! Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing required external Id value "${record[taskField.name]}"`);
+                                        this.uxLog(`NOTE! Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing required external Id value "${record[taskField.name]}"`);
                                     }
                                     missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                     delete record[fieldToUpdate];
