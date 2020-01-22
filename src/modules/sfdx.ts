@@ -332,15 +332,12 @@ export class SfdxUtils {
         let parsedQuery: Query = parseQuery(soql);
         let name = parsedQuery.sObject;
         let queryFields = new List<FieldType>(parsedQuery.fields).Cast<SOQLField>();
-        let fieldsTypeMap: Map<string, string> = new Map<string, string>();
+        let csvColumnsToColumnTypeMap: Map<string, string> = new Map<string, string>();
         let fieldsMap = sOrg.sObjectsMap.get(name).fieldsMap;
         queryFields.ForEach(field => {
             let descr = fieldsMap.get(field.field);
-            fieldsTypeMap.set(field.field, descr && descr.type || "unknown");
+            csvColumnsToColumnTypeMap.set(field.field, descr && descr.type || "unknown");
         });
-
-
-        //let name = /FROM\s([\w\d_]+)/gi.exec(soql)[1];
 
         async function getRecords(soql: string, sOrg: SfdmModels.SOrg): Promise<List<object>> {
             let ret: List<object> = new List<object>();
@@ -367,7 +364,7 @@ export class SfdxUtils {
             if (!fs.existsSync(filepath)) {
                 return new List<object>();
             }
-            let data = await CommonUtils.readCsvFile(filepath, 0, fieldsTypeMap);
+            let data = await CommonUtils.readCsvFile(filepath, 0, csvColumnsToColumnTypeMap);
             if (data.length == 0) {
                 return new List<object>(data);
             }

@@ -164,7 +164,7 @@ export class CommonUtils {
      * Reads csv files
      * Can read or entire file or wanted amount of lines
      */
-    public static async readCsvFile(fileName: string, getSpecificLinesAmount: number = 0, fieldsTypeMap?: Map<string, string>): Promise<Array<object>> {
+    public static async readCsvFile(fileName: string, getSpecificLinesAmount: number = 0, acceptedColumnsToColumnsTypeMap?: Map<string, string>): Promise<Array<object>> {
 
         function csvCast(value, context) {
 
@@ -172,7 +172,7 @@ export class CommonUtils {
                 return value;
             }
 
-            let fieldType = fieldsTypeMap && fieldsTypeMap.get(context.column);
+            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);
 
             if (fieldType == "boolean") {
                 if (value == "1" || value == "TRUE" || value == "true")
@@ -189,7 +189,7 @@ export class CommonUtils {
         }
 
         function columns(header) {
-            if (!fieldsTypeMap) {
+            if (!acceptedColumnsToColumnsTypeMap) {
                 return header;
             }
             return header.map(column => {
@@ -197,7 +197,7 @@ export class CommonUtils {
                     || column.indexOf(CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR) >= 0
                     || column.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR) >= 0
                     || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
-                    || fieldsTypeMap.has(column))
+                    || acceptedColumnsToColumnsTypeMap.has(column))
                     return column;
                 else {
                     return undefined;
