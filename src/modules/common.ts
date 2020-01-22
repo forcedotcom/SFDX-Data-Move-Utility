@@ -16,6 +16,7 @@ const readline = require('readline').createInterface({
 });
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 import SimpleCrypto from "simple-crypto-js";
+import { CONSTANTS } from './models';
 
 
 export class CommonUtils {
@@ -172,14 +173,10 @@ export class CommonUtils {
                 headerRow.push(value);
                 return value;
             }
-            if (value == "TRUE")
-                return true;
-            if (value == "FALSE")
-                return false;
             let headerRowValue = headerRow[context.index];
             let fieldType = fieldsTypeMap && fieldsTypeMap.get(headerRowValue);
             if (fieldType == "boolean") {
-                if (value == "1")
+                if (value == "1" || value == "TRUE" || value == "true")
                     return true;
                 else
                     return false;
@@ -194,7 +191,9 @@ export class CommonUtils {
                 return header;
             }
             return header.map(column => {
-                if (column.indexOf('.') >= 0)
+                if (column.indexOf('.') >= 0 || column.indexOf(CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR) >= 0
+                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR) >= 0
+                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0)
                     return column;
                 return fieldsTypeMap.has(column) ? column : undefined;
             });
