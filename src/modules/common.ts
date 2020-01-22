@@ -166,23 +166,25 @@ export class CommonUtils {
      */
     public static async readCsvFile(fileName: string, getSpecificLinesAmount: number = 0, fieldsTypeMap?: Map<string, string>): Promise<Array<object>> {
 
-        let headerRow = [];
-
         function csvCast(value, context) {
-            if (context.header) {
-                headerRow.push(value);
+
+            if (context.header || typeof context.column == "undefined") {
                 return value;
             }
-            let headerRowValue = headerRow[context.index];
-            let fieldType = fieldsTypeMap && fieldsTypeMap.get(headerRowValue);
+
+            let fieldType = fieldsTypeMap && fieldsTypeMap.get(context.column);
+
             if (fieldType == "boolean") {
                 if (value == "1" || value == "TRUE" || value == "true")
                     return true;
                 else
                     return false;
             }
-            if (!value)
+
+            if (!value) {
                 return null;
+            }
+
             return value;
         }
 
@@ -191,11 +193,15 @@ export class CommonUtils {
                 return header;
             }
             return header.map(column => {
-                if (column.indexOf('.') >= 0 || column.indexOf(CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR) >= 0
+                if (column.indexOf('.') >= 0
+                    || column.indexOf(CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR) >= 0
                     || column.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR) >= 0
-                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0)
+                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
+                    || fieldsTypeMap.has(column))
                     return column;
-                return fieldsTypeMap.has(column) ? column : undefined;
+                else {
+                    return undefined;
+                }
             });
         }
 
