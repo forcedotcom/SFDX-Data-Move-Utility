@@ -67,7 +67,7 @@ export class Application {
 
     uxLogStart() {
         this.startTime = new Date();
-        this.uxLog("Process started");
+        this.uxLog("Process started.");
     }
 
     uxLog(message: string, br: boolean = false, error: boolean = false) {
@@ -102,8 +102,8 @@ export class Application {
 
     uxLogEnd() {
         this.endTime = new Date();
-        this.uxLog("Process finished");
-        this.uxLog(`total time elapsed: ${CommonUtils.timeDiffString(this.startTime, this.endTime)}`);
+        this.uxLog("Process finished.");
+        this.uxLog(`total time elapsed: ${CommonUtils.timeDiffString(this.startTime, this.endTime)}.`);
     }
 
     /**
@@ -137,6 +137,9 @@ export class Application {
             throw new SfdmModels.FileSystemError("The export.json file does not exist in the working directory");
         }
 
+        this.uxLog("");
+        this.uxLog("Loading and validating the package script...");
+
         let json = fs.readFileSync(filePath, 'utf8');
         let jsonObject = JSON.parse(json);
         this.script = plainToClass(SfdmModels.Script, jsonObject);
@@ -144,10 +147,10 @@ export class Application {
         this.script.targetOrg = targetUsername;
         this.script.sourceOrg = sourceUsername;
 
-        this.uxLog(`Source Org: ${this.script.sourceOrg}`);
-        this.uxLog(`Target Org: ${this.script.targetOrg}`);
-        this.uxLog(`Script file: ${filePath}`);
-        this.uxLog(`Password: ${password}`);
+        this.uxLog(`Source Org: ${this.script.sourceOrg}.`);
+        this.uxLog(`Target Org: ${this.script.targetOrg}.`);
+        this.uxLog(`Script file: ${filePath}.`);
+        this.uxLog(`Password: ${password}.`);
 
         // Encryption
         let invalidPassword = false;
@@ -297,7 +300,10 @@ export class Application {
 
 
         // Describe sObjects
-        this.uxLog("Get org metadata...");
+        this.uxLog("");  
+        this.uxLog("Executing the package script...");
+        this.uxLog("Preparing...");
+        this.uxLog("Getting org metadata...");
 
         for (let i = 0; i < this.script.objects.length; i++) {
 
@@ -344,7 +350,7 @@ export class Application {
 
 
         // Analysing relationships and building script data
-        this.uxLog("Analysing relationships...");
+        this.uxLog("Analysing object metadata...");
 
         for (let i = 0; i < this.script.objects.length; i++) {
 
@@ -520,7 +526,6 @@ export class Application {
 
         }
 
-
         // Referenced fields for all objects
         this.script.objects.forEach(object => {
 
@@ -564,7 +569,7 @@ export class Application {
      */
     async initJob() {
 
-        this.uxLog("Executing job...");
+        this.uxLog("Data migration process is starting...");
 
         // Create Tasks and put them i nright order
         this.script.objects.forEach(object => {
@@ -652,7 +657,6 @@ export class Application {
      */
     async executeJob() {
 
-        this.uxLog("Running...");
         let _app: Application = this;
 
         // ---------------------------------
@@ -664,7 +668,7 @@ export class Application {
 
         if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && !this.script.encryptDataFiles) {
 
-            this.uxLog("Validating and formatting source CSV files started.");
+            this.uxLog("Validating and formatting source CSV files...");
 
 
             // A. Merge User / Group into UserAndGroup ----------------------//
@@ -890,7 +894,7 @@ export class Application {
                 let csvFilePath = csvFilePaths[index];
                 if (csvFilePathsToUpdate.has(csvFilePath)) {
                     let values = [...csvData.get(csvFilePath).values()];
-                    this.uxLog(`Updating file ${csvFilePath}`);
+                    this.uxLog(`Updating file ${csvFilePath}...`);
                     await CommonUtils.writeCsvFile(csvFilePath, values);
                 }
             }
@@ -914,7 +918,7 @@ export class Application {
                 if (this.script.promptOnMissingParentObjects) {
                     var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
                     if (ans != 'y' && ans != 'yes') {
-                        throw new SfdmModels.JobAbortedByUser("CSV files errors found");
+                        throw new SfdmModels.JobAbortedByUser("CSV files errors found.");
                     }
                 }
             }
@@ -923,7 +927,7 @@ export class Application {
             if (csvFilePathsToUpdate.size > 0) {
                 this.uxLog(`${csvFilePathsToUpdate.size} file(s) were updated.`);
             }
-            this.uxLog("Validating and formatting source CSV files completed.");
+            this.uxLog("Validating and formatting source CSV files finished.");
 
 
             // Only csv validation
@@ -941,11 +945,10 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // ---------------------------------
-        // 1 step. Delete old target records    
+        // 1 step. Delete old target records  
+        this.uxLog("");  
+        this.uxLog("STEP 1. Deleting old data.");        
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
-
-            this.uxLog("Deleting old data started.");
-
             for (let i = this.job.tasks.Count() - 1; i >= 0; i--) {
 
                 let task = this.job.tasks.ElementAt(i);
@@ -957,24 +960,24 @@ export class Application {
 
                     task.scriptObject.deleteOldData = false;
 
-                    this.uxLog(`Deleting records from target ${task.sObjectName} started`);
+                    this.uxLog(`Deleting records from target sObject ${task.sObjectName}...`);
 
                     // Query target to delete
                     let tempQuery = task.createDeleteQuery();
 
-                    this.uxLog(`Querying target: ${task.sObjectName}, query string: ${tempQuery}`);
+                    this.uxLog(`Querying target sObject: ${task.sObjectName}... Query string: ${tempQuery}.`);
                     let queriedRecords: List<object>;
                     try {
                         queriedRecords = await SfdxUtils.queryAndParseAsync(tempQuery, this.targetOrg);
                     } catch (e) {
-                        throw new SfdmModels.JobError("Query error: " + e);
+                        throw new SfdmModels.JobError("Query error: " + e + ".");
                     }
-                    this.uxLog(`Received ${queriedRecords.Count()} records`);
+                    this.uxLog(`Querying finished. Retrieved ${queriedRecords.Count()} records.`);
 
                     if (queriedRecords.Count()) {
 
                         // Make delete of target records
-                        this.uxLog(`Deleting records from target ${task.sObjectName} started, about to delete: ${queriedRecords.Count()} records`);
+                        this.uxLog(`Deleting records from target sObject ${task.sObjectName}... ${queriedRecords.Count()} records will be deleted.`);
 
                         let errorMessage = "";
                         try {
@@ -984,9 +987,9 @@ export class Application {
                                         _app.uxLog(b.message)
                                     } else {
                                         if (b.numberRecordsFailed == 0)
-                                            _app.uxLog(`Delete job# [${b.jobId}] completed ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error message: ${b.error}`);
+                                            _app.uxLog(`Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
                                         else {
-                                            errorMessage = `Delete job# [${b.jobId}] completed ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error message: ${b.error}`;
+                                            errorMessage = `Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
                                         }
                                     }
                                 }
@@ -1002,24 +1005,24 @@ export class Application {
                             else {
                                 var ans = await CommonUtils.promptUser(`Data delete error. Continue the job (y/n)?`);
                                 if (ans != 'y' && ans != 'yes') {
-                                    throw new SfdmModels.JobAbortedByUser("Data delete error: " + e);
+                                    throw new SfdmModels.JobAbortedByUser("Data delete error: " + e + ".");
                                 }
                             }
                         }
 
                     } else {
-                        this.uxLog(`Nothing to delete`);
+                        this.uxLog(`Nothing to delete.`);
                     }
 
-                    this.uxLog(`Deleting records from target ${task.sObjectName} finished`);
+                    this.uxLog(`Deleting records from target ${task.sObjectName} finished.`);
                 }
 
             }
-
-            this.uxLog("Deleting old data finished.");
-
+            this.uxLog("STEP 1 has finished.");            
+        } else {
+            this.uxLog("STEP 1 has skipped.");
         }
-
+        
 
 
 
@@ -1030,8 +1033,9 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // 2 step. Retrieve source & target records      
-        // PASS 1 **************************
-        this.uxLog("Retrieve data started. Pass 1.");
+        // Step 2 PASS 1 **************************
+        this.uxLog("");  
+        this.uxLog("STEP 2. Retrieving data for migration (first run).");
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
@@ -1039,7 +1043,7 @@ export class Application {
             if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
 
             // Calculate integrity : how many records need to process
-            this.uxLog(`Calculating integrity for SObject ${task.sObjectName}`);
+            this.uxLog(`Getting records count for SObject ${task.sObjectName}...`);
 
             if (!task.scriptObject.isExtraObject) {
 
@@ -1092,7 +1096,7 @@ export class Application {
                     }
 
                 } catch (e) {
-                    throw new SfdmModels.JobError("Query error: " + e);
+                    throw new SfdmModels.JobError("Query error: " + e + ".");
                 }
 
             } else {
@@ -1107,29 +1111,23 @@ export class Application {
                 let tempQuery = task.createQuery();
 
                 // Get the Source records
-                this.uxLog(`Querying source (ALL_RECORDS mode): ${task.sObjectName}, query string: ${tempQuery}`);
+                this.uxLog(`Querying source sObject ${task.sObjectName} (ALL_RECORDS mode)... Query string: ${tempQuery}.`);
                 try {
                     task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, await SfdxUtils.queryAndParseAsync(tempQuery,
                         this.sourceOrg,
                         true,
                         this.script.encryptDataFiles ? this.password : null));
-                    this.uxLog(`Querying completed: ${task.sObjectName}. Total received ${task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records`);
+                    this.uxLog(`Querying finished. Retrieved ${task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records.`);
                 } catch (e) {
-                    throw new SfdmModels.JobError("Query error: " + e);
+                    throw new SfdmModels.JobError("Query error: " + e + ".");
                 }
 
             } else {
 
-                this.uxLog(`Querying source (IN_RECORDS mode): ${task.sObjectName}`);
+                this.uxLog(`Querying source sObject ${task.sObjectName} (IN_RECORDS mode).`);
 
                 // Get records including additional referenced fields with limiting by the parent object backwards
                 // Get the Source records  
-
-                // TEST:
-                //if (task.scriptObject.name == "Web_Label_Description__c") {
-                //  let oo = "";
-                //}
-
                 let tempQueryList = task.createListOfLimitedQueries(true);
                 let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
 
@@ -1137,7 +1135,7 @@ export class Application {
                     const el = tempQueryList.ElementAt(index);
                     const query = el[0];
                     const field = el[1];
-                    this.uxLog(`Query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
+                    this.uxLog(`Executing query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
                     try {
                         let records = await SfdxUtils.queryAndParseAsync(query, this.sourceOrg);
                         if (!rec.has(field))
@@ -1145,12 +1143,12 @@ export class Application {
 
                         rec.set(field, rec.get(field).concat(records.ToArray()));
                     } catch (e) {
-                        throw new SfdmModels.JobError("Query error: " + e);
+                        throw new SfdmModels.JobError("Query error: " + e + ".");
                     }
                 }
                 let groupedRecs = SfdxUtils.groupRecords(rec, "Id", "OR");
                 task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>(groupedRecs));
-                this.uxLog(`Querying completed: ${task.sObjectName}. Total received ${task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} unique records`);
+                this.uxLog(`Querying finished. Retrieved ${task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records.`);
 
             }
 
@@ -1162,13 +1160,13 @@ export class Application {
 
                 // Get the Target records
                 if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert && this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
-                    this.uxLog(`Querying target (ALL_RECORDS mode): ${task.sObjectName}, query string: ${tempQuery}`);
+                    this.uxLog(`Querying target sObject ${task.sObjectName} (ALL_RECORDS mode)... Query string: ${tempQuery}.`);
                     try {
                         task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, await SfdxUtils.queryAndParseAsync(tempQuery, this.targetOrg));
                     } catch (e) {
-                        throw new SfdmModels.JobError("Query error: " + e);
+                        throw new SfdmModels.JobError("Query error: " + e + ".");
                     }
-                    this.uxLog(`Querying completed: ${task.sObjectName}. Total received ${task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records`);
+                    this.uxLog(`Querying finished. Retrieved ${task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records.`);
                 } else {
                     task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>());
                 }
@@ -1178,7 +1176,7 @@ export class Application {
                 // Get the Target records
                 if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert) {
 
-                    this.uxLog(`Querying target (IN_RECORDS mode): ${task.sObjectName}`);
+                    this.uxLog(`Querying target sObject ${task.sObjectName} (IN_RECORDS mode)...`);
 
                     let tempQueryList = task.createListOfLimitedQueries(false);
                     let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
@@ -1187,7 +1185,7 @@ export class Application {
                         const el = tempQueryList.ElementAt(index);
                         const query = el[0];
                         const field = el[1];
-                        this.uxLog(`Query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
+                        this.uxLog(`Executing query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
                         try {
                             let records = await SfdxUtils.queryAndParseAsync(query, this.targetOrg);
                             if (!rec.has(field))
@@ -1195,12 +1193,12 @@ export class Application {
 
                             rec.set(field, rec.get(field).concat(records.ToArray()));
                         } catch (e) {
-                            throw new SfdmModels.JobError("Query error: " + e);
+                            throw new SfdmModels.JobError("Query error: " + e + ".");
                         }
                     }
                     let groupedRecs = SfdxUtils.groupRecords(rec, "Id", "OR");
                     task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>(groupedRecs));
-                    this.uxLog(`Querying completed: ${task.sObjectName}. Total received ${task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} unique records`);
+                    this.uxLog(`Querying finished. Retrieved ${task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records.`);
                 } else {
                     task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>());
                 }
@@ -1210,7 +1208,7 @@ export class Application {
 
 
         }
-        this.uxLog("Retrieve data pass 1 completed");
+        this.uxLog("STEP 2 has finished.");
 
 
 
@@ -1218,8 +1216,9 @@ export class Application {
 
 
 
-        // PASS 2 **************************
-        this.uxLog("Retrieve data started. Pass 2.");
+        // Step 2 PASS 2 **************************
+        this.uxLog("");  
+        this.uxLog("STEP 3. Retrieving data for migration (second run).");
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
@@ -1273,7 +1272,7 @@ export class Application {
 
                 if (tempQueryList.Count() > 0) {
 
-                    this.uxLog(`Querying source (IN_RECORDS mode): ${task.sObjectName}`);
+                    this.uxLog(`Querying source sObject ${task.sObjectName} (IN_RECORDS mode)... `);
 
                     let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
                     let totalRecords = 0;
@@ -1284,7 +1283,7 @@ export class Application {
                         const el = tempQueryList.ElementAt(index);
                         const query = el[0];
                         const field = el[1];
-                        this.uxLog(`Query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
+                        this.uxLog(`Executing query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
                         try {
                             let records = await SfdxUtils.queryAndParseAsync(query, this.sourceOrg);
                             if (!rec.has(field))
@@ -1293,11 +1292,11 @@ export class Application {
                             rec.set(field, rec.get(field).concat(records.ToArray()));
                             totalRecords += records.Count();
                         } catch (e) {
-                            throw new SfdmModels.JobError("Query error: " + e);
+                            throw new SfdmModels.JobError("Query error: " + e + ".");
                         }
                     }
 
-                    this.uxLog(`Querying completed: ${task.sObjectName}. Total received ${totalRecords}`);
+                    this.uxLog(`Querying finished. Retrieved ${totalRecords} records.`);
                     if (totalRecords > 0) {
                         let groupedRecs = SfdxUtils.groupRecords(rec, "Id", "OR");
                         task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>(groupedRecs));
@@ -1311,7 +1310,7 @@ export class Application {
 
                     if (tempQueryList.Count() > 0) {
 
-                        this.uxLog(`Querying target (IN_RECORDS mode): ${task.sObjectName}`);
+                        this.uxLog(`Querying target sObject ${task.sObjectName} (IN_RECORDS mode)...`);
 
                         let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
                         let totalRecords = 0;
@@ -1322,7 +1321,7 @@ export class Application {
                             const el = tempQueryList.ElementAt(index);
                             const query = el[0];
                             const field = el[1];
-                            this.uxLog(`Query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
+                            this.uxLog(`Executing query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
                             try {
                                 let records = await SfdxUtils.queryAndParseAsync(query, this.targetOrg);
                                 if (!rec.has(field))
@@ -1331,11 +1330,11 @@ export class Application {
                                 rec.set(field, rec.get(field).concat(records.ToArray()));
                                 totalRecords += records.Count();
                             } catch (e) {
-                                throw new SfdmModels.JobError("Query error: " + e);
+                                throw new SfdmModels.JobError("Query error: " + e + ".");
                             }
                         }
 
-                        this.uxLog(`Querying completed: ${task.sObjectName}. Total received ${totalRecords}`);
+                        this.uxLog(`Querying finished. Retrieved ${totalRecords} records.`);
                         if (totalRecords > 0) {
                             let groupedRecs = SfdxUtils.groupRecords(rec, "Id", "OR");
                             task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>(groupedRecs));
@@ -1360,7 +1359,7 @@ export class Application {
                     targetExtIdMap[record[task.scriptObject.externalId]] = record["Id"];
             });
         }
-        this.uxLog("Retrieve data pass 2 completed");
+        this.uxLog("STEP 3 has finished.");
 
 
 
@@ -1371,8 +1370,9 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // ---------------------------------
-        // 3 step. Update target records - forward order
-        this.uxLog("Updating data. Pass #1 started.");
+        // 4 step. Update target records - forward order
+        this.uxLog("");  
+        this.uxLog("STEP 4. Updating target (first run).");
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
@@ -1409,16 +1409,16 @@ export class Application {
                         objectNameToWrite = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;
                     }
                 }
-                this.uxLog(`Write to file ${objectNameToWrite} started`);
+                this.uxLog(`Writing to file ${objectNameToWrite}...`);
                 await SfdxUtils.writeCsvFileAsync(objectNameToWrite,
                     sourceRecords.ToArray(),
                     this.targetOrg,
                     this.script.encryptDataFiles ? this.password : null);
-                this.uxLog(`Write to file ${objectNameToWrite} completed`);
+                this.uxLog(`Writing to file ${objectNameToWrite} finished.`);
                 continue;
             }
 
-            this.uxLog(`${strOper}ing target ${task.sObjectName} started`);
+            this.uxLog(`${strOper}ing target sObject ${task.sObjectName}...`);
 
             if (referencedFields.Count() == 0) {
 
@@ -1436,11 +1436,10 @@ export class Application {
                                 if (b.message) {
                                     _app.uxLog(b.message)
                                 } else {
-
                                     if (b.numberRecordsFailed == 0)
-                                        _app.uxLog(`Job# [${b.jobId}] completed ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error message: ${b.error}`);
+                                        _app.uxLog(`Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
                                     else {
-                                        errorMessage = `Job# [${b.jobId}] completed ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error message: ${b.error}`;
+                                        errorMessage = `Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
                                     }
                                 }
                             }
@@ -1450,11 +1449,11 @@ export class Application {
                     }
                 } catch (e) {
                     if (!this.script.promptOnUpdateError)
-                        throw new SfdmModels.JobError("Data update error: " + e);
+                        throw new SfdmModels.JobError("Data update error: " + e + ".");
                     else {
                         var ans = await CommonUtils.promptUser(`Data update error. Continue the job (y/n)?`);
                         if (ans != 'y' && ans != 'yes') {
-                            throw new SfdmModels.JobAbortedByUser("Data update error: " + e);
+                            throw new SfdmModels.JobAbortedByUser("Data update error: " + e + ".");
                         }
                     }
                 }
@@ -1501,7 +1500,7 @@ export class Application {
                             var value = !isRecordTypeField ? targetExtIdMap[record[taskField.name]] : targetExtIdMap[task.sObjectName + ";" + record[taskField.name]];
                             if (!value) {
                                 if (!missingParentValueOnTagetErrors.get(taskField.name)) {
-                                    this.uxLog(`NOTE!  Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required external Id value "${record[taskField.name]}"`);
+                                    this.uxLog(`[NOTE] Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required external Id value "${record[taskField.name]}"`);
                                 }
                                 missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                 delete record[fieldToUpdate];
@@ -1544,9 +1543,9 @@ export class Application {
                                     _app.uxLog(b.message)
                                 } else {
                                     if (b.numberRecordsFailed == 0)
-                                        _app.uxLog(`Job# [${b.jobId}] completed ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error message: ${b.error}`);
+                                        _app.uxLog(`Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
                                     else {
-                                        errorMessage = `Job# [${b.jobId}] completed ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error message: ${b.error}`;
+                                        errorMessage = `Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
                                     }
                                 }
                             }
@@ -1556,11 +1555,11 @@ export class Application {
                     }
                 } catch (e) {
                     if (!this.script.promptOnUpdateError)
-                        throw new SfdmModels.JobError("Data update error: " + e);
+                        throw new SfdmModels.JobError("Data update error: " + e + ".");
                     else {
                         var ans = await CommonUtils.promptUser(`Data update error. Continue the job (y/n)?`);
                         if (ans != 'y' && ans != 'yes') {
-                            throw new SfdmModels.JobAbortedByUser("Data update error: " + e);
+                            throw new SfdmModels.JobAbortedByUser("Data update error: " + e + ".");
                         }
                     }
                 }
@@ -1587,10 +1586,10 @@ export class Application {
                 });
 
                 targetRecords.AddRange(updatedRecords.ToArray());
-                this.uxLog(`${strOper}ing target ${task.sObjectName} finished, total processed ${updatedRecords.Count()} records`);
+                this.uxLog(`${strOper}ing target sObject ${task.sObjectName} finished. Total processed ${updatedRecords.Count()} records.`);
             }
         }
-        this.uxLog("Updating data. Pass #1 finished.");
+        this.uxLog("STEP 4 has finished.");
 
 
 
@@ -1602,7 +1601,9 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // ---------------------------------
-        // 4 step. Update target records - backward order
+        // 5 step. Update target records - backward order
+        this.uxLog("");  
+        this.uxLog("STEP 5. Updating target (second run).");
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
 
             this.uxLog("Updating data. Pass #2 started.");
@@ -1627,7 +1628,7 @@ export class Application {
                         !(x.externalIdTaskField && !x.externalIdTaskField.isParentTaskBefore) && x.name != "Id"
                     ).Select(x => x.name);
 
-                    this.uxLog(`Updating target ${task.sObjectName} started`);
+                    this.uxLog(`Updating target sObject ${task.sObjectName}...`);
 
                     let sourceRecords = task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main);
                     let targetRecords = task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main);
@@ -1646,7 +1647,7 @@ export class Application {
                                 var value = targetExtIdMap[record[taskField.name]];
                                 if (!value) {
                                     if (!missingParentValueOnTagetErrors.get(taskField.name)) {
-                                        this.uxLog(`NOTE! Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing required external Id value "${record[taskField.name]}"`);
+                                        this.uxLog(`[NOTE] Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing required external Id value "${record[taskField.name]}"`);
                                     }
                                     missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                     delete record[fieldToUpdate];
@@ -1688,9 +1689,9 @@ export class Application {
                                     } else {
 
                                         if (b.numberRecordsFailed == 0)
-                                            _app.uxLog(`Job# [${b.jobId}] completed ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error message: ${b.error}`);
+                                            _app.uxLog(`Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
                                         else {
-                                            errorMessage = `Job# [${b.jobId}] completed ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error message: ${b.error}`;
+                                            errorMessage = `Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
                                         }
                                     }
                                 }
@@ -1700,23 +1701,27 @@ export class Application {
                         }
                     } catch (e) {
                         if (!this.script.promptOnUpdateError)
-                            throw new SfdmModels.JobError("Data update error: " + e);
+                            throw new SfdmModels.JobError("Data update error: " + e + ".");
                         else {
                             var ans = await CommonUtils.promptUser(`Data update error. Continue the job (y/n)?`);
                             if (ans != 'y' && ans != 'yes') {
-                                throw new SfdmModels.JobAbortedByUser("Data update error: " + e);
+                                throw new SfdmModels.JobAbortedByUser("Data update error: " + e + ".");
                             }
                         }
                     }
 
-                    this.uxLog(`Updating target ${task.sObjectName} finished, total processed ${updatedRecords.Count()} records`);
+                    this.uxLog(`Updating target ${task.sObjectName} finished. Total processed ${updatedRecords.Count()} records.`);
                 }
 
             }
             this.uxLog("Updating data. Pass #2 finished.");
 
         }
+        this.uxLog("STEP 5 has finished.");
 
+        this.uxLog("");  
+        this.uxLog("Data migration process has finished.");    
+        this.uxLog("");      
 
     }
 

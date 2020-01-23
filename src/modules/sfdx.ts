@@ -29,6 +29,7 @@ import path = require('path');
 import fs = require('fs');
 
 import casual = require("casual");
+
 CommonUtils.createMockCustomFunctions(casual);
 
 
@@ -115,7 +116,6 @@ export class SfdxUtils {
         if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org)
             await SfdxUtils.queryAsync("SELECT Id FROM Account LIMIT 1", sOrg);
     }
-
 
     /**
      * Describe given org getting list of its SObjects without fields
@@ -228,7 +228,6 @@ export class SfdxUtils {
 
         return <QueryResult<object>>(await makeQueryAsync(soql));
     }
-
 
     public static formatRecords(records: Array<object>, format: [string, Map<String, List<String>>, Array<String>]): Array<object> {
         if (format[1].size == 0) {
@@ -384,7 +383,6 @@ export class SfdxUtils {
         await CommonUtils.writeCsvFile(filepath, records);
     }
 
-
     /**
      * Performs SOQL. Returns QueryResult<object>.
      */
@@ -394,67 +392,24 @@ export class SfdxUtils {
         pollCallback: Function = null): Promise<List<object>> {
 
 
-        const makeUpdateAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise((resolve, reject) => {
+        const makeUpdateAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
-            var cn = sOrg.getConnection();
+            let cn = sOrg.getConnection();
             cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
             if (records.Count() > sOrg.bulkThreshold) {
 
-                var job = cn.bulk.createJob(sObjectName, "update");
-                var batch = job.createBatch();
-                var t;
+                let job = cn.bulk.createJob(sObjectName, "update");
 
-                batch.execute(records.ToArray());
+                let chunks = CommonUtils.chunkArray(records.ToArray(), SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let totalProcessed = 0;
 
-                batch.on("error", function (batchInfo) {
-                    if (t)
-                        clearTimeout(t);
-                    { reject(batchInfo); return; }
-                });
+                for (let index = 0; index < chunks.length; index++) {
+                    const chunk = chunks[index];
+                    totalProcessed = await SfdxUtils._processBatch(cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1,  false);
+                }
 
-                let numberRecordsProcessed = 0;
-                batch.on("queue", function (batchInfo) {
-                    batch.poll(sOrg.pollingIntervalMs, SfdmModels.CONSTANTS.POLL_TIMEOUT);
-                    t = setInterval(function () {
-                        cn.bulk.job(job.id).batch(batch.id).check((err, results) => {
-                            if (pollCallback) {
-                                results.error = "No";
-                                if (numberRecordsProcessed != results.numberRecordsProcessed)
-                                    pollCallback(err, results);
-                                numberRecordsProcessed = results.numberRecordsProcessed;
-                            }
-                        });
-                    }, sOrg.pollingIntervalMs);
-                });
-                batch.on("response", function (rets) {
-                    if (t)
-                        clearInterval(t);
-                    let succeded = 0;
-                    let failed = 0;
-                    records.ForEach((record, index) => {
-                        if (rets[index].success) {
-                            record["Id"] = rets[index].id;
-                            succeded++;
-                        } else {
-                            failed++;
-                        }
-                    });
-                    if (failed > 0 && sOrg.allOrNone)
-                        reject(`There are ${failed} failed batch records`);
-                    else {
-                        let res = {
-                            jobId: job.id,
-                            numberRecordsProcessed: succeded,
-                            numberRecordsFailed: failed,
-                            error: "No"
-                        };
-                        if (pollCallback) {
-                            pollCallback(undefined, res);
-                        }
-                    }
-                    resolve(succeded);
-                });
+                resolve(totalProcessed);
 
             } else {
                 cn.sobject(sObjectName).update(records.ToArray(), {
@@ -504,106 +459,54 @@ export class SfdxUtils {
         sOrg: SfdmModels.SOrg,
         pollCallback: Function = null): Promise<List<object>> {
 
-        const makeInsertAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise((resolve, reject) => {
+        const makeInsertAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
-            var cn = sOrg.getConnection();
+            let cn = sOrg.getConnection();
             cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
             if (records.Count() > sOrg.bulkThreshold) {
 
-                var job = cn.bulk.createJob(sObjectName, "insert");
-                var batch = job.createBatch();
-                var t;
+                let job = cn.bulk.createJob(sObjectName, "insert");
+                let chunks = CommonUtils.chunkArray(records.ToArray(), SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let totalProcessed = 0;
 
-                batch.execute(records.ToArray());
+                for (let index = 0; index < chunks.length; index++) {
+                    const chunk = chunks[index];
+                    totalProcessed = await SfdxUtils._processBatch(cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1,  true);
+                }
 
-                batch.on("error", function (batchInfo) {
-                    if (t)
-                        clearTimeout(t);
-                    { reject(batchInfo); return; }
-                });
-
-                let numberRecordsProcessed = 0;
-
-                batch.on("queue", function (batchInfo) {
-                    batch.poll(sOrg.pollingIntervalMs, SfdmModels.CONSTANTS.POLL_TIMEOUT);
-                    if (pollCallback) {
-                        pollCallback("", {
-                            message : `Insert job# [${job.id}] started.`
-                        });
-                    }
-                    t = setInterval(function () {
-                        cn.bulk.job(job.id).batch(batch.id).check((err, results) => {
-                            if (pollCallback) {
-                                results.error = "No";
-                                if (numberRecordsProcessed != results.numberRecordsProcessed)
-                                    pollCallback(err, results);
-                                numberRecordsProcessed = results.numberRecordsProcessed;
-                            }
-                        });
-                    }, sOrg.pollingIntervalMs);
-                });
-
-                batch.on("response", function (rets) {
-                    if (t)
-                        clearInterval(t);
-                    let succeded = 0;
-                    let failed = 0;
-                    records.ForEach((record, index) => {
-                        if (rets[index].success) {
-                            record["Id"] = rets[index].id;
-                            succeded++;
-                        } else {
-                            failed++;
-                        }
-                    });
-                    if (failed > 0 && sOrg.allOrNone)
-                        reject(`There are ${failed} failed batch records`);
-                    else {
-                        let res = {
-                            jobId: job.id,
-                            numberRecordsProcessed: succeded,
-                            numberRecordsFailed: failed,
-                            error: "No"
-                        };
-                        if (pollCallback) {
-                            pollCallback(undefined, res);
-                        }
-                    }
-                    resolve(succeded);
-                });
+                resolve(totalProcessed);
 
             } else {
                 cn.sobject(sObjectName).create(records.ToArray(), {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
-                },
-                    function (error, result) {
-                        if (error) {
-                            reject(error);
-                            return;
-                        }
-                        let res = {
-                            jobId: "REST",
-                            numberRecordsProcessed: 0,
-                            numberRecordsFailed: 0,
-                            error: "No"
-                        };
+                }, function (error, result) {
+                    if (error) {
+                        reject(error);
+                        return;
+                    }
+                    let res = {
+                        jobId: "REST",
+                        numberRecordsProcessed: 0,
+                        numberRecordsFailed: 0,
+                        error: "No"
+                    };
 
-                        records.ForEach((record, index) => {
-                            if (result[index].success) {
-                                res.numberRecordsProcessed++;
-                                record["Id"] = result[index].id;
-                            } else {
-                                res.numberRecordsFailed++;
-                                res.error = result[index].errors[0].message;
-                            }
-                        });
-                        if (pollCallback) {
-                            pollCallback(error, res);
+                    records.ForEach((record, index) => {
+                        if (result[index].success) {
+                            res.numberRecordsProcessed++;
+                            record["Id"] = result[index].id;
+                        } else {
+                            res.numberRecordsFailed++;
+                            res.error = result[index].errors[0].message;
                         }
-                        resolve(result.length);
                     });
+                    if (pollCallback) {
+                        pollCallback(error, res);
+                    }
+                    resolve(result.length);
+                });
             }
 
         });
@@ -614,7 +517,6 @@ export class SfdxUtils {
 
     }
 
-
     /**
      * Remove records
      */
@@ -624,11 +526,14 @@ export class SfdxUtils {
         pollCallback: Function = null): Promise<void> {
 
 
-        const makeDeleteAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise((resolve, reject) => {
+        const makeDeleteAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
-            if (records.Count() == 0) { resolve(0); return; }
+            if (records.Count() == 0) {
+                resolve(0);
+                return;
+            }
 
-            var cn = sOrg.getConnection();
+            let cn = sOrg.getConnection();
             cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
             if (records.Count() > sOrg.bulkThreshold) {
@@ -639,60 +544,16 @@ export class SfdxUtils {
                     }
                 });
 
-                var job = cn.bulk.createJob(sObjectName, "delete");
-                var batch = job.createBatch();
-                var t;
+                let job = cn.bulk.createJob(sObjectName, "delete");
+                let chunks = CommonUtils.chunkArray(records.ToArray(), SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let totalProcessed = 0;
 
-                batch.execute(records.ToArray());
+                for (let index = 0; index < chunks.length; index++) {
+                    const chunk = chunks[index];
+                    totalProcessed = await SfdxUtils._processBatch(cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1,  false);
+                }
 
-                batch.on("error", function (batchInfo) {
-                    if (t)
-                        clearTimeout(t);
-                    { reject(batchInfo); return; }
-                });
-
-                let numberRecordsProcessed = 0;
-                batch.on("queue", function (batchInfo) {
-                    batch.poll(sOrg.pollingIntervalMs, SfdmModels.CONSTANTS.POLL_TIMEOUT);
-                    t = setInterval(function () {
-                        cn.bulk.job(job.id).batch(batch.id).check((err, results) => {
-                            if (pollCallback) {
-                                results.error = "No";
-                                if (numberRecordsProcessed != results.numberRecordsProcessed)
-                                    pollCallback(err, results);
-                                numberRecordsProcessed = results.numberRecordsProcessed;
-                            }
-                        });
-                    }, sOrg.pollingIntervalMs);
-                });
-
-                batch.on("response", function (rets) {
-                    if (t)
-                        clearInterval(t);
-                    let succeded = 0;
-                    let failed = 0;
-                    records.ForEach((record, index) => {
-                        if (rets[index].success) {
-                            succeded++;
-                        } else {
-                            failed++;
-                        }
-                    });
-                    if (failed > 0 && sOrg.allOrNone)
-                        reject(`There are ${failed} failed batch records`);
-                    else {
-                        let res = {
-                            jobId: job.id,
-                            numberRecordsProcessed: succeded,
-                            numberRecordsFailed: failed,
-                            error: "No"
-                        };
-                        if (pollCallback) {
-                            pollCallback(undefined, res);
-                        }
-                    }
-                    resolve(succeded);
-                });
+                resolve(totalProcessed);
 
             } else {
 
@@ -737,8 +598,6 @@ export class SfdxUtils {
         await makeDeleteAsync(sObjectName, records, sOrg);
 
     }
-
-
 
     /**
      * Performs all kinds of update operations with records (Insert / Update / Merge / Upsert/ Add).
@@ -918,7 +777,7 @@ export class SfdxUtils {
                 jobMonitorCallback(
                     null,
                     {
-                        message: `Starting to insert ${recordsToInsert.Count()} records`
+                        message: `Ready to insert ${recordsToInsert.Count()} records.`
                     }
                 );
             }
@@ -928,7 +787,7 @@ export class SfdxUtils {
                 jobMonitorCallback(
                     null,
                     {
-                        message: `Nothing to insert`
+                        message: `Nothing to insert.`
                     }
                 );
             }
@@ -967,7 +826,7 @@ export class SfdxUtils {
                     jobMonitorCallback(
                         null,
                         {
-                            message: `Starting to update ${recordToUpdate3.Count()} records`
+                            message: `Ready to update  ${recordToUpdate3.Count()} records.`
                         }
                     );
                 }
@@ -978,7 +837,7 @@ export class SfdxUtils {
                     jobMonitorCallback(
                         null,
                         {
-                            message: `Nothing to update`
+                            message: `Nothing to update.`
                         }
                     );
                 }
@@ -1164,6 +1023,108 @@ export class SfdxUtils {
         }
 
         return [...queryGen()];
+    }
+
+    private static async _processBatch(
+        cn: any,
+        sOrg: SfdmModels.SOrg,
+        pollCallback: Function,
+        job: any,
+        records: Array<any>,
+        numberJobRecordsSucceeded: number,
+        showStartMessage: boolean,
+        showStopMessage: boolean,
+        updateRecordId: boolean): Promise<any> {
+
+        return new Promise((resolve, reject) => {
+
+            var batch = job.createBatch();
+            var pollTimer;
+            var numberBatchRecordsProcessed = 0;
+
+            batch.execute(records);
+
+
+            batch.on("error", function (batchInfo) {
+                if (pollTimer) {
+                    clearTimeout(pollTimer);
+                }
+                reject(batchInfo);
+                return;
+            });
+
+            batch.on("queue", function (batchInfo) {
+
+                batch.poll(sOrg.pollingIntervalMs, SfdmModels.CONSTANTS.POLL_TIMEOUT);
+
+                if (pollCallback) {
+                    if (showStartMessage) {
+                        pollCallback("", {
+                            message: `Job# [${job.id}] started.`
+                        });
+                    }
+                    pollCallback("", {
+                        message: `Batch# [${batch.id}] started.`
+                    });
+                }
+
+                pollTimer = setInterval(function () {
+                    cn.bulk.job(job.id).batch(batch.id).check((err, results) => {
+                        if (pollCallback) {
+                            results.error = "No";
+                            results.numberRecordsProcessed = +results.numberRecordsProcessed;
+                            if (numberBatchRecordsProcessed != results.numberRecordsProcessed) {
+                                numberBatchRecordsProcessed = results.numberRecordsProcessed;
+                                results.numberRecordsProcessed = numberJobRecordsSucceeded + results.numberRecordsProcessed;
+                                pollCallback(err, results);
+                            }
+                        }
+                    });
+                }, sOrg.pollingIntervalMs);
+
+            });
+
+            batch.on("response", function (rets) {
+
+                let numberBatchRecordsFailed = 0;
+
+                if (pollTimer) {
+                    clearInterval(pollTimer);
+                }
+
+                records.forEach((record, index) => {
+                    if (rets[index].success) {
+                        if (updateRecordId) {
+                            record["Id"] = rets[index].id;
+                        }
+                        numberJobRecordsSucceeded++;
+                    } else {
+                        numberBatchRecordsFailed++;
+                    }
+                });
+
+                if (showStopMessage) {
+                    pollCallback("", {
+                        message: `Job# [${job.id}] finished with ${numberJobRecordsSucceeded} succeded records.`
+                    });
+                }
+
+
+                if (numberBatchRecordsFailed > 0) {
+                    if (sOrg.allOrNone) {
+                        reject(`Job# [${job.id}] has incomplete batch ${batch.id} having ${numberBatchRecordsFailed} failed records. Execution was stopped.`);
+                    } else if (pollCallback) {
+                        pollCallback(undefined, {
+                            message: `WARNING! Job# [${job.id}] has incomplete batch ${batch.id} having ${numberBatchRecordsFailed} failed records.`
+                        });
+                    }
+                }
+
+                resolve(numberJobRecordsSucceeded);
+
+            });
+        });
+
     }
 
 }

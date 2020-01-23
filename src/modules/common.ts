@@ -14,6 +14,7 @@ const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout
 });
+
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 import SimpleCrypto from "simple-crypto-js";
 import { CONSTANTS } from './models';
@@ -63,6 +64,7 @@ export class CommonUtils {
         return items.Select(item => func(item));
     }
 
+
     /**
      * Filters array by another array
      */
@@ -74,13 +76,25 @@ export class CommonUtils {
     /**
      * Splits array to multiple lists by max chunk size
      */
-    public static chunkArrayToLists(list: Array<any>, chunkMaxSize: number): List<Array<any>> {
+    public static chunkArrayToLists(arrSource: Array<any>, chunkMaxSize: number): List<Array<any>> {
         var i, j, lst: List<Array<any>> = new List<Array<any>>();
-        for (i = 0, j = list.length; i < j; i += chunkMaxSize) {
-            lst.Add(list.slice(i, i + chunkMaxSize));
+        for (i = 0, j = arrSource.length; i < j; i += chunkMaxSize) {
+            lst.Add(arrSource.slice(i, i + chunkMaxSize));
         }
         return lst;
     }
+
+
+    public static chunkArray(arrSource: Array<any>, chunkMaxSize: number): Array<Array<any>> {
+        var i, j, arr: Array<Array<any>> = new Array<Array<any>>();
+        for (i = 0, j = arrSource.length; i < j; i += chunkMaxSize) {
+            arr.push(arrSource.slice(i, i + chunkMaxSize));
+        }
+        return arr;
+    }
+
+
+ 
 
     /**
      * Displays difference between two dates in format [HH:mm:ss.mmm]

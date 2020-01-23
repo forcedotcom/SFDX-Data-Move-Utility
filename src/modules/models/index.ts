@@ -74,6 +74,9 @@ export let CONSTANTS = {
      */
     MAX_FETCH_SIZE: 10000000,
 
+
+    MAX_BATCH_SIZE : 9500,
+
     /**
      * Max time to wait for bulk job poll response
      */
@@ -88,6 +91,7 @@ export let CONSTANTS = {
      * Used to calculate allRecords flat
      */
     ALL_RECORDS_FLAG_AMOUNT_TO: 30000,
+
 
     /**
      * When displaying query in the log set the length
