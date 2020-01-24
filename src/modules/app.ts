@@ -249,7 +249,7 @@ export class Application {
                     object.parsedQuery.fields = [getComposedField("Id")];
                 }
             } catch (e) {
-                throw new SfdmModels.PluginInitError(`Malformed query for the ${object.name}: ${object.query}: ${e}`);
+                throw new SfdmModels.PluginInitError(`Malformed query for the sObject ${object.name}: ${object.query}, error: ${e}.`);
             }
 
             if (object.deleteOldData && object.operation == SfdmModels.Enums.OPERATION.Upsert) {
@@ -268,7 +268,7 @@ export class Application {
                     }
                     object.parsedDeleteQuery.fields = [getComposedField("Id")];
                 } catch (e) {
-                    throw new SfdmModels.PluginInitError(`Malformed delete query for the ${object.name}: ${object.deleteQuery}: ${e}`);
+                    throw new SfdmModels.PluginInitError(`Malformed delete query for the sObject ${object.name}: ${object.deleteQuery}, error: ${e}.`);
                 }
             }
 
