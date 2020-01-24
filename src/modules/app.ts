@@ -300,7 +300,7 @@ export class Application {
 
 
         // Describe sObjects
-        this.uxLog("");  
+        this.uxLog("");
         this.uxLog("Executing the package script...");
         this.uxLog("Preparing...");
         this.uxLog("Getting org metadata...");
@@ -570,6 +570,7 @@ export class Application {
     async initJob() {
 
         this.uxLog("Data migration process is starting...");
+        this.uxLog("Building migration strategy...");
 
         // Create Tasks and put them i nright order
         this.script.objects.forEach(object => {
@@ -668,7 +669,7 @@ export class Application {
 
         if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && !this.script.encryptDataFiles) {
 
-            this.uxLog("Validating and formatting source CSV files...");
+            this.uxLog("Validating and fixing source CSV files...");
 
 
             // A. Merge User / Group into UserAndGroup ----------------------//
@@ -705,7 +706,7 @@ export class Application {
                     let csvRows = await CommonUtils.readCsvFile(filepath);
                     m = new Map<string, any>();
                     csvRows.forEach(row => {
-                        if (!row["Id"]){
+                        if (!row["Id"]) {
                             row["Id"] = CommonUtils.makeId(18);
                         }
                         m.set(row["Id"], row);
@@ -751,13 +752,26 @@ export class Application {
 
 
                         // Add missing reference lookup columns *************************
-                        // *****************************************************************************
 
+                        // Checking and filling values for the column "Account__r.AccountNumber"
+                        // with external id values taken from the parent sObject csv files
+
+                        // *****************************************************************************
+                        // Account__c
                         let refSObjectName = taskField.originalScriptField.referencedSObjectType;
+                        // AccountNumber
                         let refSObjectExternalIdFieldName = taskField.originalScriptField.externalId;
 
+                        // Account__r.AccountNumber
                         let columnName = taskField.name;
+                        // Account__c
                         let lookupFieldName = taskField.originalScriptField.name;
+
+                        let parentTask = this.job.tasks.FirstOrDefault(x => x.sObjectName == refSObjectName)                        
+                        if (!parentTask || parentTask.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
+                            || parentTask.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) {
+                                continue;
+                        }
 
                         if (!csvColumnsRow[0].hasOwnProperty(columnName)
                             // TODO: Add support for $$combined fields$$
@@ -781,7 +795,7 @@ export class Application {
                                     "Parent sObject name": refSObjectName,
                                     "Parent sObject external Id field name": refSObjectExternalIdFieldName,
                                     "Parent record Id": null,
-                                    "Error description": "Missing source CSV file for the parent sObject"
+                                    "Error description": "Source CSV file for the parent sObject is empty or does not exist"
                                 });
                                 continue;
                             }
@@ -794,14 +808,18 @@ export class Application {
                             let values = [...rows.values()];
                             values.forEach(value => {
                                 if (typeof value[columnName] == "undefined") {
+                                    // Id from Account csv
                                     let id = value[lookupFieldName];
                                     let extIdValue: any;
                                     if (id && refRows.get(id)) {
+                                        // Value from Account.AccountNumber
                                         extIdValue = refRows.get(id)[refSObjectExternalIdFieldName];
                                     }
                                     if (typeof extIdValue != "undefined") {
+                                        // Value of "Account.AccountNumber"  putting to  "Account__r.Customer_number__c"
                                         value[columnName] = extIdValue;
                                     } else {
+                                        // If no value from parent csv and no original value => output error
                                         csvErrors.push({
                                             "Child sObject name": task.sObjectName,
                                             "Child lookup field name": lookupFieldName,
@@ -822,6 +840,10 @@ export class Application {
                         && !taskField.name.startsWith(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX)) {
 
                         // Process external Id columns coming from the external system *************************
+
+                        // Trasnpose column  "Account__c!Customer_number__c" to:
+                        // Account__c, Account__r.AccountNumber, Customer__number__c
+
                         // *****************************************************************************
 
                         let columnName = Object.keys(csvColumnsRow[0]).filter(key => {
@@ -831,12 +853,16 @@ export class Application {
                         if (columnName) {
 
                             // External id column => Add fake lookup column
+                            // Account__c
                             let lookupField = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR)[0].toLowerCase();
+                            // Customer_number__c
                             let tempExtIdField = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR)[1].toLowerCase();
 
                             let m: Map<string, any> = await readCsvFile(filepath);
 
+                            // Task field for Account__c
                             let lookupTaskField = task.taskFields.Where(x => x.name.toLowerCase() == lookupField);
+                            // Task field for Customer_number__c
                             let tempExtIdTaskField = task.taskFields.Where(x => x.name.toLowerCase() == tempExtIdField);
 
                             if (lookupTaskField.Count() == 0) {
@@ -869,11 +895,12 @@ export class Application {
                                 continue;
                             }
 
+                            // Account__r.AccountNumber (in case that AccountNumber is external id for Account)
                             let extIdField = lookupTaskField.ElementAt(0).externalIdTaskField.name;
                             let csvRows = [...m.values()];
 
                             csvRows.forEach(row => {
-                                row[lookupField] =  row[lookupField] || '0011p00002Zh1kr'; // Fake id
+                                row[lookupField] = row[lookupField] || '0011p00002Zh1kr'; // Fake id
                                 row[extIdField] = row[columnName];
                                 row[tempExtIdField] = row[columnName];
                                 delete row[columnName];
@@ -909,7 +936,7 @@ export class Application {
                     "Parent sObject name": null,
                     "Parent sObject external Id field name": null,
                     "Parent record Id": null,
-                    "Error description": "No errors found during the last scan"
+                    "Error description": "No errors found during the last check"
                 });
                 await CommonUtils.writeCsvFile(csvErrorsFilepath, csvErrors);
             } else {
@@ -946,8 +973,8 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // 1 step. Delete old target records  
-        this.uxLog("");  
-        this.uxLog("STEP 1. Deleting old data.");        
+        this.uxLog("");
+        this.uxLog("STEP 1. Deleting old data.");
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
             for (let i = this.job.tasks.Count() - 1; i >= 0; i--) {
 
@@ -1018,11 +1045,11 @@ export class Application {
                 }
 
             }
-            this.uxLog("STEP 1 has finished.");            
+            this.uxLog("STEP 1 has finished.");
         } else {
             this.uxLog("STEP 1 has skipped.");
         }
-        
+
 
 
 
@@ -1034,7 +1061,7 @@ export class Application {
         // ---------------------------------
         // 2 step. Retrieve source & target records      
         // Step 2 PASS 1 **************************
-        this.uxLog("");  
+        this.uxLog("");
         this.uxLog("STEP 2. Retrieving data for migration (first run).");
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
@@ -1217,7 +1244,7 @@ export class Application {
 
 
         // Step 2 PASS 2 **************************
-        this.uxLog("");  
+        this.uxLog("");
         this.uxLog("STEP 3. Retrieving data for migration (second run).");
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
@@ -1371,7 +1398,7 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // 4 step. Update target records - forward order
-        this.uxLog("");  
+        this.uxLog("");
         this.uxLog("STEP 4. Updating target (first run).");
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
@@ -1602,7 +1629,7 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // 5 step. Update target records - backward order
-        this.uxLog("");  
+        this.uxLog("");
         this.uxLog("STEP 5. Updating target (second run).");
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
 
@@ -1719,9 +1746,9 @@ export class Application {
         }
         this.uxLog("STEP 5 has finished.");
 
-        this.uxLog("");  
-        this.uxLog("Data migration process has finished.");    
-        this.uxLog("");      
+        this.uxLog("");
+        this.uxLog("Data migration process has finished.");
+        this.uxLog("");
 
     }
 
