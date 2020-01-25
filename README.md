@@ -206,6 +206,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | allOrNone                           | Boolean                    | Optional, Default false | Abort job execution on any failed record or continue working anyway.<br />If true the execution will stop or the user will be prompted to stop depend on promptOnUpdateError parameter. |
 | promptOnUpdateError                 | Boolean                    | Optional, Default true  | When some records failed or when any other error occurred during data update prompt the user to stop the execution or to continue. |
 | encryptDataFiles                    | Boolean                    | Optional, Default false | Enables encryption / decryption of the CSV files when passing *--password* argument to the Plugin call and using *file* as Source or as the Target. |
+| validateCSVFilesOnly                | Boolean                    | Optional, Default false | In general when you are using CSV files as data source, the source CSV files are subject of format  validation before running the migration job itself.  validateCSVFilesOnly=true  runs only the validation process  and stops the execution after the it is completed. |
 
 
 
@@ -376,6 +377,14 @@ Available values for the step parameter are:
 
 
 
+#### Migration issues reports.
+
+The plugin provides a variety of information about common warnings and errors that were found at runtime. All report files are put into the same folder as the corresponding export.json file.
+
+- The Issues regarding source CSV files are in the **CSVIssuesReport.csv** file.
+- The issues regarding missing parent lookup records are in the **MissingParentRecordsReport.csv** file.
+- While each running of the migration process the Plugin creates dedicated log file that can be found in the **/logs** subdirectory. This log file mirrors the console/terminal output and allow you to review it.
+
 
 
 
@@ -387,13 +396,9 @@ Available values for the step parameter are:
 
 * By default the owner of new record is the user under which you are running the data migration.
   In order to make different record owner assignment you simply need to add **OwnerId** field to the SObject's query.  This will tell to the plugin to assign the target record to the user with the same Name as in the source. To get this feature work you must ensure that you have users with the same Names in the both Orgs.
-  
 * If you want to export record by preserving RecordType just include RecordTypeId field in the query and the plugin will do the rest. 
-  
 * If you have previously exported source data into CSV files and then want to import it from the files into another Org you need to use export.json file that has the same configuration like when you have created the CSVs.
-
 * The file Import / Export feature supports standard Salesforce data loader file format.
-
 * Migration of User object currently is NOT supported.
 
 
