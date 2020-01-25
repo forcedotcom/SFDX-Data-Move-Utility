@@ -25,7 +25,6 @@ import { ScriptField } from "./models/index";
 
 
 
-
 export class Application {
 
     private startTime: Date;
@@ -148,9 +147,9 @@ export class Application {
         this.script.sourceOrg = sourceUsername;
 
         this.uxLog(`Source Org: ${this.script.sourceOrg}.`);
-        this.uxLog(`Target Org: ${this.script .targetOrg}.`);
+        this.uxLog(`Target Org: ${this.script.targetOrg}.`);
         this.uxLog(`Script file: ${filePath}.`);
-        if (password){
+        if (password) {
             this.uxLog(`Password: ${password}.`);
         }
 
@@ -660,7 +659,12 @@ export class Application {
      */
     async executeJob() {
 
+
+
         let _app: Application = this;
+
+        // Content of all csv files
+        let csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
 
         // ---------------------------------
         // ---------------------------------
@@ -687,10 +691,9 @@ export class Application {
 
             // B. Add missing referenced lookup fields and process external id columns ----------------------//
 
-            let csvData: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
             let csvIssues: Array<{
-                "Date" : string,
-                "Severity level" : string,                
+                "Date": string,
+                "Severity level": string,
                 "Child sObject name": string,
                 "Child lookup field name": string,
                 "Parent record Id": string,
@@ -700,25 +703,6 @@ export class Application {
             }> = new Array<any>();
 
             let csvFilePathsToUpdate: Set<string> = new Set<string>();
-
-            async function readCsvFile(filepath: string): Promise<Map<string, any>> {
-                let m: Map<string, any> = csvData.get(filepath);
-                if (!m) {
-                    if (!fs.existsSync(filepath)) {
-                        return null;
-                    }
-                    let csvRows = await CommonUtils.readCsvFile(filepath);
-                    m = new Map<string, any>();
-                    csvRows.forEach(row => {
-                        if (!row["Id"]) {
-                            row["Id"] = CommonUtils.makeId(18);
-                        }
-                        m.set(row["Id"], row);
-                    });
-                    csvData.set(filepath, m);
-                }
-                return m;
-            }
 
             for (let i = 0; i < this.job.tasks.Count(); i++) {
 
@@ -738,8 +722,8 @@ export class Application {
                 let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
                 if (csvColumnsRow.length == 0) {
                     csvIssues.push({
-                        "Date" : CommonUtils.formatDateTime(new Date()),
-                        "Severity level" : "HIGHEST",                        
+                        "Date": CommonUtils.formatDateTime(new Date()),
+                        "Severity level": "HIGHEST",
                         "Child sObject name": task.sObjectName,
                         "Child lookup field name": null,
                         "Parent sObject name": null,
@@ -773,10 +757,10 @@ export class Application {
                         // Account__c
                         let lookupFieldName = taskField.originalScriptField.name;
 
-                        let parentTask = this.job.tasks.FirstOrDefault(x => x.sObjectName == refSObjectName)                        
+                        let parentTask = this.job.tasks.FirstOrDefault(x => x.sObjectName == refSObjectName)
                         if (!parentTask || parentTask.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
                             || parentTask.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) {
-                                continue;
+                            continue;
                         }
 
                         if (!csvColumnsRow[0].hasOwnProperty(columnName)
@@ -784,7 +768,7 @@ export class Application {
                             && !taskField.originalScriptField.isComplexExternalId) {
 
                             // Read child CSV file (current)
-                            let m: Map<string, any> = await readCsvFile(filepath);
+                            let m: Map<string, any> = await CommonUtils.readCsvFileWithCache(csvDataCacheMap, filepath);
 
                             let refFilepath = path.join(this.sourceOrg.basePath, refSObjectName);
                             if (refSObjectName == "User" || refSObjectName == "Group") {
@@ -793,11 +777,11 @@ export class Application {
                             refFilepath += ".csv";
 
                             // Read parent CSV file
-                            m = await readCsvFile(refFilepath);
+                            m = await CommonUtils.readCsvFileWithCache(csvDataCacheMap, refFilepath);
                             if (!m) {
                                 csvIssues.push({
-                                    "Date" : CommonUtils.formatDateTime(new Date()),
-                                    "Severity level" : "HIGH",
+                                    "Date": CommonUtils.formatDateTime(new Date()),
+                                    "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": lookupFieldName,
                                     "Parent sObject name": refSObjectName,
@@ -811,8 +795,8 @@ export class Application {
                             // Mark current CSV file for further update
                             csvFilePathsToUpdate.add(filepath);
 
-                            let rows: Map<string, any> = csvData.get(filepath);
-                            let refRows: Map<string, any> = csvData.get(refFilepath);
+                            let rows: Map<string, any> = csvDataCacheMap.get(filepath);
+                            let refRows: Map<string, any> = csvDataCacheMap.get(refFilepath);
                             let values = [...rows.values()];
                             values.forEach(value => {
                                 if (typeof value[columnName] == "undefined") {
@@ -829,7 +813,7 @@ export class Application {
                                     } else {
                                         // If no value from parent csv and no original value => output error
                                         csvIssues.push({
-                                            "Date" : CommonUtils.formatDateTime(new Date()),
+                                            "Date": CommonUtils.formatDateTime(new Date()),
                                             "Severity level": "NORMAL",
                                             "Child sObject name": task.sObjectName,
                                             "Child lookup field name": lookupFieldName,
@@ -864,9 +848,9 @@ export class Application {
 
                             // External id column => Add fake lookup column
                             let parts = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
-                            if (parts.length < 2){
+                            if (parts.length < 2) {
                                 csvIssues.push({
-                                    "Date" : CommonUtils.formatDateTime(new Date()),
+                                    "Date": CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": null,
@@ -874,15 +858,15 @@ export class Application {
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
                                     "Error description": `Column ${columnName} has invalid format`
-                                });  
-                                continue;                              
+                                });
+                                continue;
                             }
                             // Account__c
                             let lookupField = parts[0].toLowerCase();
                             // Customer_number__c
                             let tempExtIdField = parts[1].toLowerCase();
 
-                            let m: Map<string, any> = await readCsvFile(filepath);
+                            let m: Map<string, any> = await CommonUtils.readCsvFileWithCache(csvDataCacheMap, filepath);
 
                             // Task field for Account__c
                             let lookupTaskField = task.taskFields.Where(x => x.name.toLowerCase() == lookupField);
@@ -891,7 +875,7 @@ export class Application {
 
                             if (lookupTaskField.Count() == 0) {
                                 csvIssues.push({
-                                    "Date" : CommonUtils.formatDateTime(new Date()),
+                                    "Date": CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": null,
@@ -906,7 +890,7 @@ export class Application {
 
                             if (tempExtIdTaskField.Count() == 0) {
                                 csvIssues.push({
-                                    "Date" : CommonUtils.formatDateTime(new Date()),
+                                    "Date": CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": null,
@@ -944,11 +928,11 @@ export class Application {
             }
 
             // Write to all changed csv files
-            let csvFilePaths = [...csvData.keys()];
+            let csvFilePaths = [...csvDataCacheMap.keys()];
             for (let index = 0; index < csvFilePaths.length; index++) {
                 let csvFilePath = csvFilePaths[index];
                 if (csvFilePathsToUpdate.has(csvFilePath)) {
-                    let values = [...csvData.get(csvFilePath).values()];
+                    let values = [...csvDataCacheMap.get(csvFilePath).values()];
                     this.uxLog(`Updating file ${csvFilePath}...`);
                     await CommonUtils.writeCsvFile(csvFilePath, values);
                 }
@@ -959,7 +943,7 @@ export class Application {
             let csvIssuesFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
             if (csvIssues.length == 0) {
                 csvIssues.push({
-                    "Date" : CommonUtils.formatDateTime(new Date()),
+                    "Date": CommonUtils.formatDateTime(new Date()),
                     "Severity level": "",
                     "Child sObject name": null,
                     "Child lookup field name": null,
@@ -1431,12 +1415,26 @@ export class Application {
         // 4 step. Update target records - forward order
         this.uxLog("");
         this.uxLog("STEP 4. Updating target (first run).");
+
+        // Extended csv error files
+        let extendedErrorFilePaths: Array<string> = new Array<string>();
+
+        // Init missing parent records error file **************
+        let missingParentRecordsErrorsFilePath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.MISSING_PARENT_RECORDS_ERRORS_FILE_NAME);
+        extendedErrorFilePaths.push(missingParentRecordsErrorsFilePath);
+        interface IMissingParentRecordsErrorRow {
+            "Child record Id": string,
+            "Child sObject": string,
+            "Parent sObject": string,
+            "Parent external Id field": string,
+            "Missing parent external Id value": string
+        };
+        csvDataCacheMap.set(missingParentRecordsErrorsFilePath, new Map<string, IMissingParentRecordsErrorRow>());
+
+
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
-
-            // TEST:
-            //continue;
 
             if ((task.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
                 || task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete)
@@ -1557,9 +1555,14 @@ export class Application {
                         } else {
                             var value = !isRecordTypeField ? targetExtIdMap[record[taskField.name]] : targetExtIdMap[task.sObjectName + ";" + record[taskField.name]];
                             if (!value) {
-                                if (!missingParentValueOnTagetErrors.get(taskField.name)) {
-                                    this.uxLog(`[NOTE] Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing  required external Id value "${record[taskField.name]}"`);
-                                }
+                                let m: Map<string, IMissingParentRecordsErrorRow> = csvDataCacheMap.get(missingParentRecordsErrorsFilePath);
+                                m.set(record["Id"], {
+                                    "Child record Id": record["Id"],
+                                    "Child sObject": task.sObjectName,
+                                    "Missing parent external Id value": record[taskField.name],
+                                    "Parent external Id field": taskField.originalScriptField.externalId,
+                                    "Parent sObject": taskField.parentTaskField.task.sObjectName
+                                });
                                 missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                 delete record[fieldToUpdate];
                             }
@@ -1574,12 +1577,15 @@ export class Application {
                 if (missingParentValueOnTagetErrors.size > 0) {
 
                     [...missingParentValueOnTagetErrors.keys()].forEach(key => {
-                        this.uxLog(`Amount of missing parent records for the field ${key}: ${missingParentValueOnTagetErrors.get(key)} of total ${sourceRecords.Count()} records`);
+                        this.uxLog(`[NOTE] sObject ${task.sObjectName}: found missing parent lookup records for the field ${key} in the TARGET org. The amount of the missing parent lookup records is: ${missingParentValueOnTagetErrors.get(key)} of total ${sourceRecords.Count()} records.`);
                     });
+                    this.uxLog(`See ${SfdmModels.CONSTANTS.MISSING_PARENT_RECORDS_ERRORS_FILE_NAME} file for the details.`)
 
                     if (this.script.promptOnMissingParentObjects) {
                         var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
                         if (ans != 'y' && ans != 'yes') {
+                            let values = [...csvDataCacheMap.get(missingParentRecordsErrorsFilePath).values()];
+                            await CommonUtils.writeCsvFile(missingParentRecordsErrorsFilePath, values);
                             throw new SfdmModels.JobAbortedByUser("Missing parent records");
                         }
                     }
@@ -1669,9 +1675,6 @@ export class Application {
 
                 let task = this.job.tasks.ElementAt(i);
 
-                // TEST
-                //continue;
-
                 if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
                     || task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
 
@@ -1704,9 +1707,14 @@ export class Application {
                             } else {
                                 var value = targetExtIdMap[record[taskField.name]];
                                 if (!value) {
-                                    if (!missingParentValueOnTagetErrors.get(taskField.name)) {
-                                        this.uxLog(`[NOTE] Missing some parent lookup records for the child sObject ${task.sObjectName} in the target org, e.g. the child record id: ${record["Id"]}, parent SObject "${taskField.parentTaskField.task.sObjectName}", external id field: "${taskField.originalScriptField.externalId}", missing required external Id value "${record[taskField.name]}"`);
-                                    }
+                                    let m: Map<string, IMissingParentRecordsErrorRow> = csvDataCacheMap.get(missingParentRecordsErrorsFilePath);
+                                    m.set(record["Id"], {
+                                        "Child record Id": record["Id"],
+                                        "Child sObject": task.sObjectName,
+                                        "Missing parent external Id value": record[taskField.name],
+                                        "Parent external Id field": taskField.originalScriptField.externalId,
+                                        "Parent sObject": taskField.parentTaskField.task.sObjectName
+                                    });
                                     missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                     delete record[fieldToUpdate];
                                 }
@@ -1720,11 +1728,15 @@ export class Application {
                     // Prompt to stop the entire job
                     if (missingParentValueOnTagetErrors.size > 0) {
                         [...missingParentValueOnTagetErrors.keys()].forEach(key => {
-                            this.uxLog(`Amount of missing parent records for the field ${key}: ${missingParentValueOnTagetErrors.get(key)} of total ${sourceRecords.Count()} records`);
+                            this.uxLog(`[NOTE] sObject ${task.sObjectName}: found missing parent lookup records for the field ${key} in the TARGET org. The amount of the missing parent lookup records is: ${missingParentValueOnTagetErrors.get(key)} of total ${sourceRecords.Count()} records.`);
                         });
+                        this.uxLog(`See ${SfdmModels.CONSTANTS.MISSING_PARENT_RECORDS_ERRORS_FILE_NAME} file for the details.`)
+
                         if (this.script.promptOnMissingParentObjects) {
                             var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
                             if (ans != 'y' && ans != 'yes') {
+                                let values = [...csvDataCacheMap.get(missingParentRecordsErrorsFilePath).values()];
+                                await CommonUtils.writeCsvFile(missingParentRecordsErrorsFilePath, values);
                                 throw new SfdmModels.JobAbortedByUser("Missing parent records");
                             }
                         }
@@ -1775,13 +1787,29 @@ export class Application {
             this.uxLog("Updating data. Pass #2 finished.");
 
         }
+
+
         this.uxLog("STEP 5 has finished.");
+
+
+        // Write all error reports to CSV files
+        for (let index = 0; index < extendedErrorFilePaths.length; index++) {
+            const filepath = extendedErrorFilePaths[index];
+            let m = csvDataCacheMap.get(filepath);
+            if (m && m.size > 0) {
+                this.uxLog(`Writing to ${filepath}...`);                
+                let values = [...m.values()];
+                await CommonUtils.writeCsvFile(filepath, values);
+            }
+        }
 
         this.uxLog("");
         this.uxLog("Data migration process has finished.");
         this.uxLog("");
 
     }
+
+
 
 }
 

@@ -323,6 +323,26 @@ export class CommonUtils {
     }
 
 
+    public static async readCsvFileWithCache(csvDataCacheMap : Map<string, Map<string, any>>, filepath: string): Promise<Map<string, any>> {
+        let m: Map<string, any> = csvDataCacheMap.get(filepath);
+        if (!m) {
+            if (!fs.existsSync(filepath)) {
+                return null;
+            }
+            let csvRows = await CommonUtils.readCsvFile(filepath);
+            m = new Map<string, any>();
+            csvRows.forEach(row => {
+                if (!row["Id"]) {
+                    row["Id"] = CommonUtils.makeId(18);
+                }
+                m.set(row["Id"], row);
+            });
+            csvDataCacheMap.set(filepath, m);
+        }
+        return m;
+    }
+
+
     /**
      * Reads list of all files in dir by given mask
      * @param dir directory

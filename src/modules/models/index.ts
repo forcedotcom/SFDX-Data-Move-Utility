@@ -114,7 +114,9 @@ export let CONSTANTS = {
 
     CSV_LOOKUP_ERRORS_FILE_NAME: 'CSVIssuesReport.csv',
 
-    CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR : '!'
+    CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR : '!',
+
+    MISSING_PARENT_RECORDS_ERRORS_FILE_NAME: 'MissingParentRecordsReport.csv'
 
 };
 
