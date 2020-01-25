@@ -112,7 +112,7 @@ export let CONSTANTS = {
 
     USER_AND_GROUP_FILE_NAME: 'UserAndGroup',
 
-    CSV_LOOKUP_ERRORS_FILE_NAME: 'CSVErrorsReport.csv',
+    CSV_LOOKUP_ERRORS_FILE_NAME: 'CSVIssuesReport.csv',
 
     CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR : '!'
 

@@ -148,9 +148,11 @@ export class Application {
         this.script.sourceOrg = sourceUsername;
 
         this.uxLog(`Source Org: ${this.script.sourceOrg}.`);
-        this.uxLog(`Target Org: ${this.script.targetOrg}.`);
+        this.uxLog(`Target Org: ${this.script .targetOrg}.`);
         this.uxLog(`Script file: ${filePath}.`);
-        this.uxLog(`Password: ${password}.`);
+        if (password){
+            this.uxLog(`Password: ${password}.`);
+        }
 
         // Encryption
         let invalidPassword = false;
@@ -686,7 +688,9 @@ export class Application {
             // B. Add missing referenced lookup fields and process external id columns ----------------------//
 
             let csvData: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
-            let csvErrors: Array<{
+            let csvIssues: Array<{
+                "Date" : string,
+                "Severity level" : string,                
                 "Child sObject name": string,
                 "Child lookup field name": string,
                 "Parent record Id": string,
@@ -733,7 +737,9 @@ export class Application {
                 // Check the source CSV file for this task
                 let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
                 if (csvColumnsRow.length == 0) {
-                    csvErrors.push({
+                    csvIssues.push({
+                        "Date" : CommonUtils.formatDateTime(new Date()),
+                        "Severity level" : "HIGHEST",                        
                         "Child sObject name": task.sObjectName,
                         "Child lookup field name": null,
                         "Parent sObject name": null,
@@ -789,7 +795,9 @@ export class Application {
                             // Read parent CSV file
                             m = await readCsvFile(refFilepath);
                             if (!m) {
-                                csvErrors.push({
+                                csvIssues.push({
+                                    "Date" : CommonUtils.formatDateTime(new Date()),
+                                    "Severity level" : "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": lookupFieldName,
                                     "Parent sObject name": refSObjectName,
@@ -820,7 +828,9 @@ export class Application {
                                         value[columnName] = extIdValue;
                                     } else {
                                         // If no value from parent csv and no original value => output error
-                                        csvErrors.push({
+                                        csvIssues.push({
+                                            "Date" : CommonUtils.formatDateTime(new Date()),
+                                            "Severity level": "NORMAL",
                                             "Child sObject name": task.sObjectName,
                                             "Child lookup field name": lookupFieldName,
                                             "Parent sObject name": refSObjectName,
@@ -853,10 +863,24 @@ export class Application {
                         if (columnName) {
 
                             // External id column => Add fake lookup column
+                            let parts = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
+                            if (parts.length < 2){
+                                csvIssues.push({
+                                    "Date" : CommonUtils.formatDateTime(new Date()),
+                                    "Severity level": "HIGH",
+                                    "Child sObject name": task.sObjectName,
+                                    "Child lookup field name": null,
+                                    "Parent sObject name": null,
+                                    "Parent sObject external Id field name": null,
+                                    "Parent record Id": null,
+                                    "Error description": `Column ${columnName} has invalid format`
+                                });  
+                                continue;                              
+                            }
                             // Account__c
-                            let lookupField = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR)[0].toLowerCase();
+                            let lookupField = parts[0].toLowerCase();
                             // Customer_number__c
-                            let tempExtIdField = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR)[1].toLowerCase();
+                            let tempExtIdField = parts[1].toLowerCase();
 
                             let m: Map<string, any> = await readCsvFile(filepath);
 
@@ -866,26 +890,30 @@ export class Application {
                             let tempExtIdTaskField = task.taskFields.Where(x => x.name.toLowerCase() == tempExtIdField);
 
                             if (lookupTaskField.Count() == 0) {
-                                csvErrors.push({
+                                csvIssues.push({
+                                    "Date" : CommonUtils.formatDateTime(new Date()),
+                                    "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": null,
                                     "Parent sObject name": null,
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
-                                    "Error description": `${lookupTaskField} is missing in the script`
+                                    "Error description": `Column "${columnName}" will not be processed because field "${parts[0]}" is missing in the script`
                                 });
                             } else {
                                 lookupField = lookupTaskField.ElementAt(0).name;
                             }
 
                             if (tempExtIdTaskField.Count() == 0) {
-                                csvErrors.push({
+                                csvIssues.push({
+                                    "Date" : CommonUtils.formatDateTime(new Date()),
+                                    "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": null,
                                     "Parent sObject name": null,
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
-                                    "Error description": `${tempExtIdTaskField} is missing in the script`
+                                    "Error description": `Column "${columnName}" will not be processed because "${parts[1]}" is missing in the script`
                                 });
                             } else {
                                 tempExtIdField = tempExtIdTaskField.ElementAt(0).name;
@@ -928,33 +956,36 @@ export class Application {
 
 
             // Write to lookup errors file
-            let csvErrorsFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
-            if (csvErrors.length == 0) {
-                csvErrors.push({
+            let csvIssuesFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
+            if (csvIssues.length == 0) {
+                csvIssues.push({
+                    "Date" : CommonUtils.formatDateTime(new Date()),
+                    "Severity level": "",
                     "Child sObject name": null,
                     "Child lookup field name": null,
                     "Parent sObject name": null,
                     "Parent sObject external Id field name": null,
                     "Parent record Id": null,
-                    "Error description": "No errors found during the last check"
+                    "Error description": "There are no issues found during the last validation of the source CSV files"
                 });
-                await CommonUtils.writeCsvFile(csvErrorsFilepath, csvErrors);
+                this.uxLog(`There are no issues found during the last validation of the source CSV files.`);
+                await CommonUtils.writeCsvFile(csvIssuesFilepath, csvIssues);
             } else {
-                await CommonUtils.writeCsvFile(csvErrorsFilepath, csvErrors);
-                this.uxLog(`WARNING! During the validation of the source CSV files found ${csvErrors.length} errors. See ${SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME} file for the complete list.`);
+                await CommonUtils.writeCsvFile(csvIssuesFilepath, csvIssues);
+                this.uxLog(`[WARNING] During the validation of the source CSV files ${csvIssues.length} issues were found. See ${SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME} file for the details.`);
                 if (this.script.promptOnMissingParentObjects) {
                     var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
                     if (ans != 'y' && ans != 'yes') {
-                        throw new SfdmModels.JobAbortedByUser("CSV files errors found.");
+                        throw new SfdmModels.JobAbortedByUser("Issues in the source CSV file(s) were found.");
                     }
                 }
             }
 
             // Format report
             if (csvFilePathsToUpdate.size > 0) {
-                this.uxLog(`${csvFilePathsToUpdate.size} file(s) were updated.`);
+                this.uxLog(`${csvFilePathsToUpdate.size} CSV files were updated.`);
             }
-            this.uxLog("Validating and formatting source CSV files finished.");
+            this.uxLog("Validating and fixing source CSV files finished.");
 
 
             // Only csv validation

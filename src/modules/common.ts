@@ -94,7 +94,7 @@ export class CommonUtils {
     }
 
 
- 
+
 
     /**
      * Displays difference between two dates in format [HH:mm:ss.mmm]
@@ -122,7 +122,7 @@ export class CommonUtils {
     }
 
     /**
-     * Formats date to string [d/MM/yyyy HH:mm:ss:mmm]
+     * Formats date to string [yyyy-MM-dd HH:mm:ss:mmm]
      */
     public static formatDateTime(date: Date, addMs: boolean = true): string {
         var hours = date.getHours();
@@ -131,7 +131,7 @@ export class CommonUtils {
         var ms = date.getMilliseconds();
         hours = hours % 24;
         var strTime = this.pad(hours, 2) + ':' + this.pad(minutes, 2) + ':' + this.pad(seconds, 2) + (addMs ? "." + this.pad(ms, 3) : "");
-        return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
+        return date.getFullYear() + "-" + this.pad(date.getMonth() + 1, 2) + "-" + this.pad(date.getDate(), 2) + "  " + strTime;
     }
 
     /**
@@ -458,5 +458,7 @@ export class CommonUtils {
         }
         return result;
     }
+
+    
 
 }
