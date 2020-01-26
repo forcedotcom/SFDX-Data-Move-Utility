@@ -406,7 +406,12 @@ export class SfdxUtils {
 
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
-                    totalProcessed = await SfdxUtils._processBatch(cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1,  false);
+                    try {
+                        totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
+                    } catch (ex) {
+                        reject(ex);
+                        return;
+                    }
                 }
 
                 resolve(totalProcessed);
@@ -472,7 +477,12 @@ export class SfdxUtils {
 
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
-                    totalProcessed = await SfdxUtils._processBatch(cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1,  true);
+                    try {
+                        totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, true);
+                    } catch (ex) {
+                        reject(ex);
+                        return;
+                    }
                 }
 
                 resolve(totalProcessed);
@@ -550,7 +560,12 @@ export class SfdxUtils {
 
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
-                    totalProcessed = await SfdxUtils._processBatch(cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1,  false);
+                    try {
+                        totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
+                    } catch (ex) {
+                        reject(ex);
+                        return;
+                    }
                 }
 
                 resolve(totalProcessed);
@@ -1026,6 +1041,7 @@ export class SfdxUtils {
     }
 
     private static async _processBatch(
+        sObjectName: string,
         cn: any,
         sOrg: SfdmModels.SOrg,
         pollCallback: Function,
@@ -1109,13 +1125,12 @@ export class SfdxUtils {
                     });
                 }
 
-
                 if (numberBatchRecordsFailed > 0) {
                     if (sOrg.allOrNone) {
-                        reject(`Job# [${job.id}] has incomplete batch ${batch.id} having ${numberBatchRecordsFailed} failed records. Execution was stopped.`);
+                        reject(`Job# [${job.id}] (sObject "${sObjectName}") has incomplete batch ${batch.id} having ${numberBatchRecordsFailed} failed records. Execution was stopped.`);
                     } else if (pollCallback) {
                         pollCallback(undefined, {
-                            message: `WARNING! Job# [${job.id}] has incomplete batch ${batch.id} having ${numberBatchRecordsFailed} failed records.`
+                            message: `WARNING! Job# [${job.id}] (sObject "${sObjectName}") has incomplete batch ${batch.id} having ${numberBatchRecordsFailed} failed records.`
                         });
                     }
                 }

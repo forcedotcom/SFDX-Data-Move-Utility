@@ -722,7 +722,7 @@ export class Application {
                 let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
                 if (csvColumnsRow.length == 0) {
                     csvIssues.push({
-                        "Date": CommonUtils.formatDateTime(new Date()),
+                        Date: CommonUtils.formatDateTime(new Date()),
                         "Severity level": "HIGHEST",
                         "Child sObject name": task.sObjectName,
                         "Child lookup field name": null,
@@ -780,7 +780,7 @@ export class Application {
                             m = await CommonUtils.readCsvFileWithCache(csvDataCacheMap, refFilepath);
                             if (!m) {
                                 csvIssues.push({
-                                    "Date": CommonUtils.formatDateTime(new Date()),
+                                    Date: CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": lookupFieldName,
@@ -813,7 +813,7 @@ export class Application {
                                     } else {
                                         // If no value from parent csv and no original value => output error
                                         csvIssues.push({
-                                            "Date": CommonUtils.formatDateTime(new Date()),
+                                            Date: CommonUtils.formatDateTime(new Date()),
                                             "Severity level": "NORMAL",
                                             "Child sObject name": task.sObjectName,
                                             "Child lookup field name": lookupFieldName,
@@ -850,7 +850,7 @@ export class Application {
                             let parts = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
                             if (parts.length < 2) {
                                 csvIssues.push({
-                                    "Date": CommonUtils.formatDateTime(new Date()),
+                                    Date: CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": null,
@@ -875,7 +875,7 @@ export class Application {
 
                             if (lookupTaskField.Count() == 0) {
                                 csvIssues.push({
-                                    "Date": CommonUtils.formatDateTime(new Date()),
+                                    Date: CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": null,
@@ -890,7 +890,7 @@ export class Application {
 
                             if (tempExtIdTaskField.Count() == 0) {
                                 csvIssues.push({
-                                    "Date": CommonUtils.formatDateTime(new Date()),
+                                    Date: CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
                                     "Child lookup field name": null,
@@ -943,7 +943,7 @@ export class Application {
             let csvIssuesFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
             if (csvIssues.length == 0) {
                 csvIssues.push({
-                    "Date": CommonUtils.formatDateTime(new Date()),
+                    Date: CommonUtils.formatDateTime(new Date()),
                     "Severity level": "",
                     "Child sObject name": null,
                     "Child lookup field name": null,
@@ -1029,9 +1029,9 @@ export class Application {
                                         _app.uxLog(b.message)
                                     } else {
                                         if (b.numberRecordsFailed == 0)
-                                            _app.uxLog(`Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
+                                            _app.uxLog(`Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
                                         else {
-                                            errorMessage = `Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
+                                            errorMessage = `Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
                                         }
                                     }
                                 }
@@ -1493,9 +1493,9 @@ export class Application {
                                     _app.uxLog(b.message)
                                 } else {
                                     if (b.numberRecordsFailed == 0)
-                                        _app.uxLog(`Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
+                                        _app.uxLog(`Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
                                     else {
-                                        errorMessage = `Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
+                                        errorMessage = `Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
                                     }
                                 }
                             }
@@ -1607,9 +1607,9 @@ export class Application {
                                     _app.uxLog(b.message)
                                 } else {
                                     if (b.numberRecordsFailed == 0)
-                                        _app.uxLog(`Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
+                                        _app.uxLog(`Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
                                     else {
-                                        errorMessage = `Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
+                                        errorMessage = `Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
                                     }
                                 }
                             }
@@ -1759,9 +1759,9 @@ export class Application {
                                     } else {
 
                                         if (b.numberRecordsFailed == 0)
-                                            _app.uxLog(`Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
+                                            _app.uxLog(`Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
                                         else {
-                                            errorMessage = `Job# [${b.jobId}] progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
+                                            errorMessage = `Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
                                         }
                                     }
                                 }
