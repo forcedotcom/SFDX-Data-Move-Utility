@@ -1,4 +1,4 @@
-# ![SFDMU](src/images/logo.png)SFDMU - the Salesforce Data Move Utility
+# ![SFDMU](src/images/logo.png)SFDMU - the Salesforce DX Data Move Utility
 
 This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox / prod) with data imported from another org. It supports all important insert / update / upsert operations **also for multiple related sObjects**.
 
@@ -91,7 +91,7 @@ sfdx plugins:link
 If currently there is no Plugin installed on your machine, then skip previous steps and make as below.
 
 1. Clone git repository: 
-git clone https://github.com/forcedotcom/sf-data-move-utility
+git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility
 
 2. Make this directory current:
 cd sf-data-move-utility
@@ -203,7 +203,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | **MockField**.name                  | String                     | Mandatory               | The name of the field to mock (see mocking feature below)    |
 | **MockField**.pattern               | String                     | Mandatory               | The pattern to create mock data for this field (see mocking feature below) |
 | promptOnMissingParentObjects        | Boolean                    | Optional, Default true  | If  parent lookup or master-detail record was not found for the some of the child records - it will propmt or will not prompt user to break or to continue the migration.<br />It allows user to monitor the job and abort it when some data is missing. |
-| allOrNone                           | Boolean                    | Optional, Default false | (REST API only) Abort job execution on any failed record or continue working anyway.<br />If true the execution will stop or the user will be prompted to stop depend on promptOnUpdateError parameter. |
+| allOrNone                           | Boolean                    | Optional, Default false | Abort job execution on any failed record or continue working anyway.<br />If true the execution will stop or the user will be prompted to stop depend on promptOnUpdateError parameter. <br /><br />*(**Note for REST API only:**  if true except of abort of script execution depend on promptOnUpdateError parameter - any failed records in a non-successful API call cause all changes made within this call to be rolled back. Record changes aren't committed unless all records are processed successfully)* |
 | promptOnUpdateError                 | Boolean                    | Optional, Default true  | When some records failed or when any other error occurred during data update prompt the user to stop the execution or to continue. |
 | encryptDataFiles                    | Boolean                    | Optional, Default false | Enables encryption / decryption of the CSV files when passing *--password* argument to the Plugin call and using *file* as Source or as the Target. |
 | validateCSVFilesOnly                | Boolean                    | Optional, Default false | In general when you are using CSV files as data source, the source CSV files are subject of format  validation before running the migration job itself.  validateCSVFilesOnly=true  runs only the validation process  and stops the execution after the it is completed. |
