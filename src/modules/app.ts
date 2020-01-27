@@ -412,7 +412,9 @@ export class Application {
                 // if originally this field was not in the query.
                 object.readonlyExternalIdFields.push(object.externalId);
 
-            } else if (object.externalId == "Id") {
+            } else if (object.sObjectDescribe.fieldsMap.has(object.externalId) && object.sObjectDescribe.fieldsMap.get(object.externalId).isReadonly
+                        || !object.sObjectDescribe.fieldsMap.has(object.externalId)) {
+                // Supress exporting external id fields of non-updatable types (formula, autonumber, etc)
                 object.readonlyExternalIdFields.push(object.externalId);
             }
 
@@ -1797,7 +1799,7 @@ export class Application {
             const filepath = extendedErrorFilePaths[index];
             let m = csvDataCacheMap.get(filepath);
             if (m && m.size > 0) {
-                this.uxLog(`Writing to ${filepath}...`);                
+                this.uxLog(`Writing to ${filepath}...`);
                 let values = [...m.values()];
                 await CommonUtils.writeCsvFile(filepath, values);
             }
