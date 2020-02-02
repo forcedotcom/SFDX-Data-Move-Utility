@@ -409,4 +409,3 @@ The plugin provides a variety of information about common warnings and errors th
 ## License
 
 This product is licensed under the BSD-3-Clause - see the [LICENSE.txt](LICENSE.txt) file for details.
-
