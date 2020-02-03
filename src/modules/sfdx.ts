@@ -29,7 +29,7 @@ import path = require('path');
 import fs = require('fs');
 
 import casual = require("casual");
-const  alasql = require("alasql");
+const alasql = require("alasql");
 
 
 CommonUtils.createMockCustomFunctions(casual);
@@ -426,7 +426,7 @@ export class SfdxUtils {
                 resolve(totalProcessed);
 
             } else {
-                
+
                 let recs = records.ToArray();
 
                 cn.sobject(sObjectName).update(recs, {
@@ -657,18 +657,18 @@ export class SfdxUtils {
 
     }
 
-    private static async _filterRecords(sql : string, data : Array<object>) : Promise<Array<object>> {
-        return new Promise<Array<object>>((resolve) =>{
-            if (!sql || data.length == 0){
+    private static async _filterRecords(sql: string, data: Array<object>): Promise<Array<object>> {
+        return new Promise<Array<object>>((resolve) => {
+            if (!sql || data.length == 0) {
                 resolve(data);
                 return;
             }
             try {
-                return alasql(`SELECT * FROM ? WHERE ${sql}`, [data], function (res){
+                return alasql(`SELECT * FROM ? WHERE ${sql}`, [data], function (res) {
                     resolve(res);
                     return;
                 });
-            }catch(ex){
+            } catch (ex) {
                 resolve(data);
                 return;
             }
@@ -714,7 +714,7 @@ export class SfdxUtils {
 
         async function insertRecordsAsync(sourceRecords: List<object>) {
 
-            if (task.scriptObject.targetRecordsFilter){
+            if (task.scriptObject.targetRecordsFilter) {
                 sourceRecords = new List<object>(await _this._filterRecords(task.scriptObject.targetRecordsFilter, sourceRecords.ToArray()));
             }
 
@@ -918,8 +918,8 @@ export class SfdxUtils {
                     );
                 }
                 let m = mockRecordsData(recordToUpdate3, ids);
-                let  recs = [...m.keys()];
-                if (task.scriptObject.targetRecordsFilter){
+                let recs = [...m.keys()];
+                if (task.scriptObject.targetRecordsFilter) {
                     recs = await this._filterRecords(task.scriptObject.targetRecordsFilter, recs);
                 }
                 await this.updateAsync(sObjectName, new List<object>(recs), targetSOrg, jobMonitorCallback);

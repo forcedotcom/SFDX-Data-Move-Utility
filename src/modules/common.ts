@@ -186,11 +186,11 @@ export class CommonUtils {
                 return value;
             }
 
-            if (value == "#N/A"){
+            if (value == "#N/A") {
                 return null;
             }
 
-            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);            
+            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);
 
             if (fieldType == "boolean") {
                 if (value == "1" || value == "TRUE" || value == "true")
@@ -327,7 +327,7 @@ export class CommonUtils {
     }
 
 
-    public static async readCsvFileWithCache(csvDataCacheMap : Map<string, Map<string, any>>, filepath: string): Promise<Map<string, any>> {
+    public static async readCsvFileWithCache(csvDataCacheMap: Map<string, Map<string, any>>, filepath: string): Promise<Map<string, any>> {
         let m: Map<string, any> = csvDataCacheMap.get(filepath);
         if (!m) {
             if (!fs.existsSync(filepath)) {
@@ -483,6 +483,6 @@ export class CommonUtils {
         return result;
     }
 
-    
+
 
 }
