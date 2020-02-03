@@ -110,6 +110,8 @@ export class Application {
      */
     async initApplication(baseDir: string, targetUsername: string, sourceUsername: string, password: string) {
 
+        this.uxLog("sfdmu:move command has started.");
+
         // Validate usernames
         if (!sourceUsername) {
             throw new SfdmModels.PluginInitError("Missing source user name.");
@@ -1672,8 +1674,6 @@ export class Application {
         this.uxLog("");
         this.uxLog("STEP 5. Updating target (second run).");
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
-
-            this.uxLog("Updating data. Pass #2 started.");
             for (let i = 0; i < this.job.tasks.Count(); i++) {
 
                 let task = this.job.tasks.ElementAt(i);
@@ -1787,11 +1787,7 @@ export class Application {
                 }
 
             }
-            this.uxLog("Updating data. Pass #2 finished.");
-
         }
-
-
         this.uxLog("STEP 5 has finished.");
 
 
@@ -1807,7 +1803,7 @@ export class Application {
         }
 
         this.uxLog("");
-        this.uxLog("Data migration process has finished.");
+        this.uxLog("sfdmu:move command has completed.");
         this.uxLog("");
 
     }

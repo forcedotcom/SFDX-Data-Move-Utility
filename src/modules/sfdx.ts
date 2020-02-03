@@ -29,6 +29,8 @@ import path = require('path');
 import fs = require('fs');
 
 import casual = require("casual");
+const  alasql = require("alasql");
+
 
 CommonUtils.createMockCustomFunctions(casual);
 
@@ -405,6 +407,7 @@ export class SfdxUtils {
 
                 let job = cn.bulk.createJob(sObjectName, "update");
                 let recs = records.ToArray();
+
                 let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
                 let totalProcessed = 0;
 
@@ -423,7 +426,9 @@ export class SfdxUtils {
                 resolve(totalProcessed);
 
             } else {
+                
                 let recs = records.ToArray();
+
                 cn.sobject(sObjectName).update(recs, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
@@ -507,6 +512,7 @@ export class SfdxUtils {
 
             } else {
                 let recs = records.ToArray();
+
                 cn.sobject(sObjectName).create(recs, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
@@ -651,6 +657,24 @@ export class SfdxUtils {
 
     }
 
+    private static async _filterRecords(sql : string, data : Array<object>) : Promise<Array<object>> {
+        return new Promise<Array<object>>((resolve) =>{
+            if (!sql || data.length == 0){
+                resolve(data);
+                return;
+            }
+            try {
+                return alasql(`SELECT * FROM ? WHERE ${sql}`, [data], function (res){
+                    resolve(res);
+                    return;
+                });
+            }catch(ex){
+                resolve(data);
+                return;
+            }
+        });
+    }
+
     /**
      * Performs all kinds of update operations with records (Insert / Update / Merge / Upsert/ Add).
      */
@@ -690,13 +714,17 @@ export class SfdxUtils {
 
         async function insertRecordsAsync(sourceRecords: List<object>) {
 
+            if (task.scriptObject.targetRecordsFilter){
+                sourceRecords = new List<object>(await _this._filterRecords(task.scriptObject.targetRecordsFilter, sourceRecords.ToArray()));
+            }
 
             //let extids = [];
             let recordsToInsert = CommonUtils.cloneListOmitProps(sourceRecords.Select(x => deepClone.deepCloneSync(x)), omitFieldsDuringInsert);
 
             let ids = sourceRecords.Select(x => x["Id"]);
             let map = mockRecordsData(recordsToInsert, ids);
-            let recs = await _this.insertAsync(sObjectName, new List<object>([...map.keys()]), targetSOrg, jobMonitorCallback);
+            let inputRecs = [...map.keys()];
+            let recs = await _this.insertAsync(sObjectName, new List<object>(inputRecs), targetSOrg, jobMonitorCallback);
             let insertedRecords = new List<object>();
             recs.ForEach((record, index) => {
                 let oldRecord = map.get(record);
@@ -890,7 +918,11 @@ export class SfdxUtils {
                     );
                 }
                 let m = mockRecordsData(recordToUpdate3, ids);
-                await this.updateAsync(sObjectName, new List<object>([...m.keys()]), targetSOrg, jobMonitorCallback);
+                let  recs = [...m.keys()];
+                if (task.scriptObject.targetRecordsFilter){
+                    recs = await this._filterRecords(task.scriptObject.targetRecordsFilter, recs);
+                }
+                await this.updateAsync(sObjectName, new List<object>(recs), targetSOrg, jobMonitorCallback);
             } else {
                 if (jobMonitorCallback) {
                     jobMonitorCallback(

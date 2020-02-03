@@ -191,6 +191,14 @@ export class ScriptObject {
     updateWithMockData: boolean = false;
 
 
+    /**
+     * Expression that allows to filter target rows before actual data changing on the Target org
+     * ex. id = 'xxxxxxx' AND Date__c
+     * ex. NOT Date__c
+     */
+    targetRecordsFilter : string;
+
+
 
 
 
