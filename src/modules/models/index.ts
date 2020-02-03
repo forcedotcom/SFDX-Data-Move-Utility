@@ -116,7 +116,11 @@ export let CONSTANTS = {
 
     CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR : '!',
 
-    MISSING_PARENT_RECORDS_ERRORS_FILE_NAME: 'MissingParentRecordsReport.csv'
+    MISSING_PARENT_RECORDS_ERRORS_FILE_NAME: 'MissingParentRecordsReport.csv',
+
+    TARGET_CSV_FILE_POSTFIX : "_target",
+
+    TARGET_CSV_FILE_SUBDIR: "target"
 
 };
 

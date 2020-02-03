@@ -218,6 +218,7 @@ export class Application {
             org.bulkThreshold = this.script.bulkThreshold;
             org.version = this.script.apiVersion;
             org.allOrNone = this.script.allOrNone;
+            org.createTargetCSVFiles = this.script.createTargetCSVFiles;
         });
 
         if (this.sourceOrg.isEquals(this.targetOrg)) {

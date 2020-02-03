@@ -186,11 +186,11 @@ export class CommonUtils {
                 return value;
             }
 
-            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);
-
             if (value == "#N/A"){
                 return null;
             }
+
+            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);            
 
             if (fieldType == "boolean") {
                 if (value == "1" || value == "TRUE" || value == "true")

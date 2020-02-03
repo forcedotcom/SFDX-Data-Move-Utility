@@ -376,9 +376,13 @@ export class SfdxUtils {
     }
 
 
-    public static async writeCsvFileAsync(name: string, records: Array<object>, sOrg: SfdmModels.SOrg, password?: string): Promise<void> {
+    public static async writeCsvFileAsync(name: string, records: Array<object>, sOrg: SfdmModels.SOrg, password?: string, subPath?: string): Promise<void> {
         let filename = `${name}.csv`;
-        let filepath = path.join(sOrg.basePath, filename);
+        let filedir = subPath ? path.join(sOrg.basePath, subPath) : sOrg.basePath;
+        if (!fs.existsSync(filedir)) {
+            fs.mkdirSync(filedir);
+        }
+        let filepath = path.join(filedir, filename);
         records = CommonUtils.encryptRecords(records, password);
         await CommonUtils.writeCsvFile(filepath, records);
     }
@@ -393,15 +397,15 @@ export class SfdxUtils {
 
 
         const makeUpdateAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
-
+            let _this = this;
             let cn = sOrg.getConnection();
             cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
             if (records.Count() > sOrg.bulkThreshold) {
 
                 let job = cn.bulk.createJob(sObjectName, "update");
-
-                let chunks = CommonUtils.chunkArray(records.ToArray(), SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let recs = records.ToArray();
+                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
@@ -409,20 +413,27 @@ export class SfdxUtils {
                     try {
                         totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
                     } catch (ex) {
+                        await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
                         reject(ex);
                         return;
                     }
                 }
 
+                await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
                 resolve(totalProcessed);
 
             } else {
-                cn.sobject(sObjectName).update(records.ToArray(), {
+                let recs = records.ToArray();
+                cn.sobject(sObjectName).update(recs, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
                 },
-                    function (error, result) {
+                    async function (error, result) {
                         if (error) {
+                            recs.forEach(rec => {
+                                rec["Errors"] = rec["Errors"] || error;
+                            });
+                            await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
                             reject(error);
                             return;
                         }
@@ -435,15 +446,17 @@ export class SfdxUtils {
                         records.ForEach((record, index) => {
                             if (result[index].success) {
                                 res.numberRecordsProcessed++;
+                                record["Errors"] = null;
                             } else {
                                 res.numberRecordsFailed++;
                                 res.error = result[index].errors[0].message;
+                                record["Errors"] = res.error;
                             }
                         });
                         if (pollCallback) {
                             pollCallback(error, res);
                         }
-
+                        await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
                         resolve(result.length);
                     });
             }
@@ -464,6 +477,8 @@ export class SfdxUtils {
         sOrg: SfdmModels.SOrg,
         pollCallback: Function = null): Promise<List<object>> {
 
+        let _this = this;
+
         const makeInsertAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
             let cn = sOrg.getConnection();
@@ -472,7 +487,8 @@ export class SfdxUtils {
             if (records.Count() > sOrg.bulkThreshold) {
 
                 let job = cn.bulk.createJob(sObjectName, "insert");
-                let chunks = CommonUtils.chunkArray(records.ToArray(), SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let recs = records.ToArray();
+                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
@@ -480,19 +496,26 @@ export class SfdxUtils {
                     try {
                         totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, true);
                     } catch (ex) {
+                        await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
                         reject(ex);
                         return;
                     }
                 }
 
+                await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
                 resolve(totalProcessed);
 
             } else {
-                cn.sobject(sObjectName).create(records.ToArray(), {
+                let recs = records.ToArray();
+                cn.sobject(sObjectName).create(recs, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
-                }, function (error, result) {
+                }, async function (error, result) {
                     if (error) {
+                        recs.forEach(rec => {
+                            rec["Errors"] = rec["Errors"] || error;
+                        });
+                        await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
                         reject(error);
                         return;
                     }
@@ -507,14 +530,17 @@ export class SfdxUtils {
                         if (result[index].success) {
                             res.numberRecordsProcessed++;
                             record["Id"] = result[index].id;
+                            record["Errors"] = null;
                         } else {
                             res.numberRecordsFailed++;
                             res.error = result[index].errors[0].message;
+                            record["Errors"] = res.error;
                         }
                     });
                     if (pollCallback) {
                         pollCallback(error, res);
                     }
+                    await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
                     resolve(result.length);
                 });
             }
@@ -535,6 +561,7 @@ export class SfdxUtils {
         sOrg: SfdmModels.SOrg,
         pollCallback: Function = null): Promise<void> {
 
+        let _this = this;
 
         const makeDeleteAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
@@ -555,7 +582,8 @@ export class SfdxUtils {
                 });
 
                 let job = cn.bulk.createJob(sObjectName, "delete");
-                let chunks = CommonUtils.chunkArray(records.ToArray(), SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let recs = records.ToArray();
+                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
@@ -563,11 +591,13 @@ export class SfdxUtils {
                     try {
                         totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
                     } catch (ex) {
+                        await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
                         reject(ex);
                         return;
                     }
                 }
 
+                await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
                 resolve(totalProcessed);
 
             } else {
@@ -575,13 +605,17 @@ export class SfdxUtils {
                 let ids = records.Select(x => x["Id"]).ToArray();
 
                 if (ids.length == 0) { resolve(0); return; }
-
+                let recs = records.ToArray();
                 cn.sobject(sObjectName).del(ids, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
                 },
-                    function (error, result) {
+                    async function (error, result) {
                         if (error) {
+                            recs.forEach(rec => {
+                                rec["Errors"] = rec["Errors"] || error;
+                            });
+                            await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
                             reject(error);
                             return;
                         }
@@ -596,14 +630,17 @@ export class SfdxUtils {
                         records.ForEach((record, index) => {
                             if (result[index].success) {
                                 res.numberRecordsProcessed++;
+                                record["Errors"] = null;
                             } else {
                                 res.numberRecordsFailed++;
                                 res.error = result[index].errors[0].message;
+                                record["Errors"] = res.error;
                             }
                         });
                         if (pollCallback) {
                             pollCallback(error, res);
                         }
+                        await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
                         resolve(result.length);
                     });
 
@@ -637,10 +674,17 @@ export class SfdxUtils {
 
         var strOper = SfdmModels.Enums.OPERATION[operation];
 
-        let fieldsSource = Object.keys(sourceRecords.ElementAt(0)).filter(field => field.endsWith("_source"));
+        let fieldsSource = Object.keys(sourceRecords.ElementAt(0)).filter(field =>
+            field.endsWith("_source")
+        );
+
         readonlyExternalIdFields = readonlyExternalIdFields || [];
-        omitFields = new List<string>([...omitFields, ...(readonlyExternalIdFields.filter(x => x != "Id")), ...fieldsSource]).Distinct().ToArray();
-        let omitFields2 = new List<string>(["Id", ...omitFields]).Distinct().ToArray();
+
+        // Omit fields below during Update and Insert
+        omitFields = new List<string>([...omitFields, ...(readonlyExternalIdFields.filter(x => x != "Id")), ...fieldsSource, "Errors"]).Distinct().ToArray();
+
+        // Omit fields below during Insert only
+        let omitFieldsDuringInsert = new List<string>(["Id", ...omitFields]).Distinct().ToArray();
 
         let _this = this;
 
@@ -648,7 +692,7 @@ export class SfdxUtils {
 
 
             //let extids = [];
-            let recordsToInsert = CommonUtils.cloneListOmitProps(sourceRecords.Select(x => deepClone.deepCloneSync(x)), omitFields2);
+            let recordsToInsert = CommonUtils.cloneListOmitProps(sourceRecords.Select(x => deepClone.deepCloneSync(x)), omitFieldsDuringInsert);
 
             let ids = sourceRecords.Select(x => x["Id"]);
             let map = mockRecordsData(recordsToInsert, ids);
@@ -1040,6 +1084,18 @@ export class SfdxUtils {
         return [...queryGen()];
     }
 
+
+    private static async _writeOutputRecordsToCSV(sObjectName: string, sOrg: SfdmModels.SOrg, records: Array<any>, operation: SfdmModels.Enums.OPERATION): Promise<any> {
+        if (sOrg.createTargetCSVFiles) {
+            await this.writeCsvFileAsync(`${sObjectName + "_" + SfdmModels.Enums.OPERATION[operation] + SfdmModels.CONSTANTS.TARGET_CSV_FILE_POSTFIX}`,
+                records,
+                sOrg,
+                undefined,
+                SfdmModels.CONSTANTS.TARGET_CSV_FILE_SUBDIR);
+        }
+    }
+
+
     private static async _processBatch(
         sObjectName: string,
         cn: any,
@@ -1051,6 +1107,7 @@ export class SfdxUtils {
         showStartMessage: boolean,
         showStopMessage: boolean,
         updateRecordId: boolean): Promise<any> {
+
 
         return new Promise((resolve, reject) => {
 
@@ -1112,9 +1169,13 @@ export class SfdxUtils {
                     if (rets[index].success) {
                         if (updateRecordId) {
                             record["Id"] = rets[index].id;
+                            record["Errors"] = null;
                         }
                         numberJobRecordsSucceeded++;
                     } else {
+                        if (rets[index].errors) {
+                            record["Errors"] = rets[index].errors.join('; ');
+                        }
                         numberBatchRecordsFailed++;
                     }
                 });

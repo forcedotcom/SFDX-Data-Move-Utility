@@ -44,6 +44,8 @@ export class SOrg {
 
     mediaType: SfdmModels.Enums.DATA_MEDIA_TYPE = SfdmModels.Enums.DATA_MEDIA_TYPE.Org;
 
+    createTargetCSVFiles : boolean;
+
     getConnection(): any {
         return new jsforce.Connection({
             instanceUrl: this.instanceUrl,

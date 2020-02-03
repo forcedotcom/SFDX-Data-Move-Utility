@@ -89,6 +89,9 @@ export class Script {
     apiVersion: string = "46.0";
 
 
+    createTargetCSVFiles : boolean = true;
+
+
     /**
      * Array of objects included into the script
      */
