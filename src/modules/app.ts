@@ -1443,9 +1443,10 @@ export class Application {
         interface IMissingParentRecordsErrorRow {
             "Child record Id": string,
             "Child sObject": string,
+            "Child external Id field": string,
             "Parent sObject": string,
             "Parent external Id field": string,
-            "Missing parent external Id value": string
+            "Missing external Id value": string
         };
         csvDataCacheMap.set(missingParentRecordsErrorsFilePath, new Map<string, IMissingParentRecordsErrorRow>());
 
@@ -1502,7 +1503,7 @@ export class Application {
                     let isChildTask = task.job.tasks.Any(x => !!x.scriptObject.referencedScriptObjectsMap.get(task.sObjectName));
                     let errorMessage = "";
                     // Update target records                    
-                    updatedRecords = await SfdxUtils.processTaskRecordAsync(task,
+                    updatedRecords = await SfdxUtils.processTaskDataAsync(task,
                         sourceRecords, targetRecords,
                         this.targetOrg, task.scriptObject.operation,
                         isChildTask, undefined, task.scriptObject.readonlyExternalIdFields, function (a, b) {
@@ -1577,9 +1578,10 @@ export class Application {
                                 m.set(record["Id"], {
                                     "Child record Id": record["Id"],
                                     "Child sObject": task.sObjectName,
-                                    "Missing parent external Id value": record[taskField.name],
+                                    "Child external Id field" : taskField.name,
                                     "Parent external Id field": taskField.originalScriptField.externalId,
-                                    "Parent sObject": taskField.parentTaskField.task.sObjectName
+                                    "Parent sObject": taskField.parentTaskField.task.sObjectName,
+                                    "Missing external Id value": record.hasOwnProperty(taskField.name) ? record[taskField.name] : `FIELD ${taskField.name} IS MISSING IN THE SOURCE RECORD`                                    
                                 });
                                 missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                 delete record[fieldToUpdate];
@@ -1614,7 +1616,7 @@ export class Application {
                     let isChildTask = task.job.tasks.Any(x => !!x.scriptObject.referencedScriptObjectsMap.get(task.sObjectName));
                     let errorMessage = "";
                     // Update target records                      
-                    updatedRecords = await SfdxUtils.processTaskRecordAsync(task,
+                    updatedRecords = await SfdxUtils.processTaskDataAsync(task,
                         sourceRecords, targetRecords,
                         this.targetOrg, task.scriptObject.operation,
                         isChildTask,
@@ -1728,9 +1730,10 @@ export class Application {
                                     m.set(record["Id"], {
                                         "Child record Id": record["Id"],
                                         "Child sObject": task.sObjectName,
-                                        "Missing parent external Id value": record[taskField.name],
+                                        "Child external Id field" : taskField.name,
                                         "Parent external Id field": taskField.originalScriptField.externalId,
-                                        "Parent sObject": taskField.parentTaskField.task.sObjectName
+                                        "Parent sObject": taskField.parentTaskField.task.sObjectName,
+                                        "Missing external Id value": record.hasOwnProperty(taskField.name) ? record[taskField.name] : `FIELD ${taskField.name} IS MISSING IN THE SOURCE RECORD`                                        
                                     });
                                     missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                     delete record[fieldToUpdate];
@@ -1763,7 +1766,7 @@ export class Application {
                         let isChildTask = task.job.tasks.Any(x => !!x.scriptObject.referencedScriptObjectsMap.get(task.sObjectName));
                         let errorMessage = "";
                         // Update target records                      
-                        updatedRecords = await SfdxUtils.processTaskRecordAsync(task,
+                        updatedRecords = await SfdxUtils.processTaskDataAsync(task,
                             sourceRecords, targetRecords,
                             this.targetOrg,
                             SfdmModels.Enums.OPERATION.Update,

@@ -678,7 +678,7 @@ export class SfdxUtils {
     /**
      * Performs all kinds of update operations with records (Insert / Update / Merge / Upsert/ Add).
      */
-    public static async processTaskRecordAsync(task: SfdmModels.Task,
+    public static async processTaskDataAsync(task: SfdmModels.Task,
         sourceRecords: List<object>,
         targetRecords: List<object>,
         targetSOrg: SfdmModels.SOrg,
@@ -687,6 +687,8 @@ export class SfdxUtils {
         omitFields: Array<string> = new Array<string>(),
         readonlyExternalIdFields: Array<string> = new Array<string>(),
         jobMonitorCallback: Function = null): Promise<List<object>> {
+        
+        let _this = this;
 
         let sObjectName: string = task.sObjectName;
         let externalId: string = task.scriptObject.externalId;
@@ -698,19 +700,21 @@ export class SfdxUtils {
 
         var strOper = SfdmModels.Enums.OPERATION[operation];
 
-        let fieldsSource = Object.keys(sourceRecords.ElementAt(0)).filter(field =>
-            field.endsWith("_source")
+        let notUpdateableFields = Object.keys(sourceRecords.ElementAt(0)).filter(field =>
+            field.endsWith("_source") || field.indexOf('.') >= 0 // Invalid fields
+        ).concat([
+            "Errors" // Special fields
+        ]).concat(
+            readonlyExternalIdFields.filter(x => x != "Id") // Readonly fields
         );
 
         readonlyExternalIdFields = readonlyExternalIdFields || [];
 
         // Omit fields below during Update and Insert
-        omitFields = new List<string>([...omitFields, ...(readonlyExternalIdFields.filter(x => x != "Id")), ...fieldsSource, "Errors"]).Distinct().ToArray();
+        omitFields = new List<string>([...omitFields, ...notUpdateableFields]).Distinct().ToArray();
 
         // Omit fields below during Insert only
-        let omitFieldsDuringInsert = new List<string>(["Id", ...omitFields]).Distinct().ToArray();
-
-        let _this = this;
+        let omitFieldsDuringInsert = new List<string>([...omitFields, "Id"]).Distinct().ToArray();
 
         async function insertRecordsAsync(sourceRecords: List<object>) {
 
