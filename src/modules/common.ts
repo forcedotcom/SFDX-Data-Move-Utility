@@ -280,8 +280,13 @@ export class CommonUtils {
     }
 
 
-    public static async writeCsvFile(fileName: string, data: Array<object>): Promise<void> {
-        if (!data || data.length == 0) return;
+    public static async writeCsvFile(fileName: string, data: Array<object>, createEmptyFileOnNoData : boolean = false): Promise<void> {
+        if (!data || data.length == 0){
+            if (createEmptyFileOnNoData){
+                fs.writeFileSync(fileName, "");
+            }
+            return;
+        }
         const csvWriter = createCsvWriter({
             header: Object.keys(data[0]).map(x => {
                 return {

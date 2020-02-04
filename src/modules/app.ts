@@ -691,7 +691,7 @@ export class Application {
         // 0 step. Prerequisites
         // Validate and prepare raw CSV source files ********************************
 
-        if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && !this.script.encryptDataFiles) {
+        if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && !(this.script.encryptDataFiles && this.password)) {
 
             this.uxLog("Validating and fixing source CSV files...");
 
@@ -713,7 +713,7 @@ export class Application {
                 "Date": string,
                 "Severity level": string,
                 "Child sObject name": string,
-                "Child lookup field name": string,
+                "Child field name": string,
                 "Parent record Id": string,
                 "Parent sObject name": string,
                 "Parent sObject external Id field name": string,
@@ -726,8 +726,7 @@ export class Application {
 
                 let task = this.job.tasks.ElementAt(i);
 
-                if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
-                    || task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete)
+                if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete)
                     continue;
 
                 let filepath = path.join(this.sourceOrg.basePath, task.sObjectName);
@@ -743,11 +742,11 @@ export class Application {
                         Date: CommonUtils.formatDateTime(new Date()),
                         "Severity level": "HIGHEST",
                         "Child sObject name": task.sObjectName,
-                        "Child lookup field name": null,
+                        "Child field name": null,
                         "Parent sObject name": null,
                         "Parent sObject external Id field name": null,
                         "Parent record Id": null,
-                        "Error description": "Source CSV file is empty or does not exist"
+                        "Error description": "CSV FILE IS EMPTY OR DOES NOT EXIST"
                     });
                     continue;
                 }
@@ -755,6 +754,19 @@ export class Application {
                 for (let j = 0; j < task.taskFields.Count(); j++) {
 
                     const taskField = task.taskFields.ElementAt(j);
+
+                    if (taskField.isOriginalField && !csvColumnsRow[0].hasOwnProperty(taskField.name)) {
+                        csvIssues.push({
+                            Date: CommonUtils.formatDateTime(new Date()),
+                            "Severity level": "NORMAL",
+                            "Child sObject name": task.sObjectName,
+                            "Child field name": taskField.name,
+                            "Parent sObject name": null,
+                            "Parent sObject external Id field name": null,
+                            "Parent record Id": null,
+                            "Error description": "COLUMN DEFINED IN THE SCRIPT IS MISSING IN THE CSV FILE"
+                        });
+                    }
 
                     if (taskField.isReference && !taskField.isOriginalField) {
 
@@ -801,11 +813,11 @@ export class Application {
                                     Date: CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
-                                    "Child lookup field name": lookupFieldName,
+                                    "Child field name": lookupFieldName,
                                     "Parent sObject name": refSObjectName,
                                     "Parent sObject external Id field name": refSObjectExternalIdFieldName,
                                     "Parent record Id": null,
-                                    "Error description": "Source CSV file for the parent sObject is empty or does not exist"
+                                    "Error description": "CSV FILE FOR THE PARENT SOBJECT IS EMPTY OR DOES NOT EXIST"
                                 });
                                 continue;
                             }
@@ -834,11 +846,11 @@ export class Application {
                                             Date: CommonUtils.formatDateTime(new Date()),
                                             "Severity level": "NORMAL",
                                             "Child sObject name": task.sObjectName,
-                                            "Child lookup field name": lookupFieldName,
+                                            "Child field name": lookupFieldName,
                                             "Parent sObject name": refSObjectName,
                                             "Parent sObject external Id field name": refSObjectExternalIdFieldName,
                                             "Parent record Id": id,
-                                            "Error description": "Missing parent lookup record"
+                                            "Error description": "MISSING PARENT RECORD FOR THE GIVEN LOOKUP VALUE"
                                         });
                                         value[columnName] = null;
                                     }
@@ -871,11 +883,11 @@ export class Application {
                                     Date: CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
-                                    "Child lookup field name": null,
+                                    "Child field name": null,
                                     "Parent sObject name": null,
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
-                                    "Error description": `Column ${columnName} has invalid format`
+                                    "Error description": `COLUMN ${columnName} HAS INVALID FORMAT`
                                 });
                                 continue;
                             }
@@ -896,11 +908,11 @@ export class Application {
                                     Date: CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
-                                    "Child lookup field name": null,
+                                    "Child field name": null,
                                     "Parent sObject name": null,
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
-                                    "Error description": `Column "${columnName}" will not be processed because field "${parts[0]}" is missing in the script`
+                                    "Error description": `COLUMN "${columnName}" WILL NOT BE PROCESSED BECAUSE THE FIELD "${parts[0]}" IS MISSING IN THE SCRIPT`
                                 });
                             } else {
                                 lookupField = lookupTaskField.ElementAt(0).name;
@@ -911,11 +923,11 @@ export class Application {
                                     Date: CommonUtils.formatDateTime(new Date()),
                                     "Severity level": "HIGH",
                                     "Child sObject name": task.sObjectName,
-                                    "Child lookup field name": null,
+                                    "Child field name": null,
                                     "Parent sObject name": null,
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
-                                    "Error description": `Column "${columnName}" will not be processed because "${parts[1]}" is missing in the script`
+                                    "Error description": `COLUMN "${columnName}" WILL NOT BE PROCESSED BECAUSE THE FIELD "${parts[1]}" IS MISSING IN THE SCRIPT`
                                 });
                             } else {
                                 tempExtIdField = tempExtIdTaskField.ElementAt(0).name;
@@ -952,28 +964,19 @@ export class Application {
                 if (csvFilePathsToUpdate.has(csvFilePath)) {
                     let values = [...csvDataCacheMap.get(csvFilePath).values()];
                     this.uxLog(`Updating file ${csvFilePath}...`);
-                    await CommonUtils.writeCsvFile(csvFilePath, values);
+                    await CommonUtils.writeCsvFile(csvFilePath, values, true);
                 }
             }
 
 
-            // Write to lookup errors file
+            // Write to csv  format issues file
             let csvIssuesFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
+
+            await CommonUtils.writeCsvFile(csvIssuesFilepath, csvIssues, true);            
+
             if (csvIssues.length == 0) {
-                csvIssues.push({
-                    Date: CommonUtils.formatDateTime(new Date()),
-                    "Severity level": "",
-                    "Child sObject name": null,
-                    "Child lookup field name": null,
-                    "Parent sObject name": null,
-                    "Parent sObject external Id field name": null,
-                    "Parent record Id": null,
-                    "Error description": "There are no issues found during the last validation of the source CSV files"
-                });
                 this.uxLog(`There are no issues found during the last validation of the source CSV files.`);
-                await CommonUtils.writeCsvFile(csvIssuesFilepath, csvIssues);
             } else {
-                await CommonUtils.writeCsvFile(csvIssuesFilepath, csvIssues);
                 this.uxLog(`[WARNING] During the validation of the source CSV files ${csvIssues.length} issues were found. See ${SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME} file for the details.`);
                 if (this.script.promptOnMissingParentObjects) {
                     var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
@@ -1822,10 +1825,10 @@ export class Application {
             for (let index = 0; index < extendedErrorFilePaths.length; index++) {
                 const filepath = extendedErrorFilePaths[index];
                 let m = csvDataCacheMap.get(filepath);
-                if (m && m.size > 0) {
+                if (m) {
                     _app.uxLog(`Writing to ${filepath}...`);
                     let values = [...m.values()];
-                    await CommonUtils.writeCsvFile(filepath, values);
+                    await CommonUtils.writeCsvFile(filepath, values, true);
                 }
             }
         }
