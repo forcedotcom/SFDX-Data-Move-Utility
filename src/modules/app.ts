@@ -148,13 +148,13 @@ export class Application {
         // Filter out disabled objects
         this.script.objects = this.script.objects.filter(object => {
             let ret = !object.excluded || object.operation == SfdmModels.Enums.OPERATION.Readonly;
-            if (!ret){
+            if (!ret) {
                 this.uxLog(`[NOTE] sObject ${object.name} will be excluded from the process.`);
             }
             return ret;
         });
 
-        if (this.script.objects.length == 0){
+        if (this.script.objects.length == 0) {
             throw new SfdmModels.PluginInitError("There are no objects defined to process.");
         }
 
@@ -1602,8 +1602,7 @@ export class Application {
                     if (this.script.promptOnMissingParentObjects) {
                         var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
                         if (ans != 'y' && ans != 'yes') {
-                            let values = [...csvDataCacheMap.get(missingParentRecordsErrorsFilePath).values()];
-                            await CommonUtils.writeCsvFile(missingParentRecordsErrorsFilePath, values);
+                            await writeallErrorReportsToCSVFiles();
                             throw new SfdmModels.JobAbortedByUser("Missing parent records");
                         }
                     }
@@ -1633,9 +1632,11 @@ export class Application {
                             }
                         });
                     if (errorMessage) {
+                        await writeallErrorReportsToCSVFiles();
                         throw new Error(errorMessage);
                     }
                 } catch (e) {
+                    await writeallErrorReportsToCSVFiles();
                     if (!this.script.promptOnUpdateError)
                         throw new SfdmModels.JobError("Data update error: " + e + ".");
                     else {
@@ -1751,8 +1752,7 @@ export class Application {
                         if (this.script.promptOnMissingParentObjects) {
                             var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
                             if (ans != 'y' && ans != 'yes') {
-                                let values = [...csvDataCacheMap.get(missingParentRecordsErrorsFilePath).values()];
-                                await CommonUtils.writeCsvFile(missingParentRecordsErrorsFilePath, values);
+                                await writeallErrorReportsToCSVFiles();
                                 throw new SfdmModels.JobAbortedByUser("Missing parent records");
                             }
                         }
@@ -1783,9 +1783,11 @@ export class Application {
                                 }
                             });
                         if (errorMessage) {
+                            await writeallErrorReportsToCSVFiles();
                             throw new Error(errorMessage);
                         }
                     } catch (e) {
+                        await writeallErrorReportsToCSVFiles();
                         if (!this.script.promptOnUpdateError)
                             throw new SfdmModels.JobError("Data update error: " + e + ".");
                         else {
@@ -1804,20 +1806,26 @@ export class Application {
         this.uxLog("STEP 5 has finished.");
 
 
-        // Write all error reports to CSV files
-        for (let index = 0; index < extendedErrorFilePaths.length; index++) {
-            const filepath = extendedErrorFilePaths[index];
-            let m = csvDataCacheMap.get(filepath);
-            if (m && m.size > 0) {
-                this.uxLog(`Writing to ${filepath}...`);
-                let values = [...m.values()];
-                await CommonUtils.writeCsvFile(filepath, values);
-            }
-        }
+        await writeallErrorReportsToCSVFiles();
 
         this.uxLog("");
         this.uxLog("sfdmu:move command has completed.");
         this.uxLog("");
+
+
+        // Helper functions
+        async function writeallErrorReportsToCSVFiles(): Promise<any> {
+            // Write all error reports to CSV files
+            for (let index = 0; index < extendedErrorFilePaths.length; index++) {
+                const filepath = extendedErrorFilePaths[index];
+                let m = csvDataCacheMap.get(filepath);
+                if (m && m.size > 0) {
+                    _app.uxLog(`Writing to ${filepath}...`);
+                    let values = [...m.values()];
+                    await CommonUtils.writeCsvFile(filepath, values);
+                }
+            }
+        }
 
     }
 
