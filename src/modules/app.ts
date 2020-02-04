@@ -145,6 +145,19 @@ export class Application {
         let jsonObject = JSON.parse(json);
         this.script = plainToClass(SfdmModels.Script, jsonObject);
 
+        // Filter out disabled objects
+        this.script.objects = this.script.objects.filter(object => {
+            let ret = !object.excluded || object.operation == SfdmModels.Enums.OPERATION.Readonly;
+            if (!ret){
+                this.uxLog(`[NOTE] sObject ${object.name} will be excluded from the process.`);
+            }
+            return ret;
+        });
+
+        if (this.script.objects.length == 0){
+            throw new SfdmModels.PluginInitError("There are no objects defined to process.");
+        }
+
         this.script.targetOrg = targetUsername;
         this.script.sourceOrg = sourceUsername;
 
@@ -416,7 +429,7 @@ export class Application {
                 object.readonlyExternalIdFields.push(object.externalId);
 
             } else if (object.sObjectDescribe.fieldsMap.has(object.externalId) && object.sObjectDescribe.fieldsMap.get(object.externalId).isReadonly
-                        || !object.sObjectDescribe.fieldsMap.has(object.externalId)) {
+                || !object.sObjectDescribe.fieldsMap.has(object.externalId)) {
                 // Supress exporting external id fields of non-updatable types (formula, autonumber, etc)
                 object.readonlyExternalIdFields.push(object.externalId);
             }

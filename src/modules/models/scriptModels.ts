@@ -73,7 +73,7 @@ export class Script {
      * If true and the source is FILE so it will only performs validation and formatting of the raw source CSV files
      * and produces error report.
      */
-    validateCSVFilesOnly : boolean = false;
+    validateCSVFilesOnly: boolean = false;
 
 
     /**
@@ -89,7 +89,7 @@ export class Script {
     apiVersion: string = "46.0";
 
 
-    createTargetCSVFiles : boolean = true;
+    createTargetCSVFiles: boolean = true;
 
 
     /**
@@ -196,10 +196,15 @@ export class ScriptObject {
      * ex. id = 'xxxxxxx' AND Date__c
      * ex. NOT Date__c
      */
-    targetRecordsFilter : string;
+    targetRecordsFilter: string;
 
 
-
+    /**
+     * When the object's operation is not
+     * Readonly - allows this object to be excluded from the
+     * migration process
+     */
+    excluded: boolean;
 
 
     // ************************************************
