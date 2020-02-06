@@ -12,8 +12,13 @@ export class OrgInfo {
     ClientId: string;
     ConnectedStatus: string;
     OrgId: string;
+    UserId: string;
     InstanceUrl: string;
     Username: string;
+
+    get isConnected(){
+        return this.ConnectedStatus == "Connected";
+    }
 }
 
 
