@@ -14,6 +14,10 @@ export class OrgInfo {
     OrgId: string;
     InstanceUrl: string;
     Username: string;
+
+    get isConnected(){
+        return this.ConnectedStatus == "Connected";
+    }
 }
 
 

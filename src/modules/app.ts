@@ -203,11 +203,17 @@ export class Application {
         if (!sourceScriptOrg || !sourceScriptOrg.accessToken) {
             try {
                 // Connection is not found int the package. Try to retrieve credentials from the SFDX.
-                let s = SfdxUtils.execSfdx("force:org:display", sourceScriptOrg.name);
+                this.uxLog(`Trying to connect to ${sourceUsername} using SFDX CLI...`);
+                let s = SfdxUtils.execSfdx("force:org:display", sourceUsername);
                 let p = SfdxUtils.parseForceOrgDisplayResult(s);
+                if (!p.isConnected){
+                    throw new Error();
+                }
+                this.uxLog(`Successfully connected to ${p.Username}`);
+                this.uxLog(`Access token: ${p.AccessToken}`);
                 this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.sourceMedia, true));
             } catch (e) {
-                throw new SfdmModels.PluginInitError("Access token to the source org expired or invalid. Please reconnect.");
+                throw new SfdmModels.PluginInitError(`Attempt to connect to ${sourceUsername} using SFDX CLI failed. Please, refresh your local connection details.`);
             }
         } else {
             this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(sourceScriptOrg.name, sourceScriptOrg.accessToken, sourceScriptOrg.instanceUrl, this.basePath, this.script.sourceMedia, true));
@@ -218,11 +224,17 @@ export class Application {
         if (!targetScriptOrg || !targetScriptOrg.accessToken) {
             try {
                 // Connection is not found int the package. Try to retrieve credentials from the SFDX.
-                let s = SfdxUtils.execSfdx("force:org:display", targetScriptOrg.name);
+                this.uxLog(`Trying to connect to ${targetUsername} using SFDX CLI...`);
+                let s = SfdxUtils.execSfdx("force:org:display", targetUsername);
                 let p = SfdxUtils.parseForceOrgDisplayResult(s);
+                if (!p.isConnected){
+                    throw new Error();
+                }
+                this.uxLog(`Successfully connected to ${p.Username}`);
+                this.uxLog(`Access token: ${p.AccessToken}`);
                 this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.targetMedia, false));
             } catch (e) {
-                throw new SfdmModels.PluginInitError("Access token to the target org expired or invalid. Please reconnect.");
+                throw new SfdmModels.PluginInitError(`Attempt to connect to ${targetUsername} using SFDX CLI failed. Please, refresh your local connection details.`);
             }
         } else {
             this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(targetScriptOrg.name, targetScriptOrg.accessToken, targetScriptOrg.instanceUrl, this.basePath, this.script.targetMedia, false));
