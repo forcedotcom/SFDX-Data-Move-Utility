@@ -318,7 +318,7 @@ This will skip the original account names and produce Accounts records like this
       {
           "Id" : "[RECORD ID1]",
           "Name" : "Miss Perry Larson",
-      },
+      }, 
       {
           "Id" : "[RECORD ID2]",
           "Name" : "Ms. Alec Romaguera",
