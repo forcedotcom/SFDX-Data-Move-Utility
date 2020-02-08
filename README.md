@@ -105,6 +105,9 @@ sfdx plugins:link
 ```
 -->
 
+<u>**Very important note! **</u>
+**If you find that the Plugin version number has recently updated or have any issue with the Plugin functionality, first please <u>try to uninstall</u> previously installed version from your local SFDX CLI (see description above) and <u>install the Plugin again</u>. This will ensure that all necessary updates and dependencies are applied to your local plugin installation.**
+
 
 
 
