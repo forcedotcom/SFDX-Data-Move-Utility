@@ -215,7 +215,6 @@ export class Application {
                         throw new Error();
                     }
                     this.uxLog(`Successfully connected to ${p.Username}`);
-                    this.uxLog(`Access token: ${p.AccessToken}`);
                     this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.sourceMedia, true));
                 } catch (e) {
                     throw new SfdmModels.PluginInitError(`Attempt to connect to ${sourceUsername} using SFDX CLI failed. Please, refresh your local connection details.`);
@@ -238,7 +237,6 @@ export class Application {
                         throw new Error();
                     }
                     this.uxLog(`Successfully connected to ${p.Username}`);
-                    this.uxLog(`Access token: ${p.AccessToken}`);
                     this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.targetMedia, false));
                 } catch (e) {
                     throw new SfdmModels.PluginInitError(`Attempt to connect to ${targetUsername} using SFDX CLI failed. Please, refresh your local connection details.`);
