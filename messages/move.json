@@ -1,5 +1,5 @@
 {
-  "commandDescription": "Populate your org (scratch/development/sandbox/production) with data imported from another org or CSV file",
+  "commandDescription": "Populate your org (scratch/development/sandbox/production) with data imported from another org or CSV file.\nRefer https://github.com/forcedotcom/SFDX-Data-Move-Utility for the detailed description.",
 
   "sourceusernameFlagDescription": "username or alias to the source org or 'file' if CSV files are used as data source",
   "passwordFlagDescription": "password for decrypting credentials provided in 'orgs' section of export.json file assuming they were previously encrypted with the same password",
