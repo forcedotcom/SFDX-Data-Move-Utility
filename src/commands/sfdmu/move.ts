@@ -12,26 +12,36 @@ import { Application } from '../../modules/app';
 
 
 Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages('sfdmu', 'move');
 
 export default class Move extends SfdxCommand {
 
     protected static supportsUsername = true;
-    protected static varargs = true;
+    protected static requiresUsername = false;
 
-    app: Application;
+    protected static varargs = false;
+
+    public static description = messages.getMessage('commandDescription');
 
     protected static flagsConfig: FlagsConfig = {
         sourceusername: flags.string({
             char: "s",
-            description: "User name for the source org",
+            description: messages.getMessage('sourceusernameFlagDescription'),
+            required: true
+        }),
+        path: flags.directory({
+            char: "f",
+            description: messages.getMessage('pathFlagDescription'),
             default: ''
         }),
-        password:  flags.string({
+        password: flags.string({
             char: "p",
-            description: "Password to encrypt/decrypt the credentials",
+            description: messages.getMessage('passwordFlagDescription'),
             default: ''
         })
     };
+
+    app: Application;
 
     public async run(): Promise<AnyJson> {
 
@@ -39,17 +49,13 @@ export default class Move extends SfdxCommand {
 
             this.app = new Application(this.ux);
 
-            this.varargs.path = this.varargs.path || "";
-            
             this.app.uxLogStart();
 
-            if (!this.flags.sourceusername) {
-                throw new SfdmModels.PluginInitError("Missing --sourceusername flag");
+            if (!this.flags.targetusername) {
+                throw new SfdmModels.PluginInitError(messages.getMessage('errorMissinRequiredFlag', ['--targetusername']));
             }
 
-            let baseDir = this.varargs.path.toString();
-
-            await this.app.initApplication(baseDir, this.flags.targetusername, this.flags.sourceusername, this.flags.password);
+            await this.app.initApplication(this.flags.path, this.flags.targetusername, this.flags.sourceusername, this.flags.password);
 
             await this.app.initJob();
 
@@ -72,13 +78,13 @@ export default class Move extends SfdxCommand {
                 case SfdmModels.JobAbortedByUser: this.app.uxLog(`Job was aborted by the user: ${errorString}`, false, true); break;
                 default: this.app.uxLog(`Unexpected runtime error: ${errorString}`, false, true);
             }
-            
+
             this.app.uxLogEnd();
 
-        } finally{
+        } finally {
             process.exit();
         }
-        
+
         return {};
     }
 

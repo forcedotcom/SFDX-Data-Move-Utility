@@ -105,7 +105,7 @@ sfdx plugins:link
 ```
 -->
 
-<u>**Very important note! **</u>
+<u>**Important note! **</u>
 **If you find that the Plugin version number has recently updated or have any issue with the Plugin functionality, first please <u>try to uninstall</u> previously installed version from your local SFDX CLI (see description above) and <u>install the Plugin again</u>. This will ensure that all necessary updates and dependencies are applied to your local plugin installation.**
 
 
@@ -218,12 +218,14 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 
 
 
-#### Running the export job. Examples of CLI commands.
+#### Running the export job. 
 
-Use following console command to start the export from one Org to another:
+##### Examples of CLI commands.
+
+To start the export from one Org to another settings the path to export.json implicitly:
 
 ```bash
-sfdx sfdmu:move --sourceusername source@name.com --targetusername target@name.com
+sfdx sfdmu:move --sourceusername source@name.com --targetusername target@name.com --path C:\Users\MyUser\Documents\SFDMU\data\MyPackage
 ```
 
 
@@ -249,11 +251,11 @@ sfdx sfdmu:move --sourceusername source@name.com --targetusername file --passwor
 
 
 
-| Parameter        | Description                                                  |
+| Flag             | Description                                                  |
 | ---------------- | ------------------------------------------------------------ |
-| --sourceusername | The username of the source salesforce org to take the data from it.<br />As mentioned above the credentials can be explicitly set in the [orgs] section of the export.json, or you can specify the username of the organization, that is previously connected using  standard sfdx force:auth:web:login command.<br /><br />**"--sourceusername file"** will import records from previously created CSV files into the target Org.<br />The CSV files must exist in the same directory as the export.json file.<br />Use --targetusername file parameter (see below) to create these files from the source records. |
-| --targetusername | The username of the target salesforce org where to put the data.<br /><br />**--targetusername file** will export records from the source org into CSV files. Each SObject will be stored in separated file. |
-| path             | (Optional) The path (absolute or relative) to the directory with your package.json file. |
+| --sourceusername | (Required) The username of the source salesforce org to take the data from it.<br />As mentioned above the credentials can be explicitly set in the [orgs] section of the export.json, or you can specify the username of the organization, that is previously connected using  standard sfdx force:auth:web:login command.<br /><br />**"--sourceusername file"** will import records from previously created CSV files into the target Org.<br />The CSV files must exist in the same directory as the export.json file.<br />Use --targetusername file parameter (see below) to create these files from the source records. |
+| --targetusername | (Required) The username of the target salesforce org where to put the data.<br /><br />**--targetusername file** will export records from the source org into CSV files. Each SObject will be stored in separated file. |
+| --path           | (Optional) The path (absolute or relative) to the directory with your package.json file. If not provided, the Plugin will try to search for the file in the current directory from which you have run the Plugin. |
 | --password       | (Optional) The master password to decrypt the **orgs** section of the export.json file.  <br />Please note, that when it is specified in the command line you need to have orgs section previously encrypted with the same master password before running the job (or alternatively  leave empty or omit **orgs** section).<br />The Plugin will attempt to decrypt the  **org.name**, **org.accessToken** and **org.instanceUrl** parameters using AEC-CBC algorithm before making the connection.  If for any reason the decryption failed, original unencrypted values will be used to connect.<br /><br />In addition if you set the parameter **encryptDataFiles=true** and use CSV files as data source then the Plugin will treat CSV files as previously encrypted and will try to decrypt them using the same master password.  Also the Plugin will encrypt CSV files when using CSV files as a data target. |
 
 
