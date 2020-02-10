@@ -161,8 +161,8 @@ export class Application {
         this.script.targetOrg = targetUsername;
         this.script.sourceOrg = sourceUsername;
 
-        this.uxLog(`Source Org: ${this.script.sourceOrg}.`);
-        this.uxLog(`Target Org: ${this.script.targetOrg}.`);
+        this.uxLog(`Source: ${this.script.sourceOrg}.`);
+        this.uxLog(`Target: ${this.script.targetOrg}.`);
         this.uxLog(`Script file: ${filePath}.`);
         if (password) {
             this.uxLog(`Password: ${password}.`);
@@ -198,35 +198,65 @@ export class Application {
             this.script.targetMedia = SfdmModels.Enums.DATA_MEDIA_TYPE.File;
         }
 
+        
+        
+
         // Create connections to the orgs
         let sourceScriptOrg = new List<SfdmModels.ScriptOrg>(this.script.orgs).FirstOrDefault(x => x.name == this.script.sourceOrg);
-        if (!sourceScriptOrg || !sourceScriptOrg.accessToken) {
-            try {
-                // Connection is not found int the package. Try to retrieve credentials from the SFDX.
-                let s = SfdxUtils.execSfdx("force:org:display", sourceScriptOrg.name);
-                let p = SfdxUtils.parseForceOrgDisplayResult(s);
-                this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.sourceMedia, true));
-            } catch (e) {
-                throw new SfdmModels.PluginInitError("Access token to the source org expired or invalid. Please reconnect.");
+        
+        if (this.script.sourceMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
+            if (!sourceScriptOrg || !sourceScriptOrg.accessToken) {
+                try {
+                    // Connection is not found int the package. Try to retrieve credentials from the SFDX.
+                    this.uxLog(`Trying to connect to ${sourceUsername} using SFDX CLI...`);
+                    let s = SfdxUtils.execSfdx("force:org:display", sourceUsername);
+                    let p = SfdxUtils.parseForceOrgDisplayResult(s);
+                    if (!p.isConnected) {
+                        throw new Error();
+                    }
+                    this.uxLog(`Successfully connected to ${p.Username}`);
+                    this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.sourceMedia, true));
+                } catch (e) {
+                    throw new SfdmModels.PluginInitError(`Attempt to connect to ${sourceUsername} using SFDX CLI failed. Please, refresh your local connection details.`);
+                }
+            } else {
+                this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(sourceScriptOrg.name, sourceScriptOrg.accessToken, sourceScriptOrg.instanceUrl, this.basePath, this.script.sourceMedia, true));
             }
-        } else {
-            this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(sourceScriptOrg.name, sourceScriptOrg.accessToken, sourceScriptOrg.instanceUrl, this.basePath, this.script.sourceMedia, true));
         }
-
-
+        
         let targetScriptOrg = new List<SfdmModels.ScriptOrg>(this.script.orgs).FirstOrDefault(x => x.name == this.script.targetOrg);
-        if (!targetScriptOrg || !targetScriptOrg.accessToken) {
-            try {
-                // Connection is not found int the package. Try to retrieve credentials from the SFDX.
-                let s = SfdxUtils.execSfdx("force:org:display", targetScriptOrg.name);
-                let p = SfdxUtils.parseForceOrgDisplayResult(s);
-                this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.targetMedia, false));
-            } catch (e) {
-                throw new SfdmModels.PluginInitError("Access token to the target org expired or invalid. Please reconnect.");
+
+        if (this.script.targetMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
+            if (!targetScriptOrg || !targetScriptOrg.accessToken) {
+                try {
+                    // Connection is not found int the package. Try to retrieve credentials from the SFDX.
+                    this.uxLog(`Trying to connect to ${targetUsername} using SFDX CLI...`);
+                    let s = SfdxUtils.execSfdx("force:org:display", targetUsername);
+                    let p = SfdxUtils.parseForceOrgDisplayResult(s);
+                    if (!p.isConnected) {
+                        throw new Error();
+                    }
+                    this.uxLog(`Successfully connected to ${p.Username}`);
+                    this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.targetMedia, false));
+                } catch (e) {
+                    throw new SfdmModels.PluginInitError(`Attempt to connect to ${targetUsername} using SFDX CLI failed. Please, refresh your local connection details.`);
+                }
+            } else {
+                this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(targetScriptOrg.name, targetScriptOrg.accessToken, targetScriptOrg.instanceUrl, this.basePath, this.script.targetMedia, false));
             }
-        } else {
-            this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(targetScriptOrg.name, targetScriptOrg.accessToken, targetScriptOrg.instanceUrl, this.basePath, this.script.targetMedia, false));
         }
+
+
+        if (this.script.sourceMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.File){
+            let targetOrg = this.orgs.get(this.script.targetKey);            
+            this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(targetOrg.name, targetOrg.accessToken, targetOrg.instanceUrl, this.basePath, this.script.sourceMedia, true));
+        }
+
+        if (this.script.targetMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.File){
+            let sourceOrg = this.orgs.get(this.script.sourceKey);            
+            this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(sourceOrg.name, sourceOrg.accessToken, sourceOrg.instanceUrl, this.basePath, this.script.targetMedia, false));
+        }
+
 
         this.orgs.forEach(org => {
             org.pollingIntervalMs = this.script.pollingIntervalMs;
@@ -972,7 +1002,7 @@ export class Application {
             // Write to csv  format issues file
             let csvIssuesFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
 
-            await CommonUtils.writeCsvFile(csvIssuesFilepath, csvIssues, true);            
+            await CommonUtils.writeCsvFile(csvIssuesFilepath, csvIssues, true);
 
             if (csvIssues.length == 0) {
                 this.uxLog(`There are no issues found during the last validation of the source CSV files.`);
@@ -1581,10 +1611,10 @@ export class Application {
                                 m.set(record["Id"], {
                                     "Child record Id": record["Id"],
                                     "Child sObject": task.sObjectName,
-                                    "Child external Id field" : taskField.name,
+                                    "Child external Id field": taskField.name,
                                     "Parent external Id field": taskField.originalScriptField.externalId,
                                     "Parent sObject": taskField.parentTaskField.task.sObjectName,
-                                    "Missing external Id value": record.hasOwnProperty(taskField.name) ? record[taskField.name] : `FIELD ${taskField.name} IS MISSING IN THE SOURCE RECORD`                                    
+                                    "Missing external Id value": record.hasOwnProperty(taskField.name) ? record[taskField.name] : `FIELD ${taskField.name} IS MISSING IN THE SOURCE RECORD`
                                 });
                                 missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                 delete record[fieldToUpdate];
@@ -1733,10 +1763,10 @@ export class Application {
                                     m.set(record["Id"], {
                                         "Child record Id": record["Id"],
                                         "Child sObject": task.sObjectName,
-                                        "Child external Id field" : taskField.name,
+                                        "Child external Id field": taskField.name,
                                         "Parent external Id field": taskField.originalScriptField.externalId,
                                         "Parent sObject": taskField.parentTaskField.task.sObjectName,
-                                        "Missing external Id value": record.hasOwnProperty(taskField.name) ? record[taskField.name] : `FIELD ${taskField.name} IS MISSING IN THE SOURCE RECORD`                                        
+                                        "Missing external Id value": record.hasOwnProperty(taskField.name) ? record[taskField.name] : `FIELD ${taskField.name} IS MISSING IN THE SOURCE RECORD`
                                     });
                                     missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                     delete record[fieldToUpdate];
