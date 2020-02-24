@@ -248,6 +248,8 @@ export default class Run extends SfdxCommand {
             }
             // --
         }
+
+        return {};
     }
 }
 
