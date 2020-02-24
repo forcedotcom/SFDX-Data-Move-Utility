@@ -55,6 +55,8 @@ Before using this plugin you need to perform standard procedure of installing SF
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm
 ```
 
+
+
 ### Installing
 
 <!--
@@ -65,56 +67,62 @@ There are two ways to install the SFDMU
 
 ```bash
 # If you already have previous version of the Plugin installed on your local machine and want to update it, first uninstall the previous version:
-sfdx plugins:uninstall sfdmu
+$ sfdx plugins:uninstall sfdmu
 
 # Install the latest version of the Plugin:
-sfdx plugins:install sfdmu
+$ sfdx plugins:install sfdmu
 ```
 
 <!-- 
 2. Install from the git repository:
 
 ```bash
-If you already have previous version of the Plugin installed from the current git source, first you need to unlink (uninstall) it from the Salesforce CLI.
+#If you already have previous version of the Plugin installed from the current git source, first you need to unlink (uninstall) it from the Salesforce CLI.
 
-1. Go to the directory contains the Plugin files and type:
-sfdx plugins:unlink
+#1. Go to the directory contains the Plugin files and type:
+$ sfdx plugins:unlink
 
-2. Update the files to the newest version.
-git pull origin master
+#2. Update the files to the newest version.
+$ git pull origin master
 
-3. Link the Plugin back to the Salesforce CLI: 
-sfdx plugins:link
+#3. Link the Plugin back to the Salesforce CLI: 
+$ sfdx plugins:link
 
 
+#If currently there is no Plugin installed on your machine, then skip previous steps and make as below.
 
-If currently there is no Plugin installed on your machine, then skip previous steps and make as below.
+#1. Clone git repository: 
+$ git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility
 
-1. Clone git repository: 
-git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility
+#2. Make this directory current:
+$ cd sf-data-move-utility
 
-2. Make this directory current:
-cd sf-data-move-utility
+#3. Install npm modules: 
+$ npm install
 
-3. Install npm modules: 
-npm install
-
-4. Link the Plugin to the Salesforce CLI: 
-sfdx plugins:link
+#4. Link the Plugin to the Salesforce CLI: 
+$ sfdx plugins:link
 
 ```
 -->
 
-<u>**Important note! **</u>
+<u>**Very important note! **</u>
 **If you find that the Plugin version number has recently updated or have any issue with the Plugin functionality, first please <u>try to uninstall</u> previously installed version from your local SFDX CLI (see description above) and <u>install the Plugin again</u>. This will ensure that all necessary updates and dependencies are applied to your local plugin installation.**
 
 
 
-
-## How to use
+## Command configuration
 
 This Plugin is fully configurable with a json file called **export.json**.
 By modifying it you can configure some export parameters and tell to the plugin which SObjects and which fields you want to process. 
+
+##### Watch the demo. The Plugin in action.
+
+Running the Plugin from the command console / terminal:
+
+![SFDMU DEMO](https://img.youtube.com/vi/KI_1vD93prA/hqdefault.jpg)
+
+( https://www.youtube.com/watch?v=KI_1vD93prA )
 
 
 
@@ -172,17 +180,9 @@ So you can export all records with preserving relationships between the objects 
 
 If you want to utilize the org credentials that were previously stored in your system using *sfdx force:auth:web:login*  or another authentication sfdx command you can simply omit the *orgs* section from the script, then the Plugin will try to retrieve access token from the SFDX local storage.
 
-##### Watch the demo
-
-Running the Plugin from the command console / terminal:
-
-![SFDMU DEMO](https://img.youtube.com/vi/KI_1vD93prA/hqdefault.jpg)
-
-( https://www.youtube.com/watch?v=KI_1vD93prA )
 
 
-
-#### Full list of the JSON parameters.
+#### Full list of the EXPORT.JSON parameters.
 
 Of course the Plugin has also a huge amount of advanced features which give you great flexibility in setting up the data migration process. 
 
@@ -210,57 +210,76 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | promptOnMissingParentObjects         | Boolean                    | Optional, Default true  | If  parent lookup or master-detail record was not found for the some of the child records - it will propmt or will not prompt user to break or to continue the migration.<br /><br />*It allows user to monitor the job and abort it when some data is missing.* |
 | allOrNone                            | Boolean                    | Optional, Default false | Abort job execution on any failed record or continue working anyway.<br />If true the execution will stop or the user will be prompted to stop depend on promptOnUpdateError parameter. <br /><br />*(**Note for REST API only:**  if true except of abort of script execution depend on promptOnUpdateError parameter - any failed records in a non-successful API call cause all changes made within this call to be rolled back. Record changes aren't committed unless all records are processed successfully)* |
 | promptOnUpdateError                  | Boolean                    | Optional, Default true  | When some records failed or when any other error occurred during data update prompt the user to stop the execution or to continue. |
-| encryptDataFiles                     | Boolean                    | Optional, Default false | Enables encryption / decryption of the CSV files when passing *--password* argument to the Plugin call and using *file* as Source or as the Target. |
+| encryptDataFiles                     | Boolean                    | Optional, Default false | Enables encryption / decryption of the CSV files when passing *--encryptkey* argument to the Plugin call and using *file* as Source or as the Target. |
 | validateCSVFilesOnly                 | Boolean                    | Optional, Default false | In general when you are using CSV files as data source, the source CSV files are subject of format  validation before running the migration job itself.  validateCSVFilesOnly=true  runs only the validation process  and stops the execution after the it is completed. |
-| createTargetCSVFiles                 | Boolean                    |                         |                                                              |
+| createTargetCSVFiles                 | Boolean                    | Optional, Default false | If true the Plugin will produce CSV file containing target records for each processed sObject with error information (if occured) per record. These CSV files are not encrypted even **--encryptkey** flag is provided. |
 
 
 
 
 
-#### Running the export job. 
+## Command execution
 
-##### Examples of CLI commands.
-
-To start the export from one Org to another settings the path to export.json implicitly:
+**Full sfdmu:run command syntax:**
 
 ```bash
-sfdx sfdmu:move --sourceusername source@name.com --targetusername target@name.com --path C:\Users\MyUser\Documents\SFDMU\data\MyPackage
+$ sfdx sfdmu:run [-s <string>] [-p <directory>] [--encryptkey <string>] [--silent] [--version] [--filelog] [--noprompt] [-u <string>] [--apiversion <string>] [--verbose] [--concise] [--quiet] [--json] 
+[--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+```
+
+**Available flags:**
+
+| Flag                          | Description                                                  |
+| ----------------------------- | ------------------------------------------------------------ |
+| --sourceusername, -s [string] | The username/alias of the source salesforce org to take the data from it.<br />As mentioned above the credentials can be explicitly set in the [orgs] section of the export.json, or you can specify the username of the organization, that is previously connected using  standard sfdx force:auth:web:login command.<br /><br />**"--sourceusername csvfile"** will import records from previously created CSV files into the target Org.<br />The CSV files must exist in the same directory as the export.json file.<br />Use *--targetusername csvfile* parameter (see below) to create these files from the source records. |
+| --targetusername, -u [string] | The username/alias of the target salesforce org where to put the data.<br /><br />**--targetusername csvfile** will export records from the source org into CSV files. Each SObject will be stored in separated file. |
+| --path, -p [directory]        | [Optional] Absolute or relative path to the directory that contains working export.json file. If not provided, the plugin will try to search for the file in the current directory. |
+| --quiet                       | [Optional] Disable logging - show only success/errors. Supress stdout output. if --filelog is specified the plugin will still log into file. |
+| --silent                      | [Optional] The same as --quiet flag. Disable logging - show only success/errors. Supress stdout output. if --filelog is specified the plugin will still log into file. |
+| --apiversion [float]          | [Optional] If specified overrides apiVersion parameter of the export.json file. Used for all api requests made by this command. Example value: 47.0 |
+| --concise                     | [Optional] Display only short messages, that are highly important for understanding the progress of the execution. |
+| --filelog                     | [Optional] In addition stdout/stderr this flag will turn on logging into .log file. Each command run will create separated log file inside /log subdirectory related to the with the working export.json file. A verbosity control is disabled for log files: all messages will be logged, even --quite flag was specified. <br />By default file logging is disabled. |
+| --json                        | [Optional] Return formatted json instead of text to stdout as a result of the command execution. <br />Json result will also contain extended information as start time, end time, time elapsed etc. |
+| --nopromp                     | [Optional] Flag to skip all prompting for more inputs or confirmation. Command will continue using the default options. |
+| --verbose                     | [Optional] Display all command messages and errors.          |
+| --version                     | [Optional] Display the current installed version of the plugin. |
+| --loglevel                    | [Optional, default: warn] logging level for this command invocation. |
+| --encryptkey                  | [Optional] The encryption key to decrypt the **orgs** section of the export.json file.  <br />Please note, that when it is specified in the command line you need to have orgs section previously encrypted with the same encryption key before running the job (or alternatively  leave empty or omit **orgs** section).<br />The Plugin will attempt to decrypt the  **org.name**, **org.accessToken** and **org.instanceUrl** parameters using AEC-CBC algorithm before making the connection.  If for any reason the decryption failed, original unencrypted values will be used to connect.<br /><br />In addition if you set the parameter **encryptDataFiles=true** and use CSV files as data source then the Plugin will treat CSV files as previously encrypted and will try to decrypt them using the same key.  Also the Plugin will encrypt CSV files when using CSV files as a data target. |
+
+**Basic examples:**
+
+Use following console command to start the export from one Org to another:
+
+```bash
+$ sfdx sfdmu:run --sourceusername source@name.com --targetusername target@name.com
 ```
 
 
 To import from the CSV files use the format as below:
 
 ```bash
-sfdx sfdmu:move --sourceusername file --targetusername target@name.com
+$ sfdx sfdmu:run --sourceusername csvfile --targetusername target@name.com
 ```
 
 
 To export records into CSV files use the format as below:
 
 ```bash
-sfdx sfdmu:move --sourceusername source@name.com --targetusername file
+$ sfdx sfdmu:run --sourceusername source@name.com --targetusername csvfile
 ```
 
 
 To export records into CSV files with encryption use the format as below:
 
 ```bash
-sfdx sfdmu:move --sourceusername source@name.com --targetusername file --password mypass
+$ sfdx sfdmu:run --sourceusername source@name.com --targetusername csvfile --encryptkey myencrkey
 ```
 
 
 
-| Flag             | Description                                                  |
-| ---------------- | ------------------------------------------------------------ |
-| --sourceusername | (Required) The username of the source salesforce org to take the data from it.<br />As mentioned above the credentials can be explicitly set in the [orgs] section of the export.json, or you can specify the username of the organization, that is previously connected using  standard sfdx force:auth:web:login command.<br /><br />**"--sourceusername file"** will import records from previously created CSV files into the target Org.<br />The CSV files must exist in the same directory as the export.json file.<br />Use --targetusername file parameter (see below) to create these files from the source records. |
-| --targetusername | (Required) The username of the target salesforce org where to put the data.<br /><br />**--targetusername file** will export records from the source org into CSV files. Each SObject will be stored in separated file. |
-| --path           | (Optional) The path (absolute or relative) to the directory with your package.json file. If not provided, the Plugin will try to search for the file in the current directory from which you have run the Plugin. |
-| --password       | (Optional) The master password to decrypt the **orgs** section of the export.json file.  <br />Please note, that when it is specified in the command line you need to have orgs section previously encrypted with the same master password before running the job (or alternatively  leave empty or omit **orgs** section).<br />The Plugin will attempt to decrypt the  **org.name**, **org.accessToken** and **org.instanceUrl** parameters using AEC-CBC algorithm before making the connection.  If for any reason the decryption failed, original unencrypted values will be used to connect.<br /><br />In addition if you set the parameter **encryptDataFiles=true** and use CSV files as data source then the Plugin will treat CSV files as previously encrypted and will try to decrypt them using the same master password.  Also the Plugin will encrypt CSV files when using CSV files as a data target. |
+## Advanced features
 
-
-
-#### Combined External Id keys.
+#### Combined External Id keys feature.
 
 This is useful feature that allows you to bind source and target records by creating "virtual" external Id field which is a combination of multiple field values. For example, there is Description object that has two parent objects called Article and Language and there is no unique field defined in Description object.
 Each Article has several Descriptions with different Languages. Each Language and Article have unique Names. 
@@ -385,13 +404,16 @@ Available values for the step parameter are:
 
 
 
-#### Migration issues reports.
+
+
+#### Reports and logs.
 
 The plugin provides a variety of information about common warnings and errors that were found at runtime. All report files are put into the same folder as the corresponding export.json file.
 
 - The Issues regarding source CSV files are in the **CSVIssuesReport.csv** file.
 - The issues regarding missing parent lookup records are in the **MissingParentRecordsReport.csv** file.
-- While each running of the migration process the Plugin creates dedicated log file that can be found in the **/logs** subdirectory. This log file mirrors the console/terminal output and allow you to review it.
+- While each running of the migration process when --filelog flag is specified the Plugin creates dedicated log file that can be found in the **logs/** subdirectory. This log file mirrors the console/terminal output and allow you to review it.
+  
 
 
 

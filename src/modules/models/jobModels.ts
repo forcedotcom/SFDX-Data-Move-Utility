@@ -4,24 +4,27 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as SfdmModels from "../models";
+import * as deepClone from 'deep.clone';
+import * as SfdmModels from '../models';
+import {
+    composeQuery,
+    getComposedField,
+    Query,
+    WhereClause
+    } from 'soql-parser-js';
 import { List } from 'linq.ts';
-import { getComposedField, composeQuery, WhereClause, Query } from 'soql-parser-js';
-import * as deepClone from "deep.clone";
-import { SfdxUtils } from "../sfdx";
+import { SfdxUtils } from '../sfdx';
 import casual = require("casual");
 
 
-// casual.define('sequence', function() {
-//     return {
-//         x: Math.random(),
-//         y: Math.random()
-//     };
-// });
+
 
 
 /**
- * Execution job
+ * Class represents migration job
+ *
+ * @export
+ * @class Job
  */
 export class Job {
 
@@ -29,14 +32,16 @@ export class Job {
         this.tasks = new List<Task>();
     }
 
-    /**
-     * Tasks to execute
-     */
     tasks: List<Task>;
 }
 
+
+
 /**
- * Execution task
+ * Class represents task as part of the migration job
+ *
+ * @export
+ * @class Task
  */
 export class Task {
 
@@ -57,27 +62,12 @@ export class Task {
     scriptObject: SfdmModels.ScriptObject;
     taskFields: List<TaskField>;
 
-    /**
-     * Source records cache
-     */
     sourceRecordSet: Map<SfdmModels.Enums.RECORDS_SET, List<object>>;
-
-    /**
-     * Calculated total amount of the source records
-     */
-    sourceTotalRecorsCount: number = -1;
-
-    /**
-     * Calculated total amount of the target records
-     */
     targetRecordSet: Map<SfdmModels.Enums.RECORDS_SET, List<object>>;
 
-
+    sourceTotalRecorsCount: number = -1;
     targetTotalRecorsCount: number = -1;
 
-    /**
-     * SObject api name
-     */
     get sObjectName(): string {
         return this.scriptObject.name;
     }
@@ -85,11 +75,7 @@ export class Task {
     get externalIdTaskField(): TaskField {
         return this.taskFields.FirstOrDefault(x => x.name == this.scriptObject.externalId);
     }
-
-
-
-
-    // ************************************************
+   
     createOriginalTaskFields() {
         this.scriptObject.fields.forEach(field => {
             let mp = field.sObject.mockFields.filter(f => f.name == field.name)[0];
@@ -113,7 +99,7 @@ export class Task {
             let childTask = this;
 
             let parentTaskField = parentTask.taskFields.FirstOrDefault(x => x.name == value[1].name);
-            let child_r_TaskField = childTask.taskFields.FirstOrDefault(x => x.name == value[0].name);
+            let childRTaskField = childTask.taskFields.FirstOrDefault(x => x.name == value[0].name);
 
             let indexOfParentTask = job.tasks.IndexOf(parentTask);
             let indexOfChildTask = job.tasks.IndexOf(childTask);
@@ -126,13 +112,13 @@ export class Task {
                 task: childTask
             });
 
-            child_r_TaskField.externalIdTaskField = externalIdTaskField;
+            childRTaskField.externalIdTaskField = externalIdTaskField;
             childTask.taskFields.Add(externalIdTaskField);
 
         });
     }
 
-    createQuery(fields: Array<string> = undefined, removeLimits: boolean = false, parsedQuery?: Query): string {
+    createQuery(fields?: Array<string>, removeLimits: boolean = false, parsedQuery?: Query): string {
 
         parsedQuery = parsedQuery || this.scriptObject.parsedQuery;
 
@@ -326,8 +312,13 @@ export class Task {
     }
 }
 
+
+
 /**
- * Fields that should be included into the Task
+ * Class represents field as part of the task
+ *
+ * @export
+ * @class TaskField
  */
 export class TaskField {
 

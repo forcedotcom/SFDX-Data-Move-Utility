@@ -333,6 +333,7 @@ export class ScriptMockField {
     pattern: string;
 }
 
+
 export class ScriptField {
 
     constructor(init?: Partial<ScriptField>) {

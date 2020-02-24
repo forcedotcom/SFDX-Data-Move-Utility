@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as SfdmModels from "./models/index";
+import * as SfdmModels from "../models/index";
 import { List } from 'linq.ts';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -18,29 +18,118 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { SfdxUtils } from "./sfdx";
-import { CommonUtils } from "./common";
+import { SfdxUtils, ApiCalloutStatus } from "../sfdx";
+import { CommonUtils } from "../common";
 import SimpleCrypto from "simple-crypto-js";
-import { ScriptField } from "./models/index";
+import { ScriptField } from "../models/index";
+import { MessageUtils, COMMON_RESOURCES, LOG_MESSAGE_VERBOSITY } from "../messages";
+
+/**
+ * Leys form the command resource file
+ *
+ * @enum {number}
+ */
+export enum RUN_RESOURCES {
+    "pluginVersion" = "pluginVersion",
+    "newLine" = "newLine",
+    "workingPathDoesNotExist" = "workingPathDoesNotExist",
+    "packageFileDoesNotExist" = "packageFileDoesNotExist",
+    "loadingPackageFile" = "loadingPackageFile",
+    "objectWillBeExcluded" = "objectWillBeExcluded",
+    "noObjectsDefinedInPackageFile" = "noObjectsDefinedInPackageFile",
+    "sourceOrg" = "sourceOrg",
+    "targetOrg" = "targetOrg",
+    "scriptFile" = "scriptFile",
+    "encryptionKey" = "encryptionKey",
+    "invalidEncryptionKey" = "invalidEncryptionKey",
+    "tryingToConnectCLI" = "tryingToConnectCLI",
+    "successfullyConnected" = "successfullyConnected",
+    "tryingToConnectCLIFailed" = "tryingToConnectCLIFailed",
+    "sourceTargetCouldNotBeTheSame" = "sourceTargetCouldNotBeTheSame",
+    "accessToSourceExpired" = "accessToSourceExpired",
+    "accessToTargetExpired" = "accessToTargetExpired",
+    "MalformedQuery" = "MalformedQuery",
+    "MalformedDeleteQuery" = "MalformedDeleteQuery",
+    "executingPackageScript" = "executingPackageScript",
+    "preparing" = "preparing",
+    "gettingOrgMetadata" = "gettingOrgMetadata",
+    "noExternalKey" = "noExternalKey",
+    "objectSourceDoesNotExist" = "objectSourceDoesNotExist",
+    "objectTargetDoesNotExist" = "objectTargetDoesNotExist",
+    "analysingOrgMetadata" = "analysingOrgMetadata",
+    "processingSObject" = "processingSObject",
+    "fieldSourceDoesNtoExist" = "fieldSourceDoesNtoExist",
+    "fieldTargetDoesNtoExist" = "fieldTargetDoesNtoExist",
+    "referencedFieldDoesNotExist" = "referencedFieldDoesNotExist",
+    "dataMigrationProcessStarted" = "dataMigrationProcessStarted",
+    "buildingMigrationStaregy" = "buildingMigrationStaregy",
+    "executionOrder" = "executionOrder",
+    "validatingAndFixingSourceCSVFiles" = "validatingAndFixingSourceCSVFiles",
+    "writingToCSV" = "writingToCSV",
+    "noIssuesFoundDuringCSVValidation" = "noIssuesFoundDuringCSVValidation",
+    "issuesFoundDuringCSVValidation" = "issuesFoundDuringCSVValidation",
+    "continueTheJobPrompt" = "continueTheJobPrompt",
+    "AbortedByTheUser" = "AbortedByTheUser",
+    "csvFileIsEmpty" = "csvFileIsEmpty",
+    "columnsMissingInCSV" = "columnsMissingInCSV",
+    "csvFileForParentSObjectIsEmpty" = "csvFileForParentSObjectIsEmpty",
+    "missingParentRecordForGivenLookupValue" = "missingParentRecordForGivenLookupValue",
+    "invalidColumnFormat" = "invalidColumnFormat",
+    "columnWillNotBeProcessed" = "columnWillNotBeProcessed",
+    "csvFilesWereUpdated" = "csvFilesWereUpdated",
+    "validationAndFixingsourceCSVFilesCompleted" = "validationAndFixingsourceCSVFilesCompleted",
+    "deletingOldData" = "deletingOldData",
+    "deletingTargetSObject" = "deletingTargetSObject",
+    "queryingTargetSObject" = "queryingTargetSObject",
+    "queryingTargetSObjectCompleted" = "queryingTargetSObjectCompleted",
+    "deletingFromTheTargetNRecordsWillBeDeleted" = "deletingFromTheTargetNRecordsWillBeDeleted",
+    "queryError" = "queryError",
+    "deletingFromTheTargetCompleted" = "deletingFromTheTargetCompleted",
+    "deletingOldDataCompleted" = "deletingOldDataCompleted",
+    "deletingOldDataSkipped" = "deletingOldDataSkipped",
+    "retrievingData" = "retrievingData",
+    "gettingRecordsCount" = "gettingRecordsCount",
+    "totalRecordsAmount" = "totalRecordsAmount",
+    "queryingAll" = "queryingAll",
+    "queryingAllQueryString" = "queryingAllQueryString",
+    "queryingIn" = "queryingIn",
+    "queryingFinished" = "queryingFinished",
+    "executingQuery" = "executingQuery",
+    "retrievingDataCompleted" = "retrievingDataCompleted",
+    "Step1" = "Step1",
+    "Step2" = "Step2",
+    "updatingTarget" = "updatingTarget",
+    "writingToFile" = "writingToFile",
+    "writingToFileCompleted" = "writingToFileCompleted",
+    "updatingTargetObject" = "updatingTargetObject",
+    "updatingTargetObjectCompleted" = "updatingTargetObjectCompleted",
+    "fieldIsMissingInTheSourceRecords" = "fieldIsMissingInTheSourceRecords",
+    "seeFileForTheDetails" = "seeFileForTheDetails",
+    "missingParentLookupRecord" = "missingParentLookupRecord",
+    "updatingTargetCompleted" = "updatingTargetCompleted",
+    "finalizing" = "finalizing"
+}
+
+/**
+ * Class to execute SFDMU:RUN CLI command
+ *
+ * @export
+ * @class RunCommand
+ */
+export class RunCommand {
 
 
 
-export class Application {
-
-    private startTime: Date;
-    private endTime: Date;
-
+    logger: MessageUtils;
     basePath: string;
-    dataPath: string;
-    filePath: string;
     password: string;
 
     script: SfdmModels.Script;
     orgs: Map<string, SfdmModels.SOrg> = new Map<string, SfdmModels.SOrg>();
     job: SfdmModels.Job = new SfdmModels.Job();
 
-    constructor(ux: any) {
-        this.ux = ux;
+    constructor(logger: MessageUtils) {
+        this.logger = logger;
     }
 
     get sourceOrg(): SfdmModels.SOrg {
@@ -51,121 +140,81 @@ export class Application {
         return this.orgs.get(this.script.targetKey);
     }
 
-    ux: any;
 
-    getLogFilePath() {
-        if (!this.filePath) {
-            let p = path.join(this.basePath, '/logs/');
-            if (!fs.existsSync(p)) {
-                fs.mkdirSync(p);
-            }
-            this.filePath = path.join(p, `log_${CommonUtils.formatFileDate(new Date())}.txt`);
-        }
-        return this.filePath;
-    }
 
-    uxLogStart() {
-        this.startTime = new Date();
-        this.uxLog("Process started.");
-    }
 
-    uxLog(message: string, br: boolean = false, error: boolean = false) {
-        let msg = "";
-        if (message) {
-            if (!error) {
-                msg = `[ ${CommonUtils.formatDateTime(new Date())}] ${message}`;
-                this.ux.log(msg);
-            }
-            else {
-                msg = `[ ${CommonUtils.formatDateTime(new Date())}] [ERROR] ${message}`;
-                this.ux.error(msg);
-            }
-            if (br) {
-                this.ux.log("\n");
-            }
-        }
-        else {
-            msg = "";
-            this.ux.log("\n");
-        }
-        if (this.basePath) {
-            let isStarting = !this.filePath;
-            let filePath = this.getLogFilePath();
-            if (isStarting) {
-                let msgStart = `[ ${CommonUtils.formatDateTime(new Date())}] Process started`;
-                fs.appendFileSync(filePath, msgStart);
-            }
-            fs.appendFileSync(filePath, "\n" + msg);
-        }
-    }
-
-    uxLogEnd() {
-        this.endTime = new Date();
-        this.uxLog("Process finished.");
-        this.uxLog(`total time elapsed: ${CommonUtils.timeDiffString(this.startTime, this.endTime)}.`);
-    }
 
     /**
-     * Function to initialize the Application object, setup scripts, validate metadata, etc
+     * Function to initialize the Command
+     *
+     * @param {string} baseDir
+     * @param {string} targetUsername
+     * @param {string} sourceUsername
+     * @param {string} password
+     * @param {string} apiVersion
+     * @memberof RunCommand
      */
-    async initApplication(baseDir: string, targetUsername: string, sourceUsername: string, password: string) {
+    async initCommand(baseDir: string,
+        targetUsername: string,
+        sourceUsername: string,
+        password: string,
+        apiVersion: string) {
 
-        this.uxLog("sfdmu:move command has started.");
-
-        // Validate usernames
-        if (!sourceUsername) {
-            throw new SfdmModels.PluginInitError("Missing source user name.");
-        }
-
-        if (!targetUsername) {
-            throw new SfdmModels.PluginInitError("Missing target user name.");
-        }
 
         this.password = password;
-
-        // Setup
         this.basePath = path.isAbsolute(baseDir) ? baseDir : path.join(process.cwd(), baseDir.toString());
         this.basePath = this.basePath.replace(/([^"]+)(.*)/, "$1");
 
         if (!fs.existsSync(this.basePath)) {
-            throw new SfdmModels.FileSystemError("The working directory does not exist");
+            throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.workingPathDoesNotExist));
         }
 
         // Read export.json script        
         let filePath = path.join(this.basePath, 'export.json');
 
         if (!fs.existsSync(filePath)) {
-            throw new SfdmModels.FileSystemError("The export.json file does not exist in the working directory");
+            throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.packageFileDoesNotExist));
         }
 
-        this.uxLog("");
-        this.uxLog("Loading and validating the package script...");
+        this.logger.infoMinimal(RUN_RESOURCES.newLine);
+        this.logger.headerMinimal(RUN_RESOURCES.loadingPackageFile);
 
         let json = fs.readFileSync(filePath, 'utf8');
         let jsonObject = JSON.parse(json);
         this.script = plainToClass(SfdmModels.Script, jsonObject);
+        if (apiVersion) {
+            this.script.apiVersion = apiVersion;
+        }
 
         // Filter out disabled objects
         this.script.objects = this.script.objects.filter(object => {
             let ret = !object.excluded || object.operation == SfdmModels.Enums.OPERATION.Readonly;
             if (!ret) {
-                this.uxLog(`[NOTE] sObject ${object.name} will be excluded from the process.`);
+                this.logger.infoVerbose(RUN_RESOURCES.objectWillBeExcluded, object.name);
             }
             return ret;
         });
 
         if (this.script.objects.length == 0) {
-            throw new SfdmModels.PluginInitError("There are no objects defined to process.");
+            throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.noObjectsDefinedInPackageFile));
         }
 
         this.script.targetOrg = targetUsername;
         this.script.sourceOrg = sourceUsername;
 
-        this.uxLog(`Source: ${this.script.sourceOrg}.`);
-        this.uxLog(`Target: ${this.script.targetOrg}.`);
-        this.uxLog(`Script file: ${filePath}.`);
-        if (password) {
-            this.uxLog(`Password: ${password}.`);
+        if (!password) {
+            this.logger.objectMinimal({
+                "Source": this.logger.getResourceString(RUN_RESOURCES.sourceOrg, this.script.sourceOrg),
+                "Target": this.logger.getResourceString(RUN_RESOURCES.targetOrg, this.script.targetOrg),
+                "Package script": this.logger.getResourceString(RUN_RESOURCES.scriptFile, filePath)
+            });
+        } else {
+            this.logger.objectMinimal({
+                "Source": this.logger.getResourceString(RUN_RESOURCES.sourceOrg, this.script.sourceOrg),
+                "Target": this.logger.getResourceString(RUN_RESOURCES.targetOrg, this.script.targetOrg),
+                "Package script": this.logger.getResourceString(RUN_RESOURCES.scriptFile, filePath),
+                "Encryption key": this.logger.getResourceString(RUN_RESOURCES.encryptionKey, password)
+            });
         }
 
         // Encryption
@@ -184,62 +233,62 @@ export class Application {
             });
         }
         if (invalidPassword) {
-            this.uxLog(`[WARNING] Invalid password. Original unencrypted credentials will be used.`);
+            this.logger.warn(RUN_RESOURCES.invalidEncryptionKey);
         }
 
-        if (sourceUsername.toLowerCase() == "file") {
+        if (sourceUsername.toLowerCase() == "csvfile") {
             this.script.sourceOrg = this.script.targetOrg;
             this.script.sourceMedia = SfdmModels.Enums.DATA_MEDIA_TYPE.File;
         }
 
         // Detect media types
-        if (targetUsername.toLowerCase() == "file") {
+        if (targetUsername.toLowerCase() == "csvfile") {
             this.script.targetOrg = this.script.sourceOrg;
             this.script.targetMedia = SfdmModels.Enums.DATA_MEDIA_TYPE.File;
         }
 
-        
-        
+
+
 
         // Create connections to the orgs
         let sourceScriptOrg = new List<SfdmModels.ScriptOrg>(this.script.orgs).FirstOrDefault(x => x.name == this.script.sourceOrg);
-        
+
         if (this.script.sourceMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
             if (!sourceScriptOrg || !sourceScriptOrg.accessToken) {
                 try {
-                    // Connection is not found int the package. Try to retrieve credentials from the SFDX.
-                    this.uxLog(`Trying to connect to ${sourceUsername} using SFDX CLI...`);
+                    // Connection is not found in the package. Try to retrieve credentials from the SFDX.
+                    this.logger.infoNormal(RUN_RESOURCES.tryingToConnectCLI, sourceUsername);
                     let s = SfdxUtils.execSfdx("force:org:display", sourceUsername);
                     let p = SfdxUtils.parseForceOrgDisplayResult(s);
                     if (!p.isConnected) {
                         throw new Error();
                     }
-                    this.uxLog(`Successfully connected to ${p.Username}`);
+                    this.logger.infoNormal(RUN_RESOURCES.successfullyConnected, p.Username);
                     this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.sourceMedia, true));
                 } catch (e) {
-                    throw new SfdmModels.PluginInitError(`Attempt to connect to ${sourceUsername} using SFDX CLI failed. Please, refresh your local connection details.`);
+                    throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.tryingToConnectCLIFailed, sourceUsername));
                 }
             } else {
                 this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(sourceScriptOrg.name, sourceScriptOrg.accessToken, sourceScriptOrg.instanceUrl, this.basePath, this.script.sourceMedia, true));
             }
         }
-        
+
         let targetScriptOrg = new List<SfdmModels.ScriptOrg>(this.script.orgs).FirstOrDefault(x => x.name == this.script.targetOrg);
 
         if (this.script.targetMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
             if (!targetScriptOrg || !targetScriptOrg.accessToken) {
                 try {
                     // Connection is not found int the package. Try to retrieve credentials from the SFDX.
-                    this.uxLog(`Trying to connect to ${targetUsername} using SFDX CLI...`);
+                    this.logger.infoNormal(RUN_RESOURCES.tryingToConnectCLI, targetUsername);
                     let s = SfdxUtils.execSfdx("force:org:display", targetUsername);
                     let p = SfdxUtils.parseForceOrgDisplayResult(s);
                     if (!p.isConnected) {
                         throw new Error();
                     }
-                    this.uxLog(`Successfully connected to ${p.Username}`);
+                    this.logger.infoNormal(RUN_RESOURCES.successfullyConnected, p.Username);
                     this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(p.Username, p.AccessToken, p.InstanceUrl, this.basePath, this.script.targetMedia, false));
                 } catch (e) {
-                    throw new SfdmModels.PluginInitError(`Attempt to connect to ${targetUsername} using SFDX CLI failed. Please, refresh your local connection details.`);
+                    throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.tryingToConnectCLIFailed, targetUsername));
                 }
             } else {
                 this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(targetScriptOrg.name, targetScriptOrg.accessToken, targetScriptOrg.instanceUrl, this.basePath, this.script.targetMedia, false));
@@ -247,13 +296,13 @@ export class Application {
         }
 
 
-        if (this.script.sourceMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.File){
-            let targetOrg = this.orgs.get(this.script.targetKey);            
+        if (this.script.sourceMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
+            let targetOrg = this.orgs.get(this.script.targetKey);
             this.orgs.set(this.script.sourceKey, new SfdmModels.SOrg(targetOrg.name, targetOrg.accessToken, targetOrg.instanceUrl, this.basePath, this.script.sourceMedia, true));
         }
 
-        if (this.script.targetMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.File){
-            let sourceOrg = this.orgs.get(this.script.sourceKey);            
+        if (this.script.targetMedia == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
+            let sourceOrg = this.orgs.get(this.script.sourceKey);
             this.orgs.set(this.script.targetKey, new SfdmModels.SOrg(sourceOrg.name, sourceOrg.accessToken, sourceOrg.instanceUrl, this.basePath, this.script.targetMedia, false));
         }
 
@@ -267,27 +316,28 @@ export class Application {
         });
 
         if (this.sourceOrg.isEquals(this.targetOrg)) {
-            throw new SfdmModels.PluginInitError("The source and the target could not be the same");
+            throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.sourceTargetCouldNotBeTheSame));
         }
 
         // Validate access token
         try {
-            await SfdxUtils.validateAccessToken(this.sourceOrg);
+            await SfdxUtils.validateAccessTokenAsync(this.sourceOrg);
         } catch (e) {
-            throw new SfdmModels.PluginInitError("Access token to the Source Org has expired or the user has no access to it. Please reconnect.");
+            throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.accessToSourceExpired));
         }
 
         try {
-            await SfdxUtils.validateAccessToken(this.targetOrg);
+            await SfdxUtils.validateAccessTokenAsync(this.targetOrg);
         } catch (e) {
-            throw new SfdmModels.PluginInitError("Access token to the Target Org has expired or the user has no access to it. Please reconnect.");
+            throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.accessToTargetExpired));
         }
 
         // Parse queries
         this.script.objects.forEach(object => {
 
-            if (CommonUtils.isString(object.operation))
+            if ((typeof object.operation == "string") == true) {
                 object.operation = <SfdmModels.Enums.OPERATION>SfdmModels.Enums.OPERATION[object.operation.toString()];
+            }
 
             try {
                 object.parsedQuery = parseQuery(object.query);
@@ -296,7 +346,7 @@ export class Application {
                     object.parsedQuery.fields = [getComposedField("Id")];
                 }
             } catch (e) {
-                throw new SfdmModels.PluginInitError(`Malformed query for the sObject ${object.name}: ${object.query}, error: ${e}.`);
+                throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.MalformedQuery, object.name, object.query, e));
             }
 
             if (object.deleteOldData && object.operation == SfdmModels.Enums.OPERATION.Upsert) {
@@ -315,7 +365,7 @@ export class Application {
                     }
                     object.parsedDeleteQuery.fields = [getComposedField("Id")];
                 } catch (e) {
-                    throw new SfdmModels.PluginInitError(`Malformed delete query for the sObject ${object.name}: ${object.deleteQuery}, error: ${e}.`);
+                    throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.MalformedDeleteQuery, object.name, object.deleteQuery, e));
                 }
             }
 
@@ -324,8 +374,8 @@ export class Application {
 
 
         // Add RecordType object if mssing & needed
-        if (this.script.objects.filter(x => x.parsedQuery.fields.filter(x1 => (<SOQLField>x1).field == "RecordTypeId").length > 0).length > 0
-            && this.script.objects.filter(x => x.name == "RecordType").length == 0) {
+        if (this.script.objects.some(x => x.parsedQuery.fields.some(x1 => (<SOQLField>x1).field == "RecordTypeId"))
+            && !this.script.objects.some(x => x.name == "RecordType")) {
             let rtObject: SfdmModels.ScriptObject = new SfdmModels.ScriptObject({
                 name: "RecordType",
                 externalId: "DeveloperName",
@@ -347,35 +397,34 @@ export class Application {
 
 
         // Describe sObjects
-        this.uxLog("");
-        this.uxLog("Executing the package script...");
-        this.uxLog("Preparing...");
-        this.uxLog("Getting org metadata...");
+        this.logger.infoMinimal(RUN_RESOURCES.gettingOrgMetadata);
 
         for (let i = 0; i < this.script.objects.length; i++) {
 
             let object: SfdmModels.ScriptObject = this.script.objects[i];
+
+            this.logger.infoVerbose(RUN_RESOURCES.processingSObject, object.name);
 
             // Validaiton external id
             if (object.operation != SfdmModels.Enums.OPERATION.Insert
                 && object.operation != SfdmModels.Enums.OPERATION.Readonly
                 && !object.isComplexExternalId
                 && !object.externalId) {
-                throw new SfdmModels.MetadataError(`Object ${object.name} has no ExternalId key defined. ${object.strOperation} operation required explicit ExternalId definition.`);
+                throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.noExternalKey, object.name, object.strOperation));
             }
 
             // Describe source sObject
             try {
                 object.sObjectDescribe = await SfdxUtils.describeSObjectAsync(object.name, this.sourceOrg, this.targetOrg.sObjectsMap);
             } catch (e) {
-                throw new SfdmModels.MetadataError(`Object ${object.name} defined in the Script does not exist in the Source`);
+                throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.objectSourceDoesNotExist, object.name));
             }
 
             // Describe target sObject
             try {
                 object.sObjectDescribeTarget = await SfdxUtils.describeSObjectAsync(object.name, this.targetOrg, this.sourceOrg.sObjectsMap);
             } catch (e) {
-                throw new SfdmModels.MetadataError(`Object ${object.name} defined in the Script does not exist in the Target`);
+                throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.objectTargetDoesNotExist, object.name));
             }
         }
 
@@ -397,11 +446,13 @@ export class Application {
 
 
         // Analysing relationships and building script data
-        this.uxLog("Analysing object metadata...");
+        this.logger.infoMinimal(RUN_RESOURCES.analysingOrgMetadata);
 
         for (let i = 0; i < this.script.objects.length; i++) {
 
             let object: SfdmModels.ScriptObject = this.script.objects[i];
+
+            this.logger.infoVerbose(RUN_RESOURCES.processingSObject, object.name);
 
             // Describe sObject where there this no describtion
             if (!object.sObjectDescribe) {
@@ -410,14 +461,14 @@ export class Application {
                 try {
                     object.sObjectDescribe = await SfdxUtils.describeSObjectAsync(object.name, this.sourceOrg, this.targetOrg.sObjectsMap);
                 } catch (e) {
-                    throw new SfdmModels.MetadataError(`Object ${object.name} defined in the Script does not exist in the Source`);
+                    throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.objectSourceDoesNotExist, object.name));
                 }
 
                 // Describe target sObject
                 try {
                     object.sObjectDescribeTarget = await SfdxUtils.describeSObjectAsync(object.name, this.targetOrg, this.sourceOrg.sObjectsMap);
                 } catch (e) {
-                    throw new SfdmModels.MetadataError(`Object ${object.name} defined in the Script does not exist in the Target`);
+                    throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.objectTargetDoesNotExist, object.name));
                 }
             }
 
@@ -488,6 +539,8 @@ export class Application {
 
             let object: SfdmModels.ScriptObject = this.script.objects[i];
 
+            this.logger.infoVerbose(RUN_RESOURCES.processingSObject, object.name);
+
             var scriptFieldsList = new List<FieldType>(object.parsedQuery.fields).Cast<SOQLField>();
 
             // Generate Script Fields & build fields map 
@@ -505,14 +558,14 @@ export class Application {
                 // Validate object metadata
                 field.sFieldDescribe = object.sObjectDescribe.fieldsMap.get(field.name);
                 if (field.sFieldDescribe == null /*&& !field.isComplexField*/) {
-                    throw new SfdmModels.MetadataError(`Missing field ${object.name + '.' + field.name} the Source`);
+                    throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.fieldSourceDoesNtoExist, object.name, field.name));
                 }
 
                 // Validate target object metadata
                 field.sFieldDescribeTarget = object.sObjectDescribeTarget.fieldsMap.get(field.name);
 
                 if (field.sFieldDescribeTarget == null /* && !field.isComplexField*/) {
-                    throw new SfdmModels.MetadataError(`Missing field ${object.name + '.' + field.name} in the Target`);
+                    throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.fieldTargetDoesNtoExist, object.name, field.name));
                 }
 
                 // Build references
@@ -541,20 +594,20 @@ export class Application {
                             try {
                                 refObj.sObjectDescribe = await SfdxUtils.describeSObjectAsync(refObj.name, this.sourceOrg, this.targetOrg.sObjectsMap);
                             } catch (e) {
-                                throw new SfdmModels.MetadataError(`Object ${refObj.name} defined in the Script does not exist in the Source`);
+                                throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.objectSourceDoesNotExist, refObj.name));
                             }
 
                             // Describe target sObject
                             try {
                                 refObj.sObjectDescribeTarget = await SfdxUtils.describeSObjectAsync(refObj.name, this.targetOrg, this.sourceOrg.sObjectsMap);
                             } catch (e) {
-                                throw new SfdmModels.MetadataError(`Object ${refObj.name} defined in the Script does not exist in the Target`);
+                                throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.objectTargetDoesNotExist, refObj.name));
                             }
                         }
                     }
 
                     if (!refObj.externalId) {
-                        throw new SfdmModels.ScriptError(`Field ${object.name + '.' + field.name} references to the SObject of type ${field.sFieldDescribe.name} that is missing ExternalId definition in the Script`);
+                        throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.referencedFieldDoesNotExist, object.name, field.name, field.sFieldDescribe.name));
                     }
 
                     object.fieldsMap.set(field.name, field);
@@ -614,14 +667,18 @@ export class Application {
 
 
     /**
-     * Function to create job object with properly ordered task objects
+     * Method to create Job and Tasks
+     *
+     * @memberof RunCommand
      */
-    async initJob() {
+    async createMigrationJob() {
 
-        this.uxLog("Data migration process is starting...");
-        this.uxLog("Building migration strategy...");
+        this.logger.infoMinimal(RUN_RESOURCES.newLine);
+        this.logger.headerMinimal(RUN_RESOURCES.dataMigrationProcessStarted);
 
-        // Create Tasks and put them i nright order
+        this.logger.infoVerbose(RUN_RESOURCES.buildingMigrationStaregy);
+
+        // Create Tasks and put them in right order
         this.script.objects.forEach(object => {
 
             // Create new Task
@@ -672,10 +729,10 @@ export class Application {
                     .Where(preRefObj => {
                         // Detect master-detail parent in theTaskNext
                         let ret = preRefObj.name == theTaskNext.sObjectName &&
-                            theTaskPrev.scriptObject.fields.filter(f => {
+                            theTaskPrev.scriptObject.fields.some(f => {
                                 let ret = f.sFieldDescribe.referencedObjectType == preRefObj.name && f.sFieldDescribe.isMasterDetail;
                                 return ret;
-                            }).length > 0;
+                            });
 
                         return ret;
                     });
@@ -698,21 +755,39 @@ export class Application {
             task.createReferencedTaskFields();
         });
 
-        this.uxLog(`Execution order:\n${this.job.tasks.Select(x => x.sObjectName).ToArray().join(", ")}\n`, true);
+        this.logger.objectMinimal({
+            "Execution order": this.logger.getResourceString(RUN_RESOURCES.executionOrder, this.job.tasks.Select(x => x.sObjectName).ToArray().join("; "))
+        });
+
     }
 
 
+
     /**
-     * Executes the Job.
+     * Method to execute the Job.
+     *
+     * @returns Command execution result 
+     * @memberof RunCommand
      */
-    async executeJob() {
+    async executeMigrationJob(): Promise<any> {
 
+        let _app: RunCommand = this;
 
-
-        let _app: Application = this;
-
-        // Content of all csv files
         let csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
+        let csvDataFilesToSave: Set<string> = new Set<string>();
+
+        async function _saveCachedCsvDataFiles(): Promise<any> {
+            let csvPaths = [...csvDataFilesToSave.keys()];
+            for (let i = 0; i < csvPaths.length; i++) {
+                const csvPath = csvPaths[i];
+                let m = csvDataCacheMap.get(csvPath);
+                if (m) {
+                    _app.logger.infoVerbose(RUN_RESOURCES.writingToCSV, csvPath);
+                    let values = [...m.values()];
+                    await CommonUtils.writeCsvFileAsync(csvPath, values, true);
+                }
+            }
+        }
 
         // ---------------------------------
         // ---------------------------------
@@ -723,7 +798,7 @@ export class Application {
 
         if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && !(this.script.encryptDataFiles && this.password)) {
 
-            this.uxLog("Validating and fixing source CSV files...");
+            this.logger.infoMinimal(RUN_RESOURCES.validatingAndFixingSourceCSVFiles);
 
 
             // A. Merge User / Group into UserAndGroup ----------------------//
@@ -735,13 +810,11 @@ export class Application {
             await CommonUtils.mergeCsvFiles(filepath1, filepath2, filepath3, true, "Id", "Name");
 
 
-
-
             // B. Add missing referenced lookup fields and process external id columns ----------------------//
 
             let csvIssues: Array<{
                 "Date": string,
-                "Severity level": string,
+                "Severity level": "HIGH" | "LOW" | "NORMAL" | "HIGHEST",
                 "Child sObject name": string,
                 "Child field name": string,
                 "Parent record Id": string,
@@ -750,7 +823,6 @@ export class Application {
                 "Error description": string
             }> = new Array<any>();
 
-            let csvFilePathsToUpdate: Set<string> = new Set<string>();
 
             for (let i = 0; i < this.job.tasks.Count(); i++) {
 
@@ -766,7 +838,7 @@ export class Application {
                 filepath += ".csv";
 
                 // Check the source CSV file for this task
-                let csvColumnsRow = await CommonUtils.readCsvFile(filepath, 1);
+                let csvColumnsRow = await CommonUtils.readCsvFileAsync(filepath, 1);
                 if (csvColumnsRow.length == 0) {
                     csvIssues.push({
                         Date: CommonUtils.formatDateTime(new Date()),
@@ -776,7 +848,7 @@ export class Application {
                         "Parent sObject name": null,
                         "Parent sObject external Id field name": null,
                         "Parent record Id": null,
-                        "Error description": "CSV FILE IS EMPTY OR DOES NOT EXIST"
+                        "Error description": this.logger.getResourceString(RUN_RESOURCES.csvFileIsEmpty)
                     });
                     continue;
                 }
@@ -784,8 +856,15 @@ export class Application {
                 for (let j = 0; j < task.taskFields.Count(); j++) {
 
                     const taskField = task.taskFields.ElementAt(j);
-
-                    if (taskField.isOriginalField && !csvColumnsRow[0].hasOwnProperty(taskField.name)) {
+                    const columnExists = Object.keys(csvColumnsRow[0]).some(columnName => {
+                        let c = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
+                        if (c.some(x => x == columnName)) {
+                            return true;
+                        } else {
+                            return false
+                        }
+                    });
+                    if (taskField.isOriginalField && !columnExists) {
                         csvIssues.push({
                             Date: CommonUtils.formatDateTime(new Date()),
                             "Severity level": "NORMAL",
@@ -794,7 +873,7 @@ export class Application {
                             "Parent sObject name": null,
                             "Parent sObject external Id field name": null,
                             "Parent record Id": null,
-                            "Error description": "COLUMN DEFINED IN THE SCRIPT IS MISSING IN THE CSV FILE"
+                            "Error description": this.logger.getResourceString(RUN_RESOURCES.columnsMissingInCSV)
                         });
                     }
 
@@ -824,11 +903,10 @@ export class Application {
                         }
 
                         if (!csvColumnsRow[0].hasOwnProperty(columnName)
-                            // TODO: Add support for $$combined fields$$
                             && !taskField.originalScriptField.isComplexExternalId) {
 
                             // Read child CSV file (current)
-                            let m: Map<string, any> = await CommonUtils.readCsvFileWithCache(csvDataCacheMap, filepath);
+                            let m: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, filepath);
 
                             let refFilepath = path.join(this.sourceOrg.basePath, refSObjectName);
                             if (refSObjectName == "User" || refSObjectName == "Group") {
@@ -837,7 +915,7 @@ export class Application {
                             refFilepath += ".csv";
 
                             // Read parent CSV file
-                            m = await CommonUtils.readCsvFileWithCache(csvDataCacheMap, refFilepath);
+                            m = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, refFilepath);
                             if (!m) {
                                 csvIssues.push({
                                     Date: CommonUtils.formatDateTime(new Date()),
@@ -847,13 +925,13 @@ export class Application {
                                     "Parent sObject name": refSObjectName,
                                     "Parent sObject external Id field name": refSObjectExternalIdFieldName,
                                     "Parent record Id": null,
-                                    "Error description": "CSV FILE FOR THE PARENT SOBJECT IS EMPTY OR DOES NOT EXIST"
+                                    "Error description": this.logger.getResourceString(RUN_RESOURCES.csvFileForParentSObjectIsEmpty)
                                 });
                                 continue;
                             }
 
                             // Mark current CSV file for further update
-                            csvFilePathsToUpdate.add(filepath);
+                            csvDataFilesToSave.add(filepath);
 
                             let rows: Map<string, any> = csvDataCacheMap.get(filepath);
                             let refRows: Map<string, any> = csvDataCacheMap.get(refFilepath);
@@ -880,7 +958,7 @@ export class Application {
                                             "Parent sObject name": refSObjectName,
                                             "Parent sObject external Id field name": refSObjectExternalIdFieldName,
                                             "Parent record Id": id,
-                                            "Error description": "MISSING PARENT RECORD FOR THE GIVEN LOOKUP VALUE"
+                                            "Error description": this.logger.getResourceString(RUN_RESOURCES.missingParentRecordForGivenLookupValue)
                                         });
                                         value[columnName] = null;
                                     }
@@ -917,7 +995,7 @@ export class Application {
                                     "Parent sObject name": null,
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
-                                    "Error description": `COLUMN ${columnName} HAS INVALID FORMAT`
+                                    "Error description": this.logger.getResourceString(RUN_RESOURCES.invalidColumnFormat, columnName)
                                 });
                                 continue;
                             }
@@ -926,7 +1004,7 @@ export class Application {
                             // Customer_number__c
                             let tempExtIdField = parts[1].toLowerCase();
 
-                            let m: Map<string, any> = await CommonUtils.readCsvFileWithCache(csvDataCacheMap, filepath);
+                            let m: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, filepath);
 
                             // Task field for Account__c
                             let lookupTaskField = task.taskFields.Where(x => x.name.toLowerCase() == lookupField);
@@ -942,7 +1020,7 @@ export class Application {
                                     "Parent sObject name": null,
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
-                                    "Error description": `COLUMN "${columnName}" WILL NOT BE PROCESSED BECAUSE THE FIELD "${parts[0]}" IS MISSING IN THE SCRIPT`
+                                    "Error description": this.logger.getResourceString(RUN_RESOURCES.columnWillNotBeProcessed, columnName, parts[0])
                                 });
                             } else {
                                 lookupField = lookupTaskField.ElementAt(0).name;
@@ -957,7 +1035,7 @@ export class Application {
                                     "Parent sObject name": null,
                                     "Parent sObject external Id field name": null,
                                     "Parent record Id": null,
-                                    "Error description": `COLUMN "${columnName}" WILL NOT BE PROCESSED BECAUSE THE FIELD "${parts[1]}" IS MISSING IN THE SCRIPT`
+                                    "Error description": this.logger.getResourceString(RUN_RESOURCES.columnWillNotBeProcessed, columnName, parts[1])
                                 });
                             } else {
                                 tempExtIdField = tempExtIdTaskField.ElementAt(0).name;
@@ -979,7 +1057,7 @@ export class Application {
                             });
 
                             // Mark current CSV file for further update                            
-                            csvFilePathsToUpdate.add(filepath);
+                            csvDataFilesToSave.add(filepath);
 
                         }
                     }
@@ -987,50 +1065,40 @@ export class Application {
                 // ****************************************************************************************************
             }
 
+
             // Write to all changed csv files
-            let csvFilePaths = [...csvDataCacheMap.keys()];
-            for (let index = 0; index < csvFilePaths.length; index++) {
-                let csvFilePath = csvFilePaths[index];
-                if (csvFilePathsToUpdate.has(csvFilePath)) {
-                    let values = [...csvDataCacheMap.get(csvFilePath).values()];
-                    this.uxLog(`Updating file ${csvFilePath}...`);
-                    await CommonUtils.writeCsvFile(csvFilePath, values, true);
-                }
-            }
+            await _saveCachedCsvDataFiles();
 
-
-            // Write to csv  format issues file
+            // Write to file with issues of csv format
             let csvIssuesFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
-
-            await CommonUtils.writeCsvFile(csvIssuesFilepath, csvIssues, true);
+            await CommonUtils.writeCsvFileAsync(csvIssuesFilepath, csvIssues, true);
 
             if (csvIssues.length == 0) {
-                this.uxLog(`There are no issues found during the last validation of the source CSV files.`);
+                this.logger.infoVerbose(RUN_RESOURCES.noIssuesFoundDuringCSVValidation);
             } else {
-                this.uxLog(`[WARNING] During the validation of the source CSV files ${csvIssues.length} issues were found. See ${SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME} file for the details.`);
+                this.logger.warn(RUN_RESOURCES.issuesFoundDuringCSVValidation, String(csvIssues.length), SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
                 if (this.script.promptOnMissingParentObjects) {
-                    var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
-                    if (ans != 'y' && ans != 'yes') {
-                        throw new SfdmModels.JobAbortedByUser("Issues in the source CSV file(s) were found.");
+                    if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                        throw new SfdmModels.CommandAbortedByUserError(this.logger.getResourceString(RUN_RESOURCES.AbortedByTheUser));
                     }
                 }
             }
 
             // Format report
-            if (csvFilePathsToUpdate.size > 0) {
-                this.uxLog(`${csvFilePathsToUpdate.size} CSV files were updated.`);
+            if (csvDataFilesToSave.size > 0) {
+                this.logger.infoVerbose(RUN_RESOURCES.csvFilesWereUpdated, String(csvDataFilesToSave.size));
             }
-            this.uxLog("Validating and fixing source CSV files finished.");
 
+            this.logger.infoVerbose(RUN_RESOURCES.validationAndFixingsourceCSVFilesCompleted);
 
             // Only csv validation
-            if (this.script.validateCSVFilesOnly)
+            if (this.script.validateCSVFilesOnly) {
                 return;
+            }
+
+            csvDataFilesToSave.clear();
 
         }
-
-
-
 
 
 
@@ -1039,9 +1107,12 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // 1 step. Delete old target records  
-        this.uxLog("");
-        this.uxLog("STEP 1. Deleting old data.");
+
+        this.logger.infoMinimal(RUN_RESOURCES.newLine);
+        this.logger.headerMinimal(RUN_RESOURCES.deletingOldData);
+
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
+
             for (let i = this.job.tasks.Count() - 1; i >= 0; i--) {
 
                 let task = this.job.tasks.ElementAt(i);
@@ -1053,67 +1124,77 @@ export class Application {
 
                     task.scriptObject.deleteOldData = false;
 
-                    this.uxLog(`Deleting records from target sObject ${task.sObjectName}...`);
+                    this.logger.infoNormal(RUN_RESOURCES.deletingTargetSObject, task.sObjectName);
 
                     // Query target to delete
                     let tempQuery = task.createDeleteQuery();
 
-                    this.uxLog(`Querying target sObject: ${task.sObjectName}... Query string: ${tempQuery}.`);
+                    this.logger.infoVerbose(RUN_RESOURCES.queryingTargetSObject, task.sObjectName, tempQuery);
+
                     let queriedRecords: List<object>;
                     try {
-                        queriedRecords = await SfdxUtils.queryAndParseAsync(tempQuery, this.targetOrg);
+                        queriedRecords = await SfdxUtils.queryAsync(tempQuery, this.targetOrg);
                     } catch (e) {
-                        throw new SfdmModels.JobError("Query error: " + e + ".");
+                        throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                     }
-                    this.uxLog(`Querying finished. Retrieved ${queriedRecords.Count()} records.`);
+
+                    this.logger.infoVerbose(RUN_RESOURCES.queryingTargetSObjectCompleted, task.sObjectName, String(queriedRecords.Count()));
 
                     if (queriedRecords.Count()) {
 
                         // Make delete of target records
-                        this.uxLog(`Deleting records from target sObject ${task.sObjectName}... ${queriedRecords.Count()} records will be deleted.`);
+                        this.logger.infoVerbose(RUN_RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, task.sObjectName, String(queriedRecords.Count()));
 
-                        let errorMessage = "";
                         try {
-                            await SfdxUtils.deleteAsync(task.sObjectName, queriedRecords, this.targetOrg, function (a, b) {
-                                if (b) {
-                                    if (b.message) {
-                                        _app.uxLog(b.message)
-                                    } else {
-                                        if (b.numberRecordsFailed == 0)
-                                            _app.uxLog(`Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
-                                        else {
-                                            errorMessage = `Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
-                                        }
-                                    }
-                                }
-                            })
+                            await SfdxUtils.deleteAsync(task.sObjectName,
+                                queriedRecords,
+                                this.targetOrg,
+                                (status: ApiCalloutStatus) => {
 
-                            if (errorMessage) {
-                                throw new Error(errorMessage);
-                            }
+                                    switch (status.verbosity) {
+
+                                        case LOG_MESSAGE_VERBOSITY.MINIMAL:
+                                            _app.logger.infoMinimal(status.message);
+                                            break;
+
+                                        case LOG_MESSAGE_VERBOSITY.VERBOSE:
+                                            _app.logger.infoVerbose(status.message);
+                                            break;
+
+                                        default:
+                                            _app.logger.infoNormal(status.message);
+                                            break;
+                                    }
+                                });
 
                         } catch (e) {
-                            if (!this.script.promptOnUpdateError)
-                                throw new SfdmModels.JobError("Data delete error: " + e);
+                            await _saveCachedCsvDataFiles();
+                            if (!this.script.promptOnUpdateError) {
+                                throw new SfdmModels.CommandExecutionError(e.error);
+                            }
                             else {
-                                var ans = await CommonUtils.promptUser(`Data delete error. Continue the job (y/n)?`);
-                                if (ans != 'y' && ans != 'yes') {
-                                    throw new SfdmModels.JobAbortedByUser("Data delete error: " + e + ".");
+                                this.logger.warn(e.error);
+                                if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                                    throw new SfdmModels.CommandAbortedByUserError(e.error);
                                 }
                             }
                         }
 
-                    } else {
-                        this.uxLog(`Nothing to delete.`);
-                    }
+                        this.logger.infoVerbose(RUN_RESOURCES.deletingFromTheTargetCompleted, task.sObjectName);
 
-                    this.uxLog(`Deleting records from target ${task.sObjectName} finished.`);
+                    } else {
+                        this.logger.infoNormal(COMMON_RESOURCES.nothingToDelete, task.sObjectName);
+                    }
                 }
 
             }
-            this.uxLog("STEP 1 has finished.");
+
+            this.logger.infoVerbose(RUN_RESOURCES.deletingOldDataCompleted);
+
         } else {
-            this.uxLog("STEP 1 has skipped.");
+
+            this.logger.infoVerbose(RUN_RESOURCES.deletingOldDataSkipped);
+
         }
 
 
@@ -1127,8 +1208,9 @@ export class Application {
         // ---------------------------------
         // 2 step. Retrieve source & target records      
         // Step 2 PASS 1 **************************
-        this.uxLog("");
-        this.uxLog("STEP 2. Retrieving data for migration (first run).");
+        this.logger.infoMinimal(RUN_RESOURCES.newLine);
+        this.logger.headerMinimal(RUN_RESOURCES.retrievingData, `(${this.logger.getResourceString(RUN_RESOURCES.Step1)})`);
+
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
@@ -1136,29 +1218,33 @@ export class Application {
             if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
 
             // Calculate integrity : how many records need to process
-            this.uxLog(`Getting records count for SObject ${task.sObjectName}...`);
+            this.logger.infoMinimal(RUN_RESOURCES.gettingRecordsCount, task.sObjectName);
 
             if (!task.scriptObject.isExtraObject) {
 
                 try {
+
                     let tempQuery = task.createQuery(['COUNT(Id) CNT'], true);
+
                     if (task.sourceTotalRecorsCount < 0) {
                         if (task.scriptObject.parsedQuery.limit > 0) {
                             task.sourceTotalRecorsCount = task.scriptObject.parsedQuery.limit;
                         } else {
-                            let ret = await SfdxUtils.queryAndParseAsync(tempQuery, this.sourceOrg);
+                            let ret = await SfdxUtils.queryAsync(tempQuery, this.sourceOrg);
                             task.sourceTotalRecorsCount = Number.parseInt(ret.ElementAt(0)["CNT"]);
                         }
                     }
+                    this.logger.infoNormal(RUN_RESOURCES.totalRecordsAmount, task.sObjectName, "source", String(task.sourceTotalRecorsCount));
 
                     if (task.targetTotalRecorsCount < 0) {
                         if (task.scriptObject.parsedQuery.limit > 0) {
                             task.targetTotalRecorsCount = task.scriptObject.parsedQuery.limit;
                         } else {
-                            let ret = await SfdxUtils.queryAndParseAsync(tempQuery, this.targetOrg);
+                            let ret = await SfdxUtils.queryAsync(tempQuery, this.targetOrg);
                             task.targetTotalRecorsCount = Number.parseInt(ret.ElementAt(0)["CNT"]);
                         }
                     }
+                    this.logger.infoNormal(RUN_RESOURCES.totalRecordsAmount, task.sObjectName, "target", String(task.targetTotalRecorsCount));
 
 
                     // Source rules -----------------------------
@@ -1189,7 +1275,7 @@ export class Application {
                     }
 
                 } catch (e) {
-                    throw new SfdmModels.JobError("Query error: " + e + ".");
+                    throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                 }
 
             } else {
@@ -1204,20 +1290,27 @@ export class Application {
                 let tempQuery = task.createQuery();
 
                 // Get the Source records
-                this.uxLog(`Querying source sObject ${task.sObjectName} (ALL_RECORDS mode)... Query string: ${tempQuery}.`);
+                if (this.logger.uxLoggerVerbosity != LOG_MESSAGE_VERBOSITY.VERBOSE) {
+                    this.logger.infoMinimal(RUN_RESOURCES.queryingAll, task.sObjectName, "source");
+                } else {
+                    this.logger.infoVerbose(RUN_RESOURCES.queryingAllQueryString, task.sObjectName, "source", tempQuery);
+                }
+
                 try {
-                    task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, await SfdxUtils.queryAndParseAsync(tempQuery,
+                    task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, await SfdxUtils.queryAsync(tempQuery,
                         this.sourceOrg,
                         true,
                         this.script.encryptDataFiles ? this.password : null));
-                    this.uxLog(`Querying finished. Retrieved ${task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records.`);
+
+                    this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "source", String(task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()));
+
                 } catch (e) {
-                    throw new SfdmModels.JobError("Query error: " + e + ".");
+                    throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                 }
 
             } else {
 
-                this.uxLog(`Querying source sObject ${task.sObjectName} (IN_RECORDS mode).`);
+                this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "source");
 
                 // Get records including additional referenced fields with limiting by the parent object backwards
                 // Get the Source records  
@@ -1228,20 +1321,23 @@ export class Application {
                     const el = tempQueryList.ElementAt(index);
                     const query = el[0];
                     const field = el[1];
-                    this.uxLog(`Executing query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
+
+                    this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
+
                     try {
-                        let records = await SfdxUtils.queryAndParseAsync(query, this.sourceOrg);
+                        let records = await SfdxUtils.queryAsync(query, this.sourceOrg);
                         if (!rec.has(field))
                             rec.set(field, new Array<object>());
 
                         rec.set(field, rec.get(field).concat(records.ToArray()));
                     } catch (e) {
-                        throw new SfdmModels.JobError("Query error: " + e + ".");
+                        throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                     }
                 }
-                let groupedRecs = SfdxUtils.groupRecords(rec, "Id", "OR");
+                let groupedRecs = SfdxUtils.recordsMapToRecordsArray(rec, "Id");
                 task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>(groupedRecs));
-                this.uxLog(`Querying finished. Retrieved ${task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records.`);
+
+                this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "source", String(task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()));
 
             }
 
@@ -1253,13 +1349,21 @@ export class Application {
 
                 // Get the Target records
                 if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert && this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
-                    this.uxLog(`Querying target sObject ${task.sObjectName} (ALL_RECORDS mode)... Query string: ${tempQuery}.`);
-                    try {
-                        task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, await SfdxUtils.queryAndParseAsync(tempQuery, this.targetOrg));
-                    } catch (e) {
-                        throw new SfdmModels.JobError("Query error: " + e + ".");
+
+                    if (this.logger.uxLoggerVerbosity != LOG_MESSAGE_VERBOSITY.VERBOSE) {
+                        this.logger.infoMinimal(RUN_RESOURCES.queryingAll, task.sObjectName, "target");
+                    } else {
+                        this.logger.infoVerbose(RUN_RESOURCES.queryingAllQueryString, task.sObjectName, "target", tempQuery);
                     }
-                    this.uxLog(`Querying finished. Retrieved ${task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records.`);
+
+                    try {
+                        task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, await SfdxUtils.queryAsync(tempQuery, this.targetOrg));
+                    } catch (e) {
+                        throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
+                    }
+
+                    this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "target", String(task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()));
+
                 } else {
                     task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>());
                 }
@@ -1269,7 +1373,7 @@ export class Application {
                 // Get the Target records
                 if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert) {
 
-                    this.uxLog(`Querying target sObject ${task.sObjectName} (IN_RECORDS mode)...`);
+                    this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "target");
 
                     let tempQueryList = task.createListOfLimitedQueries(false);
                     let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
@@ -1278,30 +1382,33 @@ export class Application {
                         const el = tempQueryList.ElementAt(index);
                         const query = el[0];
                         const field = el[1];
-                        this.uxLog(`Executing query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
+
+                        this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
+
                         try {
-                            let records = await SfdxUtils.queryAndParseAsync(query, this.targetOrg);
+                            let records = await SfdxUtils.queryAsync(query, this.targetOrg);
                             if (!rec.has(field))
                                 rec.set(field, new Array<object>());
 
                             rec.set(field, rec.get(field).concat(records.ToArray()));
                         } catch (e) {
-                            throw new SfdmModels.JobError("Query error: " + e + ".");
+                            throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                         }
                     }
-                    let groupedRecs = SfdxUtils.groupRecords(rec, "Id", "OR");
+                    let groupedRecs = SfdxUtils.recordsMapToRecordsArray(rec, "Id");
                     task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>(groupedRecs));
-                    this.uxLog(`Querying finished. Retrieved ${task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()} records.`);
+
+                    this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "target", String(task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()));
+
                 } else {
                     task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>());
                 }
 
 
             }
-
-
         }
-        this.uxLog("STEP 2 has finished.");
+
+        this.logger.infoVerbose(RUN_RESOURCES.retrievingDataCompleted, `(${this.logger.getResourceString(RUN_RESOURCES.Step1)})`);
 
 
 
@@ -1310,8 +1417,9 @@ export class Application {
 
 
         // Step 2 PASS 2 **************************
-        this.uxLog("");
-        this.uxLog("STEP 3. Retrieving data for migration (second run).");
+        this.logger.infoMinimal(RUN_RESOURCES.newLine);
+        this.logger.headerMinimal(RUN_RESOURCES.retrievingData, `(${this.logger.getResourceString(RUN_RESOURCES.Step2)})`);
+
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
@@ -1342,7 +1450,7 @@ export class Application {
                         });
                         if (values.length > 0) {
                             let queries = SfdxUtils.createFieldInQueries(["Id", field.parentTaskField.name], field.parentTaskField.name, task.sObjectName, values);
-                            let recordsMap = await SfdxUtils.queryMultipleAsync(queries, field.parentTaskField.name, _this.targetOrg, true);
+                            let recordsMap = await SfdxUtils.queryManyAsync(queries, field.parentTaskField.name, _this.targetOrg, true);
                             [...recordsMap.keys()].forEach(key => {
                                 targetExtIdMap[key] = recordsMap.get(key)["Id"];
                             });
@@ -1365,7 +1473,7 @@ export class Application {
 
                 if (tempQueryList.Count() > 0) {
 
-                    this.uxLog(`Querying source sObject ${task.sObjectName} (IN_RECORDS mode)... `);
+                    this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "source");
 
                     let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
                     let totalRecords = 0;
@@ -1376,22 +1484,25 @@ export class Application {
                         const el = tempQueryList.ElementAt(index);
                         const query = el[0];
                         const field = el[1];
-                        this.uxLog(`Executing query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
+
+                        this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
+
                         try {
-                            let records = await SfdxUtils.queryAndParseAsync(query, this.sourceOrg);
+                            let records = await SfdxUtils.queryAsync(query, this.sourceOrg);
                             if (!rec.has(field))
                                 rec.set(field, new Array<object>());
 
                             rec.set(field, rec.get(field).concat(records.ToArray()));
                             totalRecords += records.Count();
                         } catch (e) {
-                            throw new SfdmModels.JobError("Query error: " + e + ".");
+                            throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                         }
                     }
 
-                    this.uxLog(`Querying finished. Retrieved ${totalRecords} records.`);
+                    this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "source", String(totalRecords));
+
                     if (totalRecords > 0) {
-                        let groupedRecs = SfdxUtils.groupRecords(rec, "Id", "OR");
+                        let groupedRecs = SfdxUtils.recordsMapToRecordsArray(rec, "Id");
                         task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>(groupedRecs));
                     }
                 }
@@ -1403,7 +1514,7 @@ export class Application {
 
                     if (tempQueryList.Count() > 0) {
 
-                        this.uxLog(`Querying target sObject ${task.sObjectName} (IN_RECORDS mode)...`);
+                        this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "target");
 
                         let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
                         let totalRecords = 0;
@@ -1414,22 +1525,25 @@ export class Application {
                             const el = tempQueryList.ElementAt(index);
                             const query = el[0];
                             const field = el[1];
-                            this.uxLog(`Executing query: ${query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "..."}`);
+
+                            this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
+
                             try {
-                                let records = await SfdxUtils.queryAndParseAsync(query, this.targetOrg);
+                                let records = await SfdxUtils.queryAsync(query, this.targetOrg);
                                 if (!rec.has(field))
                                     rec.set(field, new Array<object>());
 
                                 rec.set(field, rec.get(field).concat(records.ToArray()));
                                 totalRecords += records.Count();
                             } catch (e) {
-                                throw new SfdmModels.JobError("Query error: " + e + ".");
+                                throw new SfdmModels.CommandExecutionError("Query error: " + e + ".");
                             }
                         }
 
-                        this.uxLog(`Querying finished. Retrieved ${totalRecords} records.`);
+                        this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "target", String(totalRecords));
+
                         if (totalRecords > 0) {
-                            let groupedRecs = SfdxUtils.groupRecords(rec, "Id", "OR");
+                            let groupedRecs = SfdxUtils.recordsMapToRecordsArray(rec, "Id");
                             task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, new List<object>(groupedRecs));
                         }
                     }
@@ -1452,7 +1566,8 @@ export class Application {
                     targetExtIdMap[record[task.scriptObject.externalId]] = record["Id"];
             });
         }
-        this.uxLog("STEP 3 has finished.");
+
+        this.logger.infoVerbose(RUN_RESOURCES.retrievingDataCompleted, `(${this.logger.getResourceString(RUN_RESOURCES.Step2)})`);
 
 
 
@@ -1464,15 +1579,13 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // 4 step. Update target records - forward order
-        this.uxLog("");
-        this.uxLog("STEP 4. Updating target (first run).");
+        this.logger.infoMinimal(RUN_RESOURCES.newLine);
+        this.logger.headerMinimal(RUN_RESOURCES.updatingTarget, `(${this.logger.getResourceString(RUN_RESOURCES.Step1)})`);
 
-        // Extended csv error files
-        let extendedErrorFilePaths: Array<string> = new Array<string>();
 
         // Init missing parent records error file **************
         let missingParentRecordsErrorsFilePath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.MISSING_PARENT_RECORDS_ERRORS_FILE_NAME);
-        extendedErrorFilePaths.push(missingParentRecordsErrorsFilePath);
+        csvDataFilesToSave.add(missingParentRecordsErrorsFilePath);
         interface IMissingParentRecordsErrorRow {
             "Child record Id": string,
             "Child sObject": string,
@@ -1517,51 +1630,58 @@ export class Application {
                         objectNameToWrite = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;
                     }
                 }
-                this.uxLog(`Writing to file ${objectNameToWrite}...`);
-                await SfdxUtils.writeCsvFileAsync(objectNameToWrite,
+                this.logger.infoMinimal(RUN_RESOURCES.writingToFile, task.sObjectName, objectNameToWrite);
+
+                await SfdxUtils.writeObjectRecordsToCsvFileAsync(objectNameToWrite,
                     sourceRecords.ToArray(),
-                    this.targetOrg,
+                    this.targetOrg.basePath,
                     this.script.encryptDataFiles ? this.password : null);
-                this.uxLog(`Writing to file ${objectNameToWrite} finished.`);
+
+                this.logger.infoVerbose(RUN_RESOURCES.writingToFileCompleted, task.sObjectName, objectNameToWrite);
                 continue;
             }
 
-            this.uxLog(`${strOper}ing target sObject ${task.sObjectName}...`);
+
+
+            this.logger.infoMinimal(RUN_RESOURCES.updatingTargetObject, task.sObjectName, strOper);
 
             if (referencedFields.Count() == 0) {
 
                 // Fields without reference
                 let updatedRecords: List<Object>;
                 try {
-                    let isChildTask = task.job.tasks.Any(x => !!x.scriptObject.referencedScriptObjectsMap.get(task.sObjectName));
-                    let errorMessage = "";
                     // Update target records                    
                     updatedRecords = await SfdxUtils.processTaskDataAsync(task,
-                        sourceRecords, targetRecords,
-                        this.targetOrg, task.scriptObject.operation,
-                        isChildTask, undefined, task.scriptObject.readonlyExternalIdFields, function (a, b) {
-                            if (b) {
-                                if (b.message) {
-                                    _app.uxLog(b.message)
-                                } else {
-                                    if (b.numberRecordsFailed == 0)
-                                        _app.uxLog(`Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
-                                    else {
-                                        errorMessage = `Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
-                                    }
-                                }
+                        sourceRecords,
+                        targetRecords,
+                        this.targetOrg,
+                        task.scriptObject.operation,
+                        undefined, (status: ApiCalloutStatus) => {
+
+                            switch (status.verbosity) {
+
+                                case LOG_MESSAGE_VERBOSITY.MINIMAL:
+                                    _app.logger.infoMinimal(status.message);
+                                    break;
+
+                                case LOG_MESSAGE_VERBOSITY.VERBOSE:
+                                    _app.logger.infoVerbose(status.message);
+                                    break;
+
+                                default:
+                                    _app.logger.infoNormal(status.message);
+                                    break;
                             }
                         });
-                    if (errorMessage) {
-                        throw new Error(errorMessage);
-                    }
                 } catch (e) {
-                    if (!this.script.promptOnUpdateError)
-                        throw new SfdmModels.JobError("Data update error: " + e + ".");
+                    await _saveCachedCsvDataFiles();
+                    if (!this.script.promptOnUpdateError) {
+                        throw new SfdmModels.CommandExecutionError(e.error);
+                    }
                     else {
-                        var ans = await CommonUtils.promptUser(`Data update error. Continue the job (y/n)?`);
-                        if (ans != 'y' && ans != 'yes') {
-                            throw new SfdmModels.JobAbortedByUser("Data update error: " + e + ".");
+                        this.logger.warn(e.error);
+                        if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                            throw new SfdmModels.CommandAbortedByUserError(e.error);
                         }
                     }
                 }
@@ -1579,7 +1699,8 @@ export class Application {
                 targetRecords.AddRange(updatedRecords.ToArray());
                 task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, targetRecords);
 
-                this.uxLog(`${strOper}ing target ${task.sObjectName} finished, total processed ${updatedRecords.Count()} records`);
+                this.logger.infoVerbose(RUN_RESOURCES.updatingTargetObjectCompleted, task.sObjectName, strOper, String(updatedRecords.Count()));
+
                 continue;
 
             } else {
@@ -1614,7 +1735,9 @@ export class Application {
                                     "Child external Id field": taskField.name,
                                     "Parent external Id field": taskField.originalScriptField.externalId,
                                     "Parent sObject": taskField.parentTaskField.task.sObjectName,
-                                    "Missing external Id value": record.hasOwnProperty(taskField.name) ? record[taskField.name] : `FIELD ${taskField.name} IS MISSING IN THE SOURCE RECORD`
+                                    "Missing external Id value": record.hasOwnProperty(taskField.name)
+                                        ? record[taskField.name]
+                                        : this.logger.getResourceString(RUN_RESOURCES.fieldIsMissingInTheSourceRecords, taskField.name)
                                 });
                                 missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                 delete record[fieldToUpdate];
@@ -1630,15 +1753,13 @@ export class Application {
                 if (missingParentValueOnTagetErrors.size > 0) {
 
                     [...missingParentValueOnTagetErrors.keys()].forEach(key => {
-                        this.uxLog(`[NOTE] sObject ${task.sObjectName}: found missing parent lookup records for the field ${key} in the TARGET org. The amount of the missing parent lookup records is: ${missingParentValueOnTagetErrors.get(key)} of total ${sourceRecords.Count()} records.`);
+                        _app.logger.warn(RUN_RESOURCES.missingParentLookupRecord, task.sObjectName, key, String(missingParentValueOnTagetErrors.get(key)), String(sourceRecords.Count()));
                     });
-                    this.uxLog(`See ${SfdmModels.CONSTANTS.MISSING_PARENT_RECORDS_ERRORS_FILE_NAME} file for the details.`)
+                    this.logger.warn(RUN_RESOURCES.seeFileForTheDetails, SfdmModels.CONSTANTS.MISSING_PARENT_RECORDS_ERRORS_FILE_NAME);
 
                     if (this.script.promptOnMissingParentObjects) {
-                        var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
-                        if (ans != 'y' && ans != 'yes') {
-                            await writeallErrorReportsToCSVFiles();
-                            throw new SfdmModels.JobAbortedByUser("Missing parent records");
+                        if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                            throw new SfdmModels.CommandAbortedByUserError(this.logger.getResourceString(RUN_RESOURCES.missingParentLookupRecord));
                         }
                     }
 
@@ -1646,38 +1767,38 @@ export class Application {
 
                 let updatedRecords: List<Object>;
                 try {
-                    let isChildTask = task.job.tasks.Any(x => !!x.scriptObject.referencedScriptObjectsMap.get(task.sObjectName));
-                    let errorMessage = "";
                     // Update target records                      
                     updatedRecords = await SfdxUtils.processTaskDataAsync(task,
-                        sourceRecords, targetRecords,
-                        this.targetOrg, task.scriptObject.operation,
-                        isChildTask,
-                        fieldNamesToOmit.ToArray(), task.scriptObject.readonlyExternalIdFields, function (a, b) {
-                            if (b) {
-                                if (b.message) {
-                                    _app.uxLog(b.message)
-                                } else {
-                                    if (b.numberRecordsFailed == 0)
-                                        _app.uxLog(`Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
-                                    else {
-                                        errorMessage = `Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
-                                    }
-                                }
+                        sourceRecords,
+                        targetRecords,
+                        this.targetOrg,
+                        task.scriptObject.operation,
+                        fieldNamesToOmit.ToArray(), (status: ApiCalloutStatus) => {
+
+                            switch (status.verbosity) {
+
+                                case LOG_MESSAGE_VERBOSITY.MINIMAL:
+                                    _app.logger.infoMinimal(status.message);
+                                    break;
+
+                                case LOG_MESSAGE_VERBOSITY.VERBOSE:
+                                    _app.logger.infoVerbose(status.message);
+                                    break;
+
+                                default:
+                                    _app.logger.infoNormal(status.message);
+                                    break;
                             }
                         });
-                    if (errorMessage) {
-                        await writeallErrorReportsToCSVFiles();
-                        throw new Error(errorMessage);
-                    }
                 } catch (e) {
-                    await writeallErrorReportsToCSVFiles();
-                    if (!this.script.promptOnUpdateError)
-                        throw new SfdmModels.JobError("Data update error: " + e + ".");
+                    await _saveCachedCsvDataFiles();
+                    if (!this.script.promptOnUpdateError) {
+                        throw new SfdmModels.CommandExecutionError(e.error);
+                    }
                     else {
-                        var ans = await CommonUtils.promptUser(`Data update error. Continue the job (y/n)?`);
-                        if (ans != 'y' && ans != 'yes') {
-                            throw new SfdmModels.JobAbortedByUser("Data update error: " + e + ".");
+                        this.logger.warn(e.error);
+                        if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                            throw new SfdmModels.CommandAbortedByUserError(e.error);
                         }
                     }
                 }
@@ -1704,10 +1825,12 @@ export class Application {
                 });
 
                 targetRecords.AddRange(updatedRecords.ToArray());
-                this.uxLog(`${strOper}ing target sObject ${task.sObjectName} finished. Total processed ${updatedRecords.Count()} records.`);
+
+                this.logger.infoVerbose(RUN_RESOURCES.updatingTargetObjectCompleted, task.sObjectName, strOper, String(updatedRecords.Count()));
+
             }
         }
-        this.uxLog("STEP 4 has finished.");
+        this.logger.infoVerbose(RUN_RESOURCES.updatingTargetCompleted, `(${this.logger.getResourceString(RUN_RESOURCES.Step1)})`);
 
 
 
@@ -1720,8 +1843,9 @@ export class Application {
         // ---------------------------------
         // ---------------------------------
         // 5 step. Update target records - backward order
-        this.uxLog("");
-        this.uxLog("STEP 5. Updating target (second run).");
+        this.logger.infoMinimal(RUN_RESOURCES.newLine);
+        this.logger.headerMinimal(RUN_RESOURCES.updatingTarget, `(${this.logger.getResourceString(RUN_RESOURCES.Step2)})`);
+
         if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
             for (let i = 0; i < this.job.tasks.Count(); i++) {
 
@@ -1741,7 +1865,7 @@ export class Application {
                         !(x.externalIdTaskField && !x.externalIdTaskField.isParentTaskBefore) && x.name != "Id"
                     ).Select(x => x.name);
 
-                    this.uxLog(`Updating target sObject ${task.sObjectName}...`);
+                    this.logger.infoMinimal(RUN_RESOURCES.updatingTargetObject, task.sObjectName, "Update");
 
                     let sourceRecords = task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main);
                     let targetRecords = task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main);
@@ -1766,7 +1890,9 @@ export class Application {
                                         "Child external Id field": taskField.name,
                                         "Parent external Id field": taskField.originalScriptField.externalId,
                                         "Parent sObject": taskField.parentTaskField.task.sObjectName,
-                                        "Missing external Id value": record.hasOwnProperty(taskField.name) ? record[taskField.name] : `FIELD ${taskField.name} IS MISSING IN THE SOURCE RECORD`
+                                        "Missing external Id value": record.hasOwnProperty(taskField.name)
+                                            ? record[taskField.name]
+                                            : this.logger.getResourceString(RUN_RESOURCES.fieldIsMissingInTheSourceRecords, taskField.name)
                                     });
                                     missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
                                     delete record[fieldToUpdate];
@@ -1781,92 +1907,73 @@ export class Application {
                     // Prompt to stop the entire job
                     if (missingParentValueOnTagetErrors.size > 0) {
                         [...missingParentValueOnTagetErrors.keys()].forEach(key => {
-                            this.uxLog(`[NOTE] sObject ${task.sObjectName}: found missing parent lookup records for the field ${key} in the TARGET org. The amount of the missing parent lookup records is: ${missingParentValueOnTagetErrors.get(key)} of total ${sourceRecords.Count()} records.`);
+                            _app.logger.warn(RUN_RESOURCES.missingParentLookupRecord, task.sObjectName, key, String(missingParentValueOnTagetErrors.get(key)), String(sourceRecords.Count()));
                         });
-                        this.uxLog(`See ${SfdmModels.CONSTANTS.MISSING_PARENT_RECORDS_ERRORS_FILE_NAME} file for the details.`)
+                        this.logger.warn(RUN_RESOURCES.seeFileForTheDetails, SfdmModels.CONSTANTS.MISSING_PARENT_RECORDS_ERRORS_FILE_NAME);
 
                         if (this.script.promptOnMissingParentObjects) {
-                            var ans = await CommonUtils.promptUser(`Continue the job (y/n)?`);
-                            if (ans != 'y' && ans != 'yes') {
-                                await writeallErrorReportsToCSVFiles();
-                                throw new SfdmModels.JobAbortedByUser("Missing parent records");
+                            if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                                throw new SfdmModels.CommandAbortedByUserError(this.logger.getResourceString(RUN_RESOURCES.missingParentLookupRecord));
                             }
                         }
                     }
 
                     let updatedRecords: List<Object>;
                     try {
-                        let isChildTask = task.job.tasks.Any(x => !!x.scriptObject.referencedScriptObjectsMap.get(task.sObjectName));
                         let errorMessage = "";
                         // Update target records                      
                         updatedRecords = await SfdxUtils.processTaskDataAsync(task,
-                            sourceRecords, targetRecords,
+                            sourceRecords,
+                            targetRecords,
                             this.targetOrg,
                             SfdmModels.Enums.OPERATION.Update,
-                            isChildTask,
-                            fieldNamesToOmit.ToArray(), task.scriptObject.readonlyExternalIdFields, function (a, b) {
-                                if (b) {
-                                    if (b.message) {
-                                        _app.uxLog(b.message)
-                                    } else {
+                            fieldNamesToOmit.ToArray(), (status: ApiCalloutStatus) => {
 
-                                        if (b.numberRecordsFailed == 0)
-                                            _app.uxLog(`Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`);
-                                        else {
-                                            errorMessage = `Job# [${b.jobId}] (sObject ${task.sObjectName}) progress: ${b.numberRecordsProcessed} records, failed ${b.numberRecordsFailed}, error: ${b.error}.`;
-                                        }
-                                    }
+                                switch (status.verbosity) {
+
+                                    case LOG_MESSAGE_VERBOSITY.MINIMAL:
+                                        _app.logger.infoMinimal(status.message);
+                                        break;
+
+                                    case LOG_MESSAGE_VERBOSITY.VERBOSE:
+                                        _app.logger.infoVerbose(status.message);
+                                        break;
+
+                                    default:
+                                        _app.logger.infoNormal(status.message);
+                                        break;
                                 }
                             });
                         if (errorMessage) {
-                            await writeallErrorReportsToCSVFiles();
+                            await _saveCachedCsvDataFiles();
                             throw new Error(errorMessage);
                         }
                     } catch (e) {
-                        await writeallErrorReportsToCSVFiles();
+                        await _saveCachedCsvDataFiles();
                         if (!this.script.promptOnUpdateError)
-                            throw new SfdmModels.JobError("Data update error: " + e + ".");
+                            throw new SfdmModels.CommandExecutionError(e.error);
                         else {
-                            var ans = await CommonUtils.promptUser(`Data update error. Continue the job (y/n)?`);
-                            if (ans != 'y' && ans != 'yes') {
-                                throw new SfdmModels.JobAbortedByUser("Data update error: " + e + ".");
+                            this.logger.warn(e.error);
+                            if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                                throw new SfdmModels.CommandAbortedByUserError(e.error);
                             }
                         }
                     }
 
-                    this.uxLog(`Updating target ${task.sObjectName} finished. Total processed ${updatedRecords.Count()} records.`);
+                    this.logger.infoVerbose(RUN_RESOURCES.updatingTargetObjectCompleted, task.sObjectName, "Update", String(updatedRecords.Count()));
                 }
 
             }
         }
-        this.uxLog("STEP 5 has finished.");
+
+        this.logger.infoVerbose(RUN_RESOURCES.updatingTargetCompleted, `(${this.logger.getResourceString(RUN_RESOURCES.Step2)})`);
+        
 
 
-        await writeallErrorReportsToCSVFiles();
-
-        this.uxLog("");
-        this.uxLog("sfdmu:move command has completed.");
-        this.uxLog("");
-
-
-        // Helper functions
-        async function writeallErrorReportsToCSVFiles(): Promise<any> {
-            // Write all error reports to CSV files
-            for (let index = 0; index < extendedErrorFilePaths.length; index++) {
-                const filepath = extendedErrorFilePaths[index];
-                let m = csvDataCacheMap.get(filepath);
-                if (m) {
-                    _app.uxLog(`Writing to ${filepath}...`);
-                    let values = [...m.values()];
-                    await CommonUtils.writeCsvFile(filepath, values, true);
-                }
-            }
-        }
-
+        this.logger.infoMinimal(RUN_RESOURCES.newLine);
+        this.logger.headerMinimal(RUN_RESOURCES.finalizing);
+        await _saveCachedCsvDataFiles();
     }
-
-
-
 }
 
 

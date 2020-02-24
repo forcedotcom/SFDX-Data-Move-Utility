@@ -4,10 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+
+
 /**
- * Errors of the package script
+ * Errors in the Org metadata validation
  */
-export class ScriptError extends Error {
+export class OrgMetadataError extends Error {
     constructor(m: string) {
         super(m);
     }
@@ -15,9 +18,20 @@ export class ScriptError extends Error {
 
 
 /**
- * Errors of the Org metadata
+ * Errors occur while the command is being initializating
  */
-export class MetadataError extends Error {
+export class CommandInitializationError extends Error {
+    constructor(m: string) {
+        super(m);
+    }
+}
+
+
+
+/**
+ * Errors during command execution
+ */
+export class CommandExecutionError extends Error {
     constructor(m: string) {
         super(m);
     }
@@ -25,37 +39,20 @@ export class MetadataError extends Error {
 
 
 /**
- * Errors of the file system
+ * Unresolvable warning => exit
  */
-export class FileSystemError extends Error {
-    constructor(m: string) {
-        super(m);
-    }
-}
-
-/**
- * Errors of plugin initialization
- */
-export class PluginInitError extends Error {
-    constructor(m: string) {
-        super(m);
-    }
-}
-
-/**
- * Errors during job execution
- */
-export class JobError extends Error {
+export class UnresolvableWarning extends Error {
     constructor(m: string) {
         super(m);
     }
 }
 
 
+
 /**
- * User has aborted the job
+ * User has stopped execution of the command
  */
-export class JobAbortedByUser extends Error {
+export class CommandAbortedByUserError extends Error {
     constructor(m: string) {
         super(m);
     }

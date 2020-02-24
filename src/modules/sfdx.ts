@@ -4,45 +4,80 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import * as SfdmModels from "./models/index";
-import { execSync } from 'child_process';
-import { List } from 'linq.ts';
-import "reflect-metadata";
-import "es6-shim";
-import { QueryResult, DescribeSObjectResult } from 'jsforce';
+import { Messages } from '@salesforce/core';
+import * as deepClone from 'deep.clone';
+import * as SfdmModels from './models/index';
+import { CommonUtils, MockGenerator } from './common';
 import {
-    Query,
-    parseQuery,
-    WhereClause,
+    composeQuery,
     Condition,
+    Field as SOQLField,
+    FieldType,
+    getComposedField,
     LiteralType,
     LogicalOperator,
-    getComposedField,
-    composeQuery,
-    Field as SOQLField,
-    FieldType
+    parseQuery,
+    Query,
+    WhereClause
 } from 'soql-parser-js';
-import * as deepClone from "deep.clone";
-import { CommonUtils } from "./common";
-import { SObjectDescribe } from "./models/index";
+import { DescribeSObjectResult, QueryResult } from 'jsforce';
+import { execSync } from 'child_process';
+import { List } from 'linq.ts';
+import { SObjectDescribe } from './models/index';
 import path = require('path');
 import fs = require('fs');
 
 import casual = require("casual");
+import { COMMON_RESOURCES, MessageUtils, LOG_MESSAGE_VERBOSITY } from './messages';
 const alasql = require("alasql");
 
-
-CommonUtils.createMockCustomFunctions(casual);
-
+MockGenerator.createCustomGenerators(casual);
 
 
+Messages.importMessagesDirectory(__dirname);
+const commonMessages = Messages.loadMessages('sfdmu', 'common');
+
+
+
+/**
+ * Status of API callouts
+ *  as parameter of the API callback function
+ *
+ * @export
+ * @class ApiCalloutStatus
+ */
+export class ApiCalloutStatus {
+    constructor(init: Partial<ApiCalloutStatus>) {
+        Object.assign(this, init);
+    }
+    bulkApiVersion: string = "V1.0";
+    jobId: string = "REST";
+    sObjectName: string;
+    message: string;
+    error: string;
+    get isError(): boolean {
+        return !!this.error;
+    }
+    numberRecordsProcessed: number = 0;
+    numberRecordsFailed: number = 0;
+    verbosity: LOG_MESSAGE_VERBOSITY  = LOG_MESSAGE_VERBOSITY.NORMAL;
+}
+
+
+/**
+ * Utils contains common function related to SFDX or Salesforce envs (ex. Update/Insert, etc)
+ * and differentd functions to manipulate with records.
+ */
 export class SfdxUtils {
 
+
     /**
-    * Executes any SFDX command and returns stdout string
-    * @param command ex. force:org:display
-    * @param targetusername the org instance username (ex. my@mail.com)
-    */
+     * Executes SFDX command synchronously
+     * 
+     * @param  {String} command SFDX command to execute ex. force:org:display without previous sfdx 
+     * @param  {String} targetusername --targetusername flag (if applied)
+     * @returns string Returns command output
+     */
     public static execSfdx(command: String, targetusername: String): string {
         if (typeof targetusername != "undefined")
             return execSync(`sfdx ${command} --targetusername ${targetusername}`).toString();
@@ -50,12 +85,17 @@ export class SfdxUtils {
             return execSync(`sfdx ${command}`).toString();
     };
 
+
+
     /**
-     * Parses console output of force:org:display command
+     * Parses console output of force:org:display command into object
+     * 
+     * @param  {String} commandResult The command result string (in plain format, not in json)
+     * @returns SfdmModels.OrgInfo
      */
-    public static parseForceOrgDisplayResult(input: String): SfdmModels.OrgInfo {
-        if (!input) return null;
-        let lines = input.split('\n');
+    public static parseForceOrgDisplayResult(commandResult: String): SfdmModels.OrgInfo {
+        if (!commandResult) return null;
+        let lines = commandResult.split('\n');
         let output: SfdmModels.OrgInfo = new SfdmModels.OrgInfo();
         lines.forEach(line => {
             if (line.startsWith("Access Token"))
@@ -76,11 +116,17 @@ export class SfdxUtils {
 
     };
 
+
+
     /**
-     * Transforms standard QueryResult records to array of objects
-     * (including nested properties ex. Account__r.Name)
+     * Transforms array of object received as result of REST callout (QueryResult) to an array of objects 
+     * including nested properties ex. Account__r.Name
+     * 
+     * @param  {object[]} rawRecords Raw records to parse
+     * @param  {string} query The originlan SOQL query used to get the parsed records. Need to retrieve field names.
+     * @returns List<object>
      */
-    public static parseRecords(records: object[], query: string): List<object> {
+    public static parseRecords(rawRecords: object[], query: string): List<object> {
 
         const getNestedObject = (nestedObj, pathArr) => {
             return pathArr.reduce((obj, key) =>
@@ -101,7 +147,7 @@ export class SfdxUtils {
             }
         });
 
-        var parsedRecords = new List<object>(records.map(function (record) {
+        var parsedRecords = new List<object>(rawRecords.map(function (record) {
             var o = {};
             for (var prop in fieldMapping) {
                 if (Object.prototype.hasOwnProperty.call(fieldMapping, prop)) {
@@ -114,13 +160,26 @@ export class SfdxUtils {
         return parsedRecords;
     }
 
-    public static async validateAccessToken(sOrg: SfdmModels.SOrg): Promise<void> {
-        if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org)
-            await SfdxUtils.queryAsync("SELECT Id FROM Account LIMIT 1", sOrg);
-    }
+
 
     /**
-     * Describe given org getting list of its SObjects without fields
+     * Function to validate current access token to org by querying to Account object
+     * Emits error when there is no access
+     * 
+     * @param  {SfdmModels.SOrg} sOrg sOrg instance
+     */
+    public static async validateAccessTokenAsync(sOrg: SfdmModels.SOrg): Promise<void> {
+        if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org)
+            await SfdxUtils._queryAsync("SELECT Id FROM Account LIMIT 1", sOrg);
+    }
+
+
+
+
+    /**
+      * Describe given org getting list of its SObjects without field detail
+      * 
+     * @param  {SfdmModels.SOrg} sOrg Org instance
      */
     public static async describeSOrgAsync(sOrg: SfdmModels.SOrg): Promise<void> {
         var cn = sOrg.getConnection();
@@ -144,13 +203,21 @@ export class SfdxUtils {
             });
             sOrg.sObjectsMap.set(o.name, o);
         });
-
     }
 
+
+
+
     /**
-     * Describes given SObject
+     * Describes given SObject by retrieving field descriptions
+     * 
+     * @param  {string} objectName Object API name to describe
+     * @param  {SfdmModels.SOrg} sOrg sOrg instance
+     * @param  {Map<string, SObjectDescribe>} defaultDescibe
+     * @returns SfdmModels.SObjectDescribe
      */
-    public static async describeSObjectAsync(objectName: string, sOrg: SfdmModels.SOrg, defaultDescibe: Map<string, SObjectDescribe>): Promise<SfdmModels.SObjectDescribe> {
+    public static async describeSObjectAsync(objectName: string, sOrg: SfdmModels.SOrg,
+        defaultDescibe: Map<string, SObjectDescribe>): Promise<SfdmModels.SObjectDescribe> {
 
         if (sOrg.mediaType != SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
             sOrg.sObjectsMap = defaultDescibe;
@@ -200,134 +267,30 @@ export class SfdxUtils {
         return o;
     };
 
-    /**
-     * Performs SOQL. 
-     * Returns QueryResult<object>
-     */
-    public static async queryAsync(soql: string, sOrg: SfdmModels.SOrg): Promise<QueryResult<object>> {
 
-        const makeQueryAsync = (soql) => new Promise((resolve, reject) => {
 
-            var cn = sOrg.getConnection();
 
-            var records = [];
-
-            var query = cn.query(soql).on("record", function (record) {
-                records.push(record);
-            }).on("end", function () {
-                resolve(<QueryResult<object>>{
-                    done: true,
-                    records: records,
-                    totalSize: query.totalSize
-                });
-            }).on("error", function (error) {
-                reject(error);
-            }).run({
-                autoFetch: true,
-                maxFetch: SfdmModels.CONSTANTS.MAX_FETCH_SIZE
-            });
-        });
-
-        return <QueryResult<object>>(await makeQueryAsync(soql));
-    }
-
-    public static formatRecords(records: Array<object>, format: [string, Map<String, List<String>>, Array<String>]): Array<object> {
-        if (format[1].size == 0) {
-            return records;
-        }
-        let keys = [...format[1].keys()];
-        records.forEach(record => {
-            keys.forEach(complexKey => {
-                let fields = format[1].get(complexKey);
-                let value = "";
-                fields.ForEach(field => {
-                    let f = field.toString();
-                    value += ";" + record[f];
-                });
-                record[complexKey.toString()] = value
-            });
-            keys.forEach(complexKey => {
-                let fields = format[1].get(complexKey);
-                fields.ForEach(field => {
-                    let f = field.toString();
-                    if (format[2].indexOf(f) < 0) {
-                        delete record[f];
-                    }
-                });
-            });
-        });
-        return records;
-    }
-
-    public static prepareQuery(soql: string): [string, Map<String, List<String>>, Array<String>] {
-        let newParsedQuery = parseQuery(soql);
-        let originalFields: Array<SOQLField> = newParsedQuery.fields.map(x => {
-            return <SOQLField>x;
-        });
-        let originalFieldNamesToKeep: Array<String> = new List<String>(originalFields.map(newFieldTmp => {
-            let newSOQLFieldTmp = <SOQLField>newFieldTmp;
-            let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
-            return newRawValueTmp;
-        })).ToArray();
-        newParsedQuery.fields = [];
-        let outputMap: Map<String, List<String>> = new Map<String, List<String>>();
-        originalFields.forEach(originalField => {
-            let rawValueOrig = originalField["rawValue"] || originalField.field;
-            if (rawValueOrig.indexOf(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX) < 0) {
-                // Simple field
-                if (newParsedQuery.fields.filter(newFieldTmp => {
-                    let newSOQLFieldTmp = <SOQLField>newFieldTmp;
-                    let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
-                    return newRawValueTmp == rawValueOrig;
-                }).length == 0) {
-                    newParsedQuery.fields.push(originalField);
-                }
-            } else {
-                // Complex field
-                let complexFields = rawValueOrig.split(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
-                complexFields[1] = complexFields[1].startsWith('.') ? complexFields[1].substr(1) : complexFields[1];
-                let containedFields = complexFields[1].split(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR);
-                containedFields.forEach(field => {
-                    let newFieldName = complexFields[0] ? complexFields[0] + field : field;
-                    if (newParsedQuery.fields.filter(newFieldTmp => {
-                        let newSOQLFieldTmp = <SOQLField>newFieldTmp;
-                        let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
-                        return newRawValueTmp == newFieldName;
-                    }).length == 0) {
-                        newParsedQuery.fields.push(getComposedField(newFieldName));
-                    }
-                    if (!outputMap.has(rawValueOrig))
-                        outputMap.set(rawValueOrig, new List<String>([newFieldName]));
-                    else
-                        outputMap.get(rawValueOrig).Add(newFieldName);
-                });
-            }
-
-        });
-        let newQuery: string = composeQuery(newParsedQuery);
-        return [newQuery, outputMap, originalFieldNamesToKeep];
-    }
-
-    /**
-     * Performs multiple queries and returns records map by given field.
-     */
-    public static async queryMultipleAsync(soqls: Array<string>, key: string, sOrg: SfdmModels.SOrg, useNonOrgMedia: boolean = false): Promise<Map<string, object>> {
-        let recordsMap: Map<string, object> = new Map<string, object>();
-        for (let index = 0; index < soqls.length; index++) {
-            const query = soqls[index];
-            let records = await this.queryAndParseAsync(query, sOrg, useNonOrgMedia);
-            records.ForEach(record => {
-                recordsMap.set(record[key], record);
-            });
-        }
-        return recordsMap;
-    }
 
     /**
      * Performs SOQL. Returns parsed list of objects.
-     * Complex external ids fields it automatically treates as formula field
+     * Supports Complex External ID fields, they are automatically treates as "virtual" formula field.
+     * 
+     * @static
+     * @param {string} soql Query to select 
+     * @param {SfdmModels.SOrg} sOrg sOrg instance
+     * @param {boolean} [allowUsingNonOrgMedias=false] In general the media type (data source type) is taken directly from the given Org instance. 
+     *                                                 By default the function uses salesforce org as data source but not csv files.
+     *                                                 If you want to allow using csv as data source 
+     *                                                 you need to set allowUsingNonOrgMedias=true
+     *                                                 and the sOrg.mediaType must set to File.
+     * @param {string} [password] Passphrase used to decrypt csv files (if specified)
+     * @returns {Promise<List<object>>} Returns records
+     * @memberof SfdxUtils
      */
-    public static async queryAndParseAsync(soql: string, sOrg: SfdmModels.SOrg, useNonOrgMedia: boolean = false, password?: string): Promise<List<object>> {
+    public static async queryAsync(soql: string,
+        sOrg: SfdmModels.SOrg,
+        allowUsingNonOrgMedias: boolean = false,
+        password?: string): Promise<List<object>> {
 
         let _this = this;
         let parsedQuery: Query = parseQuery(soql);
@@ -342,21 +305,21 @@ export class SfdxUtils {
 
         async function getRecords(soql: string, sOrg: SfdmModels.SOrg): Promise<List<object>> {
             let ret: List<object> = new List<object>();
-            let newSoql = _this.prepareQuery(soql);
+            let newSoql = _this._prepareQuery(soql);
             soql = newSoql[0];
-            let rcs = (await _this.queryAsync(soql, sOrg)).records;
+            let rcs = (await _this._queryAsync(soql, sOrg)).records;
             rcs = _this.parseRecords(rcs, soql).ToArray();
-            rcs = _this.formatRecords(rcs, newSoql);
+            rcs = _this._formatRecords(rcs, newSoql);
             ret.AddRange(rcs);
             if (soql.indexOf("FROM Group") >= 0) {
                 soql = soql.replace("FROM Group", "FROM User");
-                ret.AddRange(_this.parseRecords((await _this.queryAsync(soql, sOrg)).records, soql).ToArray());
+                ret.AddRange(_this.parseRecords((await _this._queryAsync(soql, sOrg)).records, soql).ToArray());
             }
             return ret;
         }
 
 
-        if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && useNonOrgMedia) {
+        if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && allowUsingNonOrgMedias) {
             if (name == "Group" || name == "User") {
                 name = SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME;
             }
@@ -365,11 +328,11 @@ export class SfdxUtils {
             if (!fs.existsSync(filepath)) {
                 return new List<object>();
             }
-            let data = await CommonUtils.readCsvFile(filepath, 0, csvColumnsToColumnTypeMap);
+            let data = await CommonUtils.readCsvFileAsync(filepath, 0, csvColumnsToColumnTypeMap);
             if (data.length == 0) {
                 return new List<object>(data);
             }
-            data = CommonUtils.decryptRecords(data, password);
+            data = CommonUtils.decryptArray(data, password);
             return new List<object>(data);
         }
 
@@ -378,25 +341,86 @@ export class SfdxUtils {
     }
 
 
-    public static async writeCsvFileAsync(name: string, records: Array<object>, sOrg: SfdmModels.SOrg, password?: string, subPath?: string): Promise<void> {
-        let filename = `${name}.csv`;
-        let filedir = subPath ? path.join(sOrg.basePath, subPath) : sOrg.basePath;
+
+
+
+    /**
+    * Performs many queries in a single function call and returns joined set of records 
+    * from all soqls mapped by given property name.
+    * Each output record is unique thanks to the map)
+    * 
+    * @static
+    * @param {Array<string>} soqls Array of SOQL selects to perform
+    * @param {string} mapByProp Property name that need to map records by it
+    * @param {SfdmModels.SOrg} sOrg sOrg instance
+    * @param {boolean} [allowUsingNonOrgMedias=false] In general the media type (data source type) is taken directly from the given Org instance. 
+    *                                                 By default the function uses salesforce org as data source but not csv files.
+    *                                                 If you want to allow using csv as data source 
+    *                                                 you need to set allowUsingNonOrgMedias=true
+    *                                                 and the sOrg.mediaType must set to File.
+    * @returns {Promise<Map<string, object>>}  Returns mapped records
+    * @memberof SfdxUtils
+    */
+    public static async queryManyAsync(soqls: Array<string>,
+        mapByProp: string, sOrg:
+            SfdmModels.SOrg,
+        allowUsingNonOrgMedias: boolean = false): Promise<Map<string, object>> {
+        let recordsMap: Map<string, object> = new Map<string, object>();
+        for (let index = 0; index < soqls.length; index++) {
+            const query = soqls[index];
+            let records = await this.queryAsync(query, sOrg, allowUsingNonOrgMedias);
+            records.ForEach(record => {
+                recordsMap.set(record[mapByProp], record);
+            });
+        }
+        return recordsMap;
+    }
+
+
+
+
+    /**
+     * Writes records for given sObject to csv file
+     * 
+     * @static
+     * @param {string} sObjectName sObject name. File creates with the same name as the sObject.
+     * @param {Array<object>} records Records to write to file
+     * @param {string} basePath The root folder to put csv in it
+     * @param {string} [password] Passphrase used to encrypt output csv file (if specified)
+     * @param {string} [subPath] Basically the root path to store csv file taken from Org instance.
+     *                           You also optionaly provide subdirectory related to the root path to store csv file there.
+     * @memberof SfdxUtils
+     */
+    public static async writeObjectRecordsToCsvFileAsync(sObjectName: string, records: Array<object>, basePath: string, password?: string, subPath?: string): Promise<void> {
+        let filename = `${sObjectName}.csv`;
+        let filedir = subPath ? path.join(basePath, subPath) : basePath;
         if (!fs.existsSync(filedir)) {
             fs.mkdirSync(filedir);
         }
         let filepath = path.join(filedir, filename);
-        records = CommonUtils.encryptRecords(records, password);
-        await CommonUtils.writeCsvFile(filepath, records);
+        records = CommonUtils.encryptArray(records, password);
+        await CommonUtils.writeCsvFileAsync(filepath, records);
     }
 
+
+
+
     /**
-     * Performs SOQL. Returns QueryResult<object>.
+     * Performs update on the data target.
+     * Updates the salesforce org or writes data to the csv file if File is the data target type
+     *
+     * @static
+     * @param {string} sObjectName sObject name to update
+     * @param {List<object>} records Records to update the data target
+     * @param {SfdmModels.SOrg} sOrg Target sOrg instance
+     * @param {Function} [apiCalloutStatusCallback=null] Callback function to send information about the job progress.
+     * @returns {Promise<List<object>>}  Returns resulting records as them were actually uploaded to the target.
+     * @memberof SfdxUtils
      */
     public static async updateAsync(sObjectName: string,
         records: List<object>,
         sOrg: SfdmModels.SOrg,
-        pollCallback: Function = null): Promise<List<object>> {
-
+        apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null): Promise<List<object>> {
 
         const makeUpdateAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
             let _this = this;
@@ -414,15 +438,29 @@ export class SfdxUtils {
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
                     try {
-                        totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
+                        totalProcessed = await SfdxUtils._processBatch("Update", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
                     } catch (ex) {
-                        await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
-                        reject(ex);
+                        await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
+                        let totalFailed = records.Count() - totalProcessed;
+                        let progress = new ApiCalloutStatus({
+                            sObjectName,
+                            jobId: job.id,
+                            numberRecordsProcessed: totalProcessed,
+                            numberRecordsFailed: totalFailed,
+                            error: MessageUtils.getMessagesString(commonMessages,
+                                COMMON_RESOURCES.apiOperationError,
+                                job.id || "N/A",
+                                "Update",
+                                sObjectName,
+                                String(totalProcessed),
+                                String(totalFailed))
+                        });
+                        reject(progress);
                         return;
                     }
                 }
 
-                await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
+                await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
                 resolve(totalProcessed);
 
             } else {
@@ -432,38 +470,70 @@ export class SfdxUtils {
                 cn.sobject(sObjectName).update(recs, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
-                },
-                    async function (error, result) {
-                        if (error) {
-                            recs.forEach(rec => {
-                                rec["Errors"] = rec["Errors"] || error;
-                            });
-                            await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
-                            reject(error);
-                            return;
-                        }
-                        let res = {
-                            jobId: "REST",
-                            numberRecordsProcessed: 0,
-                            numberRecordsFailed: 0,
-                            error: "No"
-                        };
-                        records.ForEach((record, index) => {
-                            if (result[index].success) {
-                                res.numberRecordsProcessed++;
-                                record["Errors"] = null;
-                            } else {
-                                res.numberRecordsFailed++;
-                                res.error = result[index].errors[0].message;
-                                record["Errors"] = res.error;
-                            }
-                        });
-                        if (pollCallback) {
-                            pollCallback(error, res);
-                        }
-                        await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
-                        resolve(result.length);
+                }, async function (error, result) {
+
+                    let progress = new ApiCalloutStatus({
+                        sObjectName,
+                        numberRecordsProcessed: 0,
+                        numberRecordsFailed: 0
                     });
+
+                    if (error) {
+                        recs.forEach(rec => {
+                            rec["Errors"] = rec["Errors"] || error;
+                        });
+
+                        await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
+
+                        progress.numberRecordsFailed = recs.length;
+                        progress.error = MessageUtils.getMessagesString(commonMessages,
+                            COMMON_RESOURCES.apiUnexpectedOperationError,
+                            progress.jobId,
+                            "Update",
+                            sObjectName,
+                            error);
+
+                        reject(progress);
+                        return;
+                    }
+
+                    records.ForEach((record, index) => {
+                        if (result[index].success) {
+                            progress.numberRecordsProcessed++;
+                            record["Errors"] = null;
+                        } else {
+                            progress.numberRecordsFailed++;
+                            progress.error = result[index].errors[0].message;
+                            record["Errors"] = progress.error;
+                        }
+                    });
+
+                    await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
+
+                    if (progress.numberRecordsFailed == 0) {
+                        if (apiCalloutStatusCallback) {
+                            progress.message = MessageUtils.getMessagesString(commonMessages,
+                                COMMON_RESOURCES.apiOperationCompleted,
+                                progress.jobId,
+                                "Update",
+                                sObjectName,
+                                String(progress.numberRecordsProcessed));
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                            apiCalloutStatusCallback(progress);
+                        }
+                        resolve(result.length);
+                    } else {
+                        progress.error = MessageUtils.getMessagesString(commonMessages,
+                            COMMON_RESOURCES.apiOperationError,
+                            progress.jobId,
+                            "Update",
+                            sObjectName,
+                            String(progress.numberRecordsProcessed),
+                            String(progress.numberRecordsFailed));
+                        reject(progress);
+                    }
+                });
+
             }
 
         });
@@ -474,13 +544,25 @@ export class SfdxUtils {
 
     }
 
+
+
+
     /**
-     * Inserts new records from list of object
+     * Performs insert to the data target.
+     * Inserts to the salesforce org or writes data to the csv file if File is the data target type
+     *
+     * @static
+     * @param {string} sObjectName sObject name to insert
+     * @param {List<object>} records Records to insert to the data target
+     * @param {SfdmModels.SOrg} sOrg Target sOrg instance
+     * @param {Function} [progressInfoCallback=null] Callback function to send information about the job progress.
+     * @returns {Promise<List<object>>}  Returns resulting records as them were actually uploaded to the target.
+     * @memberof SfdxUtils
      */
     public static async insertAsync(sObjectName: string,
         records: List<object>,
         sOrg: SfdmModels.SOrg,
-        pollCallback: Function = null): Promise<List<object>> {
+        apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null): Promise<List<object>> {
 
         let _this = this;
 
@@ -499,55 +581,101 @@ export class SfdxUtils {
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
                     try {
-                        totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, true);
+                        totalProcessed = await SfdxUtils._processBatch("Insert", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, true);
                     } catch (ex) {
-                        await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
-                        reject(ex);
+                        await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
+                        let totalFailed = records.Count() - totalProcessed;
+                        let progress = new ApiCalloutStatus({
+                            sObjectName,
+                            jobId: job.id,
+                            numberRecordsProcessed: totalProcessed,
+                            numberRecordsFailed: totalFailed,
+                            error: MessageUtils.getMessagesString(commonMessages,
+                                COMMON_RESOURCES.apiOperationError,
+                                job.id || "N/A",
+                                "Insert",
+                                sObjectName,
+                                String(totalProcessed),
+                                String(totalFailed))
+                        });
+                        reject(progress);
                         return;
                     }
                 }
 
-                await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
+                await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
                 resolve(totalProcessed);
 
             } else {
+
                 let recs = records.ToArray();
 
                 cn.sobject(sObjectName).create(recs, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
                 }, async function (error, result) {
+
+                    let progress = new ApiCalloutStatus({
+                        sObjectName,
+                        numberRecordsProcessed: 0,
+                        numberRecordsFailed: 0
+                    });
+
                     if (error) {
                         recs.forEach(rec => {
                             rec["Errors"] = rec["Errors"] || error;
                         });
-                        await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
-                        reject(error);
+
+                        await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
+
+                        progress.numberRecordsFailed = recs.length;
+                        progress.error = MessageUtils.getMessagesString(commonMessages,
+                            COMMON_RESOURCES.apiUnexpectedOperationError,
+                            progress.jobId,
+                            "Insert",
+                            sObjectName,
+                            error);
+
+                        reject(progress);
                         return;
                     }
-                    let res = {
-                        jobId: "REST",
-                        numberRecordsProcessed: 0,
-                        numberRecordsFailed: 0,
-                        error: "No"
-                    };
 
                     records.ForEach((record, index) => {
                         if (result[index].success) {
-                            res.numberRecordsProcessed++;
+                            progress.numberRecordsProcessed++;
                             record["Id"] = result[index].id;
                             record["Errors"] = null;
                         } else {
-                            res.numberRecordsFailed++;
-                            res.error = result[index].errors[0].message;
-                            record["Errors"] = res.error;
+                            progress.numberRecordsFailed++;
+                            progress.error = result[index].errors[0].message;
+                            record["Errors"] = progress.error;
                         }
                     });
-                    if (pollCallback) {
-                        pollCallback(error, res);
+
+                    await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
+
+                    if (progress.numberRecordsFailed == 0) {
+                        if (apiCalloutStatusCallback) {
+                            progress.message = MessageUtils.getMessagesString(commonMessages,
+                                COMMON_RESOURCES.apiOperationCompleted,
+                                progress.jobId,
+                                "Insert",
+                                sObjectName,
+                                String(progress.numberRecordsProcessed));
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;                                
+                            apiCalloutStatusCallback(progress);
+                        }
+                        resolve(result.length);
+                    } else {
+                        progress.error = MessageUtils.getMessagesString(commonMessages,
+                            COMMON_RESOURCES.apiOperationError,
+                            progress.jobId,
+                            "Insert",                            
+                            sObjectName,
+                            String(progress.numberRecordsProcessed),
+                            String(progress.numberRecordsFailed));
+                        reject(progress);
                     }
-                    await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
-                    resolve(result.length);
                 });
             }
 
@@ -559,13 +687,24 @@ export class SfdxUtils {
 
     }
 
+
+
+
     /**
-     * Remove records
-     */
+      * Performs delete from the data target.
+      * Deletes given records by id from the salesforce org
+      *
+      * @static
+      * @param {string} sObjectName sObject name to delete
+      * @param {List<object>} records Records to delete from to the data target
+      * @param {SfdmModels.SOrg} sOrg Target sOrg instance
+      * @param {Function} [apiCalloutStatusCallback=null] Callback function to send information about the job progress.
+      * @memberof SfdxUtils
+      */
     public static async deleteAsync(sObjectName: string,
         records: List<object>,
         sOrg: SfdmModels.SOrg,
-        pollCallback: Function = null): Promise<void> {
+        apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null): Promise<void> {
 
         let _this = this;
 
@@ -595,15 +734,29 @@ export class SfdxUtils {
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
                     try {
-                        totalProcessed = await SfdxUtils._processBatch(sObjectName, cn, sOrg, pollCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
+                        totalProcessed = await SfdxUtils._processBatch("Delete", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
                     } catch (ex) {
-                        await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
-                        reject(ex);
+                        await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
+                        let totalFailed = records.Count() - totalProcessed;
+                        let progress = new ApiCalloutStatus({
+                            sObjectName,
+                            jobId: job.id,
+                            numberRecordsProcessed: totalProcessed,
+                            numberRecordsFailed: totalFailed,
+                            error: MessageUtils.getMessagesString(commonMessages,
+                                COMMON_RESOURCES.apiOperationError,
+                                job.id || "N/A",
+                                "Delete",
+                                sObjectName,
+                                String(totalProcessed),
+                                String(totalFailed))
+                        });
+                        reject(progress);
                         return;
                     }
                 }
 
-                await this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
+                await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
                 resolve(totalProcessed);
 
             } else {
@@ -615,40 +768,71 @@ export class SfdxUtils {
                 cn.sobject(sObjectName).del(ids, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
-                },
-                    async function (error, result) {
-                        if (error) {
-                            recs.forEach(rec => {
-                                rec["Errors"] = rec["Errors"] || error;
-                            });
-                            await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
-                            reject(error);
-                            return;
-                        }
+                }, async function (error, result) {
 
-                        let res = {
-                            jobId: "REST",
-                            numberRecordsProcessed: 0,
-                            numberRecordsFailed: 0,
-                            error: "No"
-                        };
-
-                        records.ForEach((record, index) => {
-                            if (result[index].success) {
-                                res.numberRecordsProcessed++;
-                                record["Errors"] = null;
-                            } else {
-                                res.numberRecordsFailed++;
-                                res.error = result[index].errors[0].message;
-                                record["Errors"] = res.error;
-                            }
-                        });
-                        if (pollCallback) {
-                            pollCallback(error, res);
-                        }
-                        await _this._writeOutputRecordsToCSV(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
-                        resolve(result.length);
+                    let progress = new ApiCalloutStatus({
+                        sObjectName,
+                        numberRecordsProcessed: 0,
+                        numberRecordsFailed: 0
                     });
+
+                    if (error) {
+
+                        recs.forEach(rec => {
+                            rec["Errors"] = rec["Errors"] || error;
+                        });
+
+                        await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
+
+
+                        progress.numberRecordsFailed = recs.length;
+                        progress.error = MessageUtils.getMessagesString(commonMessages,
+                            COMMON_RESOURCES.apiUnexpectedOperationError,
+                            progress.jobId,
+                            "Delete",
+                            sObjectName,
+                            error);
+
+                        reject(progress);
+                        return;
+                    }
+
+                    records.ForEach((record, index) => {
+                        if (result[index].success) {
+                            progress.numberRecordsProcessed++;
+                            record["Errors"] = null;
+                        } else {
+                            progress.numberRecordsFailed++;
+                            progress.error = result[index].errors[0].message;
+                            record["Errors"] = progress.error;
+                        }
+                    });
+
+                    await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
+
+                    if (progress.numberRecordsFailed == 0) {
+                        if (apiCalloutStatusCallback) {
+                            progress.message = MessageUtils.getMessagesString(commonMessages,
+                                COMMON_RESOURCES.apiOperationCompleted,
+                                progress.jobId,
+                                "Delete",
+                                sObjectName,
+                                String(progress.numberRecordsProcessed));
+                                progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;                                
+                            apiCalloutStatusCallback(progress);
+                        }
+                        resolve(result.length);
+                    } else {
+                        progress.error = MessageUtils.getMessagesString(commonMessages,
+                            COMMON_RESOURCES.apiOperationError,
+                            progress.jobId,
+                            "Delete",
+                            sObjectName,
+                            String(progress.numberRecordsProcessed),
+                            String(progress.numberRecordsFailed));
+                        reject(progress);
+                    }
+                });
 
             }
         });
@@ -657,42 +841,43 @@ export class SfdxUtils {
 
     }
 
-    private static async _filterRecords(sql: string, data: Array<object>): Promise<Array<object>> {
-        return new Promise<Array<object>>((resolve) => {
-            if (!sql || data.length == 0) {
-                resolve(data);
-                return;
-            }
-            try {
-                return alasql(`SELECT * FROM ? WHERE ${sql}`, [data], function (res) {
-                    resolve(res);
-                    return;
-                });
-            } catch (ex) {
-                resolve(data);
-                return;
-            }
-        });
-    }
+
+
 
     /**
-     * Performs all kinds of update operations with records (Insert / Update / Merge / Upsert/ Add).
+     * Performs all kinds of CRUD operations (Insert / Update / Merge / Upsert/ Add) with set of records 
+     * related to the given task. 
+     * If File is defined as data target the function writes to the csv file instead of updating salesforce org.
+     *
+     * @static
+     * @param {SfdmModels.Task} task The task which records are currently processed
+     * @param {List<object>} sourceRecords Source records, from data source (Org or file)
+     * @param {List<object>} targetRecords Target records, the similar set of records as the Source records 
+     *                                      but coming from the Target. 
+     *                                      The source records are compared with the target before processed on the Target.
+     * @param {SfdmModels.SOrg} sOrg Target sOrg instance
+     * @param {SfdmModels.Enums.OPERATION} operation Operation to perform with the sourceRecords, can be different from defined 
+     *                                              in the given task
+     * @param {Array<string>} [omitFields=new Array<string>()] List of field (properties) in the sourceRecords to exclude (omit) 
+     *                                                          from the CRUD processing
+     * @param {Function} [apiCalloutStatusCallback=null] Callback function to send information about the job progress.
+     * @returns {Promise<List<object>>}
+     * @memberof SfdxUtils
      */
     public static async processTaskDataAsync(task: SfdmModels.Task,
         sourceRecords: List<object>,
         targetRecords: List<object>,
-        targetSOrg: SfdmModels.SOrg,
+        sOrg: SfdmModels.SOrg,
         operation: SfdmModels.Enums.OPERATION,
-        isChildTask: boolean,
         omitFields: Array<string> = new Array<string>(),
-        readonlyExternalIdFields: Array<string> = new Array<string>(),
-        jobMonitorCallback: Function = null): Promise<List<object>> {
-        
+        apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null): Promise<List<object>> {
+
         let _this = this;
 
         let sObjectName: string = task.sObjectName;
         let externalId: string = task.scriptObject.externalId;
         let scriptObject: SfdmModels.ScriptObject = task.scriptObject;
+        let readonlyExternalIdFields = task.scriptObject.readonlyExternalIdFields;
 
         if (!sourceRecords || sourceRecords.Count() == 0 || operation == SfdmModels.Enums.OPERATION.Readonly) {
             return sourceRecords;
@@ -708,13 +893,15 @@ export class SfdxUtils {
             readonlyExternalIdFields.filter(x => x != "Id") // Readonly fields
         );
 
-        readonlyExternalIdFields = readonlyExternalIdFields || [];
-
         // Omit fields below during Update and Insert
         omitFields = new List<string>([...omitFields, ...notUpdateableFields]).Distinct().ToArray();
 
         // Omit fields below during Insert only
         let omitFieldsDuringInsert = new List<string>([...omitFields, "Id"]).Distinct().ToArray();
+
+
+        let hasChildTasks = task.job.tasks.Any(x => x.scriptObject.referencedScriptObjectsMap.has(task.sObjectName));
+
 
         async function insertRecordsAsync(sourceRecords: List<object>) {
 
@@ -722,44 +909,52 @@ export class SfdxUtils {
                 sourceRecords = new List<object>(await _this._filterRecords(task.scriptObject.targetRecordsFilter, sourceRecords.ToArray()));
             }
 
-            //let extids = [];
-            let recordsToInsert = CommonUtils.cloneListOmitProps(sourceRecords.Select(x => deepClone.deepCloneSync(x)), omitFieldsDuringInsert);
+            let recordsToInsert = CommonUtils.cloneList(sourceRecords.Select(x => deepClone.deepCloneSync(x)), omitFieldsDuringInsert);
 
             let ids = sourceRecords.Select(x => x["Id"]);
             let map = mockRecordsData(recordsToInsert, ids);
             let inputRecs = [...map.keys()];
-            let recs = await _this.insertAsync(sObjectName, new List<object>(inputRecs), targetSOrg, jobMonitorCallback);
+            let recs = await _this.insertAsync(sObjectName, new List<object>(inputRecs), sOrg, apiCalloutStatusCallback);
             let insertedRecords = new List<object>();
-            recs.ForEach((record, index) => {
+            recs.ForEach(record => {
                 let oldRecord = map.get(record);
                 oldRecord["Id"] = record["Id"];
                 insertedRecords.Add(oldRecord);
             });
 
-            if (readonlyExternalIdFields.length > 0 && isChildTask) {
-                try {
-                    let inQueryFieldList = new List<string>(["Id", ...readonlyExternalIdFields]).Distinct().ToArray();
-                    let ids = insertedRecords.Select(x => x["Id"]).ToArray();
-                    let recordsMap = new Map<string, object>();
-                    if (inQueryFieldList.length == 1 && inQueryFieldList[0] == "Id") {
-                        ids.forEach(id => recordsMap.set(id, { Id: id }));
-                    } else {
-                        let queries = _this.createIdInQueries(inQueryFieldList, "Id", sObjectName, ids);
-                        recordsMap = await _this.queryMultipleAsync(queries, "Id", targetSOrg);
-                    }
-                    insertedRecords.ForEach((record, index) => {
-                        let rec = recordsMap.get(record["Id"]);
-                        let sourceRec = sourceRecords.ElementAt(index);
-                        if (rec) {
-                            readonlyExternalIdFields.forEach(field => {
-                                record[field] = rec[field];
-                                record[field + '_source'] = sourceRec[field];
-                            })
-                        }
-                    });
-                } catch (ex) {
-                    throw new SfdmModels.JobError(`Object ${sObjectName}: no records were inserted. Execution aborted.`);
+            if (readonlyExternalIdFields.length > 0 && hasChildTasks) {
+
+                // Code block to build mapping between Source and Target
+                // ---------------------------------------
+                // For all inserted records into the TARGET, we select all "readonly external id field" from the TARGET org
+                //   and then we construct new properties to each object in the array of inserted records as following:
+                //      for each "readonly external id field" (for example 'FormulaField__c') :
+                //      --a we are updating own property 'FormulaField__c' or adding it if not exist 
+                //      --b we adding new 'FormulaField__c__source' property contains the same value of FormulaField__c
+                //         but from the SOURCE Org
+                //  This allow to map external ids directly between Source and the Target on each record.
+                //  Field__c__source contains the SOURCE value and Field__c contains the TARGET value.
+
+                let inQueryFieldList = new List<string>(["Id", ...readonlyExternalIdFields]).Distinct().ToArray();
+                let ids = insertedRecords.Select(x => x["Id"]).ToArray();
+                let recordsMap = new Map<string, object>();
+                if (inQueryFieldList.length == 1 && inQueryFieldList[0] == "Id") {
+                    ids.forEach(id => recordsMap.set(id, { Id: id }));
+                } else {
+                    let queries = _this._createIdInQueries(inQueryFieldList, sObjectName, ids);
+                    recordsMap = await _this.queryManyAsync(queries, "Id", sOrg);
                 }
+                insertedRecords.ForEach((record, index) => {
+                    let rec = recordsMap.get(record["Id"]);
+                    let sourceRec = sourceRecords.ElementAt(index);
+                    if (rec) {
+                        readonlyExternalIdFields.forEach(field => {
+                            record[field] = rec[field];
+                            record[field + '_source'] = sourceRec[field];
+                        })
+                    }
+                });
+
             }
 
             return insertedRecords;
@@ -772,13 +967,13 @@ export class SfdxUtils {
                 task.taskFields.ForEach(field => {
                     if (field.mockPattern) {
                         let fn = field.mockPattern;
-                        if (SfdmModels.CONSTANTS.SPECIAL_MOCK_COMMANDS.filter(x => fn.startsWith(x + "(")).length > 0) {
+                        if (SfdmModels.CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
                             fn = fn.replace(/\(/, `('${field.name}',`);
                         }
                         mockFields.set(field.name, fn);
                     }
                 });
-                CommonUtils.resetCasualCounter();
+                MockGenerator.resetCounter();
                 sourceRecords.ForEach((record, index) => {
                     let obj2 = Object.assign({}, record);
                     [...mockFields.keys()].forEach(name => {
@@ -800,6 +995,7 @@ export class SfdxUtils {
             return m;
         }
 
+        // -------------  INSERT ONLY ---------------------        
         if (operation == SfdmModels.Enums.OPERATION.Insert) {
             let insertedRecords = await insertRecordsAsync(sourceRecords);
             return insertedRecords;
@@ -836,10 +1032,15 @@ export class SfdxUtils {
         let sourceExtId = externalId;
         let targetExtId = fieldSourceOfTarget.length > 0 ? externalId + "_source" : externalId;
 
-        var mappedRecords = this.compareRecords(sourceRecords, targetRecords, sourceExtId, targetExtId);
+        var mappedRecords = this._compareRecords(sourceRecords, targetRecords, sourceExtId, targetExtId);
         var targetMappedRecords = new Map();
 
         let idsMap = new Map<object, String>();
+
+
+
+        // -------------  ANALYSING RECORDS FOR UPSERT --------------------- 
+        // Determine which records should be updated and which inserted       
         mappedRecords.ForEach(pair => {
             if (pair[0] && !pair[1] && (operation == SfdmModels.Enums.OPERATION.Upsert || operation == SfdmModels.Enums.OPERATION.Add)) {
                 // ADD / INSERT
@@ -862,31 +1063,28 @@ export class SfdxUtils {
 
 
 
+        // -------------  INSERTING OF UPSERT ---------------------
         if (recordsToInsert.Count() > 0) {
             // INSERTING
-            if (jobMonitorCallback) {
-                jobMonitorCallback(
-                    null,
-                    {
-                        message: `Ready to insert ${recordsToInsert.Count()} records.`
-                    }
-                );
+            if (apiCalloutStatusCallback) {
+                apiCalloutStatusCallback(new ApiCalloutStatus({
+                    message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.readyToInsert, sObjectName, String(recordsToInsert.Count())),
+                    verbosity : LOG_MESSAGE_VERBOSITY.VERBOSE
+                }));
             }
             recordsToInsert = await insertRecordsAsync(recordsToInsert);
         } else {
-            if (jobMonitorCallback) {
-                jobMonitorCallback(
-                    null,
-                    {
-                        message: `Nothing to insert.`
-                    }
-                );
+            if (apiCalloutStatusCallback) {
+                apiCalloutStatusCallback(new ApiCalloutStatus({
+                    message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.nothingToInsert, sObjectName),
+                    verbosity : LOG_MESSAGE_VERBOSITY.VERBOSE
+                }));
             }
         }
 
 
 
-
+        // -------------  UPDATING OF UPSERT ---------------------
         if (recordsToUpdate.Count() > 0) {
             // UPDATING
             let records = recordsToUpdate.DistinctBy(x => x["Id"]);
@@ -903,7 +1101,7 @@ export class SfdxUtils {
             notUpdateableFields = notUpdateableFields.Distinct();
 
             if (notUpdateableFields.Count() > 0) {
-                records = CommonUtils.cloneListOmitProps(records.Select(x => deepClone.deepCloneSync(x)), notUpdateableFields.ToArray());
+                records = CommonUtils.cloneList(records.Select(x => deepClone.deepCloneSync(x)), notUpdateableFields.ToArray());
             }
             let recordToUpdate3 = new List<object>();
             records.ForEach(record => {
@@ -913,79 +1111,67 @@ export class SfdxUtils {
                 }
             });
             if (recordToUpdate3.Count() > 0) {
-                if (jobMonitorCallback) {
-                    jobMonitorCallback(
-                        null,
-                        {
-                            message: `Ready to update  ${recordToUpdate3.Count()} records.`
-                        }
-                    );
+                if (apiCalloutStatusCallback) {
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.readyToUpdate, sObjectName, String(recordToUpdate3.Count())),
+                        verbosity : LOG_MESSAGE_VERBOSITY.VERBOSE
+                    }));
                 }
                 let m = mockRecordsData(recordToUpdate3, ids);
                 let recs = [...m.keys()];
                 if (task.scriptObject.targetRecordsFilter) {
                     recs = await this._filterRecords(task.scriptObject.targetRecordsFilter, recs);
                 }
-                await this.updateAsync(sObjectName, new List<object>(recs), targetSOrg, jobMonitorCallback);
+                await this.updateAsync(sObjectName, new List<object>(recs), sOrg, apiCalloutStatusCallback);
             } else {
-                if (jobMonitorCallback) {
-                    jobMonitorCallback(
-                        null,
-                        {
-                            message: `Nothing to update.`
-                        }
-                    );
+                if (apiCalloutStatusCallback) {
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.nothingToUpdate, sObjectName),
+                        verbosity : LOG_MESSAGE_VERBOSITY.VERBOSE
+                    }));
                 }
             }
         }
 
-        recordsToInsert.AddRange(recordsToUpdate.ToArray());
 
+        recordsToInsert.AddRange(recordsToUpdate.ToArray());
         return recordsToInsert;
 
     }
 
+
+
     /**
-     * Compare two sets of records by external id field to find differences on each row.
+     * Converts map of records into array of records, using grouping by the given property.
+     * The output array is always unique by the given property.
+     * @static
+     * @param {Map<string, Array<object>>} records The input records map to convert: key => Records by the key
+     * @param {string} [groupByPropName="Id"]   (Default="Id") Group all records by this property
+     * @param {LogicalOperator} [operator="OR"] (Default="OR") Logical operator to apply to the input records (OR/AND). 
+     *                                            -- If operator="OR": all record sets from all keys are joined together into the resulting array
+     *                                            -- If operator="AND": only records do exist in ALL record sets are accepted and joined into the resulting array
+     * 
+     
+     * @returns {Array<object>}
+     * @memberof SfdxUtils
      */
-    public static compareRecords(sourceRecords: List<object>, targetRecords: List<object>,
-        sourceExternalId: string,
-        targetExternalId: string): List<[object, object]> {
-
-        var records: List<[object, object]> = new List<[object, object]>();
-        var targetMap: Map<string, object> = new Map<string, object>();
-
-        targetRecords.ForEach((target, index) => {
-            let key = target[targetExternalId];
-            targetMap.set(key, target);
-        });
-
-        sourceRecords.ForEach((source, index) => {
-            let key = source[sourceExternalId];
-            records.Add([source, targetMap.get(key)]);
-        });
-
-        return records;
-
-    }
-
-
-    public static groupRecords(records: Map<string, Array<object>>,
-        groupByField: string = "Id",
-        operator: LogicalOperator = "AND"): Array<object> {
+    public static recordsMapToRecordsArray(
+        records: Map<string, Array<object>>,
+        groupByPropName: string = "Id",
+        operator: LogicalOperator = "OR"): Array<object> {
 
         let map: Map<string, object> = new Map<string, object>();
         let tempMap: Map<string, object>;
-        let allFields = [...records.keys()];
+        let keys = [...records.keys()];
 
         if (operator == "AND") {
-            // OR => exclude
-            for (let index = 0; index < allFields.length; index++) {
-                let field = allFields[index];
-                let recrds = records.get(field)
+            // AND => exclude
+            for (let index = 0; index < keys.length; index++) {
+                let key = keys[index];
+                let recordsByKey = records.get(key)
                 tempMap = new Map<string, object>();
-                recrds.forEach(record => {
-                    tempMap.set(record[groupByField], record);
+                recordsByKey.forEach(record => {
+                    tempMap.set(record[groupByPropName], record);
                 });
                 if (map.size > 0) {
                     let keys = [...map.keys()];
@@ -1001,90 +1187,83 @@ export class SfdxUtils {
             }
         } else {
             // OR => concatence
-            for (let index = 0; index < allFields.length; index++) {
-                let field = allFields[index];
-                let recrds = records.get(field)
-                recrds.forEach(record => {
-                    map.set(record[groupByField], record);
+            for (let index = 0; index < keys.length; index++) {
+                let key = keys[index];
+                let recordsByKey = records.get(key)
+                recordsByKey.forEach(record => {
+                    map.set(record[groupByPropName], record);
                 });
             }
         }
         return [...map.values()];
     }
 
+
+
+
     /**
-     * Adds additional rule to the existing where clause.
-     * Ex.  source:  WHERE Account.Name = 'Account',   Source__c = ['Source1', 'Source2']
-     *      return:  WHERE (Account.Name = 'Account') OR (Source__c IN ('Source1', 'Source2'))
+     * Modifies existing WHERE clause by adding extra WHERE ... IN (values) rule.
+     * Ex.  source query:            WHERE Account.Name = 'Account',   Source__c = ['Source1', 'Source2']
+     *      return composite query:  WHERE (Account.Name = 'Account') OR/AND (Source__c IN ('Source1', 'Source2'))
+     * 
+     * @static
+     * @param {WhereClause} where Source query to modify
+     * @param {string} fieldName Field name to compose 'WHERE fieldName IN (values)'
+     * @param {Array<string>} values Values for 'IN'
+     * @param {LiteralType} [literalType="STRING"] (Default="STRING") Data type of the values. Used to enclose values into single quotes when needed.
+     * @param {LogicalOperator} [logicalOperator="OR"] (Default="OR") Logical operator to apply between the original WHERE and the new WHERE..IN
+     * @returns {WhereClause} Returns modified WHERE clause
+     * @memberof SfdxUtils
      */
-    public static composeWhereInClause(accumulatedWhere: WhereClause, fieldName: string, values: Array<string>,
+    public static composeWhereInClause(
+        where: WhereClause,
+        fieldName: string,
+        values: Array<string>,
         literalType: LiteralType = "STRING",
         logicalOperator: LogicalOperator = "OR"): WhereClause {
 
         let values2 = values.map(x => x.replace(/\\/g, "\\\\").replace(/'/g, "\\'"));
         let c: Condition = { field: fieldName, operator: "IN", value: values2, literalType: literalType };
-        if (!accumulatedWhere || !accumulatedWhere.left) {
+        if (!where || !where.left) {
             let ret: WhereClause = { left: c };
             ret.left.openParen = 1;
             ret.left.closeParen = 1;
             return ret;
         } else {
-            accumulatedWhere.left.openParen = 0;
-            let ret = { left: c, right: accumulatedWhere, operator: logicalOperator };
+            where.left.openParen = 0;
+            let ret = { left: c, right: where, operator: logicalOperator };
             ret.left.openParen = 1;
             return ret;
         }
     }
 
-    /**
-     * Creates WHERE Id IN ('....', '....')  clause
-     */
-    public static createIdInQueries(fieldsToQuery: Array<string>, fieldName: string = "Id", sObjectName: string, valuesIN: Array<string>): Array<string> {
 
-        let maxInsInQuery = 178;
-        let tempQuery = <Query>{
-            fields: fieldsToQuery.map(field => getComposedField(field)),
-            where: <WhereClause>{},
-            sObject: sObjectName
-        };
-        let counter: number = 0;
-        let whereValues = new Array<string>();
 
-        function* queryGen() {
-            while (true) {
-                for (let i = 0; i < maxInsInQuery; i++) {
-                    whereValues.push(valuesIN[counter]);
-                    counter++;
-                    if (counter == valuesIN.length)
-                        break;
-                }
 
-                let c: Condition = {
-                    field: fieldName,
-                    operator: "IN",
-                    value: whereValues,
-                    literalType: "STRING"
-                };
-                tempQuery.where.left = c;
-                yield composeQuery(tempQuery);
-                whereValues = new Array<string>();
-
-                if (counter == valuesIN.length)
-                    break;
-            }
-        }
-
-        return [...queryGen()];
-    }
 
     /**
-     * Creates WHERE Field__c IN ('....', '....')  clause
+     * Creates array of SOQLs that each of them contains "WHERE Field__c IN (values)"  clauses
+     * for given input values.
+     * 
+     * The function automatically will split the input array into multiple chunks
+     * according to the projected length of each query in respect to the SF max SOQL length limitations.
+     *
+     * @static
+     * @param {Array<string>} selectFields Field names to select
+     * @param {string} [fieldName="Id"] The field name to use in the  WHERE Field IN (Values) clause 
+     * @param {Array<string>} valuesIN Values to use in in the WHERE Field IN (Values) clause 
+     * @returns {Array<string>} Returns an array of SOQLs
+     * @memberof SfdxUtils
      */
-    public static createFieldInQueries(fieldsToQuery: Array<string>, fieldName: string = "Id", sObjectName: string, valuesIN: Array<string>): Array<string> {
+    public static createFieldInQueries(
+        selectFields: Array<string>,
+        fieldName: string = "Id",
+        sObjectName: string,
+        valuesIN: Array<string>): Array<string> {
 
         let maxQueryLength = 3900;
         let tempQuery = <Query>{
-            fields: fieldsToQuery.map(field => getComposedField(field)),
+            fields: selectFields.map(field => getComposedField(field)),
             where: <WhereClause>{},
             sObject: sObjectName
         };
@@ -1121,11 +1300,206 @@ export class SfdxUtils {
     }
 
 
-    private static async _writeOutputRecordsToCSV(sObjectName: string, sOrg: SfdmModels.SOrg, records: Array<any>, operation: SfdmModels.Enums.OPERATION): Promise<any> {
+
+
+
+
+    // Private members --------------------------------------  
+    private static _compareRecords(sourceRecords: List<object>, targetRecords: List<object>,
+        sourceExternalId: string,
+        targetExternalId: string): List<[object, object]> {
+
+        var records: List<[object, object]> = new List<[object, object]>();
+        var targetMap: Map<string, object> = new Map<string, object>();
+
+        targetRecords.ForEach((target, index) => {
+            let key = target[targetExternalId];
+            targetMap.set(key, target);
+        });
+
+        sourceRecords.ForEach((source, index) => {
+            let key = source[sourceExternalId];
+            records.Add([source, targetMap.get(key)]);
+        });
+
+        return records;
+
+    }
+
+
+    private static async _filterRecords(sql: string, data: Array<object>): Promise<Array<object>> {
+        return new Promise<Array<object>>((resolve) => {
+            if (!sql || data.length == 0) {
+                resolve(data);
+                return;
+            }
+            try {
+                return alasql(`SELECT * FROM ? WHERE ${sql}`, [data], function (res) {
+                    resolve(res);
+                    return;
+                });
+            } catch (ex) {
+                resolve(data);
+                return;
+            }
+        });
+    }
+
+
+    private static _formatRecords(records: Array<object>, format: [string, Map<String, List<String>>, Array<String>]): Array<object> {
+        if (format[1].size == 0) {
+            return records;
+        }
+        let keys = [...format[1].keys()];
+        records.forEach(record => {
+            keys.forEach(complexKey => {
+                let fields = format[1].get(complexKey);
+                let value = "";
+                fields.ForEach(field => {
+                    let f = field.toString();
+                    value += ";" + record[f];
+                });
+                record[complexKey.toString()] = value
+            });
+            keys.forEach(complexKey => {
+                let fields = format[1].get(complexKey);
+                fields.ForEach(field => {
+                    let f = field.toString();
+                    if (format[2].indexOf(f) < 0) {
+                        delete record[f];
+                    }
+                });
+            });
+        });
+        return records;
+    }
+
+
+    private static _prepareQuery(soql: string): [string, Map<String, List<String>>, Array<String>] {
+        let newParsedQuery = parseQuery(soql);
+        let originalFields: Array<SOQLField> = newParsedQuery.fields.map(x => {
+            return <SOQLField>x;
+        });
+        let originalFieldNamesToKeep: Array<String> = new List<String>(originalFields.map(newFieldTmp => {
+            let newSOQLFieldTmp = <SOQLField>newFieldTmp;
+            let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
+            return newRawValueTmp;
+        })).ToArray();
+        newParsedQuery.fields = [];
+        let outputMap: Map<String, List<String>> = new Map<String, List<String>>();
+        originalFields.forEach(originalField => {
+            let rawValueOrig = originalField["rawValue"] || originalField.field;
+            if (rawValueOrig.indexOf(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX) < 0) {
+                // Simple field
+                if (!newParsedQuery.fields.some(newFieldTmp => {
+                    let newSOQLFieldTmp = <SOQLField>newFieldTmp;
+                    let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
+                    return newRawValueTmp == rawValueOrig;
+                })) {
+                    newParsedQuery.fields.push(originalField);
+                }
+            } else {
+                // Complex field
+                let complexFields = rawValueOrig.split(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
+                complexFields[1] = complexFields[1].startsWith('.') ? complexFields[1].substr(1) : complexFields[1];
+                let containedFields = complexFields[1].split(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR);
+                containedFields.forEach(field => {
+                    let newFieldName = complexFields[0] ? complexFields[0] + field : field;
+                    if (!newParsedQuery.fields.some(newFieldTmp => {
+                        let newSOQLFieldTmp = <SOQLField>newFieldTmp;
+                        let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
+                        return newRawValueTmp == newFieldName;
+                    })) {
+                        newParsedQuery.fields.push(getComposedField(newFieldName));
+                    }
+                    if (!outputMap.has(rawValueOrig))
+                        outputMap.set(rawValueOrig, new List<String>([newFieldName]));
+                    else
+                        outputMap.get(rawValueOrig).Add(newFieldName);
+                });
+            }
+
+        });
+        let newQuery: string = composeQuery(newParsedQuery);
+        return [newQuery, outputMap, originalFieldNamesToKeep];
+    }
+
+
+    private static async _queryAsync(soql: string, sOrg: SfdmModels.SOrg): Promise<QueryResult<object>> {
+
+        const makeQueryAsync = (soql) => new Promise((resolve, reject) => {
+
+            var cn = sOrg.getConnection();
+
+            var records = [];
+
+            var query = cn.query(soql).on("record", function (record) {
+                records.push(record);
+            }).on("end", function () {
+                resolve(<QueryResult<object>>{
+                    done: true,
+                    records: records,
+                    totalSize: query.totalSize
+                });
+            }).on("error", function (error) {
+                reject(error);
+            }).run({
+                autoFetch: true,
+                maxFetch: SfdmModels.CONSTANTS.MAX_FETCH_SIZE
+            });
+        });
+
+        return <QueryResult<object>>(await makeQueryAsync(soql));
+    }
+
+
+    private static _createIdInQueries(
+        selectFields: Array<string>,
+        sObjectName: string,
+        valuesIN: Array<string>): Array<string> {
+
+        let maxInsInQuery = 178;
+        let tempQuery = <Query>{
+            fields: selectFields.map(field => getComposedField(field)),
+            where: <WhereClause>{},
+            sObject: sObjectName
+        };
+        let counter: number = 0;
+        let whereValues = new Array<string>();
+
+        function* queryGen() {
+            while (true) {
+                for (let i = 0; i < maxInsInQuery; i++) {
+                    whereValues.push(valuesIN[counter]);
+                    counter++;
+                    if (counter == valuesIN.length)
+                        break;
+                }
+
+                let c: Condition = {
+                    field: "Id",
+                    operator: "IN",
+                    value: whereValues,
+                    literalType: "STRING"
+                };
+                tempQuery.where.left = c;
+                yield composeQuery(tempQuery);
+                whereValues = new Array<string>();
+
+                if (counter == valuesIN.length)
+                    break;
+            }
+        }
+
+        return [...queryGen()];
+    }
+
+
+    private static async _writeObjectOutputRecordsToCSVFileAsync(sObjectName: string, sOrg: SfdmModels.SOrg, records: Array<any>, operation: SfdmModels.Enums.OPERATION): Promise<any> {
         if (sOrg.createTargetCSVFiles) {
-            await this.writeCsvFileAsync(`${sObjectName + "_" + SfdmModels.Enums.OPERATION[operation] + SfdmModels.CONSTANTS.TARGET_CSV_FILE_POSTFIX}`,
+            await this.writeObjectRecordsToCsvFileAsync(`${sObjectName + "_" + SfdmModels.Enums.OPERATION[operation] + SfdmModels.CONSTANTS.TARGET_CSV_FILE_POSTFIX}`,
                 records,
-                sOrg,
+                sOrg.basePath,
                 undefined,
                 SfdmModels.CONSTANTS.TARGET_CSV_FILE_SUBDIR);
         }
@@ -1133,10 +1507,11 @@ export class SfdxUtils {
 
 
     private static async _processBatch(
+        operation : string,
         sObjectName: string,
         cn: any,
         sOrg: SfdmModels.SOrg,
-        pollCallback: Function,
+        apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null,
         job: any,
         records: Array<any>,
         numberJobRecordsSucceeded: number,
@@ -1166,26 +1541,40 @@ export class SfdxUtils {
 
                 batch.poll(sOrg.pollingIntervalMs, SfdmModels.CONSTANTS.POLL_TIMEOUT);
 
-                if (pollCallback) {
+                if (apiCalloutStatusCallback) {
                     if (showStartMessage) {
-                        pollCallback("", {
-                            message: `Job# [${job.id}] started.`
-                        });
+                        apiCalloutStatusCallback(new ApiCalloutStatus({
+                            message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStarted, job.id, operation, sObjectName),
+                            verbosity : LOG_MESSAGE_VERBOSITY.MINIMAL
+                        }));
                     }
-                    pollCallback("", {
-                        message: `Batch# [${batch.id}] started.`
-                    });
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.batchStarted, batch.id, operation, sObjectName),
+                        verbosity : LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
                 }
 
                 pollTimer = setInterval(function () {
                     cn.bulk.job(job.id).batch(batch.id).check((err, results) => {
-                        if (pollCallback) {
-                            results.error = "No";
-                            results.numberRecordsProcessed = +results.numberRecordsProcessed;
-                            if (numberBatchRecordsProcessed != results.numberRecordsProcessed) {
-                                numberBatchRecordsProcessed = results.numberRecordsProcessed;
-                                results.numberRecordsProcessed = numberJobRecordsSucceeded + results.numberRecordsProcessed;
-                                pollCallback(err, results);
+                        if (apiCalloutStatusCallback) {
+                            let progress: ApiCalloutStatus = new ApiCalloutStatus({
+                                numberRecordsProcessed: +results.numberRecordsProcessed,
+                                jobId: job.id,
+                                sObjectName: sObjectName
+                            });
+                            if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
+                                numberBatchRecordsProcessed = progress.numberRecordsProcessed;
+                                progress.numberRecordsProcessed = numberJobRecordsSucceeded + progress.numberRecordsProcessed;
+                                progress.message = MessageUtils.getMessagesString(commonMessages,
+                                    COMMON_RESOURCES.apiOperationProgress,
+                                    job.id,
+                                    operation,
+                                    sObjectName,
+                                    String(progress.numberRecordsProcessed),
+                                    String(progress.numberRecordsFailed));
+                                progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
+                                apiCalloutStatusCallback(progress);
+
                             }
                         }
                     });
@@ -1217,18 +1606,48 @@ export class SfdxUtils {
                 });
 
                 if (showStopMessage) {
-                    pollCallback("", {
-                        message: `Job# [${job.id}] finished with ${numberJobRecordsSucceeded} succeded records.`
-                    });
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStopped, job.id, operation, sObjectName),
+                        verbosity : LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
                 }
 
+                let progress = new ApiCalloutStatus({
+                    sObjectName,
+                    jobId: job.id,
+                    numberRecordsProcessed: numberJobRecordsSucceeded,
+                    numberRecordsFailed: numberBatchRecordsFailed
+                });
+
                 if (numberBatchRecordsFailed > 0) {
+
+                    if (apiCalloutStatusCallback) {
+                        progress.error = MessageUtils.getMessagesString(commonMessages,
+                            COMMON_RESOURCES.apiOperationError2,
+                            job.id,
+                            operation,
+                            sObjectName,
+                            batch.id,
+                            String(progress.numberRecordsFailed));
+                        progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                        apiCalloutStatusCallback(progress);
+                    }
+
                     if (sOrg.allOrNone) {
-                        reject(`Job# [${job.id}] (sObject "${sObjectName}") has incomplete batch ${batch.id} having ${numberBatchRecordsFailed} failed records. Execution was stopped.`);
-                    } else if (pollCallback) {
-                        pollCallback(undefined, {
-                            message: `WARNING! Job# [${job.id}] (sObject "${sObjectName}") has incomplete batch ${batch.id} having ${numberBatchRecordsFailed} failed records.`
-                        });
+                        reject(progress);
+                        return;
+                    }
+
+                } else {
+                    if (apiCalloutStatusCallback) {
+                        progress.message = MessageUtils.getMessagesString(commonMessages,
+                            COMMON_RESOURCES.apiOperationCompleted,
+                            job.id,
+                            operation,
+                            sObjectName,
+                            String(progress.numberRecordsProcessed));
+                        progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                        apiCalloutStatusCallback(progress);
                     }
                 }
 
@@ -1238,5 +1657,8 @@ export class SfdxUtils {
         });
 
     }
+
+
+
 
 }

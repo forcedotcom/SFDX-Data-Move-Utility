@@ -11,6 +11,13 @@ import { Type } from "class-transformer";
 import * as SfdmModels from "../models";
 import { CONSTANTS } from "../models";
 
+
+/**
+ * Class that represents Salesforce organization
+ *
+ * @export
+ * @class SOrg
+ */
 export class SOrg {
 
     constructor(name: string, accessToken: string, instanceUrl: string, basePath: string, mediaType: SfdmModels.Enums.DATA_MEDIA_TYPE, isSource: boolean) {
@@ -64,15 +71,14 @@ export class SOrg {
 
 }
 
-export interface IExternalIdField {
-    value: string;
-    label: string;
-    isReference: boolean;
-    isAutoNumber: boolean;
-    isFormula: boolean;
-    objectName: string;
-}
 
+
+/**
+ * Class that represents sObject
+ *
+ * @export
+ * @class SObjectDescribe
+ */
 export class SObjectDescribe {
 
     constructor(init?: Partial<SObjectDescribe>) {
@@ -89,9 +95,11 @@ export class SObjectDescribe {
     @Type(() => SFieldDescribe)
     fieldsMap: Map<string, SFieldDescribe>;
 
+
     get initialized() {
         return this.fieldsMap.size > 0;
     }
+
 
     get availableExternalIdFields(): Array<IExternalIdField> {
         return [...this.fieldsMap.values()].filter(f => (f.creatable && f.updateable || f.autoNumber || f.isFormula)
@@ -109,6 +117,14 @@ export class SObjectDescribe {
 
 }
 
+
+
+/**
+ * Class that represents sObject field
+ *
+ * @export
+ * @class SFieldDescribe
+ */
 export class SFieldDescribe {
 
     constructor(init?: Partial<SFieldDescribe>) {
@@ -144,4 +160,21 @@ export class SFieldDescribe {
         return this.type == "boolean";
     }
 
+}
+
+
+
+/**
+ * Interface represents External id field definition
+ *
+ * @export
+ * @interface IExternalIdField
+ */
+export interface IExternalIdField {
+    value: string;
+    label: string;
+    isReference: boolean;
+    isAutoNumber: boolean;
+    isFormula: boolean;
+    objectName: string;
 }

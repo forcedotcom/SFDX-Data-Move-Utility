@@ -1,0 +1,132 @@
+{
+    "commandDescription": "The Salesforce DX data migration tool.\nPopulate your org (scratch/development/sandbox/production) with data imported from another org or CSV file.\nRefer https://github.com/forcedotcom/SFDX-Data-Move-Utility for the detailed help information.",
+    "commandLongDescription": "Populate your org (scratch/development/sandbox/production) with data imported from another org or CSV file.\nRefer https://github.com/forcedotcom/SFDX-Data-Move-Utility for the detailed help information.",
+
+    "sourceusernameFlagDescription": "Source org username/alias or 'csvfile' for csv load",
+    "sourceusernameFlagLongDescription": "Provide username or alias for the source org or 'csvfile' if CSV files are used as data source.",
+
+    "encryptKeyFlagDescription": "[Optional] In case package encrypted - provide decrypt key",
+    "encryptKeyFlagLongDescription": "[Optional] Provide decrypt key to decrypt org credentials provided in 'orgs' section of export.json file assuming they were previously encrypted with the same key.",
+
+    "pathFlagDescription": "[Optional] Absolute/Relative path to package directory",
+    "pathFlagLongDescription": "[Optional] Absolute or relative path to the directory that contains working export.json file. If not provided, the plugin will try to search for the file in the current directory.",
+
+    "quietFlagDescription": "[Optional] Disable logging - show only success/errors",
+    "quietFlagLongDescription": "[Optional] Disable logging - show only success/errors. Supress stdout output. if --filelog is specified the plugin will still log into file.",
+
+    "silentFlagDescription": "[Optional] Disable logging; same as --quiet flag",
+    "silentFlagLongDescription": "[Optional] The same as --quiet flag. Disable logging - show only success/errors. Supress stdout output. if --filelog is specified the plugin will still log into file.",
+
+    "conciseFlagDescription": "[Optional] Emit brief command output to stdout",
+    "conciseFlagLongDescription": "[Optional] Display only short messages, that are highly important for understanding the progress of the execution.",
+
+    "verboseFlagDescription": "[Optional] Emit additional command output to stdout",
+    "verboseFlagLongDescription": "[Optional] Display all command messages and errors.",
+
+    "versionFlagDescription": "[Optional] Output the current version of the plugin",
+    "versionFlagLongDescription": "[Optional] Display the current installed version of the plugin.",
+
+    "apiversionFlagDescription": "[Optional] Override the api version set in the package definition",
+    "apiversionFlagLongDescription": "[Optional] If specified overrides apiVersion parameter of the export.json file. Used for all api requests made by this command.",
+
+    "filelogFlagDescription": "[Optional] Enable additional logging into log file",
+    "filelogFlagLongDescription": "[Optional] In addition stdout/stderr this flag will turn on logging into .log file. Each command run will create separated log file inside /log subdirectory related to the with the working export.json file. A verbosity control is disabled for log files: all messages will be logged, even --quite flag was specified.",
+
+    "nopromptFlagDescription": "[Optional] Skip prompt inputs or confirmation",
+    "nopromptLongFlagDescription": "[Optional] Flag to skip prompting for more inputs or confirmation. Command will continue using the default options.",
+
+    "jsonFlagDescription": "[Optional] Format the command output as json",
+    "jsonLongFlagDescription": "[Optional] Return formatted json instead of text to stdout as a result of the command execution. Json result will also contain extended information as start time, end time, time elapsed etc.",
+
+    "errorMissingRequiredFlag": "Missing required flag: %s",
+
+    "pluginVersion": "Plugin version: %s v%s",
+    "newLine": "",
+
+    "workingPathDoesNotExist": "The specified working directory does not exist.",
+    "packageFileDoesNotExist": "Missing package.json file in the working directory.",
+    "loadingPackageFile": "Loading and validating the package script...",
+    "objectWillBeExcluded": "sObject %s will be excluded from the process.",
+    "noObjectsDefinedInPackageFile": "There are no objects defined to process.",
+    "sourceOrg": "%s.",
+    "targetOrg": "%s.",
+    "scriptFile": "%s.",
+    "encryptionKey": "%s.",
+    "invalidEncryptionKey": "Invalid encryption key. Original unencrypted values will be used.",
+    "tryingToConnectCLI": "Connecting to %s using SFDX CLI...",
+    "successfullyConnected": "Successfully connected to %s.",
+    "tryingToConnectCLIFailed": "Attempt to connect to %s failed. Please, try to refresh your local SFDX CLI connection.",
+    "sourceTargetCouldNotBeTheSame": "The source and the target could not be the same.",
+    "accessToSourceExpired": "Access token to the Source Org has expired or the user has no access.",
+    "accessToTargetExpired": "Access token to the Taget Org has expired or the user has no access.",
+    "MalformedQuery": "Malformed select query for the sObject %s: %s, error: %s.",
+    "MalformedDeleteQuery": "Malformed delete query for the sObject %s: %s, error: %s.",
+    "executingPackageScript": "Executing the package script...",
+    "preparing": "Preparing...",
+    "gettingOrgMetadata": "Getting and analysing objects metadata...",
+    "noExternalKey": "Object %s has no required external Id field definition.",
+    "objectSourceDoesNotExist": "Object %s is missing in the Source.",
+    "objectTargetDoesNotExist": "Object %s is missing in the Target.",
+    "analysingOrgMetadata": "Getting and analysing object fields metadata...",
+    "processingSObject": "Processing the metadata of the sObject %s...",
+    "fieldSourceDoesNtoExist": "Field %s.%s is missing in the Source.",
+    "fieldTargetDoesNtoExist": "Field %s.%s is missing in the Target.",
+    "referencedFieldDoesNotExist": "Field %s.%s references the SObject of type %s which has no required external Id field definition.",
+
+
+    "dataMigrationProcessStarted": "Preparing data migration job...",
+    "buildingMigrationStaregy": "Building migration strategy...",
+    "executionOrder": "%s",
+
+    "validatingAndFixingSourceCSVFiles": "Validating and fixing source CSV files...",
+    "writingToCSV": "Writing to %s...",
+    "noIssuesFoundDuringCSVValidation": "There are no issues found during the last validation of the source CSV files.",
+    "issuesFoundDuringCSVValidation": "During the validation of the source CSV files %s issues were found. See %s file for the details.",
+    "continueTheJobPrompt": "Continue the job",
+    "AbortedByTheUser": "The job was aborted by the user",
+    "csvFileIsEmpty": "CSV FILE IS EMPTY OR DOES NOT EXIST",
+    "columnsMissingInCSV": "COLUMN DEFINED IN THE SCRIPT IS MISSING IN THE CSV FILE",
+    "csvFileForParentSObjectIsEmpty": "CSV FILE FOR THE PARENT SOBJECT IS EMPTY OR DOES NOT EXIST",
+    "missingParentRecordForGivenLookupValue": "MISSING PARENT RECORD FOR THE GIVEN LOOKUP VALUE",
+    "invalidColumnFormat": "COLUMN %s HAS INVALID FORMAT",
+    "columnWillNotBeProcessed": "COLUMN %s WILL NOT BE PROCESSED BECAUSE THE FIELD %s IS MISSING IN THE SCRIPT",
+    "csvFilesWereUpdated": "%s source CSV files were updated.",
+    "validationAndFixingsourceCSVFilesCompleted": "Validating and fixing source CSV files has finished.",
+
+
+    "deletingOldData": "Deleting old data from the Target...",
+    "deletingTargetSObject": "{%s} Deleting old sObject data from the Target.",
+    "queryingTargetSObject": "{%s} Querying records for deletion in progress... Query string: %s.",
+    "queryingTargetSObjectCompleted": "{%s} Querying records for deletion has been completed. Number of records retrieved: %s.",
+    "deletingFromTheTargetNRecordsWillBeDeleted": "{%s} Number of records deleted: %s.",
+    "queryError": "Query error: %s.",
+    "deletingFromTheTargetCompleted": "{%s} Deleting old sObject data from the Target has been completed.",
+    "deletingOldDataCompleted": "Deleting old data from the Target has been completed.",
+    "deletingOldDataSkipped": "Deleting old data from the Target was skipped.",
+
+
+    "retrievingData": "Retrieving the source data %s...",
+    "gettingRecordsCount": "{%s} Getting the total amount of records.",
+    "totalRecordsAmount": "{%s} Total amount of the %s records: %s",
+    "queryingAll": "{%s} Retrieving the %s data (ALL RECORDS) in progress...",
+    "queryingAllQueryString": "{%s} Retrieving the %s data (ALL RECORDS) in progress... Query string: %s.",
+    "queryingIn": "{%s} Retrieving the %s data (FILTERED RECORDS) in progress... It may take a while, depend on the filter complexity.",
+    "queryingFinished": "{%s} Retrieving the %s data has been completed. Totally fetched %s records.",
+    "executingQuery": "{%s} Executing Query: %s.",
+    "retrievingDataCompleted": "Retrieving the source data %s has been completed...",
+
+    "Step1": "Step 1",
+    "Step2": "Step 2",
+
+    "updatingTarget": "Updating the Target %s...",
+    "writingToFile": "{%s} Writing to the file %s.",
+    "writingToFileCompleted": "{%s} Writing to the file %s has been completed.",
+    "updatingTargetObject": "{%s} %s the target sObject...",
+    "updatingTargetObjectCompleted": "{%s} %s the target sObject has been completed. Totally processed %s records.",
+    "fieldIsMissingInTheSourceRecords": "FIELD %s IS MISSING IN THE SOURCE RECORD",
+    "missingParentLookupRecord": "{%s} Found missing parent lookup records for the field %s in the Target org. The amount of the missing parent lookup records is %s of total %s records.",
+    "seeFileForTheDetails": "See %s file for the details.",
+    "missingParentLookupRecords": "Missing parent lookup records",
+    "updatingTargetCompleted": "Updating the Target %s has been completed.",
+    "finalizing": "Finalizing..."
+}
