@@ -99,17 +99,19 @@ export class SfdxUtils {
         let output: SfdmModels.OrgInfo = new SfdmModels.OrgInfo();
         lines.forEach(line => {
             if (line.startsWith("Access Token"))
-                output.AccessToken = new List<string>(line.split(' ')).Last();
+                output.AccessToken = line.split(' ').pop();
             if (line.startsWith("Client Id"))
-                output.ClientId = new List<string>(line.split(' ')).Last();
+                output.ClientId = line.split(' ').pop();
             if (line.startsWith("Connected Status"))
-                output.ConnectedStatus = new List<string>(line.split(' ')).Last();
+                output.ConnectedStatus = line.split(' ').pop();
+            if (line.startsWith("Status"))
+                output.Status = line.split(' ').pop();
             if (line.startsWith("Id"))
-                output.OrgId = new List<string>(line.split(' ')).Last();
+                output.OrgId = line.split(' ').pop();
             if (line.startsWith("Instance Url"))
-                output.InstanceUrl = new List<string>(line.split(' ')).Last();
+                output.InstanceUrl = line.split(' ').pop();
             if (line.startsWith("Username"))
-                output.Username = new List<string>(line.split(' ')).Last();
+                output.Username = line.split(' ').pop();
         });
 
         return output;

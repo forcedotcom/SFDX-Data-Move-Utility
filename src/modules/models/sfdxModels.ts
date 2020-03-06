@@ -15,13 +15,14 @@ export class OrgInfo {
     AccessToken: string;
     ClientId: string;
     ConnectedStatus: string;
+    Status: string;
     OrgId: string;
     UserId: string;
     InstanceUrl: string;
     Username: string;
 
     get isConnected(){
-        return this.ConnectedStatus == "Connected";
+        return this.ConnectedStatus == "Connected" || this.Status == "Active";
     }
 }
 
