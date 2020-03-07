@@ -154,8 +154,7 @@ So you can export all records with preserving relationships between the objects 
         {
             "query": "SELECT Id, Phone, TestObject3__c FROM Account WHERE Name LIKE 'TEST_ACC_%'",
             "operation": "Upsert",
-            "externalId": "Name",
-            "allRecords": true
+            "externalId": "Name"
         },
         {
             "query": "SELECT Id, Account__c, TestObject3__c, RecordTypeId FROM TestObject__c",
