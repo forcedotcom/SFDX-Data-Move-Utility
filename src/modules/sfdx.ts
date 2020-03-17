@@ -429,12 +429,13 @@ export class SfdxUtils {
             let cn = sOrg.getConnection();
             cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
-            if (records.Count() > sOrg.bulkThreshold) {
+            let maxBatchSize = sOrg.bulkThreshold && sOrg.bulkThreshold > 0 ? sOrg.bulkThreshold : SfdmModels.CONSTANTS.MAX_BATCH_SIZE;
 
+            if (records.Count() > maxBatchSize) {
                 let job = cn.bulk.createJob(sObjectName, "update");
                 let recs = records.ToArray();
 
-                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let chunks = CommonUtils.chunkArray(recs, maxBatchSize);
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
@@ -573,11 +574,13 @@ export class SfdxUtils {
             let cn = sOrg.getConnection();
             cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
-            if (records.Count() > sOrg.bulkThreshold) {
+            let maxBatchSize = sOrg.bulkThreshold && sOrg.bulkThreshold > 0 ? sOrg.bulkThreshold : SfdmModels.CONSTANTS.MAX_BATCH_SIZE;
+
+            if (records.Count() > maxBatchSize) {
 
                 let job = cn.bulk.createJob(sObjectName, "insert");
                 let recs = records.ToArray();
-                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let chunks = CommonUtils.chunkArray(recs, maxBatchSize);
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
@@ -720,7 +723,9 @@ export class SfdxUtils {
             let cn = sOrg.getConnection();
             cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
-            if (records.Count() > sOrg.bulkThreshold) {
+            let maxBatchSize = sOrg.bulkThreshold && sOrg.bulkThreshold > 0 ? sOrg.bulkThreshold : SfdmModels.CONSTANTS.MAX_BATCH_SIZE;
+
+            if (records.Count() > maxBatchSize) {
 
                 records = records.Select(x => {
                     return {
@@ -730,7 +735,7 @@ export class SfdxUtils {
 
                 let job = cn.bulk.createJob(sObjectName, "delete");
                 let recs = records.ToArray();
-                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let chunks = CommonUtils.chunkArray(recs, maxBatchSize);
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
