@@ -22,7 +22,7 @@ const readline = require('readline').createInterface({
 });
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-
+const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 
 /**
@@ -422,6 +422,72 @@ export class CommonUtils {
 
 
     /**
+     * Transforms array of objects into array of CSV strings. 
+     * Method splits the input array into chunks and to limit maximal size 
+     * of each produced csv string after base64 encoding.
+     *
+     * @static
+     * @param {Array<object>} array The array of objects to transform
+     * @param {number} maxCsvStringSizeInBytes The maximal size of each CSV string in bytes
+     * @param {number} blockSize The array block size. Used for calculation of the resulting csv string.
+     * @param {string} [lineDelimiter='\n'] The line delimiter for the csv
+     * @param {string} encoding The encoding for each value in the generated csv string
+     * @returns {[Array<[Array<object>, string]>, Array<string>]} Returns array of splitted csv files + records per csv and array of csv column names
+     * @memberof CommonUtils
+     */
+    public static createCsvStringsFromArray(array: Array<object>,
+        maxCsvStringSizeInBytes: number,
+        blockSize: number,
+        lineDelimiter: string = '\n',
+        encoding: string = 'utf-8'): [Array<[Array<object>, string]>, Array<string>] {
+
+        if (!array || array.length == 0) return [new Array<[Array<object>, string]>(), new Array<string>()];
+
+        const arrayBlocks = this.chunkArray(array, blockSize);
+        const headerArray = Object.keys(array[0]).map(key => {
+            return {
+                id: key,
+                title: key
+            }
+        });
+        const csvStringifier = createCsvStringifier({
+            header: headerArray,
+            alwaysQuote: true,
+            recordDelimiter: lineDelimiter
+        });
+        let header = csvStringifier.getHeaderString();
+        let csvStrings: Array<[Array<object>, string]> = new Array<[Array<object>, string]>();
+        let buffer: Buffer = Buffer.from('', encoding);
+        let totalCsvChunkSize = 0;
+        let bufferFlushed = false;
+        let csvBlock: Buffer;
+        let arrayBuffer: Array<object> = new Array<object>();
+        for (let index = 0; index < arrayBlocks.length; index++) {
+            const arrayBlock = arrayBlocks[index];
+            csvBlock = Buffer.from(csvStringifier.stringifyRecords(arrayBlock), encoding);
+            let csvBlockSize = csvBlock.toString('base64').length;
+            if (totalCsvChunkSize + csvBlockSize <= maxCsvStringSizeInBytes) {
+                buffer = Buffer.concat([buffer, csvBlock]);
+                arrayBuffer = arrayBuffer.concat(arrayBlock);
+                bufferFlushed = false;
+            } else {
+                csvStrings.push([arrayBuffer, (header + csvBlock.toString(encoding)).trim()]);
+                buffer = csvBlock
+                arrayBuffer = arrayBlock;
+                bufferFlushed = true;
+                totalCsvChunkSize = 0
+            }
+            totalCsvChunkSize += csvBlockSize;
+        }
+        if (!bufferFlushed && csvBlock) {
+            csvStrings.push([arrayBuffer, (header + csvBlock.toString('utf-8')).trim()]);
+        }
+        return [csvStrings, headerArray.map(x => x.id)];
+    }
+
+
+
+    /**
      * Read csv file only once and cache it into the Map.
      * If the file was previously read and it is in the cache it retrieved from cache instead of reading file again
      * @param  {Map<string, Map<string, any>}  csvDataCacheMap
@@ -525,6 +591,201 @@ export class CommonUtils {
         return array;
     }
 
+
+
+
+    /**
+     * Transforms array of arrays to single array of objects.
+     * The first member of the source array is the property names.
+     *
+     * @static
+     * @param {Array<any>} array The array to transform in format [[],[],[]]
+     * @returns {Array<object>} Single array
+     * @memberof CommonUtils
+     */
+    public static transformArrayOfArrays(array: Array<any>): Array<object> {
+        if (!array || array.length == 0) return new Array<object>();
+        let props = array[0];
+        let singleArray = array.slice(1).map((subArray: any) => {
+            return subArray.reduce((item: object, subArrayItem: object, propIndex: number) => {
+                item[props[propIndex]] = subArrayItem;
+                return item;
+            }, {});
+        });
+        return singleArray;
+    }
+
+
+
+
+    /**
+     * Creates map for the input array with key = hashcode of the object, value = object
+     *
+     * @static
+     * @param {Array<object>} array Array to process
+     * @param {Array<string>} [propsToExclude] Properties to exclude from hashing
+     * @returns {Map<string, object>} 
+     * @memberof CommonUtils
+     */
+    public static mapArrayItemsByHashcode(array: Array<object>, propsToExclude?: Array<string>): Map<string, object> {
+        let m = new Map<string, object>();
+        array.forEach(x => {
+            let hash = String(this.getObjectHashcode(x, propsToExclude));
+            if (m.has(hash)) {
+                hash += '1';
+            }
+            m.set(hash, x);
+        });
+        return m;
+    }
+
+
+    /**
+     * Creates map for the input array with key = object property, value = object
+     *
+     * @static
+     * @param {Array<object>} array Array to process
+     * @param {Array<string>} [propertyName] Property used to build the key of the map
+     * @returns {Map<string, object>} 
+     * @memberof CommonUtils
+     */
+    public static mapArrayItemsByPropertyName(array: Array<object>, propertyName: string): Map<string, object> {
+        let m = new Map<string, object>();
+        array.forEach(x => {
+            let key = String(x[propertyName]);
+            if (m.has(key)) {
+                key += '1';
+            }
+            m.set(key, x);
+        });
+        return m;
+    }
+
+
+
+
+    /**
+     * Compares each member of two imput arrays an produce 
+     * mapping between each member of them compared by hashcode
+     *
+     * @static
+     * @param {Array<object>} arrayOfKeys First array - become keys for the output map
+     * @param {Array<object>} arrayOfValues Second array - become values for the output map
+     * @param {Array<string>} [propsToExclude] Properties to exclude
+     * @param {Map<string, object>} [mkeys] Hashmap for the keys array if already exist
+     * @param {Map<string, object>} [mvalues] Hashmap for the values array if already exist
+     * @returns {Map<object, object>}
+     * @memberof CommonUtils
+     */
+    public static mapArraysByHashcode(
+        arrayOfKeys: Array<object>,
+        arrayOfValues: Array<object>,
+        propsToExclude?: Array<string>,
+        mkeys?: Map<string, object>,
+        mvalues?: Map<string, object>): Map<object, object> {
+
+        arrayOfKeys = arrayOfKeys || new Array<object>();
+        arrayOfValues = arrayOfValues || new Array<object>();
+
+        if (!mkeys) {
+            mkeys = this.mapArrayItemsByHashcode(arrayOfKeys, propsToExclude);
+        }
+        if (!mvalues) {
+            mvalues = this.mapArrayItemsByHashcode(arrayOfValues, propsToExclude);
+        }
+
+        let retMap: Map<object, object> = new Map<object, object>();
+        [...mkeys.keys()].forEach(hash => {
+            retMap.set(mkeys.get(hash), mvalues.get(hash));
+        });
+
+        return retMap;
+
+    }
+
+
+
+     /**
+     * Created mapping between members of two arrays by the given item property
+     *
+     * @static
+     * @param {Array<object>} arrayOfKeys First array - become keys for the output map
+     * @param {Array<object>} arrayOfValues Second array - become values for the output map
+     * @param {Array<string>} [propsToExclude] Property to map the array items
+     * @param {Map<string, object>} [mkeys] Mapping for the keys array if already exist
+     * @param {Map<string, object>} [mvalues] Mapping for the values array if already exist
+     * @returns {Map<object, object>}
+     * @memberof CommonUtils
+     */
+    public static mapArraysByItemProperty(
+        arrayOfKeys: Array<object>,
+        arrayOfValues: Array<object>,
+        propertyName: string,
+        mkeys?: Map<string, object>,
+        mvalues?: Map<string, object>): Map<object, object> {
+
+        arrayOfKeys = arrayOfKeys || new Array<object>();
+        arrayOfValues = arrayOfValues || new Array<object>();
+
+        if (!mkeys) {
+            mkeys = this.mapArrayItemsByPropertyName(arrayOfKeys, propertyName);
+        }
+        if (!mvalues) {
+            mvalues = this.mapArrayItemsByPropertyName(arrayOfValues, propertyName);
+        }
+
+        let retMap: Map<object, object> = new Map<object, object>();
+        [...mkeys.keys()].forEach(key => {
+            retMap.set(mkeys.get(key), mvalues.get(key));
+        });
+
+        return retMap;
+
+
+
+    }
+
+
+
+
+    /**
+     * Returns numeric hashcode of string
+     *
+     * @static
+     * @param {string} str String to get hashcode for it
+     * @returns {number}
+     * @memberof CommonUtils
+     */
+    public static getStringHashcode(str: string): number {
+        return !str ? 0 : str.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
+    }
+
+
+
+    /**
+     * Creates numeric hashcode of the object based on its string representation
+     *
+     * @static
+     * @param {object} object Object to get hashcode for it
+     * @param {Array<string>} [propsToExclude=new Array<string>()] Poperties to exclude from the hashing
+     * @returns {number}
+     * @memberof CommonUtils
+     */
+    public static getObjectHashcode(object: object, propsToExclude: Array<string> = new Array<string>()): number {
+        if (!object) return 0;
+        let keys = Object.keys(object).filter(k => propsToExclude.indexOf(k) < 0).sort();
+        let str = keys.map(k => {
+            let v = object[k];
+            return v == "TRUE" ? "true"
+                : v == "FALSE" ? "false"
+                    : !isNaN(v) ? String(+v)
+                        : !v || v == "#N/A" ? '' : String(v);
+        }).join('');
+        return this.getStringHashcode(str);
+    }
+
+
+
     /**
      * Generates random id string with given length
      * @param  {Number=10} length
@@ -540,6 +801,21 @@ export class CommonUtils {
     }
 
 
+
+
+    /**
+     * Returns the current active plugin information
+     *
+     * @static
+     * @param {typeof SfdxCommand} command
+     * @returns {{
+     *         pluginName: string,
+     *         commandName: string,
+     *         version: string,
+     *         path: string
+     *     }}
+     * @memberof CommonUtils
+     */
     public static getPluginInfo(command: typeof SfdxCommand): {
         pluginName: string,
         commandName: string,
@@ -555,6 +831,9 @@ export class CommonUtils {
         }
     }
 }
+
+
+
 
 
 /**

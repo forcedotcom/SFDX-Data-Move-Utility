@@ -38,6 +38,11 @@ Messages.importMessagesDirectory(__dirname);
 const commonMessages = Messages.loadMessages('sfdmu', 'common');
 
 
+interface IBulkApiProcessing {
+    createBulkApiJob: Function,
+    processBulkApiBatchAsync: Function
+}
+
 
 /**
  * Status of API callouts
@@ -60,7 +65,7 @@ export class ApiCalloutStatus {
     }
     numberRecordsProcessed: number = 0;
     numberRecordsFailed: number = 0;
-    verbosity: LOG_MESSAGE_VERBOSITY  = LOG_MESSAGE_VERBOSITY.NORMAL;
+    verbosity: LOG_MESSAGE_VERBOSITY = LOG_MESSAGE_VERBOSITY.NORMAL;
 }
 
 
@@ -407,6 +412,8 @@ export class SfdxUtils {
 
 
 
+
+
     /**
      * Performs update on the data target.
      * Updates the salesforce org or writes data to the csv file if File is the data target type
@@ -424,23 +431,30 @@ export class SfdxUtils {
         sOrg: SfdmModels.SOrg,
         apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null): Promise<List<object>> {
 
+        let _this = this;
+
+        const bulkProcessing: IBulkApiProcessing = this.BulkApiV1();
+
         const makeUpdateAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
-            let _this = this;
-            let cn = sOrg.getConnection();
-            cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
+
+            if (records.Count() == 0) {
+                resolve(0);
+                return;
+            }
+
+            let recs = records.ToArray();
 
             if (records.Count() > sOrg.bulkThreshold) {
 
-                let job = cn.bulk.createJob(sObjectName, "update");
-                let recs = records.ToArray();
+                let job: any, cn: any, chunks: any;
+                ({ job, cn, chunks } = bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Update, sObjectName, sOrg, recs));
 
-                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
                     try {
-                        totalProcessed = await SfdxUtils._processBatch("Update", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
+                        totalProcessed = await bulkProcessing.processBulkApiBatchAsync("Update", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
                     } catch (ex) {
                         await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
                         let totalFailed = records.Count() - totalProcessed;
@@ -467,7 +481,8 @@ export class SfdxUtils {
 
             } else {
 
-                let recs = records.ToArray();
+                let cn = sOrg.getConnection();
+                cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
                 cn.sobject(sObjectName).update(recs, {
                     allOrNone: sOrg.allOrNone,
@@ -568,22 +583,28 @@ export class SfdxUtils {
 
         let _this = this;
 
+        const bulkProcessing: IBulkApiProcessing = this.BulkApiV1();
+
         const makeInsertAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
-            let cn = sOrg.getConnection();
-            cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
+            if (records.Count() == 0) {
+                resolve(0);
+                return;
+            }
+
+            let recs = records.ToArray();
 
             if (records.Count() > sOrg.bulkThreshold) {
 
-                let job = cn.bulk.createJob(sObjectName, "insert");
-                let recs = records.ToArray();
-                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let job: any, cn: any, chunks: any;
+                ({ job, cn, chunks } = bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Insert, sObjectName, sOrg, recs));
+
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
                     try {
-                        totalProcessed = await SfdxUtils._processBatch("Insert", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, true);
+                        totalProcessed = await bulkProcessing.processBulkApiBatchAsync("Insert", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, true);
                     } catch (ex) {
                         await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
                         let totalFailed = records.Count() - totalProcessed;
@@ -610,7 +631,8 @@ export class SfdxUtils {
 
             } else {
 
-                let recs = records.ToArray();
+                let cn = sOrg.getConnection();
+                cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
                 cn.sobject(sObjectName).create(recs, {
                     allOrNone: sOrg.allOrNone,
@@ -664,7 +686,7 @@ export class SfdxUtils {
                                 "Insert",
                                 sObjectName,
                                 String(progress.numberRecordsProcessed));
-                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;                                
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                             apiCalloutStatusCallback(progress);
                         }
                         resolve(result.length);
@@ -672,7 +694,7 @@ export class SfdxUtils {
                         progress.error = MessageUtils.getMessagesString(commonMessages,
                             COMMON_RESOURCES.apiOperationError,
                             progress.jobId,
-                            "Insert",                            
+                            "Insert",
                             sObjectName,
                             String(progress.numberRecordsProcessed),
                             String(progress.numberRecordsFailed));
@@ -710,15 +732,14 @@ export class SfdxUtils {
 
         let _this = this;
 
+        const bulkProcessing: IBulkApiProcessing = this.BulkApiV1();
+
         const makeDeleteAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
             if (records.Count() == 0) {
                 resolve(0);
                 return;
             }
-
-            let cn = sOrg.getConnection();
-            cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
 
             if (records.Count() > sOrg.bulkThreshold) {
 
@@ -727,16 +748,17 @@ export class SfdxUtils {
                         Id: x["Id"]
                     }
                 });
-
-                let job = cn.bulk.createJob(sObjectName, "delete");
                 let recs = records.ToArray();
-                let chunks = CommonUtils.chunkArray(recs, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+
+                let job: any, cn: any, chunks: any;
+                ({ job, cn, chunks } = bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Delete, sObjectName, sOrg, recs));
+
                 let totalProcessed = 0;
 
                 for (let index = 0; index < chunks.length; index++) {
                     const chunk = chunks[index];
                     try {
-                        totalProcessed = await SfdxUtils._processBatch("Delete", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
+                        totalProcessed = await bulkProcessing.processBulkApiBatchAsync("Delete", sObjectName, cn, sOrg, apiCalloutStatusCallback, job, chunk, totalProcessed, index == 0, index == chunks.length - 1, false);
                     } catch (ex) {
                         await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
                         let totalFailed = records.Count() - totalProcessed;
@@ -764,9 +786,11 @@ export class SfdxUtils {
             } else {
 
                 let ids = records.Select(x => x["Id"]).ToArray();
-
-                if (ids.length == 0) { resolve(0); return; }
                 let recs = records.ToArray();
+
+                let cn = sOrg.getConnection();
+                cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
+
                 cn.sobject(sObjectName).del(ids, {
                     allOrNone: sOrg.allOrNone,
                     allowRecursive: true
@@ -820,7 +844,7 @@ export class SfdxUtils {
                                 "Delete",
                                 sObjectName,
                                 String(progress.numberRecordsProcessed));
-                                progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;                                
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                             apiCalloutStatusCallback(progress);
                         }
                         resolve(result.length);
@@ -1071,7 +1095,7 @@ export class SfdxUtils {
             if (apiCalloutStatusCallback) {
                 apiCalloutStatusCallback(new ApiCalloutStatus({
                     message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.readyToInsert, sObjectName, String(recordsToInsert.Count())),
-                    verbosity : LOG_MESSAGE_VERBOSITY.VERBOSE
+                    verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                 }));
             }
             recordsToInsert = await insertRecordsAsync(recordsToInsert);
@@ -1079,7 +1103,7 @@ export class SfdxUtils {
             if (apiCalloutStatusCallback) {
                 apiCalloutStatusCallback(new ApiCalloutStatus({
                     message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.nothingToInsert, sObjectName),
-                    verbosity : LOG_MESSAGE_VERBOSITY.VERBOSE
+                    verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                 }));
             }
         }
@@ -1116,7 +1140,7 @@ export class SfdxUtils {
                 if (apiCalloutStatusCallback) {
                     apiCalloutStatusCallback(new ApiCalloutStatus({
                         message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.readyToUpdate, sObjectName, String(recordToUpdate3.Count())),
-                        verbosity : LOG_MESSAGE_VERBOSITY.VERBOSE
+                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                     }));
                 }
                 let m = mockRecordsData(recordToUpdate3, ids);
@@ -1129,7 +1153,7 @@ export class SfdxUtils {
                 if (apiCalloutStatusCallback) {
                     apiCalloutStatusCallback(new ApiCalloutStatus({
                         message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.nothingToUpdate, sObjectName),
-                        verbosity : LOG_MESSAGE_VERBOSITY.VERBOSE
+                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                     }));
                 }
             }
@@ -1508,157 +1532,220 @@ export class SfdxUtils {
     }
 
 
-    private static async _processBatch(
-        operation : string,
-        sObjectName: string,
-        cn: any,
-        sOrg: SfdmModels.SOrg,
-        apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null,
-        job: any,
-        records: Array<any>,
-        numberJobRecordsSucceeded: number,
-        showStartMessage: boolean,
-        showStopMessage: boolean,
-        updateRecordId: boolean): Promise<any> {
 
 
-        return new Promise((resolve, reject) => {
+    // LEGACY BULK API V1  PROCESSING ----------------------------------------------------
+    //  --------------------------------------------------------------------------
+    public static BulkApiV1(): IBulkApiProcessing {
 
-            var batch = job.createBatch();
-            var pollTimer;
-            var numberBatchRecordsProcessed = 0;
+        return {
 
-            batch.execute(records);
+            createBulkApiJob: function (
+                operation: SfdmModels.Enums.OPERATION,
+                sObjectName: string,
+                sOrg: SfdmModels.SOrg,
+                records: Array<any>): {
+                    job: any,
+                    cn: any,
+                    chunks: any
+                } {
+
+                let cn = sOrg.getConnection();
+
+                cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
+
+                let strOperation = SfdmModels.Enums.OPERATION[operation].toString().toLowerCase();
+
+                let job = cn.bulk.createJob(sObjectName, strOperation);
+
+                let chunks = CommonUtils.chunkArray(records, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+
+                return {
+                    chunks,
+                    cn,
+                    job
+                };
+            },
+
+            processBulkApiBatchAsync: async function (
+                operation: string,
+                sObjectName: string,
+                cn: any,
+                sOrg: SfdmModels.SOrg,
+                apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null,
+                job: any,
+                records: Array<any>,
+                numberJobRecordsSucceeded: number,
+                showStartMessage: boolean,
+                showStopMessage: boolean,
+                updateRecordId: boolean): Promise<any> {
 
 
-            batch.on("error", function (batchInfo) {
-                if (pollTimer) {
-                    clearTimeout(pollTimer);
-                }
-                reject(batchInfo);
-                return;
-            });
+                return new Promise((resolve, reject) => {
 
-            batch.on("queue", function (batchInfo) {
+                    var batch = job.createBatch();
+                    var pollTimer;
+                    var numberBatchRecordsProcessed = 0;
 
-                batch.poll(sOrg.pollingIntervalMs, SfdmModels.CONSTANTS.POLL_TIMEOUT);
+                    batch.execute(records);
 
-                if (apiCalloutStatusCallback) {
-                    if (showStartMessage) {
-                        apiCalloutStatusCallback(new ApiCalloutStatus({
-                            message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStarted, job.id, operation, sObjectName),
-                            verbosity : LOG_MESSAGE_VERBOSITY.MINIMAL
-                        }));
-                    }
-                    apiCalloutStatusCallback(new ApiCalloutStatus({
-                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.batchStarted, batch.id, operation, sObjectName),
-                        verbosity : LOG_MESSAGE_VERBOSITY.MINIMAL
-                    }));
-                }
 
-                pollTimer = setInterval(function () {
-                    cn.bulk.job(job.id).batch(batch.id).check((err, results) => {
+                    batch.on("error", function (batchInfo) {
+                        if (pollTimer) {
+                            clearTimeout(pollTimer);
+                        }
+                        reject(batchInfo);
+                        return;
+                    });
+
+                    batch.on("queue", function (batchInfo) {
+
+                        batch.poll(sOrg.pollingIntervalMs, SfdmModels.CONSTANTS.POLL_TIMEOUT);
+
                         if (apiCalloutStatusCallback) {
-                            let progress: ApiCalloutStatus = new ApiCalloutStatus({
-                                numberRecordsProcessed: +results.numberRecordsProcessed,
-                                jobId: job.id,
-                                sObjectName: sObjectName
+                            if (showStartMessage) {
+                                apiCalloutStatusCallback(new ApiCalloutStatus({
+                                    message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStarted, job.id, operation, sObjectName),
+                                    verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                                }));
+                            }
+                            apiCalloutStatusCallback(new ApiCalloutStatus({
+                                message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.batchStarted, batch.id, operation, sObjectName),
+                                verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                            }));
+                        }
+
+                        pollTimer = setInterval(function () {
+                            cn.bulk.job(job.id).batch(batch.id).check((err, results) => {
+                                if (apiCalloutStatusCallback) {
+                                    let progress: ApiCalloutStatus = new ApiCalloutStatus({
+                                        numberRecordsProcessed: +results.numberRecordsProcessed,
+                                        jobId: job.id,
+                                        sObjectName: sObjectName
+                                    });
+                                    if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
+                                        numberBatchRecordsProcessed = progress.numberRecordsProcessed;
+                                        progress.numberRecordsProcessed = numberJobRecordsSucceeded + progress.numberRecordsProcessed;
+                                        progress.message = MessageUtils.getMessagesString(commonMessages,
+                                            COMMON_RESOURCES.apiOperationProgress,
+                                            job.id,
+                                            operation,
+                                            sObjectName,
+                                            String(progress.numberRecordsProcessed),
+                                            String(progress.numberRecordsFailed));
+                                        progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
+                                        apiCalloutStatusCallback(progress);
+
+                                    }
+                                }
                             });
-                            if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
-                                numberBatchRecordsProcessed = progress.numberRecordsProcessed;
-                                progress.numberRecordsProcessed = numberJobRecordsSucceeded + progress.numberRecordsProcessed;
-                                progress.message = MessageUtils.getMessagesString(commonMessages,
-                                    COMMON_RESOURCES.apiOperationProgress,
+                        }, sOrg.pollingIntervalMs);
+
+                    });
+
+                    batch.on("response", function (rets) {
+
+                        let numberBatchRecordsFailed = 0;
+
+                        if (pollTimer) {
+                            clearInterval(pollTimer);
+                        }
+
+                        records.forEach((record, index) => {
+                            if (rets[index].success) {
+                                if (updateRecordId) {
+                                    record["Id"] = rets[index].id;
+                                    record["Errors"] = null;
+                                }
+                                numberJobRecordsSucceeded++;
+                            } else {
+                                if (rets[index].errors) {
+                                    record["Errors"] = rets[index].errors.join('; ');
+                                }
+                                numberBatchRecordsFailed++;
+                            }
+                        });
+
+                        if (showStopMessage) {
+                            apiCalloutStatusCallback(new ApiCalloutStatus({
+                                message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStopped, job.id, operation, sObjectName),
+                                verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                            }));
+                        }
+
+                        let progress = new ApiCalloutStatus({
+                            sObjectName,
+                            jobId: job.id,
+                            numberRecordsProcessed: numberJobRecordsSucceeded,
+                            numberRecordsFailed: numberBatchRecordsFailed
+                        });
+
+                        if (numberBatchRecordsFailed > 0) {
+
+                            if (apiCalloutStatusCallback) {
+                                progress.error = MessageUtils.getMessagesString(commonMessages,
+                                    COMMON_RESOURCES.apiOperationError2,
                                     job.id,
                                     operation,
                                     sObjectName,
-                                    String(progress.numberRecordsProcessed),
+                                    batch.id,
                                     String(progress.numberRecordsFailed));
-                                progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
+                                progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                                 apiCalloutStatusCallback(progress);
+                            }
 
+                            if (sOrg.allOrNone) {
+                                reject(progress);
+                                return;
+                            }
+
+                        } else {
+                            if (apiCalloutStatusCallback) {
+                                progress.message = MessageUtils.getMessagesString(commonMessages,
+                                    COMMON_RESOURCES.apiOperationCompleted,
+                                    job.id,
+                                    operation,
+                                    sObjectName,
+                                    String(progress.numberRecordsProcessed));
+                                progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                                apiCalloutStatusCallback(progress);
                             }
                         }
+
+                        resolve(numberJobRecordsSucceeded);
+
                     });
-                }, sOrg.pollingIntervalMs);
-
-            });
-
-            batch.on("response", function (rets) {
-
-                let numberBatchRecordsFailed = 0;
-
-                if (pollTimer) {
-                    clearInterval(pollTimer);
-                }
-
-                records.forEach((record, index) => {
-                    if (rets[index].success) {
-                        if (updateRecordId) {
-                            record["Id"] = rets[index].id;
-                            record["Errors"] = null;
-                        }
-                        numberJobRecordsSucceeded++;
-                    } else {
-                        if (rets[index].errors) {
-                            record["Errors"] = rets[index].errors.join('; ');
-                        }
-                        numberBatchRecordsFailed++;
-                    }
                 });
 
-                if (showStopMessage) {
-                    apiCalloutStatusCallback(new ApiCalloutStatus({
-                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStopped, job.id, operation, sObjectName),
-                        verbosity : LOG_MESSAGE_VERBOSITY.MINIMAL
-                    }));
-                }
+            }
 
-                let progress = new ApiCalloutStatus({
-                    sObjectName,
-                    jobId: job.id,
-                    numberRecordsProcessed: numberJobRecordsSucceeded,
-                    numberRecordsFailed: numberBatchRecordsFailed
-                });
-
-                if (numberBatchRecordsFailed > 0) {
-
-                    if (apiCalloutStatusCallback) {
-                        progress.error = MessageUtils.getMessagesString(commonMessages,
-                            COMMON_RESOURCES.apiOperationError2,
-                            job.id,
-                            operation,
-                            sObjectName,
-                            batch.id,
-                            String(progress.numberRecordsFailed));
-                        progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
-                        apiCalloutStatusCallback(progress);
-                    }
-
-                    if (sOrg.allOrNone) {
-                        reject(progress);
-                        return;
-                    }
-
-                } else {
-                    if (apiCalloutStatusCallback) {
-                        progress.message = MessageUtils.getMessagesString(commonMessages,
-                            COMMON_RESOURCES.apiOperationCompleted,
-                            job.id,
-                            operation,
-                            sObjectName,
-                            String(progress.numberRecordsProcessed));
-                        progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
-                        apiCalloutStatusCallback(progress);
-                    }
-                }
-
-                resolve(numberJobRecordsSucceeded);
-
-            });
-        });
-
+        };
     }
+    //  --------------------------------------------------------------------------
+    //  --------------------------------------------------------------------------
+
+
+
+
+
+    // BULK API V2 PROCESSING ----------------------------------------------------
+    //  --------------------------------------------------------------------------
+    public static BulkApiV2(): IBulkApiProcessing {
+        return {
+            createBulkApiJob: function () {
+                // TODO:
+            },
+            processBulkApiBatchAsync: async function () {
+                // TODO:
+            }
+        };
+    }
+
+
+    //  --------------------------------------------------------------------------
+    //  --------------------------------------------------------------------------
+
+
 
 
 
