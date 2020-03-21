@@ -47,6 +47,13 @@ export class Script {
      */
     bulkThreshold: number = 200;
 
+    
+    /**
+     * The maximal size of each batch while using Bulk Api V1
+     *
+     */
+    bulkApiV1BatchSize: number  =  9500;
+
 
     /**
      * true if you want to break execution on any error while data updating,

@@ -40,6 +40,7 @@ export class SOrg {
 
     pollingIntervalMs: number;
     bulkThreshold: number;
+    bulkApiV1BatchSize: number;
     allOrNone: boolean;
 
     @Type(() => SObjectDescribe)

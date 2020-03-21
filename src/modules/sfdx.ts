@@ -1561,7 +1561,7 @@ export class SfdxUtils {
 
                 let job = cn.bulk.createJob(sObjectName, strOperation);
 
-                let chunks = CommonUtils.chunkArray(records, SfdmModels.CONSTANTS.MAX_BATCH_SIZE);
+                let chunks = CommonUtils.chunkArray(records, sOrg.bulkApiV1BatchSize);
 
                 return {
                     chunks,

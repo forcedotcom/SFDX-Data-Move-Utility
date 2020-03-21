@@ -214,6 +214,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | encryptDataFiles                     | Boolean                    | Optional, Default false | Enables encryption / decryption of the CSV files when passing *--encryptkey* argument to the Plugin call and using *file* as Source or as the Target. |
 | validateCSVFilesOnly                 | Boolean                    | Optional, Default false | In general when you are using CSV files as data source, the source CSV files are subject of format  validation before running the migration job itself.  validateCSVFilesOnly=true  runs only the validation process  and stops the execution after the it is completed. |
 | createTargetCSVFiles                 | Boolean                    | Optional, Default false | If true the Plugin will produce CSV file containing target records for each processed sObject with error information (if occured) per record. These CSV files are not encrypted even **--encryptkey** flag is provided. |
+| bulkApiV1BatchSize                   | Integer                    | Optional / Default 9500 | The maximal size of each batch while processing the records by the Bulk Api V1 |
 
 
 

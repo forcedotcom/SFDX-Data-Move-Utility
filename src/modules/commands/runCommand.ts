@@ -310,6 +310,7 @@ export class RunCommand {
         this.orgs.forEach(org => {
             org.pollingIntervalMs = this.script.pollingIntervalMs;
             org.bulkThreshold = this.script.bulkThreshold;
+            org.bulkApiV1BatchSize = this.script.bulkApiV1BatchSize;
             org.version = this.script.apiVersion;
             org.allOrNone = this.script.allOrNone;
             org.createTargetCSVFiles = this.script.createTargetCSVFiles;
