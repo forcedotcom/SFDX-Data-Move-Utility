@@ -4,7 +4,7 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
 
 ----
 
-***You can now find [here](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) the new desktop GUI application that will help you to manage the plugin configuration files and to run and monitor the migration process, that will make usage of this Plugin simple and convenient.***
+<!--***You can now find [here](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) the new desktop GUI application that will help you to manage the plugin configuration files and to run and monitor the migration process, that will make usage of this Plugin simple and convenient.***-->
 
 
 
