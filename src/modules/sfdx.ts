@@ -1403,6 +1403,9 @@ export class SfdxUtils {
 
     private static _prepareQuery(soql: string): [string, Map<String, List<String>>, Array<String>] {
         let newParsedQuery = parseQuery(soql);
+        if (newParsedQuery.where && newParsedQuery.where.left && newParsedQuery.where.left.openParen && !newParsedQuery.where.left.closeParen){
+            newParsedQuery.where.left.closeParen = newParsedQuery.where.left.openParen;
+        }
         let originalFields: Array<SOQLField> = newParsedQuery.fields.map(x => {
             return <SOQLField>x;
         });
