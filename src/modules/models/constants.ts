@@ -14,11 +14,6 @@ export let CONSTANTS = {
     MAX_FETCH_SIZE: 10000000,
 
     /**
-     *  Size of each batch when using Bulk API V1
-     */
-    MAX_BATCH_SIZE : 9500,
-
-    /**
      * Max time to wait for bulk job poll response
      */
     POLL_TIMEOUT: 3000000,
