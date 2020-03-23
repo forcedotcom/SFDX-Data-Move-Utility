@@ -461,7 +461,7 @@ export class CommonUtils {
         let csvStrings: Array<[Array<object>, string]> = new Array<[Array<object>, string]>();
         let buffer: Buffer = Buffer.from('', encoding);
         let totalCsvChunkSize = 0;
-        let bufferFlushed = false;
+        //let bufferFlushed = false;
         let csvBlock: Buffer;
         let arrayBuffer: Array<object> = new Array<object>();
         for (let index = 0; index < arrayBlocks.length; index++) {
@@ -471,18 +471,20 @@ export class CommonUtils {
             if (totalCsvChunkSize + csvBlockSize <= maxCsvStringSizeInBytes) {
                 buffer = Buffer.concat([buffer, csvBlock]);
                 arrayBuffer = arrayBuffer.concat(arrayBlock);
-                bufferFlushed = false;
+                //bufferFlushed = false;
             } else {
-                csvStrings.push([arrayBuffer, (header + csvBlock.toString(encoding)).trim()]);
+                if (buffer.length > 0){
+                    csvStrings.push([arrayBuffer, (header + buffer.toString(encoding)).trim()]);
+                }
                 buffer = csvBlock
                 arrayBuffer = arrayBlock;
-                bufferFlushed = true;
+                //bufferFlushed = true;
                 totalCsvChunkSize = 0
             }
             totalCsvChunkSize += csvBlockSize;
         }
-        if (!bufferFlushed && csvBlock) {
-            csvStrings.push([arrayBuffer, (header + csvBlock.toString('utf-8')).trim()]);
+        if (buffer.length > 0) {
+            csvStrings.push([arrayBuffer, (header + buffer.toString('utf-8')).trim()]);
         }
         return new CsvChunks({
             chunks: csvStrings.map(x => {

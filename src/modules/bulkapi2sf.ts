@@ -416,7 +416,7 @@ export class BulkAPI2sf {
                                 targetRecord: targetRecords,
                                 isMissingSourceTargetMapping: !targetRecords,
                                 isFailed: targetRecords && !!targetRecords["sf__Error"],
-                                isUnprocessed: !!targetRecords["sf__Unprocessed"],
+                                isUnprocessed: targetRecords && !!targetRecords["sf__Unprocessed"],
                                 errorMessage: targetRecords && targetRecords["sf__Error"],
                                 id: targetRecords && (targetRecords["sf__Id"] || targetRecords["Id"]),
                                 isCreated: targetRecords && !!targetRecords["sf__Created"]
@@ -427,13 +427,22 @@ export class BulkAPI2sf {
                             jobState: "JobComplete"
                         }));
                     } catch (e) {
-                        let responseError = JSON.parse(e.message);
-                        _this._apiRequestErrorHandler(
-                            resolve,
-                            responseError.error,
-                            responseError.response,
-                            responseError.body
-                        );
+                        if (typeof e.message == "string"){
+                            _this._apiRequestErrorHandler(
+                                resolve,
+                                e,
+                                undefined,
+                                undefined
+                            ); 
+                        } else {
+                            let responseError = JSON.parse(e.message);
+                            _this._apiRequestErrorHandler(
+                                resolve,
+                                responseError.error,
+                                responseError.response,
+                                responseError.body
+                            );
+                        }
                     }
                 }
                 else {
