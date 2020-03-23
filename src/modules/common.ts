@@ -938,7 +938,7 @@ export class MockGenerator {
 }
 
 export class CsvChunks {
-    constructor(init: Partial<CsvChunks>) {
+    constructor(init?: Partial<CsvChunks>) {
         Object.assign(this, init);
     }
 
