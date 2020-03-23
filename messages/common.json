@@ -62,6 +62,7 @@
     "batchStarted": "[Batch# %s:%s] {%s} The batch has been started.",
     "jobStopped": "[Job# %s:%s] {%s} The job has been successfully completed.",
     "batchDataUploading": "[Job# %s:%s] {%s} Batch data uploading... This may take a while.",
-    "batchDataProcessing": "[Job# %s:%s] {%s} Data upload completed. Batch data processing...",
+    "batchDataProcessing": "[Job# %s:%s] {%s} Data upload has been completed. Batch data processing...",
+    "jobResultsRetrieving": "[Job# %s:%s] {%s} Batch data processing has been completed. Retrieving results... This may take a while.",
     "jobError": "Bulk Api unexpected error"
 }

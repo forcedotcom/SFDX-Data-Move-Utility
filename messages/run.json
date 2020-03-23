@@ -98,7 +98,7 @@
     "deletingTargetSObject": "{%s} Deleting old sObject data from the Target.",
     "queryingTargetSObject": "{%s} Querying records for deletion in progress... Query string: %s.",
     "queryingTargetSObjectCompleted": "{%s} Querying records for deletion has been completed. Number of records retrieved: %s.",
-    "deletingFromTheTargetNRecordsWillBeDeleted": "{%s} Number of records deleted: %s.",
+    "deletingFromTheTargetNRecordsWillBeDeleted": "{%s} Number of records need to be deleted: %s.",
     "queryError": "Query error: %s.",
     "deletingFromTheTargetCompleted": "{%s} Deleting old sObject data from the Target has been completed.",
     "deletingOldDataCompleted": "Deleting old data from the Target has been completed.",

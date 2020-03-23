@@ -90,6 +90,7 @@ export enum COMMON_RESOURCES {
     jobStopped = "jobStopped",
     batchDataUploading = "batchDataUploading",
     batchDataProcessing = "batchDataProcessing",
+    jobResultsRetrieving = "jobResultsRetrieving",
     jobError = "jobError"
 
 }
