@@ -2,6 +2,8 @@ import { CommonUtils } from "./common";
 
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
+// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
+const requestTimeout = 10 * 60 * 1000; 
 import parse = require('csv-parse/lib/sync');
 
 
@@ -183,6 +185,7 @@ export class BulkAPI2sf {
         }
         return new Promise(resolve => {
             request.put({
+                timeout: requestTimeout,
                 url: this.instanceUrl + '/' + contentUrl,
                 body: csvContent,
                 auth: {
@@ -364,6 +367,7 @@ export class BulkAPI2sf {
         let _this = this;
         return new Promise(resolve => {
             request.get({
+                timeout: requestTimeout,
                 url: this.instanceUrl + '/' + contentUrl.replace("/batches", "/") + 'successfulResults/',
                 auth: {
                     'bearer': this.accessToken
@@ -449,6 +453,7 @@ export class BulkAPI2sf {
         let _this = this;
         return new Promise(resolve => {
             request.get({
+                timeout: requestTimeout,
                 url: this.instanceUrl + '/' + contentUrl.replace("/batches", "/") + (isGetFailed ? 'failedResults/' : 'unprocessedrecords/'),
                 auth: {
                     'bearer': this.accessToken
