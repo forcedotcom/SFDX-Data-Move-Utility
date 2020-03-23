@@ -152,6 +152,7 @@ export default class Run extends SfdxCommand {
 
             // Process --version flag
             if (this.flags.version) {
+
                 let pinfo = CommonUtils.getPluginInfo(this.statics);
 
                 // Exit - success

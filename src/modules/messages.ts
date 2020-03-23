@@ -76,22 +76,21 @@ export enum COMMON_RESOURCES {
     nothingToUpdate = "nothingToUpdate",
     nothingToDelete = "nothingToDelete",
 
+    usingBulkApi = "usingBulkApi",
+    usingRestApi = "usingRestApi",
     apiOperationProgress = "apiOperationProgress",
     apiOperationCompleted = "apiOperationCompleted",
     apiOperationError = "apiOperationError",
     apiOperationError2 = "apiOperationError2",
+    apiOperationError3 = "apiOperationError3",
     apiUnexpectedOperationError = "apiUnexpectedOperationError",
        
     jobStarted = "jobStarted",
     batchStarted = "batchStarted",
     jobStopped = "jobStopped",
-    
-    
-
-
-
-
-
+    batchDataUploading = "batchDataUploading",
+    batchDataProcessing = "batchDataProcessing",
+    jobError = "jobError"
 
 }
 

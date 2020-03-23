@@ -23,12 +23,13 @@ import {
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
 import { execSync } from 'child_process';
 import { List } from 'linq.ts';
-import { SObjectDescribe } from './models/index';
+import { SObjectDescribe, CONSTANTS } from './models/index';
 import path = require('path');
 import fs = require('fs');
 
 import casual = require("casual");
 import { COMMON_RESOURCES, MessageUtils, LOG_MESSAGE_VERBOSITY } from './messages';
+import { BulkAPI2sf, RESULT_STATUSES } from './bulkapi2sf';
 const alasql = require("alasql");
 
 MockGenerator.createCustomGenerators(casual);
@@ -433,7 +434,7 @@ export class SfdxUtils {
 
         let _this = this;
 
-        const bulkProcessing: IBulkApiProcessing = this.BulkApiV1();
+        const bulkProcessing: IBulkApiProcessing = sOrg.bulkApiVersion == "2.0" ? this.BulkApiV2_0() : this.BulkApiV1();
 
         const makeUpdateAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
@@ -447,7 +448,7 @@ export class SfdxUtils {
             if (records.Count() > sOrg.bulkThreshold) {
 
                 let job: any, cn: any, chunks: any;
-                ({ job, cn, chunks } = bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Update, sObjectName, sOrg, recs));
+                ({ job, cn, chunks } = await bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Update, sObjectName, sOrg, recs));
 
                 let totalProcessed = 0;
 
@@ -480,6 +481,13 @@ export class SfdxUtils {
                 resolve(totalProcessed);
 
             } else {
+
+                if (apiCalloutStatusCallback) {
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingRestApi),
+                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
+                }
 
                 let cn = sOrg.getConnection();
                 cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
@@ -583,7 +591,7 @@ export class SfdxUtils {
 
         let _this = this;
 
-        const bulkProcessing: IBulkApiProcessing = this.BulkApiV1();
+        const bulkProcessing: IBulkApiProcessing = sOrg.bulkApiVersion == "2.0" ? this.BulkApiV2_0() : this.BulkApiV1();
 
         const makeInsertAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
@@ -597,7 +605,7 @@ export class SfdxUtils {
             if (records.Count() > sOrg.bulkThreshold) {
 
                 let job: any, cn: any, chunks: any;
-                ({ job, cn, chunks } = bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Insert, sObjectName, sOrg, recs));
+                ({ job, cn, chunks } = await bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Insert, sObjectName, sOrg, recs));
 
                 let totalProcessed = 0;
 
@@ -630,6 +638,13 @@ export class SfdxUtils {
                 resolve(totalProcessed);
 
             } else {
+
+                if (apiCalloutStatusCallback) {
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingRestApi),
+                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
+                }
 
                 let cn = sOrg.getConnection();
                 cn.bulk.pollTimeout = SfdmModels.CONSTANTS.POLL_TIMEOUT;
@@ -732,7 +747,7 @@ export class SfdxUtils {
 
         let _this = this;
 
-        const bulkProcessing: IBulkApiProcessing = this.BulkApiV1();
+        const bulkProcessing: IBulkApiProcessing = sOrg.bulkApiVersion == "2.0" ? this.BulkApiV2_0() : this.BulkApiV1();
 
         const makeDeleteAsync = (sObjectName: string, records: List<object>, sOrg: SfdmModels.SOrg) => new Promise(async (resolve, reject) => {
 
@@ -751,7 +766,7 @@ export class SfdxUtils {
                 let recs = records.ToArray();
 
                 let job: any, cn: any, chunks: any;
-                ({ job, cn, chunks } = bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Delete, sObjectName, sOrg, recs));
+                ({ job, cn, chunks } = await bulkProcessing.createBulkApiJob(SfdmModels.Enums.OPERATION.Delete, sObjectName, sOrg, recs));
 
                 let totalProcessed = 0;
 
@@ -784,6 +799,13 @@ export class SfdxUtils {
                 resolve(totalProcessed);
 
             } else {
+
+                if (apiCalloutStatusCallback) {
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingRestApi),
+                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
+                }
 
                 let ids = records.Select(x => x["Id"]).ToArray();
                 let recs = records.ToArray();
@@ -1403,7 +1425,7 @@ export class SfdxUtils {
 
     private static _prepareQuery(soql: string): [string, Map<String, List<String>>, Array<String>] {
         let newParsedQuery = parseQuery(soql);
-        if (newParsedQuery.where && newParsedQuery.where.left && newParsedQuery.where.left.openParen && !newParsedQuery.where.left.closeParen){
+        if (newParsedQuery.where && newParsedQuery.where.left && newParsedQuery.where.left.openParen && !newParsedQuery.where.left.closeParen) {
             newParsedQuery.where.left.closeParen = newParsedQuery.where.left.openParen;
         }
         let originalFields: Array<SOQLField> = newParsedQuery.fields.map(x => {
@@ -1541,17 +1563,19 @@ export class SfdxUtils {
     //  --------------------------------------------------------------------------
     public static BulkApiV1(): IBulkApiProcessing {
 
+        const bulkApiVersion = "1.0";
+
         return {
 
-            createBulkApiJob: function (
+            createBulkApiJob: async function (
                 operation: SfdmModels.Enums.OPERATION,
                 sObjectName: string,
                 sOrg: SfdmModels.SOrg,
-                records: Array<any>): {
+                records: Array<any>): Promise<{
                     job: any,
                     cn: any,
                     chunks: any
-                } {
+                }> {
 
                 let cn = sOrg.getConnection();
 
@@ -1564,9 +1588,9 @@ export class SfdxUtils {
                 let chunks = CommonUtils.chunkArray(records, sOrg.bulkApiV1BatchSize);
 
                 return {
-                    chunks,
+                    job,
                     cn,
-                    job
+                    chunks
                 };
             },
 
@@ -1595,7 +1619,7 @@ export class SfdxUtils {
 
                     batch.on("error", function (batchInfo) {
                         if (pollTimer) {
-                            clearTimeout(pollTimer);
+                            clearInterval(pollTimer);
                         }
                         reject(batchInfo);
                         return;
@@ -1607,6 +1631,10 @@ export class SfdxUtils {
 
                         if (apiCalloutStatusCallback) {
                             if (showStartMessage) {
+                                apiCalloutStatusCallback(new ApiCalloutStatus({
+                                    message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingBulkApi, bulkApiVersion),
+                                    verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                                }));
                                 apiCalloutStatusCallback(new ApiCalloutStatus({
                                     message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStarted, job.id, operation, sObjectName),
                                     verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
@@ -1733,13 +1761,211 @@ export class SfdxUtils {
 
     // BULK API V2 PROCESSING ----------------------------------------------------
     //  --------------------------------------------------------------------------
-    public static BulkApiV2(): IBulkApiProcessing {
+    public static BulkApiV2_0(): IBulkApiProcessing {
+
+        const bulkApiUnexpectedErrorMessage = MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobError);
+        const bulkApiVersion = "2.0";
+
         return {
-            createBulkApiJob: function () {
-                // TODO:
+
+            createBulkApiJob: async function (
+                operation: SfdmModels.Enums.OPERATION,
+                sObjectName: string,
+                sOrg: SfdmModels.SOrg,
+                records: Array<any>): Promise<{
+                    job: any,
+                    cn: any,
+                    chunks: any
+                }> {
+
+                let cn = sOrg.getConnection();
+                let job = new BulkAPI2sf(String(cn.version), cn.accessToken, cn.instanceUrl);
+
+                let csvChunks = CommonUtils.createCsvStringsFromArray(records,
+                    CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
+                    CONSTANTS.BULK_API_V2_BLOCK_SIZE);
+                return {
+                    job,
+                    cn,
+                    chunks: csvChunks.chunks
+                };
             },
-            processBulkApiBatchAsync: async function () {
-                // TODO:
+
+            processBulkApiBatchAsync: async function (
+                operation: any,
+                sObjectName: string,
+                cn: any,
+                sOrg: SfdmModels.SOrg,
+                apiCalloutStatusCallback: (status: ApiCalloutStatus) => void = null,
+                job: any,
+                records: any,
+                numberJobRecordsSucceeded: number,
+                showStartMessage: boolean,
+                showStopMessage: boolean,
+                updateRecordId: boolean): Promise<any> {
+
+                return new Promise(async (resolve, reject) => {
+
+                    let bulkApiService = <BulkAPI2sf>job;
+                    let csvString = records.csvString;
+                    records = records.records;
+
+                    if (showStartMessage) {
+                        apiCalloutStatusCallback(new ApiCalloutStatus({
+                            message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingBulkApi, bulkApiVersion),
+                            verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                        }));
+                    }
+
+                    // Create job
+                    let jobResult = await bulkApiService.createBulkJobAsync(sObjectName, operation.toLowerCase());
+                    // .... error
+                    if (jobResult.resultStatus != RESULT_STATUSES.JobCreated) {
+                        reject(new ApiCalloutStatus({
+                            message: jobResult.errorMessage || bulkApiUnexpectedErrorMessage,
+                            numberRecordsProcessed: 0,
+                            numberRecordsFailed: records.length
+                        }));
+                        return;
+                    }
+                    // ... message
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStarted, jobResult.jobId, operation, sObjectName),
+                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
+
+
+
+                    // Create batch and start data uploading
+                    // ... message
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.batchDataUploading, jobResult.jobId, operation, sObjectName),
+                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
+
+                    let batchResult = await bulkApiService.createBulkBatchAsync(jobResult.contentUrl, csvString, records);
+                    // .... error
+                    if (batchResult.resultStatus != RESULT_STATUSES.BatchCreated) {
+                        reject(new ApiCalloutStatus({
+                            message: batchResult.errorMessage || bulkApiUnexpectedErrorMessage,
+                            numberRecordsProcessed: 0,
+                            numberRecordsFailed: records.length
+                        }));
+                        return;
+                    }
+
+                    // Upload complete, close batch
+                    batchResult = await bulkApiService.closeBulkJobAsync(jobResult.contentUrl);
+                    // .... error
+                    if (batchResult.resultStatus != RESULT_STATUSES.DataUploaded) {
+                        reject(new ApiCalloutStatus({
+                            message: batchResult.errorMessage || bulkApiUnexpectedErrorMessage,
+                            numberRecordsProcessed: 0,
+                            numberRecordsFailed: records.length
+                        }));
+                        return;
+                    }
+                    // ... message
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.batchDataProcessing, jobResult.jobId, operation, sObjectName),
+                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
+
+                    let numberBatchRecordsProcessed = 0;
+                    let numberBatchRecordsFailed = 0;
+
+                    // Poll job
+                    batchResult = await bulkApiService.waitForBulkJobCompleteAsync(jobResult.contentUrl, sOrg.pollingIntervalMs, function (results) {
+                        if (apiCalloutStatusCallback) {
+                            let progress: ApiCalloutStatus = new ApiCalloutStatus({
+                                numberRecordsProcessed: +results.numberRecordsProcessed,
+                                jobId: jobResult.jobId,
+                                sObjectName: sObjectName
+                            });
+                            if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
+                                numberBatchRecordsProcessed = progress.numberRecordsProcessed;
+                                progress.numberRecordsProcessed = numberJobRecordsSucceeded + progress.numberRecordsProcessed;
+                                progress.message = MessageUtils.getMessagesString(commonMessages,
+                                    COMMON_RESOURCES.apiOperationProgress,
+                                    jobResult.jobId,
+                                    operation,
+                                    sObjectName,
+                                    String(progress.numberRecordsProcessed),
+                                    String(progress.numberRecordsFailed));
+                                progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
+                                apiCalloutStatusCallback(progress);
+                            }
+                        }
+                    });
+
+
+                    // Result
+                    batchResult = await bulkApiService.getBulkJobResultAsync(jobResult.contentUrl);
+                    let rets = batchResult.resultRecords;
+
+                    records.forEach((record, index) => {
+                        if (rets[index].isSuccess) {
+                            if (updateRecordId) {
+                                record["Id"] = rets[index].id;
+                                record["Errors"] = null;
+                            }
+                            numberJobRecordsSucceeded++;
+                        } else {
+                            if (rets[index].errorMessage) {
+                                record["Errors"] = rets[index].errorMessage;
+                            }
+                            numberBatchRecordsFailed++;
+                        }
+                    });
+
+                    if (showStopMessage) {
+                        apiCalloutStatusCallback(new ApiCalloutStatus({
+                            message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStopped, jobResult.jobId, operation, sObjectName),
+                            verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                        }));
+                    }
+
+                    let progress = new ApiCalloutStatus({
+                        sObjectName,
+                        jobId: jobResult.jobId,
+                        numberRecordsProcessed: numberJobRecordsSucceeded,
+                        numberRecordsFailed: numberBatchRecordsFailed
+                    });
+
+                    if (numberBatchRecordsFailed > 0) {
+
+                        if (apiCalloutStatusCallback) {
+                            progress.error = MessageUtils.getMessagesString(commonMessages,
+                                COMMON_RESOURCES.apiOperationError3,
+                                jobResult.jobId,
+                                operation,
+                                sObjectName,
+                                jobResult.jobId,
+                                String(progress.numberRecordsFailed));
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                            apiCalloutStatusCallback(progress);
+                        }
+
+                        if (sOrg.allOrNone) {
+                            reject(progress);
+                            return;
+                        }
+
+                    } else {
+                        if (apiCalloutStatusCallback) {
+                            progress.message = MessageUtils.getMessagesString(commonMessages,
+                                COMMON_RESOURCES.apiOperationCompleted,
+                                jobResult.jobId,
+                                operation,
+                                sObjectName,
+                                String(progress.numberRecordsProcessed));
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                            apiCalloutStatusCallback(progress);
+                        }
+                    }
+
+                    resolve(numberJobRecordsSucceeded);
+                });
             }
         };
     }

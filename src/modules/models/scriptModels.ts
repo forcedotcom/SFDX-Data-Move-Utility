@@ -47,6 +47,12 @@ export class Script {
      */
     bulkThreshold: number = 200;
 
+    /**
+     * Force using specific version of Salesforce Bulk Api engine
+     * Valid values: 1.0, 2.0
+     */
+    bulkApiVersion: string = "2.0";
+
     
     /**
      * The maximal size of each batch while using Bulk Api V1

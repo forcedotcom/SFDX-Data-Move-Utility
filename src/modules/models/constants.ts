@@ -19,12 +19,12 @@ export let CONSTANTS = {
     POLL_TIMEOUT: 3000000,
 
     /**
-     * Used to calculate allRecords flat
+     * Used to calculate allRecords flag
      */
     ALL_RECORDS_FLAG_AMOUNT_FROM: 2000,
 
     /**
-     * Used to calculate allRecords flat
+     * Used to calculate allRecords flag
      */
     ALL_RECORDS_FLAG_AMOUNT_TO: 30000,
 
@@ -33,6 +33,11 @@ export let CONSTANTS = {
      * of the displayed query string in IN_RECORDS mode
      */
     IN_RECORDS_QUERY_DISPLAY_LENGTH: 400,
+
+
+    BULK_API_V2_BLOCK_SIZE: 1000,
+
+    BULK_API_V2_MAX_CSV_SIZE_IN_BYTES: 145000000,
 
 
     // Helper constants ----------

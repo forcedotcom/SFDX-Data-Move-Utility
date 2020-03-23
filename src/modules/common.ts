@@ -25,6 +25,8 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 
+
+
 /**
  * Common utilities
  */
@@ -439,9 +441,9 @@ export class CommonUtils {
         maxCsvStringSizeInBytes: number,
         blockSize: number,
         lineDelimiter: string = '\n',
-        encoding: string = 'utf-8'): [Array<[Array<object>, string]>, Array<string>] {
+        encoding: string = 'utf-8'): CsvChunks {
 
-        if (!array || array.length == 0) return [new Array<[Array<object>, string]>(), new Array<string>()];
+        if (!array || array.length == 0) return new CsvChunks();
 
         const arrayBlocks = this.chunkArray(array, blockSize);
         const headerArray = Object.keys(array[0]).map(key => {
@@ -482,7 +484,15 @@ export class CommonUtils {
         if (!bufferFlushed && csvBlock) {
             csvStrings.push([arrayBuffer, (header + csvBlock.toString('utf-8')).trim()]);
         }
-        return [csvStrings, headerArray.map(x => x.id)];
+        return new CsvChunks({
+            chunks: csvStrings.map(x => {
+                return {
+                    records: x[0],
+                    csvString: x[1]
+                };
+            }),
+            header: headerArray.map(x => x.id)
+        });
     }
 
 
@@ -705,18 +715,18 @@ export class CommonUtils {
 
 
 
-     /**
-     * Created mapping between members of two arrays by the given item property
-     *
-     * @static
-     * @param {Array<object>} arrayOfKeys First array - become keys for the output map
-     * @param {Array<object>} arrayOfValues Second array - become values for the output map
-     * @param {Array<string>} [propsToExclude] Property to map the array items
-     * @param {Map<string, object>} [mkeys] Mapping for the keys array if already exist
-     * @param {Map<string, object>} [mvalues] Mapping for the values array if already exist
-     * @returns {Map<object, object>}
-     * @memberof CommonUtils
-     */
+    /**
+    * Created mapping between members of two arrays by the given item property
+    *
+    * @static
+    * @param {Array<object>} arrayOfKeys First array - become keys for the output map
+    * @param {Array<object>} arrayOfValues Second array - become values for the output map
+    * @param {Array<string>} [propsToExclude] Property to map the array items
+    * @param {Map<string, object>} [mkeys] Mapping for the keys array if already exist
+    * @param {Map<string, object>} [mvalues] Mapping for the values array if already exist
+    * @returns {Map<object, object>}
+    * @memberof CommonUtils
+    */
     public static mapArraysByItemProperty(
         arrayOfKeys: Array<object>,
         arrayOfValues: Array<object>,
@@ -925,5 +935,17 @@ export class MockGenerator {
         });
     }
 
+}
+
+export class CsvChunks {
+    constructor(init: Partial<CsvChunks>) {
+        Object.assign(this, init);
+    }
+
+    chunks: Array<{
+        records: Array<object>,
+        csvString: string
+    }> = [];
+    header: Array<string> = new Array<string>();
 }
 

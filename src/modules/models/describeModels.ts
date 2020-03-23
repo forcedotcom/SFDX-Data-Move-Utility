@@ -39,6 +39,7 @@ export class SOrg {
     maxRequest: number = 1000000;
 
     pollingIntervalMs: number;
+    bulkApiVersion: string;
     bulkThreshold: number;
     bulkApiV1BatchSize: number;
     allOrNone: boolean;

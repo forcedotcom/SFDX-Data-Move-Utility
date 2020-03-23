@@ -4,6 +4,10 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
 
 ----
 
+***<u>NEW !!!</u> Starting from the version 2.6.0  - the Plugin uses by default the <u>Salesforce Bulk Api v2.0</u> in Beta mode. If you are experiencing any issue with the current v2.0 implementation, let me know. You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.***
+
+----
+
 <!--***You can now find [here](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) the new desktop GUI application that will help you to manage the plugin configuration files and to run and monitor the migration process, that will make usage of this Plugin simple and convenient.***-->
 
 
@@ -215,6 +219,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | validateCSVFilesOnly                 | Boolean                    | Optional, Default false | In general when you are using CSV files as data source, the source CSV files are subject of format  validation before running the migration job itself.  validateCSVFilesOnly=true  runs only the validation process  and stops the execution after the it is completed. |
 | createTargetCSVFiles                 | Boolean                    | Optional, Default false | If true the Plugin will produce CSV file containing target records for each processed sObject with error information (if occured) per record. These CSV files are not encrypted even **--encryptkey** flag is provided. |
 | bulkApiV1BatchSize                   | Integer                    | Optional / Default 9500 | The maximal size of each batch while processing the records by the Bulk Api V1 |
+| bulkApiVersion                       | Float                      | Optional / Default 2.0  | The version of Salesforce Bulk Api to use. Valid values are: 1.0 and 2.0 |
 
 
 
