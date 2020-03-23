@@ -473,7 +473,7 @@ export class CommonUtils {
                 arrayBuffer = arrayBuffer.concat(arrayBlock);
                 //bufferFlushed = false;
             } else {
-                if (buffer.length > 0){
+                if (arrayBuffer.length > 0) {
                     csvStrings.push([arrayBuffer, (header + buffer.toString(encoding)).trim()]);
                 }
                 buffer = csvBlock
@@ -483,7 +483,7 @@ export class CommonUtils {
             }
             totalCsvChunkSize += csvBlockSize;
         }
-        if (buffer.length > 0) {
+        if (arrayBuffer.length > 0) {
             csvStrings.push([arrayBuffer, (header + buffer.toString('utf-8')).trim()]);
         }
         return new CsvChunks({
@@ -643,8 +643,10 @@ export class CommonUtils {
         let m = new Map<string, object>();
         array.forEach(x => {
             let hash = String(this.getObjectHashcode(x, propsToExclude));
-            if (m.has(hash)) {
-                hash += '1';
+            let h = hash;
+            let counter = 0;
+            while (m.has(hash)) {
+                hash = h + "_" + String(counter++);
             }
             m.set(hash, x);
         });
@@ -665,8 +667,10 @@ export class CommonUtils {
         let m = new Map<string, object>();
         array.forEach(x => {
             let key = String(x[propertyName]);
-            if (m.has(key)) {
-                key += '1';
+            let k = key;
+            let counter = 0;
+            while (m.has(key)) {
+                key = k + "_" + String(counter++);
             }
             m.set(key, x);
         });

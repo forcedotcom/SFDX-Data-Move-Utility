@@ -1900,6 +1900,13 @@ export class SfdxUtils {
 
 
                     // Result
+                    // ... message
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobResultsRetrieving, 
+                                jobResult.jobId, operation, sObjectName),
+                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                    }));
+
                     batchResult = await bulkApiService.getBulkJobResultAsync(jobResult.contentUrl);
                     let rets = batchResult.resultRecords;
 
