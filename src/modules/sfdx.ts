@@ -459,7 +459,7 @@ export class SfdxUtils {
                     } catch (ex) {
                         await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
                         let totalFailed = records.Count() - totalProcessed;
-                        let progress = new ApiCalloutStatus({
+                        let progress = !(ex instanceof ApiCalloutStatus) ? new ApiCalloutStatus({
                             sObjectName,
                             jobId: job.id,
                             numberRecordsProcessed: totalProcessed,
@@ -471,7 +471,7 @@ export class SfdxUtils {
                                 sObjectName,
                                 String(totalProcessed),
                                 String(totalFailed))
-                        });
+                        }) : ex;
                         reject(progress);
                         return;
                     }
@@ -616,7 +616,7 @@ export class SfdxUtils {
                     } catch (ex) {
                         await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
                         let totalFailed = records.Count() - totalProcessed;
-                        let progress = new ApiCalloutStatus({
+                        let progress = !(ex instanceof ApiCalloutStatus) ? new ApiCalloutStatus({
                             sObjectName,
                             jobId: job.id,
                             numberRecordsProcessed: totalProcessed,
@@ -628,7 +628,7 @@ export class SfdxUtils {
                                 sObjectName,
                                 String(totalProcessed),
                                 String(totalFailed))
-                        });
+                        }) : ex;
                         reject(progress);
                         return;
                     }
@@ -777,7 +777,7 @@ export class SfdxUtils {
                     } catch (ex) {
                         await this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
                         let totalFailed = records.Count() - totalProcessed;
-                        let progress = new ApiCalloutStatus({
+                        let progress = !(ex instanceof ApiCalloutStatus) ? new ApiCalloutStatus({
                             sObjectName,
                             jobId: job.id,
                             numberRecordsProcessed: totalProcessed,
@@ -789,7 +789,7 @@ export class SfdxUtils {
                                 sObjectName,
                                 String(totalProcessed),
                                 String(totalFailed))
-                        });
+                        }) : ex;
                         reject(progress);
                         return;
                     }
@@ -1721,6 +1721,7 @@ export class SfdxUtils {
                                     sObjectName,
                                     batch.id,
                                     String(progress.numberRecordsFailed));
+                                progress.message = progress.error;
                                 progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                                 apiCalloutStatusCallback(progress);
                             }
@@ -1902,8 +1903,8 @@ export class SfdxUtils {
                     // Result
                     // ... message
                     apiCalloutStatusCallback(new ApiCalloutStatus({
-                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobResultsRetrieving, 
-                                jobResult.jobId, operation, sObjectName),
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobResultsRetrieving,
+                            jobResult.jobId, operation, sObjectName),
                         verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
                     }));
 
@@ -1948,7 +1949,8 @@ export class SfdxUtils {
                                 operation,
                                 sObjectName,
                                 jobResult.jobId,
-                                String(progress.numberRecordsFailed));
+                                String(numberBatchRecordsFailed));
+                            progress.message = progress.error;
                             progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                             apiCalloutStatusCallback(progress);
                         }
@@ -1965,7 +1967,7 @@ export class SfdxUtils {
                                 jobResult.jobId,
                                 operation,
                                 sObjectName,
-                                String(progress.numberRecordsProcessed));
+                                String(numberJobRecordsSucceeded));
                             progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                             apiCalloutStatusCallback(progress);
                         }

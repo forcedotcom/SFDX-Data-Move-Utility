@@ -3,8 +3,13 @@ import { CommonUtils } from "./common";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 // 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
-const requestTimeout = 10 * 60 * 1000; 
+const requestTimeout = 10 * 60 * 1000;
 import parse = require('csv-parse/lib/sync');
+
+const ErrorMessages = {
+    UnprocessedRecord: "Unprocessed record",
+    MissingSourceTargetMapping: "Invalid record hashcode. Unable to find matching record from the response returned by the bulk job"
+}
 
 
 export enum RESULT_STATUSES {
@@ -34,7 +39,9 @@ export class BulkApiResultRecord {
     isMissingSourceTargetMapping: boolean;
 
     get isSuccess() {
-        return !this.isFailed && !this.isUnprocessed;
+        return !this.isFailed
+            && !this.isUnprocessed
+            && !this.isMissingSourceTargetMapping;
     }
 
     isCreated: boolean;
@@ -411,7 +418,7 @@ export class BulkAPI2sf {
                         }
                         let resultRecords = _this.sourceRecords.map(record => {
                             let targetRecords = map.get(record);
-                            return new BulkApiResultRecord({
+                            let ret = new BulkApiResultRecord({
                                 sourceRecord: record,
                                 targetRecord: targetRecords,
                                 isMissingSourceTargetMapping: !targetRecords,
@@ -421,19 +428,25 @@ export class BulkAPI2sf {
                                 id: targetRecords && (targetRecords["sf__Id"] || targetRecords["Id"]),
                                 isCreated: targetRecords && !!targetRecords["sf__Created"]
                             });
+                            if (ret.isUnprocessed){
+                                ret.errorMessage = ErrorMessages.UnprocessedRecord;
+                            } else if (ret.isMissingSourceTargetMapping){
+                                ret.errorMessage = ErrorMessages.MissingSourceTargetMapping;
+                            }
+                            return ret;
                         });
                         resolve(new BulkAPIResult({
                             resultRecords: resultRecords,
                             jobState: "JobComplete"
                         }));
                     } catch (e) {
-                        if (typeof e.message == "string"){
+                        if (typeof e.message == "string") {
                             _this._apiRequestErrorHandler(
                                 resolve,
                                 e,
                                 undefined,
                                 undefined
-                            ); 
+                            );
                         } else {
                             let responseError = JSON.parse(e.message);
                             _this._apiRequestErrorHandler(
