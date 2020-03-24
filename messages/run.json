@@ -78,6 +78,8 @@
     "buildingMigrationStaregy": "Building migration strategy...",
     "executionOrder": "%s",
 
+    "readingValuesMappingFile": "Reading the values mapping CSV file (%s)",
+
     "validatingAndFixingSourceCSVFiles": "Validating and fixing source CSV files...",
     "writingToCSV": "Writing to %s...",
     "noIssuesFoundDuringCSVValidation": "There are no issues found during the last validation of the source CSV files.",
@@ -106,6 +108,7 @@
 
 
     "retrievingData": "Retrieving the source data %s...",
+    "mappingRawCsvValues": "{%s} Transforming raw CSV values by the given mapping table.",
     "gettingRecordsCount": "{%s} Getting the total amount of records.",
     "totalRecordsAmount": "{%s} Total amount of the %s records: %s",
     "queryingAll": "{%s} Retrieving the %s data (ALL RECORDS) in progress...",

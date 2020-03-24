@@ -219,6 +219,14 @@ export class ScriptObject {
      */
     excluded: boolean;
 
+    /**
+     * Enables transformation of csv values 
+     * for this object according to the given mapping
+     * definded in the ValueMapping.csv
+     *
+     */
+    useCSVValuesMapping: boolean = false;
+
 
     // ************************************************
     /**

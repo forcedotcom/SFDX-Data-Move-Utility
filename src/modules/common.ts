@@ -309,6 +309,7 @@ export class CommonUtils {
 
             if (linesAmountToRead == 0) {
                 let input = fs.readFileSync(filePath, 'utf8');
+                input = input.replace(/^\uFEFF/, '');
                 const records = parse(input, {
                     columns: columns,
                     skip_empty_lines: true,
@@ -376,7 +377,8 @@ export class CommonUtils {
                     title: x
                 }
             }),
-            path: filePath
+            path: filePath,
+            encoding : "utf8"
         });
         return csvWriter.writeRecords(array);
     }

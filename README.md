@@ -208,7 +208,8 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | **ScriptObject**.deleteOldData       | Boolean                    | Optional, Default false | Forces deletion of old target records before performing update. <br />*The difference from the "Delete" operator (see above) is that the "Delete" operator makes only deletion without updating the target environment.* |
 | **ScriptObject**.updateWithMockData  | Boolean                    | Optional, default false | Enables data mocking for this SObject                        |
 | **ScriptObject**.targetRecordsFilter | String                     | Optional                | Additional SOQL query you can use to filter out unwanted  target data just before sending them to the Target.<br /><br />*Target data means the  records are directly provided in API request (Bulk API request or REST request) to update the target environment or to generate the target CSV file.* |
-| excluded                             | Boolean                    | Optional, Default false | Set to true to exclude corresponding sObject from the migration process. <br /><br />*This parameter useful when you want to exclude certain sObject from the process leaving its definition in the export.json file.* |
+| **ScriptObject**.excluded            | Boolean                    | Optional, Default false | Set to true to exclude corresponding sObject from the migration process. <br /><br />*This parameter useful when you want to exclude certain sObject from the process leaving its definition in the export.json file.* |
+| **ScriptObject**.useCSVValuesMapping | Boolean                    | Optional, Default false | When set to true and CSV files are used as data source - it enables changing the raw values from the CSV file according to the mapping table coming from the additional CSV file. Data will be loaded after the transformation is done (see details below). |
 | **ScriptObject**.mockFields          | **Array (MockField[])**    |                         | Defines SObject fields that need to update with a fake data (see mocking feature below) |
 | **MockField**.name                   | String                     | Mandatory               | The name of the field to mock (see mocking feature below)    |
 | **MockField**.pattern                | String                     | Mandatory               | The pattern to create mock data for this field (see mocking feature below) |
@@ -218,8 +219,8 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | encryptDataFiles                     | Boolean                    | Optional, Default false | Enables encryption / decryption of the CSV files when passing *--encryptkey* argument to the Plugin call and using *file* as Source or as the Target. |
 | validateCSVFilesOnly                 | Boolean                    | Optional, Default false | In general when you are using CSV files as data source, the source CSV files are subject of format  validation before running the migration job itself.  validateCSVFilesOnly=true  runs only the validation process  and stops the execution after the it is completed. |
 | createTargetCSVFiles                 | Boolean                    | Optional, Default false | If true the Plugin will produce CSV file containing target records for each processed sObject with error information (if occured) per record. These CSV files are not encrypted even **--encryptkey** flag is provided. |
-| bulkApiV1BatchSize                   | Integer                    | Optional / Default 9500 | The maximal size of each batch while processing the records by the Bulk Api V1 |
-| bulkApiVersion                       | Float                      | Optional / Default 2.0  | The version of Salesforce Bulk Api to use. Valid values are: 1.0 and 2.0 |
+| bulkApiV1BatchSize                   | Integer                    | Optional, Default 9500  | The maximal size of each batch while processing the records by the Bulk Api V1 |
+| bulkApiVersion                       | Float                      | Optional, Default 2.0   | The version of Salesforce Bulk Api to use. Valid values are: 1.0 and 2.0 |
 
 
 
@@ -410,6 +411,28 @@ Available values for the step parameter are:
 **"-ms" :**      - one millisecond
 
 
+
+
+
+#### Automatic CSV source transformation feature.
+
+In some cases we get a source CSV file that could not be loaded directly into the target Org, because it contains raw data that need to be transformed into uploadable format prior the actual upload. 
+
+For example, our CSV file contains picklist translated labels instead of their values, so we have to replace labels with values in order to construct well formatted source CSV.
+
+The Plugin provides useful feature for automatic replacement of CSV values before upload.
+It is optional feature that can be enabled for certain sobject by setting the parameter **useCSVValuesMapping** to **true**. 
+
+The value replacement is being performed according to the mapping table stored in the CSV file **ValueMapping.csv**.  Put this file in the same directory as the export.json file.
+The file should contain 4 predefined columns:
+
+| ObjectName                                     | FieldName                                     | RawValue                                                     | Value                                                        |
+| ---------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| *The sObject api name to map, f.ex*.  **Case** | *The field api name to map, f.ex.* **Reason** | *The value in the source CSV file, f.ex. translated label*  **Вопрос** | *The value that should be uploaded to the target instead of the provided RawValue, f.ex.* **Question** |
+
+
+
+This single file provides mapping table for all sObjects and fields included in the current migration package, that they should be transformed before actual loading. 
 
 
 

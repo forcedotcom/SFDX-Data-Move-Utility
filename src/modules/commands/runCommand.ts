@@ -64,6 +64,7 @@ export enum RUN_RESOURCES {
     "dataMigrationProcessStarted" = "dataMigrationProcessStarted",
     "buildingMigrationStaregy" = "buildingMigrationStaregy",
     "executionOrder" = "executionOrder",
+    "readingValuesMappingFile" = "readingValuesMappingFile",
     "validatingAndFixingSourceCSVFiles" = "validatingAndFixingSourceCSVFiles",
     "writingToCSV" = "writingToCSV",
     "noIssuesFoundDuringCSVValidation" = "noIssuesFoundDuringCSVValidation",
@@ -88,6 +89,7 @@ export enum RUN_RESOURCES {
     "deletingOldDataCompleted" = "deletingOldDataCompleted",
     "deletingOldDataSkipped" = "deletingOldDataSkipped",
     "retrievingData" = "retrievingData",
+    "mappingRawCsvValues" = "mappingRawCsvValues",
     "gettingRecordsCount" = "gettingRecordsCount",
     "totalRecordsAmount" = "totalRecordsAmount",
     "queryingAll" = "queryingAll",
@@ -778,6 +780,9 @@ export class RunCommand {
         let csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
         let csvDataFilesToSave: Set<string> = new Set<string>();
 
+        // [Object name + Field name + Raw value] => actual value
+        let csvValuesMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
+
         async function _saveCachedCsvDataFiles(): Promise<any> {
             let csvPaths = [...csvDataFilesToSave.keys()];
             for (let i = 0; i < csvPaths.length; i++) {
@@ -801,6 +806,26 @@ export class RunCommand {
         if (this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File && !(this.script.encryptDataFiles && this.password)) {
 
             this.logger.infoMinimal(RUN_RESOURCES.validatingAndFixingSourceCSVFiles);
+
+            // Load values mapping if exists
+            const valueMappingCsvFilename = "ValueMapping.csv";
+            let valueMappingFilePath = path.join(this.sourceOrg.basePath, valueMappingCsvFilename);
+            let csvRows = await CommonUtils.readCsvFileAsync(valueMappingFilePath);
+            if (csvRows.length > 0) {
+
+                this.logger.infoVerbose(RUN_RESOURCES.readingValuesMappingFile, valueMappingCsvFilename);
+                
+                csvRows.forEach(row => {
+                    if (row["ObjectName"] && row["FieldName"] && row["RawValue"]) {
+                        let key = String(row["ObjectName"]).trim() + String(row["FieldName"]).trim();
+                        if (!csvValuesMapping.has(key)) {
+                            csvValuesMapping.set(key, new Map<string, string>());
+                        }
+                        csvValuesMapping.get(key).set(String(row["RawValue"]).trim(), (String(row["Value"]) || "").trim());
+                    }
+                });
+            }
+
 
 
             // A. Merge User / Group into UserAndGroup ----------------------//
@@ -1299,16 +1324,39 @@ export class RunCommand {
                 }
 
                 try {
-                    task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, await SfdxUtils.queryAsync(tempQuery,
+                    let recs = await SfdxUtils.queryAsync(tempQuery,
                         this.sourceOrg,
                         true,
-                        this.script.encryptDataFiles ? this.password : null));
+                        this.script.encryptDataFiles ? this.password : null);
+
+                    // Values mapping...
+                    if (csvValuesMapping.size > 0 && task.scriptObject.useCSVValuesMapping && recs.Count() > 0) {
+
+                        this.logger.infoNormal(RUN_RESOURCES.mappingRawCsvValues, task.sObjectName);
+
+                        let fields = Object.keys(recs.ElementAt(0));
+                        fields.forEach(field => {
+                            let key = task.sObjectName + field;
+                            let valuesMap = csvValuesMapping.get(key);
+                            if (valuesMap && valuesMap.size > 0) {
+                                recs.ForEach(r => {
+                                    let rawValue = (String(r[field]) || "").trim();
+                                    if (rawValue && valuesMap.has(rawValue)) {
+                                        r[field] = valuesMap.get(rawValue);
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    task.sourceRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, recs);
 
                     this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "source", String(task.sourceRecordSet.get(SfdmModels.Enums.RECORDS_SET.Main).Count()));
 
                 } catch (e) {
                     throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                 }
+
 
             } else {
 
@@ -1969,7 +2017,7 @@ export class RunCommand {
         }
 
         this.logger.infoVerbose(RUN_RESOURCES.updatingTargetCompleted, `(${this.logger.getResourceString(RUN_RESOURCES.Step2)})`);
-        
+
 
 
         this.logger.infoMinimal(RUN_RESOURCES.newLine);
