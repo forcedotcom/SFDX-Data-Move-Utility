@@ -795,7 +795,8 @@ export class CommonUtils {
             return v == "TRUE" ? "true"
                 : v == "FALSE" ? "false"
                     : !isNaN(v) ? String(+v)
-                        : !v || v == "#N/A" ? '' : String(v);
+                        : !isNaN(Date.parse(String(v))) ? String(Date.parse(String(v)))
+                            : !v || v == "#N/A" ? '' : String(v);
         }).join('');
         return this.getStringHashcode(str);
     }
