@@ -434,6 +434,8 @@ The file should contain 4 predefined columns:
 
 This single file provides mapping table for all sObjects and fields included in the current migration package, that they should be transformed before actual loading. 
 
+Only raw values that found in the mapping table will be replaced, but the rest  of CSV values remains unchanged.
+
 
 
 #### Reports and logs.
