@@ -53,12 +53,12 @@ export class Script {
      */
     bulkApiVersion: string = "2.0";
 
-    
+
     /**
      * The maximal size of each batch while using Bulk Api V1
      *
      */
-    bulkApiV1BatchSize: number  =  9500;
+    bulkApiV1BatchSize: number = 9500;
 
 
     /**
@@ -103,6 +103,18 @@ export class Script {
 
 
     createTargetCSVFiles: boolean = true;
+
+
+  
+    /**
+     * If true the source files will be uploaded
+     * to the Target as is - with all values
+     *  without processing of lookup fields
+     * by external id keys. 
+     * You need to manually provide actual target record id 
+     * for the lookup fields in the file.
+     */
+    importCSVFilesAsIs = false;
 
 
     /**
@@ -226,6 +238,9 @@ export class ScriptObject {
      *
      */
     useCSVValuesMapping: boolean = false;
+
+
+
 
 
     // ************************************************

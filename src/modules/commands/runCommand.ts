@@ -837,293 +837,296 @@ export class RunCommand {
             await CommonUtils.mergeCsvFiles(filepath1, filepath2, filepath3, true, "Id", "Name");
 
 
-            // B. Add missing referenced lookup fields and process external id columns ----------------------//
+            if (!this.script.importCSVFilesAsIs) {
 
-            let csvIssues: Array<{
-                "Date": string,
-                "Severity level": "HIGH" | "LOW" | "NORMAL" | "HIGHEST",
-                "Child sObject name": string,
-                "Child field name": string,
-                "Parent record Id": string,
-                "Parent sObject name": string,
-                "Parent sObject external Id field name": string,
-                "Error description": string
-            }> = new Array<any>();
+                // B. Add missing referenced lookup fields and process external id columns ----------------------//
 
+                let csvIssues: Array<{
+                    "Date": string,
+                    "Severity level": "HIGH" | "LOW" | "NORMAL" | "HIGHEST",
+                    "Child sObject name": string,
+                    "Child field name": string,
+                    "Parent record Id": string,
+                    "Parent sObject name": string,
+                    "Parent sObject external Id field name": string,
+                    "Error description": string
+                }> = new Array<any>();
 
-            for (let i = 0; i < this.job.tasks.Count(); i++) {
+                for (let i = 0; i < this.job.tasks.Count(); i++) {
 
-                let task = this.job.tasks.ElementAt(i);
+                    let task = this.job.tasks.ElementAt(i);
 
-                if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete)
-                    continue;
+                    if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete)
+                        continue;
 
-                let filepath = path.join(this.sourceOrg.basePath, task.sObjectName);
-                if (task.sObjectName == "User" || task.sObjectName == "Group") {
-                    filepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
-                }
-                filepath += ".csv";
+                    let filepath = path.join(this.sourceOrg.basePath, task.sObjectName);
+                    if (task.sObjectName == "User" || task.sObjectName == "Group") {
+                        filepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
+                    }
+                    filepath += ".csv";
 
-                // Check the source CSV file for this task
-                let csvColumnsRow = await CommonUtils.readCsvFileAsync(filepath, 1);
-                if (csvColumnsRow.length == 0) {
-                    csvIssues.push({
-                        Date: CommonUtils.formatDateTime(new Date()),
-                        "Severity level": "HIGHEST",
-                        "Child sObject name": task.sObjectName,
-                        "Child field name": null,
-                        "Parent sObject name": null,
-                        "Parent sObject external Id field name": null,
-                        "Parent record Id": null,
-                        "Error description": this.logger.getResourceString(RUN_RESOURCES.csvFileIsEmpty)
-                    });
-                    continue;
-                }
-
-                for (let j = 0; j < task.taskFields.Count(); j++) {
-
-                    const taskField = task.taskFields.ElementAt(j);
-                    const columnExists = Object.keys(csvColumnsRow[0]).some(columnName => {
-                        let c = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
-                        if (c.some(x => x == columnName)) {
-                            return true;
-                        } else {
-                            return false
-                        }
-                    });
-                    if (taskField.isOriginalField && !columnExists) {
+                    // Check the source CSV file for this task
+                    let csvColumnsRow = await CommonUtils.readCsvFileAsync(filepath, 1);
+                    if (csvColumnsRow.length == 0) {
                         csvIssues.push({
                             Date: CommonUtils.formatDateTime(new Date()),
-                            "Severity level": "NORMAL",
+                            "Severity level": "HIGHEST",
                             "Child sObject name": task.sObjectName,
-                            "Child field name": taskField.name,
+                            "Child field name": null,
                             "Parent sObject name": null,
                             "Parent sObject external Id field name": null,
                             "Parent record Id": null,
-                            "Error description": this.logger.getResourceString(RUN_RESOURCES.columnsMissingInCSV)
+                            "Error description": this.logger.getResourceString(RUN_RESOURCES.csvFileIsEmpty)
                         });
+                        continue;
                     }
 
-                    if (taskField.isReference && !taskField.isOriginalField) {
+                    for (let j = 0; j < task.taskFields.Count(); j++) {
 
-
-                        // Add missing reference lookup columns *************************
-
-                        // Checking and filling values for the column "Account__r.AccountNumber"
-                        // with external id values taken from the parent sObject csv files
-
-                        // *****************************************************************************
-                        // Account__c
-                        let refSObjectName = taskField.originalScriptField.referencedSObjectType;
-                        // AccountNumber
-                        let refSObjectExternalIdFieldName = taskField.originalScriptField.externalId;
-
-                        // Account__r.AccountNumber
-                        let columnName = taskField.name;
-                        // Account__c
-                        let lookupFieldName = taskField.originalScriptField.name;
-
-                        let parentTask = this.job.tasks.FirstOrDefault(x => x.sObjectName == refSObjectName)
-                        if (!parentTask || parentTask.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
-                            || parentTask.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) {
-                            continue;
-                        }
-
-                        if (!csvColumnsRow[0].hasOwnProperty(columnName)
-                            && !taskField.originalScriptField.isComplexExternalId) {
-
-                            // Read child CSV file (current)
-                            let m: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, filepath);
-
-                            let refFilepath = path.join(this.sourceOrg.basePath, refSObjectName);
-                            if (refSObjectName == "User" || refSObjectName == "Group") {
-                                refFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
+                        const taskField = task.taskFields.ElementAt(j);
+                        const columnExists = Object.keys(csvColumnsRow[0]).some(columnName => {
+                            let c = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
+                            if (c.some(x => x == columnName)) {
+                                return true;
+                            } else {
+                                return false
                             }
-                            refFilepath += ".csv";
-
-                            // Read parent CSV file
-                            m = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, refFilepath);
-                            if (!m) {
-                                csvIssues.push({
-                                    Date: CommonUtils.formatDateTime(new Date()),
-                                    "Severity level": "HIGH",
-                                    "Child sObject name": task.sObjectName,
-                                    "Child field name": lookupFieldName,
-                                    "Parent sObject name": refSObjectName,
-                                    "Parent sObject external Id field name": refSObjectExternalIdFieldName,
-                                    "Parent record Id": null,
-                                    "Error description": this.logger.getResourceString(RUN_RESOURCES.csvFileForParentSObjectIsEmpty)
-                                });
-                                continue;
-                            }
-
-                            // Mark current CSV file for further update
-                            csvDataFilesToSave.add(filepath);
-
-                            let rows: Map<string, any> = csvDataCacheMap.get(filepath);
-                            let refRows: Map<string, any> = csvDataCacheMap.get(refFilepath);
-                            let values = [...rows.values()];
-                            values.forEach(value => {
-                                if (typeof value[columnName] == "undefined") {
-                                    // Id from Account csv
-                                    let id = value[lookupFieldName];
-                                    let extIdValue: any;
-                                    if (id && refRows.get(id)) {
-                                        // Value from Account.AccountNumber
-                                        extIdValue = refRows.get(id)[refSObjectExternalIdFieldName];
-                                    }
-                                    if (typeof extIdValue != "undefined") {
-                                        // Value of "Account.AccountNumber"  putting to  "Account__r.Customer_number__c"
-                                        value[columnName] = extIdValue;
-                                    } else {
-                                        // If no value from parent csv and no original value => output error
-                                        csvIssues.push({
-                                            Date: CommonUtils.formatDateTime(new Date()),
-                                            "Severity level": "NORMAL",
-                                            "Child sObject name": task.sObjectName,
-                                            "Child field name": lookupFieldName,
-                                            "Parent sObject name": refSObjectName,
-                                            "Parent sObject external Id field name": refSObjectExternalIdFieldName,
-                                            "Parent record Id": id,
-                                            "Error description": this.logger.getResourceString(RUN_RESOURCES.missingParentRecordForGivenLookupValue)
-                                        });
-                                        value[columnName] = null;
-                                    }
-                                }
+                        });
+                        if (taskField.isOriginalField && !columnExists) {
+                            csvIssues.push({
+                                Date: CommonUtils.formatDateTime(new Date()),
+                                "Severity level": "NORMAL",
+                                "Child sObject name": task.sObjectName,
+                                "Child field name": taskField.name,
+                                "Parent sObject name": null,
+                                "Parent sObject external Id field name": null,
+                                "Parent record Id": null,
+                                "Error description": this.logger.getResourceString(RUN_RESOURCES.columnsMissingInCSV)
                             });
-
                         }
 
-                    } else if (!taskField.isReference
-                        && taskField.isOriginalField
-                        && !taskField.name.startsWith(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX)) {
+                        if (taskField.isReference && !taskField.isOriginalField) {
 
-                        // Process external Id columns coming from the external system *************************
 
-                        // Trasnpose column  "Account__c!Customer_number__c" to:
-                        // Account__c, Account__r.AccountNumber, Customer__number__c
+                            // Add missing reference lookup columns *************************
 
-                        // *****************************************************************************
+                            // Checking and filling values for the column "Account__r.AccountNumber"
+                            // with external id values taken from the parent sObject csv files
 
-                        let columnName = Object.keys(csvColumnsRow[0]).filter(key => {
-                            return key.toLowerCase().indexOf(`${SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR}${taskField.name.toLowerCase()}`) >= 0;
-                        })[0];
-
-                        if (columnName) {
-
-                            // External id column => Add fake lookup column
-                            let parts = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
-                            if (parts.length < 2) {
-                                csvIssues.push({
-                                    Date: CommonUtils.formatDateTime(new Date()),
-                                    "Severity level": "HIGH",
-                                    "Child sObject name": task.sObjectName,
-                                    "Child field name": null,
-                                    "Parent sObject name": null,
-                                    "Parent sObject external Id field name": null,
-                                    "Parent record Id": null,
-                                    "Error description": this.logger.getResourceString(RUN_RESOURCES.invalidColumnFormat, columnName)
-                                });
-                                continue;
-                            }
+                            // *****************************************************************************
                             // Account__c
-                            let lookupField = parts[0].toLowerCase();
-                            // Customer_number__c
-                            let tempExtIdField = parts[1].toLowerCase();
+                            let refSObjectName = taskField.originalScriptField.referencedSObjectType;
+                            // AccountNumber
+                            let refSObjectExternalIdFieldName = taskField.originalScriptField.externalId;
 
-                            let m: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, filepath);
+                            // Account__r.AccountNumber
+                            let columnName = taskField.name;
+                            // Account__c
+                            let lookupFieldName = taskField.originalScriptField.name;
 
-                            // Task field for Account__c
-                            let lookupTaskField = task.taskFields.Where(x => x.name.toLowerCase() == lookupField);
-                            // Task field for Customer_number__c
-                            let tempExtIdTaskField = task.taskFields.Where(x => x.name.toLowerCase() == tempExtIdField);
-
-                            if (lookupTaskField.Count() == 0) {
-                                csvIssues.push({
-                                    Date: CommonUtils.formatDateTime(new Date()),
-                                    "Severity level": "HIGH",
-                                    "Child sObject name": task.sObjectName,
-                                    "Child field name": null,
-                                    "Parent sObject name": null,
-                                    "Parent sObject external Id field name": null,
-                                    "Parent record Id": null,
-                                    "Error description": this.logger.getResourceString(RUN_RESOURCES.columnWillNotBeProcessed, columnName, parts[0])
-                                });
-                            } else {
-                                lookupField = lookupTaskField.ElementAt(0).name;
-                            }
-
-                            if (tempExtIdTaskField.Count() == 0) {
-                                csvIssues.push({
-                                    Date: CommonUtils.formatDateTime(new Date()),
-                                    "Severity level": "HIGH",
-                                    "Child sObject name": task.sObjectName,
-                                    "Child field name": null,
-                                    "Parent sObject name": null,
-                                    "Parent sObject external Id field name": null,
-                                    "Parent record Id": null,
-                                    "Error description": this.logger.getResourceString(RUN_RESOURCES.columnWillNotBeProcessed, columnName, parts[1])
-                                });
-                            } else {
-                                tempExtIdField = tempExtIdTaskField.ElementAt(0).name;
-                            }
-
-                            if (lookupTaskField.Count() == 0 || tempExtIdTaskField.Count() == 0) {
+                            let parentTask = this.job.tasks.FirstOrDefault(x => x.sObjectName == refSObjectName)
+                            if (!parentTask || parentTask.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
+                                || parentTask.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) {
                                 continue;
                             }
 
-                            // Account__r.AccountNumber (in case that AccountNumber is external id for Account)
-                            let extIdField = lookupTaskField.ElementAt(0).externalIdTaskField.name;
-                            let csvRows = [...m.values()];
+                            if (!csvColumnsRow[0].hasOwnProperty(columnName)
+                                && !taskField.originalScriptField.isComplexExternalId) {
 
-                            csvRows.forEach(row => {
-                                row[lookupField] = row[lookupField] || '0011p00002Zh1kr'; // Fake id
-                                row[extIdField] = row[columnName];
-                                row[tempExtIdField] = row[columnName];
-                                delete row[columnName];
-                            });
+                                // Read child CSV file (current)
+                                let m: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, filepath);
 
-                            // Mark current CSV file for further update                            
-                            csvDataFilesToSave.add(filepath);
+                                let refFilepath = path.join(this.sourceOrg.basePath, refSObjectName);
+                                if (refSObjectName == "User" || refSObjectName == "Group") {
+                                    refFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.USER_AND_GROUP_FILE_NAME);
+                                }
+                                refFilepath += ".csv";
 
+                                // Read parent CSV file
+                                m = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, refFilepath);
+                                if (!m) {
+                                    csvIssues.push({
+                                        Date: CommonUtils.formatDateTime(new Date()),
+                                        "Severity level": "HIGH",
+                                        "Child sObject name": task.sObjectName,
+                                        "Child field name": lookupFieldName,
+                                        "Parent sObject name": refSObjectName,
+                                        "Parent sObject external Id field name": refSObjectExternalIdFieldName,
+                                        "Parent record Id": null,
+                                        "Error description": this.logger.getResourceString(RUN_RESOURCES.csvFileForParentSObjectIsEmpty)
+                                    });
+                                    continue;
+                                }
+
+                                // Mark current CSV file for further update
+                                csvDataFilesToSave.add(filepath);
+
+                                let rows: Map<string, any> = csvDataCacheMap.get(filepath);
+                                let refRows: Map<string, any> = csvDataCacheMap.get(refFilepath);
+                                let values = [...rows.values()];
+                                values.forEach(value => {
+                                    if (typeof value[columnName] == "undefined") {
+                                        // Id from Account csv
+                                        let id = value[lookupFieldName];
+                                        let extIdValue: any;
+                                        if (id && refRows.get(id)) {
+                                            // Value from Account.AccountNumber
+                                            extIdValue = refRows.get(id)[refSObjectExternalIdFieldName];
+                                        }
+                                        if (typeof extIdValue != "undefined") {
+                                            // Value of "Account.AccountNumber"  putting to  "Account__r.Customer_number__c"
+                                            value[columnName] = extIdValue;
+                                        } else {
+                                            // If no value from parent csv and no original value => output error
+                                            csvIssues.push({
+                                                Date: CommonUtils.formatDateTime(new Date()),
+                                                "Severity level": "NORMAL",
+                                                "Child sObject name": task.sObjectName,
+                                                "Child field name": lookupFieldName,
+                                                "Parent sObject name": refSObjectName,
+                                                "Parent sObject external Id field name": refSObjectExternalIdFieldName,
+                                                "Parent record Id": id,
+                                                "Error description": this.logger.getResourceString(RUN_RESOURCES.missingParentRecordForGivenLookupValue)
+                                            });
+                                            value[columnName] = null;
+                                        }
+                                    }
+                                });
+
+                            }
+
+                        } else if (!taskField.isReference
+                            && taskField.isOriginalField
+                            && !taskField.name.startsWith(SfdmModels.CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX)) {
+
+                            // Process external Id columns coming from the external system *************************
+
+                            // Trasnpose column  "Account__c!Customer_number__c" to:
+                            // Account__c, Account__r.AccountNumber, Customer__number__c
+
+                            // *****************************************************************************
+
+                            let columnName = Object.keys(csvColumnsRow[0]).filter(key => {
+                                return key.toLowerCase().indexOf(`${SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR}${taskField.name.toLowerCase()}`) >= 0;
+                            })[0];
+
+                            if (columnName) {
+
+                                // External id column => Add fake lookup column
+                                let parts = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
+                                if (parts.length < 2) {
+                                    csvIssues.push({
+                                        Date: CommonUtils.formatDateTime(new Date()),
+                                        "Severity level": "HIGH",
+                                        "Child sObject name": task.sObjectName,
+                                        "Child field name": null,
+                                        "Parent sObject name": null,
+                                        "Parent sObject external Id field name": null,
+                                        "Parent record Id": null,
+                                        "Error description": this.logger.getResourceString(RUN_RESOURCES.invalidColumnFormat, columnName)
+                                    });
+                                    continue;
+                                }
+                                // Account__c
+                                let lookupField = parts[0].toLowerCase();
+                                // Customer_number__c
+                                let tempExtIdField = parts[1].toLowerCase();
+
+                                let m: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, filepath);
+
+                                // Task field for Account__c
+                                let lookupTaskField = task.taskFields.Where(x => x.name.toLowerCase() == lookupField);
+                                // Task field for Customer_number__c
+                                let tempExtIdTaskField = task.taskFields.Where(x => x.name.toLowerCase() == tempExtIdField);
+
+                                if (lookupTaskField.Count() == 0) {
+                                    csvIssues.push({
+                                        Date: CommonUtils.formatDateTime(new Date()),
+                                        "Severity level": "HIGH",
+                                        "Child sObject name": task.sObjectName,
+                                        "Child field name": null,
+                                        "Parent sObject name": null,
+                                        "Parent sObject external Id field name": null,
+                                        "Parent record Id": null,
+                                        "Error description": this.logger.getResourceString(RUN_RESOURCES.columnWillNotBeProcessed, columnName, parts[0])
+                                    });
+                                } else {
+                                    lookupField = lookupTaskField.ElementAt(0).name;
+                                }
+
+                                if (tempExtIdTaskField.Count() == 0) {
+                                    csvIssues.push({
+                                        Date: CommonUtils.formatDateTime(new Date()),
+                                        "Severity level": "HIGH",
+                                        "Child sObject name": task.sObjectName,
+                                        "Child field name": null,
+                                        "Parent sObject name": null,
+                                        "Parent sObject external Id field name": null,
+                                        "Parent record Id": null,
+                                        "Error description": this.logger.getResourceString(RUN_RESOURCES.columnWillNotBeProcessed, columnName, parts[1])
+                                    });
+                                } else {
+                                    tempExtIdField = tempExtIdTaskField.ElementAt(0).name;
+                                }
+
+                                if (lookupTaskField.Count() == 0 || tempExtIdTaskField.Count() == 0) {
+                                    continue;
+                                }
+
+                                // Account__r.AccountNumber (in case that AccountNumber is external id for Account)
+                                let extIdField = lookupTaskField.ElementAt(0).externalIdTaskField.name;
+                                let csvRows = [...m.values()];
+
+                                csvRows.forEach(row => {
+                                    row[lookupField] = row[lookupField] || '0011p00002Zh1kr'; // Fake id
+                                    row[extIdField] = row[columnName];
+                                    row[tempExtIdField] = row[columnName];
+                                    delete row[columnName];
+                                });
+
+                                // Mark current CSV file for further update                            
+                                csvDataFilesToSave.add(filepath);
+
+                            }
+                        }
+                    }
+                    // ****************************************************************************************************
+                }
+
+                // Write to all changed csv files
+                await _saveCachedCsvDataFiles();
+
+                // Write to file with issues of csv format
+                let csvIssuesFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
+                await CommonUtils.writeCsvFileAsync(csvIssuesFilepath, csvIssues, true);
+
+                if (csvIssues.length == 0) {
+                    this.logger.infoVerbose(RUN_RESOURCES.noIssuesFoundDuringCSVValidation);
+                } else {
+                    this.logger.warn(RUN_RESOURCES.issuesFoundDuringCSVValidation, String(csvIssues.length), SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
+                    if (this.script.promptOnMissingParentObjects) {
+                        if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                            throw new SfdmModels.CommandAbortedByUserError(this.logger.getResourceString(RUN_RESOURCES.AbortedByTheUser));
                         }
                     }
                 }
-                // ****************************************************************************************************
-            }
 
-
-            // Write to all changed csv files
-            await _saveCachedCsvDataFiles();
-
-            // Write to file with issues of csv format
-            let csvIssuesFilepath = path.join(this.sourceOrg.basePath, SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
-            await CommonUtils.writeCsvFileAsync(csvIssuesFilepath, csvIssues, true);
-
-            if (csvIssues.length == 0) {
-                this.logger.infoVerbose(RUN_RESOURCES.noIssuesFoundDuringCSVValidation);
-            } else {
-                this.logger.warn(RUN_RESOURCES.issuesFoundDuringCSVValidation, String(csvIssues.length), SfdmModels.CONSTANTS.CSV_LOOKUP_ERRORS_FILE_NAME);
-                if (this.script.promptOnMissingParentObjects) {
-                    if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
-                        throw new SfdmModels.CommandAbortedByUserError(this.logger.getResourceString(RUN_RESOURCES.AbortedByTheUser));
-                    }
+                // Format report
+                if (csvDataFilesToSave.size > 0) {
+                    this.logger.infoVerbose(RUN_RESOURCES.csvFilesWereUpdated, String(csvDataFilesToSave.size));
                 }
+
+                this.logger.infoVerbose(RUN_RESOURCES.validationAndFixingsourceCSVFilesCompleted);
+
+                // Only csv validation
+                if (this.script.validateCSVFilesOnly) {
+                    return;
+                }
+
+                csvDataFilesToSave.clear();
+
             }
 
-            // Format report
-            if (csvDataFilesToSave.size > 0) {
-                this.logger.infoVerbose(RUN_RESOURCES.csvFilesWereUpdated, String(csvDataFilesToSave.size));
-            }
-
-            this.logger.infoVerbose(RUN_RESOURCES.validationAndFixingsourceCSVFilesCompleted);
-
-            // Only csv validation
-            if (this.script.validateCSVFilesOnly) {
-                return;
-            }
-
-            csvDataFilesToSave.clear();
 
         }
 
@@ -1287,7 +1290,6 @@ export class RunCommand {
                                 || !!x.parentTaskField.originalScriptField.sObject.parsedQuery.where  // Any field is referenced to object with "where"
                                 || task.scriptObject.parsedQuery.limit > 0                            // Any field is referenced to another object & this object has "limit" 
                                 || !!task.scriptObject.parsedQuery.where                              // Any field is referenced to another object & this object has "where"                                 
-                                //|| !x.parentTaskField.originalScriptField.sObject.allRecords        // Any field is referenced to another field that related to the task with LIMITED RECORDS  Mode
                             ));
                         if (hasRelatedObjectWithConditions) {
                             task.scriptObject.allRecords = false;
@@ -1311,7 +1313,7 @@ export class RunCommand {
 
 
             // Query source records
-            if (task.scriptObject.allRecords || this.sourceOrg.mediaType != SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
+            if (task.scriptObject.allRecords || this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
 
                 // Get all records as in original query from the script including additional referenced fields
                 let tempQuery = task.createQuery();
@@ -1340,7 +1342,7 @@ export class RunCommand {
                             let valuesMap = csvValuesMapping.get(key);
                             if (valuesMap && valuesMap.size > 0) {
                                 recs.ForEach(r => {
-                                    let rawValue = (String(r[field]) || "#N/A").trim(); 
+                                    let rawValue = (String(r[field]) || "#N/A").trim();
                                     if (valuesMap.has(rawValue)) {
                                         r[field] = valuesMap.get(rawValue);
                                     }
@@ -1392,13 +1394,14 @@ export class RunCommand {
             }
 
             // Query target records
-            if (task.scriptObject.allRecordsTarget || this.sourceOrg.mediaType != SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
+
+            if (task.scriptObject.allRecordsTarget || this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
 
                 // Get all records as in original query from the script including additional referenced fields
                 let tempQuery = task.createQuery();
 
                 // Get the Target records
-                if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert && this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
+                if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert && this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org && !this.script.importCSVFilesAsIs) {
 
                     if (this.logger.uxLoggerVerbosity != LOG_MESSAGE_VERBOSITY.VERBOSE) {
                         this.logger.infoMinimal(RUN_RESOURCES.queryingAll, task.sObjectName, "target");
@@ -1421,7 +1424,7 @@ export class RunCommand {
             } else {
 
                 // Get the Target records
-                if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert) {
+                if (task.scriptObject.operation != SfdmModels.Enums.OPERATION.Insert && !this.script.importCSVFilesAsIs) {
 
                     this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "target");
 
@@ -1456,6 +1459,7 @@ export class RunCommand {
 
 
             }
+
         }
 
         this.logger.infoVerbose(RUN_RESOURCES.retrievingDataCompleted, `(${this.logger.getResourceString(RUN_RESOURCES.Step1)})`);
@@ -1695,9 +1699,9 @@ export class RunCommand {
 
             this.logger.infoMinimal(RUN_RESOURCES.updatingTargetObject, task.sObjectName, strOper);
 
-            if (referencedFields.Count() == 0) {
+            if (referencedFields.Count() == 0 || this.script.importCSVFilesAsIs) {
 
-                // Fields without reference
+                // Fields without reference or csv file as is
                 let updatedRecords: List<Object>;
                 try {
                     // Update target records                    
