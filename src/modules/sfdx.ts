@@ -1270,7 +1270,7 @@ export class SfdxUtils {
         literalType: LiteralType = "STRING",
         logicalOperator: LogicalOperator = "OR"): WhereClause {
 
-        let values2 = values.map(x => x.replace(/\\/g, "\\\\").replace(/'/g, "\\'"));
+        let values2 = values.filter(x => !!x).map(x => x.replace(/\\/g, "\\\\").replace(/'/g, "\\'"));
         let c: Condition = { field: fieldName, operator: "IN", value: values2, literalType: literalType };
         if (!where || !where.left) {
             let ret: WhereClause = { left: c };
@@ -1496,7 +1496,7 @@ export class SfdxUtils {
                 reject(error);
             }).run({
                 autoFetch: true,
-                maxFetch: SfdmModels.CONSTANTS.MAX_FETCH_SIZE
+                maxFetch: CONSTANTS.MAX_FETCH_SIZE
             });
         });
 
