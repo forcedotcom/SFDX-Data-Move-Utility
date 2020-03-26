@@ -814,7 +814,7 @@ export class RunCommand {
             if (csvRows.length > 0) {
 
                 this.logger.infoVerbose(RUN_RESOURCES.readingValuesMappingFile, valueMappingCsvFilename);
-                
+
                 csvRows.forEach(row => {
                     if (row["ObjectName"] && row["FieldName"] && row["RawValue"]) {
                         let key = String(row["ObjectName"]).trim() + String(row["FieldName"]).trim();
@@ -1340,8 +1340,8 @@ export class RunCommand {
                             let valuesMap = csvValuesMapping.get(key);
                             if (valuesMap && valuesMap.size > 0) {
                                 recs.ForEach(r => {
-                                    let rawValue = (String(r[field]) || "").trim();
-                                    if (rawValue && valuesMap.has(rawValue)) {
+                                    let rawValue = (String(r[field]) || "#N/A").trim(); 
+                                    if (valuesMap.has(rawValue)) {
                                         r[field] = valuesMap.get(rawValue);
                                     }
                                 });
