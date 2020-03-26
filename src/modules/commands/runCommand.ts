@@ -816,7 +816,7 @@ export class RunCommand {
                 this.logger.infoVerbose(RUN_RESOURCES.readingValuesMappingFile, valueMappingCsvFilename);
 
                 csvRows.forEach(row => {
-                    if (row["ObjectName"] && row["FieldName"] && row["RawValue"]) {
+                    if (row["ObjectName"] && row["FieldName"]) {
                         let key = String(row["ObjectName"]).trim() + String(row["FieldName"]).trim();
                         if (!csvValuesMapping.has(key)) {
                             csvValuesMapping.set(key, new Map<string, string>());
@@ -1337,12 +1337,18 @@ export class RunCommand {
                         this.logger.infoNormal(RUN_RESOURCES.mappingRawCsvValues, task.sObjectName);
 
                         let fields = Object.keys(recs.ElementAt(0));
+                        if (fields.indexOf("Id") < 0) {
+                            // Add Id values if missing
+                            recs.ForEach(r => {
+                                r["Id"] = CommonUtils.makeId(18);
+                            });
+                        }
                         fields.forEach(field => {
                             let key = task.sObjectName + field;
                             let valuesMap = csvValuesMapping.get(key);
                             if (valuesMap && valuesMap.size > 0) {
                                 recs.ForEach(r => {
-                                    let rawValue = (String(r[field]) || "#N/A").trim();
+                                    let rawValue = (String(r[field]) || "").trim();
                                     if (valuesMap.has(rawValue)) {
                                         r[field] = valuesMap.get(rawValue);
                                     }
@@ -1813,6 +1819,7 @@ export class RunCommand {
 
                     if (this.script.promptOnMissingParentObjects) {
                         if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                            await _saveCachedCsvDataFiles();
                             throw new SfdmModels.CommandAbortedByUserError(this.logger.getResourceString(RUN_RESOURCES.missingParentLookupRecord));
                         }
                     }
@@ -1967,6 +1974,7 @@ export class RunCommand {
 
                         if (this.script.promptOnMissingParentObjects) {
                             if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
+                                await _saveCachedCsvDataFiles();
                                 throw new SfdmModels.CommandAbortedByUserError(this.logger.getResourceString(RUN_RESOURCES.missingParentLookupRecord));
                             }
                         }
