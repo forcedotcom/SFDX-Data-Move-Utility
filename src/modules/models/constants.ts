@@ -11,7 +11,7 @@ export let CONSTANTS = {
     /**
      * Can't fetch totally more records then this by the query
      */
-    MAX_FETCH_SIZE: 10000000,
+    MAX_FETCH_SIZE: 100000,
 
     /**
      * Max time to wait for bulk job poll response
