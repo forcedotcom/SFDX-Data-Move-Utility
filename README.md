@@ -476,9 +476,8 @@ The plugin provides a variety of information about common warnings and errors th
   
 * Migration of User object currently is NOT supported.
 
-* For now the Plugin can fetch from the Source only up to 100000 record per query. We plan to increase the maximum fetch size in the one of upcoming releases.
-
   
+
 
 
 
