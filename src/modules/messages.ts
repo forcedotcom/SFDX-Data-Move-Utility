@@ -78,6 +78,8 @@ export enum COMMON_RESOURCES {
 
     usingBulkApi = "usingBulkApi",
     usingRestApi = "usingRestApi",
+    usingQueryBulkApi = "usingQueryBulkApi",
+    usingCollectionApi = "usingCollectionApi",
     apiOperationProgress = "apiOperationProgress",
     apiOperationCompleted = "apiOperationCompleted",
     apiOperationError = "apiOperationError",

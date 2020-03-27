@@ -4,7 +4,10 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
 
 ----
 
-***<u>NEW !!!</u> Starting from the version 2.6.0  - the Plugin uses by default the <u>Salesforce Bulk Api v2.0</u> in Beta mode. If you are experiencing any issue with the current v2.0 implementation, let me know. You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.***
+* **New in version 2.6.0**  - Plugin will use for CRUD by default the <u>Salesforce Bulk Api v2.0</u> in Beta mode. 
+  If you are experiencing any issue with the current v2.0 implementation, let us know. 
+  You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.
+* **New in version 2.6.8** - Added support for the Bulk Query Api V1.0 for large data sets from 100000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
 
 ----
 
@@ -221,8 +224,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | createTargetCSVFiles                 | Boolean                    | Optional, Default false | If true the Plugin will produce CSV file containing target records for each processed sObject with error information (if occured) per record. These CSV files are not encrypted even **--encryptkey** flag is provided. |
 | bulkApiV1BatchSize                   | Integer                    | Optional, Default 9500  | The maximal size of each batch while processing the records by the Bulk Api V1 |
 | bulkApiVersion                       | Float                      | Optional, Default 2.0   | The version of Salesforce Bulk Api to use. Valid values are: 1.0 and 2.0 |
-
-
+| importCSVFilesAsIs                   | Boolean                    | Optional, Default false | Sometimes you have source CSV files that are completely ready to be uploaded as is to the Target, which means that all values in these CSV files are correct (including search identifiers) and they don’t need additional verification or transformation. Typically, the standard Salesforce data loader uses this behavior, considering the CSV file ready to use. <br /> To import CSV files as is, set importCSVFilesAsIs = true <br /> Otherwise, before loading the plugin will make pre-processing of the data, which includes verification, processing relationships between the imported objects, etc. |
 
 
 

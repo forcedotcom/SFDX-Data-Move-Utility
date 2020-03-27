@@ -68,6 +68,9 @@ export class Task {
     sourceTotalRecorsCount: number = -1;
     targetTotalRecorsCount: number = -1;
 
+    useQueryBulkApiForSourceRecords: boolean = false;
+    useQueryBulkApiForTargetRecords: boolean = false;
+
     get sObjectName(): string {
         return this.scriptObject.name;
     }

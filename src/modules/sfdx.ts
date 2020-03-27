@@ -154,7 +154,6 @@ export class SfdxUtils {
                 fieldMapping[element.rawValue] = v;
             }
         });
-
         var parsedRecords = new List<object>(rawRecords.map(function (record) {
             var o = {};
             for (var prop in fieldMapping) {
@@ -178,7 +177,7 @@ export class SfdxUtils {
      */
     public static async validateAccessTokenAsync(sOrg: SfdmModels.SOrg): Promise<void> {
         if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org)
-            await SfdxUtils._queryAsync("SELECT Id FROM Account LIMIT 1", sOrg);
+            await SfdxUtils._queryAsync("SELECT Id FROM Account LIMIT 1", sOrg, false);
     }
 
 
@@ -292,13 +291,15 @@ export class SfdxUtils {
      *                                                 you need to set allowUsingNonOrgMedias=true
      *                                                 and the sOrg.mediaType must set to File.
      * @param {string} [password] Passphrase used to decrypt csv files (if specified)
+     * @param {string} [useBulkApi] Force using Bulk Query Api instead of Collection Api
      * @returns {Promise<List<object>>} Returns records
      * @memberof SfdxUtils
      */
     public static async queryAsync(soql: string,
         sOrg: SfdmModels.SOrg,
         allowUsingNonOrgMedias: boolean = false,
-        password?: string): Promise<List<object>> {
+        password?: string,
+        useBulkApi: boolean = false): Promise<List<object>> {
 
         let _this = this;
         let parsedQuery: Query = parseQuery(soql);
@@ -315,13 +316,13 @@ export class SfdxUtils {
             let ret: List<object> = new List<object>();
             let newSoql = _this._prepareQuery(soql);
             soql = newSoql[0];
-            let rcs = (await _this._queryAsync(soql, sOrg)).records;
+            let rcs = (await _this._queryAsync(soql, sOrg, useBulkApi)).records;
             rcs = _this.parseRecords(rcs, soql).ToArray();
             rcs = _this._formatRecords(rcs, newSoql);
             ret.AddRange(rcs);
             if (soql.indexOf("FROM Group") >= 0) {
                 soql = soql.replace("FROM Group", "FROM User");
-                ret.AddRange(_this.parseRecords((await _this._queryAsync(soql, sOrg)).records, soql).ToArray());
+                ret.AddRange(_this.parseRecords((await _this._queryAsync(soql, sOrg, useBulkApi)).records, soql).ToArray());
             }
             return ret;
         }
@@ -1476,7 +1477,7 @@ export class SfdxUtils {
     }
 
 
-    private static async _queryAsync(soql: string, sOrg: SfdmModels.SOrg): Promise<QueryResult<object>> {
+    private static async _queryAsync(soql: string, sOrg: SfdmModels.SOrg, useBulkApi: boolean): Promise<QueryResult<object>> {
 
         const makeQueryAsync = (soql) => new Promise((resolve, reject) => {
 
@@ -1484,20 +1485,34 @@ export class SfdxUtils {
 
             var records = [];
 
-            var query = cn.query(soql).on("record", function (record) {
-                records.push(record);
-            }).on("end", function () {
-                resolve(<QueryResult<object>>{
-                    done: true,
-                    records: records,
-                    totalSize: query.totalSize
+            if (useBulkApi) {
+                cn.bulk.query(soql).on("record", function (record) {
+                    records.push(record);
+                }).on("end", function () {
+                    resolve(<QueryResult<object>>{
+                        done: true,
+                        records: records,
+                        totalSize: records.length
+                    });
+                }).on("error", function (error) {
+                    reject(error);
                 });
-            }).on("error", function (error) {
-                reject(error);
-            }).run({
-                autoFetch: true,
-                maxFetch: CONSTANTS.MAX_FETCH_SIZE
-            });
+            } else {
+                var query = cn.query(soql).on("record", function (record) {
+                    records.push(record);
+                }).on("end", function () {
+                    resolve(<QueryResult<object>>{
+                        done: true,
+                        records: records,
+                        totalSize: query.totalSize
+                    });
+                }).on("error", function (error) {
+                    reject(error);
+                }).run({
+                    autoFetch: true,
+                    maxFetch: CONSTANTS.MAX_FETCH_SIZE
+                });
+            }
         });
 
         return <QueryResult<object>>(await makeQueryAsync(soql));

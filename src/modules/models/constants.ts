@@ -13,6 +13,10 @@ export let CONSTANTS = {
      */
     MAX_FETCH_SIZE: 100000,
 
+
+    QUERY_BULK_API_THRESHOLD: 100000,
+
+
     /**
      * Max time to wait for bulk job poll response
      */
@@ -34,11 +38,11 @@ export let CONSTANTS = {
      */
     IN_RECORDS_QUERY_DISPLAY_LENGTH: 400,
 
-
     BULK_API_V2_BLOCK_SIZE: 1000,
 
     BULK_API_V2_MAX_CSV_SIZE_IN_BYTES: 145000000,
 
+    
 
     // Helper constants ----------
 

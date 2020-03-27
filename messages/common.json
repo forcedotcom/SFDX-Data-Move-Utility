@@ -51,6 +51,8 @@
 
     "usingBulkApi": "* Using Bulk Api v%s *",
     "usingRestApi": "* Using REST Api *",
+    "usingQueryBulkApi": "* Using Bulk Query Api *",
+    "usingCollectionApi": "* Using Collection Query Api *",
     "apiOperationProgress": "[Job# %s:%s] {%s} API operation progress: %s records completed, %s records failed.",
     "apiOperationCompleted": "[Job# %s:%s] {%s} Total %s records were processed.",
     "apiOperationError": "[Job# %s:%s] {%s} API operation FAILED: %s records completed, %s records failed.",

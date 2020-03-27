@@ -21,7 +21,7 @@ import {
 import { SfdxUtils, ApiCalloutStatus } from "../sfdx";
 import { CommonUtils } from "../common";
 import SimpleCrypto from "simple-crypto-js";
-import { ScriptField } from "../models/index";
+import { ScriptField, CONSTANTS } from "../models/index";
 import { MessageUtils, COMMON_RESOURCES, LOG_MESSAGE_VERBOSITY } from "../messages";
 
 /**
@@ -1131,6 +1131,51 @@ export class RunCommand {
         }
 
 
+        // Getting recosds count to process *************************************************         
+        for (let i = 0; i < this.job.tasks.Count(); i++) {
+
+            let task = this.job.tasks.ElementAt(i);
+
+            // Calculate integrity : how many records need to process
+            this.logger.infoMinimal(RUN_RESOURCES.gettingRecordsCount, task.sObjectName);
+
+            if (!task.scriptObject.isExtraObject) {
+
+                try {
+
+                    let tempQuery = task.createQuery(['COUNT(Id) CNT'], true);
+
+                    if (task.sourceTotalRecorsCount < 0) {
+                        if (task.scriptObject.parsedQuery.limit > 0) {
+                            task.sourceTotalRecorsCount = task.scriptObject.parsedQuery.limit;
+                        } else {
+                            let ret = await SfdxUtils.queryAsync(tempQuery, this.sourceOrg);
+                            task.sourceTotalRecorsCount = Number.parseInt(ret.ElementAt(0)["CNT"]);
+                            task.useQueryBulkApiForSourceRecords = task.sourceTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
+                        }
+                    }
+                    this.logger.infoNormal(RUN_RESOURCES.totalRecordsAmount, task.sObjectName, "source", String(task.sourceTotalRecorsCount));
+
+                    if (task.targetTotalRecorsCount < 0) {
+                        if (task.scriptObject.parsedQuery.limit > 0) {
+                            task.targetTotalRecorsCount = task.scriptObject.parsedQuery.limit;
+                        } else {
+                            let ret = await SfdxUtils.queryAsync(tempQuery, this.targetOrg);
+                            task.targetTotalRecorsCount = Number.parseInt(ret.ElementAt(0)["CNT"]);
+                            task.useQueryBulkApiForTargetRecords = task.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
+                        }
+                    }
+                    this.logger.infoNormal(RUN_RESOURCES.totalRecordsAmount, task.sObjectName, "target", String(task.targetTotalRecorsCount));
+
+                } catch (e) {
+                    throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
+                }
+            }
+        }
+
+
+
+
 
         // ---------------------------------
         // ---------------------------------
@@ -1163,7 +1208,12 @@ export class RunCommand {
 
                     let queriedRecords: List<object>;
                     try {
-                        queriedRecords = await SfdxUtils.queryAsync(tempQuery, this.targetOrg);
+                        if (task.useQueryBulkApiForTargetRecords){
+                            this.logger.infoVerbose(COMMON_RESOURCES.usingQueryBulkApi);
+                        } else {
+                            this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
+                        }
+                        queriedRecords = await SfdxUtils.queryAsync(tempQuery, this.targetOrg, false, null, task.useQueryBulkApiForTargetRecords);
                     } catch (e) {
                         throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                     }
@@ -1224,7 +1274,7 @@ export class RunCommand {
         } else {
 
             this.logger.infoVerbose(RUN_RESOURCES.deletingOldDataSkipped);
-
+            
         }
 
 
@@ -1247,36 +1297,9 @@ export class RunCommand {
 
             if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
 
-            // Calculate integrity : how many records need to process
-            this.logger.infoMinimal(RUN_RESOURCES.gettingRecordsCount, task.sObjectName);
-
             if (!task.scriptObject.isExtraObject) {
 
                 try {
-
-                    let tempQuery = task.createQuery(['COUNT(Id) CNT'], true);
-
-                    if (task.sourceTotalRecorsCount < 0) {
-                        if (task.scriptObject.parsedQuery.limit > 0) {
-                            task.sourceTotalRecorsCount = task.scriptObject.parsedQuery.limit;
-                        } else {
-                            let ret = await SfdxUtils.queryAsync(tempQuery, this.sourceOrg);
-                            task.sourceTotalRecorsCount = Number.parseInt(ret.ElementAt(0)["CNT"]);
-                        }
-                    }
-                    this.logger.infoNormal(RUN_RESOURCES.totalRecordsAmount, task.sObjectName, "source", String(task.sourceTotalRecorsCount));
-
-                    if (task.targetTotalRecorsCount < 0) {
-                        if (task.scriptObject.parsedQuery.limit > 0) {
-                            task.targetTotalRecorsCount = task.scriptObject.parsedQuery.limit;
-                        } else {
-                            let ret = await SfdxUtils.queryAsync(tempQuery, this.targetOrg);
-                            task.targetTotalRecorsCount = Number.parseInt(ret.ElementAt(0)["CNT"]);
-                        }
-                    }
-                    this.logger.infoNormal(RUN_RESOURCES.totalRecordsAmount, task.sObjectName, "target", String(task.targetTotalRecorsCount));
-
-
                     // Source rules -----------------------------
                     // Record Count rule...
                     task.scriptObject.allRecords = task.sourceTotalRecorsCount > SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_FROM
@@ -1326,10 +1349,16 @@ export class RunCommand {
                 }
 
                 try {
+                    if (task.useQueryBulkApiForSourceRecords){
+                        this.logger.infoVerbose(COMMON_RESOURCES.usingQueryBulkApi);
+                    } else {
+                        this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
+                    }
                     let recs = await SfdxUtils.queryAsync(tempQuery,
                         this.sourceOrg,
                         true,
-                        this.script.encryptDataFiles ? this.password : null);
+                        this.script.encryptDataFiles ? this.password : null, 
+                        task.useQueryBulkApiForSourceRecords);
 
                     // Values mapping...
                     if (csvValuesMapping.size > 0 && task.scriptObject.useCSVValuesMapping && recs.Count() > 0) {
@@ -1383,6 +1412,7 @@ export class RunCommand {
                     this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
 
                     try {
+                        this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
                         let records = await SfdxUtils.queryAsync(query, this.sourceOrg);
                         if (!rec.has(field))
                             rec.set(field, new Array<object>());
@@ -1416,7 +1446,17 @@ export class RunCommand {
                     }
 
                     try {
-                        task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, await SfdxUtils.queryAsync(tempQuery, this.targetOrg));
+                        if (task.useQueryBulkApiForTargetRecords){
+                            this.logger.infoVerbose(COMMON_RESOURCES.usingQueryBulkApi);
+                        } else {
+                            this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
+                        }
+                        task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, 
+                                await SfdxUtils.queryAsync(tempQuery, 
+                                    this.targetOrg, 
+                                    false, 
+                                    null, 
+                                    task.useQueryBulkApiForTargetRecords));
                     } catch (e) {
                         throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                     }
@@ -1445,6 +1485,7 @@ export class RunCommand {
                         this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
 
                         try {
+                            this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
                             let records = await SfdxUtils.queryAsync(query, this.targetOrg);
                             if (!rec.has(field))
                                 rec.set(field, new Array<object>());
@@ -1548,6 +1589,7 @@ export class RunCommand {
                         this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
 
                         try {
+                            this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
                             let records = await SfdxUtils.queryAsync(query, this.sourceOrg);
                             if (!rec.has(field))
                                 rec.set(field, new Array<object>());
@@ -1589,6 +1631,7 @@ export class RunCommand {
                             this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
 
                             try {
+                                this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
                                 let records = await SfdxUtils.queryAsync(query, this.targetOrg);
                                 if (!rec.has(field))
                                     rec.set(field, new Array<object>());
