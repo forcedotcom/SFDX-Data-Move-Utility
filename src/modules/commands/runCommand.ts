@@ -15,6 +15,7 @@ import {
     parseQuery,
     composeQuery,
     FieldType,
+    OrderByClause,
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
@@ -536,6 +537,11 @@ export class RunCommand {
                     object.parsedQuery.fields.push(f);
                     scriptFieldsList.Add(<SOQLField>f);
                 }
+                if (!scriptFieldsList.Any(x => (<SOQLField>x).field == "DeveloperName")) {
+                    var f = getComposedField("DeveloperName");
+                    object.parsedQuery.fields.push(f);
+                    scriptFieldsList.Add(<SOQLField>f);
+                }
             }
         }
 
@@ -654,7 +660,13 @@ export class RunCommand {
         // Construct query for the RecordType object
         if (recordTypeScriptObject != null) {
             let pq = recordTypeScriptObject.parsedQuery;
-            pq.where = SfdxUtils.composeWhereInClause(pq.where, "SobjectType", recordTypeSObjectTypes.ToArray());
+            if (recordTypeSObjectTypes.Count() > 0){
+                pq.where = SfdxUtils.composeWhereInClause(pq.where, "SobjectType", recordTypeSObjectTypes.ToArray());
+            }
+            pq.orderBy = <OrderByClause>({
+                field : "SobjectType",
+                order : "ASC"
+            });
             recordTypeScriptObject.query = composeQuery(pq);
         }
 
