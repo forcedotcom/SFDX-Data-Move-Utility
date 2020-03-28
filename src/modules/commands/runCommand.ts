@@ -537,11 +537,6 @@ export class RunCommand {
                     object.parsedQuery.fields.push(f);
                     scriptFieldsList.Add(<SOQLField>f);
                 }
-                if (!scriptFieldsList.Any(x => (<SOQLField>x).field == "DeveloperName")) {
-                    var f = getComposedField("DeveloperName");
-                    object.parsedQuery.fields.push(f);
-                    scriptFieldsList.Add(<SOQLField>f);
-                }
             }
         }
 
