@@ -147,18 +147,6 @@ So you can export all records with preserving relationships between the objects 
 
 ```json
 {
-    "orgs": [
-        {
-            "name": "source@name.com",
-            "instanceUrl": "https://um5.salesforce.com",
-            "accessToken": "##ACCESSTOKEN1##"
-        }, 
-        {
-            "name": "target@name.com",
-            "instanceUrl": "https://cs10.salesforce.com",
-            "accessToken": "##ACCESSTOKEN2##"
-        }
-    ],
     "objects": [
         {
             "query": "SELECT Id, Phone, TestObject3__c FROM Account WHERE Name LIKE 'TEST_ACC_%'",
