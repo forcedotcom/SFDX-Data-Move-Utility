@@ -53,6 +53,8 @@ export class SOrg {
 
     mediaType: SfdmModels.Enums.DATA_MEDIA_TYPE = SfdmModels.Enums.DATA_MEDIA_TYPE.Org;
 
+    isPersonAccountEnabled: boolean = false;
+
     createTargetCSVFiles : boolean;
 
     getConnection(): any {

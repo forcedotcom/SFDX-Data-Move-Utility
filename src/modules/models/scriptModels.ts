@@ -406,7 +406,7 @@ export class ScriptField {
      */
     get referencedSObjectName(): string {
         if (this.sFieldDescribe.custom) {
-            return this.name.replace("__c", "__r");
+            return this.name.replace("__pc", "__pr").replace("__c", "__r");
         } else {
             return CommonUtils.trimEndStr(this.name, "Id");
         }

@@ -176,8 +176,15 @@ export class SfdxUtils {
      * @param  {SfdmModels.SOrg} sOrg sOrg instance
      */
     public static async validateAccessTokenAsync(sOrg: SfdmModels.SOrg): Promise<void> {
-        if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org)
+        if (sOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
             await SfdxUtils._queryAsync("SELECT Id FROM Account LIMIT 1", sOrg, false);
+        }
+        try {
+            await SfdxUtils._queryAsync("SELECT IsPersonAccount FROM Account LIMIT 1", sOrg, false);
+            sOrg.isPersonAccountEnabled = true;
+        } catch (ex){
+            sOrg.isPersonAccountEnabled = false;
+        }
     }
 
 
