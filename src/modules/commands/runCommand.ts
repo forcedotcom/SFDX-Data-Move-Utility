@@ -1317,41 +1317,46 @@ export class RunCommand {
 
             if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
 
-            if (!task.scriptObject.isExtraObject) {
-
-                try {
-                    // Source rules -----------------------------
-                    // Record Count rule...
-                    task.scriptObject.allRecords = task.sourceTotalRecorsCount > SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_FROM
-                        || task.targetTotalRecorsCount < SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_TO;
-
-                    // Reference Object rule...
-                    if (task.scriptObject.allRecords) {
-                        let hasRelatedObjectWithConditions = task.taskFields.Any(x => x.parentTaskField
-                            && (
-                                x.parentTaskField.originalScriptField.sObject.parsedQuery.limit > 0   // Any field is referenced to object with "limit"
-                                || !!x.parentTaskField.originalScriptField.sObject.parsedQuery.where  // Any field is referenced to object with "where"
-                                || task.scriptObject.parsedQuery.limit > 0                            // Any field is referenced to another object & this object has "limit" 
-                                || !!task.scriptObject.parsedQuery.where                              // Any field is referenced to another object & this object has "where"                                 
-                            ));
-                        if (hasRelatedObjectWithConditions) {
-                            task.scriptObject.allRecords = false;
-                        }
-                    }
-
-                    // Target rules -----------------------------
-                    task.scriptObject.allRecordsTarget = task.scriptObject.allRecords;
-
-                    if (!task.scriptObject.allRecordsTarget && task.scriptObject.isComplexExternalId) {
-                        task.scriptObject.allRecordsTarget = true;
-                    }
-
-                } catch (e) {
-                    throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
-                }
-
+            if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly) {
+                task.scriptObject.allRecords = true;
+                task.scriptObject.allRecordsTarget = true;
             } else {
-                task.scriptObject.allRecordsTarget = task.scriptObject.allRecords;
+                if (!task.scriptObject.isExtraObject) {
+
+                    try {
+                        // Source rules -----------------------------
+                        // Record Count rule...
+                        task.scriptObject.allRecords = task.sourceTotalRecorsCount > SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_FROM
+                            || task.targetTotalRecorsCount < SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_TO;
+
+                        // Reference Object rule...
+                        if (task.scriptObject.allRecords) {
+                            let hasRelatedObjectWithConditions = task.taskFields.Any(x => x.parentTaskField
+                                && (
+                                    x.parentTaskField.originalScriptField.sObject.parsedQuery.limit > 0   // Any field is referenced to object with "limit"
+                                    || !!x.parentTaskField.originalScriptField.sObject.parsedQuery.where  // Any field is referenced to object with "where"
+                                    || task.scriptObject.parsedQuery.limit > 0                            // Any field is referenced to another object & this object has "limit" 
+                                    || !!task.scriptObject.parsedQuery.where                              // Any field is referenced to another object & this object has "where"                                 
+                                ));
+                            if (hasRelatedObjectWithConditions) {
+                                task.scriptObject.allRecords = false;
+                            }
+                        }
+
+                        // Target rules -----------------------------
+                        task.scriptObject.allRecordsTarget = task.scriptObject.allRecords;
+
+                        if (!task.scriptObject.allRecordsTarget && task.scriptObject.isComplexExternalId) {
+                            task.scriptObject.allRecordsTarget = true;
+                        }
+
+                    } catch (e) {
+                        throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
+                    }
+
+                } else {
+                    task.scriptObject.allRecordsTarget = task.scriptObject.allRecords;
+                }
             }
 
 
@@ -1449,8 +1454,8 @@ export class RunCommand {
 
             }
 
-            // Query target records
 
+            // Query target records
             if (task.scriptObject.allRecordsTarget || this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.File) {
 
                 // Get all records as in original query from the script including additional referenced fields
