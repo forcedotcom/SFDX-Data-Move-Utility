@@ -246,7 +246,7 @@ export class Task {
                             continue;
                         }
 
-                        tempWhere2 = SfdxUtils.composeWhereInClause(tempWhere2, fieldName, whereChunk);
+                        tempWhere2 = SfdxUtils.composeWhereClause(tempWhere2, fieldName, whereChunk);
 
                         if (!tempQuery.where) {
                             tempQuery.where = tempWhere2;
@@ -270,7 +270,7 @@ export class Task {
                     }
 
                     if (flag) {
-                        tempWhere2 = SfdxUtils.composeWhereInClause(tempWhere2, fieldName, whereChunk);
+                        tempWhere2 = SfdxUtils.composeWhereClause(tempWhere2, fieldName, whereChunk);
                         if (!tempQuery.where) {
                             tempQuery.where = tempWhere2;
                             let query = composeQuery(tempQuery);

@@ -18,7 +18,8 @@ import {
     LogicalOperator,
     parseQuery,
     Query,
-    WhereClause
+    WhereClause,
+    Operator
 } from 'soql-parser-js';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
 import { execSync } from 'child_process';
@@ -182,7 +183,7 @@ export class SfdxUtils {
         try {
             await SfdxUtils._queryAsync("SELECT IsPersonAccount FROM Account LIMIT 1", sOrg, false);
             sOrg.isPersonAccountEnabled = true;
-        } catch (ex){
+        } catch (ex) {
             sOrg.isPersonAccountEnabled = false;
         }
     }
@@ -934,12 +935,11 @@ export class SfdxUtils {
         let externalId: string = task.scriptObject.externalId;
         let scriptObject: SfdmModels.ScriptObject = task.scriptObject;
         let readonlyExternalIdFields = task.scriptObject.readonlyExternalIdFields;
+        var strOper = SfdmModels.Enums.OPERATION[operation];
 
         if (!sourceRecords || sourceRecords.Count() == 0 || operation == SfdmModels.Enums.OPERATION.Readonly) {
             return sourceRecords;
         }
-
-        var strOper = SfdmModels.Enums.OPERATION[operation];
 
         let notUpdateableFields = Object.keys(sourceRecords.ElementAt(0)).filter(field =>
             field.endsWith("_source") || field.indexOf('.') >= 0 // Invalid fields
@@ -955,9 +955,42 @@ export class SfdxUtils {
         // Omit fields below during Insert only
         let omitFieldsDuringInsert = new List<string>([...omitFields, "Id"]).Distinct().ToArray();
 
-
         let hasChildTasks = task.job.tasks.Any(x => x.scriptObject.referencedScriptObjectsMap.has(task.sObjectName));
 
+        function mockRecordsData(sourceRecords: List<object>, ids: List<String>): Map<object, object> {
+            let m: Map<object, object> = new Map<object, object>();
+            if (scriptObject.updateWithMockData) {
+                let mockFields: Map<string, string> = new Map<string, string>();
+                task.taskFields.ForEach(field => {
+                    if (field.mockPattern) {
+                        let fn = field.mockPattern;
+                        if (SfdmModels.CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
+                            fn = fn.replace(/\(/, `('${field.name}',`);
+                        }
+                        mockFields.set(field.name, fn);
+                    }
+                });
+                MockGenerator.resetCounter();
+                sourceRecords.ForEach((record, index) => {
+                    let obj2 = Object.assign({}, record);
+                    [...mockFields.keys()].forEach(name => {
+                        let casualFn = mockFields.get(name);
+                        if (casualFn == "ids") {
+                            obj2[name] = ids.ElementAt(index);
+                        } else {
+                            obj2[name] = eval(`casual.${casualFn}`);
+                        }
+
+                    });
+                    m.set(obj2, record);
+                });
+            } else {
+                sourceRecords.ForEach(record => {
+                    m.set(record, record);
+                });
+            }
+            return m;
+        }
 
         async function insertRecordsAsync(sourceRecords: List<object>) {
 
@@ -1016,185 +1049,195 @@ export class SfdxUtils {
             return insertedRecords;
         }
 
-        function mockRecordsData(sourceRecords: List<object>, ids: List<String>): Map<object, object> {
-            let m: Map<object, object> = new Map<object, object>();
-            if (scriptObject.updateWithMockData) {
-                let mockFields: Map<string, string> = new Map<string, string>();
-                task.taskFields.ForEach(field => {
-                    if (field.mockPattern) {
-                        let fn = field.mockPattern;
-                        if (SfdmModels.CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
-                            fn = fn.replace(/\(/, `('${field.name}',`);
-                        }
-                        mockFields.set(field.name, fn);
+        async function updateRecordsAsync(sourceRecords: List<object>, targetRecords: List<object>): Promise<List<object>> {
+
+            let recordsToUpdate: List<object> = new List<object>();
+            let recordsToInsert: List<object> = new List<object>();
+
+            // -------------  INSERT ONLY ---------------------        
+            if (operation == SfdmModels.Enums.OPERATION.Insert) {
+                recordsToInsert = await insertRecordsAsync(sourceRecords);
+                return recordsToInsert;
+            }
+
+            if (!externalId) {
+                throw new Error(`Error while trying to ${strOper} SObject  ${sObjectName}: missing extenalID field`);
+            }
+
+            let first: object;
+            try {
+                first = sourceRecords.First();
+            } catch (ex) {
+                throw new Error(`Error while trying to ${strOper} SObject  ${sObjectName}: Missing source records`);
+            }
+
+            if (!first.hasOwnProperty(externalId)) {
+                throw new Error(`Error while trying to ${strOper} SObject  ${sObjectName}: the source records are missing external Id field ${externalId}`);
+            }
+
+            if (targetRecords.Count() == 0) {
+                targetRecords = new List<object>();
+            } else {
+                first = targetRecords.First();
+                if (!first.hasOwnProperty(externalId)) {
+                    throw new Error(`Error while trying to ${strOper} SObject  ${sObjectName}: the target records are missing external Id field ${externalId}`);
+                }
+            }
+
+
+            let fieldSourceOfTarget = targetRecords.Count() == 0 ? new Array<string>() : Object.keys(targetRecords.ElementAt(0)).filter(field => field.endsWith("_source"));
+            let sourceExtId = externalId;
+            let targetExtId = fieldSourceOfTarget.length > 0 ? externalId + "_source" : externalId;
+
+            var mappedRecords = _this._compareRecords(sourceRecords, targetRecords, sourceExtId, targetExtId);
+            var targetMappedRecords = new Map();
+
+            let idsMap = new Map<object, String>();
+
+
+
+            // -------------  ANALYSING RECORDS FOR UPSERT --------------------- 
+            // Determine which records should be updated and which inserted       
+            mappedRecords.ForEach(pair => {
+                if (pair[0] && !pair[1] && (operation == SfdmModels.Enums.OPERATION.Upsert || operation == SfdmModels.Enums.OPERATION.Add)) {
+                    // ADD / INSERT
+                    recordsToInsert.Add(pair[0]);
+                } else if (pair[0] && pair[1] && operation != SfdmModels.Enums.OPERATION.Add) {
+                    var obj: object;
+                    if (operation == SfdmModels.Enums.OPERATION.Update || operation == SfdmModels.Enums.OPERATION.Upsert) {
+                        // UPDATE / UPSERT
+                        obj = { ...pair[1], ...pair[0] };
+                    } else {
+                        //MERGE
+                        obj = CommonUtils.mergeObjectsEmptyProps(pair[0], pair[1]);
+                    }
+                    obj["Id"] = pair[1]["Id"];
+                    recordsToUpdate.Add(obj);
+                    targetMappedRecords.set(obj["Id"], pair[1]);
+                    idsMap.set(obj, pair[0]["Id"]);
+                }
+            });
+
+
+
+            // -------------  INSERTING OF UPSERT ---------------------
+            if (recordsToInsert.Count() > 0) {
+                // INSERTING
+                if (apiCalloutStatusCallback) {
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.readyToInsert, sObjectName, String(recordsToInsert.Count())),
+                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
+                    }));
+                }
+                recordsToInsert = await insertRecordsAsync(recordsToInsert);
+            } else {
+                if (apiCalloutStatusCallback) {
+                    apiCalloutStatusCallback(new ApiCalloutStatus({
+                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.nothingToInsert, sObjectName),
+                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
+                    }));
+                }
+            }
+
+
+
+            // -------------  UPDATING OF UPSERT ---------------------
+            if (recordsToUpdate.Count() > 0) {
+                // UPDATING
+                let records = recordsToUpdate.DistinctBy(x => x["Id"]);
+                let ids = new List<String>();
+                records.ForEach(record => {
+                    ids.Add(idsMap.get(record));
+                });
+                omitFields = omitFields.concat(fieldSourceOfTarget);
+
+                let notUpdateableFields = task.taskFields.Where(field => {
+                    return !field.originalScriptField.sFieldDescribe.updateable && field.isOriginalField && field.name != "Id";
+                }).Select(x => x.name);
+                notUpdateableFields.AddRange(omitFields);
+                notUpdateableFields = notUpdateableFields.Distinct();
+
+                if (notUpdateableFields.Count() > 0) {
+                    records = CommonUtils.cloneList(records.Select(x => deepClone.deepCloneSync(x)), notUpdateableFields.ToArray());
+                }
+                let recordToUpdate3 = new List<object>();
+                records.ForEach(record => {
+                    let old = targetMappedRecords.get(record["Id"]);
+                    if (scriptObject.updateWithMockData || !CommonUtils.areEqual(record, old)) {
+                        recordToUpdate3.Add(record);
                     }
                 });
-                MockGenerator.resetCounter();
-                sourceRecords.ForEach((record, index) => {
-                    let obj2 = Object.assign({}, record);
-                    [...mockFields.keys()].forEach(name => {
-                        let casualFn = mockFields.get(name);
-                        if (casualFn == "ids") {
-                            obj2[name] = ids.ElementAt(index);
-                        } else {
-                            obj2[name] = eval(`casual.${casualFn}`);
-                        }
-
-                    });
-                    m.set(obj2, record);
-                });
-            } else {
-                sourceRecords.ForEach(record => {
-                    m.set(record, record);
-                });
-            }
-            return m;
-        }
-
-        // -------------  INSERT ONLY ---------------------        
-        if (operation == SfdmModels.Enums.OPERATION.Insert) {
-            let insertedRecords = await insertRecordsAsync(sourceRecords);
-            return insertedRecords;
-        }
-
-        if (!externalId) {
-            throw new Error(`Error while trying to ${strOper} SObject  ${sObjectName}: missing extenalID field`);
-        }
-
-        let first: object;
-        try {
-            first = sourceRecords.First();
-        } catch (ex) {
-            throw new Error(`Error while trying to ${strOper} SObject  ${sObjectName}: Missing source records`);
-        }
-
-        if (!first.hasOwnProperty(externalId)) {
-            throw new Error(`Error while trying to ${strOper} SObject  ${sObjectName}: the source records are missing external Id field ${externalId}`);
-        }
-
-        if (targetRecords.Count() == 0) {
-            targetRecords = new List<object>();
-        } else {
-            first = targetRecords.First();
-            if (!first.hasOwnProperty(externalId)) {
-                throw new Error(`Error while trying to ${strOper} SObject  ${sObjectName}: the target records are missing external Id field ${externalId}`);
-            }
-        }
-
-        var recordsToUpdate: List<object> = new List<object>();
-        var recordsToInsert: List<object> = new List<object>();
-
-        let fieldSourceOfTarget = targetRecords.Count() == 0 ? new Array<string>() : Object.keys(targetRecords.ElementAt(0)).filter(field => field.endsWith("_source"));
-        let sourceExtId = externalId;
-        let targetExtId = fieldSourceOfTarget.length > 0 ? externalId + "_source" : externalId;
-
-        var mappedRecords = this._compareRecords(sourceRecords, targetRecords, sourceExtId, targetExtId);
-        var targetMappedRecords = new Map();
-
-        let idsMap = new Map<object, String>();
-
-
-
-        // -------------  ANALYSING RECORDS FOR UPSERT --------------------- 
-        // Determine which records should be updated and which inserted       
-        mappedRecords.ForEach(pair => {
-            if (pair[0] && !pair[1] && (operation == SfdmModels.Enums.OPERATION.Upsert || operation == SfdmModels.Enums.OPERATION.Add)) {
-                // ADD / INSERT
-                recordsToInsert.Add(pair[0]);
-            } else if (pair[0] && pair[1] && operation != SfdmModels.Enums.OPERATION.Add) {
-                var obj: object;
-                if (operation == SfdmModels.Enums.OPERATION.Update || operation == SfdmModels.Enums.OPERATION.Upsert) {
-                    // UPDATE / UPSERT
-                    obj = { ...pair[1], ...pair[0] };
+                if (recordToUpdate3.Count() > 0) {
+                    if (apiCalloutStatusCallback) {
+                        apiCalloutStatusCallback(new ApiCalloutStatus({
+                            message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.readyToUpdate, sObjectName, String(recordToUpdate3.Count())),
+                            verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
+                        }));
+                    }
+                    let m = mockRecordsData(recordToUpdate3, ids);
+                    let recs = [...m.keys()];
+                    if (task.scriptObject.targetRecordsFilter) {
+                        recs = await _this._filterRecords(task.scriptObject.targetRecordsFilter, recs);
+                    }
+                    await _this.updateAsync(sObjectName, new List<object>(recs), sOrg, apiCalloutStatusCallback);
                 } else {
-                    //MERGE
-                    obj = CommonUtils.mergeObjectsEmptyProps(pair[0], pair[1]);
+                    if (apiCalloutStatusCallback) {
+                        apiCalloutStatusCallback(new ApiCalloutStatus({
+                            message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.nothingToUpdate, sObjectName),
+                            verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
+                        }));
+                    }
                 }
-                obj["Id"] = pair[1]["Id"];
-                recordsToUpdate.Add(obj);
-                targetMappedRecords.set(obj["Id"], pair[1]);
-                idsMap.set(obj, pair[0]["Id"]);
             }
+
+
+            recordsToInsert.AddRange(recordsToUpdate.ToArray());
+            return recordsToInsert;
+        }
+
+        if (sObjectName != "Account" && sObjectName != "Contact"
+            || !sOrg.isPersonAccountEnabled || sourceRecords.Count() == 0) {
+            return await updateRecordsAsync(sourceRecords, targetRecords);
+        }
+
+        let outputRecords: List<object> = new List<object>();
+        let fields = Object.keys(sourceRecords.First());
+
+        // Process business accounts/contacts only *************
+        let fieldsToExclude = sObjectName == "Account" ? fields.filter(field => {
+            return field.startsWith('Person') && field.indexOf('__c') < 0
+                || field.endsWith('__pc')
+                || ["FirstName", "LastName", "IsPersonAccount"].indexOf(field) >= 0;
+        }) : fields.filter(field => {
+            return ["IsPersonAccount"].indexOf(field) >= 0;
         });
 
+        let sRec = sourceRecords.Where(record => !record["IsPersonAccount"]);
+        let tRec = targetRecords.Where(record => !record["IsPersonAccount"]);
 
-
-        // -------------  INSERTING OF UPSERT ---------------------
-        if (recordsToInsert.Count() > 0) {
-            // INSERTING
-            if (apiCalloutStatusCallback) {
-                apiCalloutStatusCallback(new ApiCalloutStatus({
-                    message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.readyToInsert, sObjectName, String(recordsToInsert.Count())),
-                    verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
-                }));
-            }
-            recordsToInsert = await insertRecordsAsync(recordsToInsert);
-        } else {
-            if (apiCalloutStatusCallback) {
-                apiCalloutStatusCallback(new ApiCalloutStatus({
-                    message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.nothingToInsert, sObjectName),
-                    verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
-                }));
-            }
+        if (sRec.Count() > 0) {
+            sRec = CommonUtils.cloneList(sRec, fieldsToExclude);
+            tRec = CommonUtils.cloneList(tRec, fieldsToExclude);
+            outputRecords.AddRange((await updateRecordsAsync(sRec, tRec)).ToArray());
         }
 
-
-
-        // -------------  UPDATING OF UPSERT ---------------------
-        if (recordsToUpdate.Count() > 0) {
-            // UPDATING
-            let records = recordsToUpdate.DistinctBy(x => x["Id"]);
-            let ids = new List<String>();
-            records.ForEach(record => {
-                ids.Add(idsMap.get(record));
+        if (sObjectName == "Account") {
+            // Process person accounts only *************             
+            fieldsToExclude = fields.filter(field => {
+                return ["Name", "IsPersonAccount"].indexOf(field) >= 0;
             });
-            omitFields = omitFields.concat(fieldSourceOfTarget);
 
-            let notUpdateableFields = task.taskFields.Where(field => {
-                return !field.originalScriptField.sFieldDescribe.updateable && field.isOriginalField && field.name != "Id";
-            }).Select(x => x.name);
-            notUpdateableFields.AddRange(omitFields);
-            notUpdateableFields = notUpdateableFields.Distinct();
+            sRec = sourceRecords.Where(record => !!record["IsPersonAccount"]);
+            tRec = targetRecords.Where(record => !!record["IsPersonAccount"]);
 
-            if (notUpdateableFields.Count() > 0) {
-                records = CommonUtils.cloneList(records.Select(x => deepClone.deepCloneSync(x)), notUpdateableFields.ToArray());
-            }
-            let recordToUpdate3 = new List<object>();
-            records.ForEach(record => {
-                let old = targetMappedRecords.get(record["Id"]);
-                if (scriptObject.updateWithMockData || !CommonUtils.areEqual(record, old)) {
-                    recordToUpdate3.Add(record);
-                }
-            });
-            if (recordToUpdate3.Count() > 0) {
-                if (apiCalloutStatusCallback) {
-                    apiCalloutStatusCallback(new ApiCalloutStatus({
-                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.readyToUpdate, sObjectName, String(recordToUpdate3.Count())),
-                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
-                    }));
-                }
-                let m = mockRecordsData(recordToUpdate3, ids);
-                let recs = [...m.keys()];
-                if (task.scriptObject.targetRecordsFilter) {
-                    recs = await this._filterRecords(task.scriptObject.targetRecordsFilter, recs);
-                }
-                await this.updateAsync(sObjectName, new List<object>(recs), sOrg, apiCalloutStatusCallback);
-            } else {
-                if (apiCalloutStatusCallback) {
-                    apiCalloutStatusCallback(new ApiCalloutStatus({
-                        message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.nothingToUpdate, sObjectName),
-                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
-                    }));
-                }
+            if (sRec.Count() > 0) {
+                sRec = CommonUtils.cloneList(sRec, fieldsToExclude);
+                tRec = CommonUtils.cloneList(tRec, fieldsToExclude);
+                outputRecords.AddRange((await updateRecordsAsync(sRec, tRec)).ToArray());
             }
         }
-
-
-        recordsToInsert.AddRange(recordsToUpdate.ToArray());
-        return recordsToInsert;
-
+        return outputRecords;
     }
-
 
 
     /**
@@ -1262,38 +1305,52 @@ export class SfdxUtils {
      * Ex.  source query:            WHERE Account.Name = 'Account',   Source__c = ['Source1', 'Source2']
      *      return composite query:  WHERE (Account.Name = 'Account') OR/AND (Source__c IN ('Source1', 'Source2'))
      * 
+     * Also can add any other extra rule like WHERE .... AND (x = ...)
+     * 
      * @static
      * @param {WhereClause} where Source query to modify
-     * @param {string} fieldName Field name to compose 'WHERE fieldName IN (values)'
-     * @param {Array<string>} values Values for 'IN'
-     * @param {LiteralType} [literalType="STRING"] (Default="STRING") Data type of the values. Used to enclose values into single quotes when needed.
+     * @param {string} fieldName Field name 
+     * @param {Array<string> | string} values Values to compare
+     * @param {operator} [Operator="IN"] (Default="IN") The operator for the extra WHERE
      * @param {LogicalOperator} [logicalOperator="OR"] (Default="OR") Logical operator to apply between the original WHERE and the new WHERE..IN
      * @returns {WhereClause} Returns modified WHERE clause
      * @memberof SfdxUtils
      */
-    public static composeWhereInClause(
+    public static composeWhereClause(
         where: WhereClause,
         fieldName: string,
-        values: Array<string>,
+        values: Array<string> | string,
+        operator: Operator = "IN",
         literalType: LiteralType = "STRING",
         logicalOperator: LogicalOperator = "OR"): WhereClause {
 
-        let values2 = values.filter(x => !!x).map(x => x.replace(/\\/g, "\\\\").replace(/'/g, "\\'"));
-        let c: Condition = { field: fieldName, operator: "IN", value: values2, literalType: literalType };
+        let valuesIsArray = Array.isArray(values);
+        let values2 = [].concat(values).filter(x => !!x).map(x => x.replace(/\\/g, "\\\\").replace(/'/g, "\\'"));
+        if (!valuesIsArray) {
+            values2 = values2[0];
+        }
+        let c: Condition = { field: fieldName, operator: operator, value: values2, literalType: literalType };
         if (!where || !where.left) {
-            let ret: WhereClause = { left: c };
+            let ret = { left: c };
             ret.left.openParen = 1;
             ret.left.closeParen = 1;
             return ret;
         } else {
-            where.left.openParen = 0;
+            //if (operator == "IN"){
+            //  where.left.openParen = 0;
+            //let ret = { left: c, right: where, operator: logicalOperator };
+            //ret.left.openParen = 1;
+            //return ret;
+            //} else {
+            where.left.openParen = (where.left.openParen || 0) + 1;
+            where.left.closeParen = (where.left.closeParen || 0) + 1;
+            c.openParen = 1;
+            c.closeParen = 1;
             let ret = { left: c, right: where, operator: logicalOperator };
-            ret.left.openParen = 1;
             return ret;
+            //}
         }
     }
-
-
 
 
 

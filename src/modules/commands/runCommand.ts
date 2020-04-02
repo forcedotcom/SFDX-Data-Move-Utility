@@ -369,6 +369,9 @@ export class RunCommand {
                         object.parsedDeleteQuery = parseQuery(object.query);
                     }
                     object.parsedDeleteQuery.fields = [getComposedField("Id")];
+                    if (this.sourceOrg.isPersonAccountEnabled && object.name == "Contact") {
+                        object.parsedDeleteQuery.where = SfdxUtils.composeWhereClause(object.parsedDeleteQuery.where, "IsPersonAccount", "false", "=", "BOOLEAN", "AND");
+                    }
                 } catch (e) {
                     throw new SfdmModels.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.MalformedDeleteQuery, object.name, object.deleteQuery, e));
                 }
@@ -520,6 +523,16 @@ export class RunCommand {
                 object.readonlyExternalIdFields.push(object.externalId);
             }
 
+            if ((object.name == "Account" || object.name == "Contact")
+                && (this.sourceOrg.isPersonAccountEnabled
+                    || this.targetOrg.isPersonAccountEnabled)
+                && !scriptFieldsList.Any(x => (<SOQLField>x).field == "IsPersonAccount")) {
+                // Add IsPersonAccount field to process person accounts
+                var f = getComposedField("IsPersonAccount");
+                object.parsedQuery.fields.push(f);
+                scriptFieldsList.Add(<SOQLField>f);
+            }
+
             // Add filter by record type
             if (scriptFieldsList.Any(x => (<SOQLField>x).field == "RecordTypeId")
                 || scriptFieldsList.Any(x => (<SOQLField>x).field == "RecordType.Id")) {
@@ -655,12 +668,12 @@ export class RunCommand {
         // Construct query for the RecordType object
         if (recordTypeScriptObject != null) {
             let pq = recordTypeScriptObject.parsedQuery;
-            if (recordTypeSObjectTypes.Count() > 0){
-                pq.where = SfdxUtils.composeWhereInClause(pq.where, "SobjectType", recordTypeSObjectTypes.ToArray());
+            if (recordTypeSObjectTypes.Count() > 0) {
+                pq.where = SfdxUtils.composeWhereClause(pq.where, "SobjectType", recordTypeSObjectTypes.ToArray());
             }
             pq.orderBy = <OrderByClause>({
-                field : "SobjectType",
-                order : "ASC"
+                field: "SobjectType",
+                order: "ASC"
             });
             recordTypeScriptObject.query = composeQuery(pq);
         }
@@ -1215,7 +1228,7 @@ export class RunCommand {
 
                     let queriedRecords: List<object>;
                     try {
-                        if (task.useQueryBulkApiForTargetRecords){
+                        if (task.useQueryBulkApiForTargetRecords) {
                             this.logger.infoVerbose(COMMON_RESOURCES.usingQueryBulkApi);
                         } else {
                             this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
@@ -1281,7 +1294,7 @@ export class RunCommand {
         } else {
 
             this.logger.infoVerbose(RUN_RESOURCES.deletingOldDataSkipped);
-            
+
         }
 
 
@@ -1356,7 +1369,7 @@ export class RunCommand {
                 }
 
                 try {
-                    if (task.useQueryBulkApiForSourceRecords){
+                    if (task.useQueryBulkApiForSourceRecords) {
                         this.logger.infoVerbose(COMMON_RESOURCES.usingQueryBulkApi);
                     } else {
                         this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
@@ -1364,7 +1377,7 @@ export class RunCommand {
                     let recs = await SfdxUtils.queryAsync(tempQuery,
                         this.sourceOrg,
                         true,
-                        this.script.encryptDataFiles ? this.password : null, 
+                        this.script.encryptDataFiles ? this.password : null,
                         task.useQueryBulkApiForSourceRecords);
 
                     // Values mapping...
@@ -1453,17 +1466,17 @@ export class RunCommand {
                     }
 
                     try {
-                        if (task.useQueryBulkApiForTargetRecords){
+                        if (task.useQueryBulkApiForTargetRecords) {
                             this.logger.infoVerbose(COMMON_RESOURCES.usingQueryBulkApi);
                         } else {
                             this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
                         }
-                        task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main, 
-                                await SfdxUtils.queryAsync(tempQuery, 
-                                    this.targetOrg, 
-                                    false, 
-                                    null, 
-                                    task.useQueryBulkApiForTargetRecords));
+                        task.targetRecordSet.set(SfdmModels.Enums.RECORDS_SET.Main,
+                            await SfdxUtils.queryAsync(tempQuery,
+                                this.targetOrg,
+                                false,
+                                null,
+                                task.useQueryBulkApiForTargetRecords));
                     } catch (e) {
                         throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                     }
@@ -1838,18 +1851,20 @@ export class RunCommand {
                         } else {
                             var value = !isRecordTypeField ? targetExtIdMap[record[taskField.name]] : targetExtIdMap[task.sObjectName + ";" + record[taskField.name]];
                             if (!value) {
-                                let m: Map<string, IMissingParentRecordsErrorRow> = csvDataCacheMap.get(missingParentRecordsErrorsFilePath);
-                                m.set(record["Id"], {
-                                    "Child record Id": record["Id"],
-                                    "Child sObject": task.sObjectName,
-                                    "Child external Id field": taskField.name,
-                                    "Parent external Id field": taskField.originalScriptField.externalId,
-                                    "Parent sObject": taskField.parentTaskField.task.sObjectName,
-                                    "Missing external Id value": record.hasOwnProperty(taskField.name)
-                                        ? record[taskField.name]
-                                        : this.logger.getResourceString(RUN_RESOURCES.fieldIsMissingInTheSourceRecords, taskField.name)
-                                });
-                                missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
+                                if (task.sObjectName != "Contact" || !this.sourceOrg.isPersonAccountEnabled || !record["IsPersonAccount"]) {
+                                    let m: Map<string, IMissingParentRecordsErrorRow> = csvDataCacheMap.get(missingParentRecordsErrorsFilePath);
+                                    m.set(record["Id"], {
+                                        "Child record Id": record["Id"],
+                                        "Child sObject": task.sObjectName,
+                                        "Child external Id field": taskField.name,
+                                        "Parent external Id field": taskField.originalScriptField.externalId,
+                                        "Parent sObject": taskField.parentTaskField.task.sObjectName,
+                                        "Missing external Id value": record.hasOwnProperty(taskField.name)
+                                            ? record[taskField.name]
+                                            : this.logger.getResourceString(RUN_RESOURCES.fieldIsMissingInTheSourceRecords, taskField.name)
+                                    });
+                                    missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
+                                }
                                 delete record[fieldToUpdate];
                             }
                             else {
@@ -1994,18 +2009,20 @@ export class RunCommand {
                             } else {
                                 var value = targetExtIdMap[record[taskField.name]];
                                 if (!value) {
-                                    let m: Map<string, IMissingParentRecordsErrorRow> = csvDataCacheMap.get(missingParentRecordsErrorsFilePath);
-                                    m.set(record["Id"], {
-                                        "Child record Id": record["Id"],
-                                        "Child sObject": task.sObjectName,
-                                        "Child external Id field": taskField.name,
-                                        "Parent external Id field": taskField.originalScriptField.externalId,
-                                        "Parent sObject": taskField.parentTaskField.task.sObjectName,
-                                        "Missing external Id value": record.hasOwnProperty(taskField.name)
-                                            ? record[taskField.name]
-                                            : this.logger.getResourceString(RUN_RESOURCES.fieldIsMissingInTheSourceRecords, taskField.name)
-                                    });
-                                    missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
+                                    if (task.sObjectName != "Contact" || !this.sourceOrg.isPersonAccountEnabled || !record["IsPersonAccount"]) {
+                                        let m: Map<string, IMissingParentRecordsErrorRow> = csvDataCacheMap.get(missingParentRecordsErrorsFilePath);
+                                        m.set(record["Id"], {
+                                            "Child record Id": record["Id"],
+                                            "Child sObject": task.sObjectName,
+                                            "Child external Id field": taskField.name,
+                                            "Parent external Id field": taskField.originalScriptField.externalId,
+                                            "Parent sObject": taskField.parentTaskField.task.sObjectName,
+                                            "Missing external Id value": record.hasOwnProperty(taskField.name)
+                                                ? record[taskField.name]
+                                                : this.logger.getResourceString(RUN_RESOURCES.fieldIsMissingInTheSourceRecords, taskField.name)
+                                        });
+                                        missingParentValueOnTagetErrors.set(taskField.name, (missingParentValueOnTagetErrors.get(taskField.name) || 0) + 1);
+                                    }
                                     delete record[fieldToUpdate];
                                 }
                                 else {
