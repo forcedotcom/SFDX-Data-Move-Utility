@@ -54,7 +54,7 @@
     "usingQueryBulkApi": "* Using Bulk Query Api *",
     "usingCollectionApi": "* Using Collection Query Api *",
     "apiOperationProgress": "[Job# %s:%s] {%s} API operation progress: %s records completed, %s records failed.",
-    "apiOperationCompleted": "[Job# %s:%s] {%s} Total %s records were processed.",
+    "apiOperationCompleted": "[Job# %s:%s] {%s} Total %s records were processed, %s records failed.",
     "apiOperationError": "[Job# %s:%s] {%s} API operation FAILED: %s records completed, %s records failed.",
     "apiOperationError2": "[Job# %s:%s] {%s} Batch# %s was INCOMPLETE having %s failed records.",
     "apiOperationError3": "[Job# %s:%s] {%s} Job# %s was INCOMPLETE having %s failed records.",

@@ -1807,6 +1807,7 @@ export class RunCommand {
                             throw new SfdmModels.CommandAbortedByUserError(e.error);
                         }
                     }
+
                 }
 
                 // Build records External id map for the target
@@ -1927,6 +1928,7 @@ export class RunCommand {
                             throw new SfdmModels.CommandAbortedByUserError(e.error);
                         }
                     }
+
                 }
 
                 // Build records External id map for the target
@@ -2049,7 +2051,6 @@ export class RunCommand {
 
                     let updatedRecords: List<Object>;
                     try {
-                        let errorMessage = "";
                         // Update target records                      
                         updatedRecords = await SfdxUtils.processTaskDataAsync(task,
                             sourceRecords,
@@ -2073,20 +2074,18 @@ export class RunCommand {
                                         break;
                                 }
                             });
-                        if (errorMessage) {
-                            await _saveCachedCsvDataFiles();
-                            throw new Error(errorMessage);
-                        }
                     } catch (e) {
                         await _saveCachedCsvDataFiles();
-                        if (!this.script.promptOnUpdateError)
+                        if (!this.script.promptOnUpdateError) {
                             throw new SfdmModels.CommandExecutionError(e.error);
+                        }
                         else {
                             this.logger.warn(e.error);
                             if (!await this.logger.yesNoPromptAsync(RUN_RESOURCES.continueTheJobPrompt)) {
                                 throw new SfdmModels.CommandAbortedByUserError(e.error);
                             }
                         }
+
                     }
 
                     this.logger.infoVerbose(RUN_RESOURCES.updatingTargetObjectCompleted, task.sObjectName, "Update", String(updatedRecords.Count()));

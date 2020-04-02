@@ -544,14 +544,15 @@ export class SfdxUtils {
 
                     await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Update);
 
-                    if (progress.numberRecordsFailed == 0) {
+                    if (progress.numberRecordsFailed == 0 || !sOrg.allOrNone && progress.numberRecordsFailed > 0) {
                         if (apiCalloutStatusCallback) {
                             progress.message = MessageUtils.getMessagesString(commonMessages,
                                 COMMON_RESOURCES.apiOperationCompleted,
                                 progress.jobId,
                                 "Update",
                                 sObjectName,
-                                String(progress.numberRecordsProcessed));
+                                String(progress.numberRecordsProcessed),
+                                String(progress.numberRecordsFailed));
                             progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                             apiCalloutStatusCallback(progress);
                         }
@@ -702,14 +703,15 @@ export class SfdxUtils {
 
                     await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Insert);
 
-                    if (progress.numberRecordsFailed == 0) {
+                    if (progress.numberRecordsFailed == 0 || !sOrg.allOrNone && progress.numberRecordsFailed > 0) {
                         if (apiCalloutStatusCallback) {
                             progress.message = MessageUtils.getMessagesString(commonMessages,
                                 COMMON_RESOURCES.apiOperationCompleted,
                                 progress.jobId,
                                 "Insert",
                                 sObjectName,
-                                String(progress.numberRecordsProcessed));
+                                String(progress.numberRecordsProcessed),
+                                String(progress.numberRecordsFailed));
                             progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                             apiCalloutStatusCallback(progress);
                         }
@@ -867,14 +869,15 @@ export class SfdxUtils {
 
                     await _this._writeObjectOutputRecordsToCSVFileAsync(sObjectName, sOrg, recs, SfdmModels.Enums.OPERATION.Delete);
 
-                    if (progress.numberRecordsFailed == 0) {
+                    if (progress.numberRecordsFailed == 0 || !sOrg.allOrNone && progress.numberRecordsFailed > 0) {
                         if (apiCalloutStatusCallback) {
                             progress.message = MessageUtils.getMessagesString(commonMessages,
                                 COMMON_RESOURCES.apiOperationCompleted,
                                 progress.jobId,
                                 "Delete",
                                 sObjectName,
-                                String(progress.numberRecordsProcessed));
+                                String(progress.numberRecordsProcessed),
+                                String(progress.numberRecordsFailed));
                             progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                             apiCalloutStatusCallback(progress);
                         }
@@ -952,8 +955,6 @@ export class SfdxUtils {
         // Omit fields below during Update and Insert
         omitFields = new List<string>([...omitFields, ...notUpdateableFields]).Distinct().ToArray();
 
-        // Omit fields below during Insert only
-        let omitFieldsDuringInsert = new List<string>([...omitFields, "Id"]).Distinct().ToArray();
 
         let hasChildTasks = task.job.tasks.Any(x => x.scriptObject.referencedScriptObjectsMap.has(task.sObjectName));
 
@@ -993,6 +994,9 @@ export class SfdxUtils {
         }
 
         async function insertRecordsAsync(sourceRecords: List<object>) {
+
+            // Omit fields below during Insert only
+            let omitFieldsDuringInsert = new List<string>([...omitFields, "Id"]).Distinct().ToArray();
 
             if (task.scriptObject.targetRecordsFilter) {
                 sourceRecords = new List<object>(await _this._filterRecords(task.scriptObject.targetRecordsFilter, sourceRecords.ToArray()));
@@ -1195,12 +1199,15 @@ export class SfdxUtils {
             return recordsToInsert;
         }
 
+        let outputRecords: List<object> = new List<object>();
+
+
+
         if (sObjectName != "Account" && sObjectName != "Contact"
             || !sOrg.isPersonAccountEnabled || sourceRecords.Count() == 0) {
             return await updateRecordsAsync(sourceRecords, targetRecords);
         }
 
-        let outputRecords: List<object> = new List<object>();
         let fields = Object.keys(sourceRecords.First());
 
         // Process business accounts/contacts only *************
@@ -1209,15 +1216,16 @@ export class SfdxUtils {
                 || field.endsWith('__pc')
                 || ["FirstName", "LastName", "IsPersonAccount"].indexOf(field) >= 0;
         }) : fields.filter(field => {
-            return ["IsPersonAccount"].indexOf(field) >= 0;
+            return ["IsPersonAccount", "Name"].indexOf(field) >= 0;
         });
+
+        let omitFields3 = [].concat(omitFields);
 
         let sRec = sourceRecords.Where(record => !record["IsPersonAccount"]);
         let tRec = targetRecords.Where(record => !record["IsPersonAccount"]);
 
         if (sRec.Count() > 0) {
-            sRec = CommonUtils.cloneList(sRec, fieldsToExclude);
-            tRec = CommonUtils.cloneList(tRec, fieldsToExclude);
+            omitFields = omitFields3.concat(fieldsToExclude);
             outputRecords.AddRange((await updateRecordsAsync(sRec, tRec)).ToArray());
         }
 
@@ -1231,11 +1239,11 @@ export class SfdxUtils {
             tRec = targetRecords.Where(record => !!record["IsPersonAccount"]);
 
             if (sRec.Count() > 0) {
-                sRec = CommonUtils.cloneList(sRec, fieldsToExclude);
-                tRec = CommonUtils.cloneList(tRec, fieldsToExclude);
+                omitFields = omitFields3.concat(fieldsToExclude);
                 outputRecords.AddRange((await updateRecordsAsync(sRec, tRec)).ToArray());
             }
         }
+
         return outputRecords;
     }
 
@@ -1817,7 +1825,8 @@ export class SfdxUtils {
                                     job.id,
                                     operation,
                                     sObjectName,
-                                    String(progress.numberRecordsProcessed));
+                                    String(progress.numberRecordsProcessed),
+                                    String(progress.numberRecordsFailed));
                                 progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                                 apiCalloutStatusCallback(progress);
                             }
@@ -2046,7 +2055,8 @@ export class SfdxUtils {
                                 jobResult.jobId,
                                 operation,
                                 sObjectName,
-                                String(numberJobRecordsSucceeded));
+                                String(numberJobRecordsSucceeded),
+                                String(numberBatchRecordsFailed));
                             progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
                             apiCalloutStatusCallback(progress);
                         }

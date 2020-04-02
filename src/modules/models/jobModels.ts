@@ -11,7 +11,7 @@ import {
     getComposedField,
     Query,
     WhereClause
-    } from 'soql-parser-js';
+} from 'soql-parser-js';
 import { List } from 'linq.ts';
 import { SfdxUtils } from '../sfdx';
 import casual = require("casual");
@@ -78,7 +78,7 @@ export class Task {
     get externalIdTaskField(): TaskField {
         return this.taskFields.FirstOrDefault(x => x.name == this.scriptObject.externalId);
     }
-   
+
     createOriginalTaskFields() {
         this.scriptObject.fields.forEach(field => {
             let mp = field.sObject.mockFields.filter(f => f.name == field.name)[0];
@@ -160,9 +160,19 @@ export class Task {
         });
 
         if (tempQuery.where && tempQuery.where.left) {
-            tempQuery.where.left.openParen = 1;
-            tempQuery.where.left.closeParen = 1;
+            //if (!tempQuery.where.right || !tempQuery.where.right.left) {
+            tempQuery.where.left.openParen = (tempQuery.where.left.openParen || 0) + 1;
+            tempQuery.where.left.closeParen = (tempQuery.where.left.closeParen || 0) + 1;
             tempQuery.where.operator = "AND";
+            // } else {
+            //     tempQuery.where.left.openParen = (tempQuery.where.left.openParen || 0) + 1;
+            //     tempQuery.where.right.left.closeParen = (tempQuery.where.right.left.closeParen || 0) + 1;
+            //     tempQuery.where = { left: undefined, right: tempQuery.where, operator: "AND" };
+            // }
+            // No limits
+            //tempQuery.limit = undefined; ??? TODO: Need to check
+            tempQuery.offset = undefined;
+            tempQuery.orderBy = undefined;
         }
 
         let tempWhere2: WhereClause = <WhereClause>{};
