@@ -8,6 +8,7 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
   If you are experiencing any issue with the current v2.0 implementation, let us know. 
   You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.
 * **New in version 2.6.8** - Added support for the Bulk Query Api V1.0 for large data sets from 100000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
+* **New in version 2.7.0** - Added support for Person accounts
 
 ----
 
@@ -42,6 +43,7 @@ It provides easiest way to export data from multiple related sObjects between Sa
 - **Supports data migration preserving Record Type** for each record.
 - **Auto-number field, formula field and even multiple combined fields can be used as external ID.**
 - **Handles** **self-referenced fields**, i.e Account.ParentId. 
+- **Handles Person accounts.**
 - **Supports**  **record** **owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
 - **Supports** **export / import records to / from CSV files.**
 - **Supports data masking** (mocking feature) during record insert / update.
@@ -196,6 +198,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | **ScriptObject**.deleteQuery         | String                     | Optional, Default none  | SOQL query string used to delete old records from the target org (see the "Delete" operator  and the "deleteOldData" parameter).<br />If this parameter is omitted - the same **ScriptObject.query** will be used to retrieve records both to delete and to update. |
 | **ScriptObject**.operator            | String                     | Mandatory               | Operation that you want to perform with the current SObject.<br />**Available values are:**<br />**"Insert"** - creates new records on the target org even old versions of these records already exist.<br />**"Update"** - only updates existing records. The operator overrides all record fields.<br />**"Add"** -  creates a new record only if the old one does not exist.<br />**"Merge"** - like "Update", but does not override existing values, only fills empty record fields.<br />**"Upsert"** - Inserts new and updates old records, overriding all values.<br />**"Readonly"** - To say that you don't want to update this object, only to retrieve its records during the export. Useful in case that you need to include readonly SObject that is referenced from another SObject.<br />**"Delete"** - Only removes old target records from the given sObject. No update performed. |
 | **ScriptObject**.externalId          | String                     | Mandatory               | External Id field for this SObject.<br />This is the unique identifier field, the field which can map any child records refering to this SObject. <br />Each field that has unique values across all records can be used as an External Id, even it's not marked as External Id within the SObject's metadata. You can also use standard External Id fields defined in the metadata.<br /><br />*This is used to compare source and target records as well as to process the relationships between objects during all operations, except of "Insert" and Readonly".* |
+| **ScriptObject**.allRecords          | Boolean                    | Optional, Default false | True value will tell to the Plugin to always process all records for this object  (but still depend on the defined object's limitations f.ex. WHERE clause). <br />Any additional run-time filters that helps to determine and process only minimal subsets of records required for keeping relationships between objects - will not be applied. |
 | **ScriptObject**.deleteOldData       | Boolean                    | Optional, Default false | Forces deletion of old target records before performing update. <br />*The difference from the "Delete" operator (see above) is that the "Delete" operator makes only deletion without updating the target environment.* |
 | **ScriptObject**.updateWithMockData  | Boolean                    | Optional, default false | Enables data mocking for this SObject                        |
 | **ScriptObject**.targetRecordsFilter | String                     | Optional                | Additional SOQL query you can use to filter out unwanted  target data just before sending them to the Target.<br /><br />*Target data means the  records are directly provided in API request (Bulk API request or REST request) to update the target environment or to generate the target CSV file.* |

@@ -160,17 +160,9 @@ export class Task {
         });
 
         if (tempQuery.where && tempQuery.where.left) {
-            //if (!tempQuery.where.right || !tempQuery.where.right.left) {
             tempQuery.where.left.openParen = (tempQuery.where.left.openParen || 0) + 1;
             tempQuery.where.left.closeParen = (tempQuery.where.left.closeParen || 0) + 1;
             tempQuery.where.operator = "AND";
-            // } else {
-            //     tempQuery.where.left.openParen = (tempQuery.where.left.openParen || 0) + 1;
-            //     tempQuery.where.right.left.closeParen = (tempQuery.where.right.left.closeParen || 0) + 1;
-            //     tempQuery.where = { left: undefined, right: tempQuery.where, operator: "AND" };
-            // }
-            // No limits
-            //tempQuery.limit = undefined; ??? TODO: Need to check
             tempQuery.offset = undefined;
             tempQuery.orderBy = undefined;
         }
@@ -208,7 +200,7 @@ export class Task {
                     if (isParentSObjectBefore) {
                         if (isSource) {
 
-                            if (taskField.parentTaskField.originalScriptField.sObject.allRecords) {
+                            if (taskField.parentTaskField.originalScriptField.sObject.processAllRecords) {
                                 skipLastQuery = true;
                                 continue;
                             }

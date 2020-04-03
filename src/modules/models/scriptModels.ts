@@ -235,27 +235,28 @@ export class ScriptObject {
      * Enables transformation of csv values 
      * for this object according to the given mapping
      * definded in the ValueMapping.csv
-     *
      */
     useCSVValuesMapping: boolean = false;
 
 
-
-
-
-    // ************************************************
     /**
-     *  Defines to copy all records of this object 
+     *  Process all records for source (script value)
      *  or limit the child records to those of the parent records, 
      *  that have already queried before.
      *  ex. parent object:  SELECT Id FROM Account LIMIT 1
      *      child  object:  SELECT Id, Account__c FROM Child__c WHERE Account__c IN ( [--Records result of the query above--])
-     * ------
-     */
-    allRecords: boolean = false;
+     */ allRecords: boolean = false;
+
+    
 
 
-    allRecordsTarget: boolean = false;
+    // ************************************************   
+    // Process all records for source (internal value)
+    processAllRecords;
+
+    
+    // Process all records for target (internal value)
+    processAllRecordsTarget;
 
 
     /**
