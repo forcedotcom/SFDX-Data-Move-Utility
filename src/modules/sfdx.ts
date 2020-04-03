@@ -1214,7 +1214,10 @@ export class SfdxUtils {
         let fieldsToExclude = sObjectName == "Account" ? fields.filter(field => {
             return field.startsWith('Person') && field.indexOf('__c') < 0
                 || field.endsWith('__pc')
-                || ["FirstName", "LastName", "IsPersonAccount"].indexOf(field) >= 0;
+                || ["FirstName",
+                    "LastName",
+                    "IsPersonAccount",
+                    "Salutation"].indexOf(field) >= 0;
         }) : fields.filter(field => {
             return ["IsPersonAccount", "Name"].indexOf(field) >= 0;
         });
@@ -1243,6 +1246,18 @@ export class SfdxUtils {
                 outputRecords.AddRange((await updateRecordsAsync(sRec, tRec)).ToArray());
             }
         }
+
+        outputRecords.ForEach(record => {
+            fields.forEach(field => {
+                if (!record.hasOwnProperty(field)) {
+                    if (field == "Name"){
+                        record[field] = `${record["FirstName"]} ${record["LastName"]}`;
+                    } else {
+                        record[field] = null;
+                    }
+                }
+            });
+        });
 
         return outputRecords;
     }
