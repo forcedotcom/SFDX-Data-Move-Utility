@@ -1421,27 +1421,44 @@ export class SfdxUtils {
         let mockToOriginalRecordMap: Map<object, object> = new Map<object, object>();
 
         if (scriptObject.updateWithMockData) {
-            let mockFields: Map<string, string> = new Map<string, string>();
+            let mockFields: Map<string, {
+                fn: string,
+                regIncl: string,
+                regExcl: string
+            }> = new Map<string, {
+                fn: string,
+                regIncl: string,
+                regExcl: string
+            }>();
             task.taskFields.ForEach(field => {
                 if (field.mockPattern) {
                     let fn = field.mockPattern;
                     if (SfdmModels.CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
                         fn = fn.replace(/\(/, `('${field.name}',`);
                     }
-                    mockFields.set(field.name, fn);
+                    mockFields.set(field.name, {
+                        fn,
+                        regExcl: field.mockExcludedRegex,
+                        regIncl: field.mockIncludedRegex
+                    });
                 }
             });
             MockGenerator.resetCounter();
             records.ForEach((record, index) => {
                 let obj2 = Object.assign({}, record);
                 [...mockFields.keys()].forEach(name => {
-                    let casualFn = mockFields.get(name);
-                    if (casualFn == "ids") {
-                        obj2[name] = ids.ElementAt(index);
-                    } else {
-                        obj2[name] = eval(`casual.${casualFn}`);
-                    }
-
+                    let mockField = mockFields.get(name);
+                    let value = String(obj2[name]);
+                    try {
+                        if ((!mockField.regExcl || (mockField.regExcl && !(new RegExp(mockField.regExcl, 'ig').test(value))))
+                            && (!mockField.regIncl || (mockField.regIncl && (new RegExp(mockField.regIncl, 'ig').test(value))))) {
+                            if (mockField.fn == "ids") {
+                                obj2[name] = ids.ElementAt(index);
+                            } else {
+                                obj2[name] = eval(`casual.${mockField.fn}`);
+                            }
+                        }
+                    } catch (ex) { }
                 });
                 mockToOriginalRecordMap.set(obj2, record);
             });

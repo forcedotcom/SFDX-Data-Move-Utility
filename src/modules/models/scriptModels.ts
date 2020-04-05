@@ -105,7 +105,7 @@ export class Script {
     createTargetCSVFiles: boolean = true;
 
 
-  
+
     /**
      * If true the source files will be uploaded
      * to the Target as is - with all values
@@ -251,16 +251,17 @@ export class ScriptObject {
      *  that have already queried before.
      *  ex. parent object:  SELECT Id FROM Account LIMIT 1
      *      child  object:  SELECT Id, Account__c FROM Child__c WHERE Account__c IN ( [--Records result of the query above--])
-     */ allRecords: boolean = true;
+     */
+    allRecords: boolean = true;
 
-    
+
 
 
     // ************************************************   
     // Process all records for source (internal value)
     processAllRecords;
 
-    
+
     // Process all records for target (internal value)
     processAllRecordsTarget;
 
@@ -376,6 +377,8 @@ export class ScriptObject {
 export class ScriptMockField {
     name: string;
     pattern: string;
+    excludedRegex: string;
+    includedRegex: string;
 }
 
 

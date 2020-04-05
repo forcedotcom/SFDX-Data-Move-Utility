@@ -86,7 +86,9 @@ export class Task {
                 name: field.name,
                 originalScriptField: field,
                 task: this,
-                mockPattern: mp ? mp.pattern : ""
+                mockPattern: mp ? mp.pattern : "",
+                mockExcludedRegex: mp ? mp.excludedRegex : "",
+                mockIncludedRegex: mp ? mp.includedRegex : "",
             });
             this.taskFields.Add(ef);
         });
@@ -339,6 +341,8 @@ export class TaskField {
     parentTaskField: TaskField;
     isParentTaskBefore: boolean = false;
     mockPattern: string;
+    mockIncludedRegex: string;
+    mockExcludedRegex: string;
 
 
 
