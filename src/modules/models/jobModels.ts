@@ -200,7 +200,8 @@ export class Task {
                     if (isParentSObjectBefore) {
                         if (isSource) {
 
-                            if (taskField.parentTaskField.originalScriptField.sObject.processAllRecords) {
+                            if (taskField.parentTaskField.originalScriptField.sObject.processAllRecords
+                                && !taskField.parentTaskField.originalScriptField.sObject.isLimitedQuery) {
                                 skipLastQuery = true;
                                 continue;
                             }

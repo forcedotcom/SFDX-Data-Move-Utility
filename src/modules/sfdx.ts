@@ -958,41 +958,6 @@ export class SfdxUtils {
 
         let hasChildTasks = task.job.tasks.Any(x => x.scriptObject.referencedScriptObjectsMap.has(task.sObjectName));
 
-        function mockRecordsData(sourceRecords: List<object>, ids: List<String>): Map<object, object> {
-            let m: Map<object, object> = new Map<object, object>();
-            if (scriptObject.updateWithMockData) {
-                let mockFields: Map<string, string> = new Map<string, string>();
-                task.taskFields.ForEach(field => {
-                    if (field.mockPattern) {
-                        let fn = field.mockPattern;
-                        if (SfdmModels.CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
-                            fn = fn.replace(/\(/, `('${field.name}',`);
-                        }
-                        mockFields.set(field.name, fn);
-                    }
-                });
-                MockGenerator.resetCounter();
-                sourceRecords.ForEach((record, index) => {
-                    let obj2 = Object.assign({}, record);
-                    [...mockFields.keys()].forEach(name => {
-                        let casualFn = mockFields.get(name);
-                        if (casualFn == "ids") {
-                            obj2[name] = ids.ElementAt(index);
-                        } else {
-                            obj2[name] = eval(`casual.${casualFn}`);
-                        }
-
-                    });
-                    m.set(obj2, record);
-                });
-            } else {
-                sourceRecords.ForEach(record => {
-                    m.set(record, record);
-                });
-            }
-            return m;
-        }
-
         async function insertRecordsAsync(sourceRecords: List<object>) {
 
             // Omit fields below during Insert only
@@ -1003,9 +968,7 @@ export class SfdxUtils {
             }
 
             let recordsToInsert = CommonUtils.cloneList(sourceRecords.Select(x => deepClone.deepCloneSync(x)), omitFieldsDuringInsert);
-
-            let ids = sourceRecords.Select(x => x["Id"]);
-            let map = mockRecordsData(recordsToInsert, ids);
+            let map = _this.mockRecords(scriptObject, task, recordsToInsert);
             let inputRecs = [...map.keys()];
             let recs = await _this.insertAsync(sObjectName, new List<object>(inputRecs), sOrg, apiCalloutStatusCallback);
             let insertedRecords = new List<object>();
@@ -1178,7 +1141,7 @@ export class SfdxUtils {
                             verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                         }));
                     }
-                    let m = mockRecordsData(recordToUpdate3, ids);
+                    let m = _this.mockRecords(scriptObject, task, recordToUpdate3, ids);
                     let recs = [...m.keys()];
                     if (task.scriptObject.targetRecordsFilter) {
                         recs = await _this._filterRecords(task.scriptObject.targetRecordsFilter, recs);
@@ -1250,7 +1213,7 @@ export class SfdxUtils {
         outputRecords.ForEach(record => {
             fields.forEach(field => {
                 if (!record.hasOwnProperty(field)) {
-                    if (field == "Name"){
+                    if (field == "Name") {
                         record[field] = `${record["FirstName"]} ${record["LastName"]}`;
                     } else {
                         record[field] = null;
@@ -1436,6 +1399,59 @@ export class SfdxUtils {
     }
 
 
+    /**
+     * Replaces original record values with anonimous / masked values
+     * Returns map between the masked record to the original record
+     *
+     * @static
+     * @param {SfdmModels.ScriptObject} scriptObject Script object that the records belong to it
+     * @param {SfdmModels.Task} task Task object that the records belong to it
+     * @param {List<object>} records Records to mask
+     * @param {List<String>} [ids] (Optional) The array of the record ids for the records 
+     *                                (in case that the source records are mssing ids)
+     * @returns {Map<object, object>} Map between the masked record to the original record
+     * @memberof SfdxUtils 
+     */
+    static mockRecords(scriptObject: SfdmModels.ScriptObject,
+        task: SfdmModels.Task,
+        records: List<object>,
+        ids?: List<String>): Map<object, object> {
+
+        ids = ids || records.Select(x => x["Id"]);
+        let mockToOriginalRecordMap: Map<object, object> = new Map<object, object>();
+
+        if (scriptObject.updateWithMockData) {
+            let mockFields: Map<string, string> = new Map<string, string>();
+            task.taskFields.ForEach(field => {
+                if (field.mockPattern) {
+                    let fn = field.mockPattern;
+                    if (SfdmModels.CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
+                        fn = fn.replace(/\(/, `('${field.name}',`);
+                    }
+                    mockFields.set(field.name, fn);
+                }
+            });
+            MockGenerator.resetCounter();
+            records.ForEach((record, index) => {
+                let obj2 = Object.assign({}, record);
+                [...mockFields.keys()].forEach(name => {
+                    let casualFn = mockFields.get(name);
+                    if (casualFn == "ids") {
+                        obj2[name] = ids.ElementAt(index);
+                    } else {
+                        obj2[name] = eval(`casual.${casualFn}`);
+                    }
+
+                });
+                mockToOriginalRecordMap.set(obj2, record);
+            });
+        } else {
+            records.ForEach(record => {
+                mockToOriginalRecordMap.set(record, record);
+            });
+        }
+        return mockToOriginalRecordMap;
+    }
 
 
 
@@ -1657,6 +1673,7 @@ export class SfdxUtils {
                 SfdmModels.CONSTANTS.TARGET_CSV_FILE_SUBDIR);
         }
     }
+
 
 
 

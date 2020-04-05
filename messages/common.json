@@ -62,7 +62,7 @@
 
     "jobStarted": "[Job# %s:%s] {%s} The job has been started.",
     "batchStarted": "[Batch# %s:%s] {%s} The batch has been started.",
-    "jobStopped": "[Job# %s:%s] {%s} The job has been successfully completed.",
+    "jobStopped": "[Job# %s:%s] {%s} The job has been finished.",
     "batchDataUploading": "[Job# %s:%s] {%s} Batch data uploading... This may take a while.",
     "batchDataProcessing": "[Job# %s:%s] {%s} Data upload has been completed. Batch data processing...",
     "jobResultsRetrieving": "[Job# %s:%s] {%s} Batch data processing has been completed. Retrieving results... This may take a while.",

@@ -75,11 +75,18 @@ export class CommonUtils {
      * @returns List
      */
     public static cloneList(objects: List<object>, propsToExclude: Array<string> = new Array<string>()): List<object> {
-        var props = propsToExclude.map((prop) => {
-            return "'" + prop + "': " + prop.replace(/[\.]/g, "");
-        }).join(",");
-        var func = new Function("item", `return (({ ${props}, ...x }) => ({ ...x }))(item)`);
-        return objects.Select(item => func(item));
+        return objects.Select(obj => {
+            let o = Object.assign({}, obj);
+            propsToExclude.forEach(prop => {
+                delete o[prop];
+            });
+            return o;
+        });
+        // var props = propsToExclude.map((prop) => {
+        //     return "'" + prop + "': " + prop.replace(/[\.]/g, "");
+        // }).join(",");
+        // var func = new Function("item", `return (({ ${props}, ...x }) => ({ ...x }))(item)`);
+        // return objects.Select(item => func(item));
     }
 
 
@@ -378,7 +385,7 @@ export class CommonUtils {
                 }
             }),
             path: filePath,
-            encoding : "utf8"
+            encoding: "utf8"
         });
         return csvWriter.writeRecords(array);
     }

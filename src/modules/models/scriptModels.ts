@@ -215,6 +215,12 @@ export class ScriptObject {
      */
     updateWithMockData: boolean = false;
 
+    /**
+     * when true and CSV files is data target - exports masked values into the CSV files,
+     * otherwise original values are exported.
+     */
+    mockCSVData: boolean = false;
+
 
     /**
      * Expression that allows to filter target rows before actual data changing on the Target org
@@ -245,7 +251,7 @@ export class ScriptObject {
      *  that have already queried before.
      *  ex. parent object:  SELECT Id FROM Account LIMIT 1
      *      child  object:  SELECT Id, Account__c FROM Child__c WHERE Account__c IN ( [--Records result of the query above--])
-     */ allRecords: boolean = false;
+     */ allRecords: boolean = true;
 
     
 
@@ -279,6 +285,8 @@ export class ScriptObject {
     parsedDeleteQuery: Query;
 
     readonlyExternalIdFields: Array<string> = Array<string>();
+
+    oldExternalId: string;
 
     /**
      * SObject descibtion for the source org

@@ -340,8 +340,15 @@ export class RunCommand {
         // Parse queries
         this.script.objects.forEach(object => {
 
+            object.oldExternalId = object.externalId;
+
             if ((typeof object.operation == "string") == true) {
                 object.operation = <SfdmModels.Enums.OPERATION>SfdmModels.Enums.OPERATION[object.operation.toString()];
+            }
+
+            // Always put explicit external id of Id for Insert operation...
+            if (object.operation == SfdmModels.Enums.OPERATION.Insert) {
+                object.externalId = "Id";
             }
 
             try {
@@ -477,6 +484,17 @@ export class RunCommand {
                     object.sObjectDescribeTarget = await SfdxUtils.describeSObjectAsync(object.name, this.targetOrg, this.sourceOrg.sObjectsMap);
                 } catch (e) {
                     throw new SfdmModels.OrgMetadataError(this.logger.getResourceString(RUN_RESOURCES.objectTargetDoesNotExist, object.name));
+                }
+            }
+
+
+            // Remove old external id field if it is readonly field
+            if (object.oldExternalId != object.externalId) {
+                let oldExternalIdField = object.sObjectDescribe.fieldsMap.get(object.oldExternalId);
+                if (oldExternalIdField && oldExternalIdField.isReadonly) {
+                    object.parsedQuery.fields = object.parsedQuery.fields.filter((f: SOQLField) => {
+                        return f.field != object.oldExternalId;
+                    });
                 }
             }
 
@@ -1317,45 +1335,53 @@ export class RunCommand {
 
             if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
 
-            if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly || task.scriptObject.allRecords) {
+            if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Readonly
+                || task.scriptObject.allRecords
+                || task.scriptObject.isExtraObject) {
 
                 task.scriptObject.processAllRecords = true;
                 task.scriptObject.processAllRecordsTarget = true;
 
             } else {
 
-                if (!task.scriptObject.isExtraObject) {
-
-                    try {
-                        // Source rules -----------------------------
-                        if (typeof task.scriptObject.processAllRecords == "undefined") {
-                            task.scriptObject.processAllRecords = task.sourceTotalRecorsCount > SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_FROM
-                                || task.targetTotalRecorsCount < SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_TO;
-                        }
-                        let hasRelatedObjectWithConditions = task.taskFields.Any(x => x.parentTaskField
-                            && (
-                                x.parentTaskField.originalScriptField.sObject.parsedQuery.limit > 0   // Any field is referenced to object with "limit"
-                                || !!x.parentTaskField.originalScriptField.sObject.parsedQuery.where  // Any field is referenced to object with "where"
-                                || task.scriptObject.parsedQuery.limit > 0                            // Any field is referenced to another object & this object has "limit" 
-                                || !!task.scriptObject.parsedQuery.where                              // Any field is referenced to another object & this object has "where"                                 
-                            ));
-                        if (hasRelatedObjectWithConditions) {
-                            task.scriptObject.processAllRecords = false;
-                        }
-
-                        // Target rules -----------------------------
-                        task.scriptObject.processAllRecordsTarget = task.scriptObject.processAllRecords;
-                        if (task.scriptObject.isComplexExternalId) {
-                            task.scriptObject.processAllRecordsTarget = true;
-                        }
-
-                    } catch (e) {
-                        throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
-                    }
-
+                task.scriptObject.processAllRecords = false;
+                if (task.scriptObject.isComplexExternalId) {
+                    task.scriptObject.processAllRecordsTarget = true;
                 } else {
-                    task.scriptObject.processAllRecordsTarget = task.scriptObject.processAllRecords;
+                    task.scriptObject.processAllRecordsTarget = false;
                 }
+                // if (!task.scriptObject.isExtraObject) {
+
+                //     try {
+                //         // Source rules -----------------------------
+                //         if (typeof task.scriptObject.processAllRecords == "undefined") {
+                //             task.scriptObject.processAllRecords = task.sourceTotalRecorsCount > SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_FROM
+                //                 || task.targetTotalRecorsCount < SfdmModels.CONSTANTS.ALL_RECORDS_FLAG_AMOUNT_TO;
+                //         }
+                //         let hasRelatedObjectWithConditions = task.taskFields.Any(x => x.parentTaskField
+                //             && (
+                //                 x.parentTaskField.originalScriptField.sObject.parsedQuery.limit > 0   // Any field is referenced to object with "limit"
+                //                 || !!x.parentTaskField.originalScriptField.sObject.parsedQuery.where  // Any field is referenced to object with "where"
+                //                 || task.scriptObject.parsedQuery.limit > 0                            // Any field is referenced to another object & this object has "limit" 
+                //                 || !!task.scriptObject.parsedQuery.where                              // Any field is referenced to another object & this object has "where"                                 
+                //             ));
+                //         if (hasRelatedObjectWithConditions) {
+                //             task.scriptObject.processAllRecords = false;
+                //         }
+
+                //         // Target rules -----------------------------
+                //         task.scriptObject.processAllRecordsTarget = task.scriptObject.processAllRecords;
+                //         if (task.scriptObject.isComplexExternalId) {
+                //             task.scriptObject.processAllRecordsTarget = true;
+                //         }
+
+                //     } catch (e) {
+                //         throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
+                //     }
+
+                // } else {
+                //     task.scriptObject.processAllRecordsTarget = task.scriptObject.processAllRecords;
+                // }
             }
 
 
@@ -1759,8 +1785,14 @@ export class RunCommand {
                 }
                 this.logger.infoMinimal(RUN_RESOURCES.writingToFile, task.sObjectName, objectNameToWrite);
 
+                // Data mocking
+                let sourceRecordsArray = sourceRecords.ToArray();
+                if (task.scriptObject.mockCSVData) {
+                    sourceRecordsArray = [...SfdxUtils.mockRecords(task.scriptObject, task, sourceRecords).keys()];
+                }
+
                 await SfdxUtils.writeObjectRecordsToCsvFileAsync(objectNameToWrite,
-                    sourceRecords.ToArray(),
+                    sourceRecordsArray,
                     this.targetOrg.basePath,
                     this.script.encryptDataFiles ? this.password : null);
 

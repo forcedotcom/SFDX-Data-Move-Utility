@@ -14,7 +14,7 @@ export let CONSTANTS = {
     MAX_FETCH_SIZE: 100000,
 
 
-    QUERY_BULK_API_THRESHOLD: 100000,
+    QUERY_BULK_API_THRESHOLD: 30000,
 
 
     /**
@@ -25,12 +25,12 @@ export let CONSTANTS = {
     /**
      * Used to calculate allRecords flag
      */
-    ALL_RECORDS_FLAG_AMOUNT_FROM: 2000,
+    //ALL_RECORDS_FLAG_AMOUNT_FROM: 2000,
 
     /**
      * Used to calculate allRecords flag
      */
-    ALL_RECORDS_FLAG_AMOUNT_TO: 30000,
+    //ALL_RECORDS_FLAG_AMOUNT_TO: 30000,
 
     /**
      * When displaying query in the log set the length
