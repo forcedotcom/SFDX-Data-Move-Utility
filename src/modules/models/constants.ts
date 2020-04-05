@@ -22,15 +22,6 @@ export let CONSTANTS = {
      */
     POLL_TIMEOUT: 3000000,
 
-    /**
-     * Used to calculate allRecords flag
-     */
-    //ALL_RECORDS_FLAG_AMOUNT_FROM: 2000,
-
-    /**
-     * Used to calculate allRecords flag
-     */
-    //ALL_RECORDS_FLAG_AMOUNT_TO: 30000,
 
     /**
      * When displaying query in the log set the length
@@ -66,7 +57,9 @@ export let CONSTANTS = {
 
     TARGET_CSV_FILE_POSTFIX : "_target",
 
-    TARGET_CSV_FILE_SUBDIR: "target"
+    TARGET_CSV_FILE_SUBDIR: "target",
+
+    MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row'
 
 };
 

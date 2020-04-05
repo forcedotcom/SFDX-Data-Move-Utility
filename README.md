@@ -367,6 +367,9 @@ This will skip the original account names and produce Accounts records like this
 
 
 
+Add "--row" flag to the excludedRegex or includedRegex expression (**f.ex "excludedRegex": "^DummyAccount$ --row"**) to skip checking other values and to exclude entire row on to include it if the current match is true.
+-----------
+
 You can find complete list of available patterns [here](https://www.npmjs.com/package/casual#embedded-generators )
 
 For the "pattern", omit the "casual." prefix leaving only the name of the function, for example, you can write:   *"name", city", "street", "address"* etc.

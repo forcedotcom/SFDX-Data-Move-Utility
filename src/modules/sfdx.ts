@@ -1417,49 +1417,81 @@ export class SfdxUtils {
         records: List<object>,
         ids?: List<String>): Map<object, object> {
 
+        let mockToOriginalRecordMap: Map<object, object> = new Map<object, object>();        
+        
+        if (records.Count() == 0) return mockToOriginalRecordMap;
+        
         ids = ids || records.Select(x => x["Id"]);
-        let mockToOriginalRecordMap: Map<object, object> = new Map<object, object>();
 
         if (scriptObject.updateWithMockData) {
             let mockFields: Map<string, {
                 fn: string,
                 regIncl: string,
-                regExcl: string
+                regExcl: string,
+                disallowMockAllRecord: boolean,
+                allowMockAllRecord: boolean
             }> = new Map<string, {
                 fn: string,
                 regIncl: string,
-                regExcl: string
+                regExcl: string,
+                disallowMockAllRecord: boolean,
+                allowMockAllRecord: boolean
             }>();
+            let keys = Object.keys(records.ElementAt(0));
             task.taskFields.ForEach(field => {
-                if (field.mockPattern) {
+                if (keys.indexOf(field.name) >= 0 && field.mockPattern) {
                     let fn = field.mockPattern;
                     if (SfdmModels.CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
                         fn = fn.replace(/\(/, `('${field.name}',`);
                     }
+                    field.mockExcludedRegex = field.mockExcludedRegex || '';
+                    field.mockIncludedRegex = field.mockIncludedRegex || '';
                     mockFields.set(field.name, {
                         fn,
-                        regExcl: field.mockExcludedRegex,
-                        regIncl: field.mockIncludedRegex
+                        regExcl: field.mockExcludedRegex.split(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
+                        regIncl: field.mockIncludedRegex.split(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
+                        disallowMockAllRecord: field.mockExcludedRegex.indexOf(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG) >= 0,
+                        allowMockAllRecord: field.mockIncludedRegex.indexOf(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG) >= 0,
                     });
                 }
             });
             MockGenerator.resetCounter();
             records.ForEach((record, index) => {
                 let obj2 = Object.assign({}, record);
+                let doNotMock = false;
+                let mockAllRecord = false;
+                let m: Map<string, boolean> = new Map<string, boolean>();
                 [...mockFields.keys()].forEach(name => {
-                    let mockField = mockFields.get(name);
-                    let value = String(obj2[name]);
-                    try {
-                        if ((!mockField.regExcl || (mockField.regExcl && !(new RegExp(mockField.regExcl, 'ig').test(value))))
-                            && (!mockField.regIncl || (mockField.regIncl && (new RegExp(mockField.regIncl, 'ig').test(value))))) {
+                    if (!doNotMock) {
+                        let mockField = mockFields.get(name);
+                        let value = String(obj2[name]);
+                        let excluded = mockField.regExcl && (new RegExp(mockField.regExcl, 'ig').test(value));
+                        let included = mockField.regIncl && (new RegExp(mockField.regIncl, 'ig').test(value));
+                        if (included && mockField.allowMockAllRecord) {
+                            mockAllRecord = true;
+                        }
+                        if (excluded && mockField.disallowMockAllRecord) {
+                            doNotMock = true;
+                        } else {
+                            if (mockAllRecord || (!mockField.regExcl || !excluded) && (!mockField.regIncl || included)) {
+                                m.set(name, true);
+                            }
+                        }
+                    }
+                });
+                if (!doNotMock) {
+                    [...mockFields.keys()].forEach(name => {
+                        if (mockAllRecord || m.has(name)) {
+                            let mockField = mockFields.get(name);
                             if (mockField.fn == "ids") {
                                 obj2[name] = ids.ElementAt(index);
                             } else {
                                 obj2[name] = eval(`casual.${mockField.fn}`);
                             }
                         }
-                    } catch (ex) { }
-                });
+                    });
+                }
+
                 mockToOriginalRecordMap.set(obj2, record);
             });
         } else {
