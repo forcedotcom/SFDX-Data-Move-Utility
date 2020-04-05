@@ -208,6 +208,8 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | **ScriptObject**.mockFields          | **Array (MockField[])**    |                         | Defines SObject fields that need to update with a fake data (see mocking feature below) |
 | **MockField**.name                   | String                     | Mandatory               | The name of the field to mock (see mocking feature below)    |
 | **MockField**.pattern                | String                     | Mandatory               | The pattern to create mock data for this field (see mocking feature below) |
+| **MockField**.excludedRegex          | String                     | Optional                | The JS regex expression to **exclude** the values that **should not** be masked. |
+| **MockField**.includedRegex          | String                     | Optional                | The JS regex expression to **include** the only values that **should** be masked. When defined -  other values are not matched the rule will not be masked. |
 | promptOnMissingParentObjects         | Boolean                    | Optional, Default true  | If  parent lookup or master-detail record was not found for the some of the child records - it will propmt or will not prompt user to break or to continue the migration.<br /><br />*It allows user to monitor the job and abort it when some data is missing.* |
 | allOrNone                            | Boolean                    | Optional, Default false | Abort job execution on any failed record or continue working anyway.<br />If true the execution will stop or the user will be prompted to stop depend on promptOnUpdateError parameter. <br /><br />*(**Note for REST API only:**  if true except of abort of script execution depend on promptOnUpdateError parameter - any failed records in a non-successful API call cause all changes made within this call to be rolled back. Record changes aren't committed unless all records are processed successfully)* |
 | promptOnUpdateError                  | Boolean                    | Optional, Default true  | When some records failed or when any other error occurred during data update prompt the user to stop the execution or to continue. |
@@ -319,6 +321,7 @@ Below is the example of script that will generate a sequence of random fake name
       { ... },
       { ... },
       {
+          
           "query": "SELECT Id, Name FROM Account",
           "operation": "Insert",
           "externalId": "Name",
@@ -326,7 +329,9 @@ Below is the example of script that will generate a sequence of random fake name
           "mockFields": [
                 {
                     "name": "Name",
-                    "pattern": "name"
+                    "pattern": "name",
+                    "excludedRegex": "^DummyAccount$",
+                    "includedRegex": "Account\\sTo\\Mask"
                 }
           ]    
       }
