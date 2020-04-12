@@ -30,7 +30,7 @@ import fs = require('fs');
 
 import casual = require("casual");
 import { COMMON_RESOURCES, MessageUtils, LOG_MESSAGE_VERBOSITY } from './messages';
-import { BulkAPI2sf, RESULT_STATUSES } from './bulkapi2sf';
+import { BulkApi2sf, RESULT_STATUSES } from './bulkApi2Sf2';
 const alasql = require("alasql");
 
 MockGenerator.createCustomGenerators(casual);
@@ -1949,7 +1949,7 @@ export class SfdxUtils {
                 }> {
 
                 let cn = sOrg.getConnection();
-                let job = new BulkAPI2sf(String(cn.version), cn.accessToken, cn.instanceUrl);
+                let job = new BulkApi2sf(String(cn.version), cn.accessToken, cn.instanceUrl);
 
                 let csvChunks = CommonUtils.createCsvStringsFromArray(records,
                     CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
@@ -1976,7 +1976,7 @@ export class SfdxUtils {
 
                 return new Promise(async (resolve, reject) => {
 
-                    let bulkApiService = <BulkAPI2sf>job;
+                    let bulkApiService = <BulkApi2sf>job;
                     let csvString = records.csvString;
                     records = records.records;
 

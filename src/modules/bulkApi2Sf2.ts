@@ -113,7 +113,7 @@ export class BulkAPIResult {
 
 
 
-export class BulkAPI2sf {
+export class BulkApi2sf {
 
     instanceUrl: string;
     accessToken: string;
