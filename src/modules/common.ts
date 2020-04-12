@@ -801,11 +801,11 @@ export class CommonUtils {
         let keys = Object.keys(object).filter(k => propsToExclude.indexOf(k) < 0).sort();
         let str = keys.map(k => {
             let v = object[k];
-            return v == "TRUE" ? "true"
-                : v == "FALSE" ? "false"
+            return v == "TRUE" || v == true ? "true"
+                : v == "FALSE" || v == false ? "false"
                     : !isNaN(v) ? String(+v)
-                        : !isNaN(Date.parse(String(v))) ? String(Date.parse(String(v)))
-                            : !v || v == "#N/A" ? '' : String(v);
+                        : !isNaN(Date.parse(v)) ? String(Date.parse(v))
+                            : !v || v == "#N/A" ? '' : String(v).replace(/[\n\r\s]/gi, '');
         }).join('');
         return this.getStringHashcode(str);
     }
