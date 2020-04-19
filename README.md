@@ -4,6 +4,10 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
 
 ----
 
+**You can now find [here](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) the new desktop GUI application that will help you to manage the plugin configuration files and to run and monitor the migration process, that will make usage of this Plugin simple and convenient.**
+
+----
+
 * **New in version 2.6.0**  - Plugin will use for CRUD by default the <u>Salesforce Bulk Api v2.0</u> in Beta mode. 
   If you are experiencing any issue with the current v2.0 implementation, let us know. 
   You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.
@@ -12,7 +16,6 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
 
 ----
 
-<!--***You can now find [here](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) the new desktop GUI application that will help you to manage the plugin configuration files and to run and monitor the migration process, that will make usage of this Plugin simple and convenient.***-->
 
 
 
