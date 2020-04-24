@@ -924,7 +924,7 @@ export class RunCommand {
                         const taskField = task.taskFields.ElementAt(j);
                         const columnExists = Object.keys(csvColumnsRow[0]).some(columnName => {
                             let c = columnName.split(SfdmModels.CONSTANTS.CSV_COMPLEX_FIELDS_COLUMN_SEPARATOR);
-                            if (c.some(x => x == columnName)) {
+                            if (c.some(x => x == taskField.name)) {
                                 return true;
                             } else {
                                 return false

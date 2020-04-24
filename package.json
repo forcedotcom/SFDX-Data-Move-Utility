@@ -1,7 +1,7 @@
 {
     "name": "sfdmu",
     "description": "SFDX Plugin to populate your org (scratch/development/sandbox/production) with data imported from another org. Supports delete,insert,update,upsert and more operations for multiple related sObjects.",
-    "version": "2.7.35",
+    "version": "2.7.36",
     "author": "hknokh@salesforce.com",
     "bugs": "https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues",
     "dependencies": {
@@ -54,7 +54,12 @@
     "homepage": "https://github.com/forcedotcom/SFDX-Data-Move-Utility",
     "keywords": [
         "sfdx-plugin",
-        "data migration"
+        "data migration",
+        "salesforce data migration",
+        "migrating salesforce data",
+        "salesforce data migration tool",
+        "salesforce data logader",
+        "sfdx data loader"
     ],
     "license": "BSD-3-Clause",
     "oclif": {
