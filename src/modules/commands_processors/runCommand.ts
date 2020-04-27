@@ -17,7 +17,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { MessageUtils, COMMON_RESOURCES, LOG_MESSAGE_VERBOSITY } from "../messages";
+import { MessageUtils, COMMON_RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/messages";
 
 
 
