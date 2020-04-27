@@ -218,6 +218,7 @@ export class MessageUtils {
 
     verboseFlag: boolean;
     noPromptFlag: boolean;
+    noWarningsFlag: boolean;
 
 
     /**
@@ -245,6 +246,7 @@ export class MessageUtils {
         quietFlag: boolean,
         jsonFlag: boolean,
         noPromptFlag: boolean,
+        noWarningsFlag: boolean,
         fileLogFlag: boolean) {
 
         this.commonMessages = commonMessages;
@@ -254,7 +256,7 @@ export class MessageUtils {
         this.jsonFlag = jsonFlag;
         this.verboseFlag = verboseFlag;
         this.noPromptFlag = noPromptFlag;
-
+        this.noWarningsFlag = noWarningsFlag;
 
         this.startTime = new Date();
 
@@ -515,7 +517,7 @@ export class MessageUtils {
                 break;
 
             case LOG_MESSAGE_TYPE.WARN:
-                if (allowUxOutput) {
+                if (allowUxOutput && !this.noWarningsFlag) {
                     let m = <string>uxLogMessage || "";
                     if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.VERBOSE && m.trim()) {
                         uxOutput = this.getResourceString(COMMON_RESOURCES.loggerWarnStringWithDate, dateString, <string>uxLogMessage);

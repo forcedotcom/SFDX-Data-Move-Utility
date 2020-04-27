@@ -551,6 +551,17 @@ export class RunCommand {
                 scriptFieldsList.Add(<SOQLField>f);
             }
 
+            // if (object.name == "Lead") {
+            //     let f = [
+            //         <SOQLField>getComposedField("ConvertedContactId"),
+            //         <SOQLField>getComposedField("ConvertedAccountId"),
+            //         <SOQLField>getComposedField("ConvertedOpportunityId")
+            //     ];
+            //     object.parsedQuery.fields = object.parsedQuery.fields.concat(f);
+            //     scriptFieldsList.AddRange(f);
+            // }
+
+
             // Add filter by record type
             if (scriptFieldsList.Any(x => (<SOQLField>x).field == "RecordTypeId")
                 || scriptFieldsList.Any(x => (<SOQLField>x).field == "RecordType.Id")) {
@@ -1570,10 +1581,10 @@ export class RunCommand {
         // Step 2 PASS 2 **************************
         this.logger.infoMinimal(RUN_RESOURCES.newLine);
         this.logger.headerMinimal(RUN_RESOURCES.retrievingData, `(${this.logger.getResourceString(RUN_RESOURCES.Step2)})`);
-        
+
         let _this = this;
 
-        async function _retrieveTaskRecords2(task: SfdmModels.Task, addSelfReferencedRecords: boolean) : Promise<void> {
+        async function _retrieveTaskRecords2(task: SfdmModels.Task, addSelfReferencedRecords: boolean): Promise<void> {
 
             // Adds source self references ****************
             async function addSelfReferencedRecordsAsync(): Promise<void> {
@@ -1717,10 +1728,10 @@ export class RunCommand {
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
-            
+
 
             if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
-            
+
             await _retrieveTaskRecords2(task, true);
 
         }
@@ -1729,9 +1740,9 @@ export class RunCommand {
         for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
-            
+
             if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
-            
+
             await _retrieveTaskRecords2(task, false);
 
         }

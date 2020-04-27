@@ -494,7 +494,7 @@ export class SfdxUtils {
                 if (apiCalloutStatusCallback) {
                     apiCalloutStatusCallback(new ApiCalloutStatus({
                         message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingRestApi),
-                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                     }));
                 }
 
@@ -553,7 +553,7 @@ export class SfdxUtils {
                                 sObjectName,
                                 String(progress.numberRecordsProcessed),
                                 String(progress.numberRecordsFailed));
-                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                             apiCalloutStatusCallback(progress);
                         }
                         resolve(result.length);
@@ -652,7 +652,7 @@ export class SfdxUtils {
                 if (apiCalloutStatusCallback) {
                     apiCalloutStatusCallback(new ApiCalloutStatus({
                         message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingRestApi),
-                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                     }));
                 }
 
@@ -712,7 +712,7 @@ export class SfdxUtils {
                                 sObjectName,
                                 String(progress.numberRecordsProcessed),
                                 String(progress.numberRecordsFailed));
-                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                             apiCalloutStatusCallback(progress);
                         }
                         resolve(result.length);
@@ -814,7 +814,7 @@ export class SfdxUtils {
                 if (apiCalloutStatusCallback) {
                     apiCalloutStatusCallback(new ApiCalloutStatus({
                         message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingRestApi),
-                        verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                        verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                     }));
                 }
 
@@ -878,7 +878,7 @@ export class SfdxUtils {
                                 sObjectName,
                                 String(progress.numberRecordsProcessed),
                                 String(progress.numberRecordsFailed));
-                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                             apiCalloutStatusCallback(progress);
                         }
                         resolve(result.length);
@@ -1801,7 +1801,7 @@ export class SfdxUtils {
                             if (showStartMessage) {
                                 apiCalloutStatusCallback(new ApiCalloutStatus({
                                     message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingBulkApi, bulkApiVersion),
-                                    verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                                    verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                                 }));
                                 apiCalloutStatusCallback(new ApiCalloutStatus({
                                     message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.jobStarted, job.id, operation, sObjectName),
@@ -1890,7 +1890,7 @@ export class SfdxUtils {
                                     batch.id,
                                     String(progress.numberRecordsFailed));
                                 progress.message = progress.error;
-                                progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                                progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                                 apiCalloutStatusCallback(progress);
                             }
 
@@ -1908,7 +1908,7 @@ export class SfdxUtils {
                                     sObjectName,
                                     String(progress.numberRecordsProcessed),
                                     String(progress.numberRecordsFailed));
-                                progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                                progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                                 apiCalloutStatusCallback(progress);
                             }
                         }
@@ -1983,7 +1983,7 @@ export class SfdxUtils {
                     if (showStartMessage) {
                         apiCalloutStatusCallback(new ApiCalloutStatus({
                             message: MessageUtils.getMessagesString(commonMessages, COMMON_RESOURCES.usingBulkApi, bulkApiVersion),
-                            verbosity: LOG_MESSAGE_VERBOSITY.MINIMAL
+                            verbosity: LOG_MESSAGE_VERBOSITY.VERBOSE
                         }));
                     }
 
@@ -2120,7 +2120,7 @@ export class SfdxUtils {
                                 jobResult.jobId,
                                 String(numberBatchRecordsFailed));
                             progress.message = progress.error;
-                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                             apiCalloutStatusCallback(progress);
                         }
 
@@ -2138,7 +2138,7 @@ export class SfdxUtils {
                                 sObjectName,
                                 String(numberJobRecordsSucceeded),
                                 String(numberBatchRecordsFailed));
-                            progress.verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+                            progress.verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                             apiCalloutStatusCallback(progress);
                         }
                     }
