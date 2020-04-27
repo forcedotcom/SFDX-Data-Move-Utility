@@ -230,8 +230,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 **Full sfdmu:run command syntax:**
 
 ```bash
-$ sfdx sfdmu:run [-s <string>] [-p <directory>] [--encryptkey <string>] [--silent] [--version] [--filelog] [--noprompt] [-u <string>] [--apiversion <string>] [--verbose] [--concise] [--quiet] [--json] 
-[--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+$ sfdx sfdmu:run [-s <string>] [-p <directory>] [--encryptkey <string>] [--silent] [--version] [--filelog] [--noprompt] [--nowarnings] [-u <string>] [--apiversion <string>] [--verbose] [--concise] [--quiet] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 ```
 
 **Available flags:**
@@ -248,6 +247,7 @@ $ sfdx sfdmu:run [-s <string>] [-p <directory>] [--encryptkey <string>] [--silen
 | --filelog                     | [Optional] In addition stdout/stderr this flag will turn on logging into .log file. Each command run will create separated log file inside /log subdirectory related to the with the working export.json file. A verbosity control is disabled for log files: all messages will be logged, even --quite flag was specified. <br />By default file logging is disabled. |
 | --json                        | [Optional] Return formatted json instead of text to stdout as a result of the command execution. <br />Json result will also contain extended information as start time, end time, time elapsed etc. |
 | --nopromp                     | [Optional] Flag to skip all prompting for more inputs or confirmation. Command will continue using the default options. |
+| --nowarnings                  | [Optional] Flag to supress output of all warning messages to stdout. |
 | --verbose                     | [Optional] Display all command messages and errors.          |
 | --version                     | [Optional] Display the current installed version of the plugin. |
 | --loglevel                    | [Optional, default: warn] logging level for this command invocation. |
