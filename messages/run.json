@@ -35,9 +35,6 @@
     "nopromptFlagDescription": "[Optional] Skip prompt inputs or confirmation",
     "nopromptLongFlagDescription": "[Optional] Flag to skip prompting for more inputs or confirmation. Command will continue using the default options.",
 
-    "nowarningsFlagDescription": "[Optional] Supress all warning messages",
-    "nowarningsLongFlagDescription": "[Optional] Flag to supress output of all warning messages to stdout.",
-
     "jsonFlagDescription": "[Optional] Format the command output as json",
     "jsonLongFlagDescription": "[Optional] Return formatted json instead of text to stdout as a result of the command execution. Json result will also contain extended information as start time, end time, time elapsed etc.",
 

@@ -24,6 +24,9 @@ import { CommonUtils } from "../common";
 import SimpleCrypto from "simple-crypto-js";
 import { ScriptField, CONSTANTS } from "../models/index";
 import { MessageUtils, COMMON_RESOURCES, LOG_MESSAGE_VERBOSITY } from "../messages";
+//import { MetadataApiSf, METADATA_TYPES_TO_DEACTIVATE_DURING_DATA_MIGRATION } from "../metadataApiSf";
+//import { MetaApiSf, METADATA_TYPES } from "../metaApiSf";
+import { MetadataApiSf } from "../metadataApiSf";
 
 /**
  * Leys form the command resource file
@@ -551,17 +554,6 @@ export class RunCommand {
                 scriptFieldsList.Add(<SOQLField>f);
             }
 
-            // if (object.name == "Lead") {
-            //     let f = [
-            //         <SOQLField>getComposedField("ConvertedContactId"),
-            //         <SOQLField>getComposedField("ConvertedAccountId"),
-            //         <SOQLField>getComposedField("ConvertedOpportunityId")
-            //     ];
-            //     object.parsedQuery.fields = object.parsedQuery.fields.concat(f);
-            //     scriptFieldsList.AddRange(f);
-            // }
-
-
             // Add filter by record type
             if (scriptFieldsList.Any(x => (<SOQLField>x).field == "RecordTypeId")
                 || scriptFieldsList.Any(x => (<SOQLField>x).field == "RecordType.Id")) {
@@ -725,6 +717,15 @@ export class RunCommand {
      * @memberof RunCommand
      */
     async createMigrationJob() {
+        // TEST:
+        let sf: MetadataApiSf = new MetadataApiSf(this.targetOrg);
+        let names = this.script.objects.map(x => x.name);
+        await sf.listMetadataAsync(names);
+        //let f = sf.metaTypeToMetadataItemsMap.get("FlowDefinition").filter(x => x.fullName == "Case_Task_Initiator");
+        let f = sf.metaTypeToMetadataItemsMap.get("LookupFilter").filter(x => x.objectName == "Account");
+        await sf.activateOrDeactivateMetadataAsync(f, "12");
+        throw new Error("dddd");
+
 
         this.logger.infoMinimal(RUN_RESOURCES.newLine);
         this.logger.headerMinimal(RUN_RESOURCES.dataMigrationProcessStarted);
@@ -1582,9 +1583,13 @@ export class RunCommand {
         this.logger.infoMinimal(RUN_RESOURCES.newLine);
         this.logger.headerMinimal(RUN_RESOURCES.retrievingData, `(${this.logger.getResourceString(RUN_RESOURCES.Step2)})`);
 
-        let _this = this;
+        for (let i = 0; i < this.job.tasks.Count(); i++) {
 
-        async function _retrieveTaskRecords2(task: SfdmModels.Task, addSelfReferencedRecords: boolean): Promise<void> {
+            let task = this.job.tasks.ElementAt(i);
+            let _this = this;
+
+            if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
+
 
             // Adds source self references ****************
             async function addSelfReferencedRecordsAsync(): Promise<void> {
@@ -1618,8 +1623,11 @@ export class RunCommand {
             }
 
 
+
+
+
             // Query records backwards
-            if (!task.scriptObject.processAllRecords && _this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
+            if (!task.scriptObject.processAllRecords && this.sourceOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
 
                 // Get records including additional referenced fields with limiting by the parent object forwards
                 // Get the Source records               
@@ -1628,7 +1636,7 @@ export class RunCommand {
 
                 if (tempQueryList.Count() > 0) {
 
-                    _this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "source");
+                    this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "source");
 
                     let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
                     let totalRecords = 0;
@@ -1640,22 +1648,22 @@ export class RunCommand {
                         const query = el[0];
                         const field = el[1];
 
-                        _this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
+                        this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
 
                         try {
-                            _this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
-                            let records = await SfdxUtils.queryAsync(query, _this.sourceOrg);
+                            this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
+                            let records = await SfdxUtils.queryAsync(query, this.sourceOrg);
                             if (!rec.has(field))
                                 rec.set(field, new Array<object>());
 
                             rec.set(field, rec.get(field).concat(records.ToArray()));
                             totalRecords += records.Count();
                         } catch (e) {
-                            throw new SfdmModels.CommandExecutionError(_this.logger.getResourceString(RUN_RESOURCES.queryError, e));
+                            throw new SfdmModels.CommandExecutionError(this.logger.getResourceString(RUN_RESOURCES.queryError, e));
                         }
                     }
 
-                    _this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "source", String(totalRecords));
+                    this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "source", String(totalRecords));
 
                     if (totalRecords > 0) {
                         let groupedRecs = SfdxUtils.recordsMapToRecordsArray(rec, "Id");
@@ -1670,7 +1678,7 @@ export class RunCommand {
 
                     if (tempQueryList.Count() > 0) {
 
-                        _this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "target");
+                        this.logger.infoNormal(RUN_RESOURCES.queryingIn, task.sObjectName, "target");
 
                         let rec: Map<string, Array<object>> = new Map<string, Array<object>>();
                         let totalRecords = 0;
@@ -1682,11 +1690,11 @@ export class RunCommand {
                             const query = el[0];
                             const field = el[1];
 
-                            _this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
+                            this.logger.infoVerbose(RUN_RESOURCES.executingQuery, task.sObjectName, query.substr(0, SfdmModels.CONSTANTS.IN_RECORDS_QUERY_DISPLAY_LENGTH) + "...");
 
                             try {
-                                _this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
-                                let records = await SfdxUtils.queryAsync(query, _this.targetOrg);
+                                this.logger.infoVerbose(COMMON_RESOURCES.usingCollectionApi);
+                                let records = await SfdxUtils.queryAsync(query, this.targetOrg);
                                 if (!rec.has(field))
                                     rec.set(field, new Array<object>());
 
@@ -1697,7 +1705,7 @@ export class RunCommand {
                             }
                         }
 
-                        _this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "target", String(totalRecords));
+                        this.logger.infoNormal(RUN_RESOURCES.queryingFinished, task.sObjectName, "target", String(totalRecords));
 
                         if (totalRecords > 0) {
                             let groupedRecs = SfdxUtils.recordsMapToRecordsArray(rec, "Id");
@@ -1712,7 +1720,7 @@ export class RunCommand {
             let targetExtIdMap = task.targetRecordSet.get(SfdmModels.Enums.RECORDS_SET.ExtIdMap).ElementAt(0);
 
             // Add additional mapping values for self-reference field
-            if (_this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org && addSelfReferencedRecords) {
+            if (this.targetOrg.mediaType == SfdmModels.Enums.DATA_MEDIA_TYPE.Org) {
                 await addSelfReferencedRecordsAsync();
             }
 
@@ -1722,29 +1730,6 @@ export class RunCommand {
                 else
                     targetExtIdMap[record[task.scriptObject.externalId]] = record["Id"];
             });
-        }
-
-
-        for (let i = 0; i < this.job.tasks.Count(); i++) {
-
-            let task = this.job.tasks.ElementAt(i);
-
-
-            if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
-
-            await _retrieveTaskRecords2(task, true);
-
-        }
-
-
-        for (let i = 0; i < this.job.tasks.Count(); i++) {
-
-            let task = this.job.tasks.ElementAt(i);
-
-            if (task.scriptObject.operation == SfdmModels.Enums.OPERATION.Delete) continue;
-
-            await _retrieveTaskRecords2(task, false);
-
         }
 
         this.logger.infoVerbose(RUN_RESOURCES.retrievingDataCompleted, `(${this.logger.getResourceString(RUN_RESOURCES.Step2)})`);

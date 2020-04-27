@@ -164,7 +164,7 @@ export class Task {
         if (tempQuery.where && tempQuery.where.left) {
             tempQuery.where.left.openParen = (tempQuery.where.left.openParen || 0) + 1;
             tempQuery.where.left.closeParen = (tempQuery.where.left.closeParen || 0) + 1;
-            tempQuery.where.operator = "OR";
+            tempQuery.where.operator = "AND";
             tempQuery.offset = undefined;
             tempQuery.orderBy = undefined;
         }
@@ -296,9 +296,6 @@ export class Task {
                         flag = false;
                     }
 
-                } else {
-                    hasQueries = true;
-                    skipLastQuery = true;
                 }
             }
 

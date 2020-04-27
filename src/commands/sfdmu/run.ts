@@ -122,12 +122,7 @@ export default class Run extends SfdxCommand {
             description: commandMessages.getMessage("jsonFlagDescription"),
             longDescription: commandMessages.getMessage("jsonLongFlagDescription"),
             default: false
-        }),
-        nowarnings: flags.boolean({
-            description: commandMessages.getMessage("nowarningsFlagDescription"),
-            longDescription: commandMessages.getMessage("nowarningsLongFlagDescription")
-        }),
-
+        })
     };
 
 
@@ -151,7 +146,6 @@ export default class Run extends SfdxCommand {
             this.flags.quiet,
             this.flags.json,
             this.flags.noprompt,
-            this.flags.nowarnings,
             this.flags.filelog);
 
         try {
