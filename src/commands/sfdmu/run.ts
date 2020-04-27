@@ -16,7 +16,7 @@ import {
     COMMON_RESOURCES,
     COMMAND_EXIT_STATUSES
 } from "../../modules/messages";
-import { RunCommand, RUN_RESOURCES } from "../../modules/commands/runCommand";
+import { RunCommand, RUN_RESOURCES } from "../../modules/commands_processors/runCommand";
 import { CommonUtils } from "../../modules/common";
 
 
