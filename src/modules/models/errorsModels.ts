@@ -9,6 +9,10 @@
 
 /**
  * Errors in the Org metadata validation
+ * 
+ * @export
+ * @class OrgMetadataError
+ * @extends {Error}
  */
 export class OrgMetadataError extends Error {
     constructor(m: string) {
@@ -19,6 +23,10 @@ export class OrgMetadataError extends Error {
 
 /**
  * Errors occur while the command is being initializating
+ *
+ * @export
+ * @class CommandInitializationError
+ * @extends {Error}
  */
 export class CommandInitializationError extends Error {
     constructor(m: string) {
@@ -30,6 +38,10 @@ export class CommandInitializationError extends Error {
 
 /**
  * Errors during command execution
+ *
+ * @export
+ * @class CommandExecutionError
+ * @extends {Error}
  */
 export class CommandExecutionError extends Error {
     constructor(m: string) {
@@ -39,7 +51,11 @@ export class CommandExecutionError extends Error {
 
 
 /**
- * Unresolvable warning => exit
+ * Unresolvable warning
+ *
+ * @export
+ * @class UnresolvableWarning
+ * @extends {Error}
  */
 export class UnresolvableWarning extends Error {
     constructor(m: string) {
@@ -51,6 +67,10 @@ export class UnresolvableWarning extends Error {
 
 /**
  * User has stopped execution of the command
+ *
+ * @export
+ * @class CommandAbortedByUserError
+ * @extends {Error}
  */
 export class CommandAbortedByUserError extends Error {
     constructor(m: string) {
