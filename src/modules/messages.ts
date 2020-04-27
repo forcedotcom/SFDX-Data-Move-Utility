@@ -15,7 +15,9 @@ const fileLogSubdirectory = "logs/";
 
 
 /**
- * Keys from the common plugin resource file.
+ * Tokens from the common.json resource file.
+ * The shared tokens are being used by all commands of the plugin 
+ * (the sfdmu:run command and every additional commands as well)
  *
  * @export
  * @enum {number}
