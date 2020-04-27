@@ -66,5 +66,8 @@
     "batchDataUploading": "[Job# %s:%s] {%s} Batch data uploading... This may take a while.",
     "batchDataProcessing": "[Job# %s:%s] {%s} Data upload has been completed. Batch data processing...",
     "jobResultsRetrieving": "[Job# %s:%s] {%s} Batch data processing has been completed. Retrieving results... This may take a while.",
-    "jobError": "Bulk Api unexpected error"
+    "jobError": "Bulk Api unexpected error.",
+
+    "unprocessedRecord": "Unprocessed record.",
+    "invalidRecordHashcode": "Invalid record hashcode. Unable to find matching record from the response returned by the bulk job."
 }

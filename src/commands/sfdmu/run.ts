@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as SfdmModels from "../../modules/models";
+import * as models from "../../modules/models";
 
 import { FlagsConfig, SfdxCommand, flags } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
@@ -173,11 +173,11 @@ export default class Run extends SfdxCommand {
             }
 
             if (!this.flags.sourceusername) {
-                throw new SfdmModels.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername']));
+                throw new models.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername']));
             }
 
             if (!this.flags.targetusername) {
-                throw new SfdmModels.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
+                throw new models.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
             }
 
             // TODO: Call command processor
@@ -196,7 +196,7 @@ export default class Run extends SfdxCommand {
             // Exit - error
             switch (e.constructor) {
 
-                case SfdmModels.CommandInitializationError:
+                case models.CommandInitializationError:
                     logger.commandExitMessage(
                         COMMON_RESOURCES.commandInitializationErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR,
@@ -204,7 +204,7 @@ export default class Run extends SfdxCommand {
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR);
 
 
-                case SfdmModels.OrgMetadataError:
+                case models.OrgMetadataError:
                     logger.commandExitMessage(
                         COMMON_RESOURCES.orgMetadataErrorResult,
                         COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR,
@@ -212,7 +212,7 @@ export default class Run extends SfdxCommand {
                     process.exit(COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR);
 
 
-                case SfdmModels.CommandExecutionError:
+                case models.CommandExecutionError:
                     logger.commandExitMessage(
                         COMMON_RESOURCES.commandExecutionErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR,
@@ -220,14 +220,14 @@ export default class Run extends SfdxCommand {
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR);
 
 
-                case SfdmModels.UnresolvableWarning:
+                case models.UnresolvableWarning:
                     logger.commandExitMessage(
                         COMMON_RESOURCES.commandUnresolvableWarningResult,
                         COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING);
 
 
-                case SfdmModels.CommandAbortedByUserError:
+                case models.CommandAbortedByUserError:
                     logger.commandExitMessage(
                         COMMON_RESOURCES.commandAbortedByUserErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER,

@@ -10,6 +10,7 @@ import * as fs from 'fs';
 import { CommonUtils } from './common';
 import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
+import { CONSTANTS } from './statics';
 
 const fileLogSubdirectory = "logs/";
 
@@ -95,7 +96,10 @@ export enum COMMON_RESOURCES {
     batchDataUploading = "batchDataUploading",
     batchDataProcessing = "batchDataProcessing",
     jobResultsRetrieving = "jobResultsRetrieving",
-    jobError = "jobError"
+    jobError = "jobError",
+
+    unprocessedRecord = "unprocessedRecord",
+    invalidRecordHashcode = "invalidRecordHashcode"
 
 }
 
@@ -233,6 +237,7 @@ export class MessageUtils {
      * @param {boolean} quietFlag --quiet/silence command flag
      * @param {boolean} jsonFlag --json command flag
      * @param {boolean} noPromptFlag --noprompt command flag
+     * @param {boolean} noWarningsFlag --nowarnings command flag
      * @param {boolean} fileLogFlag --filelog command flag
      * @memberof MessageUtils
      */
@@ -316,7 +321,7 @@ export class MessageUtils {
 
         params.options = params.options || this.getResourceString(COMMON_RESOURCES.defaultPromptOptions);
         params.default = params.default || this.getResourceString(COMMON_RESOURCES.defaultPromptSelectedOption);
-        params.timeout = params.timeout || 6000;
+        params.timeout = params.timeout || CONSTANTS.DEFAULT_USER_PROMPT_TIMEOUT_MS;
         params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
 
         if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.NONE || this.noPromptFlag) {
@@ -855,11 +860,10 @@ export class MessageUtils {
 
 
     /**
-     *  Returns 
-     *
-     * @static
+     * @static Returns resource string from the Messages framework by the given key
+     * 
      * @param {Messages} messages The instance of Messages
-     * @param {string} key The key of the common resource
+     * @param {string} key The key of the resource
      * @param {...string[]} tokens Tokens for the resource
      * @returns {string}
      * @memberof MessageUtils

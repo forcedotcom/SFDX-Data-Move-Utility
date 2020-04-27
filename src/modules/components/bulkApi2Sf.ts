@@ -8,19 +8,13 @@
 
 import { CommonUtils } from "./common";
 import parse = require('csv-parse/lib/sync');
+import { MessageUtils, COMMON_RESOURCES } from "./messages";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
 
 
 
-/**
- *  Error messages
- */
-const ErrorMessages = {
-    UnprocessedRecord: "Unprocessed record",
-    MissingSourceTargetMapping: "Invalid record hashcode. Unable to find matching record from the response returned by the bulk job"
-}
 
 /**
  *  Available result statuses for API operations
@@ -140,6 +134,8 @@ export class BulkAPIResult {
  */
 export class BulkApi2sf {
 
+    logger: MessageUtils;
+
     instanceUrl: string;
     accessToken: string;
     endpointUrl: string;
@@ -150,10 +146,11 @@ export class BulkApi2sf {
     sourceRecordsHashmap: Map<string, object> = new Map<string, object>();
 
 
-    constructor(apiVersion: string, accessToken: string, instanceUrl: string) {
+    constructor(logger: MessageUtils, apiVersion: string, accessToken: string, instanceUrl: string) {
         this.instanceUrl = instanceUrl;
         this.accessToken = accessToken;
         this.endpointUrl = endpoint.replace('[v]', `v${apiVersion}`);
+        this.logger = logger;
     }
 
 
@@ -453,9 +450,9 @@ export class BulkApi2sf {
                                 isCreated: targetRecords && !!targetRecords["sf__Created"]
                             });
                             if (ret.isUnprocessed) {
-                                ret.errorMessage = ErrorMessages.UnprocessedRecord;
+                                ret.errorMessage = _this.logger.getResourceString(COMMON_RESOURCES.unprocessedRecord);
                             } else if (ret.isMissingSourceTargetMapping) {
-                                ret.errorMessage = ErrorMessages.MissingSourceTargetMapping;
+                                ret.errorMessage = _this.logger.getResourceString(COMMON_RESOURCES.invalidRecordHashcode);
                             }
                             return ret;
                         });
