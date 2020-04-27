@@ -18,6 +18,7 @@ import {
 } from "../../modules/messages";
 import { RunCommand, RUN_RESOURCES } from "../../modules/commands/runCommand";
 import { CommonUtils } from "../../modules/common";
+import { NamedLayoutInfo } from "jsforce";
 
 
 Messages.importMessagesDirectory(__dirname);
@@ -37,7 +38,7 @@ export default class Run extends SfdxCommand {
     public static description = commandMessages.getMessage('commandDescription');
     public static longDescription = commandMessages.getMessage('commandLongDescription');
 
-    // TODO: Add deprecation to the command if neededsfdx sfdmu:
+    // NOTE: Add deprecation to the command if neededsfdx sfdmu:
     // public static deprecated = {
     //     version: 47,
     //     to: 'force:package:create'
@@ -49,7 +50,7 @@ export default class Run extends SfdxCommand {
             description: commandMessages.getMessage('sourceusernameFlagDescription'),
             longDescription: commandMessages.getMessage('sourceusernameFlagLongDescription'),
             default: '',
-            // TODO: Add deprecation to the flag if needed
+            // NOTE: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'
@@ -60,7 +61,7 @@ export default class Run extends SfdxCommand {
             description: commandMessages.getMessage('pathFlagDescription'),
             longDescription: commandMessages.getMessage('pathFlagLongDescription'),
             default: '',
-            // TODO: Add deprecation to the flag if needed
+            // NOTE: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'
@@ -70,7 +71,7 @@ export default class Run extends SfdxCommand {
             description: commandMessages.getMessage('encryptKeyFlagDescription'),
             longDescription: commandMessages.getMessage('encryptKeyFlagLongDescription'),
             default: '',
-            // TODO: Add deprecation to the flag if needed
+            // NOTE: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'
@@ -95,7 +96,7 @@ export default class Run extends SfdxCommand {
         version: flags.boolean({
             description: commandMessages.getMessage("versionFlagDescription"),
             longDescription: commandMessages.getMessage("versionFlagLongDescription"),
-            // TODO: Add deprecation to the flag if needed
+            // NOTE: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'
@@ -108,7 +109,7 @@ export default class Run extends SfdxCommand {
         filelog: flags.boolean({
             description: commandMessages.getMessage("filelogFlagDescription"),
             longDescription: commandMessages.getMessage("filelogFlagLongDescription"),
-            // TODO: Add deprecation to the flag if needed
+            // NOTE: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'
@@ -172,8 +173,6 @@ export default class Run extends SfdxCommand {
                 // --
             }
 
-            this.command = new RunCommand(logger);
-
             if (!this.flags.sourceusername) {
                 throw new SfdmModels.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername']));
             }
@@ -182,16 +181,8 @@ export default class Run extends SfdxCommand {
                 throw new SfdmModels.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
             }
 
-            await this.command.initCommand(
-                this.flags.path,
-                this.flags.targetusername,
-                this.flags.sourceusername,
-                this.flags.encryptkey,
-                this.flags.apiversion);
-
-            await this.command.createMigrationJob();
-
-            let commandResult = await this.command.executeMigrationJob();
+            // TODO: Call command processor
+            let commandResult: any;
 
             // Exit - success
             logger.commandExitMessage(
