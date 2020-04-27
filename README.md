@@ -12,7 +12,7 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
   If you are experiencing any issue with the current v2.0 implementation, let us know. 
   You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.
 * **New in version 2.6.8** - Added support for the Bulk Query Api V1.0 for large data sets from 100000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
-* **New in version 2.7.0** - Added support for Person accounts
+* **New in version 2.7.0** - Added support for Person accounts. 
 
 ----
 
