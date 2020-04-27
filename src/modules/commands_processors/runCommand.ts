@@ -121,7 +121,15 @@ export enum RUN_RESOURCES {
  */
 export class RunCommand {
 
+    logger: MessageUtils;
 
+    constructor(logger: MessageUtils){
+        this.logger = logger;
+        
+        // TODO: Continue to develop
+        
+
+    }
 
 
 }
