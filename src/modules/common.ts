@@ -162,6 +162,198 @@ export class CommonUtils {
         while (s.length < (size || 2)) { s = "0" + s; }
         return s;
     }
-    
+
+
+
+    /**
+     * @static Transforms array of arrays to single array of objects. 
+     * The first member of the source array holds the property names.
+     *
+     * @param {Array<any>} array The array to transform in format [[],[],[]]
+     * @returns {Array<object>} 
+     * @memberof CommonUtils
+     */
+    public static transformArrayOfArrays(array: Array<any>): Array<object> {
+        if (!array || array.length == 0) return new Array<object>();
+        let props = array[0];
+        let singleArray = array.slice(1).map((subArray: any) => {
+            return subArray.reduce((item: object, subArrayItem: object, propIndex: number) => {
+                item[props[propIndex]] = subArrayItem;
+                return item;
+            }, {});
+        });
+        return singleArray;
+    }
+
+
+
+    /**
+     * @static Creates a Map for the input array of objects: 
+     * object_hashcode => object
+     * 
+     * @param {Array<object>} array Array to process
+     * @param {Array<string>} [propsToExclude] Properties to exclude from hashcode calculation when creating the map key
+     * @returns {Map<string, object>} 
+     * @memberof CommonUtils
+     */
+    public static mapArrayItemsByHashcode(array: Array<object>, propsToExclude?: Array<string>): Map<string, object> {
+        let m = new Map<string, object>();
+        array.forEach(x => {
+            let hash = String(this.getObjectHashcode(x, propsToExclude));
+            let h = hash;
+            let counter = 0;
+            while (m.has(hash)) {
+                hash = h + "_" + String(counter++);
+            }
+            m.set(hash, x);
+        });
+        return m;
+    }
+
+
+    /**
+     * Creates map for the input array of objects:
+     * object_property => object
+     *
+     * @static
+     * @param {Array<object>} array Array to process
+     * @param {Array<string>} [propertyName] Property used to build the key of the map
+     * @returns {Map<string, object>} 
+     * @memberof CommonUtils
+     */
+    public static mapArrayItemsByPropertyName(array: Array<object>, propertyName: string): Map<string, object> {
+        let m = new Map<string, object>();
+        array.forEach(x => {
+            let key = String(x[propertyName]);
+            let k = key;
+            let counter = 0;
+            while (m.has(key)) {
+                key = k + "_" + String(counter++);
+            }
+            m.set(key, x);
+        });
+        return m;
+    }
+
+
+
+
+    /**
+     * @static Compares each member of two arrays an returns  
+     * a mapping between equal objects in the both arrays detected
+     * using object hashcode
+     * 
+     * @param {Array<object>} arrayOfKeys First array - become keys for the output map
+     * @param {Array<object>} arrayOfValues Second array - become values for the output map
+     * @param {Array<string>} [propsToExclude] Properties to exclude when calculating the object hashcode
+     * @param {Map<string, object>} [mkeys] Hashmap for the array of keys if already exist
+     * @param {Map<string, object>} [mvalues] Hashmap for the array of values if already exist
+     * @returns {Map<object, object>}
+     * @memberof CommonUtils
+     */
+    public static mapArraysByHashcode(
+        arrayOfKeys: Array<object>,
+        arrayOfValues: Array<object>,
+        propsToExclude?: Array<string>,
+        mkeys?: Map<string, object>,
+        mvalues?: Map<string, object>): Map<object, object> {
+
+        arrayOfKeys = arrayOfKeys || new Array<object>();
+        arrayOfValues = arrayOfValues || new Array<object>();
+
+        if (!mkeys) {
+            mkeys = this.mapArrayItemsByHashcode(arrayOfKeys, propsToExclude);
+        }
+        if (!mvalues) {
+            mvalues = this.mapArrayItemsByHashcode(arrayOfValues, propsToExclude);
+        }
+
+        let retMap: Map<object, object> = new Map<object, object>();
+        [...mkeys.keys()].forEach(hash => {
+            retMap.set(mkeys.get(hash), mvalues.get(hash));
+        });
+
+        return retMap;
+
+    }
+
+
+
+    /**
+    * @static Created mapping between members of two arrays compared by the given object property
+    *
+    * @param {Array<object>} arrayOfKeys First array - become keys for the output map
+    * @param {Array<object>} arrayOfValues Second array - become values for the output map
+    * @param {Array<string>} [propsToExclude] Property to map the array items
+    * @param {Map<string, object>} [mkeys] Mapping for the keys array if already exist
+    * @param {Map<string, object>} [mvalues] Mapping for the values array if already exist
+    * @returns {Map<object, object>}
+    * @memberof CommonUtils
+    */
+    public static mapArraysByItemProperty(
+        arrayOfKeys: Array<object>,
+        arrayOfValues: Array<object>,
+        propertyName: string,
+        mkeys?: Map<string, object>,
+        mvalues?: Map<string, object>): Map<object, object> {
+
+        arrayOfKeys = arrayOfKeys || new Array<object>();
+        arrayOfValues = arrayOfValues || new Array<object>();
+
+        if (!mkeys) {
+            mkeys = this.mapArrayItemsByPropertyName(arrayOfKeys, propertyName);
+        }
+        if (!mvalues) {
+            mvalues = this.mapArrayItemsByPropertyName(arrayOfValues, propertyName);
+        }
+
+        let retMap: Map<object, object> = new Map<object, object>();
+        [...mkeys.keys()].forEach(key => {
+            retMap.set(mkeys.get(key), mvalues.get(key));
+        });
+
+        return retMap;
+
+    }
+
+
+
+    /**
+     * Returns numeric hashcode of the input string
+     *
+     * @static
+     * @param {string} str Input string
+     * @returns {number}
+     * @memberof CommonUtils
+     */
+    public static getStringHashcode(str: string): number {
+        return !str ? 0 : str.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
+    }
+
+
+
+    /**
+     * Creates numeric hashcode of the object based on its string representation
+     *
+     * @static
+     * @param {object} object Object to get hashcode for it
+     * @param {Array<string>} [propsToExclude=new Array<string>()] Poperties to exclude from the hashing
+     * @returns {number}
+     * @memberof CommonUtils
+     */
+    public static getObjectHashcode(object: object, propsToExclude: Array<string> = new Array<string>()): number {
+        if (!object) return 0;
+        let keys = Object.keys(object).filter(k => propsToExclude.indexOf(k) < 0).sort();
+        let str = keys.map(k => {
+            let v = object[k];
+            return v == "TRUE" || v == true ? "true"
+                : v == "FALSE" || v == false ? "false"
+                    : !isNaN(v) ? String(+v)
+                        : !isNaN(Date.parse(v)) ? String(Date.parse(v))
+                            : !v || v == "#N/A" ? '' : String(v).replace(/[\n\r\s]/gi, '');
+        }).join('');
+        return this.getStringHashcode(str);
+    }
+
 
 }

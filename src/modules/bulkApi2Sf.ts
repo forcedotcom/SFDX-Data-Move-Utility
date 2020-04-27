@@ -4,20 +4,27 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { CommonUtils } from "./common";
 
+
+import { CommonUtils } from "./common";
+import parse = require('csv-parse/lib/sync');
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
-// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
-const requestTimeout = 10 * 60 * 1000;
-import parse = require('csv-parse/lib/sync');
+const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
 
+
+
+/**
+ *  Error messages
+ */
 const ErrorMessages = {
     UnprocessedRecord: "Unprocessed record",
     MissingSourceTargetMapping: "Invalid record hashcode. Unable to find matching record from the response returned by the bulk job"
 }
 
-
+/**
+ *  Available result statuses for API operations
+ */
 export enum RESULT_STATUSES {
     Undefined = "Undefined",
     JobCreated = "JobCreated",
@@ -30,6 +37,12 @@ export enum RESULT_STATUSES {
 }
 
 
+/**
+ * Represents the record returned by the Api operation
+ *
+ * @export
+ * @class BulkApiResultRecord
+ */
 export class BulkApiResultRecord {
 
     constructor(init: Partial<BulkApiResultRecord>) {
@@ -55,6 +68,13 @@ export class BulkApiResultRecord {
 }
 
 
+
+/**
+ * Represents set of records returned by the API operation
+ *
+ * @export
+ * @class BulkAPIResult
+ */
 export class BulkAPIResult {
 
     constructor(init?: Partial<BulkAPIResult>) {
@@ -112,7 +132,12 @@ export class BulkAPIResult {
 
 
 
-
+/**
+ * Implementation of the Salesforce Bulk API v2.0
+ *
+ * @export
+ * @class BulkApi2sf
+ */
 export class BulkApi2sf {
 
     instanceUrl: string;
@@ -364,13 +389,6 @@ export class BulkApi2sf {
 
     /**
      * Returns completed job result, inculding all source and target records with status per target record.
-     * The returned records has THE SAME order like the records that the source records.
-     * 
-     * Because the target records returned by the Bulk API V2 HAVE NO 
-     * the same garanteed order like the source records, we have to use workarround. 
-     * So for Insert (there is no unque Record Id for the source record) - we are using object hashcode 
-     * to identify the same source and target record and to map between them.
-     * For Update / Delete we are directly using Record Id for the source to target mapping.
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
      * @returns {Promise<BulkAPIResult>}
@@ -434,9 +452,9 @@ export class BulkApi2sf {
                                 id: targetRecords && (targetRecords["sf__Id"] || targetRecords["Id"]),
                                 isCreated: targetRecords && !!targetRecords["sf__Created"]
                             });
-                            if (ret.isUnprocessed){
+                            if (ret.isUnprocessed) {
                                 ret.errorMessage = ErrorMessages.UnprocessedRecord;
-                            } else if (ret.isMissingSourceTargetMapping){
+                            } else if (ret.isMissingSourceTargetMapping) {
                                 ret.errorMessage = ErrorMessages.MissingSourceTargetMapping;
                             }
                             return ret;

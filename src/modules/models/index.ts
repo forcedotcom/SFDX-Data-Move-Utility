@@ -5,9 +5,3 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 export * from "./errorsModels";
-export * from "./sfdxModels";
-export * from "./scriptModels";
-export * from "./describeModels";
-export * from "./jobModels";
-export * from "./enums";
-export * from "./constants";

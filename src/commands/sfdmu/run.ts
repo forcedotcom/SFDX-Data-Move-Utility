@@ -18,7 +18,6 @@ import {
 } from "../../modules/messages";
 import { RunCommand, RUN_RESOURCES } from "../../modules/commands/runCommand";
 import { CommonUtils } from "../../modules/common";
-import { NamedLayoutInfo } from "jsforce";
 
 
 Messages.importMessagesDirectory(__dirname);
