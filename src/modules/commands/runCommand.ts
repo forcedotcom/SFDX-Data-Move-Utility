@@ -1714,7 +1714,7 @@ export class RunCommand {
         }
 
 
-        for (let i = this.job.tasks.Count() - 1; i >= 0; i--) {
+        for (let i = 0; i < this.job.tasks.Count(); i++) {
 
             let task = this.job.tasks.ElementAt(i);
             
