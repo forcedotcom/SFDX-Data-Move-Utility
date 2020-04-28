@@ -452,4 +452,20 @@ export class CommonUtils {
         }
     }
 
+
+
+    /**
+     * @static Returns array with distinct values comparing by the given object property
+     * 
+     * @param {Array<any>} array The source array
+     * @param {string} distinctByProp The property to make distinct by it
+     * @returns {Array<any>}
+     * @memberof CommonUtils
+     */
+    public static distinctArray(array: Array<any>, distinctByProp: string): Array<any> {
+        return array.filter((obj, pos, arr) => {
+            return arr.map(mapObj => mapObj[distinctByProp]).indexOf(obj[distinctByProp]) === pos;
+        });
+    }
+
 }

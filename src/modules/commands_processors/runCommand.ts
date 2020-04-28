@@ -60,7 +60,7 @@ export class RunCommand {
         this.apiVersion = apiVersion;
     }
 
-    async initializeAsync(): Promise<any> {
+    async initializeAsync(): Promise<void> {
 
         // Load script file
         if (!fs.existsSync(this.basePath)) {
@@ -88,8 +88,9 @@ export class RunCommand {
             [this.logger.getResourceString(RESOURCES.packageScript)]: this.logger.getResourceString(RESOURCES.scriptFile, filePath)
         });
 
-        //console.log(this.script.sourceOrg.accessToken);
-        //console.log(this.script.targetOrg.accessToken);
+        // Describe sobjects
+        await this.script.describeSObjectsAsync();
+
     }
 
 

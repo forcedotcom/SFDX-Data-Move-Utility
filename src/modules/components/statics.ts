@@ -19,6 +19,16 @@ export const CONSTANTS = {
     SCRIPT_FILE_NAME: 'export.json',
     MAX_CONCURRENT_PARALLEL_REQUESTS : 10,
     MAX_FETCH_SIZE: 100000,
+    
+    COMPLEX_FIELDS_QUERY_SEPARATOR: '$',
+    COMPLEX_FIELDS_QUERY_PREFIX: '$$',
+    COMPLEX_FIELDS_SEPARATOR: ';',
+
+    NOT_SUPPORTED_OBJECTS: [
+        'Profile',
+        'RecordType'   
+    ]
+
 }
 
 

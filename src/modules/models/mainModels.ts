@@ -62,7 +62,20 @@ export class Script {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
 
 
-    async setupAsync(logger: MessageUtils, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<any> {
+
+
+    /**
+     * Setup this object
+     *
+     * @param {MessageUtils} logger
+     * @param {string} sourceUsername
+     * @param {string} targetUsername
+     * @param {string} basePath
+     * @param {string} apiVersion
+     * @returns {Promise<void>}
+     * @memberof Script
+     */
+    async setupAsync(logger: MessageUtils, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<void> {
 
         // Initialize script
         this.logger = logger;
@@ -72,7 +85,7 @@ export class Script {
         this.apiVersion = apiVersion || this.apiVersion;
 
 
-        // Filter excluded objects
+        // Remove excluded objects
         this.objects = this.objects.filter(object => {
             let included = (!object.excluded || object.operation == OPERATION.Readonly);
             if (!included) {
@@ -109,13 +122,13 @@ export class Script {
             object.setup(this);
         }
 
-        // Filter unnecessary objects
-        this.objects = this.objects.filter(x => x.name != "RecordType");
+        // Remove unnecessary objects
+        this.objects = this.objects.filter(x => CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(x.name) < 0);
 
-        // Create extra objects
+        // Add extra objects
         // -- Add RecordType object  
         let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
-        if (objectsWithRecordTypeFields.length > 0 && !this.objects.some(x => x.name == "RecordType")) {
+        if (objectsWithRecordTypeFields.length > 0) {
             let object = new ScriptObject();
             this.objects.push(object);
             Object.assign(object, <ScriptObject>{
@@ -135,8 +148,18 @@ export class Script {
             });
             object.query = composeQuery(object.parsedQuery);
         }
+    }
 
 
+
+    /**
+     * Retrieve description of all objects in the script
+     *
+     * @returns {Promise<void>}
+     * @memberof Script
+     */
+    async describeSObjectsAsync(): Promise<void> {
+        this.logger.infoMinimal(RESOURCES.gettingOrgMetadata);
 
     }
 }
@@ -180,7 +203,16 @@ export class ScriptOrg {
         return this.media == DATA_MEDIA_TYPE.File;
     }
 
-    async setupAsync(): Promise<any> {
+
+
+
+    /**
+     * Setup this object
+     *
+     * @returns {Promise<void>}
+     * @memberof ScriptOrg
+     */
+    async setupAsync(): Promise<void> {
         // Setup and verify org connection
         await this._setupConnection();
     }
@@ -298,18 +330,72 @@ export class ScriptObject {
     parsedDeleteQuery: Query;
     isExtraObject: boolean = false;
 
-    get fields(): string[] {
+
+    get fieldsInQuery(): string[] {
         if (!this.parsedQuery) {
             return new Array<string>();
         }
         return this.parsedQuery.fields.map(x => (<SOQLField>x).field);
     }
 
-    get hasRecordTypeIdField(): boolean {
-        return this.fields.some(x => x == "RecordTypeId");
+    get fieldsToUpdate(): string[] {
+        if (!this.parsedQuery
+            || this.sourceFieldsMap.size == 0
+            || this.operation == OPERATION.Readonly) {
+            return new Array<string>();
+        }
+        return this.parsedQuery.fields.map(x => {
+            let name = (<SOQLField>x).field;
+            let describe = this.targetFieldsMap.get(name) && this.sourceFieldsMap.get(name);
+            if (!describe || describe.isReadonly) {
+                return null;
+            }
+            return (<SOQLField>x).field;
+        }).filter(x => !!x);
     }
 
+    get hasRecordTypeIdField(): boolean {
+        return this.fieldsInQuery.some(x => x == "RecordTypeId");
+    }
 
+    get strOperation(): string {
+        return OPERATION[this.operation];
+    }
+
+    get isLimitedQuery(): boolean {
+        return this.parsedQuery
+            && (this.parsedQuery.limit > 0 || !!this.parsedQuery.where);
+    }
+
+    get isSpecialObject(): boolean {
+        return [
+            "Group",
+            "User",
+            "RecordType"
+        ].indexOf(this.name) >= 0;
+    }
+
+    get isComplexExternalId(): boolean {
+        return this.externalId.indexOf('.') >= 0
+            || this.externalId.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
+            || this.externalId.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
+    }
+
+    // FIXME:
+    getComplexExternalId(): string {
+        return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
+            + this.externalId.replace(
+                new RegExp(`${CONSTANTS.COMPLEX_FIELDS_SEPARATOR}`, 'g'),
+                CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR
+            );
+    }
+
+    /**
+     * Setup this object
+     *
+     * @param {Script} script
+     * @memberof ScriptObject
+     */
     setup(script: Script) {
 
         // Initialize object
@@ -329,15 +415,21 @@ export class ScriptObject {
         // Parse query string
         try {
             this.parsedQuery = parseQuery(this.query);
+            this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");
             if (this.operation == OPERATION.Delete) {
                 this.deleteOldData = true;
                 this.parsedQuery.fields = [getComposedField("Id")];
+            }
+            // Add record Id field to each query
+            if (!this.fieldsInQuery.some(x => x == "Id")) {
+                this.parsedQuery.fields.push(getComposedField("Id"));
             }
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
 
-        // Update object fields
+        // Update object
+        this.query = composeQuery(this.parsedQuery);
         this.name = this.parsedQuery.sObject;
         this.script.objectsMap.set(this.name, this);
 
