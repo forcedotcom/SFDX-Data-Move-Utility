@@ -47,19 +47,20 @@ export class Script {
     // -----------------------------------
     sourceOrg: ScriptOrg;
     targetOrg: ScriptOrg;
-    basePath: "";
+    basePath: string = "";
 
-    initialize(sourceUsername: string, targetUsername: string) {
+    initialize(sourceUsername: string, targetUsername: string, basePath: string) {
+        this.basePath = basePath;
         this.sourceOrg = this.orgs.filter(x => x.name == sourceUsername)[0] || new ScriptOrg();
-        this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();        
+        this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         Object.assign(this.sourceOrg, {
-            script : this,
-            name : sourceUsername,
+            script: this,
+            name: sourceUsername,
             isSource: true
         });
         Object.assign(this.targetOrg, {
-            script : this,
-            name : targetUsername
+            script: this,
+            name: targetUsername
         });
 
     }
@@ -86,13 +87,12 @@ export class ScriptOrg {
     media: DATA_MEDIA_TYPE.File;
     isSource: boolean = false;
 
-
     getConnection(): any {
         return new jsforce.Connection({
             instanceUrl: this.instanceUrl,
             accessToken: this.accessToken,
             version: this.script.apiVersion,
-            maxRequest: this.script.apiVersion
+            maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
         });
     }
 }

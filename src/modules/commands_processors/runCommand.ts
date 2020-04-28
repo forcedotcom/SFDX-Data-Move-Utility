@@ -173,6 +173,7 @@ export class RunCommand {
         if (this.apiVersion) {
             this.script.apiVersion = this.apiVersion;
         }
+        
         this.script.objects = this.script.objects.filter(object => {
             let isIncluded = !object.excluded || object.operation == OPERATION.Readonly;
             if (!isIncluded) {
@@ -180,7 +181,8 @@ export class RunCommand {
             }
             return isIncluded;
         });
-        this.script.initialize(this.sourceUsername, this.targetUsername);
+
+        this.script.initialize(this.sourceUsername, this.targetUsername, this.basePath);
     }
     
 
