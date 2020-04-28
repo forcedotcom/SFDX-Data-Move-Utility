@@ -415,15 +415,21 @@ export class ScriptObject {
         // Parse query string
         try {
             this.parsedQuery = parseQuery(this.query);
-            this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");
             if (this.operation == OPERATION.Delete) {
                 this.deleteOldData = true;
                 this.parsedQuery.fields = [getComposedField("Id")];
             }
-            // Add record Id field to each query
+            // Add record Id field to the query
             if (!this.fieldsInQuery.some(x => x == "Id")) {
                 this.parsedQuery.fields.push(getComposedField("Id"));
             }
+            // Add external Id field to the query
+            if (this.isComplexExternalId) {
+                this.parsedQuery.fields.push(getComposedField(this.getComplexExternalId()));
+            } else {
+                this.parsedQuery.fields.push(getComposedField(this.externalId));
+            }
+            this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");            
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
