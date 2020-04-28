@@ -695,7 +695,7 @@ export class MessageUtils {
 
 
     /**
-     * Logs message as styled object and NORMAL verbosity
+     * Logs message as styled object and MINIMAL verbosity
      *
      * @param {string} message Message to output
      * @param {...string[]} tokens Tokens for the command resource

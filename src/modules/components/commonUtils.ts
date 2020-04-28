@@ -8,7 +8,19 @@
 import { execSync } from 'child_process';
 import path = require('path');
 import { SfdxCommand } from '@salesforce/command';
-
+import {
+    composeQuery,
+    Condition,
+    Field as SOQLField,
+    FieldType,
+    getComposedField,
+    LiteralType,
+    LogicalOperator,
+    parseQuery,
+    Query,
+    WhereClause,
+    Operator
+} from 'soql-parser-js';
 
 /**
  * Common utility functions
@@ -390,5 +402,54 @@ export class CommonUtils {
     };
 
 
+
+    /**
+    * @static Modifies existing WHERE clause by adding extra rule.
+    * Ex:
+    *   fieldName = "Source__c" 
+    *   values = ['Source1', 'Source2']
+    *   source query = "WHERE Account.Name = 'Account'"
+    *   operator = "AND"
+    * 
+    *   returned query:  "WHERE (Account.Name = 'Account') AND (Source__c IN ('Source1', 'Source2'))"
+    * 
+    * Also can add any other extra rule like WHERE .... AND (x = ...)
+    * 
+    * @param {WhereClause} where Source query to modify
+    * @param {string} fieldName Field name
+    * @param {Array<string> | string} values Values to compare
+    * @param {operator} [Operator="IN"] (Default="IN") The operator for the extra WHERE
+    * @param {LogicalOperator} [logicalOperator="OR"] (Default="OR") Logical operator to apply between the original WHERE and the new WHERE..IN
+    * @returns {WhereClause} Returns modified WHERE clause
+    * @memberof CommonUtils
+    */
+    public static composeWhereClause(
+        where: WhereClause,
+        fieldName: string,
+        values: Array<string> | string,
+        operator: Operator = "IN",
+        literalType: LiteralType = "STRING",
+        logicalOperator: LogicalOperator = "OR"): WhereClause {
+
+        let valuesIsArray = Array.isArray(values);
+        let values2 = [].concat(values).filter(x => !!x).map(x => x.replace(/\\/g, "\\\\").replace(/'/g, "\\'"));
+        if (!valuesIsArray) {
+            values2 = values2[0];
+        }
+        let c: Condition = { field: fieldName, operator: operator, value: values2, literalType: literalType };
+        if (!where || !where.left) {
+            let ret = { left: c };
+            ret.left.openParen = 1;
+            ret.left.closeParen = 1;
+            return ret;
+        } else {
+            where.left.openParen = (where.left.openParen || 0) + 1;
+            where.left.closeParen = (where.left.closeParen || 0) + 1;
+            c.openParen = 1;
+            c.closeParen = 1;
+            let ret = { left: c, right: where, operator: logicalOperator };
+            return ret;
+        }
+    }
 
 }

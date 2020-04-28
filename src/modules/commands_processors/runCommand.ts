@@ -19,7 +19,7 @@ import {
 } from 'soql-parser-js';
 import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/messages";
 import * as models from '../models';
-import { OPERATION } from '../components/statics';
+import { OPERATION, CONSTANTS } from '../components/statics';
 
 
 
@@ -60,12 +60,13 @@ export class RunCommand {
         this.apiVersion = apiVersion;
     }
 
-    async loadScriptAsync(): Promise<any> {
+    async initializeAsync(): Promise<any> {
 
+        // Load script file
         if (!fs.existsSync(this.basePath)) {
             throw new models.CommandInitializationError(this.logger.getResourceString(RESOURCES.workingPathDoesNotExist));
         }
-        let filePath = path.join(this.basePath, 'export.json');
+        let filePath = path.join(this.basePath, CONSTANTS.SCRIPT_FILE_NAME);
 
         if (!fs.existsSync(filePath)) {
             throw new models.CommandInitializationError(this.logger.getResourceString(RESOURCES.packageFileDoesNotExist));
@@ -78,7 +79,8 @@ export class RunCommand {
         let jsonObject = JSON.parse(json);
         this.script = plainToClass(models.Script, jsonObject);
        
-        await this.script.initializeAsync(this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);
+        // Setup script object
+        await this.script.setupAsync(this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);
 
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.source)]: this.logger.getResourceString(RESOURCES.sourceOrg, this.script.sourceOrg.name),

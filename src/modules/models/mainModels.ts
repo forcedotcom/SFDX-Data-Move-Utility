@@ -14,7 +14,14 @@ import { MessageUtils, RESOURCES } from "../components/messages";
 import { CommandInitializationError } from "./errorsModels";
 import { ApiSf } from "../components/apiSf";
 var jsforce = require("jsforce");
-
+import {
+    parseQuery,
+    composeQuery,
+    FieldType,
+    OrderByClause,
+    Field as SOQLField,
+    getComposedField
+} from 'soql-parser-js';
 
 
 
@@ -52,34 +59,33 @@ export class Script {
     sourceOrg: ScriptOrg;
     targetOrg: ScriptOrg;
     basePath: string = "";
+    objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
 
 
-    async initializeAsync(logger: MessageUtils, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<any> {
+    async setupAsync(logger: MessageUtils, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<any> {
 
+        // Initialize script
         this.logger = logger;
         this.basePath = basePath;
         this.sourceOrg = this.orgs.filter(x => x.name == sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         this.apiVersion = apiVersion || this.apiVersion;
 
+        // Filter excluded objects
         this.objects = this.objects.filter(object => {
-            let isIncluded = !object.excluded || object.operation == OPERATION.Readonly;
-            if (!isIncluded) {
+            let included = !object.excluded || object.operation == OPERATION.Readonly;
+            if (!included) {
                 this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
             }
-            return isIncluded;
+            return included;
         });
 
+        // Check objects length
         if (this.objects.length == 0) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.noObjectsDefinedInPackageFile));
         }
 
-        this.objects.forEach(object => {
-            if ((typeof object.operation == "string") == true) {
-                object.operation = OPERATION[object.operation.toString()];
-            }
-        });
-
+        // Assign orgs
         Object.assign(this.sourceOrg, {
             script: this,
             name: sourceUsername,
@@ -92,8 +98,20 @@ export class Script {
             media: targetUsername.toLowerCase() == "csvfile" ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
 
-        await this.sourceOrg.initializeAsync();
-        await this.targetOrg.initializeAsync();
+        // Setup orgs
+        await this.sourceOrg.setupAsync();
+        await this.targetOrg.setupAsync();
+
+        // Setup objects
+        for (let index = 0; index < this.objects.length; index++) {
+            const object = this.objects[index];
+            object.setupAsync(this);
+        }
+
+        // Create extra objects
+
+
+
 
     }
 }
@@ -137,8 +155,9 @@ export class ScriptOrg {
         return this.media == DATA_MEDIA_TYPE.File;
     }
 
-    async initializeAsync(): Promise<any> {
-        await this._verifyConnectionAsync();
+    async setupAsync(): Promise<any> {
+        // Setup and verify org connection
+        await this._setupConnection();
     }
 
 
@@ -174,11 +193,13 @@ export class ScriptOrg {
         let apiSf = new ApiSf(this);
         if (!this.isFileMedia) {
             try {
+                // Validate access token
                 await apiSf.queryAsync("SELECT Id FROM Account LIMIT 1", false);
             } catch (ex) {
                 throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessToOrgExpired, this.name));
             }
             try {
+                // Check person account availability
                 await apiSf.queryAsync("SELECT IsPersonAccount FROM Account LIMIT 1", false);
                 this.isPersonAccountEnabled = true;
             } catch (ex) {
@@ -188,9 +209,10 @@ export class ScriptOrg {
     }
 
 
-    private async _verifyConnectionAsync(): Promise<void> {
+    private async _setupConnection(): Promise<void> {
         if (!this.isFileMedia) {
             if (!this.isConnected) {
+                // Connect with SFDX
                 this.script.logger.infoNormal(RESOURCES.tryingToConnectCLI, this.name);
                 let processResult = CommonUtils.execSfdx("force:org:display", this.name);
                 let orgInfo = this._parseForceOrgDisplayResult(processResult);
@@ -204,6 +226,7 @@ export class ScriptOrg {
                 }
             }
 
+            // Validate connection and check person account availability
             await this._validateAccessTokenAsync();
             this.script.logger.infoNormal(RESOURCES.successfullyConnected, this.name);
         }
@@ -225,7 +248,6 @@ export class ScriptObject {
     @Type(() => ScriptMockField)
     mockFields: ScriptMockField[] = new Array<ScriptMockField>();
 
-    name: string = "";
     query: string = "";
     deleteQuery: string = "";
     operation: OPERATION = OPERATION.Readonly;
@@ -240,15 +262,77 @@ export class ScriptObject {
 
 
     // -----------------------------------
+    script: Script;
+    name: string = "";
     sObjectDescribeSource = new SObjectDescribe();
     sObjectDescribeTarget = new SObjectDescribe();
     sourceFieldsMap = new Map<string, SFieldDescribe>();
     targetFieldsMap = new Map<string, SFieldDescribe>();
+    initialExternalId: string = "";
+    parsedQuery: Query;
+    parsedDeleteQuery: Query;
 
-    initialize() {
-        if ((typeof this.operation == "string") == true) {
-            this.operation = <OPERATION>OPERATION[this.operation.toString()];
+    get fields(): string[] {
+        if (!this.parsedQuery) {
+            return new Array<string>();
         }
+        return this.parsedQuery.fields.map(x => (<SOQLField>x).field);
+    }
+
+    get hasRecordTypeField(): boolean {
+        return this.fields.some(x => x == "RecordTypeId");
+    }
+
+
+    setupAsync(script: Script) {
+
+        // Initialize object
+        this.script = script;
+        this.initialExternalId = this.externalId;
+
+        // Fix operation value
+        if ((typeof this.operation == "string") == true) {
+            this.operation = OPERATION[this.operation.toString()];
+        }
+
+        // Always set explicit externalId to 'Id' on Insert operation
+        if (this.operation == OPERATION.Insert) {
+            this.externalId = "Id";
+        }
+
+        // Parse query string
+        try {
+            this.parsedQuery = parseQuery(this.query);
+            if (this.operation == OPERATION.Delete) {
+                this.deleteOldData = true;
+                this.parsedQuery.fields = [getComposedField("Id")];
+            }
+        } catch (ex) {
+            throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
+        }
+
+        // Update object fields
+        this.name = this.parsedQuery.sObject;
+        this.script.objectsMap.set(this.name, this);
+
+        // Parse delete query string
+        if (this.deleteOldData) {
+            try {
+                if (this.deleteQuery) {
+                    this.parsedDeleteQuery = parseQuery(this.deleteQuery);
+                } else {
+                    this.parsedDeleteQuery = parseQuery(this.query);
+                }
+                this.parsedDeleteQuery.fields = [getComposedField("Id")];
+                if (this.script.sourceOrg.isPersonAccountEnabled && this.name == "Contact") {
+                    this.parsedDeleteQuery.where = CommonUtils.composeWhereClause(this.parsedDeleteQuery.where, "IsPersonAccount", "false", "=", "BOOLEAN", "AND");
+                }
+                this.deleteQuery = composeQuery(this.parsedDeleteQuery);
+            } catch (ex) {
+                throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedDeleteQuery, this.name, this.deleteQuery, ex));
+            }
+        }
+
     }
 }
 
