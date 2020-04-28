@@ -381,7 +381,6 @@ export class ScriptObject {
             || this.externalId.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
     }
 
-    // FIXME:
     getComplexExternalId(): string {
         return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
             + this.externalId.replace(
@@ -429,6 +428,7 @@ export class ScriptObject {
             } else {
                 this.parsedQuery.fields.push(getComposedField(this.externalId));
             }
+            // Make each field appear only once in the query
             this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");            
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
