@@ -13,17 +13,17 @@ import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import {
     MessageUtils,
-    COMMON_RESOURCES,
+    RESOURCES,
     COMMAND_EXIT_STATUSES
 } from "../../modules/components/messages";
-import { RunCommand, RUN_RESOURCES } from "../../modules/commands_processors/runCommand";
+import { RunCommand } from "../../modules/commands_processors/runCommand";
 import { CommonUtils } from "../../modules/components/commonUtils";
 
 
 Messages.importMessagesDirectory(__dirname);
 
 const commandMessages = Messages.loadMessages('sfdmu', 'run');
-const commonMessages = Messages.loadMessages('sfdmu', 'common');
+const resources = Messages.loadMessages('sfdmu', 'resources');
 
 
 export default class Run extends SfdxCommand {
@@ -140,7 +140,7 @@ export default class Run extends SfdxCommand {
         this.flags.filelog = this.flags.filelog && !this.flags.version;
 
         let logger = new MessageUtils(
-            commonMessages,
+            resources,
             commandMessages,
             this.ux,
             this.statics,
@@ -163,7 +163,7 @@ export default class Run extends SfdxCommand {
 
                 // Exit - success
                 logger.commandExitMessage(
-                    RUN_RESOURCES.pluginVersion,
+                    RESOURCES.pluginVersion,
                     COMMAND_EXIT_STATUSES.SUCCESS,
                     undefined,
                     pinfo.pluginName, pinfo.version);
@@ -187,7 +187,7 @@ export default class Run extends SfdxCommand {
 
             // Exit - success
             logger.commandExitMessage(
-                commandResult || COMMON_RESOURCES.successfullyCompletedResult,
+                commandResult || RESOURCES.successfullyCompletedResult,
                 COMMAND_EXIT_STATUSES.SUCCESS);
 
             process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
@@ -200,7 +200,7 @@ export default class Run extends SfdxCommand {
 
                 case models.CommandInitializationError:
                     logger.commandExitMessage(
-                        COMMON_RESOURCES.commandInitializationErrorResult,
+                        RESOURCES.commandInitializationErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR,
                         e.stack, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR);
@@ -208,7 +208,7 @@ export default class Run extends SfdxCommand {
 
                 case models.OrgMetadataError:
                     logger.commandExitMessage(
-                        COMMON_RESOURCES.orgMetadataErrorResult,
+                        RESOURCES.orgMetadataErrorResult,
                         COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR,
                         e.stack, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR);
@@ -216,7 +216,7 @@ export default class Run extends SfdxCommand {
 
                 case models.CommandExecutionError:
                     logger.commandExitMessage(
-                        COMMON_RESOURCES.commandExecutionErrorResult,
+                        RESOURCES.commandExecutionErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR,
                         e.stack, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR);
@@ -224,14 +224,14 @@ export default class Run extends SfdxCommand {
 
                 case models.UnresolvableWarning:
                     logger.commandExitMessage(
-                        COMMON_RESOURCES.commandUnresolvableWarningResult,
+                        RESOURCES.commandUnresolvableWarningResult,
                         COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING);
 
 
                 case models.CommandAbortedByUserError:
                     logger.commandExitMessage(
-                        COMMON_RESOURCES.commandAbortedByUserErrorResult,
+                        RESOURCES.commandAbortedByUserErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER,
                         e.stack, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER);
@@ -239,7 +239,7 @@ export default class Run extends SfdxCommand {
 
                 default:
                     logger.commandExitMessage(
-                        COMMON_RESOURCES.commandUnexpectedErrorResult,
+                        RESOURCES.commandUnexpectedErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_UNEXPECTED_ERROR,
                         e.stack, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_UNEXPECTED_ERROR);

@@ -10,8 +10,7 @@ import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { CommonUtils } from "../components/commonUtils";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../components/statics";
-import { MessageUtils } from "../components/messages";
-import { RUN_RESOURCES } from "../commands_processors/runCommand";
+import { MessageUtils, RESOURCES } from "../components/messages";
 import { CommandInitializationError } from "./errorsModels";
 import { ApiSf } from "../components/apiSf";
 var jsforce = require("jsforce");
@@ -66,13 +65,13 @@ export class Script {
         this.objects = this.objects.filter(object => {
             let isIncluded = !object.excluded || object.operation == OPERATION.Readonly;
             if (!isIncluded) {
-                this.logger.infoVerbose(RUN_RESOURCES.objectWillBeExcluded, object.name);
+                this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
             }
             return isIncluded;
         });
 
         if (this.objects.length == 0) {
-            throw new CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.noObjectsDefinedInPackageFile));
+            throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.noObjectsDefinedInPackageFile));
         }
 
         this.objects.forEach(object => {
@@ -177,7 +176,7 @@ export class ScriptOrg {
             try {
                 await apiSf.queryAsync("SELECT Id FROM Account LIMIT 1", false);
             } catch (ex) {
-                throw new CommandInitializationError(this.script.logger.getResourceString(RUN_RESOURCES.accessToSourceExpired));
+                throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessToOrgExpired, this.name));
             }
             try {
                 await apiSf.queryAsync("SELECT IsPersonAccount FROM Account LIMIT 1", false);
@@ -192,11 +191,11 @@ export class ScriptOrg {
     private async _verifyConnectionAsync(): Promise<void> {
         if (!this.isFileMedia) {
             if (!this.isConnected) {
-                this.script.logger.infoNormal(RUN_RESOURCES.tryingToConnectCLI, this.name);
+                this.script.logger.infoNormal(RESOURCES.tryingToConnectCLI, this.name);
                 let processResult = CommonUtils.execSfdx("force:org:display", this.name);
                 let orgInfo = this._parseForceOrgDisplayResult(processResult);
                 if (!orgInfo.isConnected) {
-                    throw new CommandInitializationError(this.script.logger.getResourceString(RUN_RESOURCES.tryingToConnectCLIFailed, this.name));
+                    throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.tryingToConnectCLIFailed, this.name));
                 } else {
                     Object.assign(this, {
                         accessToken: orgInfo.AccessToken,
@@ -206,7 +205,7 @@ export class ScriptOrg {
             }
 
             await this._validateAccessTokenAsync();
-            this.script.logger.infoNormal(RUN_RESOURCES.successfullyConnected, this.name);
+            this.script.logger.infoNormal(RESOURCES.successfullyConnected, this.name);
         }
     }
 

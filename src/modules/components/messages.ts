@@ -23,45 +23,35 @@ const fileLogSubdirectory = "logs/";
  * @export
  * @enum {number}
  */
-export enum COMMON_RESOURCES {
-
+export enum RESOURCES {
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptSelectedOption = "defaultPromptSelectedOption",
 
-
     promptMessageFormat = "promptMessageFormat",
     promptDefaultOptionFormat = "promptDefaultOptionFormat",
-
 
     loggerInfoString = "loggerInfoString",
     loggerInfoStringWithDate = "loggerInfoStringWithDate",
 
-
     loggerWarnString = "loggerWarnString",
     loggerWarnStringWithDate = "loggerWarnStringWithDate",
 
-
     loggerErrorString = "loggerErrorString",
     loggerErrorStringWithDate = "loggerErrorStringWithDate",
-
 
     fileLoggerInfoString = "fileLoggerInfoString",
     fileLoggerWarnSring = "fileLoggerWarnSring",
     fileLoggerErrorSring = "fileLoggerErrorSring",
 
-
     loggerImportantInfoString = "loggerImportantInfoString",
     loggerImportantInfoStringWithDate = "loggerImportantInfoStringWithDate",
 
-
     loggerStackTraceString = "loggerStackTraceString",
-
 
     loggerTimeElapsedString = "loggerTimeElapsedString",
     loggerCommandStartedString = "loggerCommandStartedString",
     loggerCommandCompletedString = "loggerCommandCompletedString",
-
 
     successfullyCompletedResult = "successfullyCompletedResult",
     commandInitializationErrorResult = "commandInitializationErrorResult",
@@ -99,7 +89,94 @@ export enum COMMON_RESOURCES {
     jobError = "jobError",
 
     unprocessedRecord = "unprocessedRecord",
-    invalidRecordHashcode = "invalidRecordHashcode"
+    invalidRecordHashcode = "invalidRecordHashcode",
+
+    
+    // ------------------------------------ //
+    source = "source",
+    target = "target",
+    packageScript = "packageScript",
+    pluginVersion = "pluginVersion",
+    newLine = "newLine",
+    workingPathDoesNotExist = "workingPathDoesNotExist",
+    packageFileDoesNotExist = "packageFileDoesNotExist",
+    loadingPackageFile = "loadingPackageFile",
+    objectWillBeExcluded = "objectWillBeExcluded",
+    noObjectsDefinedInPackageFile = "noObjectsDefinedInPackageFile",
+    sourceOrg = "sourceOrg",
+    targetOrg = "targetOrg",
+    scriptFile = "scriptFile",
+    encryptionKey = "encryptionKey",
+    invalidEncryptionKey = "invalidEncryptionKey",
+    tryingToConnectCLI = "tryingToConnectCLI",
+    successfullyConnected = "successfullyConnected",
+    tryingToConnectCLIFailed = "tryingToConnectCLIFailed",
+    sourceTargetCouldNotBeTheSame = "sourceTargetCouldNotBeTheSame",
+    accessToSourceExpired = "accessToSourceExpired",
+    accessToTargetExpired = "accessToTargetExpired",
+    accessToOrgExpired = "accessToOrgExpired",
+    MalformedQuery = "MalformedQuery",
+    MalformedDeleteQuery = "MalformedDeleteQuery",
+    executingPackageScript = "executingPackageScript",
+    preparing = "preparing",
+    gettingOrgMetadata = "gettingOrgMetadata",
+    noExternalKey = "noExternalKey",
+    objectSourceDoesNotExist = "objectSourceDoesNotExist",
+    objectTargetDoesNotExist = "objectTargetDoesNotExist",
+    analysingOrgMetadata = "analysingOrgMetadata",
+    processingSObject = "processingSObject",
+    fieldSourceDoesNtoExist = "fieldSourceDoesNtoExist",
+    fieldTargetDoesNtoExist = "fieldTargetDoesNtoExist",
+    referencedFieldDoesNotExist = "referencedFieldDoesNotExist",
+    dataMigrationProcessStarted = "dataMigrationProcessStarted",
+    buildingMigrationStaregy = "buildingMigrationStaregy",
+    executionOrder = "executionOrder",
+    readingValuesMappingFile = "readingValuesMappingFile",
+    validatingAndFixingSourceCSVFiles = "validatingAndFixingSourceCSVFiles",
+    writingToCSV = "writingToCSV",
+    noIssuesFoundDuringCSVValidation = "noIssuesFoundDuringCSVValidation",
+    issuesFoundDuringCSVValidation = "issuesFoundDuringCSVValidation",
+    continueTheJobPrompt = "continueTheJobPrompt",
+    AbortedByTheUser = "AbortedByTheUser",
+    csvFileIsEmpty = "csvFileIsEmpty",
+    columnsMissingInCSV = "columnsMissingInCSV",
+    csvFileForParentSObjectIsEmpty = "csvFileForParentSObjectIsEmpty",
+    missingParentRecordForGivenLookupValue = "missingParentRecordForGivenLookupValue",
+    invalidColumnFormat = "invalidColumnFormat",
+    columnWillNotBeProcessed = "columnWillNotBeProcessed",
+    csvFilesWereUpdated = "csvFilesWereUpdated",
+    validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
+    deletingOldData = "deletingOldData",
+    deletingTargetSObject = "deletingTargetSObject",
+    queryingTargetSObject = "queryingTargetSObject",
+    queryingTargetSObjectCompleted = "queryingTargetSObjectCompleted",
+    deletingFromTheTargetNRecordsWillBeDeleted = "deletingFromTheTargetNRecordsWillBeDeleted",
+    queryError = "queryError",
+    deletingFromTheTargetCompleted = "deletingFromTheTargetCompleted",
+    deletingOldDataCompleted = "deletingOldDataCompleted",
+    deletingOldDataSkipped = "deletingOldDataSkipped",
+    retrievingData = "retrievingData",
+    mappingRawCsvValues = "mappingRawCsvValues",
+    gettingRecordsCount = "gettingRecordsCount",
+    totalRecordsAmount = "totalRecordsAmount",
+    queryingAll = "queryingAll",
+    queryingAllQueryString = "queryingAllQueryString",
+    queryingIn = "queryingIn",
+    queryingFinished = "queryingFinished",
+    executingQuery = "executingQuery",
+    retrievingDataCompleted = "retrievingDataCompleted",
+    Step1 = "Step1",
+    Step2 = "Step2",
+    updatingTarget = "updatingTarget",
+    writingToFile = "writingToFile",
+    writingToFileCompleted = "writingToFileCompleted",
+    updatingTargetObject = "updatingTargetObject",
+    updatingTargetObjectCompleted = "updatingTargetObjectCompleted",
+    fieldIsMissingInTheSourceRecords = "fieldIsMissingInTheSourceRecords",
+    seeFileForTheDetails = "seeFileForTheDetails",
+    missingParentLookupRecord = "missingParentLookupRecord",
+    updatingTargetCompleted = "updatingTargetCompleted",
+    finalizing = "finalizing"
 
 }
 
@@ -114,7 +191,7 @@ class FileLogger {
 
     fileName: string;
     enabled: boolean;
-    commonMessages: IResourceBundle;
+    resources: IResourceBundle;
 
     /**
      *Creates an instance of FileLogger.
@@ -123,9 +200,9 @@ class FileLogger {
      * @param {boolean} enabled Enable/Disable the logging
      * @memberof FileLogger
      */
-    constructor(commonMessages: IResourceBundle, filePath: string, fileName: string, enabled: boolean) {
+    constructor(resources: IResourceBundle, filePath: string, fileName: string, enabled: boolean) {
         this.enabled = enabled;
-        this.commonMessages = commonMessages;
+        this.resources = resources;
         if (!fs.existsSync(filePath)) {
             fs.mkdirSync(filePath);
         }
@@ -145,9 +222,9 @@ class FileLogger {
             const d = CommonUtils.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
-                m = this.commonMessages.getMessage("fileLoggerInfoString", [d, message]);
+                m = this.resources.getMessage("fileLoggerInfoString", [d, message]);
             } else {
-                m = this.commonMessages.getMessage("fileLoggerInfoStringWithoutDate", [message]);
+                m = this.resources.getMessage("fileLoggerInfoStringWithoutDate", [message]);
             }
             fs.appendFileSync(this.fileName, m);
         }
@@ -166,9 +243,9 @@ class FileLogger {
             const d = CommonUtils.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
-                m = this.commonMessages.getMessage("fileLoggerWarnSring", [d, message]);
+                m = this.resources.getMessage("fileLoggerWarnSring", [d, message]);
             } else {
-                m = this.commonMessages.getMessage("fileLoggerWarnSringWithoutDate", [message]);
+                m = this.resources.getMessage("fileLoggerWarnSringWithoutDate", [message]);
             }
             fs.appendFileSync(this.fileName, m);
         }
@@ -187,9 +264,9 @@ class FileLogger {
             const d = CommonUtils.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
-                m = this.commonMessages.getMessage("fileLoggerErrorSring", [d, message]);
+                m = this.resources.getMessage("fileLoggerErrorSring", [d, message]);
             } else {
-                m = this.commonMessages.getMessage("fileLoggerErrorSringWithoutDate", [message]);
+                m = this.resources.getMessage("fileLoggerErrorSringWithoutDate", [message]);
             }
             fs.appendFileSync(this.fileName, m);
         }
@@ -215,7 +292,7 @@ export class MessageUtils {
 
     fileLogger: FileLogger;
 
-    commonMessages: IResourceBundle;
+    resources: IResourceBundle;
     commandMessages: IResourceBundle;
 
     uxLogger: IUxLogger;
@@ -242,7 +319,7 @@ export class MessageUtils {
      * @memberof MessageUtils
      */
     constructor(
-        commonMessages: IResourceBundle,
+        resources: IResourceBundle,
         commandMessages: IResourceBundle,
         uxLogger: IUxLogger,
         command: typeof SfdxCommand,
@@ -256,7 +333,7 @@ export class MessageUtils {
         noWarningsFlag: boolean,
         fileLogFlag: boolean) {
 
-        this.commonMessages = commonMessages;
+        this.resources = resources;
         this.commandMessages = commandMessages;
         this.uxLogger = uxLogger;
 
@@ -287,7 +364,7 @@ export class MessageUtils {
         }
 
         this.fileLogger = new FileLogger(
-            this.commonMessages,
+            this.resources,
             path.join(rootPath, fileLogSubdirectory),
             `${CommonUtils.formatFileDate(new Date())}.log`,
             fileLogFlag
@@ -319,8 +396,8 @@ export class MessageUtils {
     }, ...tokens: string[]
     ): Promise<string> {
 
-        params.options = params.options || this.getResourceString(COMMON_RESOURCES.defaultPromptOptions);
-        params.default = params.default || this.getResourceString(COMMON_RESOURCES.defaultPromptSelectedOption);
+        params.options = params.options || this.getResourceString(RESOURCES.defaultPromptOptions);
+        params.default = params.default || this.getResourceString(RESOURCES.defaultPromptSelectedOption);
         params.timeout = params.timeout || CONSTANTS.DEFAULT_USER_PROMPT_TIMEOUT_MS;
         params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
 
@@ -332,8 +409,8 @@ export class MessageUtils {
         try {
             params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
 
-            return await this.uxLogger.prompt(this.getResourceString(COMMON_RESOURCES.promptMessageFormat, String(params.message), params.options), {
-                default: this.getResourceString(COMMON_RESOURCES.promptDefaultOptionFormat, params.default),
+            return await this.uxLogger.prompt(this.getResourceString(RESOURCES.promptMessageFormat, String(params.message), params.options), {
+                default: this.getResourceString(RESOURCES.promptDefaultOptionFormat, params.default),
                 timeout: params.timeout
             });
         } catch (ex) {
@@ -355,7 +432,7 @@ export class MessageUtils {
     async yesNoPromptAsync(message: string, ...tokens: string[]): Promise<boolean> {
         return this.promptAsync.apply(this, [{
             message
-        }, ...tokens]) == this.getResourceString(COMMON_RESOURCES.defaultPromptSelectedOption);
+        }, ...tokens]) == this.getResourceString(RESOURCES.defaultPromptSelectedOption);
     }
 
 
@@ -461,9 +538,9 @@ export class MessageUtils {
                 if (allowUxOutput) {
                     let m = <string>uxLogMessage || "";
                     if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.VERBOSE && m.trim()) {
-                        uxOutput = this.getResourceString(COMMON_RESOURCES.loggerErrorStringWithDate, dateString, <string>uxLogMessage);
+                        uxOutput = this.getResourceString(RESOURCES.loggerErrorStringWithDate, dateString, <string>uxLogMessage);
                     } else {
-                        uxOutput = this.getResourceString(COMMON_RESOURCES.loggerErrorString, <string>uxLogMessage);
+                        uxOutput = this.getResourceString(RESOURCES.loggerErrorString, <string>uxLogMessage);
                     }
                     this.uxLogger.error(uxOutput);
                 }
@@ -488,10 +565,10 @@ export class MessageUtils {
                 if (allowUxOutput) {
                     let m = <string>uxLogMessage || "";
                     if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.VERBOSE && m.trim()) {
-                        uxOutput = this.getResourceString(COMMON_RESOURCES.loggerImportantInfoStringWithDate, dateString, <string>uxLogMessage);
+                        uxOutput = this.getResourceString(RESOURCES.loggerImportantInfoStringWithDate, dateString, <string>uxLogMessage);
                     }
                     else {
-                        uxOutput = this.getResourceString(COMMON_RESOURCES.loggerImportantInfoString, <string>uxLogMessage);
+                        uxOutput = this.getResourceString(RESOURCES.loggerImportantInfoString, <string>uxLogMessage);
                     }
                     this.uxLogger.log(uxOutput);
                 }
@@ -527,9 +604,9 @@ export class MessageUtils {
                 if (allowUxOutput && !this.noWarningsFlag) {
                     let m = <string>uxLogMessage || "";
                     if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.VERBOSE && m.trim()) {
-                        uxOutput = this.getResourceString(COMMON_RESOURCES.loggerWarnStringWithDate, dateString, <string>uxLogMessage);
+                        uxOutput = this.getResourceString(RESOURCES.loggerWarnStringWithDate, dateString, <string>uxLogMessage);
                     } else {
-                        uxOutput = this.getResourceString(COMMON_RESOURCES.loggerWarnString, <string>uxLogMessage);
+                        uxOutput = this.getResourceString(RESOURCES.loggerWarnString, <string>uxLogMessage);
                     }
                     this.uxLogger.warn(uxOutput);
                 }
@@ -540,9 +617,9 @@ export class MessageUtils {
                 if (allowUxOutput) {
                     let m = <string>uxLogMessage || "";
                     if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.VERBOSE && m.trim()) {
-                        uxOutput = this.getResourceString(COMMON_RESOURCES.loggerInfoStringWithDate, dateString, <string>uxLogMessage);
+                        uxOutput = this.getResourceString(RESOURCES.loggerInfoStringWithDate, dateString, <string>uxLogMessage);
                     } else {
-                        uxOutput = this.getResourceString(COMMON_RESOURCES.loggerInfoString, <string>uxLogMessage);
+                        uxOutput = this.getResourceString(RESOURCES.loggerInfoString, <string>uxLogMessage);
                     }
                     this.uxLogger.log(uxOutput);
                 }
@@ -660,11 +737,11 @@ export class MessageUtils {
     commandEnterMessage(): void {
 
         if (this.uxLoggerVerbosity != LOG_MESSAGE_VERBOSITY.VERBOSE) {
-            this.uxLogger.startSpinner(this.getResourceString(COMMON_RESOURCES.commandInProgress));
+            this.uxLogger.startSpinner(this.getResourceString(RESOURCES.commandInProgress));
         }
 
         this.log(
-            this.getResourceString(COMMON_RESOURCES.loggerCommandStartedString, this.commandFullName),
+            this.getResourceString(RESOURCES.loggerCommandStartedString, this.commandFullName),
             LOG_MESSAGE_TYPE.STRING,
             LOG_MESSAGE_VERBOSITY.NORMAL
         );
@@ -786,7 +863,7 @@ export class MessageUtils {
                     // Stack trace to stdout
                     if (stack) {
                         this.log(
-                            this.getResourceString(COMMON_RESOURCES.loggerStackTraceString, stack),
+                            this.getResourceString(RESOURCES.loggerStackTraceString, stack),
                             LOG_MESSAGE_TYPE.IMPORTANT_STRING
                         );
                     }
@@ -804,7 +881,7 @@ export class MessageUtils {
                     // Stack trace to stdout
                     if (stack) {
                         this.log(
-                            this.getResourceString(COMMON_RESOURCES.loggerStackTraceString, stack),
+                            this.getResourceString(RESOURCES.loggerStackTraceString, stack),
                             LOG_MESSAGE_TYPE.IMPORTANT_STRING
                         );
                     }
@@ -813,14 +890,14 @@ export class MessageUtils {
 
             // "Command finished" to stdout
             this.log(
-                this.getResourceString(COMMON_RESOURCES.loggerCommandCompletedString, this.commandFullName, String(status), statusString),
+                this.getResourceString(RESOURCES.loggerCommandCompletedString, this.commandFullName, String(status), statusString),
                 LOG_MESSAGE_TYPE.STRING,
                 LOG_MESSAGE_VERBOSITY.NORMAL
             );
 
             // "Time elapsed" to stdout 
             this.log(
-                this.getResourceString(COMMON_RESOURCES.loggerTimeElapsedString, timeElapsedString),
+                this.getResourceString(RESOURCES.loggerTimeElapsedString, timeElapsedString),
                 LOG_MESSAGE_TYPE.STRING,
                 LOG_MESSAGE_VERBOSITY.NORMAL
             );
@@ -845,7 +922,7 @@ export class MessageUtils {
     getResourceString(message: any, ...tokens: string[]): any {
         if (!message || typeof message != "string") return message;
         try {
-            let mes = this.commonMessages.getMessage(String(message), tokens);
+            let mes = this.resources.getMessage(String(message), tokens);
             return mes;
         } catch (ex) {
             try {

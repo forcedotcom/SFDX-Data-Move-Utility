@@ -8,7 +8,7 @@
 
 import { CommonUtils } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
-import { MessageUtils, COMMON_RESOURCES } from "./messages";
+import { MessageUtils, RESOURCES } from "./messages";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -450,9 +450,9 @@ export class BulkApi2sf {
                                 isCreated: targetRecords && !!targetRecords["sf__Created"]
                             });
                             if (ret.isUnprocessed) {
-                                ret.errorMessage = _this.logger.getResourceString(COMMON_RESOURCES.unprocessedRecord);
+                                ret.errorMessage = _this.logger.getResourceString(RESOURCES.unprocessedRecord);
                             } else if (ret.isMissingSourceTargetMapping) {
-                                ret.errorMessage = _this.logger.getResourceString(COMMON_RESOURCES.invalidRecordHashcode);
+                                ret.errorMessage = _this.logger.getResourceString(RESOURCES.invalidRecordHashcode);
                             }
                             return ret;
                         });
