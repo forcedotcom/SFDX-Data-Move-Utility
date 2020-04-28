@@ -71,9 +71,10 @@ export class Script {
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         this.apiVersion = apiVersion || this.apiVersion;
 
+
         // Filter excluded objects
         this.objects = this.objects.filter(object => {
-            let included = !object.excluded || object.operation == OPERATION.Readonly;
+            let included = (!object.excluded || object.operation == OPERATION.Readonly);
             if (!included) {
                 this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
             }
@@ -105,11 +106,35 @@ export class Script {
         // Setup objects
         for (let index = 0; index < this.objects.length; index++) {
             const object = this.objects[index];
-            object.setupAsync(this);
+            object.setup(this);
         }
 
-        // Create extra objects
+        // Filter unnecessary objects
+        this.objects = this.objects.filter(x => x.name != "RecordType");
 
+        // Create extra objects
+        // -- Add RecordType object  
+        let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
+        if (objectsWithRecordTypeFields.length > 0 && !this.objects.some(x => x.name == "RecordType")) {
+            let object = new ScriptObject();
+            this.objects.push(object);
+            Object.assign(object, <ScriptObject>{
+                name: "RecordType",
+                externalId: "DeveloperName",
+                isExtraObject: true,
+                allRecords: true,
+                query: "SELECT Id FROM RecordType",
+                operation: OPERATION.Readonly
+            });
+
+            object.setup(this);
+            object.parsedQuery.where = CommonUtils.composeWhereClause(object.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
+            object.parsedQuery.orderBy = <OrderByClause>({
+                field: "SobjectType",
+                order: "ASC"
+            });
+            object.query = composeQuery(object.parsedQuery);
+        }
 
 
 
@@ -271,6 +296,7 @@ export class ScriptObject {
     initialExternalId: string = "";
     parsedQuery: Query;
     parsedDeleteQuery: Query;
+    isExtraObject: boolean = false;
 
     get fields(): string[] {
         if (!this.parsedQuery) {
@@ -279,12 +305,12 @@ export class ScriptObject {
         return this.parsedQuery.fields.map(x => (<SOQLField>x).field);
     }
 
-    get hasRecordTypeField(): boolean {
+    get hasRecordTypeIdField(): boolean {
         return this.fields.some(x => x == "RecordTypeId");
     }
 
 
-    setupAsync(script: Script) {
+    setup(script: Script) {
 
         // Initialize object
         this.script = script;
