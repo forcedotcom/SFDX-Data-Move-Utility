@@ -36,7 +36,7 @@ export class SOrg {
     name: string;
     instanceUrl: string;
     version: string;
-    maxRequest: number = 1000000;
+    maxRequest: number = 10;
 
     pollingIntervalMs: number;
     bulkApiVersion: string;
