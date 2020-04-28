@@ -333,9 +333,8 @@ export class CommonUtils {
 
 
     /**
-     * Creates numeric hashcode of the object based on its string representation
-     *
-     * @static
+     * @static Creates numeric hashcode of the object based on its string representation
+     * 
      * @param {object} object Object to get hashcode for it
      * @param {Array<string>} [propsToExclude=new Array<string>()] Poperties to exclude from the hashing
      * @returns {number}
@@ -354,6 +353,24 @@ export class CommonUtils {
         }).join('');
         return this.getStringHashcode(str);
     }
+
+
+
+    
+    /**
+     * @static Trims end of string if the string ends with the given suffix
+     * @param  {string} str String to trim
+     * @param  {string} toTrim Chars to trim from the end
+     * @returns string
+     */
+    public static trimEndStr(str: string, toTrim: string): string {
+        if (str.endsWith(toTrim)) {
+            return str.substring(0, str.lastIndexOf(toTrim));
+        } else {
+            return str;
+        }
+    }
+
 
 
 }

@@ -17,7 +17,7 @@ import {
     COMMAND_EXIT_STATUSES
 } from "../../modules/components/messages";
 import { RunCommand, RUN_RESOURCES } from "../../modules/commands_processors/runCommand";
-import { CommonUtils } from "../../modules/components/common";
+import { CommonUtils } from "../../modules/components/commonUtils";
 
 
 Messages.importMessagesDirectory(__dirname);
@@ -182,6 +182,8 @@ export default class Run extends SfdxCommand {
 
             // TODO: Call command processor
             let commandResult: any;
+            this.command = new RunCommand(logger, this.flags.path, this.flags.sourceusername, this.flags.targetusername, this.flags.apiversion);
+            this.command.loadScript();
 
             // Exit - success
             logger.commandExitMessage(

@@ -6,7 +6,7 @@
  */
 
 
-import { CommonUtils } from "./common";
+import { CommonUtils } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { MessageUtils, COMMON_RESOURCES } from "./messages";
 const request = require('request');

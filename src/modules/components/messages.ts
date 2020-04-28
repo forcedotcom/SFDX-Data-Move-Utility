@@ -7,7 +7,7 @@
 import { LoggerLevel } from '@salesforce/core';
 import * as path from 'path';
 import * as fs from 'fs';
-import { CommonUtils } from './common';
+import { CommonUtils } from './commonUtils';
 import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
