@@ -5,6 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { execSync } from 'child_process';
 import path = require('path');
 import { SfdxCommand } from '@salesforce/command';
 
@@ -356,9 +357,10 @@ export class CommonUtils {
 
 
 
-    
+
     /**
      * @static Trims end of string if the string ends with the given suffix
+     * 
      * @param  {string} str String to trim
      * @param  {string} toTrim Chars to trim from the end
      * @returns string
@@ -370,6 +372,22 @@ export class CommonUtils {
             return str;
         }
     }
+
+
+
+    /**
+    * @static Executes SFDX command synchronously
+    * 
+    * @param  {String} command SFDX command to execute ex. force:org:display without previous sfdx 
+    * @param  {String} targetusername --targetusername flag (if applied)
+    * @returns string Returns command output
+    */
+    public static execSfdx(command: String, targetusername: String): string {
+        if (typeof targetusername != "undefined")
+            return execSync(`sfdx ${command} --targetusername ${targetusername}`).toString();
+        else
+            return execSync(`sfdx ${command}`).toString();
+    };
 
 
 

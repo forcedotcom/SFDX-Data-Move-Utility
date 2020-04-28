@@ -46,6 +46,9 @@
     "pluginVersion": "Plugin version: %s v%s",
     "newLine": "",
 
+    "source": "Source",
+    "target": "Target",
+    "packageScript": "Package script",
     "workingPathDoesNotExist": "The specified working directory does not exist.",
     "packageFileDoesNotExist": "Missing package.json file in the working directory.",
     "loadingPackageFile": "Loading and validating the package script...",

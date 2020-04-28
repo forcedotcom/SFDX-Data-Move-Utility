@@ -30,6 +30,9 @@ import { OPERATION } from '../components/statics';
  * @enum {number}
  */
 export enum RUN_RESOURCES {
+    source = "source",
+    target = "target",
+    packageScript = "packageScript",
     pluginVersion = "pluginVersion",
     newLine = "newLine",
     workingPathDoesNotExist = "workingPathDoesNotExist",
@@ -146,14 +149,13 @@ export class RunCommand {
         apiVersion: string) {
 
         this.logger = logger;
-        this.basePath = path.isAbsolute(basePath) ? basePath : path.join(process.cwd(), basePath.toString());
-        this.basePath = this.basePath.replace(/([^"]+)(.*)/, "$1");
+        this.basePath = (path.isAbsolute(basePath) ? basePath : path.join(process.cwd(), basePath.toString())).replace(/([^"]+)(.*)/, "$1");
         this.targetUsername = targetUsername;
         this.sourceUsername = sourceUsername;
         this.apiVersion = apiVersion;
     }
 
-    loadScript(){
+    async loadScriptAsync(): Promise<any> {
 
         if (!fs.existsSync(this.basePath)) {
             throw new models.CommandInitializationError(this.logger.getResourceString(RUN_RESOURCES.workingPathDoesNotExist));
@@ -170,21 +172,19 @@ export class RunCommand {
         let json = fs.readFileSync(filePath, 'utf8');
         let jsonObject = JSON.parse(json);
         this.script = plainToClass(models.Script, jsonObject);
-        if (this.apiVersion) {
-            this.script.apiVersion = this.apiVersion;
-        }
-        
-        this.script.objects = this.script.objects.filter(object => {
-            let isIncluded = !object.excluded || object.operation == OPERATION.Readonly;
-            if (!isIncluded) {
-                this.logger.infoVerbose(RUN_RESOURCES.objectWillBeExcluded, object.name);
-            }
-            return isIncluded;
+       
+        await this.script.initializeAsync(this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);
+
+        this.logger.objectMinimal({
+            [this.logger.getResourceString(RUN_RESOURCES.source)]: this.logger.getResourceString(RUN_RESOURCES.sourceOrg, this.script.sourceOrg.name),
+            [this.logger.getResourceString(RUN_RESOURCES.target)]: this.logger.getResourceString(RUN_RESOURCES.targetOrg, this.script.targetOrg.name),
+            [this.logger.getResourceString(RUN_RESOURCES.packageScript)]: this.logger.getResourceString(RUN_RESOURCES.scriptFile, filePath)
         });
 
-        this.script.initialize(this.sourceUsername, this.targetUsername, this.basePath);
+        //console.log(this.script.sourceOrg.accessToken);
+        //console.log(this.script.targetOrg.accessToken);
     }
-    
+
 
 
 }
