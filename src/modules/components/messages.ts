@@ -128,6 +128,7 @@ export enum RESOURCES {
     processingSObject = "processingSObject",
     fieldSourceDoesNtoExist = "fieldSourceDoesNtoExist",
     fieldTargetDoesNtoExist = "fieldTargetDoesNtoExist",
+    missingFieldsToProcess = "missingFieldsToProcess",
     referencedFieldDoesNotExist = "referencedFieldDoesNotExist",
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",

@@ -160,11 +160,29 @@ export default class Script {
      * @memberof Script
      */
     async describeSObjectsAsync(): Promise<void> {
+        
         this.logger.infoMinimal(RESOURCES.gettingOrgMetadata);
+        
         for (let index = 0; index < this.objects.length; index++) {
             const object = this.objects[index];
+            
+            this.logger.infoVerbose(RESOURCES.processingSObject, object.name);
             await object.describeAsync();
         }
+
+        for (let index = 0; index < this.objects.length; index++) {
+            const object = this.objects[index];
+
+            this.logger.infoVerbose(RESOURCES.processingSObject, object.name);
+            
+
+
+        }
+
+
+
+
+
 
     }
 }

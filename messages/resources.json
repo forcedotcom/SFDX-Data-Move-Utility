@@ -113,6 +113,7 @@
     "processingSObject": "Processing the metadata of the sObject %s...",
     "fieldSourceDoesNtoExist": "Field %s.%s is missing in the Source.",
     "fieldTargetDoesNtoExist": "Field %s.%s is missing in the Target.",
+    "missingFieldsToProcess": "There are no fields to process for %s.",
     "referencedFieldDoesNotExist": "Field %s.%s references the SObject of type %s which has no required external Id field definition.",
 
     "dataMigrationProcessStarted": "Preparing data migration job...",

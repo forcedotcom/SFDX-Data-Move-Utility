@@ -20,7 +20,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError } from ".";
+import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError } from ".";
 
 
 /**
@@ -74,7 +74,8 @@ export default class ScriptObject {
         }
         return this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
-            let describe = this.sourceSObjectDescribe.fieldsMap.get(name) && this.targetSObjectDescribe.fieldsMap.get(name);
+            let describe = this.sourceSObjectDescribe && this.sourceSObjectDescribe.fieldsMap && this.sourceSObjectDescribe.fieldsMap.get(name)
+                || this.targetSObjectDescribe && this.targetSObjectDescribe.fieldsMap && this.targetSObjectDescribe.fieldsMap.get(name);
             if (!describe || describe.isReadonly) {
                 return null;
             }
@@ -99,19 +100,15 @@ export default class ScriptObject {
         return CONSTANTS.SPECIAL_OBJECTS.indexOf(this.name) >= 0;
     }
 
-    get isComplexExternalId(): boolean {
-        return this.externalId.indexOf('.') >= 0
-            || this.externalId.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
-            || this.externalId.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
+    get isReadonlyObject(): boolean {
+        return this.operation == OPERATION.Readonly || this.operation == OPERATION.Delete;
     }
 
-    getComplexExternalId(): string {
-        return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
-            + this.externalId.replace(
-                new RegExp(`${CONSTANTS.COMPLEX_FIELDS_SEPARATOR}`, 'g'),
-                CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR
-            );
+    get hasComplexExternalId(): boolean {
+        return this._isComplexField(this.externalId);
     }
+
+
 
     /**
      * Setup this object
@@ -147,8 +144,8 @@ export default class ScriptObject {
                 this.parsedQuery.fields.push(getComposedField("Id"));
             }
             // Add external Id field to the query
-            if (this.isComplexExternalId) {
-                this.parsedQuery.fields.push(getComposedField(this.getComplexExternalId()));
+            if (this.hasComplexExternalId) {
+                this.parsedQuery.fields.push(getComposedField(this._getComplexExternalId()));
             } else {
                 this.parsedQuery.fields.push(getComposedField(this.externalId));
             }
@@ -196,15 +193,94 @@ export default class ScriptObject {
         if (!this.sourceSObjectDescribe && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
             let apisf = new ApiSf(this.script.sourceOrg);
             this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
-            this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+            try {
+                // Retrieve sobject metadata
+                this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+
+                // Check fields existance
+                this._checkScriptFieldsAgainstObjectMetadata(this.sourceSObjectDescribe, true);
+
+            } catch (ex) {
+                if (ex instanceof CommandInitializationError) {
+                    throw ex;
+                }
+                throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectSourceDoesNotExist, this.name));
+            }
         }
 
         // Describe object in the target org        
         if (!this.targetSObjectDescribe && this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
             let apisf = new ApiSf(this.script.targetOrg);
             this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
-            this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+            try {
+                // Retrieve sobject metadata
+                this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+
+                // Check fields existance
+                this._checkScriptFieldsAgainstObjectMetadata(this.targetSObjectDescribe, false);
+
+            } catch (ex) {
+                if (ex instanceof CommandInitializationError) {
+                    throw ex;
+                }
+                throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectTargetDoesNotExist, this.name));
+            }
+        }
+
+        
+    }
+
+
+
+
+
+
+    // ---------------- Private members ---------------------------//
+    // ------------------------------------------------------------//
+    private _checkScriptFieldsAgainstObjectMetadata(describe: SObjectDescribe, isSource: boolean) {
+
+        if (!this.isReadonlyObject && !this.isSpecialObject) {
+            let fieldsInQuery = [].concat(this.fieldsInQuery);
+            fieldsInQuery.forEach(x => {
+                if (!this._isComplexField(x) && !describe.fieldsMap.has(x)) {
+
+                    // Field in the query is missing in the org metadata
+                    if (isSource)
+                        this.script.logger.warn(RESOURCES.fieldSourceDoesNtoExist, this.name, x);
+                    else
+                        this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, x);
+
+                    // Remove missing field from the query
+                    CommonUtils.removeBy(this.parsedQuery.fields, "field", x);
+                }
+            });
+
+            if (this.fieldsToUpdate.length == 0) {
+                throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.missingFieldsToProcess, this.name));
+            }
+
+        } else {
+            if (this.fieldsInQuery.length == 0) {
+                throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.missingFieldsToProcess, this.name));
+            }
         }
     }
+
+
+    private _getComplexExternalId(): string {
+        return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
+            + this.externalId.replace(
+                new RegExp(`${CONSTANTS.COMPLEX_FIELDS_SEPARATOR}`, 'g'),
+                CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR
+            );
+    }
+
+    
+    private _isComplexField(fieldName: string): boolean {
+        return fieldName.indexOf('.') >= 0
+            || fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
+            || fieldName.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
+    }
+
 
 }

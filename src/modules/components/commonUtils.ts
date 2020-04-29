@@ -468,4 +468,22 @@ export class CommonUtils {
         });
     }
 
+
+
+    /**
+     * 
+     *
+     * @static Removes all objects from the array which are matched given property value
+     * 
+     * @param {Array<object>} arr The input array
+     * @param {string} field The field name
+     * @param {string} value The value to remove by it
+     * @returns {Array<object>}
+     * @memberof CommonUtils
+     */
+    public static removeBy(arr: Array<object>, field: string, value: string): Array<object> {
+        return arr.splice(arr.findIndex(item => item[field] == value), 1);
+    }
+
+
 }
