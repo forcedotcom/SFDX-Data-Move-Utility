@@ -125,6 +125,9 @@ export class Script {
         // Remove unnecessary objects
         this.objects = this.objects.filter(x => CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(x.name) < 0);
 
+        // Make each object appear only once in the script
+        this.objects = CommonUtils.distinctArray(this.objects, "name");
+
         // Add extra objects
         // -- Add RecordType object  
         let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
@@ -160,6 +163,10 @@ export class Script {
      */
     async describeSObjectsAsync(): Promise<void> {
         this.logger.infoMinimal(RESOURCES.gettingOrgMetadata);
+        for (let index = 0; index < this.objects.length; index++) {
+            const object = this.objects[index];
+            await object.describeAsync();
+        }
 
     }
 }
@@ -182,7 +189,7 @@ export class ScriptOrg {
 
     // -----------------------------------
     script: Script;
-    media: DATA_MEDIA_TYPE.File;
+    media: DATA_MEDIA_TYPE = DATA_MEDIA_TYPE.Org;
     isSource: boolean = false;
     isPersonAccountEnabled: boolean = false;
 
@@ -321,10 +328,8 @@ export class ScriptObject {
     // -----------------------------------
     script: Script;
     name: string = "";
-    sObjectDescribeSource = new SObjectDescribe();
-    sObjectDescribeTarget = new SObjectDescribe();
-    sourceFieldsMap = new Map<string, SFieldDescribe>();
-    targetFieldsMap = new Map<string, SFieldDescribe>();
+    sourceSObjectDescribe: SObjectDescribe;
+    targetSObjectDescribe: SObjectDescribe;
     initialExternalId: string = "";
     parsedQuery: Query;
     parsedDeleteQuery: Query;
@@ -340,13 +345,14 @@ export class ScriptObject {
 
     get fieldsToUpdate(): string[] {
         if (!this.parsedQuery
-            || this.sourceFieldsMap.size == 0
+            || !this.sourceSObjectDescribe
+            || this.sourceSObjectDescribe.fieldsMap.size == 0
             || this.operation == OPERATION.Readonly) {
             return new Array<string>();
         }
         return this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
-            let describe = this.targetFieldsMap.get(name) && this.sourceFieldsMap.get(name);
+            let describe = this.sourceSObjectDescribe.fieldsMap.get(name) && this.targetSObjectDescribe.fieldsMap.get(name);
             if (!describe || describe.isReadonly) {
                 return null;
             }
@@ -368,11 +374,7 @@ export class ScriptObject {
     }
 
     get isSpecialObject(): boolean {
-        return [
-            "Group",
-            "User",
-            "RecordType"
-        ].indexOf(this.name) >= 0;
+        return CONSTANTS.SPECIAL_OBJECTS.indexOf(this.name) >= 0;
     }
 
     get isComplexExternalId(): boolean {
@@ -429,7 +431,7 @@ export class ScriptObject {
                 this.parsedQuery.fields.push(getComposedField(this.externalId));
             }
             // Make each field appear only once in the query
-            this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");            
+            this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
@@ -456,8 +458,26 @@ export class ScriptObject {
                 throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedDeleteQuery, this.name, this.deleteQuery, ex));
             }
         }
-
     }
+
+
+    async describeAsync(): Promise<void> {
+        
+        // Describe object in the source org
+        if (!this.sourceSObjectDescribe && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org){
+            let apisf = new ApiSf(this.script.sourceOrg);            
+            this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
+            this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+        }
+        
+        // Describe object in the target org        
+        if (!this.targetSObjectDescribe  && this.script.targetOrg.media == DATA_MEDIA_TYPE.Org){
+            let apisf = new ApiSf(this.script.targetOrg);
+            this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
+            this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+        }
+    }
+
 }
 
 
@@ -488,11 +508,19 @@ export class ScriptMockField {
  * @class SObjectDescribe
  */
 export class SObjectDescribe {
+
+    constructor(init?: Partial<SObjectDescribe>) {
+        if (init) {
+            Object.assign(this, init);
+        }
+    }
+
     name: string = "";
     label: string = "";
     updateable: boolean = false;
     createable: boolean = false;
     custom: boolean = false;
+    fieldsMap: Map<string, SFieldDescribe> = new Map<string, SFieldDescribe>();
 }
 
 

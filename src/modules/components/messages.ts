@@ -120,6 +120,7 @@ export enum RESOURCES {
     executingPackageScript = "executingPackageScript",
     preparing = "preparing",
     gettingOrgMetadata = "gettingOrgMetadata",
+    gettingMetadataForSObject = "gettingMetadataForSObject",
     noExternalKey = "noExternalKey",
     objectSourceDoesNotExist = "objectSourceDoesNotExist",
     objectTargetDoesNotExist = "objectTargetDoesNotExist",

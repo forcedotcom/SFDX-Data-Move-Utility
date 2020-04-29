@@ -19,8 +19,9 @@ import {
     Query,
     WhereClause
 } from 'soql-parser-js';
-import { CONSTANTS } from './statics';
-import { QueryResult } from 'jsforce';
+import { CONSTANTS, DATA_MEDIA_TYPE } from './statics';
+import { DescribeSObjectResult, QueryResult } from 'jsforce';
+
 
 
 export class ApiSf {
@@ -85,6 +86,55 @@ export class ApiSf {
         return <QueryResult<object>>(await makeQueryAsync(soql));
     }
 
+
+
+    /**
+        * Describes given SObject by retrieving field descriptions
+        * 
+        * @param  {string} objectName Object API name to describe
+        * @param  {SfdmModels.SOrg} sOrg sOrg instance
+        * @param  {Map<string, SObjectDescribe>} defaultDescibe
+        * @returns SfdmModels.SObjectDescribe
+        * @memberof ApiSf
+        */
+    async describeSObjectAsync(objectName: string): Promise<models.SObjectDescribe> {
+
+        var conn = this.org.getConnection();
+
+        const describeAsync = (name: string) => new Promise((resolve, reject) =>
+            conn.sobject(name).describe(function (err: any, meta: any) {
+                if (err)
+                    reject(err);
+                else
+                    resolve(meta);
+            }));
+        let describeResult: DescribeSObjectResult = <DescribeSObjectResult>(await describeAsync(objectName));
+        let sObjectDescribe: models.SObjectDescribe = new models.SObjectDescribe({
+            name: describeResult.name,
+            createable: describeResult.createable,
+            custom: describeResult.custom,
+            label: describeResult.label,
+            updateable: describeResult.createable && describeResult.updateable
+        });
+        describeResult.fields.forEach(field => {
+            let f = new models.SFieldDescribe();
+            f.name = field.name;
+            f.type = field.type;
+            f.label = field.label;
+            f.custom = field.custom;
+            f.isReference = field.referenceTo != null;
+            f.updateable = field.updateable;
+            f.autoNumber = field["autoNumber"];
+            f.creatable = field.createable;
+            f.calculated = field.calculated;
+            f.cascadeDelete = field.cascadeDelete;
+            f.isReference = field.referenceTo != null && field.referenceTo.length > 0;
+            f.referencedObjectType = field.referenceTo[0];
+
+            sObjectDescribe.fieldsMap.set(f.name, f);
+        });
+        return sObjectDescribe;
+    };
 
 
 }

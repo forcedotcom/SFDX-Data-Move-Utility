@@ -105,6 +105,7 @@
     "executingPackageScript": "Executing the package script...",
     "preparing": "Preparing...",
     "gettingOrgMetadata": "Getting and analysing objects metadata...",
+    "gettingMetadataForSObject": "Getting metadata for %s (%s)",
     "noExternalKey": "Object %s has no required external Id field definition.",
     "objectSourceDoesNotExist": "Object %s is missing in the Source.",
     "objectTargetDoesNotExist": "Object %s is missing in the Target.",
