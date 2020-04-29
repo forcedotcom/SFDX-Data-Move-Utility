@@ -58,6 +58,10 @@ export default class ScriptObject {
     parsedDeleteQuery: Query;
     isExtraObject: boolean = false;
 
+    get externalIdSFieldDescribe(): SFieldDescribe {
+        return this.isDescribed
+            && this.sourceSObjectDescribe.fieldsMap.get(this.externalId);
+    }
 
     get fieldsInQuery(): string[] {
         if (!this.parsedQuery) {
@@ -67,7 +71,7 @@ export default class ScriptObject {
     }
 
     get fieldsInQueryDescriptionMap(): Map<string, SFieldDescribe> {
-        if (!this.sourceSObjectDescribe) {
+        if (!this.isDescribed) {
             return new Map<string, SFieldDescribe>();
         }
         return CommonUtils.filterMapByArray(this.fieldsInQuery, this.sourceSObjectDescribe.fieldsMap, key => new SFieldDescribe({
@@ -81,14 +85,14 @@ export default class ScriptObject {
 
     get fieldsToUpdate(): string[] {
         if (!this.parsedQuery
-            || !this.sourceSObjectDescribe
+            || !this.isDescribed
             || this.sourceSObjectDescribe.fieldsMap.size == 0
             || this.operation == OPERATION.Readonly) {
             return new Array<string>();
         }
         return this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
-            let describe = this.sourceSObjectDescribe && this.sourceSObjectDescribe.fieldsMap && this.sourceSObjectDescribe.fieldsMap.get(name)
+            let describe = this.sourceSObjectDescribe.fieldsMap.get(name)
                 || this.targetSObjectDescribe && this.targetSObjectDescribe.fieldsMap && this.targetSObjectDescribe.fieldsMap.get(name);
             if (!describe || describe.isReadonly) {
                 return null;
@@ -130,7 +134,7 @@ export default class ScriptObject {
     }
 
     get isDescribed(): boolean {
-        return !!this.sourceSObjectDescribe || !!this.targetSObjectDescribe;
+        return !!this.sourceSObjectDescribe;
     }
 
     get isInitialized(): boolean {
@@ -221,7 +225,7 @@ export default class ScriptObject {
         if (this.isDescribed) return;
 
         // Describe object in the source org
-        if (!this.sourceSObjectDescribe && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
+        if (!this.isDescribed && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
             let apisf = new ApiSf(this.script.sourceOrg);
             this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
             try {
@@ -238,11 +242,9 @@ export default class ScriptObject {
                 }
                 throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectSourceDoesNotExist, this.name));
             }
-        }
 
-        // Describe object in the target org        
-        if (!this.targetSObjectDescribe && this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
-            let apisf = new ApiSf(this.script.targetOrg);
+            // Describe object in the target org        
+            apisf = new ApiSf(this.script.targetOrg);
             this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
             try {
                 // Retrieve sobject metadata

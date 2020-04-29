@@ -121,7 +121,7 @@ export default class Script {
             object.setup(this);
         }
 
-        // Remove unnecessary objects
+        // Remove unsupported objects
         this.objects = this.objects.filter(x => CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(x.name) < 0);
 
         // Make each object appear only once in the script
@@ -211,6 +211,7 @@ export default class Script {
                     parentExternalIdField.externalIdChild__rFields.push(__rSFieldDescribe);
                     field.__rSFieldDescribe = __rSFieldDescribe;
                     __rSFieldDescribe.idSFieldDescribe = field;
+
                 }
             }
         }

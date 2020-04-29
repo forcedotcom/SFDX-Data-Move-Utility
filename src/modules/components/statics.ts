@@ -27,7 +27,9 @@ export const CONSTANTS = {
 
     NOT_SUPPORTED_OBJECTS: [
         'Profile',
-        'RecordType'
+        'RecordType',
+        'User',
+        'Group'
     ],
     SPECIAL_OBJECTS: [
         "Group",
