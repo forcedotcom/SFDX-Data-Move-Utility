@@ -118,6 +118,7 @@ export class ApiSf {
         });
         describeResult.fields.forEach(field => {
             let f = new models.SFieldDescribe();
+            f.objectName = describeResult.name;
             f.name = field.name;
             f.type = field.type;
             f.label = field.label;

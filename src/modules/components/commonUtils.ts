@@ -21,6 +21,7 @@ import {
     WhereClause,
     Operator
 } from 'soql-parser-js';
+import { CONSTANTS } from './statics';
 
 /**
  * Common utility functions
@@ -484,6 +485,73 @@ export class CommonUtils {
     public static removeBy(arr: Array<object>, field: string, value: string): Array<object> {
         return arr.splice(arr.findIndex(item => item[field] == value), 1);
     }
+
+
+
+
+    /**
+     * @static Converts array to map
+     * 
+     * @template T
+     * @param {Array<T>} arr 
+     * @param {string} keyField The field to use for map key
+     * @returns {Map<string, T>}
+     * @memberof CommonUtils
+     */
+    public static arrayToMap<T>(arr: Array<T>, keyField: string): Map<string, T> {
+        return arr.reduce((mapAccumulator: Map<string, T>, obj) => {
+            mapAccumulator.set(String(obj[keyField]), obj);
+            return mapAccumulator;
+        }, new Map<string, T>());
+    }
+
+
+
+
+    /**
+     * @static Filters the input map by the keys from the array
+     * 
+     * @template T
+     * @param {Array<string>} keysToFilter The array of keys to include in the returned map
+     * @param {Map<string, T>} sourceMap The source map to filter
+     * @param {T} defaultValue The default value to set if key in the fiter array was not found in the map
+     * @returns {Map<string, T>}
+     * @memberof CommonUtils
+     */
+    public static filterMapByArray<T>(keysToFilter: Array<string>, sourceMap: Map<string, T>, defaultValueCallback?: (key: string) => T, 
+            appendToSourceMapIfNotExist? : boolean): Map<string, T> {
+        return keysToFilter.reduce((mapAccumulator: Map<string, T>, key) => {
+            let obj = sourceMap.get(key);
+            if (obj) {
+                mapAccumulator.set(key, obj);
+            } else if (defaultValueCallback) {
+                let value = defaultValueCallback(key);
+                mapAccumulator.set(key, value);
+                if (appendToSourceMapIfNotExist){
+                    sourceMap.set(key, value)
+                }
+            }
+            return mapAccumulator;
+        }, new Map<string, T>());
+    }
+
+
+
+    /**
+     * Returns true if the field name is a complex field name
+     * (f.ex. Account__r.Name)
+     *
+     * @static
+     * @param {string} fieldName The field name
+     * @returns {boolean}
+     * @memberof CommonUtils
+     */
+    public static isComplexField(fieldName: string): boolean {
+        return fieldName && (fieldName.indexOf('.') >= 0
+            || fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
+            || fieldName.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX));
+    }
+
 
 
 }

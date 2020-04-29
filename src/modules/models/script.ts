@@ -21,6 +21,7 @@ import {
     getComposedField
 } from 'soql-parser-js';
 import { ScriptOrg, ScriptObject, CommandInitializationError } from ".";
+import { fileURLToPath } from "url";
 
 
 
@@ -160,29 +161,59 @@ export default class Script {
      * @memberof Script
      */
     async describeSObjectsAsync(): Promise<void> {
-        
+
         this.logger.infoMinimal(RESOURCES.gettingOrgMetadata);
-        
+
+        // Describe all objects
         for (let index = 0; index < this.objects.length; index++) {
             const object = this.objects[index];
-            
             this.logger.infoVerbose(RESOURCES.processingSObject, object.name);
             await object.describeAsync();
         }
 
+        // Add parent related ScriptObjects and link between related objects
         for (let index = 0; index < this.objects.length; index++) {
             const object = this.objects[index];
-
             this.logger.infoVerbose(RESOURCES.processingSObject, object.name);
-            
 
+            for (let index2 = 0; index2 < object.fieldsToUpdate.length; index2++) {
+                const field = object.fieldsToUpdateDescriptionMap.get(object.fieldsToUpdate[index2]);
+                if (field.isReference) {
 
+                    // Search for the parent ScriptObject
+                    field.parentScriptObject = this.objects.filter(x => x.name == field.referencedObjectType)[0];
+
+                    if (!field.parentScriptObject) {
+                        // Add parent ScriptObject as READONLY since it is missing in the script
+                        field.parentScriptObject = new ScriptObject();
+                        this.objects.push(field.parentScriptObject);
+                        Object.assign(field.parentScriptObject, <ScriptObject>{
+                            name: field.referencedObjectType,
+                            isExtraObject: true,
+                            allRecords: true,
+                            query: `SELECT Id, ${CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME} FROM ${field.referencedObjectType}`,
+                            operation: OPERATION.Readonly
+                        });
+                    }
+
+                    // Add __r fields to the child object query
+                    let __rFieldName = field.name__r + '.' + field.parentScriptObject.externalId;
+                    object.parsedQuery.fields.push(getComposedField(__rFieldName));
+                    object.query = composeQuery(object.parsedQuery);
+
+                    // Setup and describe the parent ScriptObject
+                    field.parentScriptObject.setup(this);
+                    await field.parentScriptObject.describeAsync();
+
+                    // Linking between related fields and objects
+                    let parentExternalIdField = field.parentScriptObject.fieldsInQueryDescriptionMap.get(field.parentScriptObject.externalId);
+                    let __rSFieldDescribe = object.fieldsInQueryDescriptionMap.get(__rFieldName);
+                    parentExternalIdField.externalIdChild__rFields.push(__rSFieldDescribe);
+                    field.__rSFieldDescribe = __rSFieldDescribe;
+                    __rSFieldDescribe.idSFieldDescribe = field;
+                }
+            }
         }
-
-
-
-
-
 
     }
 }

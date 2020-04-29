@@ -21,6 +21,7 @@ import {
     getComposedField
 } from 'soql-parser-js';
 import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError } from ".";
+import SFieldDescribe from "./sfieldDescribe";
 
 
 /**
@@ -37,7 +38,7 @@ export default class ScriptObject {
     query: string = "";
     deleteQuery: string = "";
     operation: OPERATION = OPERATION.Readonly;
-    externalId: string = "Name";
+    externalId: string = CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME;
     deleteOldData: boolean = false;
     updateWithMockData: boolean = false;
     mockCSVData: boolean = false;
@@ -65,6 +66,19 @@ export default class ScriptObject {
         return this.parsedQuery.fields.map(x => (<SOQLField>x).field);
     }
 
+    get fieldsInQueryDescriptionMap(): Map<string, SFieldDescribe> {
+        if (!this.sourceSObjectDescribe) {
+            return new Map<string, SFieldDescribe>();
+        }
+        return CommonUtils.filterMapByArray(this.fieldsInQuery, this.sourceSObjectDescribe.fieldsMap, key => new SFieldDescribe({
+            creatable: false,
+            name: key,
+            label: key,
+            updateable: false,
+            type: "dynamic"
+        }), true);
+    }
+
     get fieldsToUpdate(): string[] {
         if (!this.parsedQuery
             || !this.sourceSObjectDescribe
@@ -81,6 +95,13 @@ export default class ScriptObject {
             }
             return (<SOQLField>x).field;
         }).filter(x => !!x);
+    }
+
+    get fieldsToUpdateDescriptionMap(): Map<string, SFieldDescribe> {
+        if (!this.sourceSObjectDescribe) {
+            return new Map<string, SFieldDescribe>();
+        }
+        return CommonUtils.filterMapByArray(this.fieldsToUpdate, this.sourceSObjectDescribe.fieldsMap);
     }
 
     get hasRecordTypeIdField(): boolean {
@@ -105,10 +126,16 @@ export default class ScriptObject {
     }
 
     get hasComplexExternalId(): boolean {
-        return this._isComplexField(this.externalId);
+        return CommonUtils.isComplexField(this.externalId);
     }
 
+    get isDescribed(): boolean {
+        return !!this.sourceSObjectDescribe || !!this.targetSObjectDescribe;
+    }
 
+    get isInitialized(): boolean {
+        return !!this.script;
+    }
 
     /**
      * Setup this object
@@ -117,6 +144,8 @@ export default class ScriptObject {
      * @memberof ScriptObject
      */
     setup(script: Script) {
+
+        if (this.isInitialized) return;
 
         // Initialize object
         this.script = script;
@@ -149,7 +178,7 @@ export default class ScriptObject {
             } else {
                 this.parsedQuery.fields.push(getComposedField(this.externalId));
             }
-            // Make each /*  */field appear only once in the query
+            // Make each field appear only once in the query
             this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
@@ -189,6 +218,8 @@ export default class ScriptObject {
      */
     async describeAsync(): Promise<void> {
 
+        if (this.isDescribed) return;
+
         // Describe object in the source org
         if (!this.sourceSObjectDescribe && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
             let apisf = new ApiSf(this.script.sourceOrg);
@@ -196,6 +227,7 @@ export default class ScriptObject {
             try {
                 // Retrieve sobject metadata
                 this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+                [...this.sourceSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
 
                 // Check fields existance
                 this._checkScriptFieldsAgainstObjectMetadata(this.sourceSObjectDescribe, true);
@@ -215,6 +247,7 @@ export default class ScriptObject {
             try {
                 // Retrieve sobject metadata
                 this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+                [...this.targetSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
 
                 // Check fields existance
                 this._checkScriptFieldsAgainstObjectMetadata(this.targetSObjectDescribe, false);
@@ -227,7 +260,7 @@ export default class ScriptObject {
             }
         }
 
-        
+
     }
 
 
@@ -242,7 +275,7 @@ export default class ScriptObject {
         if (!this.isReadonlyObject && !this.isSpecialObject) {
             let fieldsInQuery = [].concat(this.fieldsInQuery);
             fieldsInQuery.forEach(x => {
-                if (!this._isComplexField(x) && !describe.fieldsMap.has(x)) {
+                if (!CommonUtils.isComplexField(x) && !describe.fieldsMap.has(x)) {
 
                     // Field in the query is missing in the org metadata
                     if (isSource)
@@ -274,13 +307,5 @@ export default class ScriptObject {
                 CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR
             );
     }
-
-    
-    private _isComplexField(fieldName: string): boolean {
-        return fieldName.indexOf('.') >= 0
-            || fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
-            || fieldName.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
-    }
-
 
 }
