@@ -184,7 +184,8 @@ export default class Run extends SfdxCommand {
             this.command = new RunCommand(logger, this.flags.path, this.flags.sourceusername, this.flags.targetusername, this.flags.apiversion);
 
             await this.command.setupAsync();
-            await this.command.createMigrationJobAsync();
+            await this.command.createJobAsync();
+            await this.command.validateCSVFiles();
 
             // Exit - success
             logger.commandExitMessage(

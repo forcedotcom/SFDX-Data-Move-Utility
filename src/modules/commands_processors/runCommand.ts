@@ -19,7 +19,7 @@ import {
 } from 'soql-parser-js';
 import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/messages";
 import * as models from '../models';
-import { OPERATION, CONSTANTS } from '../components/statics';
+import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from '../components/statics';
 import { MigrationJobTask as Task, MigrationJob as Job } from '../models';
 
 
@@ -108,13 +108,13 @@ export class RunCommand {
 
     /**
      * Analyse the current script structure and create 
-     * the optimised list of steps 
+     * the optimised list of tasks
      * to perform during the migration process
      *
      * @returns {Promise<void>}
      * @memberof RunCommand
      */
-    async createMigrationJobAsync(): Promise<void> {
+    async createJobAsync(): Promise<void> {
 
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.dataMigrationProcessStarted);
@@ -125,20 +125,32 @@ export class RunCommand {
         })
 
         let startIndex = 0;
+        let startIndexReadonly = 0;
 
+        // Create task chain in the optimized order
+        // to put parent related objects before their children
         this.script.objects.forEach(newObject => {
 
+            // New task object to insert into the task chain
             let newTask: Task = new Task({
                 scriptObject: newObject,
                 job: this.job
             });
 
-            if (newObject.isReadonlyObject) {
-                // Readonly objects are always at the beginning
+            if (newObject.name == "RecordType") {
+                // RecordType object is always at the beginning 
+                //   of the task chain
                 this.job.tasks.unshift(newTask);
                 startIndex++;
+                startIndexReadonly++;
+            } else if (newObject.isReadonlyObject) {
+                // Readonly objects are always at the beginning 
+                //   of the task chain 
+                //   but after RecordType
+                this.job.tasks.splice(startIndexReadonly, 0, newTask);
+                startIndex++;
             } else if (this.job.tasks.length == 0) {
-                // First object
+                // First object in the task chain
                 this.job.tasks.push(newTask);
             } else {
                 // The index where to insert the new object
@@ -150,16 +162,50 @@ export class RunCommand {
                     // Check if the existed task is parent MD to the new object
                     let isExistedTask_ParentMasterDetail = newObject.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name);
                     if (isNewObject_Parent && !isExistedTask_ParentMasterDetail) {
-                        // The new object is the parent => push it before the existed task
+                        // The new object is the parent => it should be before BEFORE the existed task
                         indexToInsert = taskIndex;
                     }
-                    // The existed task is the parent => leave without change
+                    // The existed task is the parent => leave the insert place without change (it should be AFTER the exited task)
                 }
-                // Insert the new object at the calculated index
+                // Insert the new object 
+                //   into the task chain
+                //   at the calculated index
                 this.job.tasks.splice(indexToInsert, 0, newTask);
             }
         });
+
+        this.logger.objectMinimal({
+            [this.logger.getResourceString(RESOURCES.executionOrder)]: this.job.tasks.map(x => x.sObjectName).join("; ")
+        });
+
     }
+
+
+
+    /**
+     * Validate the source CSV files if 
+     * CSV files are set as the data source
+     *
+     * @returns {Promise<void>}
+     * @memberof RunCommand
+     */
+    async validateCSVFiles(): Promise<void> {
+
+        if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File){
+            
+            this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
+
+            // Read csv values mapping file
+            await this.job.readCSVValueMappingFileAsync();
+            await this.job.mergeUserGroupfiles();
+            
+
+
+        }
+
+    }
+
+
 }
 
 

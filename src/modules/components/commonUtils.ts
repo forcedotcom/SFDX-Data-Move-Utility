@@ -7,6 +7,7 @@
 
 import { execSync } from 'child_process';
 import path = require('path');
+import * as fs from 'fs';
 import { SfdxCommand } from '@salesforce/command';
 import {
     composeQuery,
@@ -23,11 +24,34 @@ import {
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 
+import parse = require('csv-parse/lib/sync');
+import glob = require("glob");
+
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
+
+
 /**
  * Common utility functions
  */
 export class CommonUtils {
 
+
+
+    /**
+    * @static Splits array to multiple chunks by max chunk size
+    * 
+    * @param  {Array<any>} array Array to split
+    * @param  {number} chunkMaxSize Max size of each chunk
+    * @returns {Array<Array<any>>}
+    */
+    public static chunkArray(array: Array<any>, chunkMaxSize: number): Array<Array<any>> {
+        var i, j, arr: Array<Array<any>> = new Array<Array<any>>();
+        for (i = 0, j = array.length; i < j; i += chunkMaxSize) {
+            arr.push(array.slice(i, i + chunkMaxSize));
+        }
+        return arr;
+    }
 
 
     /**
@@ -510,7 +534,7 @@ export class CommonUtils {
 
 
 
-    
+
     /**
      *
      *
@@ -564,4 +588,347 @@ export class CommonUtils {
 
 
 
+    /**
+      * @static Reads csv file from disk
+      * Can read both entire file or wanted amount of lines
+      * 
+      * @param  {string} filePath Full path to CSV to read
+      * @param  {number=0} linesAmountToRead 
+      * @param  {Map<string,string>?} acceptedColumnsToColumnsTypeMap Map between column to be imported from 
+      *             the csv to its expected type. Type can be 'string', 'boolean' etc
+      * @returns Array<object>
+      * @memberof CommonUtils
+      */
+    public static async readCsvFileAsync(filePath: string, 
+                                        linesAmountToRead: number = 0, 
+                                        acceptedColumnsToColumnsTypeMap?: Map<string, string>): Promise<Array<object>> {
+
+        function csvCast(value, context) {
+
+            if (context.header || typeof context.column == "undefined") {
+                return value;
+            }
+
+            if (value == "#N/A") {
+                return null;
+            }
+
+            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);
+
+            if (fieldType == "boolean") {
+                if (value == "1" || value == "TRUE" || value == "true")
+                    return true;
+                else
+                    return false;
+            }
+
+            if (!value) {
+                return null;
+            }
+
+            return value;
+        }
+
+        function columns(header) {
+            if (!acceptedColumnsToColumnsTypeMap) {
+                return header;
+            }
+            return header.map(column => {
+                if (column.indexOf('.') >= 0
+                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_CSV_COLUMN_SEPARATOR) >= 0
+                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR) >= 0
+                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
+                    || acceptedColumnsToColumnsTypeMap.has(column))
+                    return column;
+                else {
+                    return undefined;
+                }
+            });
+        }
+
+
+        return new Promise<Array<object>>(resolve => {
+
+            if (!fs.existsSync(filePath)) {
+                resolve(new Array<object>());
+                return;
+            }
+
+            if (linesAmountToRead == 0) {
+                let input = fs.readFileSync(filePath, 'utf8');
+                input = input.replace(/^\uFEFF/, '');
+                const records = parse(input, {
+                    columns: columns,
+                    skip_empty_lines: true,
+                    cast: csvCast
+                });
+                resolve([...records]);
+            } else {
+
+                let lineReader = require('readline').createInterface({
+                    input: require('fs').createReadStream(filePath),
+                });
+
+                let lineCounter = 0; let wantedLines = [];
+
+                lineReader.on('line', function (line) {
+                    lineCounter++;
+                    wantedLines.push(line);
+                    if (lineCounter == linesAmountToRead) {
+                        lineReader.close();
+                    }
+                });
+
+                lineReader.on('close', function () {
+                    if (wantedLines.length == 1) {
+                        let output = [wantedLines[0].split(',').reduce((acc, field) => {
+                            acc[field] = null;
+                            return acc;
+                        }, {})];
+                        resolve(output);
+                        return;
+                    }
+                    let input = wantedLines.join('\n');
+                    const records = parse(input, {
+                        columns: true,
+                        skip_empty_lines: true,
+                        cast: csvCast
+                    });
+                    resolve([...records]);
+                });
+
+            }
+
+        });
+    }
+
+
+
+    /**
+     * @static Writes array of objects to csv file
+     * 
+     * @param  {string} filePath Full file path to write to
+     * @param  {Array<object>} array Array of objects to write to the csv file
+     * @param  {boolean=false} createEmptyFileOnEmptyArray Set to true forces creating empty file 
+     *                          if the input array is empty or undefined otherwise nothing acts
+     * @memberof CommonUtils 
+     */
+    public static async writeCsvFileAsync(filePath: string, 
+                                        array: Array<object>, 
+                                        createEmptyFileOnEmptyArray: boolean = false): Promise<void> {
+
+        if (!array || array.length == 0) {
+            if (createEmptyFileOnEmptyArray) {
+                fs.writeFileSync(filePath, "");
+            }
+            return;
+        }
+        const csvWriter = createCsvWriter({
+            header: Object.keys(array[0]).map(x => {
+                return {
+                    id: x,
+                    title: x
+                }
+            }),
+            path: filePath,
+            encoding: "utf8"
+        });
+        return csvWriter.writeRecords(array);
+    }
+
+
+
+    /**
+     * @static Merges all rows from two source csv files into the single csv file
+     * 
+     * @param  {string} source1FilePath Full path to the first csv
+     * @param  {string} source2FilePath Full path to the second csv
+     * @param  {string} targetFilePath Full path to the target merged csv to create
+     * @param  {boolean} deleteSourceFiles Set true to delete all source files after successfull merging
+     * @param  {Array<string>} ...columns Acceptable columns from the source and the target to insert into the resulting csv file
+     * @memberof CommonUtils
+     */
+    public static async mergeCsvFilesAsync(source1FilePath: string, 
+                                            source2FilePath: string, 
+                                            targetFilePath: string, 
+                                            deleteSourceFiles: boolean, 
+                                            ...columns: Array<string>) {
+
+        let totalRows: Array<object> = new Array<object>();
+
+        async function addRowsFromFile(file: string) {
+            if (fs.existsSync(file)) {
+                let rows = await CommonUtils.readCsvFileAsync(file);
+                rows.forEach(row => {
+                    let thisRow = columns.reduce((acc, column) => {
+                        if (typeof row[column] != "undefined") {
+                            acc[column] = row[column];
+                        } else {
+                            acc[column] = null;
+                        }
+                        return acc;
+                    }, {});
+                    totalRows.push(thisRow);
+                });
+                if (deleteSourceFiles) {
+                    fs.unlinkSync(file);
+                }
+            }
+        }
+
+        await addRowsFromFile(source1FilePath);
+        await addRowsFromFile(source2FilePath);
+
+        await this.writeCsvFileAsync(targetFilePath, totalRows);
+
+    }
+
+
+
+    /**
+     * @static Transforms array of objects into array of CSV strings. 
+     * Method splits the input array into chunks and to limit maximal size 
+     * of each produced csv string after base64 encoding.
+     *
+     * @static
+     * @param {Array<object>} array The array of objects to transform
+     * @param {number} maxCsvStringSizeInBytes The maximal size of each CSV string in bytes
+     * @param {number} blockSize The array block size. Used for calculation of the resulting csv string.
+     * @param {string} [lineDelimiter='\n'] The line delimiter for the csv
+     * @param {string} encoding The encoding for each value in the generated csv string
+     * @returns {[Array<[Array<object>, string]>, Array<string>]} Returns array of splitted csv files + records per csv and array of csv column names
+     * @memberof CommonUtils
+     */
+    public static createCsvStringsFromArray(array: Array<object>,
+        maxCsvStringSizeInBytes: number,
+        blockSize: number,
+        lineDelimiter: string = '\n',
+        encoding: string = 'utf-8'): CsvChunks {
+
+        if (!array || array.length == 0) return new CsvChunks();
+
+        const arrayBlocks = this.chunkArray(array, blockSize);
+        const headerArray = Object.keys(array[0]).map(key => {
+            return {
+                id: key,
+                title: key
+            }
+        });
+        const csvStringifier = createCsvStringifier({
+            header: headerArray,
+            alwaysQuote: true,
+            recordDelimiter: lineDelimiter
+        });
+        let header = csvStringifier.getHeaderString();
+        let csvStrings: Array<[Array<object>, string]> = new Array<[Array<object>, string]>();
+        let buffer: Buffer = Buffer.from('', encoding);
+        let totalCsvChunkSize = 0;
+        let csvBlock: Buffer;
+        let arrayBuffer: Array<object> = new Array<object>();
+        for (let index = 0; index < arrayBlocks.length; index++) {
+            const arrayBlock = arrayBlocks[index];
+            csvBlock = Buffer.from(csvStringifier.stringifyRecords(arrayBlock), encoding);
+            let csvBlockSize = csvBlock.toString('base64').length;
+            if (totalCsvChunkSize + csvBlockSize <= maxCsvStringSizeInBytes) {
+                buffer = Buffer.concat([buffer, csvBlock]);
+                arrayBuffer = arrayBuffer.concat(arrayBlock);
+            } else {
+                if (arrayBuffer.length > 0) {
+                    csvStrings.push([arrayBuffer, (header + buffer.toString(encoding)).trim()]);
+                }
+                buffer = csvBlock
+                arrayBuffer = arrayBlock;
+                totalCsvChunkSize = 0
+            }
+            totalCsvChunkSize += csvBlockSize;
+        }
+        if (arrayBuffer.length > 0) {
+            csvStrings.push([arrayBuffer, (header + buffer.toString('utf-8')).trim()]);
+        }
+        return new CsvChunks({
+            chunks: csvStrings.map(x => {
+                return {
+                    records: x[0],
+                    csvString: x[1]
+                };
+            }),
+            header: headerArray.map(x => x.id)
+        });
+    }
+
+
+
+    /**
+     * @static Read csv file only once and cache it into the Map.
+     * If the file was previously read and it is in the cache it retrieved from cache instead of reading file again
+     * 
+     * @param  {Map<string, Map<string, any>}  csvDataCacheMap
+     * @param  {string} fileName File name to write
+     * @param  {string} indexFieldName The name of column that its value used as an index of the row in the file
+     * @param  {string} indexValueLength Length of generated random string for missing row index values
+     * @param  {string} useRowIndexAutonumber If index value is empty for the given row 
+     *                                        fills it with row number instead of random string
+     * @returns {Map<string, any>}
+     */
+    public static async readCsvFileOnceAsync(csvDataCacheMap: Map<string, Map<string, any>>,
+        fileName: string,
+        indexFieldName: string = "Id",
+        indexValueLength: number = 18,
+        useRowIndexAutonumber: boolean = false): Promise<Map<string, any>> {
+
+        let m: Map<string, any> = csvDataCacheMap.get(fileName);
+
+        if (!m) {
+            if (!fs.existsSync(fileName)) {
+                return null;
+            }
+            let csvRows = await CommonUtils.readCsvFileAsync(fileName);
+            m = new Map<string, any>();
+            csvRows.forEach((row, index) => {
+                if (!row[indexFieldName]) {
+                    row[indexFieldName] = useRowIndexAutonumber ? String(index + 1) : CommonUtils.makeId(indexValueLength);
+                }
+                m.set(row[indexFieldName], row);
+            });
+            csvDataCacheMap.set(fileName, m);
+        }
+        return m;
+    }
+
+
+
+    /**
+     * @param  {string} fileDirectory Directory to list files in it
+     * @param  {string="*"} fileMask File mask ex. *.txt
+     * @returns Array<string>
+     */
+    public static listDirAsync(fileDirectory: string, fileMask: string = "*"): Promise<Array<string>> {
+        return new Promise<Array<string>>(resolve => {
+            let fn = path.join(fileDirectory, fileMask);
+            glob(fn, undefined, function (er, files) {
+                resolve(files);
+            });
+        });
+    }
+
 }
+
+/**
+ * Represents the set of chunks of CSV file
+ *
+ * @export
+ * @class CsvChunks
+ */
+export class CsvChunks {
+    constructor(init?: Partial<CsvChunks>) {
+        Object.assign(this, init);
+    }
+
+    chunks: Array<{
+        records: Array<object>,
+        csvString: string
+    }> = [];
+
+    header: Array<string> = new Array<string>();
+}
+

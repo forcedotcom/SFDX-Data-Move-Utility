@@ -36,5 +36,9 @@ import SFieldDescribe from "./sfieldDescribe";
         }
     }
 
+    get sObjectName() : string {
+        return this.scriptObject && this.scriptObject.name;
+    }
+
 
  }

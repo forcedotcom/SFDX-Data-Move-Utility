@@ -110,7 +110,7 @@
     "objectSourceDoesNotExist": "Object %s is missing in the Source.",
     "objectTargetDoesNotExist": "Object %s is missing in the Target.",
     "analysingOrgMetadata": "Getting and analysing object fields metadata...",
-    "processingSObject": "Processing the metadata of the sObject %s...",
+    "processingSObject": "Processing the sObject %s...",
     "fieldSourceDoesNtoExist": "Field %s.%s is missing in the Source.",
     "fieldTargetDoesNtoExist": "Field %s.%s is missing in the Target.",
     "missingFieldsToProcess": "There are no fields to process for %s.",
@@ -118,7 +118,7 @@
 
     "dataMigrationProcessStarted": "Preparing data migration job...",
     "buildingMigrationStaregy": "Building migration strategy...",
-    "executionOrder": "%s",
+    "executionOrder": "Execution order",
 
     "readingValuesMappingFile": "Reading the values mapping CSV file (%s)",
 

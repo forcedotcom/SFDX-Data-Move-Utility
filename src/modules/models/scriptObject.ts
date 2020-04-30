@@ -264,40 +264,59 @@ export default class ScriptObject {
         if (this.isDescribed) return;
 
         // Describe object in the source org
-        if (!this.isDescribed && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
-            let apisf = new ApiSf(this.script.sourceOrg);
-            this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
-            try {
-                // Retrieve sobject metadata
-                this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
-                [...this.sourceSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
+        if (!this.isDescribed) {
 
-                // Check fields existance
-                this._validateFields(this.sourceSObjectDescribe, true);
+            if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
 
-            } catch (ex) {
-                if (ex instanceof CommandInitializationError) {
-                    throw ex;
+                let apisf = new ApiSf(this.script.sourceOrg);
+                this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
+                try {
+                    // Retrieve sobject metadata
+                    this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+                    [...this.sourceSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
+
+                    if (this.script.targetOrg.media == DATA_MEDIA_TYPE.File) {
+                        this.targetSObjectDescribe = this.sourceSObjectDescribe;
+                    }
+
+                    // Check fields existance
+                    this._validateFields(this.sourceSObjectDescribe, true);
+
+                } catch (ex) {
+                    if (ex instanceof CommandInitializationError) {
+                        throw ex;
+                    }
+                    throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectSourceDoesNotExist, this.name));
                 }
-                throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectSourceDoesNotExist, this.name));
+
             }
 
-            // Describe object in the target org        
-            apisf = new ApiSf(this.script.targetOrg);
-            this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
-            try {
-                // Retrieve sobject metadata
-                this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
-                [...this.targetSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
 
-                // Check fields existance
-                this._validateFields(this.targetSObjectDescribe, false);
+            if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
 
-            } catch (ex) {
-                if (ex instanceof CommandInitializationError) {
-                    throw ex;
+                // Describe object in the target org        
+                let apisf = new ApiSf(this.script.targetOrg);
+                this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
+                try {
+                    // Retrieve sobject metadata
+                    this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+                    [...this.targetSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
+
+                    if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+                        this.sourceSObjectDescribe = this.targetSObjectDescribe;
+                    }
+    
+                    // Check fields existance
+                    this._validateFields(this.targetSObjectDescribe, false);
+
+                } catch (ex) {
+                    if (ex instanceof CommandInitializationError) {
+                        throw ex;
+                    }
+                    throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectTargetDoesNotExist, this.name));
                 }
-                throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectTargetDoesNotExist, this.name));
+
+                
             }
         }
 

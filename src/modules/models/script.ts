@@ -151,7 +151,7 @@ export default class Script {
         }
 
         // Add parent related ScriptObjects and link between related objects
-        for (let objectIndex = 0; objectIndex < this.objects.length; objectIndex++) {
+        for (let objectIndex = this.objects.length - 1; objectIndex >= 0; objectIndex--) {
 
             const thisObject = this.objects[objectIndex];
             this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
@@ -159,11 +159,14 @@ export default class Script {
             for (let fieldIndex = 0; fieldIndex < thisObject.fieldsToUpdate.length; fieldIndex++) {
 
                 const thisField = thisObject.fieldsToUpdateMap.get(thisObject.fieldsToUpdate[fieldIndex]);
+                
+                // Group + User => User
+                const referencedObjectType = thisField.referencedObjectType == "Group" ? "User" : thisField.referencedObjectType;
 
                 if (thisField.isReference) {
 
                     // Search for the parent ScriptObject
-                    thisField.parentScriptObject = this.objects.filter(x => x.name == thisField.referencedObjectType)[0];
+                    thisField.parentScriptObject = this.objects.filter(x => x.name == referencedObjectType)[0];
 
                     if (!thisField.parentScriptObject) {
 
@@ -171,16 +174,16 @@ export default class Script {
                         thisField.parentScriptObject = new ScriptObject();
                         this.objects.push(thisField.parentScriptObject);
                         Object.assign(thisField.parentScriptObject, <ScriptObject>{
-                            name: thisField.referencedObjectType,
+                            name: referencedObjectType,
                             isExtraObject: true,
                             allRecords: true,
-                            query: `SELECT Id, ${thisField.referencedObjectType != "RecordType" 
-                                                ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME 
-                                                : "DeveloperName"} FROM ${thisField.referencedObjectType}`,
+                            query: `SELECT Id, ${referencedObjectType != "RecordType"
+                                ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME
+                                : "DeveloperName"} FROM ${referencedObjectType}`,
                             operation: OPERATION.Readonly
                         });
 
-                        if (thisField.referencedObjectType == "RecordType") {
+                        if (referencedObjectType == "RecordType") {
                             let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
                             thisField.parentScriptObject.parsedQuery = parseQuery(thisField.parentScriptObject.query);
                             thisField.parentScriptObject.parsedQuery.where = CommonUtils.composeWhereClause(thisField.parentScriptObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
@@ -206,7 +209,7 @@ export default class Script {
                     let parentExternalIdField = thisField.parentScriptObject.fieldsInQueryMap.get(thisField.parentScriptObject.externalId);
                     let __rSFieldDescribe = thisObject.fieldsInQueryMap.get(__rFieldName);
                     __rSFieldDescribe.objectName = thisObject.name;
-                    __rSFieldDescribe.scriptObject  =thisObject;
+                    __rSFieldDescribe.scriptObject = thisObject;
                     parentExternalIdField.child__rSFields.push(__rSFieldDescribe);
                     thisField.__rSField = __rSFieldDescribe;
                     __rSFieldDescribe.idSField = thisField;
@@ -214,10 +217,10 @@ export default class Script {
                 }
             }
         }
-        
+
     }
 
 
-    
+
 }
 
