@@ -26,6 +26,8 @@ import { CONSTANTS } from './statics';
 
 import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
+import { MessageUtils, RESOURCES } from './messages';
+import { CommandAbortedByUserError } from '../models';
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
@@ -599,9 +601,9 @@ export class CommonUtils {
       * @returns Array<object>
       * @memberof CommonUtils
       */
-    public static async readCsvFileAsync(filePath: string, 
-                                        linesAmountToRead: number = 0, 
-                                        acceptedColumnsToColumnsTypeMap?: Map<string, string>): Promise<Array<object>> {
+    public static async readCsvFileAsync(filePath: string,
+        linesAmountToRead: number = 0,
+        acceptedColumnsToColumnsTypeMap?: Map<string, string>): Promise<Array<object>> {
 
         function csvCast(value, context) {
 
@@ -713,9 +715,9 @@ export class CommonUtils {
      *                          if the input array is empty or undefined otherwise nothing acts
      * @memberof CommonUtils 
      */
-    public static async writeCsvFileAsync(filePath: string, 
-                                        array: Array<object>, 
-                                        createEmptyFileOnEmptyArray: boolean = false): Promise<void> {
+    public static async writeCsvFileAsync(filePath: string,
+        array: Array<object>,
+        createEmptyFileOnEmptyArray: boolean = false): Promise<void> {
 
         if (!array || array.length == 0) {
             if (createEmptyFileOnEmptyArray) {
@@ -748,11 +750,11 @@ export class CommonUtils {
      * @param  {Array<string>} ...columns Acceptable columns from the source and the target to insert into the resulting csv file
      * @memberof CommonUtils
      */
-    public static async mergeCsvFilesAsync(source1FilePath: string, 
-                                            source2FilePath: string, 
-                                            targetFilePath: string, 
-                                            deleteSourceFiles: boolean, 
-                                            ...columns: Array<string>) {
+    public static async mergeCsvFilesAsync(source1FilePath: string,
+        source2FilePath: string,
+        targetFilePath: string,
+        deleteSourceFiles: boolean,
+        ...columns: Array<string>) {
 
         let totalRows: Array<object> = new Array<object>();
 
@@ -864,35 +866,37 @@ export class CommonUtils {
      * 
      * @param  {Map<string, Map<string, any>}  csvDataCacheMap
      * @param  {string} fileName File name to write
-     * @param  {string} indexFieldName The name of column that its value used as an index of the row in the file
-     * @param  {string} indexValueLength Length of generated random string for missing row index values
+     * @param  {string} indexFieldName The name of column that its value used as an index of the row in the file (default to "Id")
+     * @param  {string} indexValueLength Length of generated random string for missing row index values (default to 18)
      * @param  {string} useRowIndexAutonumber If index value is empty for the given row 
-     *                                        fills it with row number instead of random string
+     *                                        fills it with a row number starting from 1 
+     *                                        instead of filling by a random string
      * @returns {Map<string, any>}
      */
-    public static async readCsvFileOnceAsync(csvDataCacheMap: Map<string, Map<string, any>>,
+    public static async readCsvFileOnceAsync(
+        csvDataCacheMap: Map<string, Map<string, any>>,
         fileName: string,
         indexFieldName: string = "Id",
         indexValueLength: number = 18,
         useRowIndexAutonumber: boolean = false): Promise<Map<string, any>> {
 
-        let m: Map<string, any> = csvDataCacheMap.get(fileName);
+        let currentFileMap: Map<string, any> = csvDataCacheMap.get(fileName);
 
-        if (!m) {
+        if (!currentFileMap) {
             if (!fs.existsSync(fileName)) {
-                return null;
+                return new Map<string, any>();
             }
             let csvRows = await CommonUtils.readCsvFileAsync(fileName);
-            m = new Map<string, any>();
+            currentFileMap = new Map<string, any>();
             csvRows.forEach((row, index) => {
                 if (!row[indexFieldName]) {
                     row[indexFieldName] = useRowIndexAutonumber ? String(index + 1) : CommonUtils.makeId(indexValueLength);
                 }
-                m.set(row[indexFieldName], row);
+                currentFileMap.set(row[indexFieldName], row);
             });
-            csvDataCacheMap.set(fileName, m);
+            csvDataCacheMap.set(fileName, currentFileMap);
         }
-        return m;
+        return currentFileMap;
     }
 
 
@@ -909,6 +913,54 @@ export class CommonUtils {
                 resolve(files);
             });
         });
+    }
+
+
+    /**
+     * 
+     * @static Displays yes/no user prompt to abort 
+     *          the operation with warning
+     * 
+     * @param {MessageUtils} logger
+     * @param {string} warnMessage The message for warning
+     * @param {boolean} showPrompt true to show prompt, false to continue with warning
+     * @param {string} promptMessage  The yes/no prompt message
+     * @param {string} errorMessage The error message when user selected to abort the operation (choosen "no")
+     * @param {...string[]} warnTokens The tokens for the warning message
+     * @returns {Promise<void>}
+     * @memberof CommonUtils
+     */
+    public static async abortWithPrompt(logger: MessageUtils,
+        warnMessage: string,
+        showPrompt: boolean,
+        promptMessage: string,
+        errorMessage: string,
+        ...warnTokens: string[]): Promise<void> {
+        logger.warn.apply(logger, [warnMessage, ...warnTokens]);
+        if (showPrompt) {
+            if (!(await logger.yesNoPromptAsync(promptMessage))) {
+                logger.log(RESOURCES.newLine);
+                throw new CommandAbortedByUserError(logger.getResourceString(errorMessage));
+            }
+            logger.log(RESOURCES.newLine);
+        }
+    }
+
+
+    /**
+     * @static Generates random id string with given length
+     * @param  {Number=10} length
+     * @returns {string}
+     * @memberof CommonUtils
+     */
+    public static makeId(length: Number = 10): string {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
     }
 
 }

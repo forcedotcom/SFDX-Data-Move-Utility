@@ -95,12 +95,41 @@ export default class SFieldDescribe {
         return this.referencedObjectType == this.objectName;
     }
 
+
+    /**
+     * Account__c => Account__r
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SFieldDescribe
+     */
     get name__r(): string {
         if (this.custom) {
             return this.name.replace("__pc", "__pr").replace("__c", "__r");
         } else {
             return CommonUtils.trimEndStr(this.name, "Id");
         }
+    }
+
+
+    /**
+     * Account__r.Name => Account__c
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SFieldDescribe
+     */
+    get nameId(): string {
+        let parts = this.name.split('.');
+        if (!this.is__r || parts.length < 2) {
+            return this.name;
+        }
+        if (this.custom) {
+            return parts[0].replace("__pr", "__pc").replace("__r", "__c");
+        } else {
+            return parts[0] + "Id";
+        }
+
     }
 
 

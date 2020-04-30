@@ -203,15 +203,15 @@ export class RunCommand {
 
             this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
 
-            // Read csv values mapping file
             await this.job.readCSVValueMappingFileAsync();
             await this.job.mergeUserGroupCSVfiles();
-            
-
-
+            await this.job.validateAndFixSourceCSVFiles();
         }
-
     }
+
+
+
+
 
 
 }

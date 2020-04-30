@@ -425,16 +425,17 @@ export class MessageUtils {
 
 
     /**
-    * Outputs simple yes/no prompt
+    * Outputs simple "yes"/"no" prompt.
+    * If user has not responded - the default option ("no") is applied
     *
     * @param {string} message  Message to prompt the user
-    * @returns {Promise<boolen>} Returns true if user has choosen 'y'
+    * @returns {Promise<boolen>} Returns true if user has choosen "yes"
     * @memberof MessageUtils
     */
     async yesNoPromptAsync(message: string, ...tokens: string[]): Promise<boolean> {
-        return this.promptAsync.apply(this, [{
+        return (await this.promptAsync.apply(this, [{
             message
-        }, ...tokens]) == this.getResourceString(RESOURCES.defaultPromptSelectedOption);
+        }, ...tokens])) != this.getResourceString(RESOURCES.defaultPromptSelectedOption);
     }
 
 

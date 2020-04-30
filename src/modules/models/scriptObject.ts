@@ -194,7 +194,7 @@ export default class ScriptObject {
         this.script = script;
         this.initialExternalId = this.externalId;
 
-        // Fix operation value
+        // Fixes operation value
         if ((typeof this.operation == "string") == true) {
             this.operation = OPERATION[this.operation.toString()];
         }
@@ -337,13 +337,19 @@ export default class ScriptObject {
             fieldsInQuery.forEach(x => {
                 if (!CommonUtils.isComplexField(x) && !describe.fieldsMap.has(x)) {
 
-                    // Field in the query is missing in the org metadata
+
+                    if (x.name == this.externalId){
+                        // Missing externalId field. Exception.
+                        throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.noExternalKey, this.name, this.strOperation));
+                    }
+
+                    // Field in the query is missing in the org metadata. Warn user.
                     if (isSource)
                         this.script.logger.warn(RESOURCES.fieldSourceDoesNtoExist, this.name, x);
                     else
                         this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, x);
 
-                    // Remove missing field from the query
+                    // Remove missing field from the query                    
                     CommonUtils.removeBy(this.parsedQuery.fields, "field", x);
                 }
             });

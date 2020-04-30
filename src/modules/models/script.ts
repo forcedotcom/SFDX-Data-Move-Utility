@@ -46,6 +46,7 @@ export default class Script {
     allOrNone: boolean = false;
     promptOnUpdateError: boolean = true;
     promptOnMissingParentObjects: boolean = true;
+    promptOnInvalidCSVFiles: boolean = true;
     validateCSVFilesOnly: boolean = false;
     encryptDataFiles: boolean = false;
     apiVersion: string = CONSTANTS.DEFAULT_API_VERSION;
@@ -207,13 +208,16 @@ export default class Script {
 
                     // Linking between related fields and objects
                     let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(thisField.parentLookupObject.externalId);
-                    let __rSFieldDescribe = thisObject.fieldsInQueryMap.get(__rFieldName);
-                    __rSFieldDescribe.objectName = thisObject.name;
-                    __rSFieldDescribe.scriptObject = thisObject;
-                    parentExternalIdField.child__rSFields.push(__rSFieldDescribe);
-                    thisField.__rSField = __rSFieldDescribe;
-                    __rSFieldDescribe.idSField = thisField;
-
+                    
+                    let __rSField = thisObject.fieldsInQueryMap.get(__rFieldName);
+                    __rSField.objectName = thisObject.name;
+                    __rSField.scriptObject = thisObject;
+                    __rSField.custom = thisField.custom;
+                    
+                    thisField.__rSField = __rSField;
+                    __rSField.idSField = thisField;
+                    
+                    parentExternalIdField.child__rSFields.push(__rSField);
                 }
             }
         }

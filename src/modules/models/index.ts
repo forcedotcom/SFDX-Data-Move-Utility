@@ -13,5 +13,5 @@ export { default as ScriptOrg} from "./scriptOrg";
 export { default as SFieldDescribe } from "./sfieldDescribe";
 export { default as SObjectDescribe } from "./sobjectDescribe";
 export { default as MigrationJobTask } from "./migrationJobTask";
-export { default as MigrationJob } from "./migrationJob";
+export { default as MigrationJob, ICSVIssues  } from "./migrationJob";
 
