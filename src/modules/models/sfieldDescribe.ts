@@ -111,6 +111,14 @@ export default class SFieldDescribe {
         }
     }
 
+    get fullName__r(): string {
+        if (this.isReference) {
+            return this.name__r + "." + this.parentLookupObject.externalId
+        } else {
+            return this.name__r;
+        }
+    }
+
 
     /**
      * Account__r.Name => Account__c

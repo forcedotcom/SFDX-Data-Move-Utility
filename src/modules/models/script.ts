@@ -160,7 +160,7 @@ export default class Script {
             for (let fieldIndex = 0; fieldIndex < thisObject.fieldsToUpdate.length; fieldIndex++) {
 
                 const thisField = thisObject.fieldsToUpdateMap.get(thisObject.fieldsToUpdate[fieldIndex]);
-                
+
                 // Group + User => User
                 const referencedObjectType = thisField.referencedObjectType == "Group" ? "User" : thisField.referencedObjectType;
 
@@ -174,14 +174,14 @@ export default class Script {
                         // Add parent ScriptObject as READONLY since it is missing in the script
                         thisField.parentLookupObject = new ScriptObject();
                         this.objects.push(thisField.parentLookupObject);
+                        let externalId = referencedObjectType != "RecordType" ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME : "DeveloperName";
                         Object.assign(thisField.parentLookupObject, <ScriptObject>{
                             name: referencedObjectType,
                             isExtraObject: true,
                             allRecords: true,
-                            query: `SELECT Id, ${referencedObjectType != "RecordType"
-                                ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME
-                                : "DeveloperName"} FROM ${referencedObjectType}`,
-                            operation: OPERATION.Readonly
+                            query: `SELECT Id, ${externalId} FROM ${referencedObjectType}`,
+                            operation: OPERATION.Readonly,
+                            externalId
                         });
 
                         if (referencedObjectType == "RecordType") {
@@ -202,21 +202,22 @@ export default class Script {
                     await thisField.parentLookupObject.describeAsync();
 
                     // Add __r fields to the child object query
-                    let __rFieldName = thisField.name__r + '.' + thisField.parentLookupObject.externalId;
+                    let __rFieldName = thisField.fullName__r;
                     thisObject.parsedQuery.fields.push(getComposedField(__rFieldName));
                     thisObject.query = composeQuery(thisObject.parsedQuery);
 
                     // Linking between related fields and objects
                     let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(thisField.parentLookupObject.externalId);
-                    
+
                     let __rSField = thisObject.fieldsInQueryMap.get(__rFieldName);
                     __rSField.objectName = thisObject.name;
                     __rSField.scriptObject = thisObject;
                     __rSField.custom = thisField.custom;
-                    
+                    __rSField.parentLookupObject = thisField.parentLookupObject;
+
                     thisField.__rSField = __rSField;
                     __rSField.idSField = thisField;
-                    
+
                     parentExternalIdField.child__rSFields.push(__rSField);
                 }
             }

@@ -31,7 +31,7 @@ export default class MigrationJob {
 
     script: Script;
     tasks: Task[] = new Array<Task>();
-    
+
     csvValuesMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
     csvIssues: Array<ICSVIssues> = new Array<ICSVIssues>();
     csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
@@ -43,12 +43,12 @@ export default class MigrationJob {
     }
 
 
-    get logger() : MessageUtils{
+    get logger(): MessageUtils {
         return this.script.logger;
     }
 
 
-    get objects() : ScriptObject[]{
+    get objects(): ScriptObject[] {
         return this.script.objects;
     }
 
@@ -99,48 +99,51 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     async validateAndFixSourceCSVFiles(): Promise<void> {
-        
+
         // Validate csv structure
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
             this.csvIssues = this.csvIssues.concat(await task.validateCSVFileStructure());
         }
 
-        if (this.csvIssues.length > 0){
+        if (this.csvIssues.length > 0) {
             // TODO: Write this.csvIssues to file
 
-            await CommonUtils.abortWithPrompt(this.logger, 
+            await CommonUtils.abortWithPrompt(this.logger,
                 RESOURCES.issuesFoundDuringCSVValidation,
-                this.script.promptOnInvalidCSVFiles, 
+                this.script.promptOnInvalidCSVFiles,
                 RESOURCES.continueTheJobPrompt,
                 "",
                 RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
         }
 
-         
-        this.csvIssues = new Array<ICSVIssues>(); 
+
+        this.csvIssues = new Array<ICSVIssues>();
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            
-            // TODO: Check logic
-            
-            // Add missing reference lookup columns. 
-            // Checking and filling values for the column "Account__r.AccountNumber"
-            // with external id values taken from the parent sObject csv files
-            this.csvIssues = this.csvIssues.concat(await task.createLookupIdCSVColumns(this.csvDataCacheMap));
-
+            // Add missing lookup columns (Account__r.Name & Account__c)
+            this.csvIssues = this.csvIssues.concat(await task.createLookupCSVColumns(this.csvDataCacheMap));
         }
 
+        if (this.csvIssues.length > 0) {
+            // TODO: Write this.csvIssues to file
+            // TODO: Prompt for abort
 
-
-
-        
+        }
     }
 
 
 
-
-
+    /**
+     * Returns a task by the given sObject name
+     *
+     * @param {string} sObjectName The sobject name
+     * @returns
+     * @memberof MigrationJob
+     */
+    getTaskBySObjectName(sObjectName: string) {
+        return this.tasks.filter(x => x.sObjectName == sObjectName)[0];
+    }
 
 }
 
