@@ -81,6 +81,7 @@ export default class MigrationJobTask {
 
 
 
+
     /**
      * Checks the structure of the CSV source file.
      *
@@ -138,7 +139,14 @@ export default class MigrationJobTask {
 
 
 
-    async createLookupCSVColumns(csvDataCacheMap: Map<string, Map<string, any>>): Promise<Array<ICSVIssues>> {
+    /**
+     * Creates missing csv columns for lookup SFields like: Account__r.Name, Account__c
+     *
+     * @param {Map<string, Map<string, any>>} csvDataCacheMap The cached content of the source csv fiels
+     * @returns {Promise<Array<ICSVIssues>>}
+     * @memberof MigrationJobTask
+     */
+    async createMissingLookupCSVColumns(csvDataCacheMap: Map<string, Map<string, any>>): Promise<Array<ICSVIssues>> {
 
         let self = this;
         let csvIssues = new Array<ICSVIssues>();
@@ -147,17 +155,20 @@ export default class MigrationJobTask {
             let columnName__r = idSField.fullName__r;
             let __rTask = self.job.getTaskBySObjectName(idSField.parentLookupObject.name);
             if (__rTask) {
-                let __rFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, __rTask.getCSVFilename());        
+                let __rFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, __rTask.getCSVFilename());
                 // TODO:
+                let test = "";
             }
         }
 
         async function addMissingIdColumn(__rSField: SFieldDescribe): Promise<void> {
+            // FIXME: Why it is not go here?
             let columnNameId = __rSField.nameId;
             let idTask = self.job.getTaskBySObjectName(__rSField.parentLookupObject.name);
             if (idTask) {
-                let idFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, idTask.getCSVFilename());        
+                let idFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(csvDataCacheMap, idTask.getCSVFilename());
                 // TODO:
+                let test = "";
             }
         }
 

@@ -121,8 +121,8 @@ export default class MigrationJob {
         this.csvIssues = new Array<ICSVIssues>();
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            // Add missing lookup columns (Account__r.Name & Account__c)
-            this.csvIssues = this.csvIssues.concat(await task.createLookupCSVColumns(this.csvDataCacheMap));
+            // Create missing lookup columns (Account__r.Name & Account__c)
+            this.csvIssues = this.csvIssues.concat(await task.createMissingLookupCSVColumns(this.csvDataCacheMap));
         }
 
         if (this.csvIssues.length > 0) {

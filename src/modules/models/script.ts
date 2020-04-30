@@ -214,6 +214,7 @@ export default class Script {
                     __rSField.scriptObject = thisObject;
                     __rSField.custom = thisField.custom;
                     __rSField.parentLookupObject = thisField.parentLookupObject;
+                    __rSField.isReference = true;
 
                     thisField.__rSField = __rSField;
                     __rSField.idSField = thisField;
