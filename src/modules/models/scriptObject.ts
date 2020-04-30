@@ -141,10 +141,10 @@ export default class ScriptObject {
         return !!this.script;
     }
 
-    get parentObjects(): ScriptObject[] {
+    get parentLookupObjects(): ScriptObject[] {
         return CommonUtils.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
             if (x.isReference) {
-                return x.parentScriptObject;
+                return x.parentLookupObject;
             }
         }).filter(x => !!x), 'name');
     }
@@ -162,7 +162,7 @@ export default class ScriptObject {
     get parentMasterDetailObjects(): ScriptObject[] {
         return CommonUtils.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
             if (x.isMasterDetail) {
-                return x.parentScriptObject;
+                return x.parentLookupObject;
             }
         }).filter(x => !!x), 'name');
     }

@@ -39,6 +39,12 @@ export class RunCommand {
     apiVersion: string;
     script: models.Script;
 
+    /**
+     * Holds the current MigrationJob object instance
+     *
+     * @type {Job}
+     * @memberof RunCommand
+     */
     job: Job;
 
     /**
@@ -124,8 +130,8 @@ export class RunCommand {
             script: this.script
         })
 
-        let startIndex = 0;
-        let startIndexReadonly = 0;
+        let lowerIndexForAnyObjects = 0;
+        let lowerIndexForReadonlyObjects = 0;
 
         // Create task chain in the optimized order
         // to put parent related objects before their children
@@ -141,31 +147,33 @@ export class RunCommand {
                 // RecordType object is always at the beginning 
                 //   of the task chain
                 this.job.tasks.unshift(newTask);
-                startIndex++;
-                startIndexReadonly++;
+                lowerIndexForAnyObjects++;
+                lowerIndexForReadonlyObjects++;
             } else if (newObject.isReadonlyObject) {
                 // Readonly objects are always at the beginning 
                 //   of the task chain 
                 //   but after RecordType
-                this.job.tasks.splice(startIndexReadonly, 0, newTask);
-                startIndex++;
+                this.job.tasks.splice(lowerIndexForReadonlyObjects, 0, newTask);
+                lowerIndexForAnyObjects++;
             } else if (this.job.tasks.length == 0) {
                 // First object in the task chain
                 this.job.tasks.push(newTask);
             } else {
                 // The index where to insert the new object
                 let indexToInsert: number = this.job.tasks.length;
-                for (var taskIndex = this.job.tasks.length - 1; taskIndex >= startIndex; taskIndex--) {
-                    var existedTask = this.job.tasks[taskIndex];
-                    // Check if the new object is parent to the existed task
-                    let isNewObject_Parent = existedTask.scriptObject.parentObjects.some(x => x.name == newObject.name);
-                    // Check if the existed task is parent MD to the new object
+                for (var existedTaskIndex = this.job.tasks.length - 1; existedTaskIndex >= lowerIndexForAnyObjects; existedTaskIndex--) {
+                    var existedTask = this.job.tasks[existedTaskIndex];
+                    // Check if the new object is parent lookup to the existed task
+                    let isNewObject_ParentLookup = existedTask.scriptObject.parentLookupObjects.some(x => x.name == newObject.name);
+                    // Check if the existed task is parent master-detail to the new object
                     let isExistedTask_ParentMasterDetail = newObject.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name);
-                    if (isNewObject_Parent && !isExistedTask_ParentMasterDetail) {
-                        // The new object is the parent => it should be before BEFORE the existed task
-                        indexToInsert = taskIndex;
+                    if (isNewObject_ParentLookup && !isExistedTask_ParentMasterDetail) {
+                        // The new object is the parent lookup, but it is not a child master-detail 
+                        //                  => it should be before BEFORE the existed task (replace existed task with it)
+                        indexToInsert = existedTaskIndex;
                     }
-                    // The existed task is the parent => leave the insert place without change (it should be AFTER the exited task)
+                    // The existed task is the parent lookup or the parent master-detail 
+                    //                      => it should be AFTER the exited task (continue as is)
                 }
                 // Insert the new object 
                 //   into the task chain
@@ -191,13 +199,13 @@ export class RunCommand {
      */
     async validateCSVFiles(): Promise<void> {
 
-        if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File){
-            
+        if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+
             this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
 
             // Read csv values mapping file
             await this.job.readCSVValueMappingFileAsync();
-            await this.job.mergeUserGroupfiles();
+            await this.job.mergeUserGroupCSVfiles();
             
 
 

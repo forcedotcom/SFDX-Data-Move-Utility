@@ -166,14 +166,14 @@ export default class Script {
                 if (thisField.isReference) {
 
                     // Search for the parent ScriptObject
-                    thisField.parentScriptObject = this.objects.filter(x => x.name == referencedObjectType)[0];
+                    thisField.parentLookupObject = this.objects.filter(x => x.name == referencedObjectType)[0];
 
-                    if (!thisField.parentScriptObject) {
+                    if (!thisField.parentLookupObject) {
 
                         // Add parent ScriptObject as READONLY since it is missing in the script
-                        thisField.parentScriptObject = new ScriptObject();
-                        this.objects.push(thisField.parentScriptObject);
-                        Object.assign(thisField.parentScriptObject, <ScriptObject>{
+                        thisField.parentLookupObject = new ScriptObject();
+                        this.objects.push(thisField.parentLookupObject);
+                        Object.assign(thisField.parentLookupObject, <ScriptObject>{
                             name: referencedObjectType,
                             isExtraObject: true,
                             allRecords: true,
@@ -185,28 +185,28 @@ export default class Script {
 
                         if (referencedObjectType == "RecordType") {
                             let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
-                            thisField.parentScriptObject.parsedQuery = parseQuery(thisField.parentScriptObject.query);
-                            thisField.parentScriptObject.parsedQuery.where = CommonUtils.composeWhereClause(thisField.parentScriptObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
-                            thisField.parentScriptObject.parsedQuery.orderBy = <OrderByClause>({
+                            thisField.parentLookupObject.parsedQuery = parseQuery(thisField.parentLookupObject.query);
+                            thisField.parentLookupObject.parsedQuery.where = CommonUtils.composeWhereClause(thisField.parentLookupObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
+                            thisField.parentLookupObject.parsedQuery.orderBy = <OrderByClause>({
                                 field: "SobjectType",
                                 order: "ASC"
                             });
-                            thisField.parentScriptObject.query = composeQuery(thisField.parentScriptObject.parsedQuery);
+                            thisField.parentLookupObject.query = composeQuery(thisField.parentLookupObject.parsedQuery);
                         }
 
                     }
 
                     // Setup and describe the parent ScriptObject
-                    thisField.parentScriptObject.setup(this);
-                    await thisField.parentScriptObject.describeAsync();
+                    thisField.parentLookupObject.setup(this);
+                    await thisField.parentLookupObject.describeAsync();
 
                     // Add __r fields to the child object query
-                    let __rFieldName = thisField.name__r + '.' + thisField.parentScriptObject.externalId;
+                    let __rFieldName = thisField.name__r + '.' + thisField.parentLookupObject.externalId;
                     thisObject.parsedQuery.fields.push(getComposedField(__rFieldName));
                     thisObject.query = composeQuery(thisObject.parsedQuery);
 
                     // Linking between related fields and objects
-                    let parentExternalIdField = thisField.parentScriptObject.fieldsInQueryMap.get(thisField.parentScriptObject.externalId);
+                    let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(thisField.parentLookupObject.externalId);
                     let __rSFieldDescribe = thisObject.fieldsInQueryMap.get(__rFieldName);
                     __rSFieldDescribe.objectName = thisObject.name;
                     __rSFieldDescribe.scriptObject = thisObject;

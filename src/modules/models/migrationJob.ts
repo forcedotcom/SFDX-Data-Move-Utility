@@ -72,7 +72,7 @@ export default class MigrationJob {
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async mergeUserGroupfiles(): Promise<void> {
+    async mergeUserGroupCSVfiles(): Promise<void> {
         let filepath1 = path.join(this.script.basePath, "User.csv");
         let filepath2 = path.join(this.script.basePath, "Group.csv");
         let filepath3 = path.join(this.script.basePath, CONSTANTS.USER_AND_GROUP_FILENAME + ".csv");

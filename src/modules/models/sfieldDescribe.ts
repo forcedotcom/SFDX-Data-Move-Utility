@@ -44,15 +44,16 @@ export default class SFieldDescribe {
     scriptObject: ScriptObject;
 
     /**
-     * Parent ScriptObject for reference field
+     * Parent lookup ScriptObject for reference field
      */
-    parentScriptObject: ScriptObject;
+    parentLookupObject: ScriptObject;
 
     /**
-     * If it is the externalId field -> is the list of the child
-     *    __r fields from other ScriptObjects, which are linked to this field
-     *  For ex. if the current field is "|Account|Name" : 
-     *          [ "|Case|Account__r.Name", "|Lead|ConvertedAccount.Name", "|CustomObject__c|MyAccount__r.Name", ... ]
+     * For the externalId field -> holds the list of all the child __r sfields
+     * 
+     *  For example, if the current sfield is externalId "|Account|Name", 
+     *  so this property will return a list of all the child lookup  __r  sfields, which point to this externalId field, as following:
+     *  [ "|Case|Account__r.Name", "|Lead|ConvertedAccount.Name", "|CustomObject__c|MyAccount__r.Name", ... ]
      */
     child__rSFields: SFieldDescribe[] = new Array<SFieldDescribe>();
 
