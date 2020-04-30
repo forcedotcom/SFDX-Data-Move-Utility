@@ -180,10 +180,11 @@ export default class Run extends SfdxCommand {
                 throw new models.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
             }
 
-            // TODO: Call command processor
             let commandResult: any;
             this.command = new RunCommand(logger, this.flags.path, this.flags.sourceusername, this.flags.targetusername, this.flags.apiversion);
-            await this.command.initializeAsync();
+
+            await this.command.setupAsync();
+            await this.command.createMigrationJobAsync();
 
             // Exit - success
             logger.commandExitMessage(

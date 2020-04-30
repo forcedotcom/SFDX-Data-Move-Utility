@@ -20,7 +20,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError } from ".";
+import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError, ScriptOrg } from ".";
 import SFieldDescribe from "./sfieldDescribe";
 
 
@@ -70,7 +70,7 @@ export default class ScriptObject {
         return this.parsedQuery.fields.map(x => (<SOQLField>x).field);
     }
 
-    get fieldsInQueryDescriptionMap(): Map<string, SFieldDescribe> {
+    get fieldsInQueryMap(): Map<string, SFieldDescribe> {
         if (!this.isDescribed) {
             return new Map<string, SFieldDescribe>();
         }
@@ -101,7 +101,7 @@ export default class ScriptObject {
         }).filter(x => !!x);
     }
 
-    get fieldsToUpdateDescriptionMap(): Map<string, SFieldDescribe> {
+    get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
         if (!this.sourceSObjectDescribe) {
             return new Map<string, SFieldDescribe>();
         }
@@ -140,6 +140,45 @@ export default class ScriptObject {
     get isInitialized(): boolean {
         return !!this.script;
     }
+
+    get parentObjects(): ScriptObject[] {
+        return CommonUtils.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
+            if (x.isReference) {
+                return x.parentScriptObject;
+            }
+        }).filter(x => !!x), 'name');
+    }
+
+    // get childObjects(): ScriptObject[] {
+    //     let set = new Set<ScriptObject>();
+    //     [...this.fieldsInQueryMap.values()].forEach(x => {
+    //         x.child__rSFields.forEach(x1 => {
+    //             set.add(x1.scriptObject);
+    //         })
+    //     });
+    //     return [...set];
+    // }
+
+    get parentMasterDetailObjects(): ScriptObject[] {
+        return CommonUtils.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
+            if (x.isMasterDetail) {
+                return x.parentScriptObject;
+            }
+        }).filter(x => !!x), 'name');
+    }
+
+    // get childMasterDetailObjects(): ScriptObject[] {
+    //     let set = new Set<ScriptObject>();
+    //     [...this.fieldsInQueryMap.values()].forEach(x => {
+    //         x.child__rSFields.filter(x1 => x1.isMasterDetail).forEach(x1 => {
+    //             set.add(x1.scriptObject);
+    //         })
+    //     });
+    //     return [...set];
+    // }
+
+
+
 
     /**
      * Setup this object
@@ -234,7 +273,7 @@ export default class ScriptObject {
                 [...this.sourceSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
 
                 // Check fields existance
-                this._checkScriptFieldsAgainstObjectMetadata(this.sourceSObjectDescribe, true);
+                this._validateFields(this.sourceSObjectDescribe, true);
 
             } catch (ex) {
                 if (ex instanceof CommandInitializationError) {
@@ -252,7 +291,7 @@ export default class ScriptObject {
                 [...this.targetSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
 
                 // Check fields existance
-                this._checkScriptFieldsAgainstObjectMetadata(this.targetSObjectDescribe, false);
+                this._validateFields(this.targetSObjectDescribe, false);
 
             } catch (ex) {
                 if (ex instanceof CommandInitializationError) {
@@ -272,7 +311,7 @@ export default class ScriptObject {
 
     // ---------------- Private members ---------------------------//
     // ------------------------------------------------------------//
-    private _checkScriptFieldsAgainstObjectMetadata(describe: SObjectDescribe, isSource: boolean) {
+    private _validateFields(describe: SObjectDescribe, isSource: boolean) {
 
         if (!this.isReadonlyObject && !this.isSpecialObject) {
             let fieldsInQuery = [].concat(this.fieldsInQuery);

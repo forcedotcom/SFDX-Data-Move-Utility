@@ -20,6 +20,7 @@ import {
 import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/messages";
 import * as models from '../models';
 import { OPERATION, CONSTANTS } from '../components/statics';
+import { MigrationJobTask as Task, MigrationJob as Job } from '../models';
 
 
 
@@ -37,6 +38,8 @@ export class RunCommand {
     sourceUsername: string;
     apiVersion: string;
     script: models.Script;
+
+    job: Job;
 
     /**
      *Creates an instance of RunCommand.
@@ -60,7 +63,15 @@ export class RunCommand {
         this.apiVersion = apiVersion;
     }
 
-    async initializeAsync(): Promise<void> {
+
+
+    /**
+     * Setup the command
+     *
+     * @returns {Promise<void>}
+     * @memberof RunCommand
+     */
+    async setupAsync(): Promise<void> {
 
         // Load script file
         if (!fs.existsSync(this.basePath)) {
@@ -78,7 +89,7 @@ export class RunCommand {
         let json = fs.readFileSync(filePath, 'utf8');
         let jsonObject = JSON.parse(json);
         this.script = plainToClass(models.Script, jsonObject);
-       
+
         // Setup script object
         await this.script.setupAsync(this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);
 
@@ -89,12 +100,66 @@ export class RunCommand {
         });
 
         // Describe sobjects
-        await this.script.describeSObjectsAsync();
+        await this.script.processObjectsMetadataAsync();
 
     }
 
 
 
+    /**
+     * Analyse the current script structure and create 
+     * the optimised list of steps 
+     * to perform during the migration process
+     *
+     * @returns {Promise<void>}
+     * @memberof RunCommand
+     */
+    async createMigrationJobAsync(): Promise<void> {
+
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.dataMigrationProcessStarted);
+        this.logger.infoVerbose(RESOURCES.buildingMigrationStaregy);
+
+        this.job = new Job({
+            script: this.script
+        })
+
+        let startIndex = 0;
+
+        this.script.objects.forEach(newObject => {
+
+            let newTask: Task = new Task({
+                scriptObject: newObject,
+                job: this.job
+            });
+
+            if (newObject.isReadonlyObject) {
+                // Readonly objects are always at the beginning
+                this.job.tasks.unshift(newTask);
+                startIndex++;
+            } else if (this.job.tasks.length == 0) {
+                // First object
+                this.job.tasks.push(newTask);
+            } else {
+                // The index where to insert the new object
+                let indexToInsert: number = this.job.tasks.length;
+                for (var taskIndex = this.job.tasks.length - 1; taskIndex >= startIndex; taskIndex--) {
+                    var existedTask = this.job.tasks[taskIndex];
+                    // Check if the new object is parent to the existed task
+                    let isNewObject_Parent = existedTask.scriptObject.parentObjects.some(x => x.name == newObject.name);
+                    // Check if the existed task is parent MD to the new object
+                    let isExistedTask_ParentMasterDetail = newObject.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name);
+                    if (isNewObject_Parent && !isExistedTask_ParentMasterDetail) {
+                        // The new object is the parent => push it before the existed task
+                        indexToInsert = taskIndex;
+                    }
+                    // The existed task is the parent => leave without change
+                }
+                // Insert the new object at the calculated index
+                this.job.tasks.splice(indexToInsert, 0, newTask);
+            }
+        });
+    }
 }
 
 

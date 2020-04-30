@@ -455,17 +455,19 @@ export class CommonUtils {
 
 
 
+
     /**
      * @static Returns array with distinct values comparing by the given object property
      * 
-     * @param {Array<any>} array The source array
+     * @template T
+     * @param {Array<T>} array The source array
      * @param {string} distinctByProp The property to make distinct by it
-     * @returns {Array<any>}
+     * @returns {Array<T>}
      * @memberof CommonUtils
      */
-    public static distinctArray(array: Array<any>, distinctByProp: string): Array<any> {
+    public static distinctArray<T>(array: Array<T>, distinctByProp: string): Array<T> {
         return array.filter((obj, pos, arr) => {
-            return arr.map(mapObj => mapObj[distinctByProp]).indexOf(obj[distinctByProp]) === pos;
+            return arr.map<T>(mapObj => mapObj[distinctByProp]).indexOf(obj[distinctByProp]) === pos;
         });
     }
 
@@ -508,18 +510,25 @@ export class CommonUtils {
 
 
 
+    
     /**
+     *
+     *
      * @static Filters the input map by the keys from the array
      * 
      * @template T
-     * @param {Array<string>} keysToFilter The array of keys to include in the returned map
+     * @param {Array<string>} keysToFilter The array of keys to filter the map
      * @param {Map<string, T>} sourceMap The source map to filter
-     * @param {T} defaultValue The default value to set if key in the fiter array was not found in the map
+     * @param {(key: string) => T} [defaultValueCallback] The default value to set if key in the fiter array was not found in the map
+     * @param {boolean} [addDefaultValueToSourceMapIfNotExist] true to add default value to the source map if the kye does not exist
      * @returns {Map<string, T>}
      * @memberof CommonUtils
      */
-    public static filterMapByArray<T>(keysToFilter: Array<string>, sourceMap: Map<string, T>, defaultValueCallback?: (key: string) => T, 
-            appendToSourceMapIfNotExist? : boolean): Map<string, T> {
+    public static filterMapByArray<T>(keysToFilter: Array<string>,
+        sourceMap: Map<string, T>,
+        defaultValueCallback?: (key: string) => T,
+        addDefaultValueToSourceMapIfNotExist?: boolean): Map<string, T> {
+
         return keysToFilter.reduce((mapAccumulator: Map<string, T>, key) => {
             let obj = sourceMap.get(key);
             if (obj) {
@@ -527,12 +536,13 @@ export class CommonUtils {
             } else if (defaultValueCallback) {
                 let value = defaultValueCallback(key);
                 mapAccumulator.set(key, value);
-                if (appendToSourceMapIfNotExist){
+                if (addDefaultValueToSourceMapIfNotExist) {
                     sourceMap.set(key, value)
                 }
             }
             return mapAccumulator;
         }, new Map<string, T>());
+
     }
 
 

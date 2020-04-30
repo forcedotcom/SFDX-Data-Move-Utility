@@ -127,95 +127,97 @@ export default class Script {
         // Make each object appear only once in the script
         this.objects = CommonUtils.distinctArray(this.objects, "name");
 
-        // Add extra objects
-        // -- Add RecordType object  
-        let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
-        if (objectsWithRecordTypeFields.length > 0) {
-            let object = new ScriptObject();
-            this.objects.push(object);
-            Object.assign(object, <ScriptObject>{
-                name: "RecordType",
-                externalId: "DeveloperName",
-                isExtraObject: true,
-                allRecords: true,
-                query: "SELECT Id FROM RecordType",
-                operation: OPERATION.Readonly
-            });
-
-            object.setup(this);
-            object.parsedQuery.where = CommonUtils.composeWhereClause(object.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
-            object.parsedQuery.orderBy = <OrderByClause>({
-                field: "SobjectType",
-                order: "ASC"
-            });
-            object.query = composeQuery(object.parsedQuery);
-        }
     }
 
 
 
     /**
-     * Retrieve description of all objects in the script
+     * Retrieve and analyse the metadata of all objects in the script
      *
      * @returns {Promise<void>}
      * @memberof Script
      */
-    async describeSObjectsAsync(): Promise<void> {
+    async processObjectsMetadataAsync(): Promise<void> {
 
         this.logger.infoMinimal(RESOURCES.gettingOrgMetadata);
 
         // Describe all objects
-        for (let index = 0; index < this.objects.length; index++) {
-            const object = this.objects[index];
-            this.logger.infoVerbose(RESOURCES.processingSObject, object.name);
-            await object.describeAsync();
+        for (let objectIndex = 0; objectIndex < this.objects.length; objectIndex++) {
+
+            const thisObject = this.objects[objectIndex];
+            this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
+
+            await thisObject.describeAsync();
         }
 
         // Add parent related ScriptObjects and link between related objects
-        for (let index = 0; index < this.objects.length; index++) {
-            const object = this.objects[index];
-            this.logger.infoVerbose(RESOURCES.processingSObject, object.name);
+        for (let objectIndex = 0; objectIndex < this.objects.length; objectIndex++) {
 
-            for (let index2 = 0; index2 < object.fieldsToUpdate.length; index2++) {
-                const field = object.fieldsToUpdateDescriptionMap.get(object.fieldsToUpdate[index2]);
-                if (field.isReference) {
+            const thisObject = this.objects[objectIndex];
+            this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
+
+            for (let fieldIndex = 0; fieldIndex < thisObject.fieldsToUpdate.length; fieldIndex++) {
+
+                const thisField = thisObject.fieldsToUpdateMap.get(thisObject.fieldsToUpdate[fieldIndex]);
+
+                if (thisField.isReference) {
 
                     // Search for the parent ScriptObject
-                    field.parentScriptObject = this.objects.filter(x => x.name == field.referencedObjectType)[0];
+                    thisField.parentScriptObject = this.objects.filter(x => x.name == thisField.referencedObjectType)[0];
 
-                    if (!field.parentScriptObject) {
+                    if (!thisField.parentScriptObject) {
+
                         // Add parent ScriptObject as READONLY since it is missing in the script
-                        field.parentScriptObject = new ScriptObject();
-                        this.objects.push(field.parentScriptObject);
-                        Object.assign(field.parentScriptObject, <ScriptObject>{
-                            name: field.referencedObjectType,
+                        thisField.parentScriptObject = new ScriptObject();
+                        this.objects.push(thisField.parentScriptObject);
+                        Object.assign(thisField.parentScriptObject, <ScriptObject>{
+                            name: thisField.referencedObjectType,
                             isExtraObject: true,
                             allRecords: true,
-                            query: `SELECT Id, ${CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME} FROM ${field.referencedObjectType}`,
+                            query: `SELECT Id, ${thisField.referencedObjectType != "RecordType" 
+                                                ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME 
+                                                : "DeveloperName"} FROM ${thisField.referencedObjectType}`,
                             operation: OPERATION.Readonly
                         });
+
+                        if (thisField.referencedObjectType == "RecordType") {
+                            let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
+                            thisField.parentScriptObject.parsedQuery = parseQuery(thisField.parentScriptObject.query);
+                            thisField.parentScriptObject.parsedQuery.where = CommonUtils.composeWhereClause(thisField.parentScriptObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
+                            thisField.parentScriptObject.parsedQuery.orderBy = <OrderByClause>({
+                                field: "SobjectType",
+                                order: "ASC"
+                            });
+                            thisField.parentScriptObject.query = composeQuery(thisField.parentScriptObject.parsedQuery);
+                        }
+
                     }
 
-                    // Add __r fields to the child object query
-                    let __rFieldName = field.name__r + '.' + field.parentScriptObject.externalId;
-                    object.parsedQuery.fields.push(getComposedField(__rFieldName));
-                    object.query = composeQuery(object.parsedQuery);
-
                     // Setup and describe the parent ScriptObject
-                    field.parentScriptObject.setup(this);
-                    await field.parentScriptObject.describeAsync();
+                    thisField.parentScriptObject.setup(this);
+                    await thisField.parentScriptObject.describeAsync();
+
+                    // Add __r fields to the child object query
+                    let __rFieldName = thisField.name__r + '.' + thisField.parentScriptObject.externalId;
+                    thisObject.parsedQuery.fields.push(getComposedField(__rFieldName));
+                    thisObject.query = composeQuery(thisObject.parsedQuery);
 
                     // Linking between related fields and objects
-                    let parentExternalIdField = field.parentScriptObject.fieldsInQueryDescriptionMap.get(field.parentScriptObject.externalId);
-                    let __rSFieldDescribe = object.fieldsInQueryDescriptionMap.get(__rFieldName);
-                    parentExternalIdField.externalIdChild__rFields.push(__rSFieldDescribe);
-                    field.__rSFieldDescribe = __rSFieldDescribe;
-                    __rSFieldDescribe.idSFieldDescribe = field;
+                    let parentExternalIdField = thisField.parentScriptObject.fieldsInQueryMap.get(thisField.parentScriptObject.externalId);
+                    let __rSFieldDescribe = thisObject.fieldsInQueryMap.get(__rFieldName);
+                    __rSFieldDescribe.objectName = thisObject.name;
+                    __rSFieldDescribe.scriptObject  =thisObject;
+                    parentExternalIdField.child__rSFields.push(__rSFieldDescribe);
+                    thisField.__rSField = __rSFieldDescribe;
+                    __rSFieldDescribe.idSField = thisField;
 
                 }
             }
         }
-
+        
     }
+
+
+    
 }
 

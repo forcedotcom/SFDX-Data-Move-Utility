@@ -49,23 +49,25 @@ export default class SFieldDescribe {
     parentScriptObject: ScriptObject;
 
     /**
-     * If it is externalId field -> list of the child
-     *  __r fields linked to it from another ScriptObjects
+     * If it is the externalId field -> is the list of the child
+     *    __r fields from other ScriptObjects, which are linked to this field
+     *  For ex. if the current field is "|Account|Name" : 
+     *          [ "|Case|Account__r.Name", "|Lead|ConvertedAccount.Name", "|CustomObject__c|MyAccount__r.Name", ... ]
      */
-    externalIdChild__rFields: SFieldDescribe[] = new Array<SFieldDescribe>();
+    child__rSFields: SFieldDescribe[] = new Array<SFieldDescribe>();
 
     /**
      * Account__r.Name
      */
-    __rSFieldDescribe: SFieldDescribe;
-    
+    __rSField: SFieldDescribe;
+
     /**
      * Account__c
      */
-    idSFieldDescribe: SFieldDescribe;
+    idSField: SFieldDescribe;
 
     get is__r(): boolean {
-        return !!this.idSFieldDescribe;
+        return !!this.idSField;
     }
 
     get isMasterDetail() {
