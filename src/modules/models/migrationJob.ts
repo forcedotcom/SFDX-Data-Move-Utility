@@ -26,6 +26,7 @@ import SFieldDescribe from "./sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
 
+
 export default class MigrationJob {
 
     script: Script;
@@ -39,7 +40,7 @@ export default class MigrationJob {
     }
 
 
-    
+
     /**
      * Reads CSVValues mapping definition file
      *
@@ -80,4 +81,23 @@ export default class MigrationJob {
 
 
 
+}
+
+
+
+/**
+ * The format of columns for a CSV issues report file
+ *
+ * @export
+ * @interface ICSVIssues
+ */
+export interface ICSVIssues {
+    "Date": string,
+    "Severity level": "HIGH" | "LOW" | "NORMAL" | "HIGHEST",
+    "Child sObject name": string,
+    "Child field name": string,
+    "Parent record Id": string,
+    "Parent sObject name": string,
+    "Parent sObject external Id field name": string,
+    "Error description": string
 }
