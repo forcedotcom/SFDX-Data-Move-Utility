@@ -23,22 +23,40 @@ import {
 } from 'soql-parser-js';
 import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError, ScriptOrg, ScriptObject, MigrationJob as Job } from ".";
 import SFieldDescribe from "./sfieldDescribe";
+import * as path from 'path';
+import * as fs from 'fs';
 
 
- export default class MigrationJobTask{
+export default class MigrationJobTask {
 
-    scriptObject:  ScriptObject;
+    scriptObject: ScriptObject;
     job: Job;
 
-    constructor(init: Partial<MigrationJobTask>){
-        if (init){
+    constructor(init: Partial<MigrationJobTask>) {
+        if (init) {
             Object.assign(this, init);
         }
     }
 
-    get sObjectName() : string {
+    get sObjectName(): string {
         return this.scriptObject && this.scriptObject.name;
+    }
+    
+    
+    /**
+     * Returns CSV filename for the current task
+     *
+     * @returns {string}
+     * @memberof MigrationJobTask
+     */
+    getCSVFilename(): string {
+        let filepath = path.join(this.scriptObject.script.basePath, this.sObjectName);
+        if (this.sObjectName == "User" || this.sObjectName == "Group") {
+            filepath = path.join(this.scriptObject.script.basePath, CONSTANTS.USER_AND_GROUP_FILENAME);
+        }
+        filepath += ".csv";
+        return filepath;
     }
 
 
- }
+}

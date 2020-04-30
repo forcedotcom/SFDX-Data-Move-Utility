@@ -191,7 +191,7 @@ export class RunCommand {
 
 
     /**
-     * Validate the source CSV files if 
+     * Validate and fix the CSV files if 
      * CSV files are set as the data source
      *
      * @returns {Promise<void>}
