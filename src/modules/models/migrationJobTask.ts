@@ -181,7 +181,7 @@ export default class MigrationJobTask {
 
         return csvIssues;
 
-        // ------------------------------------------- //
+        // ------------------ private local ------------------------- //
         /**
          * Adds all missing lookup columns (like Account__c, Account__r.Name)
          */
