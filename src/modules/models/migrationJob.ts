@@ -103,9 +103,9 @@ export default class MigrationJob {
      */
     async validateAndFixSourceCSVFiles(): Promise<void> {
 
-       // FIXME !!! Does not work on the obect tTestObject__c
-      // when removing TestObject3__r.Id, Account__r.Id 
-      // - Adds number instead of lookup in Account sobject
+        // FIXME !!! Does not work on the obect tTestObject__c
+        // when removing TestObject3__r.Id, Account__r.Id 
+        // - Adds number instead of lookup in Account sobject
 
         let self = this;
 
@@ -142,7 +142,7 @@ export default class MigrationJob {
         // Save changed csv files
         if (this.cachedCSVContent.updatedFilenames.size > 0) {
             await this.saveCachedCsvDataFiles();
-        } 
+        }
         this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
 
         // Report csv issues
@@ -168,12 +168,29 @@ export default class MigrationJob {
     }
 
 
+
+    /**
+     * Save csv file from the data of the input array
+     *
+     * @param {string} fileName It is just a filename (test.csv) not the full path
+     * @param {Array<any>} data The data to write to csv file
+     * @returns {Promise<void>}
+     * @memberof MigrationJob
+     */
     async saveCSVFileAsync(fileName: string, data: Array<any>): Promise<void> {
         let filePath = path.join(this.script.basePath, fileName);
         this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
         await CommonUtils.writeCsvFileAsync(filePath, data, true);
     }
 
+
+
+    /**
+     * Save all updated cached csv files
+     *
+     * @returns {Promise<any>}
+     * @memberof MigrationJob
+     */
     async saveCachedCsvDataFiles(): Promise<any> {
         let filePaths = [...this.cachedCSVContent.csvDataCacheMap.keys()];
         for (let i = 0; i < filePaths.length; i++) {
@@ -187,7 +204,6 @@ export default class MigrationJob {
     }
 
 }
-
 
 
 /**
