@@ -197,13 +197,14 @@ export class RunCommand {
 
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
 
+            await this.job.mergeUserGroupCSVfiles();
+            await this.job.readCSVValueMappingFileAsync();
+
             if (!this.script.importCSVFilesAsIs) {
 
                 // Validate and repair source csv files
                 this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
 
-                await this.job.readCSVValueMappingFileAsync();
-                await this.job.mergeUserGroupCSVfiles();
                 await this.job.validateAndRepairSourceCSVFiles();
 
                 this.logger.infoVerbose(RESOURCES.validationAndFixingsourceCSVFilesCompleted);
