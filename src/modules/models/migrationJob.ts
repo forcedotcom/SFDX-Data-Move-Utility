@@ -102,7 +102,7 @@ export default class MigrationJob {
 
         let self = this;
 
-        async function abortwithPrompt(): Promise<void> {
+        async function ___abortwithPrompt(): Promise<void> {
             await CommonUtils.abortWithPrompt(self.logger,
                 RESOURCES.issuesFoundDuringCSVValidation,
                 self.script.promptOnInvalidCSVFiles,
@@ -124,7 +124,7 @@ export default class MigrationJob {
         // Prompt to abort the job if structure issues were found
         let abortWasPrompted = false;
         if (this.csvIssues.length > 0) {
-            await abortwithPrompt();
+            await ___abortwithPrompt();
             abortWasPrompted = true;
         }
 
@@ -146,7 +146,7 @@ export default class MigrationJob {
         //  and save the report
         if (this.csvIssues.length > 0) {
             if (!abortWasPrompted) {
-                await abortwithPrompt();
+                await ___abortwithPrompt();
             } else {
                 await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);                
                 this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
@@ -227,9 +227,6 @@ export interface ICSVIssues {
     "Parent field": string,
     "Error": string
 }
-
-
-
 
 export class CachedCSVContent {
     csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();

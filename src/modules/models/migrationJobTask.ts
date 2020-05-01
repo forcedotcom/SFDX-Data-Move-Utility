@@ -242,6 +242,7 @@ export default class MigrationJobTask {
             this.getCSVFilename(),
             null, null,
             false, false);
+            
         if (currentFileMap.size == 0) {
             // CSV file is empty or does not exist.
             // Missing csvs were already reported. No additional report provided.
