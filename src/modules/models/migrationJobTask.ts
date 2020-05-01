@@ -6,7 +6,7 @@
  */
 
 
- 
+
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -173,34 +173,22 @@ export default class MigrationJobTask {
 
         // Add missing id column --------------------------------
         if (!firstRow.hasOwnProperty("Id")) {
-            // Missing id column
-            if (this.scriptObject.operation == OPERATION.Insert) {
-                [...currentFileMap.keys()].forEach(id => {
-                    let csvRow = currentFileMap.get(id);
-                    csvRow["Id"] = id;
-                });
-            }
-            
-            // TODO: Update  here all child lookup __r field for all child lookup objects 
-            //   (f.ex. Account.Id for sobject TestObject__c)
-            //   if the current object's (Account) external id field is "Id"
-            //....
-
-            cachedCSVContent.updatedFilenames.add(this.getCSVFilename());
+            await ___addMissingIdColumn();
         }
 
-        // Add missing lookup columns --------------------
+        // Add missing lookup columns ---------------------------
         for (let fieldIndex = 0; fieldIndex < this.fieldsInQuery.length; fieldIndex++) {
             const sField = this.fieldsInQueryMap.get(this.fieldsInQuery[fieldIndex]);
             if (sField.isReference && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
-                await ___addMissingLookupColumn(currentFileMap, sField);
+                await ___addMissingLookupColumns(currentFileMap, sField);
             }
         }
 
         return csvIssues;
 
-        // ------------------------
-        async function ___addMissingLookupColumn(currentFileMap: Map<string, any>, sField: SFieldDescribe): Promise<void> {
+        
+        // ------------------------------------------------------
+        async function ___addMissingLookupColumns(currentFileMap: Map<string, any>, sField: SFieldDescribe): Promise<void> {
             let columnName__r = sField.fullName__r;
             let columnNameId = sField.nameId;
             let parentExternalId = sField.parentLookupObject.externalId;
@@ -281,6 +269,24 @@ export default class MigrationJobTask {
                     cachedCSVContent.updatedFilenames.add(self.getCSVFilename());
                 }
             }
-        }        
+        }
+
+        async function ___addMissingIdColumn(): Promise<void> {
+            // Missing id column
+            if (this.scriptObject.operation == OPERATION.Insert) {
+                [...currentFileMap.keys()].forEach(id => {
+                    let csvRow = currentFileMap.get(id);
+                    csvRow["Id"] = id;
+                });
+            }
+
+            // TODO: Update  here all child lookup __r field for all child lookup objects 
+            //   (f.ex. Account.Id for sobject TestObject__c)
+            //   if the current object's (Account) external id field is "Id"
+            //....
+
+            cachedCSVContent.updatedFilenames.add(this.getCSVFilename());
+        }
+
     }
 }
