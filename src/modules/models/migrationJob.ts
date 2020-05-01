@@ -34,7 +34,8 @@ export default class MigrationJob {
 
     csvValuesMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
     csvIssues: Array<ICSVIssues> = new Array<ICSVIssues>();
-    csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
+
+    cachedCSVContent: CachedCSVContent = new CachedCSVContent();
 
     constructor(init: Partial<MigrationJob>) {
         if (init) {
@@ -78,6 +79,8 @@ export default class MigrationJob {
 
 
 
+
+
     /**
      * Merges User.csv and Group.csv into single file
      *
@@ -100,36 +103,55 @@ export default class MigrationJob {
      */
     async validateAndFixSourceCSVFiles(): Promise<void> {
 
+       
+        let self = this;
+
+        async function abortwithPrompt(): Promise<void> {
+            await CommonUtils.abortWithPrompt(self.logger,
+                RESOURCES.issuesFoundDuringCSVValidation,
+                self.script.promptOnInvalidCSVFiles,
+                RESOURCES.continueTheJobPrompt,
+                "",
+                async () => {
+                    // Report csv issues
+                    await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
+                },
+                String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+        }
+
         // Validate csv structure
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
             this.csvIssues = this.csvIssues.concat(await task.validateCSVFileStructure());
         }
 
+        // Prompt to abort the job if csv issues found
         if (this.csvIssues.length > 0) {
-            // TODO: Write this.csvIssues to file
-
-            await CommonUtils.abortWithPrompt(this.logger,
-                RESOURCES.issuesFoundDuringCSVValidation,
-                this.script.promptOnInvalidCSVFiles,
-                RESOURCES.continueTheJobPrompt,
-                "",
-                RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+            await abortwithPrompt();
         }
 
-
-        this.csvIssues = new Array<ICSVIssues>();
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
             // Create missing lookup columns (Account__r.Name & Account__c)
-            this.csvIssues = this.csvIssues.concat(await task.createMissingLookupCSVColumns(this.csvDataCacheMap));
+            this.csvIssues = this.csvIssues.concat(await task.createMissingCSVColumns(this.cachedCSVContent));
         }
 
+        // Save changed csv files
+        if (this.cachedCSVContent.updatedFilenames.size > 0) {
+            await this.saveCachedCsvDataFiles();
+        } 
+        this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
+
+        // Prompt to abort the job if csv issues found
         if (this.csvIssues.length > 0) {
-            // TODO: Write this.csvIssues to file
-            // TODO: Prompt for abort
-
+            // Report csv issues
+            this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+            await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
+        } else {
+            this.logger.infoVerbose(RESOURCES.noIssuesFoundDuringCSVValidation);
         }
+
+
     }
 
 
@@ -145,6 +167,25 @@ export default class MigrationJob {
         return this.tasks.filter(x => x.sObjectName == sObjectName)[0];
     }
 
+
+    async saveCSVFileAsync(fileName: string, data: Array<any>): Promise<void> {
+        let filePath = path.join(this.script.basePath, fileName);
+        this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
+        await CommonUtils.writeCsvFileAsync(filePath, data, true);
+    }
+
+    async saveCachedCsvDataFiles(): Promise<any> {
+        let filePaths = [...this.cachedCSVContent.csvDataCacheMap.keys()];
+        for (let i = 0; i < filePaths.length; i++) {
+            const filePath = filePaths[i];
+            let csvData = this.cachedCSVContent.csvDataCacheMap.get(filePath);
+            if (this.cachedCSVContent.updatedFilenames.has(filePath)) {
+                this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
+                await CommonUtils.writeCsvFileAsync(filePath, [...csvData.values()], true);
+            }
+        }
+    }
+
 }
 
 
@@ -157,11 +198,18 @@ export default class MigrationJob {
  */
 export interface ICSVIssues {
     "Date": string,
-    "Severity level": "HIGH" | "LOW" | "NORMAL" | "HIGHEST",
-    "Child sObject name": string,
-    "Child field name": string,
-    "Parent record Id": string,
-    "Parent sObject name": string,
-    "Parent sObject external Id field name": string,
-    "Error description": string
+    "Child value": string,
+    "Child sObject": string,
+    "Child field": string,
+    "Parent value": string,
+    "Parent sObject": string,
+    "Parent field": string,
+    "Error": string
+}
+
+
+export class CachedCSVContent {
+    csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
+    updatedFilenames: Set<string> = new Set<string>();
+    idCounter: number = 1;
 }

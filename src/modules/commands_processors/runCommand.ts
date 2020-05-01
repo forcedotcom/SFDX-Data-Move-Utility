@@ -206,6 +206,8 @@ export class RunCommand {
             await this.job.readCSVValueMappingFileAsync();
             await this.job.mergeUserGroupCSVfiles();
             await this.job.validateAndFixSourceCSVFiles();
+
+            this.logger.infoVerbose(RESOURCES.validationAndFixingsourceCSVFilesCompleted);
         }
     }
 

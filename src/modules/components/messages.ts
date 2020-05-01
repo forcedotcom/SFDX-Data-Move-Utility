@@ -143,6 +143,7 @@ export enum RESOURCES {
     csvFileIsEmpty = "csvFileIsEmpty",
     columnsMissingInCSV = "columnsMissingInCSV",
     csvFileForParentSObjectIsEmpty = "csvFileForParentSObjectIsEmpty",
+    missingCSVColumnForParentLookupField = "missingCSVColumnForParentLookupField",
     missingParentRecordForGivenLookupValue = "missingParentRecordForGivenLookupValue",
     invalidColumnFormat = "invalidColumnFormat",
     columnWillNotBeProcessed = "columnWillNotBeProcessed",

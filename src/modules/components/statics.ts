@@ -52,9 +52,7 @@ export enum DATA_MEDIA_TYPE {
 
 export enum OPERATION {
     Insert,
-    Add,
     Update,
-    Merge,
     Upsert,
     Readonly,
     Delete

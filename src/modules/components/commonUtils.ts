@@ -483,7 +483,7 @@ export class CommonUtils {
 
 
     /**
-     * @static Returns array with distinct values comparing by the given object property
+     * @static Returns distinct array of objects by the given object property
      * 
      * @template T
      * @param {Array<T>} array The source array
@@ -495,6 +495,21 @@ export class CommonUtils {
         return array.filter((obj, pos, arr) => {
             return arr.map<T>(mapObj => mapObj[distinctByProp]).indexOf(obj[distinctByProp]) === pos;
         });
+    }
+
+
+
+
+    /**
+     * Returns array of distinct string values
+     *
+     * @static
+     * @param {string[]} array The source array
+     * @returns {Array<string>}
+     * @memberof CommonUtils
+     */
+    public static distinctStringArray(array: string[]): Array<string> {
+        return [...new Set<string>(array)];
     }
 
 
@@ -637,7 +652,6 @@ export class CommonUtils {
             }
             return header.map(column => {
                 if (column.indexOf('.') >= 0
-                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_CSV_COLUMN_SEPARATOR) >= 0
                     || column.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR) >= 0
                     || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
                     || acceptedColumnsToColumnsTypeMap.has(column))
@@ -935,11 +949,15 @@ export class CommonUtils {
         showPrompt: boolean,
         promptMessage: string,
         errorMessage: string,
+        onBeforeAbortAsync: () => Promise<void>,
         ...warnTokens: string[]): Promise<void> {
         logger.warn.apply(logger, [warnMessage, ...warnTokens]);
         if (showPrompt) {
             if (!(await logger.yesNoPromptAsync(promptMessage))) {
                 logger.log(RESOURCES.newLine);
+                if (onBeforeAbortAsync){
+                    await onBeforeAbortAsync();
+                }
                 throw new CommandAbortedByUserError(logger.getResourceString(errorMessage));
             }
             logger.log(RESOURCES.newLine);

@@ -104,10 +104,11 @@ export default class SFieldDescribe {
      * @memberof SFieldDescribe
      */
     get name__r(): string {
+        let name = this.name.split('.')[0];
         if (this.custom) {
-            return this.name.replace("__pc", "__pr").replace("__c", "__r");
+            return name.replace("__pc", "__pr").replace("__c", "__r");
         } else {
-            return CommonUtils.trimEndStr(this.name, "Id");
+            return CommonUtils.trimEndStr(name, "Id");
         }
     }
 

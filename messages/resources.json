@@ -122,7 +122,7 @@
 
     "readingValuesMappingFile": "Reading the values mapping CSV file (%s)",
 
-    "validatingAndFixingSourceCSVFiles": "Validating and fixing source CSV files...",
+    "validatingAndFixingSourceCSVFiles": "Validating and repairing of the source CSV files...",
     "writingToCSV": "Writing to %s...",
     "noIssuesFoundDuringCSVValidation": "There are no issues found during the last validation of the source CSV files.",
     "issuesFoundDuringCSVValidation": "During the validation of the source CSV files %s issues were found. See %s file for the details.",
@@ -130,12 +130,13 @@
     "AbortedByTheUser": "The job was aborted by the user",
     "csvFileIsEmpty": "CSV FILE IS EMPTY OR DOES NOT EXIST",
     "columnsMissingInCSV": "COLUMN DEFINED IN THE SCRIPT IS MISSING IN THE CSV FILE",
-    "csvFileForParentSObjectIsEmpty": "CSV FILE FOR THE PARENT SOBJECT IS EMPTY OR DOES NOT EXIST",
+    "csvFileForParentSObjectIsEmpty": "CSV FILE FOR THE PARENT SOBJECT IS MISSING OR EMPTY",
+    "missingCSVColumnForParentLookupField": "MISSING COLUMN FOR THE PARENT LOOKUP FIELD",
     "missingParentRecordForGivenLookupValue": "MISSING PARENT RECORD FOR THE GIVEN LOOKUP VALUE",
     "invalidColumnFormat": "COLUMN %s HAS INVALID FORMAT",
     "columnWillNotBeProcessed": "COLUMN %s WILL NOT BE PROCESSED BECAUSE THE FIELD %s IS MISSING IN THE SCRIPT",
-    "csvFilesWereUpdated": "%s source CSV files were updated.",
-    "validationAndFixingsourceCSVFilesCompleted": "Validating and fixing source CSV files has finished.",
+    "csvFilesWereUpdated": "Amount of updated source CSV files: %s",
+    "validationAndFixingsourceCSVFilesCompleted": "Validating and repairing of the source CSV files have finished.",
 
     "deletingOldData": "Deleting old data from the Target...",
     "deletingTargetSObject": "{%s} Deleting old sObject data from the Target.",
