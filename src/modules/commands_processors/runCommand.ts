@@ -20,7 +20,7 @@ import {
 import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/messages";
 import * as models from '../models';
 import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from '../components/statics';
-import { MigrationJobTask as Task, MigrationJob as Job } from '../models';
+import { MigrationJobTask as Task, MigrationJob as Job, SuccessExit } from '../models';
 
 
 
@@ -205,9 +205,14 @@ export class RunCommand {
 
             await this.job.readCSVValueMappingFileAsync();
             await this.job.mergeUserGroupCSVfiles();
-            await this.job.validateAndFixSourceCSVFiles();
+            await this.job.validateAndRepairSourceCSVFiles();
 
             this.logger.infoVerbose(RESOURCES.validationAndFixingsourceCSVFilesCompleted);
+
+            if (this.script.validateCSVFilesOnly){
+                // Succeeded exit
+                throw new SuccessExit();
+            }
         }
     }
 

@@ -31,10 +31,8 @@ export default class MigrationJob {
 
     script: Script;
     tasks: Task[] = new Array<Task>();
-
     csvValuesMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
     csvIssues: Array<ICSVIssues> = new Array<ICSVIssues>();
-
     cachedCSVContent: CachedCSVContent = new CachedCSVContent();
 
     constructor(init: Partial<MigrationJob>) {
@@ -43,15 +41,15 @@ export default class MigrationJob {
         }
     }
 
-
     get logger(): MessageUtils {
         return this.script.logger;
     }
 
-
     get objects(): ScriptObject[] {
         return this.script.objects;
     }
+
+
 
 
     /**
@@ -79,8 +77,6 @@ export default class MigrationJob {
 
 
 
-
-
     /**
      * Merges User.csv and Group.csv into single file
      *
@@ -95,17 +91,14 @@ export default class MigrationJob {
     }
 
 
+
     /**
-     * Checks and fixes all CSV source files.
+     * Checks and repairs all CSV source files.
      *
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async validateAndFixSourceCSVFiles(): Promise<void> {
-
-        // FIXME !!! Does not work on the obect tTestObject__c
-        // when removing TestObject3__r.Id, Account__r.Id 
-        // - Adds number instead of lookup in Account sobject
+    async validateAndRepairSourceCSVFiles(): Promise<void> {
 
         let self = this;
 
@@ -128,30 +121,40 @@ export default class MigrationJob {
             this.csvIssues = this.csvIssues.concat(await task.validateCSVFileStructure());
         }
 
-        // Prompt to abort the job if csv issues found
+        // Prompt to abort the job if structure issues were found
+        let abortWasPrompted = false;
         if (this.csvIssues.length > 0) {
             await abortwithPrompt();
+            abortWasPrompted = true;
         }
 
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            // Create missing lookup columns (Account__r.Name & Account__c)
+            // Try to add missing lookup csv columns (Account__r.Name & Account__c)                        
             this.csvIssues = this.csvIssues.concat(await task.createMissingCSVColumns(this.cachedCSVContent));
         }
 
-        // Save changed csv files
-        if (this.cachedCSVContent.updatedFilenames.size > 0) {
+        // Save changed files
+        if (this.cachedCSVContent.updatedFilenames.size > 0 && !this.script.importCSVFilesAsIs) {
             await this.saveCachedCsvDataFiles();
+            this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
+        } else {
+            this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, "0");
         }
-        this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
 
-        // Report csv issues
+        // Prompt to abort the job if csv data issues were found
+        //  and save the report
         if (this.csvIssues.length > 0) {
-            this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+            if (!abortWasPrompted) {
+                await abortwithPrompt();
+            } else {
+                await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);                
+                this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+            }
         } else {
             this.logger.infoVerbose(RESOURCES.noIssuesFoundDuringCSVValidation);
         }
-        await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
+
     }
 
 
@@ -206,6 +209,8 @@ export default class MigrationJob {
 }
 
 
+
+// --------------------------- Helper classes -------------------------------------
 /**
  * The format of columns for a CSV issues report file
  *
@@ -224,8 +229,14 @@ export interface ICSVIssues {
 }
 
 
+
+
 export class CachedCSVContent {
     csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
     updatedFilenames: Set<string> = new Set<string>();
     idCounter: number = 1;
+
+    get nextId() : string {
+        return "ID" + CommonUtils.addLeadnigZeros(this.idCounter++, 16);
+    }
 }

@@ -916,7 +916,7 @@ export class CommonUtils {
                 if (!row[indexFieldName] && addIndexKeyValues) {
                     row[indexFieldName] = indexKey;
                 }
-                currentFileMap.set(indexKey, row);
+                currentFileMap.set(row[indexFieldName] || indexKey, row);
             });
             csvDataCacheMap.set(fileName, currentFileMap);
         }
@@ -991,6 +991,8 @@ export class CommonUtils {
         return result;
     }
 
+
+   
 }
 
 /**

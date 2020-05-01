@@ -200,6 +200,13 @@ export default class Run extends SfdxCommand {
             // Exit - error
             switch (e.constructor) {
 
+                case models.SuccessExit:
+                    logger.commandExitMessage(
+                        RESOURCES.successfullyCompletedResult,
+                        COMMAND_EXIT_STATUSES.SUCCESS);
+                    process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
+
+
                 case models.CommandInitializationError:
                     logger.commandExitMessage(
                         RESOURCES.commandInitializationErrorResult,

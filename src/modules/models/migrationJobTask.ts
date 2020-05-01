@@ -83,7 +83,6 @@ export default class MigrationJobTask {
 
 
 
-
     /**
      * Checks the structure of the CSV source file.
      *
@@ -173,8 +172,8 @@ export default class MigrationJobTask {
                             //        => fill them with next incremental numbers
                             // Since the missing columns were already reported no additional report provided.
                             isFileChanged = true;
-                            csvRow[columnNameId] = String(cachedCSVContent.idCounter++);
-                            csvRow[columnName__r] = String(cachedCSVContent.idCounter++);
+                            csvRow[columnNameId] = cachedCSVContent.nextId;
+                            csvRow[columnName__r] = cachedCSVContent.nextId;
                             return;
                         }
                         // Missing id column but __r column provided.
@@ -193,20 +192,19 @@ export default class MigrationJobTask {
                                     "Parent value": null,
                                     "Error": self.logger.getResourceString(RESOURCES.missingParentRecordForGivenLookupValue)
                                 });
-                                csvRow[columnNameId] = String(cachedCSVContent.idCounter++);
+                                csvRow[columnNameId] = cachedCSVContent.nextId;
                             } else {
                                 csvRow[columnNameId] = parentCsvRow["Id"];
                             }
                         }
-                    }
-                    if (!csvRow.hasOwnProperty(columnName__r)) {
+                    } else if (!csvRow.hasOwnProperty(columnName__r)) {
                         if (!csvRow.hasOwnProperty(columnNameId)) {
                             // Missing both id and __r columns 
                             //        => fill them with next incremental numbers
                             // Since the missing columns were already reported no additional report provided.
                             isFileChanged = true;
-                            csvRow[columnNameId] = String(cachedCSVContent.idCounter++);
-                            csvRow[columnName__r] = String(cachedCSVContent.idCounter++);
+                            csvRow[columnNameId] = cachedCSVContent.nextId;
+                            csvRow[columnName__r] = cachedCSVContent.nextId;
                             return;
                         }
                         // Missing __r column but id column provided.
@@ -226,7 +224,7 @@ export default class MigrationJobTask {
                                     "Parent value": null,
                                     "Error": self.logger.getResourceString(RESOURCES.missingParentRecordForGivenLookupValue)
                                 });
-                                csvRow[columnName__r] = String(cachedCSVContent.idCounter++);
+                                csvRow[columnName__r] = cachedCSVContent.nextId;
                             } else {
                                 isFileChanged = true;
                                 csvRow[columnName__r] = parentCsvRow[parentExternalId];
@@ -274,6 +272,4 @@ export default class MigrationJobTask {
 
         return csvIssues;
     }
-
-
 }

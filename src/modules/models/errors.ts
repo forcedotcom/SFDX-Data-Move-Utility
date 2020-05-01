@@ -77,3 +77,17 @@ export class CommandAbortedByUserError extends Error {
         super(m);
     }
 }
+
+
+/**
+ * When thrown the command need to be aborted with success result
+ *
+ * @export
+ * @class SuccessExit
+ * @extends {Error}
+ */
+export class SuccessExit extends Error {
+    constructor(m?: string) {
+        super(m);
+    }
+}
