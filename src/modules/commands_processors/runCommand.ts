@@ -70,7 +70,7 @@ export class RunCommand {
     }
 
 
-
+    // ----------------------- Public methods -------------------------------------------    
     /**
      * Setup the command
      *
@@ -109,8 +109,6 @@ export class RunCommand {
         await this.script.processObjectsMetadataAsync();
 
     }
-
-
 
     /**
      * Analyse the current script structure and create 
@@ -188,8 +186,6 @@ export class RunCommand {
 
     }
 
-
-
     /**
      * Validate and fix the CSV files if 
      * CSV files are set as the data source
@@ -202,7 +198,7 @@ export class RunCommand {
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
 
             if (!this.script.importCSVFilesAsIs) {
-                
+
                 // Validate and repair source csv files
                 this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
 
@@ -226,10 +222,16 @@ export class RunCommand {
         }
     }
 
-
-
-
-
+    /**
+    * Retireves the total record count for all 
+    * objects in the script
+    *
+    * @returns {Promise<void>}
+    * @memberof RunCommand
+    */
+    async getTotalRecordsCount(): Promise<void> {
+        // TODO: Implement this
+    }
 
 }
 
