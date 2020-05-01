@@ -181,8 +181,10 @@ export default class MigrationJobTask {
 
         return csvIssues;
 
-
-        // ******************************
+        // ------------------------------------------- //
+        /**
+         * Adds all missing lookup columns (like Account__c, Account__r.Name)
+         */
         async function ___addMissingLookupColumns(currentFileMap: Map<string, any>, sField: SFieldDescribe): Promise<void> {
             let columnName__r = sField.fullName__r;
             let columnNameId = sField.nameId;
@@ -266,6 +268,10 @@ export default class MigrationJobTask {
             }
         }
 
+        /**
+         * Add Id column to the current csv file (if it is missing), 
+         * then update all its child lookup "__r" columns in other csv files
+         */
         async function ___addMissingIdColumn(): Promise<void> {
             // Missing id column
             if (this.scriptObject.operation == OPERATION.Insert) {
