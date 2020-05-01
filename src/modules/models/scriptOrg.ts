@@ -31,10 +31,10 @@ import { Script, OrgInfo, CommandInitializationError } from ".";
  */
 export default class ScriptOrg {
 
+    // ------------- JSON --------------
     name: string = "";
     instanceUrl: string = "";
     accessToken: string = "";
-
 
     // -----------------------------------
     script: Script;
@@ -72,8 +72,6 @@ export default class ScriptOrg {
         // Setup and verify org connection
         await this._setupConnection();
     }
-
-
 
 
     // ---------------- Private members ---------------------------//

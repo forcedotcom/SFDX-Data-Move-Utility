@@ -33,6 +33,7 @@ import { fileURLToPath } from "url";
  */
 export default class Script {
 
+    // ------------- JSON --------------
     @Type(() => ScriptOrg)
     orgs: ScriptOrg[] = new Array<ScriptOrg>();
 

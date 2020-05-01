@@ -140,8 +140,5 @@ export default class SFieldDescribe {
         }
 
     }
-
-
-
 }
 

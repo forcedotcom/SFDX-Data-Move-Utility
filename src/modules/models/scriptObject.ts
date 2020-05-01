@@ -32,6 +32,7 @@ import SFieldDescribe from "./sfieldDescribe";
  */
 export default class ScriptObject {
 
+    // ------------- JSON --------------
     @Type(() => ScriptMockField)
     mockFields: ScriptMockField[] = new Array<ScriptMockField>();
 
@@ -149,16 +150,6 @@ export default class ScriptObject {
         }).filter(x => !!x), 'name');
     }
 
-    // get childObjects(): ScriptObject[] {
-    //     let set = new Set<ScriptObject>();
-    //     [...this.fieldsInQueryMap.values()].forEach(x => {
-    //         x.child__rSFields.forEach(x1 => {
-    //             set.add(x1.scriptObject);
-    //         })
-    //     });
-    //     return [...set];
-    // }
-
     get parentMasterDetailObjects(): ScriptObject[] {
         return CommonUtils.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
             if (x.isMasterDetail) {
@@ -167,15 +158,6 @@ export default class ScriptObject {
         }).filter(x => !!x), 'name');
     }
 
-    // get childMasterDetailObjects(): ScriptObject[] {
-    //     let set = new Set<ScriptObject>();
-    //     [...this.fieldsInQueryMap.values()].forEach(x => {
-    //         x.child__rSFields.filter(x1 => x1.isMasterDetail).forEach(x1 => {
-    //             set.add(x1.scriptObject);
-    //         })
-    //     });
-    //     return [...set];
-    // }
 
 
 
@@ -322,10 +304,6 @@ export default class ScriptObject {
 
 
     }
-
-
-
-
 
 
     // ---------------- Private members ---------------------------//
