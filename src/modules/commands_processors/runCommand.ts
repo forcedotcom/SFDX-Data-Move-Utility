@@ -213,6 +213,9 @@ export class RunCommand {
                 // Succeeded exit
                 throw new SuccessExit();
             }
+
+            // Free memory from the csv file data
+            this.job.clearCachedCSVData();
         }
     }
 

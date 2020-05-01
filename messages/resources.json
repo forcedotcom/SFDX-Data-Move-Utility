@@ -132,7 +132,7 @@
     "columnsMissingInCSV": "COLUMN DEFINED IN THE SCRIPT IS MISSING IN THE CSV FILE",
     "csvFileForParentSObjectIsEmpty": "CSV FILE FOR THE PARENT SOBJECT IS MISSING OR EMPTY",
     "missingCSVColumnForParentLookupField": "MISSING COLUMN FOR THE PARENT LOOKUP FIELD",
-    "missingParentRecordForGivenLookupValue": "MISSING PARENT RECORD FOR THE GIVEN LOOKUP VALUE",
+    "missingParentRecordForGivenLookupValue": "MISSING PARENT LOOKUP RECORD",
     "invalidColumnFormat": "COLUMN %s HAS INVALID FORMAT",
     "columnWillNotBeProcessed": "COLUMN %s WILL NOT BE PROCESSED BECAUSE THE FIELD %s IS MISSING IN THE SCRIPT",
     "csvFilesWereUpdated": "Amount of updated source CSV files: %s",

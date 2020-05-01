@@ -148,7 +148,7 @@ export default class MigrationJob {
             if (!abortWasPrompted) {
                 await ___abortwithPrompt();
             } else {
-                await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);                
+                await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
                 this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
             }
         } else {
@@ -206,6 +206,18 @@ export default class MigrationJob {
         }
     }
 
+
+
+    /**
+     * Clear cached csv data
+     *
+     * @memberof MigrationJob
+     */
+    clearCachedCSVData() {
+        this.cachedCSVContent.reset();
+    }
+
+
 }
 
 
@@ -229,11 +241,22 @@ export interface ICSVIssues {
 }
 
 export class CachedCSVContent {
-    csvDataCacheMap: Map<string, Map<string, any>> = new Map<string, Map<string, any>>();
-    updatedFilenames: Set<string> = new Set<string>();
-    idCounter: number = 1;
 
-    get nextId() : string {
+    constructor() {
+        this.reset();
+    }
+
+    csvDataCacheMap: Map<string, Map<string, any>>;
+    updatedFilenames: Set<string>;
+    idCounter: number;
+
+    get nextId(): string {
         return "ID" + CommonUtils.addLeadnigZeros(this.idCounter++, 16);
+    }
+
+    reset() {
+        this.csvDataCacheMap = new Map<string, Map<string, any>>();
+        this.updatedFilenames = new Set<string>();
+        this.idCounter = 1;
     }
 }
