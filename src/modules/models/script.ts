@@ -50,9 +50,8 @@ export default class Script {
     allOrNone: boolean = false;
     promptOnUpdateError: boolean = true;
     promptOnMissingParentObjects: boolean = true;
-    promptOnInvalidCSVFiles: boolean = true;
+    promptOnIssuesInCSVFiles: boolean = true;
     validateCSVFilesOnly: boolean = false;
-    encryptDataFiles: boolean = false;
     apiVersion: string = CONSTANTS.DEFAULT_API_VERSION;
     createTargetCSVFiles: boolean = true;
     importCSVFilesAsIs = false;
@@ -228,6 +227,6 @@ export default class Script {
         }
 
     }
-    
+
 }
 

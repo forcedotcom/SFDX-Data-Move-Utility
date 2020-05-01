@@ -66,16 +66,6 @@ export default class Run extends SfdxCommand {
             //     to: 'force:package:create'
             // },
         }),
-        encryptkey: flags.string({
-            description: commandMessages.getMessage('encryptKeyFlagDescription'),
-            longDescription: commandMessages.getMessage('encryptKeyFlagLongDescription'),
-            default: '',
-            // NOTE: Add deprecation to the flag if needed
-            // deprecated: {
-            //     version: 43,
-            //     to: 'force:package:create'
-            // },
-        }),
         verbose: flags.builtin({
             description: commandMessages.getMessage('verboseFlagDescription'),
             longDescription: commandMessages.getMessage('verboseFlagLongDescription')

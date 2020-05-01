@@ -104,7 +104,7 @@ export default class MigrationJob {
         async function ___abortwithPrompt(): Promise<void> {
             await CommonUtils.abortWithPrompt(self.logger,
                 RESOURCES.issuesFoundDuringCSVValidation,
-                self.script.promptOnInvalidCSVFiles,
+                self.script.promptOnIssuesInCSVFiles,
                 RESOURCES.continueTheJobPrompt,
                 "",
                 async () => {

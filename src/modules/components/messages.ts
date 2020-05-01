@@ -108,8 +108,6 @@ export enum RESOURCES {
     sourceOrg = "sourceOrg",
     targetOrg = "targetOrg",
     scriptFile = "scriptFile",
-    encryptionKey = "encryptionKey",
-    invalidEncryptionKey = "invalidEncryptionKey",
     tryingToConnectCLI = "tryingToConnectCLI",
     successfullyConnected = "successfullyConnected",
     tryingToConnectCLIFailed = "tryingToConnectCLIFailed",

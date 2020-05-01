@@ -5,9 +5,6 @@
     "sourceusernameFlagDescription": "Source org username/alias or 'csvfile' for csv load",
     "sourceusernameFlagLongDescription": "Provide username or alias for the source org or 'csvfile' if CSV files are used as data source.",
 
-    "encryptKeyFlagDescription": "[Optional] In case package encrypted - provide decrypt key",
-    "encryptKeyFlagLongDescription": "[Optional] Provide decrypt key to decrypt org credentials provided in 'orgs' section of export.json file assuming they were previously encrypted with the same key.",
-
     "pathFlagDescription": "[Optional] Absolute/Relative path to package directory",
     "pathFlagLongDescription": "[Optional] Absolute or relative path to the directory that contains working export.json file. If not provided, the plugin will try to search for the file in the current directory.",
 

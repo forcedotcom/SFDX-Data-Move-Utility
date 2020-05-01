@@ -216,9 +216,9 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | promptOnMissingParentObjects         | Boolean                    | Optional, Default true  | If  parent lookup or master-detail record was not found for the some of the child records - it will propmt or will not prompt user to break or to continue the migration.<br /><br />*It allows user to monitor the job and abort it when some data is missing.* |
 | allOrNone                            | Boolean                    | Optional, Default false | Abort job execution on any failed record or continue working anyway.<br />If true the execution will stop or the user will be prompted to stop depend on promptOnUpdateError parameter. <br /><br />*(**Note for REST API only:**  if true except of abort of script execution depend on promptOnUpdateError parameter - any failed records in a non-successful API call cause all changes made within this call to be rolled back. Record changes aren't committed unless all records are processed successfully)* |
 | promptOnUpdateError                  | Boolean                    | Optional, Default true  | When some records failed or when any other error occurred during data update prompt the user to stop the execution or to continue. |
-| encryptDataFiles                     | Boolean                    | Optional, Default false | Enables encryption / decryption of the CSV files when passing *--encryptkey* argument to the Plugin call and using *file* as Source or as the Target. |
+| promptOnIssuesInCSVFiles             | Boolean                    | Optional, Default true  | When issues were found in the source CSV files during the validation prompt the user to stop the execution or to continue. |
 | validateCSVFilesOnly                 | Boolean                    | Optional, Default false | In general when you are using CSV files as data source, the source CSV files are subject of format  validation before running the migration job itself.  validateCSVFilesOnly=true  runs only the validation process  and stops the execution after the it is completed. |
-| createTargetCSVFiles                 | Boolean                    | Optional, Default false | If true the Plugin will produce CSV file containing target records for each processed sObject with error information (if occured) per record. These CSV files are not encrypted even **--encryptkey** flag is provided. |
+| createTargetCSVFiles                 | Boolean                    | Optional, Default false | If true the Plugin will produce CSV file containing target records for each processed sObject with error information (if occured) per record. |
 | bulkApiV1BatchSize                   | Integer                    | Optional, Default 9500  | The maximal size of each batch while processing the records by the Bulk Api V1 |
 | bulkApiVersion                       | Float                      | Optional, Default 2.0   | The version of Salesforce Bulk Api to use. Valid values are: 1.0 and 2.0 |
 | importCSVFilesAsIs                   | Boolean                    | Optional, Default false | Sometimes you have source CSV files that are completely ready to be uploaded as is to the Target, which means that all values in these CSV files are correct (including search identifiers) and they don’t need additional verification or transformation. Typically, the standard Salesforce data loader uses this behavior, considering the CSV file ready to use. <br /> To import CSV files as is, set importCSVFilesAsIs = true <br /> Otherwise, before loading the plugin will make pre-processing of the data, which includes verification, processing relationships between the imported objects, etc. |
@@ -230,7 +230,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 **Full sfdmu:run command syntax:**
 
 ```bash
-$ sfdx sfdmu:run [-s <string>] [-p <directory>] [--encryptkey <string>] [--silent] [--version] [--filelog] [--noprompt] [--nowarnings] [-u <string>] [--apiversion <string>] [--verbose] [--concise] [--quiet] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+$ sfdx sfdmu:run [-s <string>] [-p <directory>] [--silent] [--version] [--filelog] [--noprompt] [--nowarnings] [-u <string>] [--apiversion <string>] [--verbose] [--concise] [--quiet] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 ```
 
 **Available flags:**
@@ -251,7 +251,6 @@ $ sfdx sfdmu:run [-s <string>] [-p <directory>] [--encryptkey <string>] [--silen
 | --verbose                     | [Optional] Display all command messages and errors.          |
 | --version                     | [Optional] Display the current installed version of the plugin. |
 | --loglevel                    | [Optional, default: warn] logging level for this command invocation. |
-| --encryptkey                  | [Optional] The encryption key to decrypt the **orgs** section of the export.json file.  <br />Please note, that when it is specified in the command line you need to have orgs section previously encrypted with the same encryption key before running the job (or alternatively  leave empty or omit **orgs** section).<br />The Plugin will attempt to decrypt the  **org.name**, **org.accessToken** and **org.instanceUrl** parameters using AEC-CBC algorithm before making the connection.  If for any reason the decryption failed, original unencrypted values will be used to connect.<br /><br />In addition if you set the parameter **encryptDataFiles=true** and use CSV files as data source then the Plugin will treat CSV files as previously encrypted and will try to decrypt them using the same key.  Also the Plugin will encrypt CSV files when using CSV files as a data target. |
 
 **Basic examples:**
 
@@ -275,12 +274,6 @@ To export records into CSV files use the format as below:
 $ sfdx sfdmu:run --sourceusername source@name.com --targetusername csvfile
 ```
 
-
-To export records into CSV files with encryption use the format as below:
-
-```bash
-$ sfdx sfdmu:run --sourceusername source@name.com --targetusername csvfile --encryptkey myencrkey
-```
 
 
 

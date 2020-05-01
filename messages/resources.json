@@ -91,8 +91,6 @@
     "sourceOrg": "%s.",
     "targetOrg": "%s.",
     "scriptFile": "%s.",
-    "encryptionKey": "%s.",
-    "invalidEncryptionKey": "Invalid encryption key. Original unencrypted values will be used.",
     "tryingToConnectCLI": "Connecting to %s using SFDX CLI...",
     "successfullyConnected": "Successfully connected to %s.",
     "tryingToConnectCLIFailed": "Attempt to connect to %s failed. Please, try to refresh your local SFDX CLI connection.",
