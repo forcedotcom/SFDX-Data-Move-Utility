@@ -240,7 +240,10 @@ export default class MigrationJobTask {
             }
         }
 
-        let currentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, this.getCSVFilename());
+        let currentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
+            this.getCSVFilename(),
+            null, null,
+            false, false);
         if (currentFileMap.size == 0) {
             // CSV file is empty or does not exist.
             // Missing csvs were already reported. No additional report provided.

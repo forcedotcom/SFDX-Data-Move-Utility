@@ -879,20 +879,29 @@ export class CommonUtils {
      * If the file was previously read and it is in the cache it retrieved from cache instead of reading file again
      * 
      * @param  {Map<string, Map<string, any>}  csvDataCacheMap
-     * @param  {string} fileName File name to write
+     * @param  {string} fileName File name to read
      * @param  {string} indexFieldName The name of column that its value used as an index of the row in the file (default to "Id")
      * @param  {string} indexValueLength Length of generated random string for missing row index values (default to 18)
      * @param  {string} useRowIndexAutonumber If index value is empty for the given row 
      *                                        fills it with a row number starting from 1 
      *                                        instead of filling by a random string
+     * @param  {string} addIndexKeyValues true to generate new value to update 
+     *                                    an index field for each object 
+     *                                    when this value is missing
      * @returns {Map<string, any>}
      */
     public static async readCsvFileOnceAsync(
         csvDataCacheMap: Map<string, Map<string, any>>,
         fileName: string,
-        indexFieldName: string = "Id",
-        indexValueLength: number = 18,
-        useRowIndexAutonumber: boolean = false): Promise<Map<string, any>> {
+        indexFieldName?: string,
+        indexValueLength?: number,
+        useRowIndexAutonumber?: boolean,
+        addIndexKeyValues?: boolean): Promise<Map<string, any>> {
+        
+        indexFieldName = indexFieldName || "Id";
+        indexValueLength = indexValueLength || 18;
+        useRowIndexAutonumber = typeof useRowIndexAutonumber == "undefined" || useRowIndexAutonumber == null ? false : useRowIndexAutonumber;
+        addIndexKeyValues = typeof addIndexKeyValues == "undefined" || addIndexKeyValues == null ? true : addIndexKeyValues;
 
         let currentFileMap: Map<string, any> = csvDataCacheMap.get(fileName);
 
@@ -903,10 +912,11 @@ export class CommonUtils {
             let csvRows = await CommonUtils.readCsvFileAsync(fileName);
             currentFileMap = new Map<string, any>();
             csvRows.forEach((row, index) => {
-                if (!row[indexFieldName]) {
-                    row[indexFieldName] = useRowIndexAutonumber ? String(index + 1) : CommonUtils.makeId(indexValueLength);
+                let indexKey = useRowIndexAutonumber ? String(index + 1) : CommonUtils.makeId(indexValueLength).toUpperCase();
+                if (!row[indexFieldName] && addIndexKeyValues) {
+                    row[indexFieldName] = indexKey;
                 }
-                currentFileMap.set(row[indexFieldName], row);
+                currentFileMap.set(indexKey, row);
             });
             csvDataCacheMap.set(fileName, currentFileMap);
         }

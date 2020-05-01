@@ -103,7 +103,10 @@ export default class MigrationJob {
      */
     async validateAndFixSourceCSVFiles(): Promise<void> {
 
-       
+       // FIXME !!! Does not work 
+      // when removing TestObject3__r.Id, Account__r.Id 
+      // - Adds number instead of lookup in Account sobject
+
         let self = this;
 
         async function abortwithPrompt(): Promise<void> {
@@ -142,16 +145,13 @@ export default class MigrationJob {
         } 
         this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
 
-        // Prompt to abort the job if csv issues found
+        // Report csv issues
         if (this.csvIssues.length > 0) {
-            // Report csv issues
             this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
-            await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
         } else {
             this.logger.infoVerbose(RESOURCES.noIssuesFoundDuringCSVValidation);
         }
-
-
+        await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
     }
 
 
