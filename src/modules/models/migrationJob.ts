@@ -101,19 +101,6 @@ export default class MigrationJob {
 
         let self = this;
 
-        async function ___abortwithPrompt(): Promise<void> {
-            await CommonUtils.abortWithPrompt(self.logger,
-                RESOURCES.issuesFoundDuringCSVValidation,
-                self.script.promptOnIssuesInCSVFiles,
-                RESOURCES.continueTheJobPrompt,
-                "",
-                async () => {
-                    // Report csv issues
-                    await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
-                },
-                String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
-        }
-
         // Analyse csv structure
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
@@ -149,6 +136,19 @@ export default class MigrationJob {
         } else {
             this.logger.infoVerbose(RESOURCES.noIssuesFoundDuringCSVValidation);
         }
+
+        async function ___abortwithPrompt(): Promise<void> {
+            await CommonUtils.abortWithPrompt(self.logger,
+                RESOURCES.issuesFoundDuringCSVValidation,
+                self.script.promptOnIssuesInCSVFiles,
+                RESOURCES.continueTheJobPrompt,
+                "",
+                async () => {
+                    // Report csv issues
+                    await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
+                },
+                String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+        }        
 
     }
 
