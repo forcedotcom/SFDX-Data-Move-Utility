@@ -83,8 +83,6 @@ export default class MigrationJobTask {
         return filepath;
     }
 
-
-
     /**
      * Checks the structure of the CSV source file.
      *
@@ -141,8 +139,6 @@ export default class MigrationJobTask {
         return csvIssues;
     }
 
-
-
     /**
      * Try to add missing lookup csv columns
      * - Adds missing id column on Insert operation.
@@ -157,7 +153,6 @@ export default class MigrationJobTask {
         let self = this;
         let csvIssues = new Array<ICSVIssues>();
 
-
         let currentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
             this.getCSVFilename(),
             null, null,
@@ -171,12 +166,12 @@ export default class MigrationJobTask {
 
         let firstRow = [...currentFileMap.values()][0];
 
-        // Add missing id column --------------------------------
+        // Add missing id column 
         if (!firstRow.hasOwnProperty("Id")) {
             await ___addMissingIdColumn();
         }
 
-        // Add missing lookup columns ---------------------------
+        // Add missing lookup columns 
         for (let fieldIndex = 0; fieldIndex < this.fieldsInQuery.length; fieldIndex++) {
             const sField = this.fieldsInQueryMap.get(this.fieldsInQuery[fieldIndex]);
             if (sField.isReference && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
@@ -186,8 +181,8 @@ export default class MigrationJobTask {
 
         return csvIssues;
 
-        
-        // ------------------------------------------------------
+
+        // ******************************
         async function ___addMissingLookupColumns(currentFileMap: Map<string, any>, sField: SFieldDescribe): Promise<void> {
             let columnName__r = sField.fullName__r;
             let columnNameId = sField.nameId;
