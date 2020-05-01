@@ -29,6 +29,7 @@ export enum RESULT_STATUSES {
     ProcessError = "ProcessError"
 }
 
+
 /**
  * Represents the record returned by the Api operation
  *
@@ -58,7 +59,6 @@ export class BulkApiResultRecord {
     isCreated: boolean;
     errorMessage: string;
 }
-
 
 
 /**
@@ -120,8 +120,6 @@ export class BulkAPIResult {
         }
     }
 }
-
-
 
 
 /**
