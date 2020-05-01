@@ -56,12 +56,12 @@ export default class MigrationJob {
 
     // ----------------------- Public methods -------------------------------------------    
     /**
-     * Reads CSVValues mapping definition file
+     * Loads CSVValues mapping definition file into the memory
      *
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async readCSVValueMappingFileAsync(): Promise<void> {
+    async loadCSVValueMappingFileAsync(): Promise<void> {
         let valueMappingFilePath = path.join(this.script.basePath, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
         let csvRows = await CommonUtils.readCsvFileAsync(valueMappingFilePath);
         if (csvRows.length > 0) {
