@@ -13,7 +13,7 @@ const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
 
-
+ 
 
 /**
  *  Available result statuses for API operations
