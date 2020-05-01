@@ -68,6 +68,7 @@ export default class MigrationJobTask {
 
 
 
+    // ----------------------- Public methods -------------------------------------------    
     /**
      * Returns CSV filename for the current task
      *
@@ -181,7 +182,7 @@ export default class MigrationJobTask {
 
         return csvIssues;
 
-        // ------------------ private local ------------------------- //
+        // ------------------ function internals ------------------------- //
         /**
          * Adds all missing lookup columns (like Account__c, Account__r.Name)
          */
