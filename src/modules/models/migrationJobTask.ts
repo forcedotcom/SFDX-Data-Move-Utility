@@ -89,7 +89,7 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async validateCSVFileStructure(): Promise<Array<ICSVIssues>> {
+    async validateCSVStructure(): Promise<Array<ICSVIssues>> {
 
         let csvIssues = new Array<ICSVIssues>();
 
@@ -150,11 +150,54 @@ export default class MigrationJobTask {
      * @returns {Promise<Array<ICSVIssues>>}
      * @memberof MigrationJobTask
      */
-    async createMissingCSVColumns(cachedCSVContent: CachedCSVContent): Promise<Array<ICSVIssues>> {
+    async repairCSV(cachedCSVContent: CachedCSVContent): Promise<Array<ICSVIssues>> {
 
         let self = this;
         let csvIssues = new Array<ICSVIssues>();
 
+
+        let currentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
+            this.getCSVFilename(),
+            null, null,
+            false, false);
+
+        if (currentFileMap.size == 0) {
+            // CSV file is empty or does not exist.
+            // Missing csvs were already reported. No additional report provided.
+            return csvIssues;
+        }
+
+        let firstRow = [...currentFileMap.values()][0];
+
+        // Add missing id column --------------------------------
+        if (!firstRow.hasOwnProperty("Id")) {
+            // Missing id column
+            if (this.scriptObject.operation == OPERATION.Insert) {
+                [...currentFileMap.keys()].forEach(id => {
+                    let csvRow = currentFileMap.get(id);
+                    csvRow["Id"] = id;
+                });
+            }
+            
+            // TODO: Update  here all child lookup __r field for all child lookup objects 
+            //   (f.ex. Account.Id for sobject TestObject__c)
+            //   if the current object's (Account) external id field is "Id"
+            //....
+
+            cachedCSVContent.updatedFilenames.add(this.getCSVFilename());
+        }
+
+        // Add missing lookup columns --------------------
+        for (let fieldIndex = 0; fieldIndex < this.fieldsInQuery.length; fieldIndex++) {
+            const sField = this.fieldsInQueryMap.get(this.fieldsInQuery[fieldIndex]);
+            if (sField.isReference && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
+                await ___addMissingLookupColumn(currentFileMap, sField);
+            }
+        }
+
+        return csvIssues;
+
+        // ------------------------
         async function ___addMissingLookupColumn(currentFileMap: Map<string, any>, sField: SFieldDescribe): Promise<void> {
             let columnName__r = sField.fullName__r;
             let columnNameId = sField.nameId;
@@ -236,41 +279,6 @@ export default class MigrationJobTask {
                     cachedCSVContent.updatedFilenames.add(self.getCSVFilename());
                 }
             }
-        }
-
-        let currentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
-            this.getCSVFilename(),
-            null, null,
-            false, false);
-            
-        if (currentFileMap.size == 0) {
-            // CSV file is empty or does not exist.
-            // Missing csvs were already reported. No additional report provided.
-            return csvIssues;
-        }
-
-        let firstRow = [...currentFileMap.values()][0];
-
-        // Add missing id column --------------------------------
-        if (!firstRow.hasOwnProperty("Id")) {
-            // Missing id column
-            if (this.scriptObject.operation == OPERATION.Insert) {
-                [...currentFileMap.keys()].forEach(id => {
-                    let csvRow = currentFileMap.get(id);
-                    csvRow["Id"] = id;
-                });
-            }
-            cachedCSVContent.updatedFilenames.add(this.getCSVFilename());
-        }
-
-        // Add missing lookup columns --------------------
-        for (let fieldIndex = 0; fieldIndex < this.fieldsInQuery.length; fieldIndex++) {
-            const sField = this.fieldsInQueryMap.get(this.fieldsInQuery[fieldIndex]);
-            if (sField.isReference && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
-                await ___addMissingLookupColumn(currentFileMap, sField);
-            }
-        }
-
-        return csvIssues;
+        }        
     }
 }

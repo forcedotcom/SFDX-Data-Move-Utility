@@ -115,26 +115,26 @@ export default class MigrationJob {
                 String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
         }
 
-        // Validate csv structure
+        // Analyse csv structure
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            this.csvIssues = this.csvIssues.concat(await task.validateCSVFileStructure());
+            this.csvIssues = this.csvIssues.concat(await task.validateCSVStructure());
         }
 
-        // Prompt to abort the job if structure issues were found
+        // if csv structure issues were found - prompt to abort the job 
         let abortWasPrompted = false;
         if (this.csvIssues.length > 0) {
             await ___abortwithPrompt();
             abortWasPrompted = true;
         }
-
+        
+        // Check and repair the source csvs
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            // Try to add missing lookup csv columns (Account__r.Name & Account__c)                        
-            this.csvIssues = this.csvIssues.concat(await task.createMissingCSVColumns(this.cachedCSVContent));
+            this.csvIssues = this.csvIssues.concat(await task.repairCSV(this.cachedCSVContent));
         }
 
-        // Save changed files
+        // Save the changed source csvs
         if (this.cachedCSVContent.updatedFilenames.size > 0 && !this.script.importCSVFilesAsIs) {
             await this.saveCachedCsvDataFiles();
             this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
@@ -142,7 +142,7 @@ export default class MigrationJob {
             this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, "0");
         }
 
-        // Prompt to abort the job if csv data issues were found
+        // if csv data issues were found - prompt to abort the job 
         //  and save the report
         if (this.csvIssues.length > 0) {
             if (!abortWasPrompted) {
@@ -214,7 +214,7 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     clearCachedCSVData() {
-        this.cachedCSVContent.reset();
+        this.cachedCSVContent.clear();
     }
 
 
@@ -243,18 +243,33 @@ export interface ICSVIssues {
 export class CachedCSVContent {
 
     constructor() {
-        this.reset();
+        this.clear();
     }
 
     csvDataCacheMap: Map<string, Map<string, any>>;
     updatedFilenames: Set<string>;
     idCounter: number;
-
+    
+    
+    /**
+     * Generates next Id string in format I[DXXXXXXXXXXXXXXXX]
+     * where XXXX... - is the next autonumber
+     *
+     * @readonly
+     * @type {string}
+     * @memberof CachedCSVContent
+     */
     get nextId(): string {
         return "ID" + CommonUtils.addLeadnigZeros(this.idCounter++, 16);
     }
 
-    reset() {
+
+    /**
+     * Clear all data
+     *
+     * @memberof CachedCSVContent
+     */
+    clear() {
         this.csvDataCacheMap = new Map<string, Map<string, any>>();
         this.updatedFilenames = new Set<string>();
         this.idCounter = 1;
