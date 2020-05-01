@@ -103,7 +103,7 @@ export default class MigrationJob {
      */
     async validateAndFixSourceCSVFiles(): Promise<void> {
 
-       // FIXME !!! Does not work 
+       // FIXME !!! Does not work on the obect tTestObject__c
       // when removing TestObject3__r.Id, Account__r.Id 
       // - Adds number instead of lookup in Account sobject
 
