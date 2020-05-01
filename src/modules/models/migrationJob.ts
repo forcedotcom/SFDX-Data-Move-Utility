@@ -6,7 +6,7 @@
  */
 
 
- 
+
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -126,7 +126,7 @@ export default class MigrationJob {
             await ___abortwithPrompt();
             abortWasPrompted = true;
         }
-        
+
         // Check and repair the source csvs
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
@@ -134,12 +134,8 @@ export default class MigrationJob {
         }
 
         // Save the changed source csvs
-        if (this.cachedCSVContent.updatedFilenames.size > 0 && !this.script.importCSVFilesAsIs) {
-            await this.saveCachedCsvDataFiles();
-            this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
-        } else {
-            this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, "0");
-        }
+        await this.saveCachedCsvDataFiles();
+        this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
 
         // if csv data issues were found - prompt to abort the job 
         //  and save the report
@@ -155,7 +151,7 @@ export default class MigrationJob {
         }
 
     }
-    
+
     /**
      * Returns a task by the given sObject name
      *
@@ -191,8 +187,8 @@ export default class MigrationJob {
         let filePaths = [...this.cachedCSVContent.csvDataCacheMap.keys()];
         for (let i = 0; i < filePaths.length; i++) {
             const filePath = filePaths[i];
-            let csvData = this.cachedCSVContent.csvDataCacheMap.get(filePath);
             if (this.cachedCSVContent.updatedFilenames.has(filePath)) {
+                let csvData = this.cachedCSVContent.csvDataCacheMap.get(filePath);
                 this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
                 await CommonUtils.writeCsvFileAsync(filePath, [...csvData.values()], true);
             }
@@ -240,8 +236,8 @@ export class CachedCSVContent {
     csvDataCacheMap: Map<string, Map<string, any>>;
     updatedFilenames: Set<string>;
     idCounter: number;
-    
-    
+
+
     /**
      * Generates next Id string in format I[DXXXXXXXXXXXXXXXX]
      * where XXXX... - is the next autonumber

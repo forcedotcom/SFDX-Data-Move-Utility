@@ -137,6 +137,7 @@ export enum RESOURCES {
     executionOrder = "executionOrder",
     readingValuesMappingFile = "readingValuesMappingFile",
     validatingAndFixingSourceCSVFiles = "validatingAndFixingSourceCSVFiles",
+    validatingSourceCSVFilesSkipped = "validatingSourceCSVFilesSkipped",
     writingToCSV = "writingToCSV",
     noIssuesFoundDuringCSVValidation = "noIssuesFoundDuringCSVValidation",
     issuesFoundDuringCSVValidation = "issuesFoundDuringCSVValidation",

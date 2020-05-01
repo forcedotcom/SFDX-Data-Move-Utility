@@ -123,6 +123,7 @@
     "readingValuesMappingFile": "Reading the values mapping CSV file (%s)",
 
     "validatingAndFixingSourceCSVFiles": "Validating and repairing of the source CSV files...",
+    "validatingSourceCSVFilesSkipped": "Validation of the source CSV files was skipped.",
     "writingToCSV": "Writing to %s...",
     "noIssuesFoundDuringCSVValidation": "There are no issues found during the last validation of the source CSV files.",
     "issuesFoundDuringCSVValidation": "During the validation of the source CSV files %s issues were found. See %s file for the details.",

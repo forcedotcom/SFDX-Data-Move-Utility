@@ -201,21 +201,28 @@ export class RunCommand {
 
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
 
-            this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
+            if (!this.script.importCSVFilesAsIs) {
+                
+                // Validate and repair source csv files
+                this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
 
-            await this.job.readCSVValueMappingFileAsync();
-            await this.job.mergeUserGroupCSVfiles();
-            await this.job.validateAndRepairSourceCSVFiles();
+                await this.job.readCSVValueMappingFileAsync();
+                await this.job.mergeUserGroupCSVfiles();
+                await this.job.validateAndRepairSourceCSVFiles();
 
-            this.logger.infoVerbose(RESOURCES.validationAndFixingsourceCSVFilesCompleted);
+                this.logger.infoVerbose(RESOURCES.validationAndFixingsourceCSVFilesCompleted);
 
-            if (this.script.validateCSVFilesOnly){
-                // Succeeded exit
-                throw new SuccessExit();
+                if (this.script.validateCSVFilesOnly) {
+                    // Succeeded exit
+                    throw new SuccessExit();
+                }
+
+                // Free memory from the csv file data
+                this.job.clearCachedCSVData();
+
+            } else {
+                this.logger.infoMinimal(RESOURCES.validatingSourceCSVFilesSkipped);
             }
-
-            // Free memory from the csv file data
-            this.job.clearCachedCSVData();
         }
     }
 
