@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+
+
 import { LoggerLevel } from '@salesforce/core';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -13,7 +16,6 @@ import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
 
 const fileLogSubdirectory = "logs/";
-
 
 /**
  * Tokens from the common.json resource file.
@@ -79,7 +81,7 @@ export enum RESOURCES {
     apiOperationError2 = "apiOperationError2",
     apiOperationError3 = "apiOperationError3",
     apiUnexpectedOperationError = "apiUnexpectedOperationError",
-       
+
     jobStarted = "jobStarted",
     batchStarted = "batchStarted",
     jobStopped = "jobStopped",
@@ -91,7 +93,7 @@ export enum RESOURCES {
     unprocessedRecord = "unprocessedRecord",
     invalidRecordHashcode = "invalidRecordHashcode",
 
-    
+
     // ------------------------------------ //
     source = "source",
     target = "target",
@@ -212,7 +214,6 @@ class FileLogger {
         this.fileName = path.join(filePath, fileName);
     }
 
-
     /** 
      * Writes INFO message into log file
      *
@@ -232,7 +233,6 @@ class FileLogger {
             fs.appendFileSync(this.fileName, m);
         }
     }
-
 
     /**
      * Writes WARN message into log file
@@ -254,7 +254,6 @@ class FileLogger {
         }
     }
 
-
     /**
      * Writes ERROR message into log file
      *
@@ -274,10 +273,8 @@ class FileLogger {
             fs.appendFileSync(this.fileName, m);
         }
     }
+
 }
-
-
-
 
 /**
  * Class to manage logs
@@ -422,9 +419,6 @@ export class MessageUtils {
 
     }
 
-
-
-
     /**
     * Outputs simple "yes"/"no" prompt.
     * If user has not responded - the default option ("no") is applied
@@ -438,10 +432,6 @@ export class MessageUtils {
             message
         }, ...tokens])) != this.getResourceString(RESOURCES.defaultPromptSelectedOption);
     }
-
-
-    
-
 
     /**
      * Outputs message to sfdx ux and to the log file
@@ -481,7 +471,6 @@ export class MessageUtils {
                 allowUxOutput = false;
             }
         }
-
 
         // Format the message
         let fileLogMessage: string;
@@ -634,7 +623,6 @@ export class MessageUtils {
 
     }
 
-
     /**
      * Logs info string message in NORMAL verbosity
      *
@@ -645,8 +633,6 @@ export class MessageUtils {
     infoNormal(message: string, ...tokens: string[]): void {
         this.log.apply(this, [message, LOG_MESSAGE_TYPE.STRING, LOG_MESSAGE_VERBOSITY.NORMAL, ...tokens]);
     }
-
-
 
     /**
      * Logs info string message in MINIMAL verbosity
@@ -659,8 +645,6 @@ export class MessageUtils {
         this.log.apply(this, [message, LOG_MESSAGE_TYPE.STRING, LOG_MESSAGE_VERBOSITY.MINIMAL, ...tokens]);
     }
 
-
-
     /**
      * Logs info string message in VERBOSE verbosity
      *
@@ -671,8 +655,6 @@ export class MessageUtils {
     infoVerbose(message: string, ...tokens: string[]): void {
         this.log.apply(this, [message, LOG_MESSAGE_TYPE.STRING, LOG_MESSAGE_VERBOSITY.VERBOSE, ...tokens]);
     }
-
-
 
     /**
      * Logs message as styled header  and MINIMAL verbosity
@@ -685,7 +667,6 @@ export class MessageUtils {
         this.log.apply(this, [message, LOG_MESSAGE_TYPE.HEADER, LOG_MESSAGE_VERBOSITY.MINIMAL, ...tokens]);
     }
 
-
     /**
      * Logs message as styled object and NORMAL verbosity
      *
@@ -697,7 +678,6 @@ export class MessageUtils {
         this.log.apply(this, [message, LOG_MESSAGE_TYPE.OBJECT, LOG_MESSAGE_VERBOSITY.NORMAL]);
     }
 
-
     /**
      * Logs message as styled object and MINIMAL verbosity
      *
@@ -708,7 +688,6 @@ export class MessageUtils {
     objectMinimal(message: object): void {
         this.log.apply(this, [message, LOG_MESSAGE_TYPE.OBJECT, LOG_MESSAGE_VERBOSITY.MINIMAL]);
     }
-
 
     /**
      * Logs warn string message
@@ -732,7 +711,6 @@ export class MessageUtils {
         this.log.apply(this, [message, LOG_MESSAGE_TYPE.ERROR, LOG_MESSAGE_VERBOSITY.NORMAL, ...tokens]);
     }
 
-
     /**
      * Logs message when command is starting
      *
@@ -751,7 +729,6 @@ export class MessageUtils {
         );
     }
 
-
     /**
      * Method to update ux spinner
      *
@@ -767,7 +744,6 @@ export class MessageUtils {
             this.uxLogger.setSpinnerStatus(message);
         }
     }
-
 
     /**
      * Logs result message when command is finishing
@@ -907,11 +883,7 @@ export class MessageUtils {
             );
 
         }
-
-
     }
-
-
 
     /**
      * Try to get string from the plugin resources using input message value as a key.
@@ -938,8 +910,6 @@ export class MessageUtils {
         }
     }
 
-
-
     /**
      * @static Returns resource string from the Messages framework by the given key
      * 
@@ -957,8 +927,6 @@ export class MessageUtils {
         }
     }
 
-
-
     /**
      * Gets difference value from the startTime till timeNow in human readable format
      *
@@ -971,8 +939,6 @@ export class MessageUtils {
         return CommonUtils.timeDiffString(this.startTime, timeNow);
     }
 
-
-
     /**
      * Returns time when the process was started
      *
@@ -983,9 +949,7 @@ export class MessageUtils {
         return this.startTime;
     }
 
-
 }
-
 
 /**
  * Type of message
@@ -1027,7 +991,6 @@ export enum LOG_MESSAGE_TYPE {
      */
     OBJECT,
 
-
     /**
      * Formatted header to stdout (without date)
      */
@@ -1045,16 +1008,12 @@ export enum LOG_MESSAGE_TYPE {
      */
     IMPORTANT_STRING,
 
-
     /**
      * * Formatted object to stdout (without date)
      *   Always is sent, even when --quite.
      */
     IMPORTANT_OBJECT
 }
-
-
-
 
 /**
  * The wanted verbosity defined by the command flags or the verbosity of the message
@@ -1078,7 +1037,6 @@ export enum LOG_MESSAGE_VERBOSITY {
 
 }
 
-
 /**
  * UX Logger type description
  *
@@ -1098,9 +1056,6 @@ interface IUxLogger {
     setSpinnerStatus: Function
 }
 
-
-
-
 /**
  * Represents message bundle type
  *
@@ -1109,8 +1064,6 @@ interface IUxLogger {
 interface IResourceBundle {
     getMessage(key: string, tokens?: any): string;
 }
-
-
 
 /**
  * Tabular message description
@@ -1125,7 +1078,6 @@ interface ITableMessage {
         width?: number
     }>
 }
-
 
 /**
  * Format of output message for successful command result
@@ -1145,8 +1097,6 @@ interface IExitSuccessMessage {
     timeElapsed: string
 }
 
-
-
 /**
  * Format of output message for failed command result
  *
@@ -1165,7 +1115,6 @@ interface IExitFailedMessage {
     endTimeUTC: Date,
     timeElapsedString: string
 }
-
 
 /**
  * Exit status codes are passed to the command output

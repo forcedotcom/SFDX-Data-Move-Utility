@@ -28,12 +28,9 @@ export class ApiSf {
 
     org: models.ScriptOrg;
 
-
     constructor(org: models.ScriptOrg) {
         this.org = org;
     }
-
-
 
     /**
      *  Performs SOQL query and returns records
@@ -86,17 +83,15 @@ export class ApiSf {
         return <QueryResult<object>>(await makeQueryAsync(soql));
     }
 
-
-
     /**
-        * Describes given SObject by retrieving field descriptions
-        * 
-        * @param  {string} objectName Object API name to describe
-        * @param  {SfdmModels.SOrg} sOrg sOrg instance
-        * @param  {Map<string, SObjectDescribe>} defaultDescibe
-        * @returns SfdmModels.SObjectDescribe
-        * @memberof ApiSf
-        */
+    * Describes given SObject by retrieving field descriptions
+    * 
+    * @param  {string} objectName Object API name to describe
+    * @param  {SfdmModels.SOrg} sOrg sOrg instance
+    * @param  {Map<string, SObjectDescribe>} defaultDescibe
+    * @returns SfdmModels.SObjectDescribe
+    * @memberof ApiSf
+    */
     async describeSObjectAsync(objectName: string): Promise<models.SObjectDescribe> {
 
         var conn = this.org.getConnection();

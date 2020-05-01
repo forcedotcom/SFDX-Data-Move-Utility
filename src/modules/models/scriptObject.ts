@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+
+ 
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -161,7 +164,7 @@ export default class ScriptObject {
 
 
 
-
+    // ----------------------- Public methods -------------------------------------------    
     /**
      * Setup this object
      *
@@ -233,8 +236,6 @@ export default class ScriptObject {
         }
     }
 
-
-
     /**
      * Retrieves the object descriptions from the source and from the target org
      *
@@ -273,7 +274,6 @@ export default class ScriptObject {
 
             }
 
-
             if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
 
                 // Describe object in the target org        
@@ -287,7 +287,7 @@ export default class ScriptObject {
                     if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
                         this.sourceSObjectDescribe = this.targetSObjectDescribe;
                     }
-    
+
                     // Check fields existance
                     this._validateFields(this.targetSObjectDescribe, false);
 
@@ -297,17 +297,13 @@ export default class ScriptObject {
                     }
                     throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectTargetDoesNotExist, this.name));
                 }
-
-                
             }
         }
-
-
     }
 
 
-    // ---------------- Private members ---------------------------//
-    // ------------------------------------------------------------//
+
+    // ----------------------- Private members -------------------------------------------
     private _validateFields(describe: SObjectDescribe, isSource: boolean) {
 
         if (!this.isReadonlyObject && !this.isSpecialObject) {
@@ -316,7 +312,7 @@ export default class ScriptObject {
                 if (!CommonUtils.isComplexField(x) && !describe.fieldsMap.has(x)) {
 
 
-                    if (x.name == this.externalId){
+                    if (x.name == this.externalId) {
                         // Missing externalId field. Exception.
                         throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.noExternalKey, this.name, this.strOperation));
                     }
@@ -342,7 +338,6 @@ export default class ScriptObject {
             }
         }
     }
-
 
     private _getComplexExternalId(): string {
         return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX

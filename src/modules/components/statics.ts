@@ -8,7 +8,6 @@
 
 
 export const CONSTANTS = {
-
     DEFAULT_USER_PROMPT_TIMEOUT_MS: 6000,
     DEFAULT_POLLING_INTERVAL_MS: 5000,
     DEFAULT_BULK_API_THRESHOLD_RECORDS: 200,
@@ -40,15 +39,12 @@ export const CONSTANTS = {
         "User",
         "RecordType"
     ]
-
 }
-
 
 export enum DATA_MEDIA_TYPE {
     Org,
     File
 }
-
 
 export enum OPERATION {
     Insert,

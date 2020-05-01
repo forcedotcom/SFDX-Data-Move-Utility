@@ -6,7 +6,6 @@
  */
 
  
-
 /**
  * Parsed mock field object from the script file
  *

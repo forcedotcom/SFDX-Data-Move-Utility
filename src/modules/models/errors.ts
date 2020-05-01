@@ -20,7 +20,6 @@ export class OrgMetadataError extends Error {
     }
 }
 
-
 /**
  * Errors occur while the command is being initializating
  *
@@ -33,8 +32,6 @@ export class CommandInitializationError extends Error {
         super(m);
     }
 }
-
-
 
 /**
  * Errors during command execution
@@ -49,7 +46,6 @@ export class CommandExecutionError extends Error {
     }
 }
 
-
 /**
  * Unresolvable warning
  *
@@ -63,8 +59,6 @@ export class UnresolvableWarning extends Error {
     }
 }
 
-
-
 /**
  * User has stopped execution of the command
  *
@@ -77,7 +71,6 @@ export class CommandAbortedByUserError extends Error {
         super(m);
     }
 }
-
 
 /**
  * When thrown the command need to be aborted with success result

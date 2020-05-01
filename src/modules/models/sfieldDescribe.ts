@@ -5,9 +5,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+
 import { CommonUtils } from "../components/commonUtils";
 import { ScriptObject } from ".";
-
 
 
 /**
@@ -95,7 +95,6 @@ export default class SFieldDescribe {
         return this.referencedObjectType == this.objectName;
     }
 
-
     /**
      * Account__c => Account__r
      *
@@ -120,7 +119,6 @@ export default class SFieldDescribe {
         }
     }
 
-
     /**
      * Account__r.Name => Account__c
      *
@@ -138,7 +136,7 @@ export default class SFieldDescribe {
         } else {
             return parts[0] + "Id";
         }
-
     }
+
 }
 

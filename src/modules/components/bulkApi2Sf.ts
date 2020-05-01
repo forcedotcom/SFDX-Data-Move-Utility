@@ -15,7 +15,6 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
 
 
 
-
 /**
  *  Available result statuses for API operations
  */
@@ -29,7 +28,6 @@ export enum RESULT_STATUSES {
     FailedOrAborted = "FailedOrAborted",
     ProcessError = "ProcessError"
 }
-
 
 /**
  * Represents the record returned by the Api operation
@@ -153,7 +151,6 @@ export class BulkApi2sf {
         this.logger = logger;
     }
 
-
     /**
      * Creates new Bulk job
      *
@@ -199,8 +196,6 @@ export class BulkApi2sf {
         });
     }
 
-
-
     /**
      *  Create batch for the given bulk job and initializes uploading of csv content
      *
@@ -243,8 +238,6 @@ export class BulkApi2sf {
         });
     }
 
-
-
     /**
      * Closes bulk job and forces csv content to be uploaded 
      *
@@ -281,8 +274,6 @@ export class BulkApi2sf {
         });
     }
 
-
-
     /**
      * Polls  job for the status
      *
@@ -318,7 +309,6 @@ export class BulkApi2sf {
             });
         });
     }
-
 
     /**
      * Asks the server for the job status by given polling 
@@ -379,10 +369,6 @@ export class BulkApi2sf {
             }, pollInterval);
         });
     }
-
-
-
-
 
     /**
      * Returns completed job result, inculding all source and target records with status per target record.
@@ -489,8 +475,6 @@ export class BulkApi2sf {
 
 
 
-
-
     // ----------------------- Private members -------------------------------------------
     private async _getBulkJobUnsuccessfullResultAsync(contentUrl: string, isGetFailed: boolean): Promise<Array<object>> {
         let _this = this;
@@ -552,7 +536,6 @@ export class BulkApi2sf {
 
         return value;
     }
-
 
     private _apiRequestErrorHandler(resolve: any, error: any, response: any, body: any) {
         if (!response) {

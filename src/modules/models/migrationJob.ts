@@ -5,6 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+
+ 
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -52,6 +54,7 @@ export default class MigrationJob {
 
 
 
+    // ----------------------- Public methods -------------------------------------------    
     /**
      * Reads CSVValues mapping definition file
      *
@@ -75,8 +78,6 @@ export default class MigrationJob {
         }
     }
 
-
-
     /**
      * Merges User.csv and Group.csv into single file
      *
@@ -89,8 +90,6 @@ export default class MigrationJob {
         let filepath3 = path.join(this.script.basePath, CONSTANTS.USER_AND_GROUP_FILENAME + ".csv");
         await CommonUtils.mergeCsvFilesAsync(filepath1, filepath2, filepath3, true, "Id", "Name");
     }
-
-
 
     /**
      * Checks and repairs all CSV source files.
@@ -156,9 +155,7 @@ export default class MigrationJob {
         }
 
     }
-
-
-
+    
     /**
      * Returns a task by the given sObject name
      *
@@ -169,8 +166,6 @@ export default class MigrationJob {
     getTaskBySObjectName(sObjectName: string) {
         return this.tasks.filter(x => x.sObjectName == sObjectName)[0];
     }
-
-
 
     /**
      * Save csv file from the data of the input array
@@ -185,8 +180,6 @@ export default class MigrationJob {
         this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
         await CommonUtils.writeCsvFileAsync(filePath, data, true);
     }
-
-
 
     /**
      * Save all updated cached csv files
@@ -205,8 +198,6 @@ export default class MigrationJob {
             }
         }
     }
-
-
 
     /**
      * Clear cached csv data

@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+
+ 
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -61,7 +64,7 @@ export default class ScriptOrg {
 
 
 
-
+    // ----------------------- Public methods -------------------------------------------    
     /**
      * Setup this object
      *
@@ -74,8 +77,8 @@ export default class ScriptOrg {
     }
 
 
-    // ---------------- Private members ---------------------------//
-    // ------------------------------------------------------------//
+
+    // ----------------------- Private members -------------------------------------------    
     private _parseForceOrgDisplayResult(commandResult: String): OrgInfo {
         if (!commandResult) return null;
         let lines = commandResult.split('\n');
@@ -99,7 +102,6 @@ export default class ScriptOrg {
         return output;
     };
 
-
     private async _validateAccessTokenAsync(): Promise<void> {
         let apiSf = new ApiSf(this);
         if (!this.isFileMedia) {
@@ -118,7 +120,6 @@ export default class ScriptOrg {
             }
         }
     }
-
 
     private async _setupConnection(): Promise<void> {
         if (!this.isFileMedia) {

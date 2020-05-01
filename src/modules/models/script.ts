@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+
+ 
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -64,7 +67,8 @@ export default class Script {
 
 
 
-
+    
+    // ----------------------- Public methods -------------------------------------------    
     /**
      * Setup this object
      *
@@ -130,8 +134,6 @@ export default class Script {
         this.objects = CommonUtils.distinctArray(this.objects, "name");
 
     }
-
-
 
     /**
      * Retrieve and analyse the metadata of all objects in the script
@@ -226,8 +228,6 @@ export default class Script {
         }
 
     }
-
-
-
+    
 }
 
