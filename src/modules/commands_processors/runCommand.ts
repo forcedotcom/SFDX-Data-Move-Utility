@@ -232,7 +232,7 @@ export class RunCommand {
     * @memberof RunCommand
     */
     async getTotalRecordsCount(): Promise<void> {
-        // TODO: Implement this
+        await this.job.getTotalRecordsCount();        
     }
 
 }

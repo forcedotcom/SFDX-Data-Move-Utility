@@ -28,13 +28,15 @@ import SFieldDescribe from "./sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
 import { CachedCSVContent } from "./migrationJob";
-
+import * as deepClone from 'deep.clone';
 
 
 export default class MigrationJobTask {
 
     scriptObject: ScriptObject;
     job: Job;
+    sourceTotalRecorsCount: number = 0;
+    targetTotalRecorsCount: number = 0;
 
     constructor(init: Partial<MigrationJobTask>) {
         if (init) {
@@ -86,9 +88,16 @@ export default class MigrationJobTask {
         return this.getCSVFilename(filepath);
     }
 
+    get sourceOrg() {
+        return this.scriptObject.script.sourceOrg;
+    }
+
+    get targetOrg() {
+        return this.scriptObject.script.targetOrg;
+    }
+
+
     // ----------------------- Public methods -------------------------------------------    
-
-
     /**
      * Checks the structure of the CSV source file.
      *
@@ -403,5 +412,65 @@ export default class MigrationJobTask {
             return path.join(rootPath, this.sObjectName) + ".csv";
         }
     }
+
+    /**
+     * Creates SOQK query
+     *
+     * @param {Array<string>} [fieldNames] Field names to include in the query, 
+     *                                     pass undefined value to use all fields 
+     *                                      of the current task
+     * @param {boolean} [removeLimits=false]  true to remove LIMIT, OFFSET, ORDERBY clauses
+     * @param {Query} [parsedQuery]  Default parsed query.
+     * @returns {string}
+     * @memberof MigrationJobTask
+     */
+    createQuery(fieldNames?: Array<string>, removeLimits: boolean = false, parsedQuery?: Query): string {
+
+        parsedQuery = parsedQuery || this.scriptObject.parsedQuery;
+
+        let tempQuery = deepClone.deepCloneSync(parsedQuery, {
+            absolute: true,
+        });
+
+        if (!fieldNames)
+            tempQuery.fields = this.fieldsInQuery.map(fieldName => getComposedField(fieldName));
+        else
+            tempQuery.fields = fieldNames.map(fieldName => getComposedField(fieldName));
+
+        if (removeLimits) {
+            tempQuery.limit = undefined;
+            tempQuery.offset = undefined;
+            tempQuery.orderBy = undefined;
+        }
+
+        return composeQuery(tempQuery);
+    }
+
+    /**
+    * Retireves the total records count 
+    *
+    * @returns {Promise<void>}
+    * @memberof MigrationJobTask
+    */
+    async getTotalRecordsCountAsync(): Promise<void> {
+        this.logger.infoMinimal(RESOURCES.gettingRecordsCount, this.sObjectName);
+        let query = this.createQuery(['COUNT(Id) CNT'], true);
+        if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
+            let apiSf = new ApiSf(this.sourceOrg);
+            let ret = await apiSf.queryAsync(query, false);
+            this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
+            this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
+                this.logger.getResourceString(RESOURCES.source), String(this.sourceTotalRecorsCount));
+        }
+        if (this.targetOrg.media == DATA_MEDIA_TYPE.Org) {
+            let apiSf = new ApiSf(this.targetOrg);
+            let ret = await apiSf.queryAsync(query, false);
+            this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
+            this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
+                this.logger.getResourceString(RESOURCES.target), String(this.targetTotalRecorsCount));
+        }
+    }
+
+
 
 }

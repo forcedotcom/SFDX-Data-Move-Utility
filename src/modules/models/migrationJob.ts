@@ -29,6 +29,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 
+
 export default class MigrationJob {
 
     script: Script;
@@ -165,6 +166,21 @@ export default class MigrationJob {
 
     }
 
+
+   /**
+   * Retireves the total record count for all 
+   * objects in the job
+   *
+   * @returns {Promise<void>}
+   * @memberof MigrationJob
+   */
+    async getTotalRecordsCount(): Promise<void> {
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            await task.getTotalRecordsCountAsync();
+        }
+    }
+
     /**
      * Returns a task by the given sObject name
      *
@@ -216,6 +232,8 @@ export default class MigrationJob {
     clearCachedCSVData() {
         this.cachedCSVContent.clear();
     }
+
+   
 
 
 }
