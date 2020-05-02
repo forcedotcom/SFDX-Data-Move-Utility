@@ -189,7 +189,7 @@ export default class MigrationJobTask {
             let child__rSFields = this.scriptObject.externalIdSFieldDescribe.child__rSFields;
             for (let fieldIndex = 0; fieldIndex < child__rSFields.length; fieldIndex++) {
                 const childIdSField = child__rSFields[fieldIndex].idSField;
-                await ___updateChildOriginalIdColumns(childIdSField);
+                await ___updateChildOriginalIdColumnsAsync(childIdSField);
             }
         }
 
@@ -197,7 +197,7 @@ export default class MigrationJobTask {
         for (let fieldIndex = 0; fieldIndex < this.fieldsInQuery.length; fieldIndex++) {
             const sField = this.fieldsInQueryMap.get(this.fieldsInQuery[fieldIndex]);
             if (sField.isReference && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
-                await ___addMissingLookupColumns(sField);
+                await ___addMissingLookupColumnsAsync(sField);
             }
         }
 
@@ -223,7 +223,7 @@ export default class MigrationJobTask {
          * @param {SFieldDescribe} sField sField to process
          * @returns {Promise<void>}
          */
-        async function ___addMissingLookupColumns(sField: SFieldDescribe): Promise<void> {
+        async function ___addMissingLookupColumnsAsync(sField: SFieldDescribe): Promise<void> {
             let columnName__r = sField.fullName__r;
             let columnNameId = sField.nameId;
             let parentExternalId = sField.parentLookupObject.externalId;
@@ -322,7 +322,7 @@ export default class MigrationJobTask {
          * @param {SFieldDescribe} childIdSField Child lookup id sField to process
          * @returns {Promise<void>}
          */
-        async function ___updateChildOriginalIdColumns(childIdSField: SFieldDescribe): Promise<void> {
+        async function ___updateChildOriginalIdColumnsAsync(childIdSField: SFieldDescribe): Promise<void> {
             let columnChildOriginalName__r = childIdSField.fullOriginalName__r;
             let columnChildIdName__r = childIdSField.fullIdName__r;
             let columnChildNameId = childIdSField.nameId;
@@ -425,24 +425,19 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     createQuery(fieldNames?: Array<string>, removeLimits: boolean = false, parsedQuery?: Query): string {
-
         parsedQuery = parsedQuery || this.scriptObject.parsedQuery;
-
         let tempQuery = deepClone.deepCloneSync(parsedQuery, {
             absolute: true,
         });
-
         if (!fieldNames)
             tempQuery.fields = this.fieldsInQuery.map(fieldName => getComposedField(fieldName));
         else
             tempQuery.fields = fieldNames.map(fieldName => getComposedField(fieldName));
-
         if (removeLimits) {
             tempQuery.limit = undefined;
             tempQuery.offset = undefined;
             tempQuery.orderBy = undefined;
         }
-
         return composeQuery(tempQuery);
     }
 
@@ -453,8 +448,10 @@ export default class MigrationJobTask {
     * @memberof MigrationJobTask
     */
     async getTotalRecordsCountAsync(): Promise<void> {
+        
         this.logger.infoMinimal(RESOURCES.gettingRecordsCount, this.sObjectName);
         let query = this.createQuery(['COUNT(Id) CNT'], true);
+        
         if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
             let apiSf = new ApiSf(this.sourceOrg);
             let ret = await apiSf.queryAsync(query, false);
@@ -462,6 +459,7 @@ export default class MigrationJobTask {
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
                 this.logger.getResourceString(RESOURCES.source), String(this.sourceTotalRecorsCount));
         }
+
         if (this.targetOrg.media == DATA_MEDIA_TYPE.Org) {
             let apiSf = new ApiSf(this.targetOrg);
             let ret = await apiSf.queryAsync(query, false);
