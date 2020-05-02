@@ -944,6 +944,9 @@ export class CommonUtils {
 
 }
 
+
+
+// ---------------------------- Helper classes -------------------------------
 /**
  * Represents the set of chunks of CSV file
  *
