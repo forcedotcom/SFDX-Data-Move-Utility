@@ -448,10 +448,10 @@ export default class MigrationJobTask {
     * @memberof MigrationJobTask
     */
     async getTotalRecordsCountAsync(): Promise<void> {
-        
+
         this.logger.infoMinimal(RESOURCES.gettingRecordsCount, this.sObjectName);
         let query = this.createQuery(['COUNT(Id) CNT'], true);
-        
+
         if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
             let apiSf = new ApiSf(this.sourceOrg);
             let ret = await apiSf.queryAsync(query, false);
@@ -467,6 +467,19 @@ export default class MigrationJobTask {
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
                 this.logger.getResourceString(RESOURCES.target), String(this.targetTotalRecorsCount));
         }
+    }
+
+    /**
+     * Deletes old records from the org
+     *
+     * @returns {Promise<void>}
+     * @memberof MigrationJobTask
+     */
+    async deleteOldRecords(): Promise<boolean> {
+        this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
+
+        // TODO: implement this
+        return true;
     }
 
 

@@ -167,18 +167,33 @@ export default class MigrationJob {
     }
 
 
-   /**
-   * Retireves the total record count for all 
-   * objects in the job
-   *
-   * @returns {Promise<void>}
-   * @memberof MigrationJob
-   */
+    /**
+    * Retireves the total record count for all 
+    * objects in the job
+    *
+    * @returns {Promise<void>}
+    * @memberof MigrationJob
+    */
     async getTotalRecordsCount(): Promise<void> {
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
             await task.getTotalRecordsCountAsync();
         }
+    }
+
+    /**
+    * Deletes old records of all script objects
+    *
+    * @returns {Promise<void>}
+    * @memberof MigrationJob
+    */
+    async deleteOldRecords(): Promise<boolean> {
+        let deleted = false;
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            deleted = deleted || await task.deleteOldRecords();
+        }
+        return deleted;
     }
 
     /**
@@ -233,7 +248,7 @@ export default class MigrationJob {
         this.cachedCSVContent.clear();
     }
 
-   
+
 
 
 }

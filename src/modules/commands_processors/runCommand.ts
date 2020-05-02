@@ -225,14 +225,23 @@ export class RunCommand {
     }
 
     /**
-    * Retireves the total record count for all 
-    * objects in the script
-    *
+    * Prepare the migration job
+    * 
     * @returns {Promise<void>}
     * @memberof RunCommand
     */
-    async getTotalRecordsCount(): Promise<void> {
+    async prepareJob(): Promise<void> {
+
         await this.job.getTotalRecordsCount();        
+
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.deletingOldData);
+        
+        if (await this.job.deleteOldRecords()){
+            this.logger.infoVerbose(RESOURCES.deletingOldDataCompleted);
+        } else {
+            this.logger.infoVerbose(RESOURCES.deletingOldDataSkipped);
+        }    
     }
 
 }
