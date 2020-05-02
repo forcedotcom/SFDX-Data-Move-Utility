@@ -392,15 +392,15 @@ export default class MigrationJobTask {
     /**
      * Returns full filename for the sobject of the current task
      *
-     * @param {string} basePath
+     * @param {string} rootPath The root path to append the filename to it
      * @returns {string}
      * @memberof MigrationJobTask
      */
-    getCSVFilename(basePath: string): string {
+    getCSVFilename(rootPath: string): string {
         if (this.sObjectName == "User" || this.sObjectName == "Group") {
-            return path.join(basePath, CONSTANTS.USER_AND_GROUP_FILENAME) + ".csv";
+            return path.join(rootPath, CONSTANTS.USER_AND_GROUP_FILENAME) + ".csv";
         } else {
-            return path.join(basePath, this.sObjectName) + ".csv";
+            return path.join(rootPath, this.sObjectName) + ".csv";
         }
     }
 
