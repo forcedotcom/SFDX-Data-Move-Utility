@@ -166,11 +166,11 @@ export default class ScriptObject {
     }
 
     get complexExternalId(): string {
-        return CommonUtils.getComplexExternalId(this.externalId);
+        return CommonUtils.getComplexField(this.externalId);
     }
 
     get complexOriginalExternalId(): string {
-        return CommonUtils.getComplexExternalId(this.originalExternalId);
+        return CommonUtils.getComplexField(this.originalExternalId);
     }
 
 

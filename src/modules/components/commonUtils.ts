@@ -38,8 +38,6 @@ const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
  */
 export class CommonUtils {
 
-
-
     /**
     * @static Splits array to multiple chunks by max chunk size
     * 
@@ -54,7 +52,6 @@ export class CommonUtils {
         }
         return arr;
     }
-
 
     /**
     * @static Formats date to string [HH:mm:dd.mmm] using 24h-format
@@ -71,8 +68,6 @@ export class CommonUtils {
         return `${date.toLocaleTimeString(undefined, { hour12: false })}`;
     }
 
-
-
     /**
      * @static Formats date to string [d_MM_yyyy_HH_mm_ss] to use with fs
      * 
@@ -83,8 +78,6 @@ export class CommonUtils {
     public static formatFileDate(date: Date): string {
         return this.formatDateTime(date, false).replace(/[:]/g, "_").replace(/\s/g, "_").replace(/[/]/g, "_");
     }
-
-
 
     /**
     * @static Returns the current active plugin information
@@ -113,8 +106,6 @@ export class CommonUtils {
         }
     }
 
-
-
     /**
     * @static Formats date to string [yyyy-MM-dd HH:mm:ss:mmm]
     * 
@@ -132,8 +123,6 @@ export class CommonUtils {
         var strTime = this.addLeadnigZeros(hours, 2) + ':' + this.addLeadnigZeros(minutes, 2) + ':' + this.addLeadnigZeros(seconds, 2) + (addMilliseconds ? "." + this.addLeadnigZeros(ms, 3) : "");
         return date.getFullYear() + "-" + this.addLeadnigZeros(date.getMonth() + 1, 2) + "-" + this.addLeadnigZeros(date.getDate(), 2) + "  " + strTime;
     }
-
-
 
     /**
     * @static Calculates and returns difference between two dates in format [HH:mm:ss.mmm]
@@ -156,8 +145,6 @@ export class CommonUtils {
             + "ms ";
     }
 
-
-
     /**
      * @static Returns the full command line string, which was used to start the current SFDX Command
      *
@@ -170,8 +157,6 @@ export class CommonUtils {
             return "sfdx " + process.argv.slice(2).join(' ');
         return process.argv.join(' ');
     }
-
-
 
     /**
      * @static Converts given UTC date to the local date
@@ -188,7 +173,6 @@ export class CommonUtils {
         return newDate;
     }
 
-
     /**
     * @static Left pads the number with given number of leading zerros
     * 
@@ -202,8 +186,6 @@ export class CommonUtils {
         while (s.length < (size || 2)) { s = "0" + s; }
         return s;
     }
-
-
 
     /**
      * @static Transforms array of arrays to single array of objects. 
@@ -224,8 +206,6 @@ export class CommonUtils {
         });
         return singleArray;
     }
-
-
 
     /**
      * @static Creates a Map for the input array of objects: 
@@ -250,7 +230,6 @@ export class CommonUtils {
         return m;
     }
 
-
     /**
      * Creates map for the input array of objects:
      * object_property => object
@@ -274,9 +253,6 @@ export class CommonUtils {
         });
         return m;
     }
-
-
-
 
     /**
      * @static Compares each member of two arrays an returns  
@@ -317,8 +293,6 @@ export class CommonUtils {
 
     }
 
-
-
     /**
     * @static Created mapping between members of two arrays compared by the given object property
     *
@@ -356,8 +330,6 @@ export class CommonUtils {
 
     }
 
-
-
     /**
      * Returns numeric hashcode of the input string
      *
@@ -369,8 +341,6 @@ export class CommonUtils {
     public static getStringHashcode(str: string): number {
         return !str ? 0 : str.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
     }
-
-
 
     /**
      * @static Creates numeric hashcode of the object based on its string representation
@@ -394,9 +364,6 @@ export class CommonUtils {
         return this.getStringHashcode(str);
     }
 
-
-
-
     /**
      * @static Trims end of string if the string ends with the given suffix
      * 
@@ -412,8 +379,6 @@ export class CommonUtils {
         }
     }
 
-
-
     /**
     * @static Executes SFDX command synchronously
     * 
@@ -427,8 +392,6 @@ export class CommonUtils {
         else
             return execSync(`sfdx ${command}`).toString();
     };
-
-
 
     /**
     * @static Modifies existing WHERE clause by adding extra rule.
@@ -479,9 +442,6 @@ export class CommonUtils {
         }
     }
 
-
-
-
     /**
      * @static Returns distinct array of objects by the given object property
      * 
@@ -497,9 +457,6 @@ export class CommonUtils {
         });
     }
 
-
-
-
     /**
      * Returns array of distinct string values
      *
@@ -512,11 +469,7 @@ export class CommonUtils {
         return [...new Set<string>(array)];
     }
 
-
-
     /**
-     * 
-     *
      * @static Removes all objects from the array which are matched given property value
      * 
      * @param {Array<object>} arr The input array
@@ -528,9 +481,6 @@ export class CommonUtils {
     public static removeBy(arr: Array<object>, field: string, value: string): Array<object> {
         return arr.splice(arr.findIndex(item => item[field] == value), 1);
     }
-
-
-
 
     /**
      * @static Converts array to map
@@ -548,13 +498,7 @@ export class CommonUtils {
         }, new Map<string, T>());
     }
 
-
-
-
-
     /**
-     *
-     *
      * @static Filters the input map by the keys from the array
      * 
      * @template T
@@ -586,11 +530,10 @@ export class CommonUtils {
 
     }
 
-
-
     /**
      * Returns true if the field name is a complex field name
-     * (f.ex. Account__r.Name)
+     * (f.ex. Account__r.Name => true, 
+     *        Id => false)
      *
      * @static
      * @param {string} fieldName The field name
@@ -603,18 +546,26 @@ export class CommonUtils {
             || fieldName.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX));
     }
 
-
-    public static getComplexExternalId(externalId: string): string {
-        if (externalId.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0) {
+    /**
+     * Transforms field name into the complex field 
+     * (f.ex. Account__r.Name;Account__r.Id => $$Account__r.Name$Account__r.Id
+     *        Account__r.Name => Account__r.Name)
+     *
+     * @static
+     * @param {string} fieldName
+     * @returns {string}
+     * @memberof CommonUtils
+     */
+    public static getComplexField(fieldName: string): string {
+        if (fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0) {
             return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
-                + externalId.replace(
+                + fieldName.replace(
                     new RegExp(`${CONSTANTS.COMPLEX_FIELDS_SEPARATOR}`, 'g'),
                     CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR
                 );
         }
-        return externalId;
+        return fieldName;
     }
-
 
     /**
       * @static Reads csv file from disk
@@ -729,8 +680,6 @@ export class CommonUtils {
         });
     }
 
-
-
     /**
      * @static Writes array of objects to csv file
      * 
@@ -762,8 +711,6 @@ export class CommonUtils {
         });
         return csvWriter.writeRecords(array);
     }
-
-
 
     /**
      * @static Merges all rows from two source csv files into the single csv file
@@ -805,12 +752,9 @@ export class CommonUtils {
 
         await addRowsFromFile(source1FilePath);
         await addRowsFromFile(source2FilePath);
-
         await this.writeCsvFileAsync(targetFilePath, totalRows);
 
     }
-
-
 
     /**
      * @static Transforms array of objects into array of CSV strings. 
@@ -883,8 +827,6 @@ export class CommonUtils {
         });
     }
 
-
-
     /**
      * @static Read csv file only once and cache it into the Map.
      * If the file was previously read and it is in the cache it retrieved from cache instead of reading file again
@@ -934,8 +876,6 @@ export class CommonUtils {
         return currentFileMap;
     }
 
-
-
     /**
      * @param  {string} fileDirectory Directory to list files in it
      * @param  {string="*"} fileMask File mask ex. *.txt
@@ -949,7 +889,6 @@ export class CommonUtils {
             });
         });
     }
-
 
     /**
      * 
@@ -984,7 +923,6 @@ export class CommonUtils {
             logger.log(RESOURCES.newLine);
         }
     }
-
 
     /**
      * @static Generates random id string with given length
