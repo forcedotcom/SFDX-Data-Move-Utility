@@ -137,6 +137,10 @@ export default class ScriptObject {
         return CommonUtils.isComplexField(this.externalId);
     }
 
+    get hasComplexrogiinalExternalId(): boolean {
+        return CommonUtils.isComplexField(this.originalExternalId);
+    }
+
     get isDescribed(): boolean {
         return !!this.sourceSObjectDescribe;
     }
@@ -206,6 +210,8 @@ export default class ScriptObject {
             } else {
                 this.parsedQuery.fields.push(getComposedField(this.externalId));
             }
+            // Add original external id field to the query
+            this.parsedQuery.fields.push(getComposedField(CommonUtils.getComplexExternalId(this.originalExternalId)));
             // Make each field appear only once in the query
             this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");
         } catch (ex) {
@@ -340,11 +346,7 @@ export default class ScriptObject {
     }
 
     private _getComplexExternalId(): string {
-        return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
-            + this.externalId.replace(
-                new RegExp(`${CONSTANTS.COMPLEX_FIELDS_SEPARATOR}`, 'g'),
-                CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR
-            );
+        return CommonUtils.getComplexExternalId(this.externalId);
     }
 
 }

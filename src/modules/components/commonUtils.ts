@@ -604,6 +604,17 @@ export class CommonUtils {
     }
 
 
+    public static getComplexExternalId(externalId: string): string {
+        if (externalId.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0) {
+            return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
+                + externalId.replace(
+                    new RegExp(`${CONSTANTS.COMPLEX_FIELDS_SEPARATOR}`, 'g'),
+                    CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR
+                );
+        }
+        return externalId;
+    }
+
 
     /**
       * @static Reads csv file from disk
@@ -897,7 +908,7 @@ export class CommonUtils {
         indexValueLength?: number,
         useRowIndexAutonumber?: boolean,
         addIndexKeyValues?: boolean): Promise<Map<string, any>> {
-        
+
         indexFieldName = indexFieldName || "Id";
         indexValueLength = indexValueLength || 18;
         useRowIndexAutonumber = typeof useRowIndexAutonumber == "undefined" || useRowIndexAutonumber == null ? false : useRowIndexAutonumber;
@@ -965,7 +976,7 @@ export class CommonUtils {
         if (showPrompt) {
             if (!(await logger.yesNoPromptAsync(promptMessage))) {
                 logger.log(RESOURCES.newLine);
-                if (onBeforeAbortAsync){
+                if (onBeforeAbortAsync) {
                     await onBeforeAbortAsync();
                 }
                 throw new CommandAbortedByUserError(logger.getResourceString(errorMessage));
@@ -992,7 +1003,7 @@ export class CommonUtils {
     }
 
 
-   
+
 }
 
 /**

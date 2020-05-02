@@ -205,7 +205,9 @@ export default class Script {
 
                     // Add __r fields to the child object query
                     let __rFieldName = thisField.fullName__r;
+                    let __rOriginalFieldName = thisField.fullOriginalName__r;
                     thisObject.parsedQuery.fields.push(getComposedField(__rFieldName));
+                    thisObject.parsedQuery.fields.push(getComposedField(__rOriginalFieldName));
                     thisObject.query = composeQuery(thisObject.parsedQuery);
 
                     // Linking between related fields and objects
@@ -225,6 +227,12 @@ export default class Script {
                 }
             }
         }
+
+        // Remove duplicate fields
+        this.objects.forEach(object=>{
+            object.parsedQuery.fields = CommonUtils.distinctArray(object.parsedQuery.fields, "field");
+            object.query = composeQuery(object.parsedQuery);
+        });
 
     }
 
