@@ -6,7 +6,7 @@
  */
 
 
- 
+
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -165,6 +165,13 @@ export default class ScriptObject {
         }).filter(x => !!x), 'name');
     }
 
+    get complexExternalId(): string {
+        return CommonUtils.getComplexExternalId(this.externalId);
+    }
+
+    get complexOriginalExternalId(): string {
+        return CommonUtils.getComplexExternalId(this.originalExternalId);
+    }
 
 
 
@@ -206,12 +213,12 @@ export default class ScriptObject {
             }
             // Add external Id field to the query
             if (this.hasComplexExternalId) {
-                this.parsedQuery.fields.push(getComposedField(this._getComplexExternalId()));
+                this.parsedQuery.fields.push(getComposedField(this.complexExternalId));
             } else {
                 this.parsedQuery.fields.push(getComposedField(this.externalId));
             }
             // Add original external id field to the query
-            this.parsedQuery.fields.push(getComposedField(CommonUtils.getComplexExternalId(this.originalExternalId)));
+            this.parsedQuery.fields.push(getComposedField(this.complexOriginalExternalId));
             // Make each field appear only once in the query
             this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");
         } catch (ex) {
@@ -345,8 +352,5 @@ export default class ScriptObject {
         }
     }
 
-    private _getComplexExternalId(): string {
-        return CommonUtils.getComplexExternalId(this.externalId);
-    }
 
 }
