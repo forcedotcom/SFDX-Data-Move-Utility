@@ -95,7 +95,7 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async validateCSVStructure(): Promise<Array<ICSVIssues>> {
+    async validateCSV(): Promise<Array<ICSVIssues>> {
 
         let csvIssues = new Array<ICSVIssues>();
 

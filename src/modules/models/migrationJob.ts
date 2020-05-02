@@ -117,7 +117,7 @@ export default class MigrationJob {
         // Analyse csv structure
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            this.csvIssues = this.csvIssues.concat(await task.validateCSVStructure());
+            this.csvIssues = this.csvIssues.concat(await task.validateCSV());
         }
 
         // if csv structure issues were found - prompt to abort the job 
