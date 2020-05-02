@@ -199,6 +199,7 @@ export class RunCommand {
 
             await this.job.mergeUserGroupCSVfiles();
             await this.job.loadCSVValueMappingFileAsync();
+            this.job.copyCSVFilesToSourceSubDir();
 
             if (!this.script.importCSVFilesAsIs) {
 

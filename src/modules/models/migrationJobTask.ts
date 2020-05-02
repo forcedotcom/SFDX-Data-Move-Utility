@@ -66,23 +66,28 @@ export default class MigrationJobTask {
         return this.scriptObject.fieldsInQuery;
     }
 
+    get cSVFilename(): string {
+        return this._getCSVFilename(this.scriptObject.script.basePath);
+    }
 
+    get sourceCSVFilename(): string {
+        let filepath = path.join(this.scriptObject.script.basePath, CONSTANTS.CSV_SOURCE_SUBDIRECTORY);
+        if (!fs.existsSync(filepath)) {
+            fs.mkdirSync(filepath);
+        }
+        return this._getCSVFilename(filepath);
+    }
+
+    get targetCSVFilename(): string {
+        let filepath = path.join(this.scriptObject.script.basePath, CONSTANTS.CSV_TARGET_SUBDIRECTORY);
+        if (!fs.existsSync(filepath)) {
+            fs.mkdirSync(filepath);
+        }
+        return this._getCSVFilename(filepath);
+    }
 
     // ----------------------- Public methods -------------------------------------------    
-    /**
-     * Returns CSV filename for the current task
-     *
-     * @returns {string}
-     * @memberof MigrationJobTask
-     */
-    getCSVFilename(): string {
-        let filepath = path.join(this.scriptObject.script.basePath, this.sObjectName);
-        if (this.sObjectName == "User" || this.sObjectName == "Group") {
-            filepath = path.join(this.scriptObject.script.basePath, CONSTANTS.USER_AND_GROUP_FILENAME);
-        }
-        filepath += ".csv";
-        return filepath;
-    }
+
 
     /**
      * Checks the structure of the CSV source file.
@@ -96,7 +101,7 @@ export default class MigrationJobTask {
 
         // Check csv file --------------------------------------
         // Read the csv header row
-        let csvColumnsRow = await CommonUtils.readCsvFileAsync(this.getCSVFilename(), 1);
+        let csvColumnsRow = await CommonUtils.readCsvFileAsync(this.sourceCSVFilename, 1);
 
         if (csvColumnsRow.length == 0) {
             // Missing or empty file
@@ -155,7 +160,7 @@ export default class MigrationJobTask {
         let csvIssues = new Array<ICSVIssues>();
 
         let currentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
-            this.getCSVFilename(),
+            this.sourceCSVFilename,
             null, null,
             false, false);
 
@@ -165,35 +170,64 @@ export default class MigrationJobTask {
             return csvIssues;
         }
 
-        let firstRow = [...currentFileMap.values()][0];
+        let firstRow = currentFileMap.values().next().value;
 
-        // Add missing id column 
         if (!firstRow.hasOwnProperty("Id")) {
-            await ___addMissingIdColumn();
+            // Add missing id column 
+            ___addMissingIdColumn();
+
+            // Update child lookup id columns
+            let child__rSFields = this.scriptObject.externalIdSFieldDescribe.child__rSFields;
+            for (let fieldIndex = 0; fieldIndex < child__rSFields.length; fieldIndex++) {
+                const childIdSField = child__rSFields[fieldIndex].idSField;
+                await ___updateChildOriginalIdColumns(childIdSField);
+            }
         }
 
         // Add missing lookup columns 
         for (let fieldIndex = 0; fieldIndex < this.fieldsInQuery.length; fieldIndex++) {
             const sField = this.fieldsInQueryMap.get(this.fieldsInQuery[fieldIndex]);
             if (sField.isReference && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
-                await ___addMissingLookupColumns(currentFileMap, sField);
+                await ___addMissingLookupColumns(sField);
             }
         }
 
         return csvIssues;
 
-        // ------------------ function internals ------------------------- //
+
+        // ------------------ internal function ------------------------- //
+        /**
+         * Add Id column to the current csv file (if it is missing), 
+         * then update all its child lookup "__r" columns in other csv files
+         */
+        function ___addMissingIdColumn() {
+            [...currentFileMap.keys()].forEach(id => {
+                let csvRow = currentFileMap.get(id);
+                csvRow["Id"] = id;
+            });
+            cachedCSVContent.updatedFilenames.add(self.sourceCSVFilename);
+        }
+
         /**
          * Adds all missing lookup columns (like Account__c, Account__r.Name)
+         *
+         * @param {SFieldDescribe} sField sField to process
+         * @returns {Promise<void>}
          */
-        async function ___addMissingLookupColumns(currentFileMap: Map<string, any>, sField: SFieldDescribe): Promise<void> {
+        async function ___addMissingLookupColumns(sField: SFieldDescribe): Promise<void> {
             let columnName__r = sField.fullName__r;
             let columnNameId = sField.nameId;
             let parentExternalId = sField.parentLookupObject.externalId;
             let parentTask = self.job.getTaskBySObjectName(sField.parentLookupObject.name);
             if (parentTask) {
-                let parentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, parentTask.getCSVFilename());
-                let parentCSVRows = [...parentFileMap.values()];
+                let parentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, parentTask.sourceCSVFilename);
+                let parentCSVRowsMap = new Map<string, any>();
+                [...parentFileMap.values()].forEach(parentCsvRow => {
+                    let key = parentTask.getRecordValue(parentCsvRow, parentExternalId);
+                    if (key) {
+                        parentCSVRowsMap.set(key, parentCsvRow);
+                    }
+                });
                 let isFileChanged = false;
                 [...currentFileMap.keys()].forEach(id => {
                     let csvRow = currentFileMap.get(id);
@@ -208,10 +242,10 @@ export default class MigrationJobTask {
                             return;
                         }
                         // Missing id column but __r column provided.
-                        let desiredExternalIdValue = csvRow[columnName__r];
+                        let desiredExternalIdValue = parentTask.getRecordValue(csvRow, parentExternalId, self.sObjectName, columnName__r);
                         if (desiredExternalIdValue) {
                             isFileChanged = true;
-                            let parentCsvRow = parentCSVRows.filter(v => v[parentExternalId] == desiredExternalIdValue)[0];
+                            let parentCsvRow = parentCSVRowsMap.get(desiredExternalIdValue);
                             if (!parentCsvRow) {
                                 csvIssues.push({
                                     Date: CommonUtils.formatDateTime(new Date()),
@@ -264,31 +298,107 @@ export default class MigrationJobTask {
                     }
                 });
                 if (isFileChanged) {
-                    cachedCSVContent.updatedFilenames.add(self.getCSVFilename());
+                    cachedCSVContent.updatedFilenames.add(self.sourceCSVFilename);
                 }
             }
         }
 
         /**
-         * Add Id column to the current csv file (if it is missing), 
-         * then update all its child lookup "__r" columns in other csv files
+         * When Id column was added 
+         *      - updates child lookup id columns
+         *      for all other objects.
+         * For ex. if the current object is "Account", it will update 
+         *     the child lookup id column "Account__c" of the child "Case" object
+         *
+         * @param {SFieldDescribe} childIdSField Child lookup id sField to process
+         * @returns {Promise<void>}
          */
-        async function ___addMissingIdColumn(): Promise<void> {
-            // Missing id column
-            if (this.scriptObject.operation == OPERATION.Insert) {
-                [...currentFileMap.keys()].forEach(id => {
-                    let csvRow = currentFileMap.get(id);
-                    csvRow["Id"] = id;
-                });
+        async function ___updateChildOriginalIdColumns(childIdSField: SFieldDescribe): Promise<void> {
+            let columnChildOriginalName__r = childIdSField.fullOriginalName__r;
+            let columnChildIdName__r = childIdSField.fullIdName__r;
+            let columnChildNameId = childIdSField.nameId;
+            let parentOriginalExternalIdColumnName = self.scriptObject.originalExternalId;
+            if (parentOriginalExternalIdColumnName != "Id") {
+                let childTask = self.job.getTaskBySObjectName(childIdSField.scriptObject.name);
+                if (childTask) {
+                    let childFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, childTask.sourceCSVFilename);
+                    let isFileChanged = false;
+                    if (childFileMap.size > 0) {
+                        let childCSVFirstRow = childFileMap.values().next().value;
+                        if (childCSVFirstRow.hasOwnProperty(columnChildOriginalName__r)) {
+                            let parentCSVExtIdMap = new Map<string, any>();
+                            [...currentFileMap.values()].forEach(csvRow => {
+                                let key = self.getRecordValue(csvRow, parentOriginalExternalIdColumnName);
+                                if (key) {
+                                    parentCSVExtIdMap.set(key, csvRow);
+                                }
+                            });
+                            [...childFileMap.values()].forEach(csvRow => {
+                                let extIdValue = self.getRecordValue(csvRow, parentOriginalExternalIdColumnName, childTask.sObjectName, columnChildOriginalName__r);
+                                if (extIdValue && parentCSVExtIdMap.has(extIdValue)) {
+                                    csvRow[columnChildNameId] = parentCSVExtIdMap.get(extIdValue)["Id"];
+                                    csvRow[columnChildIdName__r] = csvRow[columnChildNameId];
+                                    isFileChanged = true;
+                                }
+                            });
+                        } else {
+                            csvIssues.push({
+                                Date: CommonUtils.formatDateTime(new Date()),
+                                "Child sObject": childTask.sObjectName,
+                                "Child field": columnChildOriginalName__r,
+                                "Child value": null,
+                                "Parent sObject": self.sObjectName,
+                                "Parent field": "Id",
+                                "Parent value": null,
+                                "Error": self.logger.getResourceString(RESOURCES.cantUpdateChildLookupCSVColumn)
+                            });
+                        }
+                    }
+                    if (isFileChanged) {
+                        cachedCSVContent.updatedFilenames.add(childTask.sourceCSVFilename);
+                    }
+                }
             }
-
-            // TODO: Update  here all child lookup __r field for all child lookup objects 
-            //   (f.ex. Account.Id for sobject TestObject__c)
-            //   if the current object's (Account) external id field is "Id"
-            //....
-
-            cachedCSVContent.updatedFilenames.add(this.getCSVFilename());
         }
 
     }
+
+    /**
+     * Returns record value by given property name
+     *     for the current task object
+     *
+     * @param {*} record The record
+     * @param {string} propName The property name to extract value from the record object
+     * @param {string} [sObjectName] If the current task is RecordType and propName = DeveloperName - 
+     *                               pass here the SobjectType
+     * @param {string} [sFieldName]  If the current task is RecordType and propName = DeveloperName -
+     *                               pass here the property name to extract value from the record object
+     *                               instead of passing it with the "propName" parameter
+     * @returns {*}
+     * @memberof MigrationJobTask
+     */
+    getRecordValue(record: any, propName: string, sObjectName?: string, sFieldName?: string): any {
+        if (!record) return null;
+        let value = record[sFieldName || propName];
+        if (!value) return value;
+        sObjectName = sObjectName || record["SobjectType"];
+        if (this.sObjectName == "RecordType" && propName == "DeveloperName") {
+            return value + ";" + sObjectName;
+        } else {
+            return value;
+        }
+    }
+
+
+
+    // ----------------------- Private members -------------------------------------------
+    private _getCSVFilename(basePath: string): string {
+        if (this.sObjectName == "User" || this.sObjectName == "Group") {
+            return path.join(basePath, CONSTANTS.USER_AND_GROUP_FILENAME) + ".csv";
+        } else {
+            return path.join(basePath, this.sObjectName) + ".csv";
+        }
+    }
+
+
 }

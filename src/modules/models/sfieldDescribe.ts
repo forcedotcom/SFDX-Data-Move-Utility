@@ -111,15 +111,7 @@ export default class SFieldDescribe {
         }
     }
 
-    get fullName__r(): string {
-        if (this.isReference) {
-            return this.name__r + "." + this.parentLookupObject.externalId
-        } else {
-            return this.name__r;
-        }
-    }
-
-    /**
+     /**
      * Account__r.Name => Account__c
      *
      * @readonly
@@ -137,6 +129,56 @@ export default class SFieldDescribe {
             return parts[0] + "Id";
         }
     }
+
+    /**
+     * Account__c => Account__r.Id 
+     * ("Id" is current external id for Account)
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SFieldDescribe
+     */
+    get fullName__r(): string {
+        if (this.isReference) {
+            return this.name__r + "." + this.parentLookupObject.externalId;
+        } else {
+            return this.name__r;
+        }
+    }
+
+    /**
+     * Account__c => Account__r.Name 
+     * ("Name" is the original external id for Account defained in the script)
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SFieldDescribe
+     */
+    get fullOriginalName__r(): string {
+        if (this.isReference) {
+            return this.name__r + "." + this.parentLookupObject.originalExternalId;
+        } else {
+            return this.name__r;
+        }
+    }
+
+     /**
+     * Account__c => Account__r.Id 
+     * ("Name" is the original external id for Account defained in the script)
+     *
+     * @readonly
+     * @type {string}
+     * @memberof SFieldDescribe
+     */
+    get fullIdName__r(): string {
+        if (this.isReference) {
+            return this.name__r + ".Id";
+        } else {
+            return this.name__r;
+        }
+    }
+
+   
 
 }
 

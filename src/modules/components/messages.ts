@@ -15,7 +15,6 @@ import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
 
-const fileLogSubdirectory = "logs/";
 
 /**
  * Tokens from the common.json resource file.
@@ -148,6 +147,7 @@ export enum RESOURCES {
     missingParentRecordForGivenLookupValue = "missingParentRecordForGivenLookupValue",
     invalidColumnFormat = "invalidColumnFormat",
     columnWillNotBeProcessed = "columnWillNotBeProcessed",
+    cantUpdateChildLookupCSVColumn = "cantUpdateChildLookupCSVColumn",
     csvFilesWereUpdated = "csvFilesWereUpdated",
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
     deletingOldData = "deletingOldData",
@@ -364,8 +364,8 @@ export class MessageUtils {
 
         this.fileLogger = new FileLogger(
             this.resources,
-            path.join(rootPath, fileLogSubdirectory),
-            `${CommonUtils.formatFileDate(new Date())}.log`,
+            path.join(rootPath, CONSTANTS.FILE_LOG_SUBDIRECTORY),
+            `${CommonUtils.formatFileDate(new Date())}.${CONSTANTS.FILE_LOG_FILEEXTENSION}`,
             fileLogFlag
         );
 

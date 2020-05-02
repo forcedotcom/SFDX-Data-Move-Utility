@@ -57,7 +57,7 @@ export default class ScriptObject {
     name: string = "";
     sourceSObjectDescribe: SObjectDescribe;
     targetSObjectDescribe: SObjectDescribe;
-    initialExternalId: string = "";
+    originalExternalId: string = "";
     parsedQuery: Query;
     parsedDeleteQuery: Query;
     isExtraObject: boolean = false;
@@ -177,7 +177,7 @@ export default class ScriptObject {
 
         // Initialize object
         this.script = script;
-        this.initialExternalId = this.externalId;
+        this.originalExternalId = this.externalId;
 
         // Fixes operation value
         if ((typeof this.operation == "string") == true) {

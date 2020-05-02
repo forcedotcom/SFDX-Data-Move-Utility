@@ -92,6 +92,19 @@ export default class MigrationJob {
     }
 
     /**
+     * Copies all source CSV files into the /source/ subdir
+     * to leave the original files unchanged after
+     * the validation and repairing
+     *
+     * @memberof MigrationJob
+     */
+    copyCSVFilesToSourceSubDir() {
+        this.tasks.forEach(task => {
+            fs.copyFileSync(task.cSVFilename, task.sourceCSVFilename);
+        });
+    }
+
+    /**
      * Checks and repairs all CSV source files.
      *
      * @returns {Promise<void>}
@@ -148,7 +161,7 @@ export default class MigrationJob {
                     await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
                 },
                 String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
-        }        
+        }
 
     }
 
