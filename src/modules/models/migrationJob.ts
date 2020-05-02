@@ -191,7 +191,7 @@ export default class MigrationJob {
         let deleted = false;
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            deleted = deleted || await task.deleteOldRecords();
+            deleted = await task.deleteOldRecords() || deleted;
         }
         return deleted;
     }

@@ -96,6 +96,15 @@ export default class MigrationJobTask {
         return this.scriptObject.script.targetOrg;
     }
 
+    get useQueryBulkApiForSourceRecords(){
+        return this.sourceTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
+    }
+
+    get useQueryBulkApiForTargetRecords(){
+        return this.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
+    }
+
+
 
     // ----------------------- Public methods -------------------------------------------    
     /**
@@ -442,6 +451,20 @@ export default class MigrationJobTask {
     }
 
     /**
+     * Construct query to delete
+     *
+     * @returns
+     * @memberof MigrationJobTask
+     */
+    createDeleteQuery() {
+        if (!this.scriptObject.parsedDeleteQuery) {
+            return this.createQuery(["Id"], true);
+        } else {
+            return this.createQuery(["Id"], true, this.scriptObject.parsedDeleteQuery);
+        }
+    }
+
+    /**
     * Retireves the total records count 
     *
     * @returns {Promise<void>}
@@ -476,9 +499,27 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     async deleteOldRecords(): Promise<boolean> {
-        this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
+
+        if (!(this.targetOrg.media == DATA_MEDIA_TYPE.Org
+            && this.scriptObject.operation != OPERATION.Readonly
+            && this.scriptObject.deleteOldData)) {
+            this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
+            return false;
+        }
 
         // TODO: implement this
+        this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
+        let query = this.createDeleteQuery();
+        let apiSf = new ApiSf(this.targetOrg);
+        let records = await apiSf.queryAsync(query, this.useQueryBulkApiForTargetRecords);
+        if (records.totalSize == 0){
+            this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
+            return false;
+        }
+        
+        // ...
+        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));        
+        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetCompleted, this.sObjectName);
         return true;
     }
 
