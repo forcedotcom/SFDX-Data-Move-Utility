@@ -67,7 +67,7 @@ export default class MigrationJobTask {
     }
 
     get cSVFilename(): string {
-        return this._getCSVFilename(this.scriptObject.script.basePath);
+        return this.getCSVFilename(this.scriptObject.script.basePath);
     }
 
     get sourceCSVFilename(): string {
@@ -75,7 +75,7 @@ export default class MigrationJobTask {
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
-        return this._getCSVFilename(filepath);
+        return this.getCSVFilename(filepath);
     }
 
     get targetCSVFilename(): string {
@@ -83,7 +83,7 @@ export default class MigrationJobTask {
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
-        return this._getCSVFilename(filepath);
+        return this.getCSVFilename(filepath);
     }
 
     // ----------------------- Public methods -------------------------------------------    
@@ -389,16 +389,19 @@ export default class MigrationJobTask {
         }
     }
 
-
-
-    // ----------------------- Private members -------------------------------------------
-    private _getCSVFilename(basePath: string): string {
+    /**
+     * Returns full filename for the sobject of the current task
+     *
+     * @param {string} basePath
+     * @returns {string}
+     * @memberof MigrationJobTask
+     */
+    getCSVFilename(basePath: string): string {
         if (this.sObjectName == "User" || this.sObjectName == "Group") {
             return path.join(basePath, CONSTANTS.USER_AND_GROUP_FILENAME) + ".csv";
         } else {
             return path.join(basePath, this.sObjectName) + ".csv";
         }
     }
-
 
 }
