@@ -92,7 +92,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             return null;
         }
 
-        // Create bulk batch *************************
+        // Create bulk batch and upload csv *************************
         let batchResult = await this.createBulkBatchAsync(jobResult.contentUrl, csvChunk.csvString, csvChunk.records);
         if (progressCallback) {
             // Progress message: job was created
