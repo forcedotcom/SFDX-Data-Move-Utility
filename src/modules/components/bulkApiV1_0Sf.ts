@@ -30,7 +30,7 @@ export class BulkApiV1_0sf implements IApiProcess {
     }    
 
 
-    // ----------------------- Interface ICRUDApiProcess ----------------------------------
+    // ----------------------- Interface IApiProcess ----------------------------------
     async executeCRUD(operation: OPERATION, records: Array<any>, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>>{
         let jobResult = await this.createCRUDApiJobAsync(operation, records);
         return await this.processCRUDApiJobAsync(jobResult, progressCallback);

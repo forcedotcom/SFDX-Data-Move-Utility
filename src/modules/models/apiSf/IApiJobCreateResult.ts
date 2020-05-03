@@ -5,15 +5,14 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MigrationJobTask, ScriptOrg } from "..";
+import { MigrationJobTask, ScriptOrg, ApiResult } from "..";
 import { OPERATION } from "../../components/statics";
 
 
 export default interface IApiJobCreateResult {
-    job: any,
+    job: ApiResult,
     cn: any,
     chunks: Array<Array<any>>,
-    task: MigrationJobTask,
     org: ScriptOrg,
     operation: OPERATION
 }
