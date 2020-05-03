@@ -19,12 +19,12 @@ import IApiJobCreateResult from "../models/apiSf/IApiJobCreateResult";
 
 
 /**
- * Implementation of the Salesforce Bulk API v1.0
+ * Implementation of the Salesforce REST Api
  *
  * @export
  * @class BulkApiV1_0sf
  */
-export class BulkApiV1_0sf extends ApiProcessBase implements IApiProcess {
+export class RestApiSf extends ApiProcessBase implements IApiProcess {
 
     constructor(logger: MessageUtils, 
         connectionData : IOrgConnectionData, 
