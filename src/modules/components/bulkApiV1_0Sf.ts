@@ -26,6 +26,7 @@ export class BulkApiV1_0sf implements IApiProcess {
 
     task: MigrationJobTask;
     isSource: boolean;
+    operation: OPERATION;
 
     // Check ???
     get org(): ScriptOrg {
@@ -50,6 +51,7 @@ export class BulkApiV1_0sf implements IApiProcess {
     
     constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
         this.task = task;
+        this.operation = operation;
     }
 
 

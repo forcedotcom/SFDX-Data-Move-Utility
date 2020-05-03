@@ -29,6 +29,7 @@ export class BulkApiV2_0sf implements IApiProcess {
 
     task: MigrationJobTask;
     isSource: boolean;
+    operation: OPERATION;
 
     get org(): ScriptOrg {
         return this.isSource ? this.task.sourceOrg : this.task.targetOrg;
@@ -58,6 +59,7 @@ export class BulkApiV2_0sf implements IApiProcess {
 
     constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
         this.task = task;
+        this.operation = operation;
     }
 
 
