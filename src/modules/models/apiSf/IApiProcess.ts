@@ -7,6 +7,7 @@
 
 import { OPERATION } from "../../components/statics";
 import { MigrationJobTask, ScriptOrg, IApiJobCreateResult as IApiJobCreateResult, ApiResult } from "..";
+import { ICsvChunk } from "../../components/commonUtils";
 
 
 export default interface IApiProcess {
@@ -17,7 +18,7 @@ export default interface IApiProcess {
      *
      * @param {Array<any>} allRecords The all source records to process
      * @param {Function} progressCallback The progress callback function
-     * @returns {Promise<IApiJobCreateResult>} 
+     * @returns {Promise<IApiJobCreateResult>} Returns null when unresolvable error occured
      * @memberof IApiProcess
      */
     executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>>;
@@ -36,7 +37,7 @@ export default interface IApiProcess {
      * On Insert operation will add a new Record Id value to each returned record.
      *
      * @param {Function} progressCallback The progress callback function
-     * @returns {Promise<Array<any>>}
+     * @returns {Promise<Array<any>>} Returns null when unresolvable error occured
      * @memberof IApiProcess
      */
     processCRUDApiJobAsync: (progressCallback: (progress: ApiResult) => void) => Promise<Array<any>>;
@@ -45,13 +46,13 @@ export default interface IApiProcess {
      * Creates and executes api batch on the given chunk of the input records.
      * The function is a part of the api job execution.
      *
-     * @param {Array<any>} chunkRecords The part of the input 
+     * @param {ICsvChunk} csvChunk The part of the input 
      *                                  records to process with the batch
      * @param {Function} progressCallback The progress callback function
-     * @returns {Promise<Array<any>>}
+     * @returns {Promise<Array<any>>} Returns null when unresolvable error occured
      * @memberof IApiProcess
      */
-    processCRUDApiBatchAsync(chunkRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>>;
+    processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiResult) => void): Promise<Array<any>>; 
 
 
 }

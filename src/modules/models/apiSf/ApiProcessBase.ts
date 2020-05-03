@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MigrationJobTask, ScriptOrg, IApiJobCreateResult } from "..";
+import { MigrationJobTask, ScriptOrg, IApiJobCreateResult, Script } from "..";
 import { OPERATION } from "../../components/statics";
 import { MessageUtils } from "../../components/messages";
 
@@ -22,11 +22,21 @@ export default class ApiProcessBase {
     task: MigrationJobTask;
     isSource: boolean;
     operation: OPERATION;
+    updateRecordId: boolean;
+
     apiJobCreateResult: IApiJobCreateResult;
+
+    numberJobRecordsSucceeded: number =  0;
+    numberJobRecordsFailed: number =  0;
 
     get org(): ScriptOrg {
         return this.isSource ? this.task.sourceOrg : this.task.targetOrg;
     }
+
+    get script(): Script {
+        return this.org.script;
+    }
+
 
     get logger(): MessageUtils {
         return this.org.script.logger;
@@ -51,9 +61,16 @@ export default class ApiProcessBase {
         return this.operation.toString();
     }
 
-    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
+    get sObjectName(): string {
+        return this.task.sObjectName;
+    }
+
+
+    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION, updateRecordId: boolean) {
         this.task = task;
+        this.isSource = isSource;
         this.operation = operation;
+        this.updateRecordId = updateRecordId;
     }
 
 }

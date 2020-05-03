@@ -6,7 +6,7 @@
  */
 
 
-import { CommonUtils } from "./commonUtils";
+import { CommonUtils, ICsvChunk } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { MessageUtils, RESOURCES } from "./messages";
 import { RESULT_STATUSES, OPERATION } from "./statics";
@@ -22,8 +22,8 @@ import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, I
  */
 export class BulkApiV1_0sf extends ApiProcessBase implements IApiProcess {
 
-    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
-        super(task, isSource, operation);
+    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION, updateRecordId: boolean) {
+        super(task, isSource, operation, updateRecordId);
     }
 
 
@@ -42,7 +42,7 @@ export class BulkApiV1_0sf extends ApiProcessBase implements IApiProcess {
         // TODO: Implement this
     }
 
-    async processCRUDApiBatchAsync(chunkRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+    async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         // TODO: Implement this
     }
 

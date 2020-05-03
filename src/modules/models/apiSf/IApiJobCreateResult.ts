@@ -7,10 +7,12 @@
 
 import { MigrationJobTask, ScriptOrg, ApiResult } from "..";
 import { OPERATION } from "../../components/statics";
+import { CsvChunks } from "../../components/commonUtils";
 
 
 export default interface IApiJobCreateResult {
     jobCreateResult: ApiResult,
-    connection: any,
-    chunks: Array<Array<any>>
+    connection?: any,
+    chunks: CsvChunks,
+    allRecords: Array<any>
 }

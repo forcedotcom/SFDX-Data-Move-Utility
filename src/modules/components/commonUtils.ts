@@ -957,12 +957,13 @@ export class CsvChunks {
     constructor(init?: Partial<CsvChunks>) {
         Object.assign(this, init);
     }
-
-    chunks: Array<{
-        records: Array<object>,
-        csvString: string
-    }> = [];
-
+    chunks: Array<ICsvChunk> = [];
     header: Array<string> = new Array<string>();
+}
+
+
+export interface ICsvChunk{
+    records: Array<object>,
+    csvString: string
 }
 

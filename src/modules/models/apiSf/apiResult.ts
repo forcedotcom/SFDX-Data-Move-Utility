@@ -22,6 +22,9 @@ export default class ApiResult {
         this.resultRecords = this.resultRecords || new Array<ApiResultRecord>();
     }
 
+    sObjectName: string;
+    strOperation: string;
+
     contentUrl: string;
 
     jobId: string;

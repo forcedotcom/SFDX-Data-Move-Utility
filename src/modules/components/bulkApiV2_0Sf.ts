@@ -6,10 +6,10 @@
  */
 
 
-import { CommonUtils } from "./commonUtils";
+import { CommonUtils, ICsvChunk } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { MessageUtils, RESOURCES } from "./messages";
-import { RESULT_STATUSES, OPERATION } from "./statics";
+import { RESULT_STATUSES, OPERATION, CONSTANTS } from "./statics";
 import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, IApiJobCreateResult, ApiProcessBase } from "../models";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
@@ -27,16 +27,16 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  */
 export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
-    operationType: "insert" | "update" | "delete";
+    operationType: string | "insert" | "update" | "delete";
     sourceRecords: Array<object> = new Array<object>();
     sourceRecordsHashmap: Map<string, object> = new Map<string, object>();
 
     get endpointUrl(): string {
         return endpoint.replace('[v]', `v${this.version}`);
     }
- 
-    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
-        super(task, isSource, operation);
+
+    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION, updateRecordId: boolean) {
+        super(task, isSource, operation, updateRecordId);
     }
 
 
@@ -47,16 +47,114 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
-        // TODO: Implement this
-        let connection = this.org.getConnection();
+        let csvChunks = CommonUtils.createCsvStringsFromArray(allRecords,
+            CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
+            CONSTANTS.BULK_API_V2_BLOCK_SIZE);
+        this.apiJobCreateResult = {
+            chunks: csvChunks,
+            allRecords,
+            jobCreateResult: new ApiResult({
+                jobState: "Undefined",
+                strOperation: this.strOperation,
+                sObjectName: this.sObjectName,
+            })
+        };
+        return this.apiJobCreateResult;
     }
 
     async processCRUDApiJobAsync(progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
-        // TODO: Implement this
-
+        let allResultRecords = new Array<any>();
+        for (let index = 0; index < this.apiJobCreateResult.chunks.chunks.length; index++) {
+            const csvCunk = this.apiJobCreateResult.chunks.chunks[index];
+            let resultRecords = await this.processCRUDApiBatchAsync(csvCunk, progressCallback);
+            if (!resultRecords) {
+                // ERROR RESULT
+                return null;
+            } else {
+                allResultRecords = allResultRecords.concat(resultRecords);
+            }
+        }
+        return allResultRecords;
     }
 
-    async processCRUDApiBatchAsync(chunkRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+    async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+
+        let self = this;
+
+        // Create bulk job *************************
+        let jobResult = await this.createBulkJobAsync(this.sObjectName, this.strOperation.toLowerCase());
+        if (progressCallback) {
+            // Progress message: job was created
+            progressCallback(jobResult);
+        }
+        if (jobResult.resultStatus != RESULT_STATUSES.JobCreated) {
+            // ERROR RESULT
+            return null;
+        }
+
+        // Create bulk batch *************************
+        let batchResult = await this.createBulkBatchAsync(jobResult.contentUrl, csvChunk.csvString, csvChunk.records);
+        if (progressCallback) {
+            // Progress message: job was created
+            progressCallback(batchResult);
+        }
+        if (batchResult.resultStatus != RESULT_STATUSES.BatchCreated) {
+            // ERROR RESULT
+            return null;
+        }
+
+        // Close batch *************************
+        batchResult = await this.closeBulkJobAsync(jobResult.contentUrl);
+        if (progressCallback) {
+            // Progress message: job was created
+            progressCallback(batchResult);
+        }
+        if (batchResult.resultStatus != RESULT_STATUSES.DataUploaded) {
+            // ERROR RESULT
+            return null;
+        }
+
+        // Poll bulk batch status *************************
+        let numberBatchRecordsProcessed = 0;
+        batchResult = await this.waitForBulkJobCompleteAsync(jobResult.contentUrl, this.script.pollingIntervalMs, function (progress: ApiResult) {
+            if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
+                // Store current number of processed value
+                numberBatchRecordsProcessed = progress.numberRecordsProcessed;
+                // Total processed and total failed
+                progress.numberRecordsProcessed += self.numberJobRecordsSucceeded;
+                progress.numberRecordsFailed += self.numberJobRecordsFailed;
+                if (progressCallback) {
+                    // Progress message: N records processed
+                    progressCallback(progress);
+                }
+            }
+        });
+        if (batchResult.resultStatus != RESULT_STATUSES.Completed) {
+            // ERROR RESULT
+            return null;
+        }
+
+        // Get bulk batch result *************************
+        batchResult = await this.getBulkJobResultAsync(jobResult.contentUrl);
+        let rets = batchResult.resultRecords;
+
+        csvChunk.records.forEach((record, index) => {
+            if (rets[index].isSuccess) {
+                if (self.updateRecordId) {
+                    record["Id"] = rets[index].id;
+                    record["Errors"] = null;
+                }
+                self.numberJobRecordsSucceeded++;
+            } else {
+                if (rets[index].errorMessage) {
+                    record["Errors"] = rets[index].errorMessage;
+                }
+                self.numberJobRecordsFailed++;
+            }
+        });
+
+        // SUCCESS RESULT
+        return csvChunk.records;
 
     }
 
@@ -70,9 +168,9 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * @returns {Promise<ApiResult>}
      * @memberof BulkAPI2sf
      */
-    async createBulkJobAsync(objectAPIName: string, operationType: "insert" | "update" | "delete"): Promise<ApiResult> {
+    async createBulkJobAsync(objectAPIName: string, operationType: string | "insert" | "update" | "delete"): Promise<ApiResult> {
 
-        let _this = this;
+        let self = this;
         this.operationType = operationType;
         return new Promise(resolve => {
             request.post({
@@ -96,13 +194,14 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                     resolve(new ApiResult({
                         jobId: info.id,
                         contentUrl: info.contentUrl,
-
+                        sObjectName: self.sObjectName,
+                        strOperation: self.strOperation,
                         jobState: info.state,
                         errorMessage: info.errorMessage
                     }));
                 }
                 else {
-                    _this._apiRequestErrorHandler(resolve, error, response, body);
+                    self._apiRequestErrorHandler(resolve, error, response, body);
                 }
             });
         });
@@ -118,7 +217,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * @memberof BulkAPI2sf
      */
     async createBulkBatchAsync(contentUrl: string, csvContent: string, records: Array<object>): Promise<ApiResult> {
-        let _this = this;
+        let self = this;
         this.sourceRecords = records;
         if (this.operationType == "insert") {
             this.sourceRecordsHashmap = CommonUtils.mapArrayItemsByHashcode(records, undefined);
@@ -140,11 +239,13 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             }, function (error: any, response: any) {
                 if (!error && response.statusCode == 201) {
                     resolve(new ApiResult({
-                        jobState: "UploadStart"
+                        jobState: "UploadStart",
+                        sObjectName: self.sObjectName,
+                        strOperation: self.strOperation,
                     }));
                 }
                 else {
-                    _this._apiRequestErrorHandler(resolve, error, response, undefined);
+                    self._apiRequestErrorHandler(resolve, error, response, undefined);
                 }
             });
         });
@@ -158,7 +259,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * @memberof BulkAPI2sf
      */
     async closeBulkJobAsync(contentUrl: string): Promise<ApiResult> {
-        let _this = this;
+        let self = this;
         return new Promise(resolve => {
             request.patch({
                 url: this.instanceUrl + '/' + contentUrl.replace("/batches", "/"),
@@ -176,11 +277,13 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                 if (!error && response.statusCode == 200) {
                     let info = JSON.parse(body);
                     resolve(new ApiResult({
-                        jobState: info.state
+                        jobState: info.state,
+                        sObjectName: self.sObjectName,
+                        strOperation: self.strOperation,
                     }));
                 }
                 else {
-                    _this._apiRequestErrorHandler(resolve, error, response, body);
+                    self._apiRequestErrorHandler(resolve, error, response, body);
                 }
             });
         });
@@ -194,7 +297,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * @memberof BulkAPI2sf
      */
     async pollBulkJobAsync(contentUrl: string): Promise<ApiResult> {
-        let _this = this;
+        let self = this;
         return new Promise(resolve => {
             request.get({
                 url: this.instanceUrl + '/' + contentUrl.replace("/batches", "/"),
@@ -212,11 +315,13 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                         errorMessage: info.errorMessage,
                         jobState: info.state,
                         numberRecordsFailed: info.numberRecordsFailed,
-                        numberRecordsProcessed: info.numberRecordsProcessed
+                        numberRecordsProcessed: info.numberRecordsProcessed,
+                        sObjectName: self.sObjectName,
+                        strOperation: self.strOperation,
                     }));
                 }
                 else {
-                    _this._apiRequestErrorHandler(resolve, error, response, body);
+                    self._apiRequestErrorHandler(resolve, error, response, body);
                 }
             });
         });
@@ -236,7 +341,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         pollInterval: number,
         pollCallback: (result: ApiResult) => any): Promise<ApiResult> {
 
-        let _this = this;
+        let self = this;
 
         return new Promise(resolve => {
 
@@ -244,7 +349,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
                 try {
 
-                    let res = await _this.pollBulkJobAsync(contentUrl);
+                    let res = await self.pollBulkJobAsync(contentUrl);
 
                     switch (res.resultStatus) {
 
@@ -259,7 +364,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
                         case RESULT_STATUSES.ProcessError:
                             clearInterval(interval);
-                            _this._apiRequestErrorHandler(resolve, {
+                            self._apiRequestErrorHandler(resolve, {
                                 message: res.errorMessage,
                                 stack: res.errorStack
                             }, null, null);
@@ -275,7 +380,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
                 } catch (e) {
                     clearInterval(interval);
-                    _this._apiRequestErrorHandler(resolve, e, null, null);
+                    self._apiRequestErrorHandler(resolve, e, null, null);
                 }
 
             }, pollInterval);
@@ -290,7 +395,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * @memberof BulkAPI2sf
      */
     async getBulkJobResultAsync(contentUrl: string): Promise<ApiResult> {
-        let _this = this;
+        let self = this;
         return new Promise(resolve => {
             request.get({
                 timeout: requestTimeout,
@@ -307,7 +412,9 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
                     if (response.statusCode != 200) {
                         resolve(new ApiResult({
-                            jobState: "InProgress"
+                            jobState: "InProgress",
+                            sObjectName: self.sObjectName,
+                            strOperation: self.strOperation,
                         }));
                         return;
                     }
@@ -315,52 +422,54 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                     try {
                         let csv = parse(body, {
                             skip_empty_lines: true,
-                            cast: _this._csvCast
+                            cast: self._csvCast
                         });
 
                         let allRecords = CommonUtils.transformArrayOfArrays(csv);
-                        let failedRecords = await _this._getBulkJobUnsuccessfullResultAsync(contentUrl, true);
-                        let unprocessedRecords = await _this._getBulkJobUnsuccessfullResultAsync(contentUrl, false);
+                        let failedRecords = await self._getBulkJobUnsuccessfullResultAsync(contentUrl, true);
+                        let unprocessedRecords = await self._getBulkJobUnsuccessfullResultAsync(contentUrl, false);
                         allRecords = allRecords.concat(failedRecords, unprocessedRecords);
 
                         let map: Map<object, object>;
 
-                        if (_this.operationType == "insert") {
+                        if (self.operationType == "insert") {
                             map = CommonUtils.mapArraysByHashcode(undefined, allRecords, [
                                 "sf__Created",
                                 "sf__Id",
                                 "sf__Error",
                                 "sf__Unprocessed"
-                            ], _this.sourceRecordsHashmap);
+                            ], self.sourceRecordsHashmap);
                         } else {
-                            map = CommonUtils.mapArraysByItemProperty(undefined, allRecords, "Id", _this.sourceRecordsHashmap);
+                            map = CommonUtils.mapArraysByItemProperty(undefined, allRecords, "Id", self.sourceRecordsHashmap);
                         }
-                        let resultRecords = _this.sourceRecords.map(record => {
-                            let targetRecords = map.get(record);
-                            let ret = new ApiResultRecord({
-                                sourceRecord: record,
-                                targetRecord: targetRecords,
-                                isMissingSourceTargetMapping: !targetRecords,
-                                isFailed: targetRecords && !!targetRecords["sf__Error"],
-                                isUnprocessed: targetRecords && !!targetRecords["sf__Unprocessed"],
-                                errorMessage: targetRecords && targetRecords["sf__Error"],
-                                id: targetRecords && (targetRecords["sf__Id"] || targetRecords["Id"]),
-                                isCreated: targetRecords && !!targetRecords["sf__Created"]
+                        let resultRecords = self.sourceRecords.map(sourceRecord => {
+                            let targetRecord = map.get(sourceRecord);
+                            let resultRecord = new ApiResultRecord({
+                                sourceRecord,
+                                targetRecord,
+                                isMissingSourceTargetMapping: !targetRecord,
+                                isFailed: targetRecord && !!targetRecord["sf__Error"],
+                                isUnprocessed: targetRecord && !!targetRecord["sf__Unprocessed"],
+                                errorMessage: targetRecord && targetRecord["sf__Error"],
+                                id: targetRecord && (targetRecord["sf__Id"] || targetRecord["Id"]),
+                                isCreated: targetRecord && !!targetRecord["sf__Created"]
                             });
-                            if (ret.isUnprocessed) {
-                                ret.errorMessage = _this.logger.getResourceString(RESOURCES.unprocessedRecord);
-                            } else if (ret.isMissingSourceTargetMapping) {
-                                ret.errorMessage = _this.logger.getResourceString(RESOURCES.invalidRecordHashcode);
+                            if (resultRecord.isUnprocessed) {
+                                resultRecord.errorMessage = self.logger.getResourceString(RESOURCES.unprocessedRecord);
+                            } else if (resultRecord.isMissingSourceTargetMapping) {
+                                resultRecord.errorMessage = self.logger.getResourceString(RESOURCES.invalidRecordHashcode);
                             }
-                            return ret;
+                            return resultRecord;
                         });
                         resolve(new ApiResult({
-                            resultRecords: resultRecords,
-                            jobState: "JobComplete"
+                            resultRecords,
+                            jobState: "JobComplete",
+                            sObjectName: self.sObjectName,
+                            strOperation: self.strOperation,
                         }));
                     } catch (e) {
                         if (typeof e.message == "string") {
-                            _this._apiRequestErrorHandler(
+                            self._apiRequestErrorHandler(
                                 resolve,
                                 e,
                                 undefined,
@@ -368,7 +477,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                             );
                         } else {
                             let responseError = JSON.parse(e.message);
-                            _this._apiRequestErrorHandler(
+                            self._apiRequestErrorHandler(
                                 resolve,
                                 responseError.error,
                                 responseError.response,
@@ -378,7 +487,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                     }
                 }
                 else {
-                    _this._apiRequestErrorHandler(resolve, error, response, body);
+                    self._apiRequestErrorHandler(resolve, error, response, body);
                 }
             });
         });
@@ -389,7 +498,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
     // ----------------------- Private members -------------------------------------------
     private async _getBulkJobUnsuccessfullResultAsync(contentUrl: string, isGetFailed: boolean): Promise<Array<object>> {
-        let _this = this;
+        let self = this;
         return new Promise(resolve => {
             request.get({
                 timeout: requestTimeout,
@@ -405,7 +514,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                 if (!error && response.statusCode == 200) {
                     let csv = parse(body, {
                         skip_empty_lines: true,
-                        cast: _this._csvCast
+                        cast: self._csvCast
                     });
                     let unprocessedRecords = CommonUtils.transformArrayOfArrays(csv);
                     if (!isGetFailed) {
@@ -450,11 +559,14 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
     }
 
     private _apiRequestErrorHandler(resolve: any, error: any, response: any, body: any) {
+        let self = this;
         if (!response) {
             // Runtime error
             resolve(new ApiResult({
                 errorMessage: error.message,
-                errorStack: error.stack
+                errorStack: error.stack,
+                sObjectName: self.sObjectName,
+                strOperation: self.strOperation,
             }));
         } else {
             // Rest API error
@@ -463,6 +575,8 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             };
             resolve(new ApiResult({
                 errorMessage: info.message,
+                sObjectName: self.sObjectName,
+                strOperation: self.strOperation,
             }));
         }
     }
