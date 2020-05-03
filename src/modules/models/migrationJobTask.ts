@@ -108,7 +108,7 @@ export default class MigrationJobTask {
 
     // ----------------------- Public methods -------------------------------------------    
     /**
-     * Checks the structure of the CSV source file.
+     * Check the structure of the CSV source file.
      *
      * @returns {Promise<void>}
      * @memberof MigrationJob
@@ -227,7 +227,7 @@ export default class MigrationJobTask {
         }
 
         /**
-         * Adds all missing lookup columns (like Account__c, Account__r.Name)
+         * Add all missing lookup columns (like Account__c, Account__r.Name)
          *
          * @param {SFieldDescribe} sField sField to process
          * @returns {Promise<void>}
@@ -382,8 +382,8 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Returns record value by given property name
-     *     for the current task object
+     * Get record value by given property name
+     *     for this sobject
      *
      * @param {*} record The record
      * @param {string} propName The property name to extract value from the record object
@@ -408,7 +408,7 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Returns full filename for the sobject of the current task
+     * Get CSV filename for this sobject including the full directory path
      *
      * @param {string} rootPath The root path to append the filename to it
      * @returns {string}
@@ -423,7 +423,7 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Creates SOQL query
+     * Creates SOQL query to retrieve records
      *
      * @param {Array<string>} [fieldNames] Field names to include in the query, 
      *                                     pass undefined value to use all fields 
@@ -451,7 +451,7 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Creates SOQL query to delete records
+     * Create SOQL query to delete records
      *
      * @returns
      * @memberof MigrationJobTask
@@ -465,7 +465,7 @@ export default class MigrationJobTask {
     }
 
     /**
-    * Retireves the total records count 
+    * Retireve the total records count 
     *
     * @returns {Promise<void>}
     * @memberof MigrationJobTask
@@ -493,12 +493,12 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Deletes old records from the org
+     * Delete old records from the target org
      *
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async deleteOldRecords(): Promise<boolean> {
+    async deleteOldTargetRecords(): Promise<boolean> {
 
         if (!(this.targetOrg.media == DATA_MEDIA_TYPE.Org
             && this.scriptObject.operation != OPERATION.Readonly
@@ -507,7 +507,6 @@ export default class MigrationJobTask {
             return false;
         }
 
-        // TODO: implement this
         this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
         let query = this.createDeleteQuery();
         let apiSf = new ApiSf(this.targetOrg);
@@ -518,6 +517,8 @@ export default class MigrationJobTask {
         }
 
         // ...
+        // TODO: implement delete
+        // ...        
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));   
         
         

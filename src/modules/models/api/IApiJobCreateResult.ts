@@ -9,7 +9,7 @@ import { MigrationJobTask, ScriptOrg } from "..";
 import { OPERATION } from "../../components/statics";
 
 
-export default interface ICRUDJobCreateResult {
+export default interface IApiJobCreateResult {
     job: any,
     cn: any,
     chunks: Array<Array<any>>,

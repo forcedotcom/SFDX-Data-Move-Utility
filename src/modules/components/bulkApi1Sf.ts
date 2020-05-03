@@ -10,7 +10,7 @@ import { CommonUtils } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { MessageUtils, RESOURCES } from "./messages";
 import { RESULT_STATUSES, OPERATION } from "./statics";
-import { BulkAPIResult, BulkApiResultRecord, ICRUDApiProcess, MigrationJobTask, ScriptOrg, ICRUDJobCreateResult } from "../models";
+import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, IApiJobCreateResult } from "../models";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -22,21 +22,26 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  * @export
  * @class BulkApi2sf
  */
-export class BulkApi1sf implements ICRUDApiProcess {
+export class BulkApi1sf implements IApiProcess {
 
 
-    constructor(logger: MessageUtils){
-        
+    constructor(logger: MessageUtils, task: MigrationJobTask, isSource: boolean, operation: OPERATION){
+
     }    
 
 
     // ----------------------- Interface ICRUDApiProcess ----------------------------------
-    async createCRUDApiJobAsync(task: MigrationJobTask, org: ScriptOrg, operation: OPERATION, records: Array<any>) : Promise<ICRUDJobCreateResult>{
+    async executeCRUD(operation: OPERATION, records: Array<any>, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>>{
+        let jobResult = await this.createCRUDApiJobAsync(operation, records);
+        return await this.processCRUDApiJobAsync(jobResult, progressCallback);
+    }
+
+    async createCRUDApiJobAsync(operation: OPERATION, records: Array<any>) : Promise<IApiJobCreateResult>{
         // TODO: Implement this
 
     }
 
-    async processCRUDApiJobAsync(createJobResult : ICRUDJobCreateResult) : Promise<Array<any>> {
+    async processCRUDApiJobAsync(createJobResult : IApiJobCreateResult, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>> {
         // TODO: Implement this
     }
     // ----------------------- ---------------- -------------------------------------------    

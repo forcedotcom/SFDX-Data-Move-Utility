@@ -230,7 +230,7 @@ export class RunCommand {
     * @returns {Promise<void>}
     * @memberof RunCommand
     */
-    async prepareJob(): Promise<void> {
+    async prepareJobExecution(): Promise<void> {
 
         await this.job.getTotalRecordsCount();        
 

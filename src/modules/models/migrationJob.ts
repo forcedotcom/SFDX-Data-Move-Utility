@@ -57,7 +57,7 @@ export default class MigrationJob {
 
     // ----------------------- Public methods -------------------------------------------    
     /**
-     * Loads CSVValues mapping definition file into the memory
+     * Load CSVValues mapping definition file into the memory
      *
      * @returns {Promise<void>}
      * @memberof MigrationJob
@@ -80,7 +80,7 @@ export default class MigrationJob {
     }
 
     /**
-     * Merges User.csv and Group.csv into single file
+     * Merge User.csv and Group.csv into single file
      *
      * @returns {Promise<void>}
      * @memberof MigrationJob
@@ -93,7 +93,7 @@ export default class MigrationJob {
     }
 
     /**
-     * Copies all source CSV files into the /source/ subdir
+     * Copy all source CSV files into the /source/ subdir
      * to leave the original files unchanged after
      * the validation and repairing
      *
@@ -106,7 +106,7 @@ export default class MigrationJob {
     }
 
     /**
-     * Checks and repairs all CSV source files.
+     * Check and repair all CSV source files.
      *
      * @returns {Promise<void>}
      * @memberof MigrationJob
@@ -168,8 +168,7 @@ export default class MigrationJob {
 
 
     /**
-    * Retireves the total record count for all 
-    * objects in the job
+    * Retireve the total record count for each task in the job
     *
     * @returns {Promise<void>}
     * @memberof MigrationJob
@@ -182,7 +181,7 @@ export default class MigrationJob {
     }
 
     /**
-    * Deletes old records of all script objects
+    * Delete old records of each task in the job
     *
     * @returns {Promise<void>}
     * @memberof MigrationJob
@@ -191,7 +190,7 @@ export default class MigrationJob {
         let deleted = false;
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            deleted = await task.deleteOldRecords() || deleted;
+            deleted = await task.deleteOldTargetRecords() || deleted;
         }
         return deleted;
     }

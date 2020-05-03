@@ -10,7 +10,7 @@ import { CommonUtils } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { MessageUtils, RESOURCES } from "./messages";
 import { RESULT_STATUSES, OPERATION } from "./statics";
-import { BulkAPIResult, BulkApiResultRecord, ICRUDApiProcess, MigrationJobTask, ScriptOrg, ICRUDJobCreateResult } from "../models";
+import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, IApiJobCreateResult } from "../models";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -25,7 +25,7 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  * @export
  * @class BulkApi2sf
  */
-export class BulkApi2sf implements ICRUDApiProcess {
+export class BulkApi2sf implements IApiProcess {
 
     logger: MessageUtils;
 
@@ -48,12 +48,17 @@ export class BulkApi2sf implements ICRUDApiProcess {
 
 
     // ----------------------- Interface ICRUDApiProcess ----------------------------------
-    async createCRUDApiJobAsync(task: MigrationJobTask, org: ScriptOrg, operation: OPERATION, records: Array<any>) : Promise<ICRUDJobCreateResult>{
+    async executeCRUD(operation: OPERATION, records: Array<any>, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>>{
+        let jobResult = await this.createCRUDApiJobAsync(operation, records);
+        return await this.processCRUDApiJobAsync(jobResult, progressCallback);
+    }
+
+    async createCRUDApiJobAsync(operation: OPERATION, records: Array<any>) : Promise<IApiJobCreateResult>{
         // TODO: Implement this
 
     }
 
-    async processCRUDApiJobAsync(createJobResult : ICRUDJobCreateResult) : Promise<Array<any>> {
+    async processCRUDApiJobAsync(createJobResult : IApiJobCreateResult, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>> {
         // TODO: Implement this
     }
     // ----------------------- ---------------- -------------------------------------------    
@@ -63,10 +68,10 @@ export class BulkApi2sf implements ICRUDApiProcess {
      *
      * @param {string} objectAPIName Object to process
      * @param {string} operationType Operation type to perform
-     * @returns {Promise<BulkAPIResult>}
+     * @returns {Promise<ApiResult>}
      * @memberof BulkAPI2sf
      */
-    async createBulkJobAsync(objectAPIName: string, operationType: "insert" | "update" | "delete"): Promise<BulkAPIResult> {
+    async createBulkJobAsync(objectAPIName: string, operationType: "insert" | "update" | "delete"): Promise<ApiResult> {
         
         let _this = this;
         this.operationType = operationType;
@@ -89,7 +94,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
             }, function (error: any, response: any, body: any) {
                 if (!error && response.statusCode == 200) {
                     let info = JSON.parse(body);
-                    resolve(new BulkAPIResult({
+                    resolve(new ApiResult({
                         jobId: info.id,
                         contentUrl: info.contentUrl,
 
@@ -110,10 +115,10 @@ export class BulkApi2sf implements ICRUDApiProcess {
      * @param {string} contentUrl Content url returned by createBulkJob()
      * @param {string} csvContent The string contains records to process in serialized csv format
      * @param {Array<object>} records Records to process were used to generate the csv string
-     * @returns {Promise<BulkAPIResult>}
+     * @returns {Promise<ApiResult>}
      * @memberof BulkAPI2sf
      */
-    async createBulkBatchAsync(contentUrl: string, csvContent: string, records: Array<object>): Promise<BulkAPIResult> {
+    async createBulkBatchAsync(contentUrl: string, csvContent: string, records: Array<object>): Promise<ApiResult> {
         let _this = this;
         this.sourceRecords = records;
         if (this.operationType == "insert") {
@@ -135,7 +140,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
                 }
             }, function (error: any, response: any) {
                 if (!error && response.statusCode == 201) {
-                    resolve(new BulkAPIResult({
+                    resolve(new ApiResult({
                         jobState: "UploadStart"
                     }));
                 }
@@ -150,10 +155,10 @@ export class BulkApi2sf implements ICRUDApiProcess {
      * Closes bulk job and forces csv content to be uploaded 
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
-     * @returns {Promise<BulkAPIResult>}
+     * @returns {Promise<ApiResult>}
      * @memberof BulkAPI2sf
      */
-    async closeBulkJobAsync(contentUrl: string): Promise<BulkAPIResult> {
+    async closeBulkJobAsync(contentUrl: string): Promise<ApiResult> {
         let _this = this;
         return new Promise(resolve => {
             request.patch({
@@ -171,7 +176,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
             }, function (error: any, response: any, body: any) {
                 if (!error && response.statusCode == 200) {
                     let info = JSON.parse(body);
-                    resolve(new BulkAPIResult({
+                    resolve(new ApiResult({
                         jobState: info.state
                     }));
                 }
@@ -186,10 +191,10 @@ export class BulkApi2sf implements ICRUDApiProcess {
      * Polls  job for the status
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
-     * @returns {Promise<BulkAPIResult>} 
+     * @returns {Promise<ApiResult>} 
      * @memberof BulkAPI2sf
      */
-    async pollBulkJobAsync(contentUrl: string): Promise<BulkAPIResult> {
+    async pollBulkJobAsync(contentUrl: string): Promise<ApiResult> {
         let _this = this;
         return new Promise(resolve => {
             request.get({
@@ -204,7 +209,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
             }, function (error: any, response: any, body: any) {
                 if (!error && response.statusCode == 200) {
                     let info = JSON.parse(body);
-                    resolve(new BulkAPIResult({
+                    resolve(new ApiResult({
                         errorMessage: info.errorMessage,
                         jobState: info.state,
                         numberRecordsFailed: info.numberRecordsFailed,
@@ -224,13 +229,13 @@ export class BulkApi2sf implements ICRUDApiProcess {
      *
      * @param {string} contentUrl
      * @param {number} pollInterval
-     * @param {(result: BulkAPIResult) => any} pollCallback
-     * @returns {Promise<BulkAPIResult>}
+     * @param {(result: ApiResult) => any} pollCallback
+     * @returns {Promise<ApiResult>}
      * @memberof BulkAPI2sf
      */
     async waitForBulkJobCompleteAsync(contentUrl: string,
         pollInterval: number,
-        pollCallback: (result: BulkAPIResult) => any): Promise<BulkAPIResult> {
+        pollCallback: (result: ApiResult) => any): Promise<ApiResult> {
 
         let _this = this;
 
@@ -282,10 +287,10 @@ export class BulkApi2sf implements ICRUDApiProcess {
      * Returns completed job result, inculding all source and target records with status per target record.
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
-     * @returns {Promise<BulkAPIResult>}
+     * @returns {Promise<ApiResult>}
      * @memberof BulkAPI2sf
      */
-    async getBulkJobResultAsync(contentUrl: string): Promise<BulkAPIResult> {
+    async getBulkJobResultAsync(contentUrl: string): Promise<ApiResult> {
         let _this = this;
         return new Promise(resolve => {
             request.get({
@@ -302,7 +307,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
                 if (!error && response.statusCode >= 200 && response.statusCode < 400) {
 
                     if (response.statusCode != 200) {
-                        resolve(new BulkAPIResult({
+                        resolve(new ApiResult({
                             jobState: "InProgress"
                         }));
                         return;
@@ -333,7 +338,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
                         }
                         let resultRecords = _this.sourceRecords.map(record => {
                             let targetRecords = map.get(record);
-                            let ret = new BulkApiResultRecord({
+                            let ret = new ApiResultRecord({
                                 sourceRecord: record,
                                 targetRecord: targetRecords,
                                 isMissingSourceTargetMapping: !targetRecords,
@@ -350,7 +355,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
                             }
                             return ret;
                         });
-                        resolve(new BulkAPIResult({
+                        resolve(new ApiResult({
                             resultRecords: resultRecords,
                             jobState: "JobComplete"
                         }));
@@ -448,7 +453,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
     private _apiRequestErrorHandler(resolve: any, error: any, response: any, body: any) {
         if (!response) {
             // Runtime error
-            resolve(new BulkAPIResult({
+            resolve(new ApiResult({
                 errorMessage: error.message,
                 errorStack: error.stack
             }));
@@ -457,7 +462,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
             let info = body && JSON.parse(body)[0] || {
                 message: "Unexpected error",
             };
-            resolve(new BulkAPIResult({
+            resolve(new ApiResult({
                 errorMessage: info.message,
             }));
         }

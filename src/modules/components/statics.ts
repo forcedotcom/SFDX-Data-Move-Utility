@@ -60,9 +60,6 @@ export enum OPERATION {
     Delete
 }
 
-/**
- *  Available result statuses for API operations
- */
 export enum RESULT_STATUSES {
     Undefined = "Undefined",
     JobCreated = "JobCreated",
@@ -73,6 +70,16 @@ export enum RESULT_STATUSES {
     FailedOrAborted = "FailedOrAborted",
     ProcessError = "ProcessError"
 }
+
+export enum MESSAGE_IMPORTANCE {
+    Silent,
+    Low,
+    High,
+    Warn,
+    Error
+}
+
+
 
 
 
