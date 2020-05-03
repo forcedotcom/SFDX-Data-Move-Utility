@@ -951,7 +951,7 @@ export class CommonUtils {
      * @returns {*}
      * @memberof ApiSf
      */
-    public static createConnection(connectionData: IOrgConnectionData): any {
+    public static createOrgConnection(connectionData: IOrgConnectionData): any {
         return new jsforce.Connection({
             instanceUrl: connectionData.instanceUrl,
             accessToken: connectionData.accessToken,

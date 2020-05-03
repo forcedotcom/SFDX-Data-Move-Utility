@@ -54,7 +54,7 @@ export default class ScriptOrg {
     }
 
     getConnection(): any {
-        return CommonUtils.createConnection(this.connectionData);
+        return CommonUtils.createOrgConnection(this.connectionData);
     }
 
     get isConnected(): boolean {
