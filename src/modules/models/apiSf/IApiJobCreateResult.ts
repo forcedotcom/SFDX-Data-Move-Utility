@@ -12,7 +12,5 @@ import { OPERATION } from "../../components/statics";
 export default interface IApiJobCreateResult {
     job: ApiResult,
     cn: any,
-    chunks: Array<Array<any>>,
-    org: ScriptOrg,
-    operation: OPERATION
+    chunks: Array<Array<any>>
 }

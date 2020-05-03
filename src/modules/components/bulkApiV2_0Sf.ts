@@ -15,7 +15,7 @@ const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
 
- 
+
 
 
 
@@ -27,11 +27,28 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  */
 export class BulkApiV2_0sf implements IApiProcess {
 
-    logger: MessageUtils;
+    task: MigrationJobTask;
+    isSource: boolean;
 
-    instanceUrl: string;
-    accessToken: string;
-    endpointUrl: string;
+    get org(): ScriptOrg {
+        return this.isSource ? this.task.sourceOrg : this.task.targetOrg;
+    }
+
+    get logger(): MessageUtils {
+        return this.org.script.logger;
+    }
+
+    get instanceUrl(): string {
+        return this.org.instanceUrl;
+    }
+
+    get accessToken(): string {
+        return this.org.accessToken;
+    }
+
+    get endpointUrl(): string {
+        return endpoint.replace('[v]', `v${this.org.script.apiVersion}`);
+    }
 
     operationType: "insert" | "update" | "delete";
 
@@ -39,26 +56,24 @@ export class BulkApiV2_0sf implements IApiProcess {
     sourceRecordsHashmap: Map<string, object> = new Map<string, object>();
 
 
-    constructor(logger: MessageUtils, apiVersion: string, accessToken: string, instanceUrl: string) {
-        this.instanceUrl = instanceUrl;
-        this.accessToken = accessToken;
-        this.endpointUrl = endpoint.replace('[v]', `v${apiVersion}`);
-        this.logger = logger;
+    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
+        this.task = task;
     }
 
 
     // ----------------------- Interface IApiProcess ----------------------------------
-    async executeCRUD(operation: OPERATION, records: Array<any>, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>>{
-        let jobResult = await this.createCRUDApiJobAsync(operation, records);
+    async executeCRUD(records: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+        let jobResult = await this.createCRUDApiJobAsync(records);
         return await this.processCRUDApiJobAsync(jobResult, progressCallback);
     }
 
-    async createCRUDApiJobAsync(operation: OPERATION, records: Array<any>) : Promise<IApiJobCreateResult>{
+    async createCRUDApiJobAsync(records: Array<any>): Promise<IApiJobCreateResult> {
         // TODO: Implement this
+
 
     }
 
-    async processCRUDApiJobAsync(createJobResult : IApiJobCreateResult, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>> {
+    async processCRUDApiJobAsync(createJobResult: IApiJobCreateResult, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         // TODO: Implement this
     }
     // ----------------------- ---------------- -------------------------------------------    
@@ -72,7 +87,7 @@ export class BulkApiV2_0sf implements IApiProcess {
      * @memberof BulkAPI2sf
      */
     async createBulkJobAsync(objectAPIName: string, operationType: "insert" | "update" | "delete"): Promise<ApiResult> {
-        
+
         let _this = this;
         this.operationType = operationType;
         return new Promise(resolve => {

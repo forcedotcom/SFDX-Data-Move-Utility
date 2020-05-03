@@ -24,24 +24,47 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  */
 export class BulkApiV1_0sf implements IApiProcess {
 
+    task: MigrationJobTask;
+    isSource: boolean;
 
-    constructor(logger: MessageUtils, task: MigrationJobTask, isSource: boolean, operation: OPERATION){
+    // Check ???
+    get org(): ScriptOrg {
+        return this.isSource ? this.task.sourceOrg : this.task.targetOrg;
+    }
 
-    }    
+    // Check ???
+    get logger(): MessageUtils {
+        return this.org.script.logger;
+    }
+
+    // Check ???
+    get instanceUrl(): string {
+        return this.org.instanceUrl;
+    }
+
+    // Check ???
+    get accessToken(): string {
+        return this.org.accessToken;
+    }
+
+    
+    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
+        this.task = task;
+    }
 
 
     // ----------------------- Interface IApiProcess ----------------------------------
-    async executeCRUD(operation: OPERATION, records: Array<any>, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>>{
-        let jobResult = await this.createCRUDApiJobAsync(operation, records);
+    async executeCRUD(records: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+        let jobResult = await this.createCRUDApiJobAsync(records);
         return await this.processCRUDApiJobAsync(jobResult, progressCallback);
     }
 
-    async createCRUDApiJobAsync(operation: OPERATION, records: Array<any>) : Promise<IApiJobCreateResult>{
+    async createCRUDApiJobAsync(records: Array<any>): Promise<IApiJobCreateResult> {
         // TODO: Implement this
 
     }
 
-    async processCRUDApiJobAsync(createJobResult : IApiJobCreateResult, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>> {
+    async processCRUDApiJobAsync(createJobResult: IApiJobCreateResult, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         // TODO: Implement this
     }
     // ----------------------- ---------------- -------------------------------------------    

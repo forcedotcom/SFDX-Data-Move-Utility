@@ -12,30 +12,30 @@ import { MigrationJobTask, ScriptOrg, IApiJobCreateResult as IApiJobCreateResult
 export default interface IApiProcess {
 
     /**
-     * Executes CRUD (creates and processes the CRUD job in single action)
-     * Returns the same records as input. On Insert adds record id property.
+     * Executes complete api operation including job create and execute
      *
-     * @param {OPERATION} operation The operation to perform
      * @param {Array<any>} records The source records
+     * @param {Function} progressCallback The progress callback function
      * @returns {Promise<IApiJobCreateResult>} 
      * @memberof IApiProcess
      */
-    executeCRUD(operation: OPERATION, records: Array<any>, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>>;
+    executeCRUD(records: Array<any>, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>>;
   
     /**
-     * Creates CRUD job
-     * @param {OPERATION} operation The operation to perform
+     * Creates job
      * @param {Array<any>} records The source records
      * @returns {Promise<IApiJobCreateResult>} 
      * @memberof IApiProcess
      */
-    createCRUDApiJobAsync: (operation: OPERATION, records: Array<any>) => Promise<IApiJobCreateResult>;
+    createCRUDApiJobAsync: (records: Array<any>) => Promise<IApiJobCreateResult>;
 
     /**
-     * Processed previously created CRUD job
-     * Returns the same records as input. On Insert adds record id property.
+     * Executes previously created job.
+     * Returns the same record set as the input. 
+     * On Insert adds a Record Id property.
      *
-     * @param {IApiJobCreateResult} createJobResult The CRUD job create result
+     * @param {IApiJobCreateResult} createJobResult The job create result
+     * @param {Function} progressCallback The progress callback function
      * @returns {Promise<Array<any>>}
      * @memberof IApiProcess
      */
