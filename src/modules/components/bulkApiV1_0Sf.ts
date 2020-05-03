@@ -20,9 +20,9 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  * Implementation of the Salesforce Bulk API v2.0
  *
  * @export
- * @class BulkApi2sf
+ * @class BulkApiV1_0sf
  */
-export class BulkApi1sf implements IApiProcess {
+export class BulkApiV1_0sf implements IApiProcess {
 
 
     constructor(logger: MessageUtils, task: MigrationJobTask, isSource: boolean, operation: OPERATION){
