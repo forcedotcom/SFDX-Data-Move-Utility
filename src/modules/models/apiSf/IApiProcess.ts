@@ -12,35 +12,47 @@ import { MigrationJobTask, ScriptOrg, IApiJobCreateResult as IApiJobCreateResult
 export default interface IApiProcess {
 
     /**
-     * Executes complete api operation including job create and execute
+     * Executes complete api operation 
+     * including api job create and api job execute
      *
-     * @param {Array<any>} records The source records
+     * @param {Array<any>} allRecords The all source records to process
      * @param {Function} progressCallback The progress callback function
      * @returns {Promise<IApiJobCreateResult>} 
      * @memberof IApiProcess
      */
-    executeCRUD(records: Array<any>, progressCallback: (progress : ApiResult) => void) : Promise<Array<any>>;
-  
+    executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>>;
+
     /**
-     * Creates job
-     * @param {Array<any>} records The source records
+     * Creates api job
+     * @param {Array<any>} allRecords The all source records to process
      * @returns {Promise<IApiJobCreateResult>} 
      * @memberof IApiProcess
      */
-    createCRUDApiJobAsync: (records: Array<any>) => Promise<IApiJobCreateResult>;
+    createCRUDApiJobAsync: (allrecords: Array<any>) => Promise<IApiJobCreateResult>;
 
     /**
-     * Executes previously created job.
-     * Returns the same record set as the input. 
-     * On Insert adds a Record Id property.
+     * Executes previously created api job.
+     * Returns the same records as the input. 
+     * On Insert operation will add a new Record Id value to each returned record.
      *
-     * @param {IApiJobCreateResult} createJobResult The job create result
      * @param {Function} progressCallback The progress callback function
      * @returns {Promise<Array<any>>}
      * @memberof IApiProcess
      */
-    processCRUDApiJobAsync: (createJobResult : IApiJobCreateResult, progressCallback: (progress : ApiResult) => void) => Promise<Array<any>>;
+    processCRUDApiJobAsync: (progressCallback: (progress: ApiResult) => void) => Promise<Array<any>>;
 
-  
+    /**
+     * Creates and executes api batch on the given chunk of the input records.
+     * The function is a part of the api job execution.
+     *
+     * @param {Array<any>} chunkRecords The part of the input 
+     *                                  records to process with the batch
+     * @param {Function} progressCallback The progress callback function
+     * @returns {Promise<Array<any>>}
+     * @memberof IApiProcess
+     */
+    processCRUDApiBatchAsync(chunkRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>>;
+
+
 }
 

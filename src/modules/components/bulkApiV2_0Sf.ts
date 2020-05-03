@@ -32,7 +32,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
     sourceRecordsHashmap: Map<string, object> = new Map<string, object>();
 
     get endpointUrl(): string {
-        return endpoint.replace('[v]', `v${this.org.script.apiVersion}`);
+        return endpoint.replace('[v]', `v${this.version}`);
     }
  
     constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
@@ -41,20 +41,25 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
 
     // ----------------------- Interface IApiProcess ----------------------------------
-    async executeCRUD(records: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
-        let jobResult = await this.createCRUDApiJobAsync(records);
-        return await this.processCRUDApiJobAsync(jobResult, progressCallback);
+    async executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+        await this.createCRUDApiJobAsync(allRecords);
+        return await this.processCRUDApiJobAsync(progressCallback);
     }
 
-    async createCRUDApiJobAsync(records: Array<any>): Promise<IApiJobCreateResult> {
+    async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
+        // TODO: Implement this
+        let connection = this.org.getConnection();
+    }
+
+    async processCRUDApiJobAsync(progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         // TODO: Implement this
 
+    }
+
+    async processCRUDApiBatchAsync(chunkRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
 
     }
 
-    async processCRUDApiJobAsync(createJobResult: IApiJobCreateResult, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
-        // TODO: Implement this
-    }
     // ----------------------- ---------------- -------------------------------------------    
 
     /**
