@@ -11,8 +11,8 @@ import { CsvChunks } from "../../components/commonUtils";
 
 
 export default interface IApiJobCreateResult {
+    chunks: CsvChunks,        
     jobCreateResult: ApiResult,
     connection?: any,
-    chunks: CsvChunks,
-    allRecords: Array<any>
+    allRecords?: Array<any>
 }

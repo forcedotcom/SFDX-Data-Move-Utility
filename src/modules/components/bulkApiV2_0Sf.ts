@@ -52,12 +52,12 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             CONSTANTS.BULK_API_V2_BLOCK_SIZE);
         this.apiJobCreateResult = {
             chunks: csvChunks,
-            allRecords,
             jobCreateResult: new ApiResult({
                 jobState: "Undefined",
                 strOperation: this.strOperation,
                 sObjectName: this.sObjectName,
-            })
+            }),
+            allRecords
         };
         return this.apiJobCreateResult;
     }
