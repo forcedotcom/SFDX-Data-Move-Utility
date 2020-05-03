@@ -17,4 +17,7 @@ export { default as SFieldDescribe } from "./sfieldDescribe";
 export { default as SObjectDescribe } from "./sobjectDescribe";
 export { default as MigrationJobTask } from "./migrationJobTask";
 export { default as MigrationJob, ICSVIssues  } from "./migrationJob";
+export { default as BulkApiResultRecord  } from "./api/bulkApiResultRecord";
+export { default as BulkAPIResult  } from "./api/bulkApiResult";
+export { default as ICRUDApiProcess  } from "./api/ICRUDApiProcess";
 

@@ -60,5 +60,20 @@ export enum OPERATION {
     Delete
 }
 
+/**
+ *  Available result statuses for API operations
+ */
+export enum RESULT_STATUSES {
+    Undefined = "Undefined",
+    JobCreated = "JobCreated",
+    BatchCreated = "BatchCreated",
+    DataUploaded = "DataUploaded",
+    InProgress = "InProgress",
+    Completed = "Completed",
+    FailedOrAborted = "FailedOrAborted",
+    ProcessError = "ProcessError"
+}
+
+
 
 

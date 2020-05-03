@@ -9,117 +9,15 @@
 import { CommonUtils } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { MessageUtils, RESOURCES } from "./messages";
+import { RESULT_STATUSES, OPERATION } from "./statics";
+import { BulkAPIResult, BulkApiResultRecord, ICRUDApiProcess, MigrationJobTask, ScriptOrg } from "../models";
+import { ICRUDJobCreateResult } from "../models/api/ICRUDApiProcess";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
 
  
 
-/**
- *  Available result statuses for API operations
- */
-export enum RESULT_STATUSES {
-    Undefined = "Undefined",
-    JobCreated = "JobCreated",
-    BatchCreated = "BatchCreated",
-    DataUploaded = "DataUploaded",
-    InProgress = "InProgress",
-    Completed = "Completed",
-    FailedOrAborted = "FailedOrAborted",
-    ProcessError = "ProcessError"
-}
-
-
-/**
- * Represents the record returned by the Api operation
- *
- * @export
- * @class BulkApiResultRecord
- */
-export class BulkApiResultRecord {
-
-    constructor(init: Partial<BulkApiResultRecord>) {
-        Object.assign(this, init);
-    }
-
-    id: string;
-    sourceRecord: object;
-    targetRecord: object;
-
-    isFailed: boolean;
-    isUnprocessed: boolean;
-    isMissingSourceTargetMapping: boolean;
-
-    get isSuccess() {
-        return !this.isFailed
-            && !this.isUnprocessed
-            && !this.isMissingSourceTargetMapping;
-    }
-
-    isCreated: boolean;
-    errorMessage: string;
-}
-
-
-/**
- * Represents set of records returned by the API operation
- *
- * @export
- * @class BulkAPIResult
- */
-export class BulkAPIResult {
-
-    constructor(init?: Partial<BulkAPIResult>) {
-        Object.assign(this, init);
-        this.resultRecords = this.resultRecords || new Array<BulkApiResultRecord>();
-    }
-
-    contentUrl: string;
-
-    jobId: string;
-    jobState: "Undefined" | "Open" | "Closed" | "Aborted" | "Failed" | "UploadStart" | "UploadComplete" | "InProgress" | "JobComplete" = "Undefined";
-
-    errorMessage: string;
-    errorStack: string;
-
-    numberRecordsProcessed: number;
-    numberRecordsFailed: number;
-
-    resultRecords: Array<BulkApiResultRecord>;
-
-    get resultStatus(): RESULT_STATUSES {
-
-        if (!!this.errorMessage) {
-            return RESULT_STATUSES.ProcessError;
-        }
-
-        switch (this.jobState) {
-
-            default:
-                return RESULT_STATUSES.Undefined;
-
-            case "Open":
-                return RESULT_STATUSES.JobCreated;
-
-            case "UploadStart":
-                return RESULT_STATUSES.BatchCreated;
-
-            case "UploadComplete":
-                return RESULT_STATUSES.DataUploaded;
-
-            case "InProgress":
-            case "Closed":
-                return RESULT_STATUSES.InProgress;
-
-            case "Aborted":
-            case "Failed":
-                return RESULT_STATUSES.FailedOrAborted;
-
-            case "JobComplete":
-                return RESULT_STATUSES.Completed;
-        }
-    }
-}
 
 
 /**
@@ -128,7 +26,7 @@ export class BulkAPIResult {
  * @export
  * @class BulkApi2sf
  */
-export class BulkApi2sf {
+export class BulkApi2sf implements ICRUDApiProcess {
 
     logger: MessageUtils;
 
@@ -149,6 +47,18 @@ export class BulkApi2sf {
         this.logger = logger;
     }
 
+
+    // ----------------------- Interface ICRUDApiProcess ----------------------------------
+    async createCRUDApiJobAsync(task: MigrationJobTask, org: ScriptOrg, operation: OPERATION, records: Array<any>) : Promise<ICRUDJobCreateResult>{
+        // TODO: Implement this
+
+    }
+    
+    async processCRUDApiJobAsync(createJobResult : ICRUDJobCreateResult) : Promise<Array<any>> {
+        // TODO: Implement this
+    }
+    // ----------------------- ---------------- -------------------------------------------    
+
     /**
      * Creates new Bulk job
      *
@@ -158,6 +68,7 @@ export class BulkApi2sf {
      * @memberof BulkAPI2sf
      */
     async createBulkJobAsync(objectAPIName: string, operationType: "insert" | "update" | "delete"): Promise<BulkAPIResult> {
+        
         let _this = this;
         this.operationType = operationType;
         return new Promise(resolve => {

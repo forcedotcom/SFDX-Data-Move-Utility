@@ -401,7 +401,7 @@ export default class MigrationJobTask {
         if (!value) return value;
         sObjectName = sObjectName || record["SobjectType"];
         if (this.sObjectName == "RecordType" && propName == "DeveloperName") {
-            return value + ";" + sObjectName;
+            return value + CONSTANTS.COMPLEX_FIELDS_SEPARATOR + sObjectName;
         } else {
             return value;
         }
@@ -423,7 +423,7 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Creates SOQK query
+     * Creates SOQL query
      *
      * @param {Array<string>} [fieldNames] Field names to include in the query, 
      *                                     pass undefined value to use all fields 
@@ -451,7 +451,7 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Construct query to delete
+     * Creates SOQL query to delete records
      *
      * @returns
      * @memberof MigrationJobTask
@@ -516,9 +516,11 @@ export default class MigrationJobTask {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
             return false;
         }
-        
+
         // ...
-        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));        
+        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));   
+        
+        
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetCompleted, this.sObjectName);
         return true;
     }
