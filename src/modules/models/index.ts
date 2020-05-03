@@ -21,4 +21,5 @@ export { default as ApiResultRecord } from "./apiSf/apiResultRecord";
 export { default as ApiResult } from "./apiSf/apiResult";
 export { default as IApiProcess } from "./apiSf/IApiProcess";
 export { default as IApiJobCreateResult } from "./apiSf/IApiJobCreateResult";
+export { default as ApiProcessBase } from "./apiSf/ApiProcessBase";
 

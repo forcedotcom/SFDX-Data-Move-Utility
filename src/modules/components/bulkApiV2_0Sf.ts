@@ -10,7 +10,7 @@ import { CommonUtils } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { MessageUtils, RESOURCES } from "./messages";
 import { RESULT_STATUSES, OPERATION } from "./statics";
-import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, IApiJobCreateResult } from "../models";
+import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, IApiJobCreateResult, ApiProcessBase } from "../models";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -25,41 +25,19 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  * @export
  * @class BulkApiV2_0sf
  */
-export class BulkApiV2_0sf implements IApiProcess {
+export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
-    task: MigrationJobTask;
-    isSource: boolean;
-    operation: OPERATION;
-
-    get org(): ScriptOrg {
-        return this.isSource ? this.task.sourceOrg : this.task.targetOrg;
-    }
-
-    get logger(): MessageUtils {
-        return this.org.script.logger;
-    }
-
-    get instanceUrl(): string {
-        return this.org.instanceUrl;
-    }
-
-    get accessToken(): string {
-        return this.org.accessToken;
-    }
+    operationType: "insert" | "update" | "delete";
+    sourceRecords: Array<object> = new Array<object>();
+    sourceRecordsHashmap: Map<string, object> = new Map<string, object>();
 
     get endpointUrl(): string {
         return endpoint.replace('[v]', `v${this.org.script.apiVersion}`);
     }
-
-    operationType: "insert" | "update" | "delete";
-
-    sourceRecords: Array<object> = new Array<object>();
-    sourceRecordsHashmap: Map<string, object> = new Map<string, object>();
-
+ 
 
     constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
-        this.task = task;
-        this.operation = operation;
+        super(task, isSource, operation);
     }
 
 
