@@ -12,8 +12,8 @@ import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { CommonUtils } from "../components/commonUtils";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../components/statics";
-import { MessageUtils, RESOURCES } from "../components/messages";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../components/statics";
+import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/messages";
 import { ApiSf } from "../components/apiSf";
 var jsforce = require("jsforce");
 import {
@@ -30,6 +30,7 @@ import * as fs from 'fs';
 import { CachedCSVContent } from "./migrationJob";
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0sf } from "../components/bulkApiV2_0Sf";
+import ApiResult from "./apiSf/apiResult";
 
 
 export default class MigrationJobTask {
@@ -525,13 +526,16 @@ export default class MigrationJobTask {
         // TEST:
         // FIXME:
         let recToDelete = records.records.map(x => { return { Id: x["Id"] } });
-        let b: BulkApiV2_0sf = new BulkApiV2_0sf(this.logger,
+        let apiProcessor: BulkApiV2_0sf = new BulkApiV2_0sf(this.logger,
             this.targetOrg.connectionData,
             this.sObjectName,
             OPERATION.Delete,
             this.scriptObject.script.pollingIntervalMs,
             true);
-        let rec = await b.executeCRUD(recToDelete, null);
+        let resultRecords = await apiProcessor.executeCRUD(recToDelete, this.apiOperationCallback);
+        if (resultRecords == null) {
+            // ERROR RESULT
+        }
 
 
 
@@ -540,6 +544,53 @@ export default class MigrationJobTask {
         return true;
     }
 
+    /**
+     * Api operation progress status callback.
+     * Outputs the status to the console 
+     * and handles api exception
+     *
+     * @param {ApiResult} apiResult
+     * @memberof MigrationJobTask
+     */
+    apiOperationCallback(apiResult: ApiResult): void {
 
+        let verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+        let messageType: "Info" | "Warn" = "Info";
+
+        switch (apiResult.messageImportance) {
+
+            case MESSAGE_IMPORTANCE.Low:
+                verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
+                break;
+
+            case MESSAGE_IMPORTANCE.Warn:
+                messageType = "Warn";
+                break;
+        }
+
+        switch (apiResult.resultStatus) {
+
+            case RESULT_STATUSES.JobCreated:
+                break;
+
+            case RESULT_STATUSES.BatchCreated:
+                break;
+
+            case RESULT_STATUSES.DataUploaded:
+                break;
+
+            case RESULT_STATUSES.InProgress:
+                break;
+
+            case RESULT_STATUSES.Completed:
+                break;
+
+            case RESULT_STATUSES.FailedOrAborted:
+                break;
+
+            case RESULT_STATUSES.ProcessError:
+                break;
+        }
+    }
 
 }

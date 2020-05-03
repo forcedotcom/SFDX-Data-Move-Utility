@@ -31,6 +31,7 @@ export default class ApiResult {
     contentUrl: string;
 
     jobId: string;
+    batchId: string;
     jobState: "Undefined" | "Open" | "Closed" | "Aborted" | "Failed" | "UploadStart" | "UploadComplete" | "InProgress" | "JobComplete" = "Undefined";
 
     errorMessage: string;
@@ -41,7 +42,7 @@ export default class ApiResult {
 
     resultRecords: Array<ApiResultRecord>;
 
-    messageImportance(): MESSAGE_IMPORTANCE {
+    get messageImportance(): MESSAGE_IMPORTANCE {
 
         switch (this.resultStatus) {
 
