@@ -6,7 +6,7 @@
  */
 
 
- 
+
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -46,11 +46,10 @@ export default class ScriptOrg {
     isPersonAccountEnabled: boolean = false;
 
     getConnection(): any {
-        return new jsforce.Connection({
+        return CommonUtils.createConnection({
             instanceUrl: this.instanceUrl,
             accessToken: this.accessToken,
-            version: this.script.apiVersion,
-            maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
+            apiVersion: this.script.apiVersion
         });
     }
 
@@ -145,3 +144,5 @@ export default class ScriptOrg {
     }
 
 }
+
+

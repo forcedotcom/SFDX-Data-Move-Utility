@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils, CsvChunks } from "../components/commonUtils";
+import { CommonUtils } from "../components/commonUtils";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../components/statics";
 import { MessageUtils, RESOURCES } from "../components/messages";
 import { ApiSf } from "../components/apiSf";
@@ -23,12 +23,13 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError, ScriptOrg, ScriptObject, MigrationJob as Job, ICSVIssues } from ".";
+import { ScriptObject, MigrationJob as Job, ICSVIssues } from ".";
 import SFieldDescribe from "./sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
 import { CachedCSVContent } from "./migrationJob";
 import * as deepClone from 'deep.clone';
+import { BulkApiV2_0sf } from "../components/bulkApiV2_0Sf";
 
 
 export default class MigrationJobTask {
@@ -96,11 +97,11 @@ export default class MigrationJobTask {
         return this.scriptObject.script.targetOrg;
     }
 
-    get useQueryBulkApiForSourceRecords(){
+    get useQueryBulkApiForSourceRecords() {
         return this.sourceTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
     }
 
-    get useQueryBulkApiForTargetRecords(){
+    get useQueryBulkApiForTargetRecords() {
         return this.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
     }
 
@@ -511,7 +512,7 @@ export default class MigrationJobTask {
         let query = this.createDeleteQuery();
         let apiSf = new ApiSf(this.targetOrg);
         let records = await apiSf.queryAsync(query, this.useQueryBulkApiForTargetRecords);
-        if (records.totalSize == 0){
+        if (records.totalSize == 0) {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
             return false;
         }
@@ -519,9 +520,22 @@ export default class MigrationJobTask {
         // ...
         // TODO: implement delete
         // ...        
-        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));   
-        
-        
+        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));
+
+        // TEST:
+        let recToDelete = records.records.map(x => x["Id"]);
+        let b: BulkApiV2_0sf = new BulkApiV2_0sf(this.logger, {
+            accessToken: this.targetOrg.accessToken,
+            apiVersion: this.scriptObject.script.apiVersion,
+            instanceUrl: this.targetOrg.instanceUrl
+        }, this.sObjectName, OPERATION.Delete,
+            this.scriptObject.script.pollingIntervalMs,
+            true);
+        let rec = await b.executeCRUD(recToDelete, null);
+
+
+
+
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetCompleted, this.sObjectName);
         return true;
     }

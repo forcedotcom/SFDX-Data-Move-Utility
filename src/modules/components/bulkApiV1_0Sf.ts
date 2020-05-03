@@ -6,11 +6,15 @@
  */
 
 
-import { CommonUtils, ICsvChunk } from "./commonUtils";
-import parse = require('csv-parse/lib/sync');
-import { MessageUtils, RESOURCES } from "./messages";
-import { RESULT_STATUSES, OPERATION } from "./statics";
-import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, IApiJobCreateResult, ApiProcessBase } from "../models";
+import { ICsvChunk } from "./commonUtils";
+import { OPERATION } from "./statics";
+import { IOrgConnectionData } from "../models";
+import { MessageUtils } from "./messages";
+import ApiProcessBase from "../models/apiSf/ApiProcessBase";
+import IApiProcess from "../models/apiSf/IApiProcess";
+import ApiResult from "../models/apiSf/apiResult";
+import IApiJobCreateResult from "../models/apiSf/IApiJobCreateResult";
+
 
 
 
@@ -22,8 +26,13 @@ import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, I
  */
 export class BulkApiV1_0sf extends ApiProcessBase implements IApiProcess {
 
-    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION, updateRecordId: boolean) {
-        super(task, isSource, operation, updateRecordId);
+    constructor(logger: MessageUtils, 
+        connectionData : IOrgConnectionData, 
+        sObjectName : string, 
+        operation: OPERATION, 
+        pollingIntervalMs: number,
+        updateRecordId: boolean) {
+        super(logger, connectionData, sObjectName, operation, pollingIntervalMs, updateRecordId);
     }
 
 
@@ -35,15 +44,17 @@ export class BulkApiV1_0sf extends ApiProcessBase implements IApiProcess {
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         // TODO: Implement this
-
+        return null;
     }
 
     async processCRUDApiJobAsync(progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         // TODO: Implement this
+        return null;
     }
 
     async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         // TODO: Implement this
+        return null;
     }
 
     // ----------------------- ---------------- -------------------------------------------    

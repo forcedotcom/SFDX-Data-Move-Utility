@@ -5,9 +5,13 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MigrationJobTask, ScriptOrg, IApiJobCreateResult, Script } from "..";
+
 import { OPERATION } from "../../components/statics";
 import { MessageUtils } from "../../components/messages";
+import { IOrgConnectionData } from "..";
+import IApiJobCreateResult from "./IApiJobCreateResult";
+
+
 
 
 
@@ -19,39 +23,29 @@ import { MessageUtils } from "../../components/messages";
  */
 export default class ApiProcessBase {
 
-    task: MigrationJobTask;
     isSource: boolean;
+    pollingIntervalMs: number
     operation: OPERATION;
     updateRecordId: boolean;
+    sObjectName : string;
+    logger: MessageUtils;
+    connectionData : IOrgConnectionData;
 
     apiJobCreateResult: IApiJobCreateResult;
 
     numberJobRecordsSucceeded: number =  0;
     numberJobRecordsFailed: number =  0;
 
-    get org(): ScriptOrg {
-        return this.isSource ? this.task.sourceOrg : this.task.targetOrg;
+    get instanceUrl(){
+        return this.connectionData.instanceUrl;
     }
 
-    get script(): Script {
-        return this.org.script;
+    get accessToken(){
+        return this.connectionData.accessToken;
     }
 
-
-    get logger(): MessageUtils {
-        return this.org.script.logger;
-    }
-
-    get instanceUrl(): string {
-        return this.org.instanceUrl;
-    }
-
-    get accessToken(): string {
-        return this.org.accessToken;
-    }
-
-    get version(): string {
-        return this.org.script.apiVersion;
+    get version(){
+        return this.connectionData.apiVersion;
     }
 
     get strOperation(): string {
@@ -61,15 +55,17 @@ export default class ApiProcessBase {
         return this.operation.toString();
     }
 
-    get sObjectName(): string {
-        return this.task.sObjectName;
-    }
-
-
-    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION, updateRecordId: boolean) {
-        this.task = task;
-        this.isSource = isSource;
+    constructor(logger: MessageUtils, 
+                connectionData : IOrgConnectionData, 
+                sObjectName : string, 
+                operation: OPERATION, 
+                pollingIntervalMs: number,
+                updateRecordId: boolean) {
+        this.logger = logger;
+        this.connectionData = connectionData;
+        this.sObjectName = sObjectName;
         this.operation = operation;
+        this.pollingIntervalMs = pollingIntervalMs;
         this.updateRecordId = updateRecordId;
     }
 

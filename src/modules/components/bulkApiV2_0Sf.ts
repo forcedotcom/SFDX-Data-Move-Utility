@@ -8,9 +8,14 @@
 
 import { CommonUtils, ICsvChunk } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
-import { RESOURCES } from "./messages";
+import { RESOURCES, MessageUtils } from "./messages";
 import { RESULT_STATUSES, OPERATION, CONSTANTS } from "./statics";
-import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, IApiJobCreateResult, ApiProcessBase } from "../models";
+import { IOrgConnectionData } from "../models";
+import ApiProcessBase from "../models/apiSf/ApiProcessBase";
+import IApiProcess from "../models/apiSf/IApiProcess";
+import ApiResult from "../models/apiSf/apiResult";
+import IApiJobCreateResult from "../models/apiSf/IApiJobCreateResult";
+import ApiResultRecord from "../models/apiSf/apiResultRecord";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -35,8 +40,13 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         return endpoint.replace('[v]', `v${this.version}`);
     }
 
-    constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION, updateRecordId: boolean) {
-        super(task, isSource, operation, updateRecordId);
+    constructor(logger: MessageUtils, 
+        connectionData : IOrgConnectionData, 
+        sObjectName : string, 
+        operation: OPERATION, 
+        pollingIntervalMs: number,
+        updateRecordId: boolean) {
+        super(logger, connectionData, sObjectName, operation, pollingIntervalMs, updateRecordId);
     }
 
 
@@ -116,7 +126,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
         // Poll bulk batch status *************************
         let numberBatchRecordsProcessed = 0;
-        batchResult = await this.waitForBulkJobCompleteAsync(jobResult.contentUrl, this.script.pollingIntervalMs, function (progress: ApiResult) {
+        batchResult = await this.waitForBulkJobCompleteAsync(jobResult.contentUrl, this.pollingIntervalMs, function (progress: ApiResult) {
             if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
                 // Store current number of processed value
                 numberBatchRecordsProcessed = progress.numberRecordsProcessed;

@@ -6,7 +6,10 @@
  */
 
 import { RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../../components/statics";
-import { ApiResultRecord as ApiResultRecord } from "..";
+import ApiResultRecord from "./apiResultRecord";
+
+
+
 
 
 /**

@@ -21,7 +21,7 @@ import {
 } from 'soql-parser-js';
 import { CONSTANTS, DATA_MEDIA_TYPE } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
-
+var jsforce = require("jsforce");
 
 
 export class ApiSf {
@@ -132,5 +132,5 @@ export class ApiSf {
         return sObjectDescribe;
     };
 
-
+  
 }

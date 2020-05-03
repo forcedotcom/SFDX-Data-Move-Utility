@@ -27,7 +27,8 @@ import { CONSTANTS } from './statics';
 import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
 import { MessageUtils, RESOURCES } from './messages';
-import { CommandAbortedByUserError } from '../models';
+import { CommandAbortedByUserError, IOrgConnectionData } from '../models';
+var jsforce = require("jsforce");
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
@@ -938,6 +939,25 @@ export class CommonUtils {
             result += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         return result;
+    }
+
+
+    /**
+     * Creates jforce connection instance
+     *
+     * @param {string} instanceUrl
+     * @param {string} accessToken
+     * @param {string} apiVersion
+     * @returns {*}
+     * @memberof ApiSf
+     */
+    public static createConnection(connectionData: IOrgConnectionData): any {
+        return new jsforce.Connection({
+            instanceUrl: connectionData.instanceUrl,
+            accessToken: connectionData.accessToken,
+            version: connectionData.apiVersion,
+            maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
+        });
     }
 
 

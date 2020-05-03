@@ -17,9 +17,5 @@ export { default as SFieldDescribe } from "./sfieldDescribe";
 export { default as SObjectDescribe } from "./sobjectDescribe";
 export { default as MigrationJobTask } from "./migrationJobTask";
 export { default as MigrationJob, ICSVIssues } from "./migrationJob";
-export { default as ApiResultRecord } from "./apiSf/apiResultRecord";
-export { default as ApiResult } from "./apiSf/apiResult";
-export { default as IApiProcess } from "./apiSf/IApiProcess";
-export { default as IApiJobCreateResult } from "./apiSf/IApiJobCreateResult";
-export { default as ApiProcessBase } from "./apiSf/ApiProcessBase";
+export { default as IOrgConnectionData } from "./IOrgConnectionData";
 
