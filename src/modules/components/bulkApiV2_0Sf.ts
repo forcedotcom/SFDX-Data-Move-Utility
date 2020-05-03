@@ -8,9 +8,9 @@
 
 import { CommonUtils, ICsvChunk } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
-import { MessageUtils, RESOURCES } from "./messages";
+import { RESOURCES } from "./messages";
 import { RESULT_STATUSES, OPERATION, CONSTANTS } from "./statics";
-import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, ScriptOrg, IApiJobCreateResult, ApiProcessBase } from "../models";
+import { ApiResult, ApiResultRecord, IApiProcess, MigrationJobTask, IApiJobCreateResult, ApiProcessBase } from "../models";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
