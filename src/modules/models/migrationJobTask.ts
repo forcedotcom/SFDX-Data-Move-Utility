@@ -523,12 +523,12 @@ export default class MigrationJobTask {
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));
 
         // TEST:
-        let recToDelete = records.records.map(x => x["Id"]);
-        let b: BulkApiV2_0sf = new BulkApiV2_0sf(this.logger, {
-            accessToken: this.targetOrg.accessToken,
-            apiVersion: this.scriptObject.script.apiVersion,
-            instanceUrl: this.targetOrg.instanceUrl
-        }, this.sObjectName, OPERATION.Delete,
+        // FIXME:
+        let recToDelete = records.records.map(x => { return { Id: x["Id"] } });
+        let b: BulkApiV2_0sf = new BulkApiV2_0sf(this.logger,
+            this.targetOrg.connectionData,
+            this.sObjectName,
+            OPERATION.Delete,
             this.scriptObject.script.pollingIntervalMs,
             true);
         let rec = await b.executeCRUD(recToDelete, null);

@@ -40,22 +40,38 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         return endpoint.replace('[v]', `v${this.version}`);
     }
 
-    constructor(logger: MessageUtils, 
-        connectionData : IOrgConnectionData, 
-        sObjectName : string, 
-        operation: OPERATION, 
+    constructor(logger: MessageUtils,
+        connectionData: IOrgConnectionData,
+        sObjectName: string,
+        operation: OPERATION,
         pollingIntervalMs: number,
         updateRecordId: boolean) {
         super(logger, connectionData, sObjectName, operation, pollingIntervalMs, updateRecordId);
     }
 
 
+
     // ----------------------- Interface IApiProcess ----------------------------------
+    /**
+     * Execute full CRUD operation
+     *
+     * @param {Array<any>} allRecords
+     * @param {(progress: ApiResult) => void} progressCallback
+     * @returns {Promise<Array<any>>}
+     * @memberof BulkApiV2_0sf
+     */
     async executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         await this.createCRUDApiJobAsync(allRecords);
         return await this.processCRUDApiJobAsync(progressCallback);
     }
 
+    /**
+     * Create CRUD api job
+     *
+     * @param {Array<any>} allRecords
+     * @returns {Promise<IApiJobCreateResult>}
+     * @memberof BulkApiV2_0sf
+     */
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let csvChunks = CommonUtils.createCsvStringsFromArray(allRecords,
             CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
@@ -72,6 +88,13 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         return this.apiJobCreateResult;
     }
 
+    /**
+     * Process CRUD api job
+     * 
+     * @param {(progress: ApiResult) => void} progressCallback
+     * @returns {Promise<Array<any>>}
+     * @memberof BulkApiV2_0sf
+     */
     async processCRUDApiJobAsync(progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         let allResultRecords = new Array<any>();
         for (let index = 0; index < this.apiJobCreateResult.chunks.chunks.length; index++) {
@@ -87,6 +110,14 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         return allResultRecords;
     }
 
+    /**
+     * Create and process CRUD api batch
+     *
+     * @param {ICsvChunk} csvChunk
+     * @param {(progress: ApiResult) => void} progressCallback
+     * @returns {Promise<Array<any>>}
+     * @memberof BulkApiV2_0sf
+     */
     async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
 
         let self = this;
@@ -167,8 +198,8 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         return csvChunk.records;
 
     }
-
     // ----------------------- ---------------- -------------------------------------------    
+
 
     /**
      * Creates new Bulk job

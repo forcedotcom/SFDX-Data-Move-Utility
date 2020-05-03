@@ -6,6 +6,12 @@
  */
 
 
+/**
+ * Connection data for salesforce env
+ *
+ * @export
+ * @interface IOrgConnectionData
+ */
 export default interface IOrgConnectionData {
     instanceUrl: string;
     accessToken: string;

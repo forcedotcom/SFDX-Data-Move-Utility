@@ -23,7 +23,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { Script, OrgInfo, CommandInitializationError } from ".";
+import { Script, OrgInfo, CommandInitializationError, IOrgConnectionData } from ".";
 
 
 /**
@@ -45,12 +45,16 @@ export default class ScriptOrg {
     isSource: boolean = false;
     isPersonAccountEnabled: boolean = false;
 
-    getConnection(): any {
-        return CommonUtils.createConnection({
+    get connectionData(): IOrgConnectionData {
+        return {
             instanceUrl: this.instanceUrl,
             accessToken: this.accessToken,
             apiVersion: this.script.apiVersion
-        });
+        };
+    }
+
+    getConnection(): any {
+        return CommonUtils.createConnection(this.connectionData);
     }
 
     get isConnected(): boolean {
