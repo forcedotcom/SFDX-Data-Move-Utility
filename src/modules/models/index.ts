@@ -20,4 +20,5 @@ export { default as MigrationJob, ICSVIssues  } from "./migrationJob";
 export { default as BulkApiResultRecord  } from "./api/bulkApiResultRecord";
 export { default as BulkAPIResult  } from "./api/bulkApiResult";
 export { default as ICRUDApiProcess  } from "./api/ICRUDApiProcess";
+export { default as ICRUDJobCreateResult  } from "./api/ICRUDJobCreateResult";
 

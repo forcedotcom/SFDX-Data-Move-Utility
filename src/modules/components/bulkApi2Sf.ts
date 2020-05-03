@@ -10,8 +10,7 @@ import { CommonUtils } from "./commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { MessageUtils, RESOURCES } from "./messages";
 import { RESULT_STATUSES, OPERATION } from "./statics";
-import { BulkAPIResult, BulkApiResultRecord, ICRUDApiProcess, MigrationJobTask, ScriptOrg } from "../models";
-import { ICRUDJobCreateResult } from "../models/api/ICRUDApiProcess";
+import { BulkAPIResult, BulkApiResultRecord, ICRUDApiProcess, MigrationJobTask, ScriptOrg, ICRUDJobCreateResult } from "../models";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -53,7 +52,7 @@ export class BulkApi2sf implements ICRUDApiProcess {
         // TODO: Implement this
 
     }
-    
+
     async processCRUDApiJobAsync(createJobResult : ICRUDJobCreateResult) : Promise<Array<any>> {
         // TODO: Implement this
     }

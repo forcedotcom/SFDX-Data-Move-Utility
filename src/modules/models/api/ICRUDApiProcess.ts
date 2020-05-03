@@ -6,7 +6,7 @@
  */
 
 import { OPERATION } from "../../components/statics";
-import { MigrationJobTask, ScriptOrg } from "..";
+import { MigrationJobTask, ScriptOrg, ICRUDJobCreateResult } from "..";
 
 
 export default interface ICRUDApiProcess {
@@ -32,11 +32,3 @@ export default interface ICRUDApiProcess {
     processCRUDApiJobAsync: (createJobResult: ICRUDJobCreateResult) => Promise<Array<any>>;
 }
 
-export interface ICRUDJobCreateResult {
-    job: any,
-    cn: any,
-    chunks: Array<Array<any>>,
-    task: MigrationJobTask,
-    org: ScriptOrg,
-    operation: OPERATION
-}
