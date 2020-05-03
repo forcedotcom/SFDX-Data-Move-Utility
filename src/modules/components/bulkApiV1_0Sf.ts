@@ -26,7 +26,7 @@ export class BulkApiV1_0sf extends ApiProcessBase implements IApiProcess {
         super(task, isSource, operation);
     }
 
-
+    
     // ----------------------- Interface IApiProcess ----------------------------------
     async executeCRUD(records: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
         let jobResult = await this.createCRUDApiJobAsync(records);

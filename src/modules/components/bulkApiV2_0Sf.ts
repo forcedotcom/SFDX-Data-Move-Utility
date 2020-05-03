@@ -35,7 +35,6 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         return endpoint.replace('[v]', `v${this.org.script.apiVersion}`);
     }
  
-
     constructor(task: MigrationJobTask, isSource: boolean, operation: OPERATION) {
         super(task, isSource, operation);
     }
