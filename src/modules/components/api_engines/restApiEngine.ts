@@ -10,8 +10,8 @@ import { ICsvChunk } from "../common_components/commonUtils";
 import { OPERATION } from "../common_components/statics";
 import { IOrgConnectionData } from "../../models";
 import { MessageUtils } from "../common_components/messages";
-import { IApiEngine, IApiJobCreateResult } from "../../models/apiSf/interfaces";
-import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../../models/apiSf";
+import { IApiEngine, IApiJobCreateResult } from "../../models/api_models/interfaces";
+import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../../models/api_models";
 
 
 

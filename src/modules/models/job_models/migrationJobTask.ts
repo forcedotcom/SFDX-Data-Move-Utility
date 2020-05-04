@@ -11,10 +11,10 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../components/common_components/commonUtils";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../components/common_components/statics";
-import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../components/common_components/messages";
-import { Sfdx } from "../components/common_components/sfdx";
+import { CommonUtils } from "../../components/common_components/commonUtils";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../../components/common_components/statics";
+import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../../components/common_components/messages";
+import { Sfdx } from "../../components/common_components/sfdx";
 var jsforce = require("jsforce");
 import {
     parseQuery,
@@ -23,17 +23,17 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, ScriptOrg, Script } from ".";
-import SFieldDescribe from "./sfieldDescribe";
+import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, ScriptOrg, Script } from "..";
+import SFieldDescribe from "../script_models/sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
 import { CachedCSVContent } from "./migrationJob";
 import * as deepClone from 'deep.clone';
-import { BulkApiV2_0Engine } from "../components/api_engines/bulkApiV2_0Engine";
-import { IApiEngine } from "./apiSf/interfaces";
-import ApiInfo from "./apiSf/apiInfo";
-import { BulkApiV1_0Engine } from "../components/api_engines/bulkApiV1_0Engine";
-import { RestApiEngine } from "../components/api_engines/restApiEngine";
+import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";
+import { IApiEngine } from "../api_models/interfaces";
+import ApiInfo from "../api_models/apiInfo";
+import { BulkApiV1_0Engine } from "../../components/api_engines/bulkApiV1_0Engine";
+import { RestApiEngine } from "../../components/api_engines/restApiEngine";
 
 
 

@@ -11,8 +11,8 @@ import parse = require('csv-parse/lib/sync');
 import { RESOURCES, MessageUtils } from "../common_components/messages";
 import { RESULT_STATUSES, OPERATION, CONSTANTS } from "../common_components/statics";
 import { IOrgConnectionData } from "../../models";
-import { IApiEngine, IApiJobCreateResult } from "../../models/apiSf/interfaces";
-import { ApiEngineBase, ApiInfo, ApiResultRecord, IApiEngineInitParameters } from "../../models/apiSf";
+import { IApiEngine, IApiJobCreateResult } from "../../models/api_models/interfaces";
+import { ApiEngineBase, ApiInfo, ApiResultRecord, IApiEngineInitParameters } from "../../models/api_models";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection

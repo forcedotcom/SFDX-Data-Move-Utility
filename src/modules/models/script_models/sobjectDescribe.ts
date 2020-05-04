@@ -6,7 +6,7 @@
  */
 
  
-import { SFieldDescribe } from ".";
+import { SFieldDescribe } from "..";
 
 /**
  * Description of the sobject

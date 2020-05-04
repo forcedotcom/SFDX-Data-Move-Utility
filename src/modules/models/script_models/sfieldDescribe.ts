@@ -6,8 +6,8 @@
  */
 
 
-import { CommonUtils } from "../components/common_components/commonUtils";
-import { ScriptObject } from ".";
+import { CommonUtils } from "../../components/common_components/commonUtils";
+import { ScriptObject } from "..";
 
 
 /**

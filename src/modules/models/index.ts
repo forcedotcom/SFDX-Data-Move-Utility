@@ -7,16 +7,16 @@
 
 
 
-export * from "./errors";
-export * from "./interfaces";
-export { default as OrgInfo } from "./orgInfo";
-export { default as Script } from "./script";
-export { default as ScriptMockField } from "./scriptMockField";
-export { default as ScriptObject } from "./scriptObject";
-export { default as ScriptOrg } from "./scriptOrg";
-export { default as SFieldDescribe } from "./sfieldDescribe";
-export { default as SObjectDescribe } from "./sobjectDescribe";
-export { default as MigrationJobTask } from "./migrationJobTask";
-export { default as MigrationJob, ICSVIssues } from "./migrationJob";
+export * from "./common_models/errors";
+export * from "./common_models/interfaces";
+export { default as OrgInfo } from "./common_models/orgInfo";
+export { default as Script } from "./script_models/script";
+export { default as ScriptMockField } from "./script_models/scriptMockField";
+export { default as ScriptObject } from "./script_models/scriptObject";
+export { default as ScriptOrg } from "./script_models/scriptOrg";
+export { default as SFieldDescribe } from "./script_models/sfieldDescribe";
+export { default as SObjectDescribe } from "./script_models/sobjectDescribe";
+export { default as MigrationJobTask } from "./job_models/migrationJobTask";
+export { default as MigrationJob, ICSVIssues } from "./job_models/migrationJob";
 
 

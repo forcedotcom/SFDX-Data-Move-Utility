@@ -11,10 +11,10 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../components/common_components/commonUtils";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../components/common_components/statics";
-import { MessageUtils, RESOURCES } from "../components/common_components/messages";
-import { Sfdx } from "../components/common_components/sfdx";
+import { CommonUtils } from "../../components/common_components/commonUtils";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
+import { MessageUtils, RESOURCES } from "../../components/common_components/messages";
+import { Sfdx } from "../../components/common_components/sfdx";
 var jsforce = require("jsforce");
 import {
     parseQuery,
@@ -23,8 +23,8 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError, ScriptOrg, ScriptObject, MigrationJobTask as Task } from ".";
-import SFieldDescribe from "./sfieldDescribe";
+import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError, ScriptOrg, ScriptObject, MigrationJobTask as Task } from "..";
+import SFieldDescribe from "../script_models/sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
 
