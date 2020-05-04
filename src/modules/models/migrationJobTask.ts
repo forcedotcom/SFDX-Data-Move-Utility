@@ -109,11 +109,11 @@ export default class MigrationJobTask {
         return this.script.targetOrg;
     }
 
-    get useQueryBulkApiForSourceRecords() {
+    get useBulkQueryApiForSource() {
         return this.sourceTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
     }
 
-    get useQueryBulkApiForTargetRecords() {
+    get useBulkQueryApiForTarget() {
         return this.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
     }
 
@@ -531,21 +531,21 @@ export default class MigrationJobTask {
         }
 
         this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
-        let query = this.createDeleteQuery();
+        let soql = this.createDeleteQuery();
         let apiSf = new ApiSf(this.targetOrg);
-        let records = await apiSf.queryAsync(query, this.useQueryBulkApiForTargetRecords);
-        if (records.totalSize == 0) {
+        let queryResult = await apiSf.queryAsync(soql, this.useBulkQueryApiForTarget);
+        if (queryResult.totalSize == 0) {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
             return false;
         }
 
-        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));
+        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(queryResult.totalSize));
 
         // FIXME:
         // Create Api engine and delete records
-        let recToDelete = records.records.map(x => { return { Id: x["Id"] } });
+        let recordsToDelete = queryResult.records.map(x => { return { Id: x["Id"] } });
         this.createApiEngine(this.targetOrg, OPERATION.Delete, true);
-        let resultRecords = await this.apiEngine.executeCRUD(recToDelete, this.apiProgressCallback);
+        let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
         if (resultRecords == null) {
             // API ERROR. Exiting.
             this._apiOperationError(OPERATION.Delete);

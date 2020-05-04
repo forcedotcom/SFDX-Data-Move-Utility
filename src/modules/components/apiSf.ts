@@ -36,11 +36,11 @@ export class ApiSf {
      *  Performs SOQL query and returns records
      *
      * @param {string} soql The SOQL query
-     * @param {boolean} useBulkApi true to use Bulk Query Api instead of the Collection Api
+     * @param {boolean} useBulkQueryApi true to use Bulk Query Api instead of the Collection Api
      * @returns {Promise<QueryResult<object>>}
      * @memberof ApiSf
      */
-    async queryAsync(soql: string, useBulkApi: boolean): Promise<QueryResult<object>> {
+    async queryAsync(soql: string, useBulkQueryApi: boolean): Promise<QueryResult<object>> {
 
         let self = this;
 
@@ -50,7 +50,7 @@ export class ApiSf {
 
             let records = [];
 
-            if (useBulkApi) {
+            if (useBulkQueryApi) {
                 conn.bulk.query(soql).on("record", function (record: any) {
                     records.push(record);
                 }).on("end", function () {
