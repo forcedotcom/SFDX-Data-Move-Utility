@@ -541,8 +541,6 @@ export default class MigrationJobTask {
 
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(queryResult.totalSize));
 
-        // FIXME:
-        // Create Api engine and delete records
         let recordsToDelete = queryResult.records.map(x => { return { Id: x["Id"] } });
         this.createApiEngine(this.targetOrg, OPERATION.Delete, true);
         let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
