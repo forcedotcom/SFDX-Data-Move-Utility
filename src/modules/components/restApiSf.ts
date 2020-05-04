@@ -11,7 +11,7 @@ import { OPERATION } from "./statics";
 import { IOrgConnectionData } from "../models";
 import { MessageUtils } from "./messages";
 import { IApiEngine, IApiJobCreateResult } from "../models/apiSf/interfaces";
-import { ApiProcessBase, ApiInfo, IApiEngineInitParameters } from "../models/apiSf";
+import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../models/apiSf";
 
 
 
@@ -23,7 +23,7 @@ import { ApiProcessBase, ApiInfo, IApiEngineInitParameters } from "../models/api
  * @export
  * @class BulkApiV1_0sf
  */
-export class RestApiSf extends ApiProcessBase implements IApiEngine {
+export class RestApiSf extends ApiEngineBase implements IApiEngine {
 
     constructor(params: IApiEngineInitParameters) {
         super(params);

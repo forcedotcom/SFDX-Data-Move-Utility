@@ -942,23 +942,7 @@ export class CommonUtils {
     }
 
 
-    /**
-     * Creates jforce connection instance
-     *
-     * @param {string} instanceUrl
-     * @param {string} accessToken
-     * @param {string} apiVersion
-     * @returns {*}
-     * @memberof ApiSf
-     */
-    public static createOrgConnection(connectionData: IOrgConnectionData): any {
-        return new jsforce.Connection({
-            instanceUrl: connectionData.instanceUrl,
-            accessToken: connectionData.accessToken,
-            version: connectionData.apiVersion,
-            maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
-        });
-    }
+
 
 
 
@@ -979,10 +963,27 @@ export class CsvChunks {
     }
     chunks: Array<ICsvChunk> = [];
     header: Array<string> = new Array<string>();
+    /**
+     * Converts array of objects into CsvChunk
+     */
+    fromArrayOfRecords(records: Array<Array<any>>): CsvChunks {
+        if (records.length == 0) return;
+        this.chunks = [].concat(records.map(chunkRecords => <ICsvChunk>{
+            csvString: "",
+            records: chunkRecords
+        }));
+        this.header = Object.keys(records[0][0]);
+        return this;
+    }
 }
 
-
-export interface ICsvChunk{
+/**
+ * Single chunk of CSV
+ *
+ * @export
+ * @interface ICsvChunk
+ */
+export interface ICsvChunk {
     records: Array<object>,
     csvString: string
 }

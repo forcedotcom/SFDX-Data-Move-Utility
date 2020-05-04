@@ -586,7 +586,8 @@ export default class MigrationJobTask {
                         sObjectName: this.sObjectName,
                         operation,
                         pollingIntervalMs: this.script.pollingIntervalMs,
-                        updateRecordId
+                        updateRecordId,
+                        bulkApiV1BatchSize: this.script.bulkApiV1BatchSize
                     });
                     break;
             }

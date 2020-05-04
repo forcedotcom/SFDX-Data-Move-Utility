@@ -21,6 +21,7 @@ import {
 } from 'soql-parser-js';
 import { CONSTANTS, DATA_MEDIA_TYPE } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
+import { IOrgConnectionData } from '../models';
 var jsforce = require("jsforce");
 
 
@@ -132,5 +133,23 @@ export class ApiSf {
         return sObjectDescribe;
     };
 
+
+    /**
+     * Creates jforce connection instance
+     *
+     * @param {string} instanceUrl
+     * @param {string} accessToken
+     * @param {string} apiVersion
+     * @returns {*}
+     * @memberof ApiSf
+     */
+    public static createOrgConnection(connectionData: IOrgConnectionData): any {
+        return new jsforce.Connection({
+            instanceUrl: connectionData.instanceUrl,
+            accessToken: connectionData.accessToken,
+            version: connectionData.apiVersion,
+            maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
+        });
+    }    
   
 }

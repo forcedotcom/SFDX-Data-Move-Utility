@@ -20,14 +20,16 @@ import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
  * @export
  * @class ApiProcessBase
  */
-export default class ApiProcessBase {
+export default class ApiEngineBase {
 
     isSource: boolean;
     pollingIntervalMs: number
+    bulkApiV1BatchSize: number;
     operation: OPERATION;
     updateRecordId: boolean;
     sObjectName : string;
     logger: MessageUtils;
+
     connectionData : IOrgConnectionData;
 
     apiJobCreateResult: IApiJobCreateResult;
@@ -61,6 +63,7 @@ export default class ApiProcessBase {
         this.operation = params.operation;
         this.pollingIntervalMs = params.pollingIntervalMs;
         this.updateRecordId = params.updateRecordId;
+        this.bulkApiV1BatchSize = params.bulkApiV1BatchSize;
     }
 
 }

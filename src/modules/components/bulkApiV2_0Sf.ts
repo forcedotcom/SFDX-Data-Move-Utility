@@ -12,7 +12,7 @@ import { RESOURCES, MessageUtils } from "./messages";
 import { RESULT_STATUSES, OPERATION, CONSTANTS } from "./statics";
 import { IOrgConnectionData } from "../models";
 import { IApiEngine, IApiJobCreateResult } from "../models/apiSf/interfaces";
-import { ApiProcessBase, ApiInfo, ApiResultRecord, IApiEngineInitParameters } from "../models/apiSf";
+import { ApiEngineBase, ApiInfo, ApiResultRecord, IApiEngineInitParameters } from "../models/apiSf";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -27,7 +27,7 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  * @export
  * @class BulkApiV2_0sf
  */
-export class BulkApiV2_0sf extends ApiProcessBase implements IApiEngine {
+export class BulkApiV2_0sf extends ApiEngineBase implements IApiEngine {
 
     operationType: string | "insert" | "update" | "delete";
     sourceRecords: Array<object> = new Array<object>();

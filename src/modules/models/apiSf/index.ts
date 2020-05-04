@@ -8,4 +8,4 @@
 export * from "./interfaces";
 export { default as ApiInfo } from "./apiInfo";
 export { default as ApiResultRecord } from "./apiResultRecord";
-export { default as ApiProcessBase } from "./ApiProcessBase";
+export { default as ApiEngineBase } from "./ApiEngineBase";

@@ -105,7 +105,8 @@ export interface IApiEngineInitParameters {
     sObjectName: string,
     operation: OPERATION,
     pollingIntervalMs: number,
-    updateRecordId: boolean
+    updateRecordId: boolean,
+    bulkApiV1BatchSize?: number
 }
 
 

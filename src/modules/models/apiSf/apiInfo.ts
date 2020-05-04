@@ -29,6 +29,7 @@ export default class ApiInfo {
 
     contentUrl: string;
 
+    job: any;
     jobId: string;
     batchId: string;
     jobState: "Undefined" | "Info" | "OperationStarted" | "OperationFinished" | "Open" | "Closed" | "Aborted" | "Failed" | "UploadStart" | "UploadComplete" | "InProgress" | "JobComplete" = "Undefined";
