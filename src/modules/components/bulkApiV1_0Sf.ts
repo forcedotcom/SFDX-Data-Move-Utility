@@ -10,10 +10,10 @@ import { ICsvChunk } from "./commonUtils";
 import { OPERATION } from "./statics";
 import { IOrgConnectionData } from "../models";
 import { MessageUtils } from "./messages";
-import ApiProcessBase from "../models/apiSf/ApiProcessBase";
-import IApiProcess from "../models/apiSf/IApiProcess";
-import ApiInfo from "../models/apiSf/apiInfo";
-import IApiJobCreateResult from "../models/apiSf/IApiJobCreateResult";
+import { IApiProcess, IApiJobCreateResult } from "../models/apiSf/interfaces";
+import { ApiProcessBase } from "../models/apiSf/ApiProcessBase";
+import { ApiInfo } from "../models/apiSf/apiInfo";
+
 
 
 
@@ -61,6 +61,9 @@ export class BulkApiV1_0sf extends ApiProcessBase implements IApiProcess {
         return null;
     }
 
+    getStrOperation() : string {
+        return this.strOperation;
+    }
     // ----------------------- ---------------- -------------------------------------------    
 
 }

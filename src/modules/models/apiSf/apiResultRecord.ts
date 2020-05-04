@@ -12,7 +12,7 @@
  * @export
  * @class BulkApiResultRecord
  */
-export default class ApiResultRecord {
+export class ApiResultRecord {
 
     constructor(init: Partial<ApiResultRecord>) {
         Object.assign(this, init);

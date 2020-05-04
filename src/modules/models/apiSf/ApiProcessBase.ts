@@ -9,8 +9,7 @@
 import { OPERATION } from "../../components/statics";
 import { MessageUtils } from "../../components/messages";
 import { IOrgConnectionData } from "..";
-import IApiJobCreateResult from "./IApiJobCreateResult";
-
+import { IApiJobCreateResult } from "./interfaces";
 
 
 
@@ -21,7 +20,7 @@ import IApiJobCreateResult from "./IApiJobCreateResult";
  * @export
  * @class ApiProcessBase
  */
-export default class ApiProcessBase {
+export class ApiProcessBase {
 
     isSource: boolean;
     pollingIntervalMs: number

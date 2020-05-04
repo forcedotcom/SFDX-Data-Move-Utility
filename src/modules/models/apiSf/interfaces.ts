@@ -6,13 +6,19 @@
  */
 
 
-import { ICsvChunk } from "../../components/commonUtils";
-import ApiInfo from "./apiInfo";
-import IApiJobCreateResult from "./IApiJobCreateResult";
+
+import { ICsvChunk, CsvChunks } from "../../components/commonUtils";
+import { ApiInfo } from "./apiInfo";
 
 
+export interface IApiJobCreateResult {
+    chunks: CsvChunks,        
+    jobCreateResult: ApiInfo,
+    connection?: any,
+    allRecords?: Array<any>
+}
 
-export default interface IApiProcess {
+export interface IApiProcess {
 
     /**
      * Executes complete api operation 
@@ -64,5 +70,16 @@ export default interface IApiProcess {
      */
     getEngineName(): string;
 
+    /**
+     * Return the name of the current api operation
+     *
+     * @returns {string}
+     * @memberof IApiProcess
+     */
+    getStrOperation(): string;
+
 }
+
+
+
 

@@ -6,7 +6,7 @@
  */
 
 import { RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../../components/statics";
-import ApiResultRecord from "./apiResultRecord";
+import { ApiResultRecord } from "./apiResultRecord";
 
 
 
@@ -18,7 +18,7 @@ import ApiResultRecord from "./apiResultRecord";
 * @export
 * @class BulkAPIResult
 */
-export default class ApiInfo {
+export class ApiInfo {
 
     constructor(init?: Partial<ApiInfo>) {
         Object.assign(this, init);

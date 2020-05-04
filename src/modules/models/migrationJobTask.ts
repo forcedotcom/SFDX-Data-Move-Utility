@@ -23,14 +23,16 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError } from ".";
+import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, ScriptOrg } from ".";
 import SFieldDescribe from "./sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
 import { CachedCSVContent } from "./migrationJob";
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0sf } from "../components/bulkApiV2_0Sf";
-import ApiInfo from "./apiSf/apiInfo";
+import { IApiProcess } from "./apiSf/interfaces";
+import { ApiInfo } from "./apiSf/apiInfo";
+
 
 
 export default class MigrationJobTask {
@@ -110,14 +112,14 @@ export default class MigrationJobTask {
         return this.scriptObject.operation;
     }
 
-     get strOperation(): string {
-         return this.scriptObject.strOperation;
-     }
+    get strOperation(): string {
+        return this.scriptObject.strOperation;
+    }
 
-     get strApiOperation(){
-         // FIXME: Replace hardcoded value
-         return "Delete"; 
-     }
+    
+
+
+
 
 
     // ----------------------- Public methods -------------------------------------------    
@@ -514,8 +516,6 @@ export default class MigrationJobTask {
      */
     async deleteOldTargetRecords(): Promise<boolean> {
 
-        let self = this;
-
         if (!(this.targetOrg.media == DATA_MEDIA_TYPE.Org
             && this.scriptObject.operation != OPERATION.Readonly
             && this.scriptObject.deleteOldData)) {
@@ -598,48 +598,55 @@ export default class MigrationJobTask {
 
             case RESULT_STATUSES.ApiOperationStarted:
                 // FIXME: replace hardcoded value
-                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this.strApiOperation, "BulkApi V2.0");
+                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation(), this._apiEngine.getEngineName());
                 break;
 
             case RESULT_STATUSES.ApiOperationFinished:
-                this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this.strApiOperation);
+                this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation());
                 break;
 
             case RESULT_STATUSES.JobCreated:
-                this.logger.log(RESOURCES.apiOperationJobCreated, logMessageType, verbosity, apiResult.jobId, this.strApiOperation, this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationJobCreated, logMessageType, verbosity, apiResult.jobId, this._apiEngine.getStrOperation(), this.sObjectName);
                 break;
 
             case RESULT_STATUSES.BatchCreated:
-                this.logger.log(RESOURCES.apiOperationBatchCreated, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationBatchCreated, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName);
                 break;
 
             case RESULT_STATUSES.DataUploaded:
-                this.logger.log(RESOURCES.apiOperationDataUploaded, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationDataUploaded, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName);
                 break;
 
             case RESULT_STATUSES.InProgress:
-                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
+                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 break;
 
             case RESULT_STATUSES.Completed:
                 if (logMessageType != LOG_MESSAGE_TYPE.WARN)
-                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
+                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 else
-                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
+                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 break;
 
             case RESULT_STATUSES.ProcessError:
             case RESULT_STATUSES.FailedOrAborted:
                 if (apiResult.errorMessage)
-                    this.logger.log(RESOURCES.apiOperationProcessError, logMessageType, verbosity, this.sObjectName, this.strApiOperation, apiResult.errorMessage);
+                    this.logger.log(RESOURCES.apiOperationProcessError, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation(), apiResult.errorMessage);
                 else
-                    this.logger.log(RESOURCES.apiOperationFailed, logMessageType, verbosity, this.sObjectName, this.strApiOperation);
+                    this.logger.log(RESOURCES.apiOperationFailed, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation());
                 break;
         }
     }
 
     private _apiOperationError(operation: OPERATION) {
-        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.strApiOperation));
+        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName,this._apiEngine.getStrOperation()));
+    }
+
+    private _apiEngine: IApiProcess;
+
+    private _createApiEngine(org: ScriptOrg, operation: OPERATION): IApiProcess {
+        // TODO: Implement this
+        return this._apiEngine;
     }
 
 }
