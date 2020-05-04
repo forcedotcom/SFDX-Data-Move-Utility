@@ -31,7 +31,8 @@ import { CachedCSVContent } from "./migrationJob";
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0sf } from "../components/bulkApiV2_0Sf";
 import { IApiProcess } from "./apiSf/interfaces";
-import { ApiInfo } from "./apiSf/apiInfo";
+import ApiInfo from "./apiSf/apiInfo";
+
 
 
 
@@ -116,7 +117,7 @@ export default class MigrationJobTask {
         return this.scriptObject.strOperation;
     }
 
-    
+
 
 
 
@@ -540,12 +541,14 @@ export default class MigrationJobTask {
         // TEST:
         // FIXME:
         let recToDelete = records.records.map(x => { return { Id: x["Id"] } });
-        let apiProcessor: BulkApiV2_0sf = new BulkApiV2_0sf(this.logger,
-            this.targetOrg.connectionData,
-            this.sObjectName,
-            OPERATION.Delete,
-            this.scriptObject.script.pollingIntervalMs,
-            true);
+        let apiProcessor: BulkApiV2_0sf = new BulkApiV2_0sf({
+            logger: this.logger,
+            connectionData: this.targetOrg.connectionData,
+            sObjectName: this.sObjectName,
+            operation: OPERATION.Delete,
+            pollingIntervalMs: this.scriptObject.script.pollingIntervalMs,
+            updateRecordId: true
+        });
         let callback = this._apiOperationCallback.bind(this);
         let resultRecords = await apiProcessor.executeCRUD(recToDelete, callback);
         if (resultRecords == null) {
@@ -639,7 +642,7 @@ export default class MigrationJobTask {
     }
 
     private _apiOperationError(operation: OPERATION) {
-        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName,this._apiEngine.getStrOperation()));
+        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this._apiEngine.getStrOperation()));
     }
 
     private _apiEngine: IApiProcess;

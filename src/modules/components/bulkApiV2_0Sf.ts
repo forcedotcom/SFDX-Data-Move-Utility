@@ -12,9 +12,7 @@ import { RESOURCES, MessageUtils } from "./messages";
 import { RESULT_STATUSES, OPERATION, CONSTANTS } from "./statics";
 import { IOrgConnectionData } from "../models";
 import { IApiProcess, IApiJobCreateResult } from "../models/apiSf/interfaces";
-import { ApiProcessBase } from "../models/apiSf/ApiProcessBase";
-import { ApiInfo } from "../models/apiSf/apiInfo";
-import { ApiResultRecord } from "../models/apiSf/apiResultRecord";
+import { ApiProcessBase, ApiInfo, ApiResultRecord, IApiProcessParameters } from "../models/apiSf";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -39,13 +37,8 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         return endpoint.replace('[v]', `v${this.version}`);
     }
 
-    constructor(logger: MessageUtils,
-        connectionData: IOrgConnectionData,
-        sObjectName: string,
-        operation: OPERATION,
-        pollingIntervalMs: number,
-        updateRecordId: boolean) {
-        super(logger, connectionData, sObjectName, operation, pollingIntervalMs, updateRecordId);
+    constructor(params: IApiProcessParameters) {
+        super(params);
     }
 
 

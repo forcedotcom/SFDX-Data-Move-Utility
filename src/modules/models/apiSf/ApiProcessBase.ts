@@ -9,7 +9,7 @@
 import { OPERATION } from "../../components/statics";
 import { MessageUtils } from "../../components/messages";
 import { IOrgConnectionData } from "..";
-import { IApiJobCreateResult } from "./interfaces";
+import { IApiJobCreateResult, IApiProcessParameters } from "./interfaces";
 
 
 
@@ -20,7 +20,7 @@ import { IApiJobCreateResult } from "./interfaces";
  * @export
  * @class ApiProcessBase
  */
-export class ApiProcessBase {
+export default class ApiProcessBase {
 
     isSource: boolean;
     pollingIntervalMs: number
@@ -54,18 +54,13 @@ export class ApiProcessBase {
         return this.operation.toString();
     }
 
-    constructor(logger: MessageUtils, 
-                connectionData : IOrgConnectionData, 
-                sObjectName : string, 
-                operation: OPERATION, 
-                pollingIntervalMs: number,
-                updateRecordId: boolean) {
-        this.logger = logger;
-        this.connectionData = connectionData;
-        this.sObjectName = sObjectName;
-        this.operation = operation;
-        this.pollingIntervalMs = pollingIntervalMs;
-        this.updateRecordId = updateRecordId;
+    constructor(params: IApiProcessParameters) {
+        this.logger = params.logger;
+        this.connectionData = params.connectionData;
+        this.sObjectName = params.sObjectName;
+        this.operation = params.operation;
+        this.pollingIntervalMs = params.pollingIntervalMs;
+        this.updateRecordId = params.updateRecordId;
     }
 
 }

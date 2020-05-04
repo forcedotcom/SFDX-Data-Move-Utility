@@ -11,8 +11,7 @@ import { OPERATION } from "./statics";
 import { IOrgConnectionData } from "../models";
 import { MessageUtils } from "./messages";
 import { IApiProcess, IApiJobCreateResult } from "../models/apiSf/interfaces";
-import { ApiProcessBase } from "../models/apiSf/ApiProcessBase";
-import { ApiInfo } from "../models/apiSf/apiInfo";
+import { ApiProcessBase, ApiInfo, IApiProcessParameters } from "../models/apiSf";
 
 
 
@@ -26,14 +25,10 @@ import { ApiInfo } from "../models/apiSf/apiInfo";
  */
 export class RestApiSf extends ApiProcessBase implements IApiProcess {
 
-    constructor(logger: MessageUtils,
-        connectionData: IOrgConnectionData,
-        sObjectName: string,
-        operation: OPERATION,
-        pollingIntervalMs: number,
-        updateRecordId: boolean) {
-        super(logger, connectionData, sObjectName, operation, pollingIntervalMs, updateRecordId);
+    constructor(params: IApiProcessParameters) {
+        super(params);
     }
+
 
 
     // ----------------------- Interface IApiProcess ----------------------------------

@@ -5,15 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-/**
- * Connection data for salesforce env
- *
- * @export
- * @interface IOrgConnectionData
- */
-export default interface IOrgConnectionData {
-    instanceUrl: string;
-    accessToken: string;
-    apiVersion: string;
-}
+export * from "./interfaces";
+export { default as ApiInfo } from "./apiInfo";
+export { default as ApiResultRecord } from "./apiResultRecord";
+export { default as ApiProcessBase } from "./ApiProcessBase";

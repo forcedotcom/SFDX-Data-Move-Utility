@@ -8,6 +8,7 @@
 
 
 export * from "./errors";
+export * from "./interfaces";
 export { default as OrgInfo } from "./orgInfo";
 export { default as Script } from "./script";
 export { default as ScriptMockField } from "./scriptMockField";
@@ -17,5 +18,5 @@ export { default as SFieldDescribe } from "./sfieldDescribe";
 export { default as SObjectDescribe } from "./sobjectDescribe";
 export { default as MigrationJobTask } from "./migrationJobTask";
 export { default as MigrationJob, ICSVIssues } from "./migrationJob";
-export { default as IOrgConnectionData } from "./IOrgConnectionData";
+
 

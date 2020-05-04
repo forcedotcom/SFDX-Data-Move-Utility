@@ -8,16 +8,30 @@
 
 
 import { ICsvChunk, CsvChunks } from "../../components/commonUtils";
-import { ApiInfo } from "./apiInfo";
+import { ApiInfo } from ".";
+import { MessageUtils } from "../../components/messages";
+import { IOrgConnectionData } from "..";
+import { OPERATION } from "../../components/statics";
 
-
+/**
+ * Returned after creating an Api job
+ *
+ * @export
+ * @interface IApiJobCreateResult
+ */
 export interface IApiJobCreateResult {
-    chunks: CsvChunks,        
+    chunks: CsvChunks,
     jobCreateResult: ApiInfo,
     connection?: any,
     allRecords?: Array<any>
 }
 
+/**
+ * The Api process engine reference
+ *
+ * @export
+ * @interface IApiProcess
+ */
 export interface IApiProcess {
 
     /**
@@ -78,6 +92,20 @@ export interface IApiProcess {
      */
     getStrOperation(): string;
 
+}
+/**
+ * Parameters to initialize Api process engine instance
+ *
+ * @export
+ * @interface IApiProcessParameters
+ */
+export interface IApiProcessParameters {
+    logger: MessageUtils,
+    connectionData: IOrgConnectionData,
+    sObjectName: string,
+    operation: OPERATION,
+    pollingIntervalMs: number,
+    updateRecordId: boolean
 }
 
 
