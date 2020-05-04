@@ -46,9 +46,9 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
         connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
         let job = connection.bulk.createJob(this.sObjectName, this.strOperation.toLowerCase());
         let recordChunks = CommonUtils.chunkArray(allRecords, this.bulkApiV1BatchSize);
-        let csvChunks = new CsvChunks().fromArrayChunks(recordChunks);
+        let chunks = new CsvChunks().fromArrayChunks(recordChunks);
         this.apiJobCreateResult = {
-            chunks: csvChunks,
+            chunks,
             jobCreateResult: new ApiInfo({
                 jobState: "Undefined",
                 strOperation: this.strOperation,
