@@ -45,7 +45,7 @@ export default class MigrationJobTask {
     sourceTotalRecorsCount: number = 0;
     targetTotalRecorsCount: number = 0;
     apiEngine: IApiEngine;
-    apiOperationCallback: (apiResult: ApiInfo) => void;
+    apiProgressCallback: (apiResult: ApiInfo) => void;
 
     constructor(init: Partial<MigrationJobTask>) {
         if (init) {
@@ -545,7 +545,7 @@ export default class MigrationJobTask {
         // Create Api engine and delete records
         let recToDelete = records.records.map(x => { return { Id: x["Id"] } });
         this.createApiEngine(this.targetOrg, OPERATION.Delete, true);
-        let resultRecords = await this.apiEngine.executeCRUD(recToDelete, this.apiOperationCallback);
+        let resultRecords = await this.apiEngine.executeCRUD(recToDelete, this.apiProgressCallback);
         if (resultRecords == null) {
             // API ERROR. Exiting.
             this._apiOperationError(OPERATION.Delete);
@@ -603,13 +603,13 @@ export default class MigrationJobTask {
                 updateRecordId
             });
         }
-        this.apiOperationCallback = this.apiOperationCallback || this._apiOperationCallback.bind(this);
+        this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
         return this.apiEngine;
     }
 
 
     // ----------------------- Private members -------------------------------------------
-    private _apiOperationCallback(apiResult: ApiInfo): void {
+    private _apiProgressCallback(apiResult: ApiInfo): void {
 
         let verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
         let logMessageType = LOG_MESSAGE_TYPE.STRING;
