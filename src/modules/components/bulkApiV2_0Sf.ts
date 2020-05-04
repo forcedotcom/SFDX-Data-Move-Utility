@@ -13,7 +13,7 @@ import { RESULT_STATUSES, OPERATION, CONSTANTS } from "./statics";
 import { IOrgConnectionData } from "../models";
 import ApiProcessBase from "../models/apiSf/ApiProcessBase";
 import IApiProcess from "../models/apiSf/IApiProcess";
-import ApiResult from "../models/apiSf/apiResult";
+import ApiInfo from "../models/apiSf/apiInfo";
 import IApiJobCreateResult from "../models/apiSf/IApiJobCreateResult";
 import ApiResultRecord from "../models/apiSf/apiResultRecord";
 const request = require('request');
@@ -56,11 +56,11 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * Execute full CRUD operation
      *
      * @param {Array<any>} allRecords
-     * @param {(progress: ApiResult) => void} progressCallback
+     * @param {(progress: ApiInfo) => void} progressCallback
      * @returns {Promise<Array<any>>}
      * @memberof BulkApiV2_0sf
      */
-    async executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+    async executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
         await this.createCRUDApiJobAsync(allRecords);
         return await this.processCRUDApiJobAsync(progressCallback);
     }
@@ -78,7 +78,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             CONSTANTS.BULK_API_V2_BLOCK_SIZE);
         this.apiJobCreateResult = {
             chunks: csvChunks,
-            jobCreateResult: new ApiResult({
+            jobCreateResult: new ApiInfo({
                 jobState: "Undefined",
                 strOperation: this.strOperation,
                 sObjectName: this.sObjectName,
@@ -91,11 +91,11 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
     /**
      * Process CRUD api job
      * 
-     * @param {(progress: ApiResult) => void} progressCallback
+     * @param {(progress: ApiInfo) => void} progressCallback
      * @returns {Promise<Array<any>>}
      * @memberof BulkApiV2_0sf
      */
-    async processCRUDApiJobAsync(progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+    async processCRUDApiJobAsync(progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
         let allResultRecords = new Array<any>();
         for (let index = 0; index < this.apiJobCreateResult.chunks.chunks.length; index++) {
             const csvCunk = this.apiJobCreateResult.chunks.chunks[index];
@@ -114,21 +114,28 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * Create and process CRUD api batch
      *
      * @param {ICsvChunk} csvChunk
-     * @param {(progress: ApiResult) => void} progressCallback
+     * @param {(progress: ApiInfo) => void} progressCallback
      * @returns {Promise<Array<any>>}
      * @memberof BulkApiV2_0sf
      */
-    async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+    async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
 
         let self = this;
 
         if (progressCallback) {
             // Progress message: operation started
-            progressCallback(new ApiResult({
+            progressCallback(new ApiInfo({
                 jobState: "OperationStarted"
             }));
         }
 
+        if (progressCallback) {
+            // Progress message: using bulk api version
+            progressCallback(new ApiInfo({
+                jobState: "Info",
+                informationMessageData: [RESOURCES.usingBulkApi, "V2.0"]
+            }));
+        }
 
         // Create bulk job ******************************************
         let jobResult = await this.createBulkJobAsync(this.sObjectName, this.strOperation.toLowerCase());
@@ -169,7 +176,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
         // Poll bulk batch status and wait for operation completed *************************
         let numberBatchRecordsProcessed = 0;
-        batchResult = await this.waitForBulkJobCompleteAsync(jobResult.contentUrl, this.pollingIntervalMs, function (progress: ApiResult) {
+        batchResult = await this.waitForBulkJobCompleteAsync(jobResult.contentUrl, this.pollingIntervalMs, function (progress: ApiInfo) {
             progress.jobId = jobResult.jobId;
             progress.batchId = jobResult.jobId;
             if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
@@ -226,11 +233,11 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
         if (progressCallback) {
             // Progress message: operation finished
-            progressCallback(new ApiResult({
+            progressCallback(new ApiInfo({
                 jobState: "OperationFinished"
             }));
         }
-       
+
 
         // SUCCESS RESULT
         return csvChunk.records;
@@ -244,10 +251,10 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      *
      * @param {string} objectAPIName Object to process
      * @param {string} operationType Operation type to perform
-     * @returns {Promise<ApiResult>}
+     * @returns {Promise<ApiInfo>}
      * @memberof BulkAPI2sf
      */
-    async createBulkJobAsync(objectAPIName: string, operationType: string | "insert" | "update" | "delete"): Promise<ApiResult> {
+    async createBulkJobAsync(objectAPIName: string, operationType: string | "insert" | "update" | "delete"): Promise<ApiInfo> {
 
         let self = this;
         this.operationType = operationType;
@@ -270,7 +277,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             }, function (error: any, response: any, body: any) {
                 if (!error && response.statusCode == 200) {
                     let info = JSON.parse(body);
-                    resolve(new ApiResult({
+                    resolve(new ApiInfo({
                         jobId: info.id,
                         contentUrl: info.contentUrl,
                         sObjectName: self.sObjectName,
@@ -292,10 +299,10 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * @param {string} contentUrl Content url returned by createBulkJob()
      * @param {string} csvContent The string contains records to process in serialized csv format
      * @param {Array<object>} records Records to process were used to generate the csv string
-     * @returns {Promise<ApiResult>}
+     * @returns {Promise<ApiInfo>}
      * @memberof BulkAPI2sf
      */
-    async createBulkBatchAsync(contentUrl: string, csvContent: string, records: Array<object>): Promise<ApiResult> {
+    async createBulkBatchAsync(contentUrl: string, csvContent: string, records: Array<object>): Promise<ApiInfo> {
         let self = this;
         this.sourceRecords = records;
         if (this.operationType == "insert") {
@@ -317,7 +324,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                 }
             }, function (error: any, response: any) {
                 if (!error && response.statusCode == 201) {
-                    resolve(new ApiResult({
+                    resolve(new ApiInfo({
                         jobState: "UploadStart",
                         sObjectName: self.sObjectName,
                         strOperation: self.strOperation,
@@ -334,10 +341,10 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * Closes bulk job and forces csv content to be uploaded 
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
-     * @returns {Promise<ApiResult>}
+     * @returns {Promise<ApiInfo>}
      * @memberof BulkAPI2sf
      */
-    async closeBulkJobAsync(contentUrl: string): Promise<ApiResult> {
+    async closeBulkJobAsync(contentUrl: string): Promise<ApiInfo> {
         let self = this;
         return new Promise(resolve => {
             request.patch({
@@ -355,7 +362,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             }, function (error: any, response: any, body: any) {
                 if (!error && response.statusCode == 200) {
                     let info = JSON.parse(body);
-                    resolve(new ApiResult({
+                    resolve(new ApiInfo({
                         jobState: info.state,
                         sObjectName: self.sObjectName,
                         strOperation: self.strOperation,
@@ -372,10 +379,10 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * Polls  job for the status
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
-     * @returns {Promise<ApiResult>} 
+     * @returns {Promise<ApiInfo>} 
      * @memberof BulkAPI2sf
      */
-    async pollBulkJobAsync(contentUrl: string): Promise<ApiResult> {
+    async pollBulkJobAsync(contentUrl: string): Promise<ApiInfo> {
         let self = this;
         return new Promise(resolve => {
             request.get({
@@ -390,7 +397,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             }, function (error: any, response: any, body: any) {
                 if (!error && response.statusCode == 200) {
                     let info = JSON.parse(body);
-                    resolve(new ApiResult({
+                    resolve(new ApiInfo({
                         errorMessage: info.errorMessage,
                         jobState: info.state,
                         numberRecordsFailed: info.numberRecordsFailed,
@@ -412,13 +419,13 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      *
      * @param {string} contentUrl
      * @param {number} pollInterval
-     * @param {(result: ApiResult) => any} pollCallback
-     * @returns {Promise<ApiResult>}
+     * @param {(result: ApiInfo) => any} pollCallback
+     * @returns {Promise<ApiInfo>}
      * @memberof BulkAPI2sf
      */
     async waitForBulkJobCompleteAsync(contentUrl: string,
         pollInterval: number,
-        pollCallback: (result: ApiResult) => any): Promise<ApiResult> {
+        pollCallback: (result: ApiInfo) => any): Promise<ApiInfo> {
 
         let self = this;
 
@@ -470,10 +477,10 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
      * Returns completed job result, inculding all source and target records with status per target record.
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
-     * @returns {Promise<ApiResult>}
+     * @returns {Promise<ApiInfo>}
      * @memberof BulkAPI2sf
      */
-    async getBulkJobResultAsync(contentUrl: string): Promise<ApiResult> {
+    async getBulkJobResultAsync(contentUrl: string): Promise<ApiInfo> {
         let self = this;
         return new Promise(resolve => {
             request.get({
@@ -490,7 +497,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                 if (!error && response.statusCode >= 200 && response.statusCode < 400) {
 
                     if (response.statusCode != 200) {
-                        resolve(new ApiResult({
+                        resolve(new ApiInfo({
                             jobState: "InProgress",
                             sObjectName: self.sObjectName,
                             strOperation: self.strOperation,
@@ -540,13 +547,11 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                             }
                             return resultRecord;
                         });
-                        resolve(new ApiResult({
+                        resolve(new ApiInfo({
                             resultRecords,
                             jobState: "JobComplete",
                             sObjectName: self.sObjectName,
-                            strOperation: self.strOperation,
-                            numberRecordsProcessed: self.numberJobRecordsSucceeded,
-                            numberRecordsFailed: self.numberJobRecordsFailed
+                            strOperation: self.strOperation
                         }));
                     } catch (e) {
                         if (typeof e.message == "string") {
@@ -643,7 +648,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         let self = this;
         if (!response) {
             // Runtime error
-            resolve(new ApiResult({
+            resolve(new ApiInfo({
                 errorMessage: error.message,
                 errorStack: error.stack,
                 sObjectName: self.sObjectName,
@@ -654,7 +659,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             let info = body && JSON.parse(body)[0] || {
                 message: "Unexpected error",
             };
-            resolve(new ApiResult({
+            resolve(new ApiInfo({
                 errorMessage: info.message,
                 sObjectName: self.sObjectName,
                 strOperation: self.strOperation,

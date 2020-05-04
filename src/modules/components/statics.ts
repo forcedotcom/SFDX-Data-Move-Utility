@@ -66,6 +66,7 @@ export enum RESULT_STATUSES {
     Undefined = "Undefined",
     ApiOperationStarted = "ApiOperationStarted",
     ApiOperationFinished = "ApiOperationFinished",
+    Information = "Information",
     JobCreated = "JobCreated",
     BatchCreated = "BatchCreated",
     DataUploaded = "DataUploaded",

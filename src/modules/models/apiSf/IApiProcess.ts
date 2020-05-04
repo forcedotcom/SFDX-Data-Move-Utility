@@ -7,7 +7,7 @@
 
 
 import { ICsvChunk } from "../../components/commonUtils";
-import ApiResult from "./apiResult";
+import ApiInfo from "./apiInfo";
 import IApiJobCreateResult from "./IApiJobCreateResult";
 
 
@@ -23,7 +23,7 @@ export default interface IApiProcess {
      * @returns {Promise<IApiJobCreateResult>} Returns null when unresolvable error occured
      * @memberof IApiProcess
      */
-    executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>>;
+    executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>>;
 
     /**
      * Creates api job
@@ -42,7 +42,7 @@ export default interface IApiProcess {
      * @returns {Promise<Array<any>>} Returns null when unresolvable error occured
      * @memberof IApiProcess
      */
-    processCRUDApiJobAsync: (progressCallback: (progress: ApiResult) => void) => Promise<Array<any>>;
+    processCRUDApiJobAsync: (progressCallback: (progress: ApiInfo) => void) => Promise<Array<any>>;
 
     /**
      * Creates and executes api batch on the given chunk of the input records.
@@ -54,7 +54,7 @@ export default interface IApiProcess {
      * @returns {Promise<Array<any>>} Returns null when unresolvable error occured
      * @memberof IApiProcess
      */
-    processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiResult) => void): Promise<Array<any>>; 
+    processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>>; 
 
 
 }

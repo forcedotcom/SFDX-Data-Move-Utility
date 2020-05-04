@@ -18,9 +18,9 @@ import ApiResultRecord from "./apiResultRecord";
 * @export
 * @class BulkAPIResult
 */
-export default class ApiResult {
+export default class ApiInfo {
 
-    constructor(init?: Partial<ApiResult>) {
+    constructor(init?: Partial<ApiInfo>) {
         Object.assign(this, init);
         this.resultRecords = this.resultRecords || new Array<ApiResultRecord>();
     }
@@ -32,7 +32,7 @@ export default class ApiResult {
 
     jobId: string;
     batchId: string;
-    jobState: "Undefined" | "OperationStarted" | "OperationFinished" | "Open" | "Closed" | "Aborted" | "Failed" | "UploadStart" | "UploadComplete" | "InProgress" | "JobComplete" = "Undefined";
+    jobState: "Undefined" | "Info" | "OperationStarted" | "OperationFinished" | "Open" | "Closed" | "Aborted" | "Failed" | "UploadStart" | "UploadComplete" | "InProgress" | "JobComplete" = "Undefined";
 
     errorMessage: string;
     errorStack: string;
@@ -41,6 +41,7 @@ export default class ApiResult {
     numberRecordsFailed: number;
 
     resultRecords: Array<ApiResultRecord>;
+    informationMessageData: Array<string> = new Array<string>();
 
     get messageImportance(): MESSAGE_IMPORTANCE {
 
@@ -90,12 +91,15 @@ export default class ApiResult {
             default:
                 return RESULT_STATUSES.Undefined;
 
+            case "Info":
+                return RESULT_STATUSES.Information;
+
             case "OperationStarted":
                 return RESULT_STATUSES.ApiOperationStarted;
-            
+
             case "OperationFinished":
                 return RESULT_STATUSES.ApiOperationFinished;
-   
+
             case "Open":
                 return RESULT_STATUSES.JobCreated;
 

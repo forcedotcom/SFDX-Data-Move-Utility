@@ -7,14 +7,14 @@
 
 
 import { CsvChunks } from "../../components/commonUtils";
-import ApiResult from "./apiResult";
+import ApiInfo from "./apiInfo";
 
 
 
 
 export default interface IApiJobCreateResult {
     chunks: CsvChunks,        
-    jobCreateResult: ApiResult,
+    jobCreateResult: ApiInfo,
     connection?: any,
     allRecords?: Array<any>
 }

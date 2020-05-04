@@ -30,7 +30,7 @@ import * as fs from 'fs';
 import { CachedCSVContent } from "./migrationJob";
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0sf } from "../components/bulkApiV2_0Sf";
-import ApiResult from "./apiSf/apiResult";
+import ApiInfo from "./apiSf/apiInfo";
 
 
 export default class MigrationJobTask {
@@ -555,7 +555,7 @@ export default class MigrationJobTask {
 
 
     // ----------------------- Private members -------------------------------------------
-    private _apiOperationCallback(apiResult: ApiResult): void {
+    private _apiOperationCallback(apiResult: ApiInfo): void {
 
         let verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
         let logMessageType = LOG_MESSAGE_TYPE.STRING;
@@ -582,6 +582,14 @@ export default class MigrationJobTask {
 
         switch (apiResult.resultStatus) {
 
+            case RESULT_STATUSES.Information:
+                if (apiResult.informationMessageData.length > 0) {
+                    // [0] - always is the RESOURCE message
+                    // [1...] - the rest of the RESOURCE message tokens
+                    this.logger.log.apply(this, [...apiResult.informationMessageData[0], logMessageType, verbosity, apiResult.informationMessageData.slice(1)]);
+                }
+                break;
+
             case RESULT_STATUSES.ApiOperationStarted:
                 this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this.strOperation);
                 break;
@@ -603,14 +611,14 @@ export default class MigrationJobTask {
                 break;
 
             case RESULT_STATUSES.InProgress:
-                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed));
                 break;
 
             case RESULT_STATUSES.Completed:
                 if (logMessageType != LOG_MESSAGE_TYPE.WARN)
-                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
+                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed);
                 else
-                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
+                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed);
                 break;
 
             case RESULT_STATUSES.ProcessError:

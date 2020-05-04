@@ -12,7 +12,7 @@ import { IOrgConnectionData } from "../models";
 import { MessageUtils } from "./messages";
 import ApiProcessBase from "../models/apiSf/ApiProcessBase";
 import IApiProcess from "../models/apiSf/IApiProcess";
-import ApiResult from "../models/apiSf/apiResult";
+import ApiInfo from "../models/apiSf/apiInfo";
 import IApiJobCreateResult from "../models/apiSf/IApiJobCreateResult";
 
 
@@ -37,7 +37,7 @@ export class RestApiSf extends ApiProcessBase implements IApiProcess {
 
 
     // ----------------------- Interface IApiProcess ----------------------------------
-    async executeCRUD(allRcords: Array<any>, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+    async executeCRUD(allRcords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
         await this.createCRUDApiJobAsync(allRcords);
         return await this.processCRUDApiJobAsync(progressCallback);
     }
@@ -47,12 +47,12 @@ export class RestApiSf extends ApiProcessBase implements IApiProcess {
         return null;
     }
 
-    async processCRUDApiJobAsync(progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+    async processCRUDApiJobAsync(progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
         // TODO: Implement this
         return null;
     }
 
-    async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiResult) => void): Promise<Array<any>> {
+    async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
         // TODO: Implement this
         return null;
     }
