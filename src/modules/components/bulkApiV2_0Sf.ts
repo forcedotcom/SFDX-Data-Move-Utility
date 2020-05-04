@@ -133,7 +133,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
             // Progress message: using bulk api version
             progressCallback(new ApiInfo({
                 jobState: "Info",
-                informationMessageData: [RESOURCES.usingBulkApi, "V2.0"]
+                informationMessageData: [RESOURCES.usingBulkApi, "2.0"]
             }));
         }
 

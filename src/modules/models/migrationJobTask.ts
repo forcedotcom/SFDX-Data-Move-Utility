@@ -586,7 +586,8 @@ export default class MigrationJobTask {
                 if (apiResult.informationMessageData.length > 0) {
                     // [0] - always is the RESOURCE message
                     // [1...] - the rest of the RESOURCE message tokens
-                    this.logger.log.apply(this, [...apiResult.informationMessageData[0], logMessageType, verbosity, apiResult.informationMessageData.slice(1)]);
+                    let resourceString = this.logger.getResourceString.apply(this.logger, [apiResult.informationMessageData[0], ...apiResult.informationMessageData.slice(1)])
+                    this.logger.log.apply(this.logger, [resourceString, logMessageType, verbosity]);
                 }
                 break;
 
@@ -616,9 +617,9 @@ export default class MigrationJobTask {
 
             case RESULT_STATUSES.Completed:
                 if (logMessageType != LOG_MESSAGE_TYPE.WARN)
-                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed);
+                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed));
                 else
-                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed);
+                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed));
                 break;
 
             case RESULT_STATUSES.ProcessError:
