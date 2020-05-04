@@ -54,11 +54,11 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
-        let csvChunks = CommonUtils.createCsvStringsFromArray(allRecords,
+        let chunks = CommonUtils.createCsvStringsFromArray(allRecords,
             CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
             CONSTANTS.BULK_API_V2_BLOCK_SIZE);
         this.apiJobCreateResult = {
-            chunks: csvChunks,
+            chunks,
             jobCreateResult: new ApiInfo({
                 jobState: "Undefined",
                 strOperation: this.strOperation,
