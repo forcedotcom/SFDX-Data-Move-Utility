@@ -545,6 +545,8 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                             jobState: "JobComplete",
                             sObjectName: self.sObjectName,
                             strOperation: self.strOperation,
+                            numberRecordsProcessed: self.numberJobRecordsSucceeded,
+                            numberRecordsFailed: self.numberJobRecordsFailed
                         }));
                     } catch (e) {
                         if (typeof e.message == "string") {

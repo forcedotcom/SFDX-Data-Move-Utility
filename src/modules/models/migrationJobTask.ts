@@ -509,6 +509,8 @@ export default class MigrationJobTask {
      */
     async deleteOldTargetRecords(): Promise<boolean> {
 
+        let self = this;
+
         if (!(this.targetOrg.media == DATA_MEDIA_TYPE.Org
             && this.scriptObject.operation != OPERATION.Readonly
             && this.scriptObject.deleteOldData)) {
@@ -539,7 +541,8 @@ export default class MigrationJobTask {
             OPERATION.Delete,
             this.scriptObject.script.pollingIntervalMs,
             true);
-        let resultRecords = await apiProcessor.executeCRUD(recToDelete, this._apiOperationCallback);
+        let callback = this._apiOperationCallback.bind(this);
+        let resultRecords = await apiProcessor.executeCRUD(recToDelete, callback);
         if (resultRecords == null) {
             // API ERROR. Exiting.
             this._apiOperationError(OPERATION.Delete);
