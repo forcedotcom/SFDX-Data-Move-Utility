@@ -122,6 +122,14 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
         let self = this;
 
+        if (progressCallback) {
+            // Progress message: operation started
+            progressCallback(new ApiResult({
+                jobState: "OperationStarted"
+            }));
+        }
+
+
         // Create bulk job ******************************************
         let jobResult = await this.createBulkJobAsync(this.sObjectName, this.strOperation.toLowerCase());
         if (progressCallback) {
@@ -215,6 +223,14 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                 self.numberJobRecordsFailed++;
             }
         });
+
+        if (progressCallback) {
+            // Progress message: operation finished
+            progressCallback(new ApiResult({
+                jobState: "OperationFinished"
+            }));
+        }
+       
 
         // SUCCESS RESULT
         return csvChunk.records;

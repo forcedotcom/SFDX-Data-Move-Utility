@@ -64,6 +64,8 @@ export enum OPERATION {
 
 export enum RESULT_STATUSES {
     Undefined = "Undefined",
+    ApiOperationStarted = "ApiOperationStarted",
+    ApiOperationFinished = "ApiOperationFinished",
     JobCreated = "JobCreated",
     BatchCreated = "BatchCreated",
     DataUploaded = "DataUploaded",
@@ -76,6 +78,7 @@ export enum RESULT_STATUSES {
 export enum MESSAGE_IMPORTANCE {
     Silent,
     Low,
+    Normal,
     High,
     Warn,
     Error

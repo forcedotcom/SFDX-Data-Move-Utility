@@ -32,7 +32,7 @@ export default class ApiResult {
 
     jobId: string;
     batchId: string;
-    jobState: "Undefined" | "Open" | "Closed" | "Aborted" | "Failed" | "UploadStart" | "UploadComplete" | "InProgress" | "JobComplete" = "Undefined";
+    jobState: "Undefined" | "OperationStarted" | "OperationFinished" | "Open" | "Closed" | "Aborted" | "Failed" | "UploadStart" | "UploadComplete" | "InProgress" | "JobComplete" = "Undefined";
 
     errorMessage: string;
     errorStack: string;
@@ -55,15 +55,14 @@ export default class ApiResult {
                 return MESSAGE_IMPORTANCE.Low;
 
             case RESULT_STATUSES.InProgress:
-                if (this.numberRecordsFailed == 0)
-                    return MESSAGE_IMPORTANCE.Low;
-                else
-                    return MESSAGE_IMPORTANCE.Warn;
+                return MESSAGE_IMPORTANCE.Normal;
 
             // High
             // Warn
             case RESULT_STATUSES.BatchCreated:
             case RESULT_STATUSES.JobCreated:
+            case RESULT_STATUSES.ApiOperationStarted:
+            case RESULT_STATUSES.ApiOperationFinished:
                 return MESSAGE_IMPORTANCE.High;
 
             case RESULT_STATUSES.Completed:
@@ -91,6 +90,12 @@ export default class ApiResult {
             default:
                 return RESULT_STATUSES.Undefined;
 
+            case "OperationStarted":
+                return RESULT_STATUSES.ApiOperationStarted;
+            
+            case "OperationFinished":
+                return RESULT_STATUSES.ApiOperationFinished;
+   
             case "Open":
                 return RESULT_STATUSES.JobCreated;
 

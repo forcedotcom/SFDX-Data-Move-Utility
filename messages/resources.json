@@ -60,7 +60,7 @@
     "usingQueryBulkApi": "* Using Bulk Query Api *",
     "usingCollectionApi": "* Using Collection Query Api *",
     "apiOperationProgress": "[Job# %s:%s] {%s} API operation progress: %s records completed, %s records failed.",
-    "apiOperationCompleted": "[Job# %s:%s] {%s} Total %s records were processed, %s records failed.",
+
     "apiOperationError": "[Job# %s:%s] {%s} API operation FAILED: %s records completed, %s records failed.",
     "apiOperationError2": "[Job# %s:%s] {%s} Batch# %s was INCOMPLETE having %s failed records.",
     "apiOperationError3": "[Job# %s:%s] {%s} Job# %s was INCOMPLETE having %s failed records.",
@@ -172,6 +172,21 @@
     "seeFileForTheDetails": "See %s file for the details.",
     "missingParentLookupRecords": "Missing parent lookup records",
     "updatingTargetCompleted": "Updating the Target %s has been completed.",
-    "finalizing": "Finalizing..."
+    "finalizing": "Finalizing...",
+
+
+
+    "apiOperationFailed": "{%s} The %s API operation FAILED.",
+    "apiOperationProcessError": "{%s} The %s API operation FAILED with message: %s.",
+    "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created. Creating  batch...",
+    "apiOperationBatchCreated": "[Batch# %s:%s] {%s} The batch has been created. Uploading data...",
+    "apiOperationDataUploaded": "[Batch# %s:%s] {%s} The data has been uploaded. Processing...",
+    "apiOperationInProgress": "[Batch# %s:%s] {%s} Processing... %s records succeeded, %s records failed.",
+    "apiOperationCompleted": "[Batch# %s:%s] {%s} Completed. %s records succeeded, %s records failed.",
+    "apiOperationWarnCompleted": "[Batch# %s:%s] {%s} Incomplete. %s records succeeded, %s records failed.",
+    "apiOperationStarted": "{%s} The %s API operation has been started.",
+    "apiOperationFinished": "{%s} The %s API operation has been finished."
+
+
 
 }

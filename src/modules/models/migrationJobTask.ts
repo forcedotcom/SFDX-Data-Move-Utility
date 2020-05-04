@@ -13,7 +13,7 @@ import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { CommonUtils } from "../components/commonUtils";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../components/statics";
-import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/messages";
+import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../components/messages";
 import { ApiSf } from "../components/apiSf";
 var jsforce = require("jsforce");
 import {
@@ -23,7 +23,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptObject, MigrationJob as Job, ICSVIssues } from ".";
+import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError } from ".";
 import SFieldDescribe from "./sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
@@ -106,6 +106,13 @@ export default class MigrationJobTask {
         return this.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
     }
 
+    get operation(): OPERATION {
+        return this.scriptObject.operation;
+    }
+
+    get strOperation(): string {
+        return this.scriptObject.strOperation;
+    }
 
 
     // ----------------------- Public methods -------------------------------------------    
@@ -532,30 +539,23 @@ export default class MigrationJobTask {
             OPERATION.Delete,
             this.scriptObject.script.pollingIntervalMs,
             true);
-        let resultRecords = await apiProcessor.executeCRUD(recToDelete, this.apiOperationCallback);
+        let resultRecords = await apiProcessor.executeCRUD(recToDelete, this._apiOperationCallback);
         if (resultRecords == null) {
-            // ERROR RESULT
+            // API ERROR. Exiting.
+            this._apiOperationError(OPERATION.Delete);
         }
-
-
-
 
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetCompleted, this.sObjectName);
         return true;
     }
 
-    /**
-     * Api operation progress status callback.
-     * Outputs the status to the console 
-     * and handles api exception
-     *
-     * @param {ApiResult} apiResult
-     * @memberof MigrationJobTask
-     */
-    apiOperationCallback(apiResult: ApiResult): void {
+
+
+    // ----------------------- Private members -------------------------------------------
+    private _apiOperationCallback(apiResult: ApiResult): void {
 
         let verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
-        let messageType: "Info" | "Warn" = "Info";
+        let logMessageType = LOG_MESSAGE_TYPE.STRING;
 
         switch (apiResult.messageImportance) {
 
@@ -563,34 +563,62 @@ export default class MigrationJobTask {
                 verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                 break;
 
-            case MESSAGE_IMPORTANCE.Warn:
-                messageType = "Warn";
+            case MESSAGE_IMPORTANCE.Normal:
+                verbosity = LOG_MESSAGE_VERBOSITY.NORMAL;
                 break;
+
+            case MESSAGE_IMPORTANCE.Warn:
+                logMessageType = LOG_MESSAGE_TYPE.WARN;
+                break;
+
+            case MESSAGE_IMPORTANCE.Error:
+                logMessageType = LOG_MESSAGE_TYPE.ERROR;
+                break;
+
         }
 
         switch (apiResult.resultStatus) {
 
+            case RESULT_STATUSES.ApiOperationStarted:
+                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this.strOperation);
+                break;
+
+            case RESULT_STATUSES.ApiOperationFinished:
+                this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this.strOperation);
+                break;
+
             case RESULT_STATUSES.JobCreated:
+                this.logger.log(RESOURCES.apiOperationJobCreated, logMessageType, verbosity, apiResult.jobId, this.strOperation, this.sObjectName);
                 break;
 
             case RESULT_STATUSES.BatchCreated:
+                this.logger.log(RESOURCES.apiOperationBatchCreated, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
                 break;
 
             case RESULT_STATUSES.DataUploaded:
+                this.logger.log(RESOURCES.apiOperationDataUploaded, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
                 break;
 
             case RESULT_STATUSES.InProgress:
+                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
                 break;
 
             case RESULT_STATUSES.Completed:
-                break;
-
-            case RESULT_STATUSES.FailedOrAborted:
+                if (logMessageType != LOG_MESSAGE_TYPE.WARN)
+                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
+                else
+                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
                 break;
 
             case RESULT_STATUSES.ProcessError:
+            case RESULT_STATUSES.FailedOrAborted:
+                this.logger.log(RESOURCES.apiOperationFailed, logMessageType, verbosity, this.sObjectName, this.strOperation);
                 break;
         }
+    }
+
+    private _apiOperationError(operation: OPERATION) {
+        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.strOperation));
     }
 
 }

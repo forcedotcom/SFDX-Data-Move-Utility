@@ -75,7 +75,6 @@ export enum RESOURCES {
     usingQueryBulkApi = "usingQueryBulkApi",
     usingCollectionApi = "usingCollectionApi",
     apiOperationProgress = "apiOperationProgress",
-    apiOperationCompleted = "apiOperationCompleted",
     apiOperationError = "apiOperationError",
     apiOperationError2 = "apiOperationError2",
     apiOperationError3 = "apiOperationError3",
@@ -180,7 +179,19 @@ export enum RESOURCES {
     seeFileForTheDetails = "seeFileForTheDetails",
     missingParentLookupRecord = "missingParentLookupRecord",
     updatingTargetCompleted = "updatingTargetCompleted",
-    finalizing = "finalizing"
+    finalizing = "finalizing",
+
+    // ----------------------
+    apiOperationFailed = "apiOperationFailed",
+    apiOperationProcessError = "apiOperationProcessError",
+    apiOperationJobCreated = "apiOperationJobCreated",
+    apiOperationBatchCreated = "apiOperationBatchCreated",
+    apiOperationDataUploaded = "apiOperationDataUploaded",
+    apiOperationInProgress = "apiOperationInProgress",
+    apiOperationCompleted = "apiOperationCompleted",
+    apiOperationWarnCompleted = "apiOperationWarnCompleted",
+    apiOperationStarted = "apiOperationStarted",
+    apiOperationFinished = "apiOperationFinished"
 
 }
 
