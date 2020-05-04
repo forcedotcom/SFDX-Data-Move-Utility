@@ -964,15 +964,15 @@ export class CsvChunks {
     chunks: Array<ICsvChunk> = [];
     header: Array<string> = new Array<string>();
     /**
-     * Converts array of objects into CsvChunk
+     * Converts array chunks into CsvChunk object
      */
-    fromArrayOfRecords(records: Array<Array<any>>): CsvChunks {
-        if (records.length == 0) return;
-        this.chunks = [].concat(records.map(chunkRecords => <ICsvChunk>{
+    fromArrayChunks(arrayChunks: Array<Array<any>>): CsvChunks {
+        if (arrayChunks.length == 0) return;
+        this.chunks = [].concat(arrayChunks.map(records => <ICsvChunk>{
             csvString: "",
-            records: chunkRecords
+            records
         }));
-        this.header = Object.keys(records[0][0]);
+        this.header = Object.keys(arrayChunks[0][0]);
         return this;
     }
 }
