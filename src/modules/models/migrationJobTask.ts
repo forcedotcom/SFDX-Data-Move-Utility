@@ -44,6 +44,8 @@ export default class MigrationJobTask {
     job: Job;
     sourceTotalRecorsCount: number = 0;
     targetTotalRecorsCount: number = 0;
+    apiEngine: IApiEngine;
+    apiOperationCallback: (apiResult: ApiInfo) => void;
 
     constructor(init: Partial<MigrationJobTask>) {
         if (init) {
@@ -542,8 +544,8 @@ export default class MigrationJobTask {
         // FIXME:
         // Create Api engine and delete records
         let recToDelete = records.records.map(x => { return { Id: x["Id"] } });
-        this._createApiEngine(this.targetOrg, OPERATION.Delete, true);
-        let resultRecords = await this._apiEngine.executeCRUD(recToDelete, this._thisApiOperationCallback);
+        this.createApiEngine(this.targetOrg, OPERATION.Delete, true);
+        let resultRecords = await this.apiEngine.executeCRUD(recToDelete, this.apiOperationCallback);
         if (resultRecords == null) {
             // API ERROR. Exiting.
             this._apiOperationError(OPERATION.Delete);
@@ -553,6 +555,57 @@ export default class MigrationJobTask {
         return true;
     }
 
+    /**
+     * Creates new api engine for the given org and operation
+     *
+     * @param {ScriptOrg} org The org to connect the api engine
+     * @param {OPERATION} operation The operation to perform
+     * @param {boolean} updateRecordId Allow update Id property 
+     *                                of the processed (the source) records 
+     *                                with the target record ids
+     * @returns {IApiEngine}
+     * @memberof MigrationJobTask
+     */
+    createApiEngine(org: ScriptOrg, operation: OPERATION, updateRecordId: boolean): IApiEngine {
+        //if (org.isSource ? this.sourceTotalRecorsCount : this.targetTotalRecorsCount > this.script.bulkThreshold) {
+        if (true) {
+            // Use bulk api
+            switch (this.script.bulkApiVersionNumber) {
+                case 2: // Bulk Api V2.0
+                    this.apiEngine = new BulkApiV2_0sf({
+                        logger: this.logger,
+                        connectionData: org.connectionData,
+                        sObjectName: this.sObjectName,
+                        operation,
+                        pollingIntervalMs: this.script.pollingIntervalMs,
+                        updateRecordId
+                    });
+                    break;
+                default: // Bulk Api V1.0
+                    this.apiEngine = new BulkApiV1_0sf({
+                        logger: this.logger,
+                        connectionData: org.connectionData,
+                        sObjectName: this.sObjectName,
+                        operation,
+                        pollingIntervalMs: this.script.pollingIntervalMs,
+                        updateRecordId
+                    });
+                    break;
+            }
+        } else {
+            // Use rest api
+            this.apiEngine = new RestApiSf({
+                logger: this.logger,
+                connectionData: org.connectionData,
+                sObjectName: this.sObjectName,
+                operation,
+                pollingIntervalMs: this.script.pollingIntervalMs,
+                updateRecordId
+            });
+        }
+        this.apiOperationCallback = this.apiOperationCallback || this._apiOperationCallback.bind(this);
+        return this.apiEngine;
+    }
 
 
     // ----------------------- Private members -------------------------------------------
@@ -585,85 +638,42 @@ export default class MigrationJobTask {
                 }
                 break;
             case RESULT_STATUSES.ApiOperationStarted:
-                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation(), this._apiEngine.getEngineName());
+                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation(), this.apiEngine.getEngineName());
                 break;
             case RESULT_STATUSES.ApiOperationFinished:
-                this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation());
+                this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation());
                 break;
             case RESULT_STATUSES.JobCreated:
-                this.logger.log(RESOURCES.apiOperationJobCreated, logMessageType, verbosity, apiResult.jobId, this._apiEngine.getStrOperation(), this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationJobCreated, logMessageType, verbosity, apiResult.jobId, this.apiEngine.getStrOperation(), this.sObjectName);
                 break;
             case RESULT_STATUSES.BatchCreated:
-                this.logger.log(RESOURCES.apiOperationBatchCreated, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationBatchCreated, logMessageType, verbosity, apiResult.batchId, this.apiEngine.getStrOperation(), this.sObjectName);
                 break;
             case RESULT_STATUSES.DataUploaded:
-                this.logger.log(RESOURCES.apiOperationDataUploaded, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationDataUploaded, logMessageType, verbosity, apiResult.batchId, this.apiEngine.getStrOperation(), this.sObjectName);
                 break;
             case RESULT_STATUSES.InProgress:
-                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
+                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this.apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 break;
             case RESULT_STATUSES.Completed:
                 if (logMessageType != LOG_MESSAGE_TYPE.WARN)
-                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
+                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 else
-                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
+                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 break;
             case RESULT_STATUSES.ProcessError:
             case RESULT_STATUSES.FailedOrAborted:
                 if (apiResult.errorMessage)
-                    this.logger.log(RESOURCES.apiOperationProcessError, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation(), apiResult.errorMessage);
+                    this.logger.log(RESOURCES.apiOperationProcessError, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation(), apiResult.errorMessage);
                 else
-                    this.logger.log(RESOURCES.apiOperationFailed, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation());
+                    this.logger.log(RESOURCES.apiOperationFailed, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation());
                 break;
         }
     }
 
     private _apiOperationError(operation: OPERATION) {
-        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this._apiEngine.getStrOperation()));
+        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.apiEngine.getStrOperation()));
     }
 
-    // Api engine management *************************
-    private _apiEngine: IApiEngine;
-    private _thisApiOperationCallback: (apiResult: ApiInfo) => void;
 
-    private _createApiEngine(org: ScriptOrg, operation: OPERATION, updateRecordId: boolean): IApiEngine {
-        //if (org.isSource ? this.sourceTotalRecorsCount : this.targetTotalRecorsCount > this.script.bulkThreshold) {
-        if (true) {
-            // Use bulk api
-            switch (this.script.bulkApiVersionNumber) {
-                case 2: // Bulk Api V2.0
-                    this._apiEngine = new BulkApiV2_0sf({
-                        logger: this.logger,
-                        connectionData: org.connectionData,
-                        sObjectName: this.sObjectName,
-                        operation,
-                        pollingIntervalMs: this.script.pollingIntervalMs,
-                        updateRecordId
-                    });
-                    break;
-                default: // Bulk Api V1.0
-                    this._apiEngine = new BulkApiV1_0sf({
-                        logger: this.logger,
-                        connectionData: org.connectionData,
-                        sObjectName: this.sObjectName,
-                        operation,
-                        pollingIntervalMs: this.script.pollingIntervalMs,
-                        updateRecordId
-                    });
-                    break;
-            }
-        } else {
-            // Use rest api
-            this._apiEngine = new RestApiSf({
-                logger: this.logger,
-                connectionData: org.connectionData,
-                sObjectName: this.sObjectName,
-                operation,
-                pollingIntervalMs: this.script.pollingIntervalMs,
-                updateRecordId
-            });
-        }
-        this._thisApiOperationCallback = this._thisApiOperationCallback || this._apiOperationCallback.bind(this);
-        return this._apiEngine;
-    }
 }
