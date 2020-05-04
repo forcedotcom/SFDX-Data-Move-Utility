@@ -6,8 +6,8 @@
  */
 
 
-import { OPERATION } from "../../components/statics";
-import { MessageUtils } from "../../components/messages";
+import { OPERATION } from "../../components/common_components/statics";
+import { MessageUtils } from "../../components/common_components/messages";
 import { IOrgConnectionData } from "..";
 import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
 
@@ -56,14 +56,14 @@ export default class ApiEngineBase {
         return this.operation.toString();
     }
 
-    constructor(params: IApiEngineInitParameters) {
-        this.logger = params.logger;
-        this.connectionData = params.connectionData;
-        this.sObjectName = params.sObjectName;
-        this.operation = params.operation;
-        this.pollingIntervalMs = params.pollingIntervalMs;
-        this.updateRecordId = params.updateRecordId;
-        this.bulkApiV1BatchSize = params.bulkApiV1BatchSize;
+    constructor(init: IApiEngineInitParameters) {
+        this.logger = init.logger;
+        this.connectionData = init.connectionData;
+        this.sObjectName = init.sObjectName;
+        this.operation = init.operation;
+        this.pollingIntervalMs = init.pollingIntervalMs;
+        this.updateRecordId = init.updateRecordId;
+        this.bulkApiV1BatchSize = init.bulkApiV1BatchSize;
     }
 
 }

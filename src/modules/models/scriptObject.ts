@@ -11,10 +11,10 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../components/commonUtils";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../components/statics";
-import { MessageUtils, RESOURCES } from "../components/messages";
-import { ApiSf } from "../components/apiSf";
+import { CommonUtils } from "../components/common_components/commonUtils";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../components/common_components/statics";
+import { MessageUtils, RESOURCES } from "../components/common_components/messages";
+import { Sfdx } from "../components/common_components/sfdx";
 var jsforce = require("jsforce");
 import {
     parseQuery,
@@ -264,7 +264,7 @@ export default class ScriptObject {
 
             if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
 
-                let apisf = new ApiSf(this.script.sourceOrg);
+                let apisf = new Sfdx(this.script.sourceOrg);
                 this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
                 try {
                     // Retrieve sobject metadata
@@ -290,7 +290,7 @@ export default class ScriptObject {
             if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
 
                 // Describe object in the target org        
-                let apisf = new ApiSf(this.script.targetOrg);
+                let apisf = new Sfdx(this.script.targetOrg);
                 this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
                 try {
                     // Retrieve sobject metadata

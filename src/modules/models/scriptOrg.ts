@@ -11,10 +11,10 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../components/commonUtils";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../components/statics";
-import { MessageUtils, RESOURCES } from "../components/messages";
-import { ApiSf } from "../components/apiSf";
+import { CommonUtils } from "../components/common_components/commonUtils";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../components/common_components/statics";
+import { MessageUtils, RESOURCES } from "../components/common_components/messages";
+import { Sfdx } from "../components/common_components/sfdx";
 var jsforce = require("jsforce");
 import {
     parseQuery,
@@ -54,7 +54,7 @@ export default class ScriptOrg {
     }
 
     getConnection(): any {
-        return ApiSf.createOrgConnection(this.connectionData);
+        return Sfdx.createOrgConnection(this.connectionData);
     }
 
     get isConnected(): boolean {
@@ -106,7 +106,7 @@ export default class ScriptOrg {
     };
 
     private async _validateAccessTokenAsync(): Promise<void> {
-        let apiSf = new ApiSf(this);
+        let apiSf = new Sfdx(this);
         if (!this.isFileMedia) {
             try {
                 // Validate access token

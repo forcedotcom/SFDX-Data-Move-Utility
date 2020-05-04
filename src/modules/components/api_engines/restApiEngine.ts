@@ -6,12 +6,12 @@
  */
 
 
-import { ICsvChunk } from "./commonUtils";
-import { OPERATION } from "./statics";
-import { IOrgConnectionData } from "../models";
-import { MessageUtils } from "./messages";
-import { IApiEngine, IApiJobCreateResult } from "../models/apiSf/interfaces";
-import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../models/apiSf";
+import { ICsvChunk } from "../common_components/commonUtils";
+import { OPERATION } from "../common_components/statics";
+import { IOrgConnectionData } from "../../models";
+import { MessageUtils } from "../common_components/messages";
+import { IApiEngine, IApiJobCreateResult } from "../../models/apiSf/interfaces";
+import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../../models/apiSf";
 
 
 
@@ -23,10 +23,10 @@ import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../models/apiS
  * @export
  * @class BulkApiV1_0sf
  */
-export class RestApiSf extends ApiEngineBase implements IApiEngine {
+export class RestApiEngine extends ApiEngineBase implements IApiEngine {
 
-    constructor(params: IApiEngineInitParameters) {
-        super(params);
+    constructor(init: IApiEngineInitParameters) {
+        super(init);
     }
 
 

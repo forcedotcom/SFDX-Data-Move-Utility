@@ -7,11 +7,11 @@
 
 
 
-import { ICsvChunk, CsvChunks } from "../../components/commonUtils";
+import { ICsvChunk, CsvChunks } from "../../components/common_components/commonUtils";
 import { ApiInfo } from ".";
-import { MessageUtils } from "../../components/messages";
+import { MessageUtils } from "../../components/common_components/messages";
 import { IOrgConnectionData } from "..";
-import { OPERATION } from "../../components/statics";
+import { OPERATION } from "../../components/common_components/statics";
 
 /**
  * Returned after creating an Api job

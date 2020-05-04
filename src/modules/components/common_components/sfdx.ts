@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as models from '../models';
+import * as models from '../../models';
 import {
     composeQuery,
     Condition,
@@ -21,11 +21,11 @@ import {
 } from 'soql-parser-js';
 import { CONSTANTS, DATA_MEDIA_TYPE } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
-import { IOrgConnectionData } from '../models';
+import { IOrgConnectionData } from '../../models';
 var jsforce = require("jsforce");
 
 
-export class ApiSf {
+export class Sfdx {
 
     org: models.ScriptOrg;
 

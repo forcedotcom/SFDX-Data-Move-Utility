@@ -6,13 +6,13 @@
  */
 
 
-import { ICsvChunk, CommonUtils, CsvChunks } from "./commonUtils";
-import { OPERATION, CONSTANTS } from "./statics";
-import { IOrgConnectionData } from "../models";
-import { MessageUtils } from "./messages";
-import { IApiEngine, IApiJobCreateResult } from "../models/apiSf/interfaces";
-import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../models/apiSf";
-import { ApiSf } from "./apiSf";
+import { ICsvChunk, CommonUtils, CsvChunks } from "../common_components/commonUtils";
+import { OPERATION, CONSTANTS } from "../common_components/statics";
+import { IOrgConnectionData } from "../../models";
+import { MessageUtils } from "../common_components/messages";
+import { IApiEngine, IApiJobCreateResult } from "../../models/apiSf/interfaces";
+import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../../models/apiSf";
+import { Sfdx } from "../common_components/sfdx";
 
 
 
@@ -24,10 +24,10 @@ import { ApiSf } from "./apiSf";
  * @export
  * @class BulkApiV1_0sf
  */
-export class BulkApiV1_0sf extends ApiEngineBase implements IApiEngine {
+export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
 
-    constructor(params: IApiEngineInitParameters) {
-        super(params);
+    constructor(init: IApiEngineInitParameters) {
+        super(init);
     }
 
 
@@ -42,7 +42,7 @@ export class BulkApiV1_0sf extends ApiEngineBase implements IApiEngine {
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
-        let connection = ApiSf.createOrgConnection(this.connectionData);
+        let connection = Sfdx.createOrgConnection(this.connectionData);
         connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
         let job = connection.bulk.createJob(this.sObjectName, this.strOperation.toLowerCase());
         let chunks = CommonUtils.chunkArray(allRecords, this.bulkApiV1BatchSize);

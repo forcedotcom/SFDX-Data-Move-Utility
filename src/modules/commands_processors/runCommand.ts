@@ -17,9 +17,9 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/messages";
+import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/common_components/messages";
 import * as models from '../models';
-import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from '../components/statics';
+import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from '../components/common_components/statics';
 import { MigrationJobTask as Task, MigrationJob as Job, SuccessExit } from '../models';
 
 

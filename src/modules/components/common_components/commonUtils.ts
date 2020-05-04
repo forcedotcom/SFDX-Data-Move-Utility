@@ -27,7 +27,7 @@ import { CONSTANTS } from './statics';
 import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
 import { MessageUtils, RESOURCES } from './messages';
-import { CommandAbortedByUserError, IOrgConnectionData } from '../models';
+import { CommandAbortedByUserError, IOrgConnectionData } from '../../models';
 var jsforce = require("jsforce");
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;

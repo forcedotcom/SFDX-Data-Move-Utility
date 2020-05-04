@@ -11,10 +11,10 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../components/commonUtils";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../components/statics";
-import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../components/messages";
-import { ApiSf } from "../components/apiSf";
+import { CommonUtils } from "../components/common_components/commonUtils";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../components/common_components/statics";
+import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../components/common_components/messages";
+import { Sfdx } from "../components/common_components/sfdx";
 var jsforce = require("jsforce");
 import {
     parseQuery,
@@ -29,11 +29,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { CachedCSVContent } from "./migrationJob";
 import * as deepClone from 'deep.clone';
-import { BulkApiV2_0sf } from "../components/bulkApiV2_0Sf";
+import { BulkApiV2_0Engine } from "../components/api_engines/bulkApiV2_0Engine";
 import { IApiEngine } from "./apiSf/interfaces";
 import ApiInfo from "./apiSf/apiInfo";
-import { BulkApiV1_0sf } from "../components/bulkApiV1_0Sf";
-import { RestApiSf } from "../components/restApiSf";
+import { BulkApiV1_0Engine } from "../components/api_engines/bulkApiV1_0Engine";
+import { RestApiEngine } from "../components/api_engines/restApiEngine";
 
 
 
@@ -499,7 +499,7 @@ export default class MigrationJobTask {
         let query = this.createQuery(['COUNT(Id) CNT'], true);
 
         if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
-            let apiSf = new ApiSf(this.sourceOrg);
+            let apiSf = new Sfdx(this.sourceOrg);
             let ret = await apiSf.queryAsync(query, false);
             this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
@@ -507,7 +507,7 @@ export default class MigrationJobTask {
         }
 
         if (this.targetOrg.media == DATA_MEDIA_TYPE.Org) {
-            let apiSf = new ApiSf(this.targetOrg);
+            let apiSf = new Sfdx(this.targetOrg);
             let ret = await apiSf.queryAsync(query, false);
             this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
@@ -532,7 +532,7 @@ export default class MigrationJobTask {
 
         this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
         let soql = this.createDeleteQuery();
-        let apiSf = new ApiSf(this.targetOrg);
+        let apiSf = new Sfdx(this.targetOrg);
         let queryResult = await apiSf.queryAsync(soql, this.useBulkQueryApiForTarget);
         if (queryResult.totalSize == 0) {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
@@ -570,7 +570,7 @@ export default class MigrationJobTask {
             // Use bulk api
             switch (this.script.bulkApiVersionNumber) {
                 case 2: // Bulk Api V2.0
-                    this.apiEngine = new BulkApiV2_0sf({
+                    this.apiEngine = new BulkApiV2_0Engine({
                         logger: this.logger,
                         connectionData: org.connectionData,
                         sObjectName: this.sObjectName,
@@ -580,7 +580,7 @@ export default class MigrationJobTask {
                     });
                     break;
                 default: // Bulk Api V1.0
-                    this.apiEngine = new BulkApiV1_0sf({
+                    this.apiEngine = new BulkApiV1_0Engine({
                         logger: this.logger,
                         connectionData: org.connectionData,
                         sObjectName: this.sObjectName,
@@ -593,7 +593,7 @@ export default class MigrationJobTask {
             }
         } else {
             // Use rest api
-            this.apiEngine = new RestApiSf({
+            this.apiEngine = new RestApiEngine({
                 logger: this.logger,
                 connectionData: org.connectionData,
                 sObjectName: this.sObjectName,

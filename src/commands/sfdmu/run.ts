@@ -15,9 +15,9 @@ import {
     MessageUtils,
     RESOURCES,
     COMMAND_EXIT_STATUSES
-} from "../../modules/components/messages";
+} from "../../modules/components/common_components/messages";
 import { RunCommand } from "../../modules/commands_processors/runCommand";
-import { CommonUtils } from "../../modules/components/commonUtils";
+import { CommonUtils } from "../../modules/components/common_components/commonUtils";
 
 
 Messages.importMessagesDirectory(__dirname);

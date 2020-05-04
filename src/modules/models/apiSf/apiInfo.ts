@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../../components/statics";
+import { RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../../components/common_components/statics";
 import { ApiResultRecord } from ".";
 
 
