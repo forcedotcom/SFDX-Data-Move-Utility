@@ -64,7 +64,9 @@ export default class Script {
     basePath: string = "";
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
 
-
+    get bulkApiVersionNumber() : number {
+        return +(this.bulkApiVersion || '1.0');
+    }
 
     
     // ----------------------- Public methods -------------------------------------------    

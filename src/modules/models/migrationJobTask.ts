@@ -23,7 +23,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, ScriptOrg } from ".";
+import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, ScriptOrg, Script } from ".";
 import SFieldDescribe from "./sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
@@ -32,6 +32,8 @@ import * as deepClone from 'deep.clone';
 import { BulkApiV2_0sf } from "../components/bulkApiV2_0Sf";
 import { IApiProcess } from "./apiSf/interfaces";
 import ApiInfo from "./apiSf/apiInfo";
+import { BulkApiV1_0sf } from "../components/bulkApiV1_0Sf";
+import { RestApiSf } from "../components/restApiSf";
 
 
 
@@ -53,8 +55,12 @@ export default class MigrationJobTask {
         return this.scriptObject && this.scriptObject.name;
     }
 
+    get script(): Script {
+        return this.scriptObject.script;
+    }
+
     get logger(): MessageUtils {
-        return this.scriptObject.script.logger;
+        return this.script.logger;
     }
 
     get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
@@ -74,11 +80,11 @@ export default class MigrationJobTask {
     }
 
     get cSVFilename(): string {
-        return this.getCSVFilename(this.scriptObject.script.basePath);
+        return this.getCSVFilename(this.script.basePath);
     }
 
     get sourceCSVFilename(): string {
-        let filepath = path.join(this.scriptObject.script.basePath, CONSTANTS.CSV_SOURCE_SUBDIRECTORY);
+        let filepath = path.join(this.script.basePath, CONSTANTS.CSV_SOURCE_SUBDIRECTORY);
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
@@ -86,7 +92,7 @@ export default class MigrationJobTask {
     }
 
     get targetCSVFilename(): string {
-        let filepath = path.join(this.scriptObject.script.basePath, CONSTANTS.CSV_TARGET_SUBDIRECTORY);
+        let filepath = path.join(this.script.basePath, CONSTANTS.CSV_TARGET_SUBDIRECTORY);
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
@@ -94,11 +100,11 @@ export default class MigrationJobTask {
     }
 
     get sourceOrg() {
-        return this.scriptObject.script.sourceOrg;
+        return this.script.sourceOrg;
     }
 
     get targetOrg() {
-        return this.scriptObject.script.targetOrg;
+        return this.script.targetOrg;
     }
 
     get useQueryBulkApiForSourceRecords() {
@@ -116,8 +122,6 @@ export default class MigrationJobTask {
     get strOperation(): string {
         return this.scriptObject.strOperation;
     }
-
-
 
 
 
@@ -533,24 +537,13 @@ export default class MigrationJobTask {
             return false;
         }
 
-        // ...
-        // TODO: implement delete
-        // ...        
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(records.totalSize));
 
-        // TEST:
         // FIXME:
+        // Create Api engine and delete records
         let recToDelete = records.records.map(x => { return { Id: x["Id"] } });
-        let apiProcessor: BulkApiV2_0sf = new BulkApiV2_0sf({
-            logger: this.logger,
-            connectionData: this.targetOrg.connectionData,
-            sObjectName: this.sObjectName,
-            operation: OPERATION.Delete,
-            pollingIntervalMs: this.scriptObject.script.pollingIntervalMs,
-            updateRecordId: true
-        });
-        let callback = this._apiOperationCallback.bind(this);
-        let resultRecords = await apiProcessor.executeCRUD(recToDelete, callback);
+        this._createApiEngine(this.targetOrg, OPERATION.Delete, true);
+        let resultRecords = await this._apiEngine.executeCRUD(recToDelete, this._thisApiOperationCallback);
         if (resultRecords == null) {
             // API ERROR. Exiting.
             this._apiOperationError(OPERATION.Delete);
@@ -569,27 +562,20 @@ export default class MigrationJobTask {
         let logMessageType = LOG_MESSAGE_TYPE.STRING;
 
         switch (apiResult.messageImportance) {
-
             case MESSAGE_IMPORTANCE.Low:
                 verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
                 break;
-
             case MESSAGE_IMPORTANCE.Normal:
                 verbosity = LOG_MESSAGE_VERBOSITY.NORMAL;
                 break;
-
             case MESSAGE_IMPORTANCE.Warn:
                 logMessageType = LOG_MESSAGE_TYPE.WARN;
                 break;
-
             case MESSAGE_IMPORTANCE.Error:
                 logMessageType = LOG_MESSAGE_TYPE.ERROR;
                 break;
-
         }
-
         switch (apiResult.resultStatus) {
-
             case RESULT_STATUSES.Information:
                 if (apiResult.informationMessageData.length > 0) {
                     // [0] - always is the RESOURCE message
@@ -598,39 +584,30 @@ export default class MigrationJobTask {
                     this.logger.log.apply(this.logger, [resourceString, logMessageType, verbosity]);
                 }
                 break;
-
             case RESULT_STATUSES.ApiOperationStarted:
-                // FIXME: replace hardcoded value
                 this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation(), this._apiEngine.getEngineName());
                 break;
-
             case RESULT_STATUSES.ApiOperationFinished:
                 this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this._apiEngine.getStrOperation());
                 break;
-
             case RESULT_STATUSES.JobCreated:
                 this.logger.log(RESOURCES.apiOperationJobCreated, logMessageType, verbosity, apiResult.jobId, this._apiEngine.getStrOperation(), this.sObjectName);
                 break;
-
             case RESULT_STATUSES.BatchCreated:
                 this.logger.log(RESOURCES.apiOperationBatchCreated, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName);
                 break;
-
             case RESULT_STATUSES.DataUploaded:
                 this.logger.log(RESOURCES.apiOperationDataUploaded, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName);
                 break;
-
             case RESULT_STATUSES.InProgress:
                 this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 break;
-
             case RESULT_STATUSES.Completed:
                 if (logMessageType != LOG_MESSAGE_TYPE.WARN)
                     this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 else
                     this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this._apiEngine.getStrOperation(), this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 break;
-
             case RESULT_STATUSES.ProcessError:
             case RESULT_STATUSES.FailedOrAborted:
                 if (apiResult.errorMessage)
@@ -645,11 +622,47 @@ export default class MigrationJobTask {
         throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this._apiEngine.getStrOperation()));
     }
 
+    // Api engine management *************************
     private _apiEngine: IApiProcess;
+    private _thisApiOperationCallback: (apiResult: ApiInfo) => void;
 
-    private _createApiEngine(org: ScriptOrg, operation: OPERATION): IApiProcess {
-        // TODO: Implement this
+    private _createApiEngine(org: ScriptOrg, operation: OPERATION, updateRecordId: boolean): IApiProcess {
+        if (org.isSource ? this.sourceTotalRecorsCount : this.targetTotalRecorsCount > this.script.bulkThreshold) {
+            // Use bulk api
+            switch (this.script.bulkApiVersionNumber) {
+                case 2: // Bulk Api V2.0
+                    this._apiEngine = new BulkApiV2_0sf({
+                        logger: this.logger,
+                        connectionData: org.connectionData,
+                        sObjectName: this.sObjectName,
+                        operation,
+                        pollingIntervalMs: this.script.pollingIntervalMs,
+                        updateRecordId
+                    });
+                    break;
+                default: // Bulk Api V1.0
+                    this._apiEngine = new BulkApiV1_0sf({
+                        logger: this.logger,
+                        connectionData: org.connectionData,
+                        sObjectName: this.sObjectName,
+                        operation,
+                        pollingIntervalMs: this.script.pollingIntervalMs,
+                        updateRecordId
+                    });
+                    break;
+            }
+        } else {
+            // Use rest api
+            this._apiEngine = new RestApiSf({
+                logger: this.logger,
+                connectionData: org.connectionData,
+                sObjectName: this.sObjectName,
+                operation,
+                pollingIntervalMs: this.script.pollingIntervalMs,
+                updateRecordId
+            });
+        }
+        this._thisApiOperationCallback = this._thisApiOperationCallback || this._apiOperationCallback.bind(this);
         return this._apiEngine;
     }
-
 }
