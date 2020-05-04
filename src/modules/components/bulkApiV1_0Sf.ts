@@ -37,6 +37,10 @@ export class BulkApiV1_0sf extends ApiProcessBase implements IApiProcess {
 
 
     // ----------------------- Interface IApiProcess ----------------------------------
+    getEngineName(): string {
+        return "Bulk API V1.0";
+    }
+
     async executeCRUD(allRcords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
         await this.createCRUDApiJobAsync(allRcords);
         return await this.processCRUDApiJobAsync(progressCallback);

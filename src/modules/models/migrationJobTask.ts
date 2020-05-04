@@ -110,9 +110,14 @@ export default class MigrationJobTask {
         return this.scriptObject.operation;
     }
 
-    get strOperation(): string {
-        return this.scriptObject.strOperation;
-    }
+     get strOperation(): string {
+         return this.scriptObject.strOperation;
+     }
+
+     get strApiOperation(){
+         // FIXME: Replace hardcoded value
+         return "Delete"; 
+     }
 
 
     // ----------------------- Public methods -------------------------------------------    
@@ -592,45 +597,49 @@ export default class MigrationJobTask {
                 break;
 
             case RESULT_STATUSES.ApiOperationStarted:
-                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this.strOperation);
+                // FIXME: replace hardcoded value
+                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this.strApiOperation, "BulkApi V2.0");
                 break;
 
             case RESULT_STATUSES.ApiOperationFinished:
-                this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this.strOperation);
+                this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this.strApiOperation);
                 break;
 
             case RESULT_STATUSES.JobCreated:
-                this.logger.log(RESOURCES.apiOperationJobCreated, logMessageType, verbosity, apiResult.jobId, this.strOperation, this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationJobCreated, logMessageType, verbosity, apiResult.jobId, this.strApiOperation, this.sObjectName);
                 break;
 
             case RESULT_STATUSES.BatchCreated:
-                this.logger.log(RESOURCES.apiOperationBatchCreated, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationBatchCreated, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName);
                 break;
 
             case RESULT_STATUSES.DataUploaded:
-                this.logger.log(RESOURCES.apiOperationDataUploaded, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName);
+                this.logger.log(RESOURCES.apiOperationDataUploaded, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName);
                 break;
 
             case RESULT_STATUSES.InProgress:
-                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed));
+                this.logger.log(RESOURCES.apiOperationInProgress, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 break;
 
             case RESULT_STATUSES.Completed:
                 if (logMessageType != LOG_MESSAGE_TYPE.WARN)
-                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed));
+                    this.logger.log(RESOURCES.apiOperationCompleted, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 else
-                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.strOperation, this.sObjectName, String(apiResult.numberRecordsProcessed),String(apiResult.numberRecordsFailed));
+                    this.logger.log(RESOURCES.apiOperationWarnCompleted, logMessageType, verbosity, apiResult.batchId, this.strApiOperation, this.sObjectName, String(apiResult.numberRecordsProcessed), String(apiResult.numberRecordsFailed));
                 break;
 
             case RESULT_STATUSES.ProcessError:
             case RESULT_STATUSES.FailedOrAborted:
-                this.logger.log(RESOURCES.apiOperationFailed, logMessageType, verbosity, this.sObjectName, this.strOperation);
+                if (apiResult.errorMessage)
+                    this.logger.log(RESOURCES.apiOperationProcessError, logMessageType, verbosity, this.sObjectName, this.strApiOperation, apiResult.errorMessage);
+                else
+                    this.logger.log(RESOURCES.apiOperationFailed, logMessageType, verbosity, this.sObjectName, this.strApiOperation);
                 break;
         }
     }
 
     private _apiOperationError(operation: OPERATION) {
-        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.strOperation));
+        throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.strApiOperation));
     }
 
 }

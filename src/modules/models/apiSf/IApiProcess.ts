@@ -54,8 +54,15 @@ export default interface IApiProcess {
      * @returns {Promise<Array<any>>} Returns null when unresolvable error occured
      * @memberof IApiProcess
      */
-    processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>>; 
+    processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>>;
 
+    /**
+     * The name of the current api engine
+     *
+     * @returns {string}
+     * @memberof IApiProcess
+     */
+    getEngineName(): string;
 
 }
 

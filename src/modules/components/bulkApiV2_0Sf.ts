@@ -52,6 +52,10 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
 
 
     // ----------------------- Interface IApiProcess ----------------------------------
+    getEngineName(): string {
+        return "Bulk API V2.0";
+    }
+    
     /**
      * Execute full CRUD operation
      *
@@ -128,14 +132,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
                 jobState: "OperationStarted"
             }));
         }
-
-        if (progressCallback) {
-            // Progress message: using bulk api version
-            progressCallback(new ApiInfo({
-                jobState: "Info",
-                informationMessageData: [RESOURCES.usingBulkApi, "2.0"]
-            }));
-        }
+    
 
         // Create bulk job ******************************************
         let jobResult = await this.createBulkJobAsync(this.sObjectName, this.strOperation.toLowerCase());
