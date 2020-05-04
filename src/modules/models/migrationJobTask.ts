@@ -30,7 +30,7 @@ import * as fs from 'fs';
 import { CachedCSVContent } from "./migrationJob";
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0sf } from "../components/bulkApiV2_0Sf";
-import { IApiProcess } from "./apiSf/interfaces";
+import { IApiEngine } from "./apiSf/interfaces";
 import ApiInfo from "./apiSf/apiInfo";
 import { BulkApiV1_0sf } from "../components/bulkApiV1_0Sf";
 import { RestApiSf } from "../components/restApiSf";
@@ -623,11 +623,12 @@ export default class MigrationJobTask {
     }
 
     // Api engine management *************************
-    private _apiEngine: IApiProcess;
+    private _apiEngine: IApiEngine;
     private _thisApiOperationCallback: (apiResult: ApiInfo) => void;
 
-    private _createApiEngine(org: ScriptOrg, operation: OPERATION, updateRecordId: boolean): IApiProcess {
-        if (org.isSource ? this.sourceTotalRecorsCount : this.targetTotalRecorsCount > this.script.bulkThreshold) {
+    private _createApiEngine(org: ScriptOrg, operation: OPERATION, updateRecordId: boolean): IApiEngine {
+        //if (org.isSource ? this.sourceTotalRecorsCount : this.targetTotalRecorsCount > this.script.bulkThreshold) {
+        if (true) {
             // Use bulk api
             switch (this.script.bulkApiVersionNumber) {
                 case 2: // Bulk Api V2.0

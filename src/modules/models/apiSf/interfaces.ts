@@ -32,7 +32,7 @@ export interface IApiJobCreateResult {
  * @export
  * @interface IApiProcess
  */
-export interface IApiProcess {
+export interface IApiEngine {
 
     /**
      * Executes complete api operation 
@@ -99,7 +99,7 @@ export interface IApiProcess {
  * @export
  * @interface IApiProcessParameters
  */
-export interface IApiProcessParameters {
+export interface IApiEngineInitParameters {
     logger: MessageUtils,
     connectionData: IOrgConnectionData,
     sObjectName: string,

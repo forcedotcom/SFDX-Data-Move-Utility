@@ -11,8 +11,8 @@ import parse = require('csv-parse/lib/sync');
 import { RESOURCES, MessageUtils } from "./messages";
 import { RESULT_STATUSES, OPERATION, CONSTANTS } from "./statics";
 import { IOrgConnectionData } from "../models";
-import { IApiProcess, IApiJobCreateResult } from "../models/apiSf/interfaces";
-import { ApiProcessBase, ApiInfo, ApiResultRecord, IApiProcessParameters } from "../models/apiSf";
+import { IApiEngine, IApiJobCreateResult } from "../models/apiSf/interfaces";
+import { ApiProcessBase, ApiInfo, ApiResultRecord, IApiEngineInitParameters } from "../models/apiSf";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -27,7 +27,7 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  * @export
  * @class BulkApiV2_0sf
  */
-export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
+export class BulkApiV2_0sf extends ApiProcessBase implements IApiEngine {
 
     operationType: string | "insert" | "update" | "delete";
     sourceRecords: Array<object> = new Array<object>();
@@ -37,7 +37,7 @@ export class BulkApiV2_0sf extends ApiProcessBase implements IApiProcess {
         return endpoint.replace('[v]', `v${this.version}`);
     }
 
-    constructor(params: IApiProcessParameters) {
+    constructor(params: IApiEngineInitParameters) {
         super(params);
     }
 

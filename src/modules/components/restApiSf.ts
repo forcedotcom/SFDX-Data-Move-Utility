@@ -10,8 +10,8 @@ import { ICsvChunk } from "./commonUtils";
 import { OPERATION } from "./statics";
 import { IOrgConnectionData } from "../models";
 import { MessageUtils } from "./messages";
-import { IApiProcess, IApiJobCreateResult } from "../models/apiSf/interfaces";
-import { ApiProcessBase, ApiInfo, IApiProcessParameters } from "../models/apiSf";
+import { IApiEngine, IApiJobCreateResult } from "../models/apiSf/interfaces";
+import { ApiProcessBase, ApiInfo, IApiEngineInitParameters } from "../models/apiSf";
 
 
 
@@ -23,9 +23,9 @@ import { ApiProcessBase, ApiInfo, IApiProcessParameters } from "../models/apiSf"
  * @export
  * @class BulkApiV1_0sf
  */
-export class RestApiSf extends ApiProcessBase implements IApiProcess {
+export class RestApiSf extends ApiProcessBase implements IApiEngine {
 
-    constructor(params: IApiProcessParameters) {
+    constructor(params: IApiEngineInitParameters) {
         super(params);
     }
 

@@ -9,7 +9,7 @@
 import { OPERATION } from "../../components/statics";
 import { MessageUtils } from "../../components/messages";
 import { IOrgConnectionData } from "..";
-import { IApiJobCreateResult, IApiProcessParameters } from "./interfaces";
+import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
 
 
 
@@ -54,7 +54,7 @@ export default class ApiProcessBase {
         return this.operation.toString();
     }
 
-    constructor(params: IApiProcessParameters) {
+    constructor(params: IApiEngineInitParameters) {
         this.logger = params.logger;
         this.connectionData = params.connectionData;
         this.sObjectName = params.sObjectName;
