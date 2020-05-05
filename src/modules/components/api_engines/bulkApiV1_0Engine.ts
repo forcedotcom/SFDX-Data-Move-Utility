@@ -55,9 +55,10 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                 strOperation: this.strOperation,
                 sObjectName: this.sObjectName,
                 job,
-                jobId: job.id
+                jobId: job.id,
             }),
-            allRecords
+            allRecords,
+            connection
         };
         return this.apiJobCreateResult;
     }
@@ -90,11 +91,16 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
             }
 
             // Create bulk batch and upload csv ***************************
-            let pollTimer;
+            let pollTimer : any;
             let numberBatchRecordsProcessed = 0;
             let job = this.apiJobCreateResult.apiInfo.job;
             let connection = this.apiJobCreateResult.connection;
             let records = csvChunk.records;
+            // Progress message: job was created
+            progressCallback(new ApiInfo({
+                jobState: "Open",
+                jobId: job.jobId
+            }));
             let batch = job.createBatch();
             batch.execute(records);
             batch.on("error", function (batchInfo: any) {
