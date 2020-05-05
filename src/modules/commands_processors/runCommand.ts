@@ -11,7 +11,7 @@ import "es6-shim";
 import { plainToClass } from "class-transformer";
 import { Logger, RESOURCES } from "../components/common_components/logger";
 import * as models from '../models';
-import { CONSTANTS, DATA_MEDIA_TYPE } from '../components/common_components/statics';
+import { CONSTANTS, DATA_MEDIA_TYPE, OPERATION } from '../components/common_components/statics';
 import { MigrationJobTask as Task, MigrationJob as Job } from '../models';
 import { CommandInitializationError, SuccessExit } from '../models/common_models/errors';
 
@@ -133,7 +133,16 @@ export class RunCommand {
                 scriptObject: newObject,
                 job: this.job
             });
-
+            if (newObject.operation == OPERATION.Readonly
+                || newObject.allRecords
+                || newObject.isExtraObject) {
+                newObject.processAllRecords = true;
+                newObject.processAllRecordsTarget = true;
+            } else {
+                if (newObject.hasComplexExternalId) {
+                    newObject.processAllRecordsTarget = true;
+                }
+            }
             if (newObject.name == "RecordType") {
                 // RecordType object is always at the beginning 
                 //   of the task chain
@@ -244,11 +253,11 @@ export class RunCommand {
      * @memberof RunCommand
      */
     async executeJob(): Promise<void> {
-        
+
         // Query records PASS 1
         await this.job.queryRecords();
 
-        
+
     }
 
 }

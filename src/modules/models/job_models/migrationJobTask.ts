@@ -516,14 +516,14 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     async deleteOldTargetRecords(): Promise<boolean> {
-
+        // Checking
         if (!(this.targetOrg.media == DATA_MEDIA_TYPE.Org
             && this.scriptObject.operation != OPERATION.Readonly
             && this.scriptObject.deleteOldData)) {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
             return false;
         }
-
+        // Querying
         this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
         let soql = this.createDeleteQuery();
         let apiSf = new Sfdx(this.targetOrg);
@@ -532,17 +532,20 @@ export default class MigrationJobTask {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
             return false;
         }
-
+        // Deleting
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(queryResult.totalSize));
-
-        let recordsToDelete = queryResult.records.map(x => { return { Id: x["Id"] } });
+        let recordsToDelete = queryResult.records.map(x => {
+            return {
+                Id: x["Id"]
+            }
+        });
         this.createApiEngine(this.targetOrg, OPERATION.Delete, recordsToDelete.length, true);
         let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
         if (resultRecords == null) {
             // API ERROR. Exiting.
             this._apiOperationError(OPERATION.Delete);
         }
-
+        // Done
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetCompleted, this.sObjectName);
         return true;
     }
@@ -555,6 +558,10 @@ export default class MigrationJobTask {
      */
     async queryRecords(): Promise<void> {
         // TODO: Implement this
+        // Checking
+        if (this.operation == OPERATION.Delete) return;
+        
+
     }
 
     /**

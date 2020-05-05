@@ -60,6 +60,8 @@ export default class ScriptObject {
     parsedQuery: Query;
     parsedDeleteQuery: Query;
     isExtraObject: boolean = false;
+    processAllRecords: boolean = false;
+    processAllRecordsTarget: boolean = false;
 
     get externalIdSFieldDescribe(): SFieldDescribe {
         return this.isDescribed
@@ -136,7 +138,7 @@ export default class ScriptObject {
         return Common.isComplexField(this.externalId);
     }
 
-    get hasComplexrogiinalExternalId(): boolean {
+    get hasComplexOriginalExternalId(): boolean {
         return Common.isComplexField(this.originalExternalId);
     }
 
