@@ -39,7 +39,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let connection = Sfdx.createOrgConnection(this.connectionData);
-        let chunks = new CsvChunks().fromArray(allRecords);
+        let chunks = new CsvChunks().fromArray(allRecords.map(x => x["Id"]));
         this.apiJobCreateResult = {
             chunks,
             apiInfo: new ApiInfo({
@@ -113,9 +113,11 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                 }
                 records.forEach((record, index) => {
                     if (resultRecords[index].success) {
-                        record["Errors"] = null;
-                        if (self.operation == OPERATION.Insert && self.updateRecordId) {
-                            record["Id"] = resultRecords[index].id;
+                        if (self.operation != OPERATION.Delete) {
+                            record["Errors"] = null;
+                            if (self.operation == OPERATION.Insert && self.updateRecordId) {
+                                record["Id"] = resultRecords[index].id;
+                            }
                         }
                         self.numberJobRecordsSucceeded++;
                     } else {
