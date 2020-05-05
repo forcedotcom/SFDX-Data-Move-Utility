@@ -9,17 +9,9 @@ import * as fs from 'fs';
 import "reflect-metadata";
 import "es6-shim";
 import { plainToClass } from "class-transformer";
-import {
-    parseQuery,
-    composeQuery,
-    FieldType,
-    OrderByClause,
-    Field as SOQLField,
-    getComposedField
-} from 'soql-parser-js';
-import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/common_components/logger";
+import { Logger, RESOURCES } from "../components/common_components/logger";
 import * as models from '../models';
-import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from '../components/common_components/statics';
+import { CONSTANTS, DATA_MEDIA_TYPE } from '../components/common_components/statics';
 import { MigrationJobTask as Task, MigrationJob as Job } from '../models';
 import { CommandInitializationError, SuccessExit } from '../models/common_models/errors';
 

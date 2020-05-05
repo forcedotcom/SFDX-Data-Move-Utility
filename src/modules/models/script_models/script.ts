@@ -10,21 +10,16 @@
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
-import { Query } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
-import { Sfdx } from "../../components/common_components/sfdx";
-var jsforce = require("jsforce");
 import {
     parseQuery,
     composeQuery,
     OrderByClause,
-    Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
 import { ScriptOrg, ScriptObject } from "..";
-import { fileURLToPath } from "url";
 import { CommandInitializationError } from "../common_models/errors";
 
 

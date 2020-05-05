@@ -10,15 +10,9 @@ import path = require('path');
 import * as fs from 'fs';
 import { SfdxCommand } from '@salesforce/command';
 import {
-    composeQuery,
     Condition,
-    Field as SOQLField,
-    FieldType,
-    getComposedField,
     LiteralType,
     LogicalOperator,
-    parseQuery,
-    Query,
     WhereClause,
     Operator
 } from 'soql-parser-js';
@@ -27,8 +21,8 @@ import { CONSTANTS } from './statics';
 import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
 import { Logger, RESOURCES } from './logger';
-import { CommandAbortedByUserError, IOrgConnectionData } from '../../models';
-var jsforce = require("jsforce");
+import { CommandAbortedByUserError } from '../../models';
+
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;

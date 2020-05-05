@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as models from "../../modules/models";
+
 
 import { FlagsConfig, SfdxCommand, flags } from '@salesforce/command';
 import { Messages } from '@salesforce/core';

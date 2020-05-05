@@ -13,17 +13,15 @@ import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
-import { Logger, RESOURCES } from "../../components/common_components/logger";
+import {  RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
-var jsforce = require("jsforce");
 import {
     parseQuery,
     composeQuery,
-    OrderByClause,
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, ScriptOrg } from "..";
+import { ScriptMockField, Script, SObjectDescribe } from "..";
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 
