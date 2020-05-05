@@ -84,6 +84,76 @@ export class Sfdx {
         return <QueryResult<object>>(await makeQueryAsync(soql));
     }
 
+
+    async queryAndParseAsync(soql: string, org: models.ScriptOrg, useBulkQueryApi: boolean): Promise<Array<any>> {
+
+    }
+
+    /**
+    * Transforms array of object received as result of REST callout (QueryResult) to an array of objects 
+    * including nested properties ex. Account__r.Name
+    * 
+    * @param  {Array<any>} rawRecords Raw records to parse
+    * @param  {string} query The originlan SOQL query used to get the parsed records. Need to retrieve field names.
+    * @returns Array<any>
+    */
+    parseRecords(rawRecords: Array<any>, query: string): Array<any> {
+        const getNestedObject = (nestedObj: any, pathArr: any) => {
+            return pathArr.reduce((obj: any, key: any) =>
+                (obj && obj[key] !== 'undefined') ? obj[key] : undefined, nestedObj);
+        }
+        let fieldMapping = {};
+        const soqlQuery = parseQuery(query);
+        soqlQuery.fields.forEach(element => {
+            if (element.type == "FieldFunctionExpression") {
+                fieldMapping[element.alias] = [element.alias];
+            } else if (element.type == "Field")
+                fieldMapping[element.field] = [element.field];
+            else if (element.type == "FieldRelationship") {
+                var v = element.relationships.concat(element.field);
+                fieldMapping[element.rawValue] = v;
+            }
+        });
+        var parsedRecords = rawRecords.map(function (record) {
+            var o = {};
+            for (var prop in fieldMapping) {
+                if (Object.prototype.hasOwnProperty.call(fieldMapping, prop)) {
+                    o[prop] = getNestedObject(record, fieldMapping[prop]);
+                }
+            }
+            return o;
+        });
+        return parsedRecords;
+    }
+
+    formatRecords(records: Array<any>, format: [string, Map<String, Array<string>>, Array<string>]): Array<any> {
+        if (format[1].size == 0) {
+            return records;
+        } 
+        let keys = [...format[1].keys()];
+        records.forEach(record => {
+            keys.forEach(complexKey => {
+                let fields = format[1].get(complexKey);
+                let value = "";
+                fields.ForEach(field => {
+                    let f = field.toString();
+                    value += ";" + record[f];
+                });
+                record[complexKey.toString()] = value
+            });
+            keys.forEach(complexKey => {
+                let fields = format[1].get(complexKey);
+                fields.ForEach(field => {
+                    let f = field.toString();
+                    if (format[2].indexOf(f) < 0) {
+                        delete record[f];
+                    }
+                });
+            });
+        });
+        return records;
+    }
+
     /**
     * Describes given SObject by retrieving field descriptions
     * 
@@ -150,6 +220,6 @@ export class Sfdx {
             version: connectionData.apiVersion,
             maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
         });
-    }    
-  
+    }
+
 }

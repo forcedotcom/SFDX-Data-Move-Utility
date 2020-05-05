@@ -136,11 +136,11 @@ export class RunCommand {
             if (newObject.operation == OPERATION.Readonly
                 || newObject.allRecords
                 || newObject.isExtraObject) {
-                newObject.processAllRecords = true;
-                newObject.processAllRecordsTarget = true;
+                newObject.processAllSource = true;
+                newObject.processAllTarget = true;
             } else {
                 if (newObject.hasComplexExternalId) {
-                    newObject.processAllRecordsTarget = true;
+                    newObject.processAllTarget = true;
                 }
             }
             if (newObject.name == "RecordType") {

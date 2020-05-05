@@ -60,8 +60,8 @@ export default class ScriptObject {
     parsedQuery: Query;
     parsedDeleteQuery: Query;
     isExtraObject: boolean = false;
-    processAllRecords: boolean = false;
-    processAllRecordsTarget: boolean = false;
+    processAllSource: boolean = false;
+    processAllTarget: boolean = false;
 
     get externalIdSFieldDescribe(): SFieldDescribe {
         return this.isDescribed
