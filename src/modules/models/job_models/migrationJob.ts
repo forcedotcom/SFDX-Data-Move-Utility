@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../../components/common_components/commonUtils";
+import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
@@ -64,7 +64,7 @@ export default class MigrationJob {
      */
     async loadCSVValueMappingFileAsync(): Promise<void> {
         let valueMappingFilePath = path.join(this.script.basePath, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
-        let csvRows = await CommonUtils.readCsvFileAsync(valueMappingFilePath);
+        let csvRows = await Common.readCsvFileAsync(valueMappingFilePath);
         if (csvRows.length > 0) {
             this.logger.infoVerbose(RESOURCES.readingValuesMappingFile, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
             csvRows.forEach(row => {
@@ -89,7 +89,7 @@ export default class MigrationJob {
         let filepath1 = path.join(this.script.basePath, "User.csv");
         let filepath2 = path.join(this.script.basePath, "Group.csv");
         let filepath3 = path.join(this.script.basePath, CONSTANTS.USER_AND_GROUP_FILENAME + ".csv");
-        await CommonUtils.mergeCsvFilesAsync(filepath1, filepath2, filepath3, true, "Id", "Name");
+        await Common.mergeCsvFilesAsync(filepath1, filepath2, filepath3, true, "Id", "Name");
     }
 
     /**
@@ -152,7 +152,7 @@ export default class MigrationJob {
         }
 
         async function ___abortwithPrompt(): Promise<void> {
-            await CommonUtils.abortWithPrompt(self.logger,
+            await Common.abortWithPrompt(self.logger,
                 RESOURCES.issuesFoundDuringCSVValidation,
                 self.script.promptOnIssuesInCSVFiles,
                 RESOURCES.continueTheJobPrompt,
@@ -231,7 +231,7 @@ export default class MigrationJob {
     async saveCSVFileAsync(fileName: string, data: Array<any>): Promise<void> {
         let filePath = path.join(this.script.basePath, fileName);
         this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
-        await CommonUtils.writeCsvFileAsync(filePath, data, true);
+        await Common.writeCsvFileAsync(filePath, data, true);
     }
 
     /**
@@ -247,7 +247,7 @@ export default class MigrationJob {
             if (this.cachedCSVContent.updatedFilenames.has(filePath)) {
                 let csvData = this.cachedCSVContent.csvDataCacheMap.get(filePath);
                 this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
-                await CommonUtils.writeCsvFileAsync(filePath, [...csvData.values()], true);
+                await Common.writeCsvFileAsync(filePath, [...csvData.values()], true);
             }
         }
     }
@@ -306,7 +306,7 @@ export class CachedCSVContent {
      * @memberof CachedCSVContent
      */
     get nextId(): string {
-        return "ID" + CommonUtils.addLeadnigZeros(this.idCounter++, 16);
+        return "ID" + Common.addLeadnigZeros(this.idCounter++, 16);
     }
 
 

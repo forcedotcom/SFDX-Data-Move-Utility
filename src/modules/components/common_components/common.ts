@@ -37,7 +37,7 @@ const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 /**
  * Common utility functions
  */
-export class CommonUtils {
+export class Common {
 
     /**
     * @static Splits array to multiple chunks by max chunk size
@@ -733,7 +733,7 @@ export class CommonUtils {
 
         async function addRowsFromFile(file: string) {
             if (fs.existsSync(file)) {
-                let rows = await CommonUtils.readCsvFileAsync(file);
+                let rows = await Common.readCsvFileAsync(file);
                 rows.forEach(row => {
                     let thisRow = columns.reduce((acc, column) => {
                         if (typeof row[column] != "undefined") {
@@ -863,10 +863,10 @@ export class CommonUtils {
             if (!fs.existsSync(fileName)) {
                 return new Map<string, any>();
             }
-            let csvRows = await CommonUtils.readCsvFileAsync(fileName);
+            let csvRows = await Common.readCsvFileAsync(fileName);
             currentFileMap = new Map<string, any>();
             csvRows.forEach((row, index) => {
-                let indexKey = useRowIndexAutonumber ? String(index + 1) : CommonUtils.makeId(indexValueLength).toUpperCase();
+                let indexKey = useRowIndexAutonumber ? String(index + 1) : Common.makeId(indexValueLength).toUpperCase();
                 if (!row[indexFieldName] && addIndexKeyValues) {
                     row[indexFieldName] = indexKey;
                 }

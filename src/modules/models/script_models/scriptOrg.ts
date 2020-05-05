@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../../components/common_components/commonUtils";
+import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
@@ -131,7 +131,7 @@ export default class ScriptOrg {
             if (!this.isConnected) {
                 // Connect with SFDX
                 this.script.logger.infoNormal(RESOURCES.tryingToConnectCLI, this.name);
-                let processResult = CommonUtils.execSfdx("force:org:display", this.name);
+                let processResult = Common.execSfdx("force:org:display", this.name);
                 let orgInfo = this._parseForceOrgDisplayResult(processResult);
                 if (!orgInfo.isConnected) {
                     throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.tryingToConnectCLIFailed, this.name));

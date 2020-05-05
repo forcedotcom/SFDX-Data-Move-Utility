@@ -10,7 +10,7 @@
 import { LoggerLevel } from '@salesforce/core';
 import * as path from 'path';
 import * as fs from 'fs';
-import { CommonUtils } from './commonUtils';
+import { Common } from './common';
 import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
@@ -235,7 +235,7 @@ class FileLogger {
     log(message: string) {
         if (this.enabled) {
             message = message || "";
-            const d = CommonUtils.formatDateTimeShort(new Date());
+            const d = Common.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
                 m = this.resources.getMessage("fileLoggerInfoString", [d, message]);
@@ -255,7 +255,7 @@ class FileLogger {
     warn(message: string) {
         if (this.enabled) {
             message = message || "";
-            const d = CommonUtils.formatDateTimeShort(new Date());
+            const d = Common.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
                 m = this.resources.getMessage("fileLoggerWarnSring", [d, message]);
@@ -275,7 +275,7 @@ class FileLogger {
     error(message: string) {
         if (this.enabled) {
             message = message || "";
-            const d = CommonUtils.formatDateTimeShort(new Date());
+            const d = Common.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
                 m = this.resources.getMessage("fileLoggerErrorSring", [d, message]);
@@ -369,7 +369,7 @@ export class Logger {
         this.uxLoggerLevel = (<any>LoggerLevel)[String(logLevelFlag).toUpperCase()];
 
         if (command) {
-            let pinfo = CommonUtils.getPluginInfo(command);
+            let pinfo = Common.getPluginInfo(command);
             this.commandFullName = pinfo.pluginName + ":" + pinfo.commandName;
         } else {
             this.commandFullName = "unknown";
@@ -378,7 +378,7 @@ export class Logger {
         this.fileLogger = new FileLogger(
             this.resources,
             path.join(rootPath, CONSTANTS.FILE_LOG_SUBDIRECTORY),
-            `${CommonUtils.formatFileDate(new Date())}.${CONSTANTS.FILE_LOG_FILEEXTENSION}`,
+            `${Common.formatFileDate(new Date())}.${CONSTANTS.FILE_LOG_FILEEXTENSION}`,
             fileLogFlag
         );
 
@@ -534,7 +534,7 @@ export class Logger {
             fileLogMessage = String(uxLogMessage);
         }
         // Get the date string
-        let dateString = CommonUtils.formatDateTime(new Date());
+        let dateString = Common.formatDateTime(new Date());
         let uxOutput: any;
 
         switch (type) {
@@ -797,7 +797,7 @@ export class Logger {
 
         let statusString = COMMAND_EXIT_STATUSES[status].toString();
         let endTime = new Date();
-        let timeElapsedString = CommonUtils.timeDiffString(this.startTime, endTime);
+        let timeElapsedString = Common.timeDiffString(this.startTime, endTime);
 
         if (this.jsonFlag) {
             // As JSON ....
@@ -806,11 +806,11 @@ export class Logger {
                 // Full success result to stdout
                 this.log(<IExitSuccessMessage>{
                     command: this.commandFullName,
-                    cliCommandString: CommonUtils.getFullCommandLine(),
-                    endTime: CommonUtils.convertUTCDateToLocalDate(endTime),
+                    cliCommandString: Common.getFullCommandLine(),
+                    endTime: Common.convertUTCDateToLocalDate(endTime),
                     endTimeUTC: endTime,
                     result: message,
-                    startTime: CommonUtils.convertUTCDateToLocalDate(this.startTime),
+                    startTime: Common.convertUTCDateToLocalDate(this.startTime),
                     startTimeUTC: this.startTime,
                     status: status,
                     statusString: statusString,
@@ -822,12 +822,12 @@ export class Logger {
                 // Full error resut to stdout
                 this.log(<IExitFailedMessage>{
                     command: this.commandFullName,
-                    cliCommandString: CommonUtils.getFullCommandLine(),
-                    endTime: CommonUtils.convertUTCDateToLocalDate(endTime),
+                    cliCommandString: Common.getFullCommandLine(),
+                    endTime: Common.convertUTCDateToLocalDate(endTime),
                     endTimeUTC: endTime,
                     message: message,
                     stack: stack,
-                    startTime: CommonUtils.convertUTCDateToLocalDate(this.startTime),
+                    startTime: Common.convertUTCDateToLocalDate(this.startTime),
                     startTimeUTC: this.startTime,
                     status: status,
                     statusString: statusString,
@@ -948,7 +948,7 @@ export class Logger {
      */
     getFormattedElapsedTimeString(timeNow?: Date): string {
         timeNow = timeNow || new Date();
-        return CommonUtils.timeDiffString(this.startTime, timeNow);
+        return Common.timeDiffString(this.startTime, timeNow);
     }
 
     /**

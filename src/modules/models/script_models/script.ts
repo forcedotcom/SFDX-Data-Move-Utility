@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../../components/common_components/commonUtils";
+import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
@@ -134,7 +134,7 @@ export default class Script {
         this.objects = this.objects.filter(x => CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(x.name) < 0);
 
         // Make each object appear only once in the script
-        this.objects = CommonUtils.distinctArray(this.objects, "name");
+        this.objects = Common.distinctArray(this.objects, "name");
 
     }
 
@@ -193,7 +193,7 @@ export default class Script {
                         if (referencedObjectType == "RecordType") {
                             let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
                             thisField.parentLookupObject.parsedQuery = parseQuery(thisField.parentLookupObject.query);
-                            thisField.parentLookupObject.parsedQuery.where = CommonUtils.composeWhereClause(thisField.parentLookupObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
+                            thisField.parentLookupObject.parsedQuery.where = Common.composeWhereClause(thisField.parentLookupObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
                             thisField.parentLookupObject.parsedQuery.orderBy = <OrderByClause>({
                                 field: "SobjectType",
                                 order: "ASC"
@@ -234,7 +234,7 @@ export default class Script {
 
         // Remove duplicate fields
         this.objects.forEach(object=>{
-            object.parsedQuery.fields = CommonUtils.distinctArray(object.parsedQuery.fields, "field");
+            object.parsedQuery.fields = Common.distinctArray(object.parsedQuery.fields, "field");
             object.query = composeQuery(object.parsedQuery);
         });
 

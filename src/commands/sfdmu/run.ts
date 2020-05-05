@@ -17,7 +17,7 @@ import {
     COMMAND_EXIT_STATUSES
 } from "../../modules/components/common_components/logger";
 import { RunCommand } from "../../modules/commands_processors/runCommand";
-import { CommonUtils } from "../../modules/components/common_components/commonUtils";
+import { Common } from "../../modules/components/common_components/common";
 import { CommandInitializationError, SuccessExit, OrgMetadataError, CommandExecutionError, UnresolvableWarning, CommandAbortedByUserError } from "../../modules/models/common_models/errors";
 
 
@@ -150,7 +150,7 @@ export default class Run extends SfdxCommand {
             // Process --version flag
             if (this.flags.version) {
 
-                let pinfo = CommonUtils.getPluginInfo(this.statics);
+                let pinfo = Common.getPluginInfo(this.statics);
 
                 // Exit - success
                 logger.commandExitMessage(

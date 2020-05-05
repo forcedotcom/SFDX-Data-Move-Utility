@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { ApiInfo } from '.';
-import { CsvChunks, ICsvChunk } from '../../components/common_components/commonUtils';
+import { CsvChunks, ICsvChunk } from '../../components/common_components/common';
 import { IOrgConnectionData } from '../common_models/interfaces';
 import { Logger } from '../../components/common_components/logger';
 import { OPERATION } from '../../components/common_components/statics';

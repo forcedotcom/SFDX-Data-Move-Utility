@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../../components/common_components/commonUtils";
+import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
@@ -79,7 +79,7 @@ export default class ScriptObject {
         if (!this.isDescribed) {
             return new Map<string, SFieldDescribe>();
         }
-        return CommonUtils.filterMapByArray(this.fieldsInQuery, this.sourceSObjectDescribe.fieldsMap, key => new SFieldDescribe({
+        return Common.filterMapByArray(this.fieldsInQuery, this.sourceSObjectDescribe.fieldsMap, key => new SFieldDescribe({
             creatable: false,
             name: key,
             label: key,
@@ -110,7 +110,7 @@ export default class ScriptObject {
         if (!this.sourceSObjectDescribe) {
             return new Map<string, SFieldDescribe>();
         }
-        return CommonUtils.filterMapByArray(this.fieldsToUpdate, this.sourceSObjectDescribe.fieldsMap);
+        return Common.filterMapByArray(this.fieldsToUpdate, this.sourceSObjectDescribe.fieldsMap);
     }
 
     get hasRecordTypeIdField(): boolean {
@@ -135,11 +135,11 @@ export default class ScriptObject {
     }
 
     get hasComplexExternalId(): boolean {
-        return CommonUtils.isComplexField(this.externalId);
+        return Common.isComplexField(this.externalId);
     }
 
     get hasComplexrogiinalExternalId(): boolean {
-        return CommonUtils.isComplexField(this.originalExternalId);
+        return Common.isComplexField(this.originalExternalId);
     }
 
     get isDescribed(): boolean {
@@ -151,7 +151,7 @@ export default class ScriptObject {
     }
 
     get parentLookupObjects(): ScriptObject[] {
-        return CommonUtils.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
+        return Common.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
             if (x.isReference) {
                 return x.parentLookupObject;
             }
@@ -159,7 +159,7 @@ export default class ScriptObject {
     }
 
     get parentMasterDetailObjects(): ScriptObject[] {
-        return CommonUtils.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
+        return Common.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
             if (x.isMasterDetail) {
                 return x.parentLookupObject;
             }
@@ -167,11 +167,11 @@ export default class ScriptObject {
     }
 
     get complexExternalId(): string {
-        return CommonUtils.getComplexField(this.externalId);
+        return Common.getComplexField(this.externalId);
     }
 
     get complexOriginalExternalId(): string {
-        return CommonUtils.getComplexField(this.originalExternalId);
+        return Common.getComplexField(this.originalExternalId);
     }
 
 
@@ -219,7 +219,7 @@ export default class ScriptObject {
             // Add original external id field to the query
             this.parsedQuery.fields.push(getComposedField(this.complexOriginalExternalId));
             // Make each field appear only once in the query
-            this.parsedQuery.fields = CommonUtils.distinctArray(this.parsedQuery.fields, "field");
+            this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
@@ -239,7 +239,7 @@ export default class ScriptObject {
                 }
                 this.parsedDeleteQuery.fields = [getComposedField("Id")];
                 if (this.script.sourceOrg.isPersonAccountEnabled && this.name == "Contact") {
-                    this.parsedDeleteQuery.where = CommonUtils.composeWhereClause(this.parsedDeleteQuery.where, "IsPersonAccount", "false", "=", "BOOLEAN", "AND");
+                    this.parsedDeleteQuery.where = Common.composeWhereClause(this.parsedDeleteQuery.where, "IsPersonAccount", "false", "=", "BOOLEAN", "AND");
                 }
                 this.deleteQuery = composeQuery(this.parsedDeleteQuery);
             } catch (ex) {
@@ -349,7 +349,7 @@ export default class ScriptObject {
         if (!this.isReadonlyObject && !this.isSpecialObject) {
             let fieldsInQuery = [].concat(this.fieldsInQuery);
             fieldsInQuery.forEach(x => {
-                if (!CommonUtils.isComplexField(x) && !describe.fieldsMap.has(x)) {
+                if (!Common.isComplexField(x) && !describe.fieldsMap.has(x)) {
 
 
                     if (x.name == this.externalId) {
@@ -364,7 +364,7 @@ export default class ScriptObject {
                         this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, x);
 
                     // Remove missing field from the query                    
-                    CommonUtils.removeBy(this.parsedQuery.fields, "field", x);
+                    Common.removeBy(this.parsedQuery.fields, "field", x);
                 }
             });
 

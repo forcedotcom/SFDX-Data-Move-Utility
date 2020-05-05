@@ -6,7 +6,7 @@
  */
 
 
-import { CommonUtils } from "../../components/common_components/commonUtils";
+import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
 
 
@@ -88,7 +88,7 @@ export default class SFieldDescribe {
     }
 
     get isComplex(): boolean {
-        return CommonUtils.isComplexField(this.name);
+        return Common.isComplexField(this.name);
     }
 
     get isSelfReference(): boolean {
@@ -107,7 +107,7 @@ export default class SFieldDescribe {
         if (this.custom) {
             return name.replace("__pc", "__pr").replace("__c", "__r");
         } else {
-            return CommonUtils.trimEndStr(name, "Id");
+            return Common.trimEndStr(name, "Id");
         }
     }
 
@@ -140,7 +140,7 @@ export default class SFieldDescribe {
      */
     get fullName__r(): string {
         if (this.isReference) {
-            return this.name__r + "." + CommonUtils.getComplexField(this.parentLookupObject.externalId);
+            return this.name__r + "." + Common.getComplexField(this.parentLookupObject.externalId);
         } else {
             return this.name__r;
         }
@@ -156,7 +156,7 @@ export default class SFieldDescribe {
      */
     get fullOriginalName__r(): string {
         if (this.isReference) {
-            return this.name__r + "." + CommonUtils.getComplexField(this.parentLookupObject.originalExternalId);
+            return this.name__r + "." + Common.getComplexField(this.parentLookupObject.originalExternalId);
         } else {
             return this.name__r;
         }

@@ -8,7 +8,7 @@ import { OPERATION } from "../../components/common_components/statics";
 import { Logger } from "../../components/common_components/logger";
 import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
 import { ApiInfo, IApiEngine } from ".";
-import { ICsvChunk, CommonUtils } from "../../components/common_components/commonUtils";
+import { ICsvChunk, Common } from "../../components/common_components/common";
 import { IOrgConnectionData } from "../common_models/interfaces";
 import { ScriptObject } from "..";
 
@@ -119,7 +119,7 @@ export default class ApiEngineBase implements IApiEngine {
      */
     async writeToTargetCSVFileAsync(records: Array<any>): Promise<void> {
         if (this.createTargetCSVFiles) {
-            await CommonUtils.writeCsvFileAsync(this.targetCSVFullFilename, records, true);
+            await Common.writeCsvFileAsync(this.targetCSVFullFilename, records, true);
         }
     }
 

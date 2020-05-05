@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
-import { CommonUtils, CsvChunks, ICsvChunk } from '../common_components/commonUtils';
+import { Common, CsvChunks, ICsvChunk } from '../common_components/common';
 import { CONSTANTS, OPERATION } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
 import { Sfdx } from '../common_components/sfdx';
@@ -34,7 +34,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
         let connection = Sfdx.createOrgConnection(this.connectionData);
         connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
         let job = connection.bulk.createJob(this.sObjectName, this.strOperation.toLowerCase());
-        let recordChunks = CommonUtils.chunkArray(allRecords, this.bulkApiV1BatchSize);
+        let recordChunks = Common.chunkArray(allRecords, this.bulkApiV1BatchSize);
         let chunks = new CsvChunks().fromArrayChunks(recordChunks);
         this.apiJobCreateResult = {
             chunks,

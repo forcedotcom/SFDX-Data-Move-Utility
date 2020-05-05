@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
-import { CommonUtils } from "../../components/common_components/commonUtils";
+import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../../components/common_components/statics";
 import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
@@ -142,12 +142,12 @@ export default class MigrationJobTask {
 
         // Check csv file --------------------------------------
         // Read the csv header row
-        let csvColumnsRow = await CommonUtils.readCsvFileAsync(this.sourceCSVFilename, 1);
+        let csvColumnsRow = await Common.readCsvFileAsync(this.sourceCSVFilename, 1);
 
         if (csvColumnsRow.length == 0) {
             // Missing or empty file
             csvIssues.push({
-                Date: CommonUtils.formatDateTime(new Date()),
+                Date: Common.formatDateTime(new Date()),
                 "Child sObject": this.sObjectName,
                 "Child field": null,
                 "Child value": null,
@@ -171,7 +171,7 @@ export default class MigrationJobTask {
             if (!columnExists) {
                 // Column is missing in the csv file
                 csvIssues.push({
-                    Date: CommonUtils.formatDateTime(new Date()),
+                    Date: Common.formatDateTime(new Date()),
                     "Child sObject": this.sObjectName,
                     "Child field": fieldName,
                     "Child value": null,
@@ -200,7 +200,7 @@ export default class MigrationJobTask {
         let self = this;
         let csvIssues = new Array<ICSVIssues>();
 
-        let currentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
+        let currentFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
             this.sourceCSVFilename,
             null, null,
             false, false);
@@ -261,7 +261,7 @@ export default class MigrationJobTask {
             let parentExternalId = sField.parentLookupObject.externalId;
             let parentTask = self.job.getTaskBySObjectName(sField.parentLookupObject.name);
             if (parentTask) {
-                let parentFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, parentTask.sourceCSVFilename);
+                let parentFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, parentTask.sourceCSVFilename);
                 let parentCSVRowsMap = new Map<string, any>();
                 [...parentFileMap.values()].forEach(parentCsvRow => {
                     let key = parentTask.getRecordValue(parentCsvRow, parentExternalId);
@@ -289,7 +289,7 @@ export default class MigrationJobTask {
                             let parentCsvRow = parentCSVRowsMap.get(desiredExternalIdValue);
                             if (!parentCsvRow) {
                                 csvIssues.push({
-                                    Date: CommonUtils.formatDateTime(new Date()),
+                                    Date: Common.formatDateTime(new Date()),
                                     "Child sObject": self.sObjectName,
                                     "Child field": columnName__r,
                                     "Child value": desiredExternalIdValue,
@@ -321,7 +321,7 @@ export default class MigrationJobTask {
                             let parentCsvRow = parentFileMap.get(idValue);
                             if (!parentCsvRow) {
                                 csvIssues.push({
-                                    Date: CommonUtils.formatDateTime(new Date()),
+                                    Date: Common.formatDateTime(new Date()),
                                     "Child sObject": self.sObjectName,
                                     "Child field": columnNameId,
                                     "Child value": idValue,
@@ -362,7 +362,7 @@ export default class MigrationJobTask {
             if (parentOriginalExternalIdColumnName != "Id") {
                 let childTask = self.job.getTaskBySObjectName(childIdSField.scriptObject.name);
                 if (childTask) {
-                    let childFileMap: Map<string, any> = await CommonUtils.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, childTask.sourceCSVFilename);
+                    let childFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, childTask.sourceCSVFilename);
                     let isFileChanged = false;
                     if (childFileMap.size > 0) {
                         let childCSVFirstRow = childFileMap.values().next().value;
@@ -384,7 +384,7 @@ export default class MigrationJobTask {
                             });
                         } else {
                             csvIssues.push({
-                                Date: CommonUtils.formatDateTime(new Date()),
+                                Date: Common.formatDateTime(new Date()),
                                 "Child sObject": childTask.sObjectName,
                                 "Child field": columnChildOriginalName__r,
                                 "Child value": null,

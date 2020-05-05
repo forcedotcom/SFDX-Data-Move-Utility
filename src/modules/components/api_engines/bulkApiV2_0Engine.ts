@@ -10,7 +10,7 @@ import {
     ApiResultRecord,
     IApiEngineInitParameters
     } from '../../models/api_models';
-import { CommonUtils, ICsvChunk } from '../common_components/commonUtils';
+import { Common, ICsvChunk } from '../common_components/common';
 import { CONSTANTS, OPERATION, RESULT_STATUSES } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
 import { RESOURCES } from '../common_components/logger';
@@ -52,7 +52,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
     }
   
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
-        let chunks = CommonUtils.createCsvStringsFromArray(allRecords,
+        let chunks = Common.createCsvStringsFromArray(allRecords,
             CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
             CONSTANTS.BULK_API_V2_BLOCK_SIZE);
         this.apiJobCreateResult = {
@@ -244,9 +244,9 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         let self = this;
         this.sourceRecords = records;
         if (this.operationType == "insert") {
-            this.sourceRecordsHashmap = CommonUtils.mapArrayItemsByHashcode(records, undefined);
+            this.sourceRecordsHashmap = Common.mapArrayItemsByHashcode(records, undefined);
         } else {
-            this.sourceRecordsHashmap = CommonUtils.mapArrayItemsByPropertyName(records, "Id");
+            this.sourceRecordsHashmap = Common.mapArrayItemsByPropertyName(records, "Id");
         }
         return new Promise(resolve => {
             request.put({
@@ -449,7 +449,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                             cast: self._csvCast
                         });
 
-                        let allRecords = CommonUtils.transformArrayOfArrays(csv);
+                        let allRecords = Common.transformArrayOfArrays(csv);
                         let failedRecords = await self._getBulkJobUnsuccessfullResultAsync(contentUrl, true);
                         let unprocessedRecords = await self._getBulkJobUnsuccessfullResultAsync(contentUrl, false);
                         allRecords = allRecords.concat(failedRecords, unprocessedRecords);
@@ -457,14 +457,14 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                         let map: Map<object, object>;
 
                         if (self.operationType == "insert") {
-                            map = CommonUtils.mapArraysByHashcode(undefined, allRecords, [
+                            map = Common.mapArraysByHashcode(undefined, allRecords, [
                                 "sf__Created",
                                 "sf__Id",
                                 "sf__Error",
                                 "sf__Unprocessed"
                             ], self.sourceRecordsHashmap);
                         } else {
-                            map = CommonUtils.mapArraysByItemProperty(undefined, allRecords, "Id", self.sourceRecordsHashmap);
+                            map = Common.mapArraysByItemProperty(undefined, allRecords, "Id", self.sourceRecordsHashmap);
                         }
                         let resultRecords = self.sourceRecords.map(sourceRecord => {
                             let targetRecord = map.get(sourceRecord);
@@ -540,7 +540,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                         skip_empty_lines: true,
                         cast: self._csvCast
                     });
-                    let unprocessedRecords = CommonUtils.transformArrayOfArrays(csv);
+                    let unprocessedRecords = Common.transformArrayOfArrays(csv);
                     if (!isGetFailed) {
                         unprocessedRecords.forEach(record => {
                             record["sf__Unprocessed"] = true
