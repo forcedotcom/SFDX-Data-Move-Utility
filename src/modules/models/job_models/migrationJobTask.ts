@@ -90,7 +90,7 @@ export default class MigrationJobTask {
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
-        return this.getCSVFilename(filepath);
+        return this.getCSVFilename(filepath, '_source');
     }
 
     targetCSVFilename(operation: OPERATION): string {
@@ -438,10 +438,11 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     getCSVFilename(rootPath: string, pattern?: string): string {
+        let suffix = `${pattern || ''}.csv`;
         if (this.sObjectName == "User" || this.sObjectName == "Group") {
-            return path.join(rootPath, CONSTANTS.USER_AND_GROUP_FILENAME) + ".csv";
+            return path.join(rootPath, CONSTANTS.USER_AND_GROUP_FILENAME) + suffix;
         } else {
-            return path.join(rootPath, this.sObjectName) + `${pattern}.csv`;
+            return path.join(rootPath, this.sObjectName) + suffix;
         }
     }
 
