@@ -975,6 +975,9 @@ export class CsvChunks {
         this.header = Object.keys(arrayChunks[0][0]);
         return this;
     }
+    fromArray(array : Array<any>) : CsvChunks{
+        return this.fromArrayChunks([array]);
+    }
 }
 
 /**

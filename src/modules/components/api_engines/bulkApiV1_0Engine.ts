@@ -35,7 +35,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
     getEngineName(): string {
         return "Bulk API V1.0";
     }
- 
+
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let connection = Sfdx.createOrgConnection(this.connectionData);
         connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
@@ -81,6 +81,14 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                 if (pollTimer) {
                     clearInterval(pollTimer);
                 }
+                if (progressCallback) {
+                    progressCallback(new ApiInfo({
+                        jobState: "Failed",
+                        errorMessage: batchInfo.stateMessage,
+                        jobId: job.id,
+                        batchId: batch.id                        
+                    }));
+                }
                 // ERROR RESULT
                 resolve(null);
                 return;
@@ -101,9 +109,17 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                     }));
                 }
                 pollTimer = setInterval(function () {
-                    connection.bulk.job(job.id).batch(batch.id).check((err: any, results: any) => {
-                        if (err) {
+                    connection.bulk.job(job.id).batch(batch.id).check((error: any, results: any) => {
+                        if (error) {
                             clearInterval(pollTimer);
+                            if (progressCallback) {
+                                progressCallback(new ApiInfo({
+                                    jobState: "Failed",
+                                    errorMessage: error,
+                                    jobId: job.id,
+                                    batchId: batch.id                                    
+                                }));
+                            }
                             // ERROR RESULT                                                        
                             resolve(null);
                             return;
@@ -123,10 +139,10 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                             numberBatchRecordsProcessed = processed;
                             let progress = new ApiInfo({
                                 jobState: "InProgress",
-                                jobId: job.id,
-                                batchId: batch.id,
                                 numberRecordsProcessed: self.numberJobRecordsSucceeded + processed,
-                                numberRecordsFailed: self.numberJobRecordsFailed + failed
+                                numberRecordsFailed: self.numberJobRecordsFailed + failed,
+                                jobId: job.id,
+                                batchId: batch.id
                             });
                             if (progressCallback) {
                                 // Progress message: N batch records were processed

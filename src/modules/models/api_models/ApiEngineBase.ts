@@ -28,6 +28,7 @@ export default class ApiEngineBase  implements IApiEngine {
     isSource: boolean;
     pollingIntervalMs: number
     bulkApiV1BatchSize: number;
+    allOrNone: boolean;
     operation: OPERATION;
     updateRecordId: boolean;
     sObjectName : string;
@@ -67,6 +68,7 @@ export default class ApiEngineBase  implements IApiEngine {
         this.pollingIntervalMs = init.pollingIntervalMs;
         this.updateRecordId = init.updateRecordId;
         this.bulkApiV1BatchSize = init.bulkApiV1BatchSize;
+        this.allOrNone = init.allOrNone;
     }
 
     // ----------------------- Interface IApiProcess ----------------------------------

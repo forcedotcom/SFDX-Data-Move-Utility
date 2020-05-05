@@ -191,7 +191,9 @@ export enum RESOURCES {
     apiOperationCompleted = "apiOperationCompleted",
     apiOperationWarnCompleted = "apiOperationWarnCompleted",
     apiOperationStarted = "apiOperationStarted",
-    apiOperationFinished = "apiOperationFinished"
+    apiOperationFinished = "apiOperationFinished",
+    invalidApiOperation = "invalidApiOperation",
+    unexpectedApiError = "unexpectedApiError"
 
 }
 

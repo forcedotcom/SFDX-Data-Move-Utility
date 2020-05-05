@@ -602,7 +602,8 @@ export default class MigrationJobTask {
                 sObjectName: this.sObjectName,
                 operation,
                 pollingIntervalMs: this.script.pollingIntervalMs,
-                updateRecordId
+                updateRecordId,
+                allOrNone: this.script.allOrNone
             });
         }
         this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);

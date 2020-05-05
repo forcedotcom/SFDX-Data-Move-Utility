@@ -187,7 +187,9 @@
     "apiOperationCompleted": "[Batch# %s:%s] {%s} Completed. %s records succeeded, %s records failed.",
     "apiOperationWarnCompleted": "[Batch# %s:%s] {%s} Incompleted. %s records succeeded, %s records failed.",
     "apiOperationStarted": "{%s} The %s API operation has been started using %s.",
-    "apiOperationFinished": "{%s} The %s API operation has been finished."
+    "apiOperationFinished": "{%s} The %s API operation has been finished.",
+    "invalidApiOperation": "Invalid Api operation",
+    "unexpectedApiError": "Unexpected Api error"
 
 
 

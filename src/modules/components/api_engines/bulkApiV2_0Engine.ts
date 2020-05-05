@@ -579,24 +579,23 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
     }
 
     private _apiRequestErrorHandler(resolve: any, error: any, response: any, body: any) {
-        let self = this;
         if (!response) {
             // Runtime error
             resolve(new ApiInfo({
                 errorMessage: error.message,
                 errorStack: error.stack,
-                sObjectName: self.sObjectName,
-                strOperation: self.strOperation,
+                sObjectName: this.sObjectName,
+                strOperation: this.strOperation,
             }));
         } else {
-            // Rest API error
+            // API error
             let info = body && JSON.parse(body)[0] || {
-                message: "Unexpected error",
+                message: this.logger.getResourceString(RESOURCES.unexpectedApiError),
             };
             resolve(new ApiInfo({
                 errorMessage: info.message,
-                sObjectName: self.sObjectName,
-                strOperation: self.strOperation,
+                sObjectName: this.sObjectName,
+                strOperation: this.strOperation,
             }));
         }
     }
