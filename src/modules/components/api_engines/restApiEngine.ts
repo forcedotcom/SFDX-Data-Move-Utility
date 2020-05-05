@@ -93,7 +93,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
             // Progress message: job was created
             progressCallback(new ApiInfo({
                 jobState: "Open",
-                jobId: "REST"
+                jobId: apiInfo.jobId
             }));
             apiFn(records, {
                 allOrNone: this.allOrNone,
