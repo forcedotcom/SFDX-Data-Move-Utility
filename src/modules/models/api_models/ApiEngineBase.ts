@@ -8,8 +8,11 @@
 
 import { OPERATION } from "../../components/common_components/statics";
 import { MessageUtils } from "../../components/common_components/messages";
-import { IOrgConnectionData } from "..";
+
 import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
+import { ApiInfo, IApiEngine } from ".";
+import { ICsvChunk } from "../../components/common_components/commonUtils";
+import { IOrgConnectionData } from "../common_models/interfaces";
 
 
 
@@ -20,7 +23,7 @@ import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
  * @export
  * @class ApiProcessBase
  */
-export default class ApiEngineBase {
+export default class ApiEngineBase  implements IApiEngine {
 
     isSource: boolean;
     pollingIntervalMs: number
@@ -65,5 +68,45 @@ export default class ApiEngineBase {
         this.updateRecordId = init.updateRecordId;
         this.bulkApiV1BatchSize = init.bulkApiV1BatchSize;
     }
+
+    // ----------------------- Interface IApiProcess ----------------------------------
+    getEngineName(): string {
+        return "REST API";
+    }
+
+    async executeCRUD(allRcords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
+        await this.createCRUDApiJobAsync(allRcords);
+        return await this.processCRUDApiJobAsync(progressCallback);
+    }
+
+    async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
+        // TODO: Override this
+        return null;
+    }
+
+    async processCRUDApiJobAsync(progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
+        let allResultRecords = new Array<any>();
+        for (let index = 0; index < this.apiJobCreateResult.chunks.chunks.length; index++) {
+            const csvCunk = this.apiJobCreateResult.chunks.chunks[index];
+            let resultRecords = await this.processCRUDApiBatchAsync(csvCunk, progressCallback);
+            if (!resultRecords) {
+                // ERROR RESULT
+                return null;
+            } else {
+                allResultRecords = allResultRecords.concat(resultRecords);
+            }
+        }
+        return allResultRecords;
+    }
+
+    async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
+        // TODO: Override this
+        return null;
+    }
+
+    getStrOperation(): string {
+        return this.strOperation;
+    }
+    // ----------------------- ---------------- -------------------------------------------    
 
 }

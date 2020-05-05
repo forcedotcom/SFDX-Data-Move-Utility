@@ -23,7 +23,9 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { Script, OrgInfo, CommandInitializationError, IOrgConnectionData } from "..";
+import { Script, OrgInfo } from "..";
+import { IOrgConnectionData } from "../common_models/interfaces";
+import { CommandInitializationError } from "../common_models/errors";
 
 
 /**

@@ -18,6 +18,7 @@ import {
 } from "../../modules/components/common_components/messages";
 import { RunCommand } from "../../modules/commands_processors/runCommand";
 import { CommonUtils } from "../../modules/components/common_components/commonUtils";
+import { CommandInitializationError, SuccessExit, OrgMetadataError, CommandExecutionError, UnresolvableWarning, CommandAbortedByUserError } from "../../modules/models/common_models/errors";
 
 
 Messages.importMessagesDirectory(__dirname);
@@ -163,11 +164,11 @@ export default class Run extends SfdxCommand {
             }
 
             if (!this.flags.sourceusername) {
-                throw new models.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername']));
+                throw new CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername']));
             }
 
             if (!this.flags.targetusername) {
-                throw new models.CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
+                throw new CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
             }
 
             let commandResult: any;
@@ -191,14 +192,14 @@ export default class Run extends SfdxCommand {
             // Exit - error
             switch (e.constructor) {
 
-                case models.SuccessExit:
+                case SuccessExit:
                     logger.commandExitMessage(
                         RESOURCES.successfullyCompletedResult,
                         COMMAND_EXIT_STATUSES.SUCCESS);
                     process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
 
 
-                case models.CommandInitializationError:
+                case CommandInitializationError:
                     logger.commandExitMessage(
                         RESOURCES.commandInitializationErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR,
@@ -206,7 +207,7 @@ export default class Run extends SfdxCommand {
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR);
 
 
-                case models.OrgMetadataError:
+                case OrgMetadataError:
                     logger.commandExitMessage(
                         RESOURCES.orgMetadataErrorResult,
                         COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR,
@@ -214,7 +215,7 @@ export default class Run extends SfdxCommand {
                     process.exit(COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR);
 
 
-                case models.CommandExecutionError:
+                case CommandExecutionError:
                     logger.commandExitMessage(
                         RESOURCES.commandExecutionErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR,
@@ -222,14 +223,14 @@ export default class Run extends SfdxCommand {
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR);
 
 
-                case models.UnresolvableWarning:
+                case UnresolvableWarning:
                     logger.commandExitMessage(
                         RESOURCES.commandUnresolvableWarningResult,
                         COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING);
 
 
-                case models.CommandAbortedByUserError:
+                case CommandAbortedByUserError:
                     logger.commandExitMessage(
                         RESOURCES.commandAbortedByUserErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER,

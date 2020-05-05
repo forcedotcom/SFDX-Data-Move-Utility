@@ -10,7 +10,7 @@ import { CommonUtils, ICsvChunk } from "../common_components/commonUtils";
 import parse = require('csv-parse/lib/sync');
 import { RESOURCES, MessageUtils } from "../common_components/messages";
 import { RESULT_STATUSES, OPERATION, CONSTANTS } from "../common_components/statics";
-import { IOrgConnectionData } from "../../models";
+
 import { IApiEngine, IApiJobCreateResult } from "../../models/api_models/interfaces";
 import { ApiEngineBase, ApiInfo, ApiResultRecord, IApiEngineInitParameters } from "../../models/api_models";
 const request = require('request');
@@ -47,12 +47,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
     getEngineName(): string {
         return "Bulk API V2.0";
     }
-    
-    async executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
-        await this.createCRUDApiJobAsync(allRecords);
-        return await this.processCRUDApiJobAsync(progressCallback);
-    }
-
+  
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let chunks = CommonUtils.createCsvStringsFromArray(allRecords,
             CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
@@ -67,21 +62,6 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
             allRecords
         };
         return this.apiJobCreateResult;
-    }
-
-    async processCRUDApiJobAsync(progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
-        let allResultRecords = new Array<any>();
-        for (let index = 0; index < this.apiJobCreateResult.chunks.chunks.length; index++) {
-            const csvCunk = this.apiJobCreateResult.chunks.chunks[index];
-            let resultRecords = await this.processCRUDApiBatchAsync(csvCunk, progressCallback);
-            if (!resultRecords) {
-                // ERROR RESULT
-                return null;
-            } else {
-                allResultRecords = allResultRecords.concat(resultRecords);
-            }
-        }
-        return allResultRecords;
     }
 
     async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
@@ -197,11 +177,6 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         // SUCCESS RESULT
         return csvChunk.records;
     }
-
-    getStrOperation() : string {
-        return this.strOperation;
-    }
-
     // ----------------------- ---------------- -------------------------------------------    
 
 

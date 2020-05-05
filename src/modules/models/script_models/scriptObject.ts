@@ -23,8 +23,9 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, CommandInitializationError, OrgMetadataError, ScriptOrg } from "..";
+import { ScriptMockField, Script, SObjectDescribe,  ScriptOrg } from "..";
 import SFieldDescribe from "./sfieldDescribe";
+import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 
 
 /**

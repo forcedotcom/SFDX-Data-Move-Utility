@@ -8,7 +8,6 @@
 
 import { ICsvChunk, CommonUtils, CsvChunks } from "../common_components/commonUtils";
 import { OPERATION, CONSTANTS } from "../common_components/statics";
-import { IOrgConnectionData } from "../../models";
 import { MessageUtils } from "../common_components/messages";
 import { IApiEngine, IApiJobCreateResult } from "../../models/api_models/interfaces";
 import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../../models/api_models";
@@ -36,12 +35,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
     getEngineName(): string {
         return "Bulk API V1.0";
     }
-
-    async executeCRUD(allRcords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
-        await this.createCRUDApiJobAsync(allRcords);
-        return await this.processCRUDApiJobAsync(progressCallback);
-    }
-
+ 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let connection = Sfdx.createOrgConnection(this.connectionData);
         connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
@@ -61,21 +55,6 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
             connection
         };
         return this.apiJobCreateResult;
-    }
-
-    async processCRUDApiJobAsync(progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
-        let allResultRecords = new Array<any>();
-        for (let index = 0; index < this.apiJobCreateResult.chunks.chunks.length; index++) {
-            const csvCunk = this.apiJobCreateResult.chunks.chunks[index];
-            let resultRecords = await this.processCRUDApiBatchAsync(csvCunk, progressCallback);
-            if (!resultRecords) {
-                // ERROR RESULT
-                return null;
-            } else {
-                allResultRecords = allResultRecords.concat(resultRecords);
-            }
-        }
-        return allResultRecords;
     }
 
     async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
@@ -186,10 +165,6 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                 resolve(records);
             });
         });
-    }
-
-    getStrOperation(): string {
-        return this.strOperation;
     }
     // ----------------------- ---------------- -------------------------------------------    
 

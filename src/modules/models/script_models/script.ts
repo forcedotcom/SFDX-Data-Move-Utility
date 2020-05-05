@@ -23,8 +23,9 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptOrg, ScriptObject, CommandInitializationError } from "..";
+import { ScriptOrg, ScriptObject } from "..";
 import { fileURLToPath } from "url";
+import { CommandInitializationError } from "../common_models/errors";
 
 
 

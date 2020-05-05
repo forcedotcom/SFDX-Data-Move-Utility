@@ -20,7 +20,8 @@ import {
 import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/common_components/messages";
 import * as models from '../models';
 import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from '../components/common_components/statics';
-import { MigrationJobTask as Task, MigrationJob as Job, SuccessExit } from '../models';
+import { MigrationJobTask as Task, MigrationJob as Job } from '../models';
+import { CommandInitializationError, SuccessExit } from '../models/common_models/errors';
 
 
 
@@ -81,12 +82,12 @@ export class RunCommand {
 
         // Load script file
         if (!fs.existsSync(this.basePath)) {
-            throw new models.CommandInitializationError(this.logger.getResourceString(RESOURCES.workingPathDoesNotExist));
+            throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.workingPathDoesNotExist));
         }
         let filePath = path.join(this.basePath, CONSTANTS.SCRIPT_FILE_NAME);
 
         if (!fs.existsSync(filePath)) {
-            throw new models.CommandInitializationError(this.logger.getResourceString(RESOURCES.packageFileDoesNotExist));
+            throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.packageFileDoesNotExist));
         }
 
         this.logger.infoMinimal(RESOURCES.newLine);
