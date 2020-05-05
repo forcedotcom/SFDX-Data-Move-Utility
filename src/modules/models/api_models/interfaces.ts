@@ -4,15 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+import { ApiInfo } from '.';
+import { CsvChunks, ICsvChunk } from '../../components/common_components/commonUtils';
+import { IOrgConnectionData } from '../common_models/interfaces';
+import { MessageUtils } from '../../components/common_components/messages';
+import { OPERATION } from '../../components/common_components/statics';
 
 
-
-import { ICsvChunk, CsvChunks } from "../../components/common_components/commonUtils";
-import { ApiInfo } from ".";
-import { MessageUtils } from "../../components/common_components/messages";
-
-import { OPERATION } from "../../components/common_components/statics";
-import { IOrgConnectionData } from "../common_models/interfaces";
 
 /**
  * Returned after creating an Api job
@@ -107,6 +105,8 @@ export interface IApiEngineInitParameters {
     operation: OPERATION,
     pollingIntervalMs: number,
     updateRecordId: boolean,
+    targetCSVFullFilename: string,
+    createTargetCSVFiles: boolean,
     bulkApiV1BatchSize?: number,
     allOrNone?: boolean
 }

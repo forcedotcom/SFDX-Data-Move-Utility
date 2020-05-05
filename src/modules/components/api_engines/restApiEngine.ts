@@ -4,16 +4,12 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
-
-import { ICsvChunk, CsvChunks } from "../common_components/commonUtils";
-import { OPERATION } from "../common_components/statics";
-
-import { MessageUtils, RESOURCES } from "../common_components/messages";
-import { IApiEngine, IApiJobCreateResult } from "../../models/api_models/interfaces";
-import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../../models/api_models";
-import { Sfdx } from "../common_components/sfdx";
-
+import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
+import { CsvChunks, ICsvChunk } from '../common_components/commonUtils';
+import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
+import { OPERATION } from '../common_components/statics';
+import { RESOURCES } from '../common_components/messages';
+import { Sfdx } from '../common_components/sfdx';
 
 
 
@@ -71,11 +67,11 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
             let connection = this.apiJobCreateResult.connection;
             let apiInfo = this.apiJobCreateResult.apiInfo;
             let records = csvChunk.records;
-            let apiFn: string;
+            let apiFunctionName: string;
             switch (this.operation) {
-                case OPERATION.Insert: apiFn = "create"; break;
-                case OPERATION.Update: apiFn = "update"; break;
-                case OPERATION.Delete: apiFn = "del"; break;
+                case OPERATION.Insert: apiFunctionName = "create"; break;
+                case OPERATION.Update: apiFunctionName = "update"; break;
+                case OPERATION.Delete: apiFunctionName = "del"; break;
                 default:
                     // ERROR RESULT
                     if (progressCallback) {
@@ -95,7 +91,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                 jobState: "Open",
                 jobId: apiInfo.jobId
             }));
-            connection.sobject(this.sObjectName)[apiFn](records, {
+            connection.sobject(this.sObjectName)[apiFunctionName](records, {
                 allOrNone: this.allOrNone,
                 allowRecursive: true
             }, async function (error: any, resultRecords: any) {
@@ -133,6 +129,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                         batchId: apiInfo.batchId
                     }));
                 }
+                //SUCCESS RESULT
                 resolve(records);
             });
         });

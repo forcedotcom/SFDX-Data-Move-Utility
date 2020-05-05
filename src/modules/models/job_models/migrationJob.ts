@@ -196,6 +196,20 @@ export default class MigrationJob {
     }
 
     /**
+     * Queries records for all tasks in the job
+     *
+     * @returns {Promise<void>}
+     * @memberof MigrationJob
+     */
+    async queryRecords(): Promise<void> {
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            await task.queryRecords();
+        }
+    }
+
+
+    /**
      * Returns a task by the given sObject name
      *
      * @param {string} sObjectName The sobject name

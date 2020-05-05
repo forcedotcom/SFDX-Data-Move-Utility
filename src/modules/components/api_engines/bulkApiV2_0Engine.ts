@@ -4,15 +4,18 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
-
-import { CommonUtils, ICsvChunk } from "../common_components/commonUtils";
+import {
+    ApiEngineBase,
+    ApiInfo,
+    ApiResultRecord,
+    IApiEngineInitParameters
+    } from '../../models/api_models';
+import { CommonUtils, ICsvChunk } from '../common_components/commonUtils';
+import { CONSTANTS, OPERATION, RESULT_STATUSES } from '../common_components/statics';
+import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
+import { RESOURCES } from '../common_components/messages';
 import parse = require('csv-parse/lib/sync');
-import { RESOURCES, MessageUtils } from "../common_components/messages";
-import { RESULT_STATUSES, OPERATION, CONSTANTS } from "../common_components/statics";
 
-import { IApiEngine, IApiJobCreateResult } from "../../models/api_models/interfaces";
-import { ApiEngineBase, ApiInfo, ApiResultRecord, IApiEngineInitParameters } from "../../models/api_models";
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
 const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time operations and for large csv files and slow internet connection
@@ -174,6 +177,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                 batchId: jobResult.batchId
             }));
         }
+        
         // SUCCESS RESULT
         return csvChunk.records;
     }

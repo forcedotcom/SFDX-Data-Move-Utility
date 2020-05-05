@@ -93,12 +93,12 @@ export default class MigrationJobTask {
         return this.getCSVFilename(filepath);
     }
 
-    get targetCSVFilename(): string {
+    targetCSVFilename(operation: OPERATION): string {
         let filepath = path.join(this.script.basePath, CONSTANTS.CSV_TARGET_SUBDIRECTORY);
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
-        return this.getCSVFilename(filepath);
+        return this.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}`);
     }
 
     get sourceOrg() {
@@ -437,11 +437,11 @@ export default class MigrationJobTask {
      * @returns {string}
      * @memberof MigrationJobTask
      */
-    getCSVFilename(rootPath: string): string {
+    getCSVFilename(rootPath: string, pattern?: string): string {
         if (this.sObjectName == "User" || this.sObjectName == "Group") {
             return path.join(rootPath, CONSTANTS.USER_AND_GROUP_FILENAME) + ".csv";
         } else {
-            return path.join(rootPath, this.sObjectName) + ".csv";
+            return path.join(rootPath, this.sObjectName) + `${pattern}.csv`;
         }
     }
 
@@ -554,6 +554,16 @@ export default class MigrationJobTask {
     }
 
     /**
+     * Query records for this task
+     *
+     * @returns {Promise<void>}
+     * @memberof MigrationJobTask
+     */
+    async queryRecords(): Promise<void> {
+        // TODO: Implement this
+    }
+
+    /**
      * Creates new api engine for the given org and operation
      *
      * @param {ScriptOrg} org The org to connect the api engine
@@ -567,9 +577,8 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     createApiEngine(org: ScriptOrg, operation: OPERATION, amountOfRecordsToProcess: number, updateRecordId: boolean): IApiEngine {
-        
-        //if (amountOfRecordsToProcess > this.script.bulkThreshold && !this.script.alwaysUseRestApiToUpdateRecords) {
-        if (false) {
+
+        if (amountOfRecordsToProcess > this.script.bulkThreshold && !this.script.alwaysUseRestApiToUpdateRecords) {
             // Use bulk api
             switch (this.script.bulkApiVersionNumber) {
                 case 2: // Bulk Api V2.0
@@ -579,7 +588,9 @@ export default class MigrationJobTask {
                         sObjectName: this.sObjectName,
                         operation,
                         pollingIntervalMs: this.script.pollingIntervalMs,
-                        updateRecordId
+                        updateRecordId,
+                        targetCSVFullFilename: this.targetCSVFilename(operation),
+                        createTargetCSVFiles: this.script.createTargetCSVFiles
                     });
                     break;
                 default: // Bulk Api V1.0
@@ -590,7 +601,9 @@ export default class MigrationJobTask {
                         operation,
                         pollingIntervalMs: this.script.pollingIntervalMs,
                         updateRecordId,
-                        bulkApiV1BatchSize: this.script.bulkApiV1BatchSize
+                        bulkApiV1BatchSize: this.script.bulkApiV1BatchSize,
+                        targetCSVFullFilename: this.targetCSVFilename(operation),
+                        createTargetCSVFiles: this.script.createTargetCSVFiles
                     });
                     break;
             }
@@ -603,7 +616,9 @@ export default class MigrationJobTask {
                 operation,
                 pollingIntervalMs: this.script.pollingIntervalMs,
                 updateRecordId,
-                allOrNone: this.script.allOrNone
+                allOrNone: this.script.allOrNone,
+                targetCSVFullFilename: this.targetCSVFilename(operation),
+                createTargetCSVFiles: this.script.createTargetCSVFiles
             });
         }
         this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);

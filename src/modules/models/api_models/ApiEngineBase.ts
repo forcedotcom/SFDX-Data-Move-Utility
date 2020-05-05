@@ -4,16 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
-
 import { OPERATION } from "../../components/common_components/statics";
 import { MessageUtils } from "../../components/common_components/messages";
-
 import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
 import { ApiInfo, IApiEngine } from ".";
-import { ICsvChunk } from "../../components/common_components/commonUtils";
+import { ICsvChunk, CommonUtils } from "../../components/common_components/commonUtils";
 import { IOrgConnectionData } from "../common_models/interfaces";
-
+import { ScriptObject } from "..";
 
 
 
@@ -23,7 +20,7 @@ import { IOrgConnectionData } from "../common_models/interfaces";
  * @export
  * @class ApiProcessBase
  */
-export default class ApiEngineBase  implements IApiEngine {
+export default class ApiEngineBase implements IApiEngine {
 
     isSource: boolean;
     pollingIntervalMs: number
@@ -31,33 +28,32 @@ export default class ApiEngineBase  implements IApiEngine {
     allOrNone: boolean;
     operation: OPERATION;
     updateRecordId: boolean;
-    sObjectName : string;
+    sObjectName: string;
+    targetCSVFullFilename: string;
+    createTargetCSVFiles: boolean;
     logger: MessageUtils;
 
-    connectionData : IOrgConnectionData;
+    connectionData: IOrgConnectionData;
 
     apiJobCreateResult: IApiJobCreateResult;
 
-    numberJobRecordsSucceeded: number =  0;
-    numberJobRecordsFailed: number =  0;
+    numberJobRecordsSucceeded: number = 0;
+    numberJobRecordsFailed: number = 0;
 
-    get instanceUrl(){
+    get instanceUrl() {
         return this.connectionData.instanceUrl;
     }
 
-    get accessToken(){
+    get accessToken() {
         return this.connectionData.accessToken;
     }
 
-    get version(){
+    get version() {
         return this.connectionData.apiVersion;
     }
 
     get strOperation(): string {
-        if ((typeof this.operation != "string") == true) {
-            return OPERATION[this.operation].toString();
-        }
-        return this.operation.toString();
+        return ScriptObject.getStrOperation(this.operation);
     }
 
     constructor(init: IApiEngineInitParameters) {
@@ -69,6 +65,8 @@ export default class ApiEngineBase  implements IApiEngine {
         this.updateRecordId = init.updateRecordId;
         this.bulkApiV1BatchSize = init.bulkApiV1BatchSize;
         this.allOrNone = init.allOrNone;
+        this.createTargetCSVFiles = init.createTargetCSVFiles;
+        this.targetCSVFullFilename = init.targetCSVFullFilename;
     }
 
     // ----------------------- Interface IApiProcess ----------------------------------
@@ -82,7 +80,6 @@ export default class ApiEngineBase  implements IApiEngine {
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
-        // TODO: Override this
         return null;
     }
 
@@ -93,16 +90,17 @@ export default class ApiEngineBase  implements IApiEngine {
             let resultRecords = await this.processCRUDApiBatchAsync(csvCunk, progressCallback);
             if (!resultRecords) {
                 // ERROR RESULT
+                await this.writeToTargetCSVFileAsync(new Array<any>());
                 return null;
             } else {
                 allResultRecords = allResultRecords.concat(resultRecords);
             }
         }
+        await this.writeToTargetCSVFileAsync(allResultRecords);
         return allResultRecords;
     }
 
     async processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
-        // TODO: Override this
         return null;
     }
 
@@ -110,5 +108,20 @@ export default class ApiEngineBase  implements IApiEngine {
         return this.strOperation;
     }
     // ----------------------- ---------------- -------------------------------------------    
+
+
+
+    /**
+     * Writes target records to csv file during CRUD api operation
+     *
+     * @param {Array<any>} records
+     * @returns {Promise<void>}
+     * @memberof ApiEngineBase
+     */
+    async writeToTargetCSVFileAsync(records: Array<any>): Promise<void> {
+        if (this.createTargetCSVFiles) {
+            await CommonUtils.writeCsvFileAsync(this.targetCSVFullFilename, records, true);
+        }
+    }
 
 }

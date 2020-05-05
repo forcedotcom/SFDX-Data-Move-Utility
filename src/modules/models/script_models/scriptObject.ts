@@ -118,7 +118,7 @@ export default class ScriptObject {
     }
 
     get strOperation(): string {
-        return OPERATION[this.operation];
+        return ScriptObject.getStrOperation(this.operation);
     }
 
     get isLimitedQuery(): boolean {
@@ -192,9 +192,7 @@ export default class ScriptObject {
         this.originalExternalId = this.externalId;
 
         // Fixes operation value
-        if ((typeof this.operation == "string") == true) {
-            this.operation = OPERATION[this.operation.toString()];
-        }
+        this.operation = ScriptObject.getOperation(this.operation);
 
         // Always set explicit externalId to 'Id' on Insert operation
         if (this.operation == OPERATION.Insert) {
@@ -316,6 +314,19 @@ export default class ScriptObject {
     }
 
 
+    public static getStrOperation(operation: OPERATION){
+        if ((typeof operation != "string") == true) {
+            return OPERATION[operation].toString();
+        }
+        return operation.toString();
+    }
+
+    public static getOperation(operation: OPERATION){
+        if ((typeof operation == "string") == true) {
+            return OPERATION[operation.toString()];
+        }
+        return operation;
+    }
 
     // ----------------------- Private members -------------------------------------------
     private _validateFields(describe: SObjectDescribe, isSource: boolean) {

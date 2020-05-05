@@ -4,17 +4,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
-
-import { ICsvChunk, CommonUtils, CsvChunks } from "../common_components/commonUtils";
-import { OPERATION, CONSTANTS } from "../common_components/statics";
-import { MessageUtils } from "../common_components/messages";
-import { IApiEngine, IApiJobCreateResult } from "../../models/api_models/interfaces";
-import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from "../../models/api_models";
-import { Sfdx } from "../common_components/sfdx";
-import { Job } from "jsforce";
-
-
+import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
+import { CommonUtils, CsvChunks, ICsvChunk } from '../common_components/commonUtils';
+import { CONSTANTS, OPERATION } from '../common_components/statics';
+import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
+import { Sfdx } from '../common_components/sfdx';
 
 
 
@@ -152,7 +146,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                     });
                 }, self.pollingIntervalMs);
             });
-            batch.on("response", function (resultRecords: any) {
+            batch.on("response", async function (resultRecords: any) {
                 clearInterval(pollTimer);
                 records.forEach((record, index) => {
                     if (resultRecords[index].success) {
@@ -178,6 +172,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                         batchId: batch.id
                     }));
                 }
+                // SUCCESS RESULT
                 resolve(records);
             });
         });

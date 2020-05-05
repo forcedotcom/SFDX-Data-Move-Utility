@@ -231,18 +231,32 @@ export class RunCommand {
     * @returns {Promise<void>}
     * @memberof RunCommand
     */
-    async prepareJobExecution(): Promise<void> {
+    async prepareJob(): Promise<void> {
 
-        await this.job.getTotalRecordsCount();        
+        await this.job.getTotalRecordsCount();
 
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.deletingOldData);
-        
-        if (await this.job.deleteOldRecords()){
+
+        if (await this.job.deleteOldRecords()) {
             this.logger.infoVerbose(RESOURCES.deletingOldDataCompleted);
         } else {
             this.logger.infoVerbose(RESOURCES.deletingOldDataSkipped);
-        }    
+        }
+    }
+
+    /**
+     * Execute the migration job
+     *
+     * @returns {Promise<void>}
+     * @memberof RunCommand
+     */
+    async executeJob(): Promise<void> {
+        
+        // Query records PASS 1
+        await this.job.queryRecords();
+
+        
     }
 
 }
