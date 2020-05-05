@@ -185,8 +185,8 @@
     "apiOperationDataUploaded": "[Batch# %s:%s] {%s} The data has been uploaded. Processing...",
     "apiOperationInProgress": "[Batch# %s:%s] {%s} Processing... %s records succeeded, %s records failed.",
     "apiOperationCompleted": "[Batch# %s:%s] {%s} Completed. %s records succeeded, %s records failed.",
-    "apiOperationWarnCompleted": "[Batch# %s:%s] {%s} Incomplete. %s records succeeded, %s records failed.",
-    "apiOperationStarted": "{%s} The %s API operation has been started. Using %s",
+    "apiOperationWarnCompleted": "[Batch# %s:%s] {%s} Incompleted. %s records succeeded, %s records failed.",
+    "apiOperationStarted": "{%s} The %s API operation has been started using %s.",
     "apiOperationFinished": "{%s} The %s API operation has been finished."
 
 

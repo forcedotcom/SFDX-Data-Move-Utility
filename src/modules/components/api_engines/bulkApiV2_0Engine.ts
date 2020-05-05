@@ -59,7 +59,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
             CONSTANTS.BULK_API_V2_BLOCK_SIZE);
         this.apiJobCreateResult = {
             chunks,
-            jobCreateResult: new ApiInfo({
+            apiInfo: new ApiInfo({
                 jobState: "Undefined",
                 strOperation: this.strOperation,
                 sObjectName: this.sObjectName,
@@ -139,14 +139,9 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
             progress.jobId = jobResult.jobId;
             progress.batchId = jobResult.jobId;
             if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
-
-                // Store current number of processed value
                 numberBatchRecordsProcessed = progress.numberRecordsProcessed;
-
-                // Total processed and total failed
                 progress.numberRecordsProcessed += self.numberJobRecordsSucceeded;
                 progress.numberRecordsFailed += self.numberJobRecordsFailed;
-
                 if (progressCallback) {
                     // Progress message: N batch records were processed
                     progressCallback(progress);
@@ -159,6 +154,8 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         batchResult.batchId = jobResult.jobId;
         batchResult.numberRecordsProcessed += self.numberJobRecordsSucceeded;
         batchResult.numberRecordsFailed += self.numberJobRecordsFailed;
+        self.numberJobRecordsSucceeded = batchResult.numberRecordsProcessed;
+        self.numberJobRecordsFailed = batchResult.numberRecordsFailed;
         if (progressCallback) {
             // Progress message: job was completed
             progressCallback(batchResult);
@@ -181,26 +178,24 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                     record["Id"] = batchResult.resultRecords[index].id;
                     record["Errors"] = null;
                 }
-                self.numberJobRecordsSucceeded++;
             } else {
                 if (batchResult.resultRecords[index].errorMessage) {
                     record["Errors"] = batchResult.resultRecords[index].errorMessage;
+                } else {
+                    record["Errors"] = null;
                 }
-                self.numberJobRecordsFailed++;
             }
         });
-
         if (progressCallback) {
             // Progress message: operation finished
             progressCallback(new ApiInfo({
-                jobState: "OperationFinished"
+                jobState: "OperationFinished",
+                jobId: jobResult.jobId,
+                batchId: jobResult.batchId
             }));
         }
-
-
         // SUCCESS RESULT
         return csvChunk.records;
-
     }
 
     getStrOperation() : string {

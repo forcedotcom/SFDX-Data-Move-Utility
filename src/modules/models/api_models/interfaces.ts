@@ -21,7 +21,7 @@ import { OPERATION } from "../../components/common_components/statics";
  */
 export interface IApiJobCreateResult {
     chunks: CsvChunks,
-    jobCreateResult: ApiInfo,
+    apiInfo: ApiInfo,
     connection?: any,
     allRecords?: Array<any>
 }
