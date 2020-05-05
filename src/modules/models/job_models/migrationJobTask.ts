@@ -98,7 +98,7 @@ export default class MigrationJobTask {
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
-        return this.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}`);
+        return this.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}_target`);
     }
 
     get sourceOrg() {

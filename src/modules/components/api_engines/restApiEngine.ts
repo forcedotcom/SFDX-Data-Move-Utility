@@ -35,7 +35,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let connection = Sfdx.createOrgConnection(this.connectionData);
-        let chunks = new CsvChunks().fromArray(allRecords.map(x => x["Id"]));
+        let chunks = new CsvChunks().fromArray(this._getSourceRecordsArray(allRecords));
         this.apiJobCreateResult = {
             chunks,
             apiInfo: new ApiInfo({
@@ -107,13 +107,12 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                     // ERROR RESULT
                     resolve(null);
                 }
+                records = self._getResultRecordsArray(records);
                 records.forEach((record, index) => {
                     if (resultRecords[index].success) {
-                        if (self.operation != OPERATION.Delete) {
-                            record["Errors"] = null;
-                            if (self.operation == OPERATION.Insert && self.updateRecordId) {
-                                record["Id"] = resultRecords[index].id;
-                            }
+                        record["Errors"] = null;
+                        if (self.operation == OPERATION.Insert && self.updateRecordId) {
+                            record["Id"] = resultRecords[index].id;
                         }
                         self.numberJobRecordsSucceeded++;
                     } else {
@@ -136,5 +135,27 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
     }
     // ----------------------- ---------------- -------------------------------------------    
 
+
+
+    // ----------------------- Private members -------------------------------------------        
+    private _getSourceRecordsArray(records: Array<any>): Array<any> {
+        if (this.operation == OPERATION.Delete) {
+            return records.map(x => x["Id"]);
+        } else {
+            return records;
+        }
+    }
+
+    private _getResultRecordsArray(records: Array<any>): Array<any> {
+        if (this.operation == OPERATION.Delete) {
+            return records.map(Id => {
+                return {
+                    Id
+                };
+            });
+        } else {
+            return records;
+        }
+    }
 
 }
