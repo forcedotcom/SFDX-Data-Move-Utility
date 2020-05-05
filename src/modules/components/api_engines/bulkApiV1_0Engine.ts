@@ -91,16 +91,11 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
             }
 
             // Create bulk batch and upload csv ***************************
-            let pollTimer : any;
+            let pollTimer: any;
             let numberBatchRecordsProcessed = 0;
             let job = this.apiJobCreateResult.apiInfo.job;
             let connection = this.apiJobCreateResult.connection;
             let records = csvChunk.records;
-            // Progress message: job was created
-            progressCallback(new ApiInfo({
-                jobState: "Open",
-                jobId: job.jobId
-            }));
             let batch = job.createBatch();
             batch.execute(records);
             batch.on("error", function (batchInfo: any) {
@@ -114,10 +109,15 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
             batch.on("queue", function (batchInfo: any) {
                 batch.poll(self.pollingIntervalMs, CONSTANTS.POLL_TIMEOUT);
                 if (progressCallback) {
+                    // Progress message: job was created
+                    progressCallback(new ApiInfo({
+                        jobState: "Open",
+                        jobId: job.id
+                    }));
                     // Progress message: batch was created
                     progressCallback(new ApiInfo({
                         jobState: "UploadStart",
-                        jobId: job.jobId,
+                        jobId: job.id,
                         batchId: batch.id
                     }));
                 }
@@ -137,14 +137,14 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                                 // Progress message: data uploaded
                                 progressCallback(new ApiInfo({
                                     jobState: "UploadComplete",
-                                    jobId: job.jobId,
+                                    jobId: job.id,
                                     batchId: batch.id
                                 }));
                             }
                             numberBatchRecordsProcessed = processed;
                             let progress = new ApiInfo({
                                 jobState: "InProgress",
-                                jobId: job.jobId,
+                                jobId: job.id,
                                 batchId: batch.id,
                                 numberRecordsProcessed: self.numberJobRecordsSucceeded + processed,
                                 numberRecordsFailed: self.numberJobRecordsFailed + failed
@@ -161,10 +161,10 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                 clearInterval(pollTimer);
                 records.forEach((record, index) => {
                     if (resultRecords[index].success) {
+                        record["Errors"] = null;
                         if (self.operation == OPERATION.Insert && self.updateRecordId) {
                             record["Id"] = resultRecords[index].id;
                         }
-                        record["Errors"] = null;
                         self.numberJobRecordsSucceeded++;
                     } else {
                         if (resultRecords[index].errors) {
