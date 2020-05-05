@@ -569,7 +569,7 @@ export default class MigrationJobTask {
     createApiEngine(org: ScriptOrg, operation: OPERATION, amountOfRecordsToProcess: number, updateRecordId: boolean): IApiEngine {
         
         //if (amountOfRecordsToProcess > this.script.bulkThreshold && !this.script.alwaysUseRestApiToUpdateRecords) {
-        if (true) {
+        if (false) {
             // Use bulk api
             switch (this.script.bulkApiVersionNumber) {
                 case 2: // Bulk Api V2.0

@@ -71,11 +71,11 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
             let connection = this.apiJobCreateResult.connection;
             let apiInfo = this.apiJobCreateResult.apiInfo;
             let records = csvChunk.records;
-            let apiFn: Function;
+            let apiFn: string;
             switch (this.operation) {
-                case OPERATION.Insert: apiFn = connection.sobject(this.sObjectName).create; break;
-                case OPERATION.Update: apiFn = connection.sobject(this.sObjectName).update; break;
-                case OPERATION.Delete: apiFn = connection.sobject(this.sObjectName).del; break;
+                case OPERATION.Insert: apiFn = "create"; break;
+                case OPERATION.Update: apiFn = "update"; break;
+                case OPERATION.Delete: apiFn = "del"; break;
                 default:
                     // ERROR RESULT
                     if (progressCallback) {
@@ -95,7 +95,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                 jobState: "Open",
                 jobId: apiInfo.jobId
             }));
-            apiFn(records, {
+            connection.sobject(this.sObjectName)[apiFn](records, {
                 allOrNone: this.allOrNone,
                 allowRecursive: true
             }, async function (error: any, resultRecords: any) {
@@ -103,7 +103,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                     if (progressCallback) {
                         progressCallback(new ApiInfo({
                             jobState: "Failed",
-                            errorMessage: error,
+                            errorMessage: error.message,
                             jobId: apiInfo.jobId,
                             batchId: apiInfo.batchId
                         }));
