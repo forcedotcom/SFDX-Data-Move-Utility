@@ -542,7 +542,7 @@ export default class MigrationJobTask {
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(queryResult.totalSize));
 
         let recordsToDelete = queryResult.records.map(x => { return { Id: x["Id"] } });
-        this.createApiEngine(this.targetOrg, OPERATION.Delete, true);
+        this.createApiEngine(this.targetOrg, OPERATION.Delete, recordsToDelete.length, true);
         let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
         if (resultRecords == null) {
             // API ERROR. Exiting.
@@ -561,11 +561,14 @@ export default class MigrationJobTask {
      * @param {boolean} updateRecordId Allow update Id property 
      *                                of the processed (the source) records 
      *                                with the target record ids
+     * @param {number} amountOfRecordsToProcess The total amount of records that should 
+     *                                          be processed using this engine instance
      * @returns {IApiEngine}
      * @memberof MigrationJobTask
      */
-    createApiEngine(org: ScriptOrg, operation: OPERATION, updateRecordId: boolean): IApiEngine {
-        //if (org.isSource ? this.sourceTotalRecorsCount : this.targetTotalRecorsCount > this.script.bulkThreshold) {
+    createApiEngine(org: ScriptOrg, operation: OPERATION, amountOfRecordsToProcess: number, updateRecordId: boolean): IApiEngine {
+        
+        //if (amountOfRecordsToProcess > this.script.bulkThreshold && !this.script.alwaysUseRestApiToUpdateRecords) {
         if (true) {
             // Use bulk api
             switch (this.script.bulkApiVersionNumber) {

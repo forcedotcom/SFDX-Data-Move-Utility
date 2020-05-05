@@ -9,10 +9,10 @@
     "pathFlagLongDescription": "[Optional] Absolute or relative path to the directory that contains working export.json file. If not provided, the plugin will try to search for the file in the current directory.",
 
     "quietFlagDescription": "[Optional] Disable logging - show only success/errors",
-    "quietFlagLongDescription": "[Optional] Disable logging - show only success/errors. Supress stdout output. if --filelog is specified the plugin will still log into file.",
+    "quietFlagLongDescription": "[Optional] Disable logging - show only success/errors. Suppress stdout output. if --filelog is specified the plugin will still log into file.",
 
     "silentFlagDescription": "[Optional] Disable logging; same as --quiet flag",
-    "silentFlagLongDescription": "[Optional] The same as --quiet flag. Disable logging - show only success/errors. Supress stdout output. if --filelog is specified the plugin will still log into file.",
+    "silentFlagLongDescription": "[Optional] The same as --quiet flag. Disable logging - show only success/errors. Suppress stdout output. if --filelog is specified the plugin will still log into file.",
 
     "conciseFlagDescription": "[Optional] Emit brief command output to stdout",
     "conciseFlagLongDescription": "[Optional] Display only short messages, that are highly important for understanding the progress of the execution.",
@@ -32,8 +32,8 @@
     "nopromptFlagDescription": "[Optional] Skip prompt inputs or confirmation",
     "nopromptLongFlagDescription": "[Optional] Flag to skip prompting for more inputs or confirmation. Command will continue using the default options.",
 
-    "nowarningsFlagDescription": "[Optional] Supress all warning messages",
-    "nowarningsLongFlagDescription": "[Optional] Flag to supress output of all warning messages to stdout.",
+    "nowarningsFlagDescription": "[Optional] Suppress all warning messages",
+    "nowarningsLongFlagDescription": "[Optional] Flag to suppress output of all warning messages to stdout.",
 
     "jsonFlagDescription": "[Optional] Format the command output as json",
     "jsonLongFlagDescription": "[Optional] Return formatted json instead of text to stdout as a result of the command execution. Json result will also contain extended information as start time, end time, time elapsed etc."

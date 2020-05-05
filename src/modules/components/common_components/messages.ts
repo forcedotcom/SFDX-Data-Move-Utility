@@ -412,7 +412,7 @@ export class MessageUtils {
         params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
 
         if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.NONE || this.noPromptFlag) {
-            // Supress propmts on --quite or --noprompt, immediately send the default value
+            // Suppress propmts on --quite or --noprompt, immediately send the default value
             return params.default;
         }
 

@@ -56,6 +56,7 @@ export default class Script {
     apiVersion: string = CONSTANTS.DEFAULT_API_VERSION;
     createTargetCSVFiles: boolean = true;
     importCSVFilesAsIs = false;
+    alwaysUseRestApiToUpdateRecords: false;
 
 
     // -----------------------------------
