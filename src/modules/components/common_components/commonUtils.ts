@@ -26,7 +26,7 @@ import { CONSTANTS } from './statics';
 
 import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
-import { MessageUtils, RESOURCES } from './messages';
+import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError, IOrgConnectionData } from '../../models';
 var jsforce = require("jsforce");
 
@@ -896,7 +896,7 @@ export class CommonUtils {
      * @static Displays yes/no user prompt to abort 
      *          the operation with warning
      * 
-     * @param {MessageUtils} logger
+     * @param {Logger} logger
      * @param {string} warnMessage The message for warning
      * @param {boolean} showPrompt true to show prompt, false to continue with warning
      * @param {string} promptMessage  The yes/no prompt message
@@ -905,7 +905,7 @@ export class CommonUtils {
      * @returns {Promise<void>}
      * @memberof CommonUtils
      */
-    public static async abortWithPrompt(logger: MessageUtils,
+    public static async abortWithPrompt(logger: Logger,
         warnMessage: string,
         showPrompt: boolean,
         promptMessage: string,

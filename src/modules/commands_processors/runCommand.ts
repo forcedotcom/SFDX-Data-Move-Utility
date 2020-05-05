@@ -17,7 +17,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { MessageUtils, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/common_components/messages";
+import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY } from "../components/common_components/logger";
 import * as models from '../models';
 import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from '../components/common_components/statics';
 import { MigrationJobTask as Task, MigrationJob as Job } from '../models';
@@ -33,7 +33,7 @@ import { CommandInitializationError, SuccessExit } from '../models/common_models
  */
 export class RunCommand {
 
-    logger: MessageUtils;
+    logger: Logger;
     basePath: string;
     targetUsername: string;
     sourceUsername: string;
@@ -50,14 +50,14 @@ export class RunCommand {
 
     /**
      *Creates an instance of RunCommand.
-     * @param {MessageUtils} logger The MessageUtils instance
+     * @param {Logger} logger The MessageUtils instance
      * @param {string} basePath The absolute or relative path where the export.json file does exist (from the command line)
      * @param {string} sourceUsername The username/SFDX instance name of the source env (from the command line)
      * @param {string} targetUsername The username/SFDX instance name of the target env (from the command line)
      * @param {string} apiVersion The sf api version to use across all api operations (from the command line)
      * @memberof RunCommand
      */
-    constructor(logger: MessageUtils,
+    constructor(logger: Logger,
         basePath: string,
         sourceUsername: string,
         targetUsername: string,

@@ -13,7 +13,7 @@ import {
 import { CommonUtils, ICsvChunk } from '../common_components/commonUtils';
 import { CONSTANTS, OPERATION, RESULT_STATUSES } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
-import { RESOURCES } from '../common_components/messages';
+import { RESOURCES } from '../common_components/logger';
 import parse = require('csv-parse/lib/sync');
 
 const request = require('request');

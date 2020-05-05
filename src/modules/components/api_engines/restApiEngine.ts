@@ -8,7 +8,7 @@ import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/a
 import { CsvChunks, ICsvChunk } from '../common_components/commonUtils';
 import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
 import { OPERATION } from '../common_components/statics';
-import { RESOURCES } from '../common_components/messages';
+import { RESOURCES } from '../common_components/logger';
 import { Sfdx } from '../common_components/sfdx';
 
 

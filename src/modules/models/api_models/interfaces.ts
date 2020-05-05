@@ -7,7 +7,7 @@
 import { ApiInfo } from '.';
 import { CsvChunks, ICsvChunk } from '../../components/common_components/commonUtils';
 import { IOrgConnectionData } from '../common_models/interfaces';
-import { MessageUtils } from '../../components/common_components/messages';
+import { Logger } from '../../components/common_components/logger';
 import { OPERATION } from '../../components/common_components/statics';
 
 
@@ -99,7 +99,7 @@ export interface IApiEngine {
  * @interface IApiProcessParameters
  */
 export interface IApiEngineInitParameters {
-    logger: MessageUtils,
+    logger: Logger,
     connectionData: IOrgConnectionData,
     sObjectName: string,
     operation: OPERATION,

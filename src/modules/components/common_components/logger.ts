@@ -294,7 +294,7 @@ class FileLogger {
  * @export
  * @class MessageUtils
  */
-export class MessageUtils {
+export class Logger {
 
     commandFullName: string;
 

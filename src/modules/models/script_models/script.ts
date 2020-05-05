@@ -13,7 +13,7 @@ import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { CommonUtils } from "../../components/common_components/commonUtils";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
-import { MessageUtils, RESOURCES } from "../../components/common_components/messages";
+import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 var jsforce = require("jsforce");
 import {
@@ -60,7 +60,7 @@ export default class Script {
 
 
     // -----------------------------------
-    logger: MessageUtils;
+    logger: Logger;
     sourceOrg: ScriptOrg;
     targetOrg: ScriptOrg;
     basePath: string = "";
@@ -75,7 +75,7 @@ export default class Script {
     /**
      * Setup this object
      *
-     * @param {MessageUtils} logger
+     * @param {Logger} logger
      * @param {string} sourceUsername
      * @param {string} targetUsername
      * @param {string} basePath
@@ -83,7 +83,7 @@ export default class Script {
      * @returns {Promise<void>}
      * @memberof Script
      */
-    async setupAsync(logger: MessageUtils, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<void> {
+    async setupAsync(logger: Logger, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<void> {
 
         // Initialize script
         this.logger = logger;

@@ -13,7 +13,7 @@ import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { CommonUtils } from "../../components/common_components/commonUtils";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
-import { MessageUtils, RESOURCES } from "../../components/common_components/messages";
+import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 var jsforce = require("jsforce");
 import {
@@ -44,7 +44,7 @@ export default class MigrationJob {
         }
     }
 
-    get logger(): MessageUtils {
+    get logger(): Logger {
         return this.script.logger;
     }
 

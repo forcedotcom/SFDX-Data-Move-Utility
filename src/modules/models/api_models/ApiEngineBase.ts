@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { OPERATION } from "../../components/common_components/statics";
-import { MessageUtils } from "../../components/common_components/messages";
+import { Logger } from "../../components/common_components/logger";
 import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
 import { ApiInfo, IApiEngine } from ".";
 import { ICsvChunk, CommonUtils } from "../../components/common_components/commonUtils";
@@ -30,7 +30,7 @@ export default class ApiEngineBase implements IApiEngine {
     sObjectName: string;
     targetCSVFullFilename: string;
     createTargetCSVFiles: boolean;
-    logger: MessageUtils;
+    logger: Logger;
 
     connectionData: IOrgConnectionData;
 

@@ -12,10 +12,10 @@ import { Messages } from '@salesforce/core';
 
 import { AnyJson } from '@salesforce/ts-types';
 import {
-    MessageUtils,
+    Logger,
     RESOURCES,
     COMMAND_EXIT_STATUSES
-} from "../../modules/components/common_components/messages";
+} from "../../modules/components/common_components/logger";
 import { RunCommand } from "../../modules/commands_processors/runCommand";
 import { CommonUtils } from "../../modules/components/common_components/commonUtils";
 import { CommandInitializationError, SuccessExit, OrgMetadataError, CommandExecutionError, UnresolvableWarning, CommandAbortedByUserError } from "../../modules/models/common_models/errors";
@@ -130,7 +130,7 @@ export default class Run extends SfdxCommand {
         this.flags.quiet = this.flags.quiet || this.flags.silent || this.flags.version;
         this.flags.filelog = this.flags.filelog && !this.flags.version;
 
-        let logger = new MessageUtils(
+        let logger = new Logger(
             resources,
             commandMessages,
             this.ux,
