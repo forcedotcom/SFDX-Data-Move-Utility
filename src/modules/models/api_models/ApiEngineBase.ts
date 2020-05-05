@@ -22,7 +22,6 @@ import { ScriptObject } from "..";
  */
 export default class ApiEngineBase implements IApiEngine {
 
-    isSource: boolean;
     pollingIntervalMs: number
     bulkApiV1BatchSize: number;
     allOrNone: boolean;
