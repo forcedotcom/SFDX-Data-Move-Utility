@@ -23,7 +23,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe,  ScriptOrg } from "..";
+import { ScriptMockField, Script, SObjectDescribe, ScriptOrg } from "..";
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 
@@ -313,15 +313,30 @@ export default class ScriptObject {
         }
     }
 
-
-    public static getStrOperation(operation: OPERATION){
+    /**
+     * Converts numeric enum value into string
+     *
+     * @static
+     * @param {OPERATION} operation
+     * @returns
+     * @memberof ScriptObject
+     */
+    public static getStrOperation(operation: OPERATION) {
         if ((typeof operation != "string") == true) {
             return OPERATION[operation].toString();
         }
         return operation.toString();
     }
-
-    public static getOperation(operation: OPERATION){
+    
+    /**
+     * Converts string enum value into numeric
+     *
+     * @static
+     * @param {OPERATION} operation
+     * @returns
+     * @memberof ScriptObject
+     */
+    public static getOperation(operation: OPERATION) {
         if ((typeof operation == "string") == true) {
             return OPERATION[operation.toString()];
         }
