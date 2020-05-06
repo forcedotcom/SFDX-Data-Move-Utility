@@ -20,7 +20,7 @@ import {
     WhereClause
 } from 'soql-parser-js';
 import { CONSTANTS, DATA_MEDIA_TYPE } from './statics';
-import { DescribeSObjectResult, QueryResult } from 'jsforce';
+import { DescribeSObjectResult, QueryResult, Analytics } from 'jsforce';
 import { IOrgConnectionData } from '../../models';
 var jsforce = require("jsforce");
 
@@ -84,74 +84,134 @@ export class Sfdx {
         return <QueryResult<object>>(await makeQueryAsync(soql));
     }
 
-
-    async queryAndParseAsync(soql: string, org: models.ScriptOrg, useBulkQueryApi: boolean): Promise<Array<any>> {
-
-    }
-
-    /**
-    * Transforms array of object received as result of REST callout (QueryResult) to an array of objects 
-    * including nested properties ex. Account__r.Name
-    * 
-    * @param  {Array<any>} rawRecords Raw records to parse
-    * @param  {string} query The originlan SOQL query used to get the parsed records. Need to retrieve field names.
-    * @returns Array<any>
-    */
-    parseRecords(rawRecords: Array<any>, query: string): Array<any> {
-        const getNestedObject = (nestedObj: any, pathArr: any) => {
-            return pathArr.reduce((obj: any, key: any) =>
-                (obj && obj[key] !== 'undefined') ? obj[key] : undefined, nestedObj);
+    async queryFullAsync(soql: string, useBulkQueryApi: boolean, csvFilename?: string): Promise<Array<any>> {
+        let self = this;
+        let records = [].concat(await ___query(soql));
+        if (soql.indexOf("FROM Group") >= 0) {
+            soql = soql.replace("FROM Group", "FROM User");
+            records = records.concat(await ___query(soql));
         }
-        let fieldMapping = {};
-        const soqlQuery = parseQuery(query);
-        soqlQuery.fields.forEach(element => {
-            if (element.type == "FieldFunctionExpression") {
-                fieldMapping[element.alias] = [element.alias];
-            } else if (element.type == "Field")
-                fieldMapping[element.field] = [element.field];
-            else if (element.type == "FieldRelationship") {
-                var v = element.relationships.concat(element.field);
-                fieldMapping[element.rawValue] = v;
-            }
-        });
-        var parsedRecords = rawRecords.map(function (record) {
-            var o = {};
-            for (var prop in fieldMapping) {
-                if (Object.prototype.hasOwnProperty.call(fieldMapping, prop)) {
-                    o[prop] = getNestedObject(record, fieldMapping[prop]);
-                }
-            }
-            return o;
-        });
-        return parsedRecords;
-    }
-
-    formatRecords(records: Array<any>, format: [string, Map<String, Array<string>>, Array<string>]): Array<any> {
-        if (format[1].size == 0) {
-            return records;
-        } 
-        let keys = [...format[1].keys()];
-        records.forEach(record => {
-            keys.forEach(complexKey => {
-                let fields = format[1].get(complexKey);
-                let value = "";
-                fields.ForEach(field => {
-                    let f = field.toString();
-                    value += ";" + record[f];
-                });
-                record[complexKey.toString()] = value
-            });
-            keys.forEach(complexKey => {
-                let fields = format[1].get(complexKey);
-                fields.ForEach(field => {
-                    let f = field.toString();
-                    if (format[2].indexOf(f) < 0) {
-                        delete record[f];
-                    }
-                });
-            });
-        });
         return records;
+
+        // ------------------ internal functions ------------------------- //
+        async function ___query(soql: string): Promise<Array<any>> {
+            let soqlFormat = ___formatSoql(soql);
+            soql = soqlFormat[0];
+            let records = (await self.queryAsync(soql, useBulkQueryApi)).records;
+            records = ___parseRecords(records, soql);
+            records = ___formatRecords(records, soqlFormat);
+            return records;
+        }
+
+        function ___formatSoql(soql: string): [string, Map<string, Array<string>>, Array<string>] {
+            let newParsedQuery = parseQuery(soql);
+            if (newParsedQuery.where && newParsedQuery.where.left && newParsedQuery.where.left.openParen && !newParsedQuery.where.left.closeParen) {
+                newParsedQuery.where.left.closeParen = newParsedQuery.where.left.openParen;
+            }
+            let originalFields: Array<SOQLField> = newParsedQuery.fields.map(x => {
+                return <SOQLField>x;
+            });
+            let originalFieldNamesToKeep = originalFields.map(newFieldTmp => {
+                let newSOQLFieldTmp = <SOQLField>newFieldTmp;
+                let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
+                return newRawValueTmp;
+            });
+            newParsedQuery.fields = [];
+            let outputMap: Map<string, Array<string>> = new Map<string, Array<string>>();
+            originalFields.forEach(originalField => {
+                let rawValueOrig = originalField["rawValue"] || originalField.field;
+                if (rawValueOrig.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX) < 0) {
+                    // Simple field
+                    if (!newParsedQuery.fields.some(newFieldTmp => {
+                        let newSOQLFieldTmp = <SOQLField>newFieldTmp;
+                        let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
+                        return newRawValueTmp == rawValueOrig;
+                    })) {
+                        newParsedQuery.fields.push(originalField);
+                    }
+                } else {
+                    // Complex field
+                    let complexFields = rawValueOrig.split(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX);
+                    complexFields[1] = complexFields[1].startsWith('.') ? complexFields[1].substr(1) : complexFields[1];
+                    let containedFields = complexFields[1].split(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR);
+                    containedFields.forEach((field: any) => {
+                        let newFieldName = complexFields[0] ? complexFields[0] + field : field;
+                        if (!newParsedQuery.fields.some(newFieldTmp => {
+                            let newSOQLFieldTmp = <SOQLField>newFieldTmp;
+                            let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
+                            return newRawValueTmp == newFieldName;
+                        })) {
+                            newParsedQuery.fields.push(getComposedField(newFieldName));
+                        }
+                        if (!outputMap.has(rawValueOrig))
+                            outputMap.set(rawValueOrig, [newFieldName]);
+                        else
+                            outputMap.get(rawValueOrig).push(newFieldName);
+                    });
+                }
+
+            });
+            let newQuery: string = composeQuery(newParsedQuery);
+            return [newQuery, outputMap, originalFieldNamesToKeep];
+        }
+
+        function ___parseRecords(rawRecords: Array<any>, query: string): Array<any> {
+            const getNestedObject = (nestedObj: any, pathArr: any) => {
+                return pathArr.reduce((obj: any, key: any) => obj && obj[key] !== 'undefined' ? obj[key] : undefined, nestedObj);
+            }
+            let fieldMapping = {};
+            const soqlQuery = parseQuery(query);
+            soqlQuery.fields.forEach(element => {
+                if (element.type == "FieldFunctionExpression") {
+                    fieldMapping[element.alias] = [element.alias];
+                } else if (element.type == "Field")
+                    fieldMapping[element.field] = [element.field];
+                else if (element.type == "FieldRelationship") {
+                    var v = element.relationships.concat(element.field);
+                    fieldMapping[element.rawValue] = v;
+                }
+            });
+            var parsedRecords = rawRecords.map(function (record) {
+                var o = {};
+                for (var prop in fieldMapping) {
+                    if (fieldMapping.hasOwnProperty(prop)) {
+                        o[prop] = getNestedObject(record, fieldMapping[prop]);
+                    }
+                }
+                return o;
+            });
+            return parsedRecords;
+        }
+
+        function ___formatRecords(records: Array<any>, soqlFormat: [string, Map<string, Array<string>>, Array<string>]): Array<any> {
+            if (soqlFormat[1].size == 0) {
+                return records;
+            }
+            let complexKeys = [...soqlFormat[1].keys()];
+            records.forEach(record => {
+                complexKeys.forEach(complexKey => {
+                    let fields = soqlFormat[1].get(complexKey);
+                    let value = [];
+                    fields.forEach(field => {
+                        if (record[field]) {
+                            value.push(record[field]);
+                        }
+                    });
+                    record[complexKey.toString()] = value.join(';');
+                });
+                complexKeys.forEach(complexKey => {
+                    let fields = soqlFormat[1].get(complexKey);
+                    fields.forEach(field => {
+                        if (soqlFormat[2].indexOf(field) < 0) {
+                            delete record[field];
+                        }
+                    });
+                });
+            });
+            return records;
+        }
+
+
     }
 
     /**
@@ -221,5 +281,11 @@ export class Sfdx {
             maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
         });
     }
+
+
+
+    // ------------------------------------- Private members ------------------------------------------------
+
+
 
 }

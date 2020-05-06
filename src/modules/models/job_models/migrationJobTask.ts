@@ -227,9 +227,7 @@ export default class MigrationJobTask {
         }
 
         return csvIssues;
-
-
-        // ------------------ internal function ------------------------- //
+        // ------------------ internal functions ------------------------- //
         /**
          * Add Id column to the current csv file (if it is missing), 
          * then update all its child lookup "__r" columns in other csv files
@@ -560,7 +558,9 @@ export default class MigrationJobTask {
         // TODO: Implement this
         // Checking
         if (this.operation == OPERATION.Delete) return;
-        
+        let soql = "SELECT Id, Name, Data__c, Language__c, $$Language__r.Name$Language__r.LangCode__c$Language__r.Name, TestObject__r.$$TestObject3__r.Name$Account__r.Name$TestObject3__r.Name$Account__r.TestObject3__r.Name FROM TestObject_Description__c";
+        let sfdx = new Sfdx(this.sourceOrg);
+        let ret = await sfdx.queryFullAsync(soql, false, "");        
 
     }
 
