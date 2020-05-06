@@ -538,11 +538,13 @@ export default class MigrationJobTask {
             }
         });
         this.createApiEngine(this.targetOrg, OPERATION.Delete, recordsToDelete.length, true);
-        let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
-        if (resultRecords == null) {
-            // API ERROR. Exiting.
-            this._apiOperationError(OPERATION.Delete);
-        }
+        // FIXME: Enable rows below to delete records
+
+        // let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
+        // if (resultRecords == null) {
+        //     // API ERROR. Exiting.
+        //     this._apiOperationError(OPERATION.Delete);
+        // }
         // Done
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetCompleted, this.sObjectName);
         return true;
@@ -555,12 +557,18 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     async queryRecords(): Promise<void> {
-        // TODO: Implement this
+
         // Checking
         if (this.operation == OPERATION.Delete) return;
-        let soql = "SELECT Id, Name, Data__c, Language__c, $$Language__r.Name$Language__r.LangCode__c$Language__r.Name, TestObject__r.$$TestObject3__r.Name$Account__r.Name$TestObject3__r.Name$Account__r.TestObject3__r.Name FROM TestObject_Description__c";
-        let sfdx = new Sfdx(this.sourceOrg);
-        let ret = await sfdx.queryFullAsync(soql, false, "");        
+
+        // TODO: Implement this
+        if (this.sObjectName == 'TestObject4__c') {
+            // TEST:
+            let soql = "SELECT Id, TestObject_Descr__c, Account__c, TestObject3__c, TEST__c, Name, TestObject_Descr__r.Id, TestObject_Descr__r.$$Language__r.LangCode__c$TestObject__r.Name, Account__r.Id, Account__r.Name, TestObject3__r.Id, TestObject3__r.an__c FROM TestObject4__c";
+            let sfdx = new Sfdx(this.targetOrg);
+            let ret = await sfdx.queryFullAsync(soql, false, "");
+            let eeee = "";
+        }
 
     }
 
