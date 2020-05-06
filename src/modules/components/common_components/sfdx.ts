@@ -92,14 +92,18 @@ export class Sfdx {
      *
      * @param {string} soql The soql query to retireve records
      * @param {boolean} useBulkQueryApi true to use the Bulk Query Api instead of the REST Api
-     * @param {string} [csvFilename]   The full csv filename including full path (Used to query csv file). Leave blank to retrieve records from org.
-     * @param {Map<string, SFieldDescribe>} [fieldsMap] The field description of the queried sObject (Used to query csv file). Leave blank to retrieve records from org.
+     * @param {string} [csvFullFilename]   The full csv filename including full path (Used to query csv file). Leave blank to retrieve records from org.
+     * @param {Map<string, SFieldDescribe>} [sFieldsDescribeMap] The field description of the queried sObject (Used to query csv file). Leave blank to retrieve records from org.
      * @returns {Promise<Array<any>>}
      * @memberof Sfdx
      */
-    async queryFullAsync(soql: string, useBulkQueryApi: boolean, csvFilename?: string, fieldsMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {
+    async queryFullAsync(soql: string,
+        useBulkQueryApi: boolean = false,
+        csvFullFilename?: string,
+        sFieldsDescribeMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {
+
         let self = this;
-        if (csvFilename && fieldsMap) {
+        if (csvFullFilename && sFieldsDescribeMap) {
             return await ___readAndFormatCsvRecordsAsync();
         }
         let records = [].concat(await ___queryAsync(soql));
@@ -229,8 +233,8 @@ export class Sfdx {
 
         async function ___readAndFormatCsvRecordsAsync(): Promise<Array<any>> {
             let fieldTypesMap: Map<string, string> = new Map<string, string>();
-            fieldsMap.forEach((value, key) => fieldTypesMap.set(key, value.type));
-            let records: Array<any> = await Common.readCsvFileAsync(csvFilename, 0, fieldTypesMap);
+            sFieldsDescribeMap.forEach((value, key) => fieldTypesMap.set(key, value.type));
+            let records: Array<any> = await Common.readCsvFileAsync(csvFullFilename, 0, fieldTypesMap);
             let parsedQuery = parseQuery(soql);
             let fields = parsedQuery.fields.map(field => (<SOQLField>field)["rawValue"] || (<SOQLField>field).field);
             records.forEach(record => {
@@ -240,8 +244,6 @@ export class Sfdx {
             });
             return records;
         }
-
-
     }
 
     /**
