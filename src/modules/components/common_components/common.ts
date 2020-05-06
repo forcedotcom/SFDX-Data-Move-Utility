@@ -577,81 +577,32 @@ export class Common {
         linesAmountToRead: number = 0,
         acceptedColumnsToColumnsTypeMap?: Map<string, string>): Promise<Array<object>> {
 
-        function csvCast(value, context) {
-
-            if (context.header || typeof context.column == "undefined") {
-                return value;
-            }
-
-            if (value == "#N/A") {
-                return null;
-            }
-
-            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);
-
-            if (fieldType == "boolean") {
-                if (value == "1" || value == "TRUE" || value == "true")
-                    return true;
-                else
-                    return false;
-            }
-
-            if (!value) {
-                return null;
-            }
-
-            return value;
-        }
-
-        function columns(header) {
-            if (!acceptedColumnsToColumnsTypeMap) {
-                return header;
-            }
-            return header.map(column => {
-                if (column.indexOf('.') >= 0
-                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR) >= 0
-                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
-                    || acceptedColumnsToColumnsTypeMap.has(column))
-                    return column;
-                else {
-                    return undefined;
-                }
-            });
-        }
-
-
         return new Promise<Array<object>>(resolve => {
-
             if (!fs.existsSync(filePath)) {
                 resolve(new Array<object>());
                 return;
             }
-
             if (linesAmountToRead == 0) {
                 let input = fs.readFileSync(filePath, 'utf8');
                 input = input.replace(/^\uFEFF/, '');
                 const records = parse(input, {
-                    columns: columns,
+                    columns: ___columns,
                     skip_empty_lines: true,
-                    cast: csvCast
+                    cast: ___csvCast
                 });
                 resolve([...records]);
             } else {
-
                 let lineReader = require('readline').createInterface({
                     input: require('fs').createReadStream(filePath),
                 });
-
                 let lineCounter = 0; let wantedLines = [];
-
-                lineReader.on('line', function (line) {
+                lineReader.on('line', function (line: any) {
                     lineCounter++;
                     wantedLines.push(line);
                     if (lineCounter == linesAmountToRead) {
                         lineReader.close();
                     }
                 });
-
                 lineReader.on('close', function () {
                     if (wantedLines.length == 1) {
                         let output = [wantedLines[0].split(',').reduce((acc, field) => {
@@ -665,14 +616,49 @@ export class Common {
                     const records = parse(input, {
                         columns: true,
                         skip_empty_lines: true,
-                        cast: csvCast
+                        cast: ___csvCast
                     });
                     resolve([...records]);
                 });
-
             }
-
         });
+
+        // ----------------- internal functions -------------------------//
+        function ___csvCast(value: any, context: any) {
+            if (context.header || typeof context.column == "undefined") {
+                return value;
+            }
+            if (value == "#N/A") {
+                return null;
+            }
+            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);
+            if (fieldType == "boolean") {
+                if (value == "1" || value == "TRUE" || value == "true")
+                    return true;
+                else
+                    return false;
+            }
+            if (!value) {
+                return null;
+            }
+            return value;
+        }
+        
+        function ___columns(header: any) {
+            if (!acceptedColumnsToColumnsTypeMap) {
+                return header;
+            }
+            return header.map((column: any) => {
+                if (column.indexOf('.') >= 0
+                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR) >= 0
+                    || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
+                    || acceptedColumnsToColumnsTypeMap.has(column))
+                    return column;
+                else {
+                    return undefined;
+                }
+            });
+        }
     }
 
     /**
@@ -725,7 +711,12 @@ export class Common {
 
         let totalRows: Array<object> = new Array<object>();
 
-        async function addRowsFromFile(file: string) {
+        await ___addRowsFromFile(source1FilePath);
+        await ___addRowsFromFile(source2FilePath);
+        await this.writeCsvFileAsync(targetFilePath, totalRows);
+
+        // ------------------ internal functions -----------------//
+        async function ___addRowsFromFile(file: string) {
             if (fs.existsSync(file)) {
                 let rows = await Common.readCsvFileAsync(file);
                 rows.forEach(row => {
@@ -744,11 +735,6 @@ export class Common {
                 }
             }
         }
-
-        await addRowsFromFile(source1FilePath);
-        await addRowsFromFile(source2FilePath);
-        await this.writeCsvFileAsync(targetFilePath, totalRows);
-
     }
 
     /**
@@ -969,7 +955,7 @@ export class CsvChunks {
         this.header = Object.keys(arrayChunks[0][0]);
         return this;
     }
-    fromArray(array : Array<any>) : CsvChunks{
+    fromArray(array: Array<any>): CsvChunks {
         return this.fromArrayChunks([array]);
     }
 }
