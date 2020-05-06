@@ -99,24 +99,21 @@ export class Sfdx {
      */
     async queryFullAsync(soql: string, useBulkQueryApi: boolean, csvFilename?: string, fieldsMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {
         let self = this;
-        let fieldTypesMap: Map<string, string> = new Map<string, string>();
-        if (fieldsMap){
-            fieldsMap.forEach((value, key) => fieldTypesMap.set(key, value.type));
+        if (csvFilename && fieldsMap) {
+            return await ___readAndFormatCsvRecordsAsync();
         }
-        let records = [].concat(await ___query(soql));
+        let records = [].concat(await ___queryAsync(soql));
         if (soql.indexOf("FROM Group") >= 0) {
             soql = soql.replace("FROM Group", "FROM User");
-            records = records.concat(await ___query(soql));
+            records = records.concat(await ___queryAsync(soql));
         }
         return records;
 
         // ------------------ internal functions ------------------------- //
-        async function ___query(soql: string): Promise<Array<any>> {
+        async function ___queryAsync(soql: string): Promise<Array<any>> {
             let soqlFormat = ___formatSoql(soql);
             soql = soqlFormat[0];
-            let records = csvFilename
-                ? (await Common.readCsvFileAsync(csvFilename, 0, fieldTypesMap))
-                : (await self.queryAsync(soql, useBulkQueryApi)).records;
+            let records = (await self.queryAsync(soql, useBulkQueryApi)).records;
             records = ___parseRecords(records, soql);
             records = ___formatRecords(records, soqlFormat);
             return records;
@@ -225,6 +222,20 @@ export class Sfdx {
                             delete record[field];
                         }
                     });
+                });
+            });
+            return records;
+        }
+
+        async function ___readAndFormatCsvRecordsAsync(): Promise<Array<any>> {
+            let fieldTypesMap: Map<string, string> = new Map<string, string>();
+            fieldsMap.forEach((value, key) => fieldTypesMap.set(key, value.type));
+            let records: Array<any> = await Common.readCsvFileAsync(csvFilename, 0, fieldTypesMap);
+            let parsedQuery = parseQuery(soql);
+            let fields = parsedQuery.fields.map(field => (<SOQLField>field)["rawValue"] || (<SOQLField>field).field);
+            records.forEach(record => {
+                fields.forEach(field => {
+                    record[field] = record[field] || null;
                 });
             });
             return records;
