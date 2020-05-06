@@ -22,6 +22,7 @@ import {
 import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
 import { IOrgConnectionData, SFieldDescribe, SObjectDescribe, ScriptOrg } from '../../models';
+import { Common } from './common';
 
 var jsforce = require("jsforce");
 
@@ -98,6 +99,10 @@ export class Sfdx {
      */
     async queryFullAsync(soql: string, useBulkQueryApi: boolean, csvFilename?: string, fieldsMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {
         let self = this;
+        let fieldTypesMap: Map<string, string> = new Map<string, string>();
+        if (fieldsMap){
+            fieldsMap.forEach((value, key) => fieldTypesMap.set(key, value.type));
+        }
         let records = [].concat(await ___query(soql));
         if (soql.indexOf("FROM Group") >= 0) {
             soql = soql.replace("FROM Group", "FROM User");
@@ -109,7 +114,9 @@ export class Sfdx {
         async function ___query(soql: string): Promise<Array<any>> {
             let soqlFormat = ___formatSoql(soql);
             soql = soqlFormat[0];
-            let records = (await self.queryAsync(soql, useBulkQueryApi)).records;
+            let records = csvFilename
+                ? (await Common.readCsvFileAsync(csvFilename, 0, fieldTypesMap))
+                : (await self.queryAsync(soql, useBulkQueryApi)).records;
             records = ___parseRecords(records, soql);
             records = ___formatRecords(records, soqlFormat);
             return records;
