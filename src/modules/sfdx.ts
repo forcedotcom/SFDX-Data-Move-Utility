@@ -1562,7 +1562,8 @@ export class SfdxUtils {
                         value.push(record[f]);
                     }
                 });
-                record[complexKey.toString()] = value.join(';');
+                record[complexKey.toString()] = value.join(';') || null;
+                
             });
             keys.forEach(complexKey => {
                 let fields = format[1].get(complexKey);
