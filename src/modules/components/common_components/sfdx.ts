@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as models from '../../models';
+
 import {
     composeQuery,
     Condition,
@@ -19,17 +19,18 @@ import {
     Query,
     WhereClause
 } from 'soql-parser-js';
-import { CONSTANTS, DATA_MEDIA_TYPE } from './statics';
-import { DescribeSObjectResult, QueryResult, Analytics } from 'jsforce';
-import { IOrgConnectionData } from '../../models';
+import { CONSTANTS } from './statics';
+import { DescribeSObjectResult, QueryResult } from 'jsforce';
+import { IOrgConnectionData, SFieldDescribe, SObjectDescribe, ScriptOrg } from '../../models';
+
 var jsforce = require("jsforce");
 
 
 export class Sfdx {
 
-    org: models.ScriptOrg;
+    org: ScriptOrg;
 
-    constructor(org: models.ScriptOrg) {
+    constructor(org: ScriptOrg) {
         this.org = org;
     }
 
@@ -84,7 +85,18 @@ export class Sfdx {
         return <QueryResult<object>>(await makeQueryAsync(soql));
     }
 
-    async queryFullAsync(soql: string, useBulkQueryApi: boolean, csvFilename?: string): Promise<Array<any>> {
+    /**
+     * Query records from the current org or from csv file.
+     * Handles composite external id keys.
+     *
+     * @param {string} soql The soql query to retireve records
+     * @param {boolean} useBulkQueryApi true to use the Bulk Query Api instead of the REST Api
+     * @param {string} [csvFilename]   The full csv filename including full path (Used to query csv file). Leave blank to retrieve records from org.
+     * @param {Map<string, SFieldDescribe>} [fieldsMap] The field description of the queried sObject (Used to query csv file). Leave blank to retrieve records from org.
+     * @returns {Promise<Array<any>>}
+     * @memberof Sfdx
+     */
+    async queryFullAsync(soql: string, useBulkQueryApi: boolean, csvFilename?: string, fieldsMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {
         let self = this;
         let records = [].concat(await ___query(soql));
         if (soql.indexOf("FROM Group") >= 0) {
@@ -218,12 +230,12 @@ export class Sfdx {
     * Describes given SObject by retrieving field descriptions
     * 
     * @param  {string} objectName Object API name to describe
-    * @param  {SfdmModels.SOrg} sOrg sOrg instance
+    * @param  {SfdmSOrg} sOrg sOrg instance
     * @param  {Map<string, SObjectDescribe>} defaultDescibe
-    * @returns SfdmModels.SObjectDescribe
+    * @returns SfdmSObjectDescribe
     * @memberof ApiSf
     */
-    async describeSObjectAsync(objectName: string): Promise<models.SObjectDescribe> {
+    async describeSObjectAsync(objectName: string): Promise<SObjectDescribe> {
 
         var conn = this.org.getConnection();
 
@@ -235,7 +247,7 @@ export class Sfdx {
                     resolve(meta);
             }));
         let describeResult: DescribeSObjectResult = <DescribeSObjectResult>(await describeAsync(objectName));
-        let sObjectDescribe: models.SObjectDescribe = new models.SObjectDescribe({
+        let sObjectDescribe: SObjectDescribe = new SObjectDescribe({
             name: describeResult.name,
             createable: describeResult.createable,
             custom: describeResult.custom,
@@ -243,7 +255,7 @@ export class Sfdx {
             updateable: describeResult.createable && describeResult.updateable
         });
         describeResult.fields.forEach(field => {
-            let f = new models.SFieldDescribe();
+            let f = new SFieldDescribe();
             f.objectName = describeResult.name;
             f.name = field.name;
             f.type = field.type;
