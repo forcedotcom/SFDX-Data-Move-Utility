@@ -87,7 +87,7 @@ export class Sfdx {
     }
 
     /**
-     * Query records from the current org or from csv file.
+     * Retrieve records from the org or from csv file.
      * Handles composite external id keys.
      *
      * @param {string} soql The soql query to retireve records
@@ -97,7 +97,7 @@ export class Sfdx {
      * @returns {Promise<Array<any>>}
      * @memberof Sfdx
      */
-    async queryFullAsync(soql: string,
+    async retrieveRecordsAsync(soql: string,
         useBulkQueryApi: boolean = false,
         csvFullFilename?: string,
         sFieldsDescribeMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {

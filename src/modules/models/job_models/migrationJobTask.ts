@@ -566,7 +566,7 @@ export default class MigrationJobTask {
             // TEST:
             let soql = "SELECT Id, TestObject_Descr__c, Account__c, TestObject3__c, TEST__c, Name, TestObject_Descr__r.Id, TestObject_Descr__r.$$Language__r.LangCode__c$TestObject__r.Name, Account__r.Id, Account__r.Name, TestObject3__r.Id, TestObject3__r.an__c FROM TestObject4__c";
             let sfdx = new Sfdx(this.targetOrg);
-            let ret = await sfdx.queryFullAsync(soql, false, this.sourceCSVFilename, this.scriptObject.targetSObjectDescribe.fieldsMap);
+            let ret = await sfdx.retrieveRecordsAsync(soql, false, this.sourceCSVFilename, this.scriptObject.targetSObjectDescribe.fieldsMap);
             //let ret = await sfdx.queryFullAsync(soql, false);
             let eeee = "";
         }
