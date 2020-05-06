@@ -254,8 +254,8 @@ export class RunCommand {
      */
     async executeJob(): Promise<void> {
 
-        // Query records PASS 1
-        await this.job.queryRecords();
+        // Retrieve records PASS 1
+        await this.job.retrieveRecords();
 
 
     }

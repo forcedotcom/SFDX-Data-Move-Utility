@@ -551,12 +551,12 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Query records for this task
+     * Retrieve records for this task
      *
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async queryRecords(): Promise<void> {
+    async retrieveRecords(): Promise<void> {
 
         // Checking
         if (this.operation == OPERATION.Delete) return;
