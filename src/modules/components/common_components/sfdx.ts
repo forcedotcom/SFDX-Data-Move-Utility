@@ -197,7 +197,7 @@ export class Sfdx {
                             value.push(record[field]);
                         }
                     });
-                    record[complexKey.toString()] = value.join(';');
+                    record[complexKey.toString()] = value.join(';') || null;
                 });
                 complexKeys.forEach(complexKey => {
                     let fields = soqlFormat[1].get(complexKey);
