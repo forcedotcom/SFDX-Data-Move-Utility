@@ -1555,12 +1555,14 @@ export class SfdxUtils {
         records.forEach(record => {
             keys.forEach(complexKey => {
                 let fields = format[1].get(complexKey);
-                let value = "";
+                let value = [];
                 fields.ForEach(field => {
                     let f = field.toString();
-                    value += ";" + record[f];
+                    if (record[f]){
+                        value.push(record[f]);
+                    }
                 });
-                record[complexKey.toString()] = value
+                record[complexKey.toString()] = value.join(';');
             });
             keys.forEach(complexKey => {
                 let fields = format[1].get(complexKey);
