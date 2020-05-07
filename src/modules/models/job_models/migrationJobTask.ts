@@ -585,19 +585,21 @@ export default class MigrationJobTask {
 
     /**
      * Retrieve records for this task
-     *
+     * 
+     * @param {number} mode The mode of record processing
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async retrieveRecords(): Promise<void> {
+    async retrieveRecords(mode: "forwards" | "backwads"): Promise<void> {
 
         // Checking status *********
         if (this.operation == OPERATION.Delete) return;
 
         let records: Array<any> = new Array<any>();
 
-        // Read source data ************
-        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+        // Read source data *********************************************************************************************
+        // **************************************************************************************************************
+        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File && mode == "forwards") {
             // Read from the source csv file
             this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceResourceString, this.csvResourceString);
 
@@ -606,7 +608,7 @@ export default class MigrationJobTask {
             records = records.concat(await sfdx.retrieveRecordsAsync(query, false, this.sourceCSVFilename, this.targetFieldsMap));
         } else {
             // Read from the source org
-            if (this.scriptObject.processAllSource) {
+            if (this.scriptObject.processAllSource && mode == "forwards") {
                 // All records ---------
                 let query = this.createQuery();
                 this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceResourceString, this.orgResourceString);
@@ -618,9 +620,12 @@ export default class MigrationJobTask {
                 // Filtered records --------
                 this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceResourceString, this.orgResourceString);
                 // TODO: Implement querying filtered records
+
+
+
             }
         }
-        // Set external id map
+        // Set external id map ---------
         records.forEach(record => {
             let value = this.getRecordValue(record, this.scriptObject.externalId);
             if (value) {
@@ -628,20 +633,13 @@ export default class MigrationJobTask {
             }
         });
 
-
-        // Read target data ****************
+        // Read target data ***********************************************************************************
+        // ****************************************************************************************************
         records = new Array<any>();
 
-        if (this.targetOrg.media == DATA_MEDIA_TYPE.File) {
-            // Read from the source csv file
-            this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetResourceString, this.csvResourceString);
-
-            let query = this.createQuery();
-            let sfdx = new Sfdx(this.sourceOrg);
-            records = records.concat(await sfdx.retrieveRecordsAsync(query, false, this.sourceCSVFilename, this.sourceFieldsMap));
-        } else {
+        if (this.targetOrg.media == DATA_MEDIA_TYPE.Org) {
             // Read from the source org
-            if (this.scriptObject.processAllTarget) {
+            if (this.scriptObject.processAllTarget && mode == "forwards") {
                 // All records ---------
                 let query = this.createQuery();
                 this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetResourceString, this.orgResourceString);
@@ -653,15 +651,25 @@ export default class MigrationJobTask {
                 // Filtered records --------
                 this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetResourceString, this.orgResourceString);
                 // TODO: Implement querying filtered records
+
+
             }
         }
-        // Set external id map
+        // Set external id map ---------
         records.forEach(record => {
             let value = this.getRecordValue(record, this.scriptObject.externalId);
             if (value) {
                 this.targetExtIdRecordsMap.set(value, record["Id"]);
             }
         });
+
+        // Add self reference records *************************************************************************
+        // ****************************************************************************************************
+        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File && mode == "forwards") {
+            // TODO: Add self-referenced records
+            
+
+        }
 
     }
 

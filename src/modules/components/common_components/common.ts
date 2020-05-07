@@ -14,7 +14,10 @@ import {
     LiteralType,
     LogicalOperator,
     WhereClause,
-    Operator
+    Operator,
+    Query,
+    getComposedField,
+    composeQuery
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 
@@ -957,6 +960,64 @@ export class Common {
         let temp = str.replace(regex, tempChar).split(tempChar);
         // trim & remove empty
         return temp.map(el => el.trim()).filter(el => el.length > 0);
+    }
+
+
+    /**
+       * Creates array of SOQLs that each of them contains "WHERE Field__c IN (values)"  clauses
+       * for given input values.
+       * 
+       * The function automatically will split the input array into multiple chunks
+       * according to the projected length of each query in respect to the SF max SOQL length limitations.
+       *
+       * @static
+       * @param {Array<string>} selectFields Field names to select
+       * @param {string} [fieldName="Id"] The field name to use in the  WHERE Field IN (Values) clause 
+       * @param {Array<string>} valuesIN Values to use in in the WHERE Field IN (Values) clause 
+       * @returns {Array<string>} Returns an array of SOQLs
+       * @memberof SfdxUtils
+       */
+    public static createFieldInQueries(
+        selectFields: Array<string>,
+        fieldName: string = "Id",
+        sObjectName: string,
+        valuesIN: Array<string>): Array<string> {
+
+        let tempQuery = <Query>{
+            fields: selectFields.map(field => getComposedField(field)),
+            where: <WhereClause>{},
+            sObject: sObjectName
+        };
+        let whereValuesCounter: number = 0;
+        let whereValues = new Array<string>();
+
+        function* queryGen() {
+            while (true) {
+                for (let whereClausLength = 0; whereClausLength < CONSTANTS.MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH;) {
+                    let value = String(valuesIN[whereValuesCounter] || "");
+                    whereValues.push(value);
+                    whereClausLength += value.length + 4;
+                    whereValuesCounter++;
+                    if (whereValuesCounter == valuesIN.length)
+                        break;
+                }
+
+                let c: Condition = {
+                    field: fieldName,
+                    operator: "IN",
+                    value: whereValues,
+                    literalType: "STRING"
+                };
+                tempQuery.where.left = c;
+                yield composeQuery(tempQuery);
+                whereValues = new Array<string>();
+
+                if (whereValuesCounter == valuesIN.length)
+                    break;
+            }
+        }
+
+        return [...queryGen()];
     }
 
 
