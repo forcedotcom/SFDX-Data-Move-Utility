@@ -175,7 +175,7 @@ export default class Script {
                         // Add parent ScriptObject as READONLY since it is missing in the script
                         thisField.parentLookupObject = new ScriptObject();
                         this.objects.push(thisField.parentLookupObject);
-                        let externalId = referencedObjectType != "RecordType" ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME : "DeveloperName";
+                        let externalId = referencedObjectType != CONSTANTS.RECORD_TYPE_SOBJECT_NAME ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME : CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
                         Object.assign(thisField.parentLookupObject, <ScriptObject>{
                             name: referencedObjectType,
                             isExtraObject: true,
@@ -185,15 +185,17 @@ export default class Script {
                             externalId
                         });
 
-                        if (referencedObjectType == "RecordType") {
+                        if (referencedObjectType == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
                             let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
                             thisField.parentLookupObject.parsedQuery = parseQuery(thisField.parentLookupObject.query);
+                            thisField.parentLookupObject.parsedQuery.fields.push(getComposedField("SobjectType"));
                             thisField.parentLookupObject.parsedQuery.where = Common.composeWhereClause(thisField.parentLookupObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
                             thisField.parentLookupObject.parsedQuery.orderBy = <OrderByClause>({
                                 field: "SobjectType",
                                 order: "ASC"
                             });
                             thisField.parentLookupObject.query = composeQuery(thisField.parentLookupObject.parsedQuery);
+                            
                         }
 
                     }

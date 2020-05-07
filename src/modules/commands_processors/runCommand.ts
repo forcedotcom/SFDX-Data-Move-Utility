@@ -143,7 +143,7 @@ export class RunCommand {
                     newObject.processAllTarget = true;
                 }
             }
-            if (newObject.name == "RecordType") {
+            if (newObject.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
                 // RecordType object is always at the beginning 
                 //   of the task chain
                 this.job.tasks.unshift(newTask);

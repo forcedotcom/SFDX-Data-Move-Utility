@@ -643,7 +643,7 @@ export class Common {
             }
             return value;
         }
-        
+
         function ___columns(header: any) {
             if (!acceptedColumnsToColumnsTypeMap) {
                 return header;
@@ -922,7 +922,42 @@ export class Common {
     }
 
 
+    /**
+    * Get record value by given property name
+    *     for this sobject
+    *
+    * @param {*} record The record
+    * @param {string} thisSobjectName The current sObject name that we want to retrieve value for the record object
+    * @param {string} propName The property name to extract value from the record object
+    * @param {string} [sObjectName] If the current task is RecordType and propName = DeveloperName - 
+    *                               pass here the SobjectType o include in the returned value
+    * @param {string} [sFieldName]  If the current task is RecordType and propName = DeveloperName -
+    *                               pass here the property name to extract value from the record object
+    *                               instead of passing it with the "propName" parameter
+    * @returns {*}
+    * @memberof MigrationJobTask
+    */
+    public static getRecordValue(thisSobjectName: string, record: any, propName: string, sObjectName?: string, sFieldName?: string): any {
+        if (!record) return null;
+        let value = record[sFieldName || propName];
+        if (!value) return value;
+        sObjectName = sObjectName || record["SobjectType"];
+        if (thisSobjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && propName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
+            return value + CONSTANTS.COMPLEX_FIELDS_SEPARATOR + sObjectName;
+        } else {
+            return value;
+        }
+    }
 
+
+    public static splitMulti(str: string, separators: Array<string>) {
+        var tempChar = 't3mp'; //prevent short text separator in split down
+        //split by regex e.g. \b(or|and)\b
+        var regex = new RegExp('\\b(' + separators.join('|') + ')\\b', "g");
+        let temp = str.replace(regex, tempChar).split(tempChar);
+        // trim & remove empty
+        return temp.map(el => el.trim()).filter(el => el.length > 0);
+    }
 
 
 

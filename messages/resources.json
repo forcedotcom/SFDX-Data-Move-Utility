@@ -80,8 +80,6 @@
 
 
 
-    "source": "Source",
-    "target": "Target",
     "packageScript": "Package script",
     "workingPathDoesNotExist": "The specified working directory does not exist.",
     "packageFileDoesNotExist": "Missing package.json file in the working directory.",
@@ -152,9 +150,7 @@
     "mappingRawCsvValues": "{%s} Transforming raw CSV values by the given mapping table.",
     "gettingRecordsCount": "{%s} Getting the total amount of records.",
     "totalRecordsAmount": "{%s} Total amount of the %s records: %s",
-    "queryingAll": "{%s} Retrieving the %s data (ALL RECORDS) in progress...",
     "queryingAllQueryString": "{%s} Retrieving the %s data (ALL RECORDS) in progress... Query string: %s.",
-    "queryingIn": "{%s} Retrieving the %s data (FILTERED RECORDS) in progress... It may take a while, depend on the filter complexity.",
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Totally fetched %s records.",
     "executingQuery": "{%s} Executing Query: %s.",
     "retrievingDataCompleted": "Retrieving the source data %s has been completed...",
@@ -177,7 +173,8 @@
 
 
 
-
+    "source": "Source",
+    "target": "Target",
     "apiOperationFailed": "{%s} The %s API operation FAILED.",
     "apiOperationProcessError": "{%s} The %s API operation FAILED with message: %s.",
     "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created. Creating  batch...",
@@ -189,7 +186,12 @@
     "apiOperationStarted": "{%s} The %s API operation has been started using %s.",
     "apiOperationFinished": "{%s} The %s API operation has been finished.",
     "invalidApiOperation": "Invalid Api operation",
-    "unexpectedApiError": "Unexpected Api error"
+    "unexpectedApiError": "Unexpected Api error",
+    "queryingAll": "{%s} Retrieving the %s data from %s (ALL RECORDS)...",
+    "queryingIn": "{%s} Retrieving the %s data from %s (FILTERED RECORDS)...",
+    "queryString": "{%s} Query string: %s",
+    "csvFile": "CSV file",
+    "org": "Org"
 
 
 

@@ -123,7 +123,7 @@ export class Sfdx {
             return records;
         }
 
-        function ___formatSoql(soql: string): [string, Map<string, Array<string>>, Array<string>] {
+        function ___formatSoql(soql: string): [string, Map<string, Array<string>>, Array<string>, string] {
             let newParsedQuery = parseQuery(soql);
             if (newParsedQuery.where && newParsedQuery.where.left && newParsedQuery.where.left.openParen && !newParsedQuery.where.left.closeParen) {
                 newParsedQuery.where.left.closeParen = newParsedQuery.where.left.openParen;
@@ -172,7 +172,7 @@ export class Sfdx {
 
             });
             let newQuery: string = composeQuery(newParsedQuery);
-            return [newQuery, outputMap, originalFieldNamesToKeep];
+            return [newQuery, outputMap, originalFieldNamesToKeep, newParsedQuery.sObject];
         }
 
         function ___parseRecords(rawRecords: Array<any>, query: string): Array<any> {
@@ -203,7 +203,19 @@ export class Sfdx {
             return parsedRecords;
         }
 
-        function ___formatRecords(records: Array<any>, soqlFormat: [string, Map<string, Array<string>>, Array<string>]): Array<any> {
+        function ___formatRecords(records: Array<any>, soqlFormat: [string, Map<string, Array<string>>, Array<string>, string]): Array<any> {
+            // Trasnform RecordType.DeveloperName object fields into proper format
+            let recordTypeExtIdPropName = CONSTANTS.RECORD_TYPE_SOBJECT_NAME + "." + CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
+            records.forEach(record => {
+                if (record.hasOwnProperty(recordTypeExtIdPropName)) {
+                    record[recordTypeExtIdPropName] = Common.getRecordValue(CONSTANTS.RECORD_TYPE_SOBJECT_NAME,
+                        record,
+                        CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME,
+                        soqlFormat[3],
+                        recordTypeExtIdPropName);
+                }
+            });
+            // {rpcess complex keys}
             if (soqlFormat[1].size == 0) {
                 return records;
             }

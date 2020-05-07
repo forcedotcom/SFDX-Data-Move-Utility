@@ -40,6 +40,10 @@ export default class MigrationJobTask {
     apiEngine: IApiEngine;
     apiProgressCallback: (apiResult: ApiInfo) => void;
 
+    sourceExtIdRecordsMap: Map<string, string> = new Map<string, string>();
+    targetExtIdRecordsMap: Map<string, string> = new Map<string, string>();
+
+
     constructor(init: Partial<MigrationJobTask>) {
         if (init) {
             Object.assign(this, init);
@@ -118,9 +122,29 @@ export default class MigrationJobTask {
         return this.scriptObject.strOperation;
     }
 
+    get sourceFieldsMap(): Map<string, SFieldDescribe> {
+        return this.scriptObject.sourceSObjectDescribe.fieldsMap;
+    }
 
+    get targetFieldsMap(): Map<string, SFieldDescribe> {
+        return this.scriptObject.targetSObjectDescribe.fieldsMap;
+    }
 
+    get sourceResourceString(): string {
+        return this.logger.getResourceString(RESOURCES.source);
+    }
 
+    get targetResourceString(): string {
+        return this.logger.getResourceString(RESOURCES.target);
+    }
+
+    get csvResourceString(): string {
+        return this.logger.getResourceString(RESOURCES.csvFile);
+    }
+
+    get orgResourceString(): string {
+        return this.logger.getResourceString(RESOURCES.org);
+    }
 
     // ----------------------- Public methods -------------------------------------------    
     /**
@@ -410,15 +434,7 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     getRecordValue(record: any, propName: string, sObjectName?: string, sFieldName?: string): any {
-        if (!record) return null;
-        let value = record[sFieldName || propName];
-        if (!value) return value;
-        sObjectName = sObjectName || record["SobjectType"];
-        if (this.sObjectName == "RecordType" && propName == "DeveloperName") {
-            return value + CONSTANTS.COMPLEX_FIELDS_SEPARATOR + sObjectName;
-        } else {
-            return value;
-        }
+        return Common.getRecordValue(this.sObjectName, record, propName, sObjectName, sFieldName);
     }
 
     /**
@@ -466,6 +482,23 @@ export default class MigrationJobTask {
     }
 
     /**
+     * Converts full query string into short form
+     * to be displayed in the stdout
+     *
+     * @param {string} query
+     * @returns {string}
+     * @memberof MigrationJobTask
+     */
+    createShortQueryString(longString: string): string {
+        let parts = longString.split("FROM");
+        return parts[0].substr(0, 250) +
+            (parts[0].length > 250 ? "..." : "") +
+            " FROM "
+            + parts[1].substr(0, 250) +
+            (parts[1].length > 250 ? "..." : "");
+    }
+
+    /**
      * Create SOQL query to delete records
      *
      * @returns
@@ -495,7 +528,7 @@ export default class MigrationJobTask {
             let ret = await apiSf.queryAsync(query, false);
             this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
-                this.logger.getResourceString(RESOURCES.source), String(this.sourceTotalRecorsCount));
+                this.sourceResourceString, String(this.sourceTotalRecorsCount));
         }
 
         if (this.targetOrg.media == DATA_MEDIA_TYPE.Org) {
@@ -503,7 +536,7 @@ export default class MigrationJobTask {
             let ret = await apiSf.queryAsync(query, false);
             this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
-                this.logger.getResourceString(RESOURCES.target), String(this.targetTotalRecorsCount));
+                this.targetResourceString, String(this.targetTotalRecorsCount));
         }
     }
 
@@ -558,18 +591,77 @@ export default class MigrationJobTask {
      */
     async retrieveRecords(): Promise<void> {
 
-        // Checking
+        // Checking status *********
         if (this.operation == OPERATION.Delete) return;
 
-        // TODO: Implement this
-        if (this.sObjectName == 'TestObject4__c') {
-            // TEST:
-            let soql = "SELECT Id, TestObject_Descr__c, Account__c, TestObject3__c, TEST__c, Name, TestObject_Descr__r.Id, TestObject_Descr__r.$$Language__r.LangCode__c$TestObject__r.Name, Account__r.Id, Account__r.Name, TestObject3__r.Id, TestObject3__r.an__c FROM TestObject4__c";
+        let records: Array<any> = new Array<any>();
+
+        // Read source data ************
+        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+            // Read from the source csv file
+            this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceResourceString, this.csvResourceString);
+
+            let query = this.createQuery();
             let sfdx = new Sfdx(this.targetOrg);
-            let ret = await sfdx.retrieveRecordsAsync(soql, false, this.sourceCSVFilename, this.scriptObject.targetSObjectDescribe.fieldsMap);
-            //let ret = await sfdx.queryFullAsync(soql, false);
-            let eeee = "";
+            records = records.concat(await sfdx.retrieveRecordsAsync(query, false, this.sourceCSVFilename, this.targetFieldsMap));
+        } else {
+            // Read from the source org
+            if (this.scriptObject.processAllSource) {
+                // All records ---------
+                let query = this.createQuery();                
+                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceResourceString, this.orgResourceString);
+                this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
+
+                let sfdx = new Sfdx(this.sourceOrg);
+                records = records.concat(await sfdx.retrieveRecordsAsync(query, this.useBulkQueryApiForSource));
+            } else {
+                // Filtered records --------
+                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceResourceString, this.orgResourceString);
+                // TODO: Implement querying filtered records
+            }
         }
+        // Set external id map
+        records.forEach(record => {
+            let value = this.getRecordValue(record, this.scriptObject.externalId);
+            if (value) {
+                this.sourceExtIdRecordsMap.set(value, record["Id"]);
+            }
+        });
+
+
+        // Read target data ****************
+        records = new Array<any>();
+
+        if (this.targetOrg.media == DATA_MEDIA_TYPE.File) {
+            // Read from the source csv file
+            this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetResourceString, this.csvResourceString);
+
+            let query = this.createQuery();
+            let sfdx = new Sfdx(this.sourceOrg);
+            records = records.concat(await sfdx.retrieveRecordsAsync(query, false, this.sourceCSVFilename, this.sourceFieldsMap));
+        } else {
+            // Read from the source org
+            if (this.scriptObject.processAllTarget) {
+                // All records ---------
+                let query = this.createQuery();                
+                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetResourceString, this.orgResourceString);
+                this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
+
+                let sfdx = new Sfdx(this.targetOrg);
+                records = records.concat(await sfdx.retrieveRecordsAsync(query, this.useBulkQueryApiForTarget));
+            } else {
+                // Filtered records --------
+                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetResourceString, this.orgResourceString);
+                // TODO: Implement querying filtered records
+            }
+        }
+        // Set external id map
+        records.forEach(record => {
+            let value = this.getRecordValue(record, this.scriptObject.externalId);
+            if (value) {
+                this.targetExtIdRecordsMap.set(value, record["Id"]);
+            }
+        });
 
     }
 

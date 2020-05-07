@@ -93,8 +93,6 @@ export enum RESOURCES {
 
 
     // ------------------------------------ //
-    source = "source",
-    target = "target",
     packageScript = "packageScript",
     pluginVersion = "pluginVersion",
     newLine = "newLine",
@@ -162,9 +160,7 @@ export enum RESOURCES {
     mappingRawCsvValues = "mappingRawCsvValues",
     gettingRecordsCount = "gettingRecordsCount",
     totalRecordsAmount = "totalRecordsAmount",
-    queryingAll = "queryingAll",
     queryingAllQueryString = "queryingAllQueryString",
-    queryingIn = "queryingIn",
     queryingFinished = "queryingFinished",
     executingQuery = "executingQuery",
     retrievingDataCompleted = "retrievingDataCompleted",
@@ -181,7 +177,11 @@ export enum RESOURCES {
     updatingTargetCompleted = "updatingTargetCompleted",
     finalizing = "finalizing",
 
+
+
     // ----------------------
+    source = "source",
+    target = "target",
     apiOperationFailed = "apiOperationFailed",
     apiOperationProcessError = "apiOperationProcessError",
     apiOperationJobCreated = "apiOperationJobCreated",
@@ -193,7 +193,13 @@ export enum RESOURCES {
     apiOperationStarted = "apiOperationStarted",
     apiOperationFinished = "apiOperationFinished",
     invalidApiOperation = "invalidApiOperation",
-    unexpectedApiError = "unexpectedApiError"
+    unexpectedApiError = "unexpectedApiError",
+    queryingAll = "queryingAll",    
+    queryingIn = "queryingIn",
+    queryString = "queryString",
+    csvFile = "from CSV file",
+    org = "from Org"
+
 
 }
 
