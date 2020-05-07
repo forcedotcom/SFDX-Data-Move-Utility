@@ -27,7 +27,6 @@ export const CONSTANTS = {
     CSV_ISSUES_ERRORS_FILENAME: 'CSVIssuesReport.csv',
     RECORD_TYPE_SOBJECT_NAME: "RecordType",
     
-
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
     MAX_FETCH_SIZE: 100000,
     QUERY_BULK_API_THRESHOLD: 30000,
@@ -49,7 +48,9 @@ export const CONSTANTS = {
         "Group",
         "User",
         "RecordType"
-    ]
+    ],
+
+    SHORT_QUERY_STRING_MAXLENGTH: 250
 }
 
 export enum DATA_MEDIA_TYPE {

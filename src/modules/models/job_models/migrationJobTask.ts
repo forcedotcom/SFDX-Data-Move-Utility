@@ -491,11 +491,11 @@ export default class MigrationJobTask {
      */
     createShortQueryString(longString: string): string {
         let parts = longString.split("FROM");
-        return parts[0].substr(0, 250) +
-            (parts[0].length > 250 ? "..." : "") +
+        return parts[0].substr(0, CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH) +
+            (parts[0].length > CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH ? "..." : "") +
             " FROM "
-            + parts[1].substr(0, 250) +
-            (parts[1].length > 250 ? "..." : "");
+            + parts[1].substr(0, CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH) +
+            (parts[1].length > CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH ? "..." : "");
     }
 
     /**
@@ -608,7 +608,7 @@ export default class MigrationJobTask {
             // Read from the source org
             if (this.scriptObject.processAllSource) {
                 // All records ---------
-                let query = this.createQuery();                
+                let query = this.createQuery();
                 this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceResourceString, this.orgResourceString);
                 this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
 
@@ -643,7 +643,7 @@ export default class MigrationJobTask {
             // Read from the source org
             if (this.scriptObject.processAllTarget) {
                 // All records ---------
-                let query = this.createQuery();                
+                let query = this.createQuery();
                 this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetResourceString, this.orgResourceString);
                 this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
 
