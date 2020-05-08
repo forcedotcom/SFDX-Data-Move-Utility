@@ -86,7 +86,7 @@ export default class MigrationJob {
      */
     copyCSVFilesToSourceSubDir() {
         this.tasks.forEach(task => {
-            fs.copyFileSync(task.cSVFilename, task.sourceCSVFilename);
+            fs.copyFileSync(task.data.csvFilename, task.data.sourceCsvFilename);
         });
     }
 
@@ -189,9 +189,11 @@ export default class MigrationJob {
     async retrieveRecords(): Promise<void> {
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-
             await task.retrieveRecords("forwards");
-            await task.retrieveRecords("backwads");
+        }
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            await task.retrieveRecords("backwards");
         }
     }
 

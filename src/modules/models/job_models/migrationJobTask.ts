@@ -40,9 +40,6 @@ export default class MigrationJobTask {
     apiEngine: IApiEngine;
     apiProgressCallback: (apiResult: ApiInfo) => void;
 
-    sourceExtIdRecordsMap: Map<string, string> = new Map<string, string>();
-    targetExtIdRecordsMap: Map<string, string> = new Map<string, string>();
-
 
     constructor(init: Partial<MigrationJobTask>) {
         if (init) {
@@ -62,89 +59,15 @@ export default class MigrationJobTask {
         return this.script.logger;
     }
 
-    get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
-        return this.scriptObject.fieldsToUpdateMap;
-    }
-
-    get fieldsInQueryMap(): Map<string, SFieldDescribe> {
-        return this.scriptObject.fieldsInQueryMap;
-    }
-
-    get fieldsToUpdate(): string[] {
-        return this.scriptObject.fieldsToUpdate;
-    }
-
-    get fieldsInQuery(): string[] {
-        return this.scriptObject.fieldsInQuery;
-    }
-
-    get cSVFilename(): string {
-        return this.getCSVFilename(this.script.basePath);
-    }
-
-    get sourceCSVFilename(): string {
-        let filepath = path.join(this.script.basePath, CONSTANTS.CSV_SOURCE_SUBDIRECTORY);
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
-        }
-        return this.getCSVFilename(filepath, '_source');
-    }
-
-    targetCSVFilename(operation: OPERATION): string {
-        let filepath = path.join(this.script.basePath, CONSTANTS.CSV_TARGET_SUBDIRECTORY);
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
-        }
-        return this.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}_target`);
-    }
-
-    get sourceOrg() {
-        return this.script.sourceOrg;
-    }
-
-    get targetOrg() {
-        return this.script.targetOrg;
-    }
-
-    get useBulkQueryApiForSource() {
-        return this.sourceTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
-    }
-
-    get useBulkQueryApiForTarget() {
-        return this.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
-    }
-
     get operation(): OPERATION {
         return this.scriptObject.operation;
     }
 
-    get strOperation(): string {
-        return this.scriptObject.strOperation;
-    }
+    data: TaskCommonData = new TaskCommonData(this);
+    sourceData: TaskOrgData = new TaskOrgData(this, true);
+    targetData: TaskOrgData = new TaskOrgData(this, false);
 
-    get sourceFieldsMap(): Map<string, SFieldDescribe> {
-        return this.scriptObject.sourceSObjectDescribe.fieldsMap;
-    }
 
-    get targetFieldsMap(): Map<string, SFieldDescribe> {
-        return this.scriptObject.targetSObjectDescribe.fieldsMap;
-    }
-
-    get sourceResourceString(): string {
-        return this.logger.getResourceString(RESOURCES.source);
-    }
-
-    get targetResourceString(): string {
-        return this.logger.getResourceString(RESOURCES.target);
-    }
-
-    get csvResourceString(): string {
-        return this.logger.getResourceString(RESOURCES.csvFile);
-    }
-
-    get orgResourceString(): string {
-        return this.logger.getResourceString(RESOURCES.org);
-    }
 
     // ----------------------- Public methods -------------------------------------------    
     /**
@@ -159,7 +82,7 @@ export default class MigrationJobTask {
 
         // Check csv file --------------------------------------
         // Read the csv header row
-        let csvColumnsRow = await Common.readCsvFileAsync(this.sourceCSVFilename, 1);
+        let csvColumnsRow = await Common.readCsvFileAsync(this.data.sourceCsvFilename, 1);
 
         if (csvColumnsRow.length == 0) {
             // Missing or empty file
@@ -180,7 +103,7 @@ export default class MigrationJobTask {
         // Check columns in the csv file ------------------------
         // Only checking for the mandatory fields (to be updated), 
         // Not checking for all fields in the query (like RecordType.DevelopeName).
-        [...this.fieldsToUpdateMap.keys()].forEach(fieldName => {
+        [...this.data.fieldsToUpdateMap.keys()].forEach(fieldName => {
             const columnExists = Object.keys(csvColumnsRow[0]).some(columnName => {
                 let nameParts = columnName.split('.');
                 return columnName == fieldName || nameParts.some(namePart => namePart == fieldName);
@@ -218,7 +141,7 @@ export default class MigrationJobTask {
         let csvIssues = new Array<ICSVIssues>();
 
         let currentFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
-            this.sourceCSVFilename,
+            this.data.sourceCsvFilename,
             null, null,
             false, false);
 
@@ -243,8 +166,8 @@ export default class MigrationJobTask {
         }
 
         // Add missing lookup columns 
-        for (let fieldIndex = 0; fieldIndex < this.fieldsInQuery.length; fieldIndex++) {
-            const sField = this.fieldsInQueryMap.get(this.fieldsInQuery[fieldIndex]);
+        for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
+            const sField = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
             if (sField.isReference && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
                 await ___addMissingLookupColumnsAsync(sField);
             }
@@ -261,7 +184,7 @@ export default class MigrationJobTask {
                 let csvRow = currentFileMap.get(id);
                 csvRow["Id"] = id;
             });
-            cachedCSVContent.updatedFilenames.add(self.sourceCSVFilename);
+            cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
         }
 
         /**
@@ -276,7 +199,7 @@ export default class MigrationJobTask {
             let parentExternalId = sField.parentLookupObject.externalId;
             let parentTask = self.job.getTaskBySObjectName(sField.parentLookupObject.name);
             if (parentTask) {
-                let parentFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, parentTask.sourceCSVFilename);
+                let parentFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, parentTask.data.sourceCsvFilename);
                 let parentCSVRowsMap = new Map<string, any>();
                 [...parentFileMap.values()].forEach(parentCsvRow => {
                     let key = parentTask.getRecordValue(parentCsvRow, parentExternalId);
@@ -354,7 +277,7 @@ export default class MigrationJobTask {
                     }
                 });
                 if (isFileChanged) {
-                    cachedCSVContent.updatedFilenames.add(self.sourceCSVFilename);
+                    cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
                 }
             }
         }
@@ -377,7 +300,7 @@ export default class MigrationJobTask {
             if (parentOriginalExternalIdColumnName != "Id") {
                 let childTask = self.job.getTaskBySObjectName(childIdSField.scriptObject.name);
                 if (childTask) {
-                    let childFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, childTask.sourceCSVFilename);
+                    let childFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, childTask.data.sourceCsvFilename);
                     let isFileChanged = false;
                     if (childFileMap.size > 0) {
                         let childCSVFirstRow = childFileMap.values().next().value;
@@ -411,7 +334,7 @@ export default class MigrationJobTask {
                         }
                     }
                     if (isFileChanged) {
-                        cachedCSVContent.updatedFilenames.add(childTask.sourceCSVFilename);
+                        cachedCSVContent.updatedFilenames.add(childTask.data.sourceCsvFilename);
                     }
                 }
             }
@@ -470,7 +393,7 @@ export default class MigrationJobTask {
             absolute: true,
         });
         if (!fieldNames)
-            tempQuery.fields = this.fieldsInQuery.map(fieldName => getComposedField(fieldName));
+            tempQuery.fields = this.data.fieldsInQuery.map(fieldName => getComposedField(fieldName));
         else
             tempQuery.fields = fieldNames.map(fieldName => getComposedField(fieldName));
         if (removeLimits) {
@@ -523,20 +446,20 @@ export default class MigrationJobTask {
         this.logger.infoMinimal(RESOURCES.gettingRecordsCount, this.sObjectName);
         let query = this.createQuery(['COUNT(Id) CNT'], true);
 
-        if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
-            let apiSf = new Sfdx(this.sourceOrg);
+        if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org) {
+            let apiSf = new Sfdx(this.sourceData.org);
             let ret = await apiSf.queryAsync(query, false);
             this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
-                this.sourceResourceString, String(this.sourceTotalRecorsCount));
+                this.sourceData.resourceString_Source_Target, String(this.sourceTotalRecorsCount));
         }
 
-        if (this.targetOrg.media == DATA_MEDIA_TYPE.Org) {
-            let apiSf = new Sfdx(this.targetOrg);
+        if (this.targetData.org.media == DATA_MEDIA_TYPE.Org) {
+            let apiSf = new Sfdx(this.targetData.org);
             let ret = await apiSf.queryAsync(query, false);
             this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
-                this.targetResourceString, String(this.targetTotalRecorsCount));
+                this.targetData.resourceString_Source_Target, String(this.targetTotalRecorsCount));
         }
     }
 
@@ -548,7 +471,7 @@ export default class MigrationJobTask {
      */
     async deleteOldTargetRecords(): Promise<boolean> {
         // Checking
-        if (!(this.targetOrg.media == DATA_MEDIA_TYPE.Org
+        if (!(this.targetData.org.media == DATA_MEDIA_TYPE.Org
             && this.scriptObject.operation != OPERATION.Readonly
             && this.scriptObject.deleteOldData)) {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
@@ -557,8 +480,8 @@ export default class MigrationJobTask {
         // Querying
         this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
         let soql = this.createDeleteQuery();
-        let apiSf = new Sfdx(this.targetOrg);
-        let queryResult = await apiSf.queryAsync(soql, this.useBulkQueryApiForTarget);
+        let apiSf = new Sfdx(this.targetData.org);
+        let queryResult = await apiSf.queryAsync(soql, this.targetData.useBulkQueryApi);
         if (queryResult.totalSize == 0) {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
             return false;
@@ -570,7 +493,7 @@ export default class MigrationJobTask {
                 Id: x["Id"]
             }
         });
-        this.createApiEngine(this.targetOrg, OPERATION.Delete, recordsToDelete.length, true);
+        this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
         // FIXME: Enable rows below to delete records
 
         // let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
@@ -590,7 +513,9 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async retrieveRecords(mode: "forwards" | "backwads"): Promise<void> {
+    async retrieveRecords(mode: "forwards" | "backwards"): Promise<void> {
+
+        let self = this;
 
         // Checking status *********
         if (this.operation == OPERATION.Delete) return;
@@ -599,26 +524,27 @@ export default class MigrationJobTask {
 
         // Read source data *********************************************************************************************
         // **************************************************************************************************************
-        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File && mode == "forwards") {
+        if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && mode == "forwards") {
             // Read from the source csv file
-            this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceResourceString, this.csvResourceString);
+            this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.resourceString_Step(mode));
 
             let query = this.createQuery();
-            let sfdx = new Sfdx(this.targetOrg);
-            records = records.concat(await sfdx.retrieveRecordsAsync(query, false, this.sourceCSVFilename, this.targetFieldsMap));
+            let sfdx = new Sfdx(this.targetData.org);
+            records = records.concat(await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap));
         } else {
             // Read from the source org
             if (this.scriptObject.processAllSource && mode == "forwards") {
                 // All records ---------
                 let query = this.createQuery();
-                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceResourceString, this.orgResourceString);
+                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org,
+                    this.data.resourceString_Step(mode));
                 this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
 
-                let sfdx = new Sfdx(this.sourceOrg);
-                records = records.concat(await sfdx.retrieveRecordsAsync(query, this.useBulkQueryApiForSource));
+                let sfdx = new Sfdx(this.sourceData.org);
+                records = records.concat(await sfdx.retrieveRecordsAsync(query, this.sourceData.useBulkQueryApi));
             } else {
                 // Filtered records --------
-                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceResourceString, this.orgResourceString);
+                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(mode));
                 // TODO: Implement querying filtered records
 
 
@@ -626,51 +552,76 @@ export default class MigrationJobTask {
             }
         }
         // Set external id map ---------
-        records.forEach(record => {
-            let value = this.getRecordValue(record, this.scriptObject.externalId);
-            if (value) {
-                this.sourceExtIdRecordsMap.set(value, record["Id"]);
-            }
-        });
+        ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
 
         // Read target data ***********************************************************************************
         // ****************************************************************************************************
         records = new Array<any>();
-
-        if (this.targetOrg.media == DATA_MEDIA_TYPE.Org) {
+        if (this.targetData.org.media == DATA_MEDIA_TYPE.Org) {
             // Read from the source org
             if (this.scriptObject.processAllTarget && mode == "forwards") {
                 // All records ---------
                 let query = this.createQuery();
-                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetResourceString, this.orgResourceString);
+                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org,this.data.resourceString_Step(mode));
                 this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
 
-                let sfdx = new Sfdx(this.targetOrg);
-                records = records.concat(await sfdx.retrieveRecordsAsync(query, this.useBulkQueryApiForTarget));
+                let sfdx = new Sfdx(this.targetData.org);
+                records = records.concat(await sfdx.retrieveRecordsAsync(query, this.targetData.useBulkQueryApi));
             } else {
                 // Filtered records --------
-                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetResourceString, this.orgResourceString);
+                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(mode));
                 // TODO: Implement querying filtered records
 
 
             }
         }
         // Set external id map ---------
-        records.forEach(record => {
-            let value = this.getRecordValue(record, this.scriptObject.externalId);
-            if (value) {
-                this.targetExtIdRecordsMap.set(value, record["Id"]);
-            }
-        });
+        ___setExternalIdMap(records, this.targetData.extIdRecordsMap, this.targetData.idRecordsMap);
 
-        // Add self reference records *************************************************************************
+        // Add self reference records from the source *************************************************************************
         // ****************************************************************************************************
-        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File && mode == "forwards") {
-            // TODO: Add self-referenced records
-            
-
+        records = new Array<any>();
+        if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org && mode == "forwards") {
+            let inValues: Array<string> = new Array<string>();
+            for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
+                const describe = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
+                if (describe.isSelfReference) {
+                    [...this.sourceData.idRecordsMap.values()].forEach(sourceRec => {
+                        if (sourceRec[describe.name]) {
+                            inValues.push(sourceRec[describe.name]);
+                        }
+                    });
+                }
+            }
+            if (inValues.length > 0) {
+                this.logger.infoNormal(RESOURCES.queryingSelfReferenceRecords, this.sObjectName, this.sourceData.resourceString_Source_Target);
+                inValues = Common.distinctStringArray(inValues);
+                let sfdx = new Sfdx(this.sourceData.org);
+                let queries = Common.createFieldInQueries(this.data.fieldsInQuery, "Id", this.sObjectName, inValues);
+                for (let queryIndex = 0; queryIndex < queries.length; queryIndex++) {
+                    const query = queries[queryIndex];
+                    this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
+                    records = records.concat(await sfdx.retrieveRecordsAsync(query));
+                }
+                ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
+            }
         }
 
+
+        // ------------------------ Internal function --------------------------
+        function ___setExternalIdMap(records: Array<any>,
+            sourceExtIdRecordsMap: Map<string, string>,
+            sourceIdRecordsMap: Map<string, string>) {
+            records.forEach(record => {
+                let value = self.getRecordValue(record, self.scriptObject.externalId); //FIXME: Bug
+                if (value) {
+                    sourceExtIdRecordsMap.set(value, record["Id"]);
+                }
+                if (record["Id"]) {
+                    sourceIdRecordsMap.set(record["Id"], record);
+                }
+            });
+        }
     }
 
     /**
@@ -699,7 +650,7 @@ export default class MigrationJobTask {
                         operation,
                         pollingIntervalMs: this.script.pollingIntervalMs,
                         updateRecordId,
-                        targetCSVFullFilename: this.targetCSVFilename(operation),
+                        targetCSVFullFilename: this.data.targetCSVFilename(operation),
                         createTargetCSVFiles: this.script.createTargetCSVFiles
                     });
                     break;
@@ -712,7 +663,7 @@ export default class MigrationJobTask {
                         pollingIntervalMs: this.script.pollingIntervalMs,
                         updateRecordId,
                         bulkApiV1BatchSize: this.script.bulkApiV1BatchSize,
-                        targetCSVFullFilename: this.targetCSVFilename(operation),
+                        targetCSVFullFilename: this.data.targetCSVFilename(operation),
                         createTargetCSVFiles: this.script.createTargetCSVFiles
                     });
                     break;
@@ -727,7 +678,7 @@ export default class MigrationJobTask {
                 pollingIntervalMs: this.script.pollingIntervalMs,
                 updateRecordId,
                 allOrNone: this.script.allOrNone,
-                targetCSVFullFilename: this.targetCSVFilename(operation),
+                targetCSVFullFilename: this.data.targetCSVFilename(operation),
                 createTargetCSVFiles: this.script.createTargetCSVFiles
             });
         }
@@ -798,6 +749,86 @@ export default class MigrationJobTask {
 
     private _apiOperationError(operation: OPERATION) {
         throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.apiEngine.getStrOperation()));
+    }
+}
+
+// ---------------------------------------- Helper classes ---------------------------------------------------- //
+class TaskCommonData {
+
+    task: MigrationJobTask;
+
+    constructor(task: MigrationJobTask) {
+        this.task = task;
+    }
+
+    get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
+        return this.task.scriptObject.fieldsToUpdateMap;
+    }
+    get fieldsInQueryMap(): Map<string, SFieldDescribe> {
+        return this.task.scriptObject.fieldsInQueryMap;
+    }
+    get fieldsToUpdate(): string[] {
+        return this.task.scriptObject.fieldsToUpdate;
+    }
+    get fieldsInQuery(): string[] {
+        return this.task.scriptObject.fieldsInQuery;
+    }
+    get csvFilename(): string {
+        return this.task.getCSVFilename(this.task.script.basePath);
+    }
+    get sourceCsvFilename(): string {
+        let filepath = path.join(this.task.script.basePath, CONSTANTS.CSV_SOURCE_SUB_DIRECTORY);
+        if (!fs.existsSync(filepath)) {
+            fs.mkdirSync(filepath);
+        }
+        return this.task.getCSVFilename(filepath, CONSTANTS.CSV_SOURCE_FILE_SUFFIX);
+    }
+    targetCSVFilename(operation: OPERATION): string {
+        let filepath = path.join(this.task.script.basePath, CONSTANTS.CSV_TARGET_SUB_DIRECTORY);
+        if (!fs.existsSync(filepath)) {
+            fs.mkdirSync(filepath);
+        }
+        return this.task.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
+    }
+    get resourceString_csvFile(): string {
+        return this.task.logger.getResourceString(RESOURCES.csvFile);
+    }
+    get resourceString_org(): string {
+        return this.task.logger.getResourceString(RESOURCES.org);
+    }
+    resourceString_Step(mode: "forwards" | "backwards"): string {
+        return mode == "forwards" ? this.task.logger.getResourceString(RESOURCES.Step1)
+            : this.task.logger.getResourceString(RESOURCES.Step2);
+    }
+}
+
+class TaskOrgData {
+
+    task: MigrationJobTask;
+    isSource: boolean;
+
+    extIdRecordsMap: Map<string, string> = new Map<string, string>();
+    idRecordsMap: Map<string, string> = new Map<string, string>();
+
+    constructor(task: MigrationJobTask, isSource: boolean) {
+        this.task = task;
+        this.isSource = isSource;
+    }
+
+    get org(): ScriptOrg {
+        return this.isSource ? this.task.script.sourceOrg : this.task.script.targetOrg;
+    }
+    get useBulkQueryApi(): boolean {
+        return this.isSource ? this.task.sourceTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD :
+            this.task.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
+    }
+    get fieldsMap(): Map<string, SFieldDescribe> {
+        return this.isSource ? this.task.scriptObject.sourceSObjectDescribe.fieldsMap :
+            this.task.scriptObject.targetSObjectDescribe.fieldsMap;
+    }
+    get resourceString_Source_Target(): string {
+        return this.isSource ? this.task.logger.getResourceString(RESOURCES.source) :
+            this.task.logger.getResourceString(RESOURCES.target);
     }
 
 

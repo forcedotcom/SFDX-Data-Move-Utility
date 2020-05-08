@@ -92,7 +92,7 @@ export default class SFieldDescribe {
     }
 
     get isSelfReference(): boolean {
-        return this.referencedObjectType == this.objectName;
+        return this.isReference && !this.is__r && this.referencedObjectType == this.objectName;
     }
 
     /**

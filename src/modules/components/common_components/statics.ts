@@ -18,8 +18,10 @@ export const CONSTANTS = {
     DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName",
 
     SCRIPT_FILE_NAME: 'export.json',
-    CSV_SOURCE_SUBDIRECTORY: "source",
-    CSV_TARGET_SUBDIRECTORY: "target",
+    CSV_SOURCE_SUB_DIRECTORY: "source",
+    CSV_TARGET_SUB_DIRECTORY: "target",
+    CSV_SOURCE_FILE_SUFFIX: "_source",
+    CSV_TARGET_FILE_SUFFIX: "_target",
     FILE_LOG_SUBDIRECTORY: "logs",
     FILE_LOG_FILEEXTENSION: "log",
     VALUE_MAPPING_CSV_FILENAME: 'ValueMapping.csv',

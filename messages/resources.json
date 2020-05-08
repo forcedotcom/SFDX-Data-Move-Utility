@@ -155,8 +155,6 @@
     "executingQuery": "{%s} Executing Query: %s.",
     "retrievingDataCompleted": "Retrieving the source data %s has been completed...",
 
-    "Step1": "Step 1",
-    "Step2": "Step 2",
 
     "updatingTarget": "Updating the Target %s...",
     "writingToFile": "{%s} Writing to the file %s.",
@@ -175,6 +173,8 @@
 
     "source": "Source",
     "target": "Target",
+    "Step1": "Step 1",
+    "Step2": "Step 2",
     "apiOperationFailed": "{%s} The %s API operation FAILED.",
     "apiOperationProcessError": "{%s} The %s API operation FAILED with message: %s.",
     "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created. Creating  batch...",
@@ -187,8 +187,9 @@
     "apiOperationFinished": "{%s} The %s API operation has been finished.",
     "invalidApiOperation": "Invalid Api operation",
     "unexpectedApiError": "Unexpected Api error",
-    "queryingAll": "{%s} Retrieving the %s data from %s (ALL RECORDS)...",
-    "queryingIn": "{%s} Retrieving the %s data from %s (FILTERED RECORDS)...",
+    "queryingAll": "{%s} Retrieving the %s data from %s (%s: all records)...",
+    "queryingIn": "{%s} Retrieving the %s data from %s (%s: filtered records)...",
+    "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
     "queryString": "{%s} Query string: %s",
     "csvFile": "CSV file",
     "org": "Org"

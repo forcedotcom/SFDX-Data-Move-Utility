@@ -164,8 +164,6 @@ export enum RESOURCES {
     queryingFinished = "queryingFinished",
     executingQuery = "executingQuery",
     retrievingDataCompleted = "retrievingDataCompleted",
-    Step1 = "Step1",
-    Step2 = "Step2",
     updatingTarget = "updatingTarget",
     writingToFile = "writingToFile",
     writingToFileCompleted = "writingToFileCompleted",
@@ -182,6 +180,8 @@ export enum RESOURCES {
     // ----------------------
     source = "source",
     target = "target",
+    Step1 = "Step1",
+    Step2 = "Step2",
     apiOperationFailed = "apiOperationFailed",
     apiOperationProcessError = "apiOperationProcessError",
     apiOperationJobCreated = "apiOperationJobCreated",
@@ -194,8 +194,9 @@ export enum RESOURCES {
     apiOperationFinished = "apiOperationFinished",
     invalidApiOperation = "invalidApiOperation",
     unexpectedApiError = "unexpectedApiError",
-    queryingAll = "queryingAll",    
+    queryingAll = "queryingAll",  
     queryingIn = "queryingIn",
+    queryingSelfReferenceRecords = "queryingSelfReferenceRecords",
     queryString = "queryString",
     csvFile = "from CSV file",
     org = "from Org"
