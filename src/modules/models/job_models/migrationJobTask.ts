@@ -403,6 +403,18 @@ export default class MigrationJobTask {
         }
         return composeQuery(tempQuery);
     }
+    
+    /**
+     * Returns array of filtered queries
+     * for given query mode
+     *
+     * @param {("forwards" | "backwards")} queryMode
+     * @returns {Array<string>}
+     * @memberof MigrationJobTask
+     */
+    createFilteredQueries(queryMode: "forwards" | "backwards"): Array<string> {
+
+    }
 
     /**
      * Converts full query string into short form
@@ -509,11 +521,11 @@ export default class MigrationJobTask {
     /**
      * Retrieve records for this task
      * 
-     * @param {number} mode The mode of record processing
+     * @param {number} queryMode The mode of record processing
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async retrieveRecords(mode: "forwards" | "backwards"): Promise<void> {
+    async retrieveRecords(queryMode: "forwards" | "backwards"): Promise<void> {
 
         let self = this;
 
@@ -524,27 +536,27 @@ export default class MigrationJobTask {
 
         // Read source data *********************************************************************************************
         // **************************************************************************************************************
-        if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && mode == "forwards") {
+        if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
             // Read from the source csv file
-            this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.resourceString_Step(mode));
+            this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.resourceString_Step(queryMode));
 
             let query = this.createQuery();
             let sfdx = new Sfdx(this.targetData.org);
             records = records.concat(await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap));
         } else {
             // Read from the source org
-            if (this.scriptObject.processAllSource && mode == "forwards") {
+            if (this.scriptObject.processAllSource && queryMode == "forwards") {
                 // All records ---------
                 let query = this.createQuery();
                 this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org,
-                    this.data.resourceString_Step(mode));
+                    this.data.resourceString_Step(queryMode));
                 this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
 
                 let sfdx = new Sfdx(this.sourceData.org);
                 records = records.concat(await sfdx.retrieveRecordsAsync(query, this.sourceData.useBulkQueryApi));
             } else {
                 // Filtered records --------
-                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(mode));
+                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
                 // TODO: Implement querying filtered records
 
 
@@ -559,17 +571,17 @@ export default class MigrationJobTask {
         records = new Array<any>();
         if (this.targetData.org.media == DATA_MEDIA_TYPE.Org) {
             // Read from the source org
-            if (this.scriptObject.processAllTarget && mode == "forwards") {
+            if (this.scriptObject.processAllTarget && queryMode == "forwards") {
                 // All records ---------
                 let query = this.createQuery();
-                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org,this.data.resourceString_Step(mode));
+                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
                 this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
 
                 let sfdx = new Sfdx(this.targetData.org);
                 records = records.concat(await sfdx.retrieveRecordsAsync(query, this.targetData.useBulkQueryApi));
             } else {
                 // Filtered records --------
-                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(mode));
+                this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
                 // TODO: Implement querying filtered records
 
 
@@ -581,7 +593,7 @@ export default class MigrationJobTask {
         // Add self reference records from the source *************************************************************************
         // ****************************************************************************************************
         records = new Array<any>();
-        if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org && mode == "forwards") {
+        if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org && queryMode == "forwards") {
             let inValues: Array<string> = new Array<string>();
             for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
                 const describe = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
