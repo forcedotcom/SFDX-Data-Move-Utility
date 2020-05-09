@@ -115,7 +115,6 @@ export enum RESOURCES {
     MalformedDeleteQuery = "MalformedDeleteQuery",
     executingPackageScript = "executingPackageScript",
     preparing = "preparing",
-    gettingOrgMetadata = "gettingOrgMetadata",
     gettingMetadataForSObject = "gettingMetadataForSObject",
     noExternalKey = "noExternalKey",
     objectSourceDoesNotExist = "objectSourceDoesNotExist",
@@ -157,8 +156,6 @@ export enum RESOURCES {
     deletingOldDataCompleted = "deletingOldDataCompleted",
     deletingOldDataSkipped = "deletingOldDataSkipped",
     mappingRawCsvValues = "mappingRawCsvValues",
-    gettingRecordsCount = "gettingRecordsCount",
-    totalRecordsAmount = "totalRecordsAmount",
     queryingAllQueryString = "queryingAllQueryString",
     executingQuery = "executingQuery",
     updatingTarget = "updatingTarget",
@@ -179,6 +176,7 @@ export enum RESOURCES {
     target = "target",
     Step1 = "Step1",
     Step2 = "Step2",
+    gettingOrgMetadata = "gettingOrgMetadata",
     apiOperationFailed = "apiOperationFailed",
     apiOperationProcessError = "apiOperationProcessError",
     apiOperationJobCreated = "apiOperationJobCreated",
@@ -200,7 +198,10 @@ export enum RESOURCES {
     queryingTotallyFetched = "queryingTotallyFetched",
     queryString = "queryString",
     csvFile = "from CSV file",
-    org = "from Org"
+    org = "from Org",
+    gettingRecordsCount = "gettingRecordsCount",
+    totalRecordsAmount = "totalRecordsAmount"
+
     
 
 

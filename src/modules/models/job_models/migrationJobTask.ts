@@ -523,7 +523,6 @@ export default class MigrationJobTask {
     */
     async getTotalRecordsCountAsync(): Promise<void> {
 
-        this.logger.infoMinimal(RESOURCES.gettingRecordsCount, this.sObjectName);
         let query = this.createQuery(['COUNT(Id) CNT'], true);
 
         if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org) {

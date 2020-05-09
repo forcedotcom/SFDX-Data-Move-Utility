@@ -144,7 +144,8 @@ export default class Script {
      */
     async processObjectsMetadataAsync(): Promise<void> {
 
-        this.logger.infoMinimal(RESOURCES.gettingOrgMetadata);
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.gettingOrgMetadata);
 
         // Describe all objects
         for (let objectIndex = 0; objectIndex < this.objects.length; objectIndex++) {

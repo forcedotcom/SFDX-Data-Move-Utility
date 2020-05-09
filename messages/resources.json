@@ -100,7 +100,7 @@
     "MalformedDeleteQuery": "Malformed delete query for the sObject %s: %s, error: %s.",
     "executingPackageScript": "Executing the package script...",
     "preparing": "Preparing...",
-    "gettingOrgMetadata": "Getting and analysing objects metadata...",
+
     "gettingMetadataForSObject": "Getting metadata for %s (%s)",
     "noExternalKey": "Object %s has no required external Id field definition.",
     "objectSourceDoesNotExist": "Object %s is missing in the Source.",
@@ -148,8 +148,6 @@
 
 
     "mappingRawCsvValues": "{%s} Transforming raw CSV values by the given mapping table.",
-    "gettingRecordsCount": "{%s} Getting the total amount of records.",
-    "totalRecordsAmount": "{%s} Total amount of the %s records: %s",
     "queryingAllQueryString": "{%s} Retrieving the %s data (ALL RECORDS) in progress... Query string: %s.",
 
     "executingQuery": "{%s} Executing Query: %s.",
@@ -175,6 +173,7 @@
     "target": "Target",
     "Step1": "Step 1",
     "Step2": "Step 2",
+    "gettingOrgMetadata": "Getting and analysing objects metadata...",
     "apiOperationFailed": "{%s} The %s API operation FAILED.",
     "apiOperationProcessError": "{%s} The %s API operation FAILED with message: %s.",
     "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created. Creating  batch...",
@@ -196,7 +195,10 @@
     "queryingTotallyFetched": "{%s} Fetch summary: were totally fetched (source/target) %s records.",
     "queryString": "{%s} Query string: %s",
     "csvFile": "CSV file",
-    "org": "Org"
+    "org": "Org",
+    "gettingRecordsCount": "Getting the total amount of records...",
+    "totalRecordsAmount": "{%s} Total amount of the %s records: %s"
+
 
 
 

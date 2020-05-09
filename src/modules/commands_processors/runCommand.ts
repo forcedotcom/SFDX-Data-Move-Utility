@@ -11,9 +11,9 @@ import "es6-shim";
 import { plainToClass } from "class-transformer";
 import { Logger, RESOURCES } from "../components/common_components/logger";
 import * as models from '../models';
-import { CONSTANTS, DATA_MEDIA_TYPE, OPERATION } from '../components/common_components/statics';
-import { MigrationJobTask as Task, MigrationJob as Job } from '../models';
-import { CommandInitializationError, SuccessExit } from '../models/common_models/errors';
+import { CONSTANTS } from '../components/common_components/statics';
+import { MigrationJob as Job } from '../models';
+import { CommandInitializationError } from '../models/common_models/errors';
 
 
 
@@ -132,34 +132,7 @@ export class RunCommand {
      * @memberof RunCommand
      */
     async validateCSVFiles(): Promise<void> {
-
-        if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
-
-            await this.job.mergeUserGroupCSVfiles();
-            await this.job.loadCSVValueMappingFileAsync();
-            this.job.copyCSVFilesToSourceSubDir();
-
-            if (!this.script.importCSVFilesAsIs) {
-
-                // Validate and repair source csv files
-                this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
-
-                await this.job.validateAndRepairSourceCSVFiles();
-
-                this.logger.infoVerbose(RESOURCES.validationAndFixingsourceCSVFilesCompleted);
-
-                if (this.script.validateCSVFilesOnly) {
-                    // Succeeded exit
-                    throw new SuccessExit();
-                }
-
-                // Free memory from the csv file data
-                this.job.clearCachedCSVData();
-
-            } else {
-                this.logger.infoMinimal(RESOURCES.validatingSourceCSVFilesSkipped);
-            }
-        }
+        await this.job.validateCSVFiles();
     }
 
     /**
@@ -181,6 +154,9 @@ export class RunCommand {
      */
     async executeJob(): Promise<void> {
         await this.job.retrieveRecords();
+
+
+        this.logger.infoMinimal(RESOURCES.newLine);
     }
 
 }

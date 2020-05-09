@@ -7,9 +7,9 @@
 
 
 import { Common } from "../../components/common_components/common";
-import { CONSTANTS, OPERATION } from "../../components/common_components/statics";
+import { CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
-import { Script, ScriptObject, MigrationJobTask as Task } from "..";
+import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -126,7 +126,7 @@ export default class MigrationJob {
             }
         });
         this.tasks.forEach(task => {
-            if (this.queryTasks.indexOf(task) < 0){
+            if (this.queryTasks.indexOf(task) < 0) {
                 this.queryTasks.push(task);
             }
         });
@@ -137,115 +137,41 @@ export default class MigrationJob {
     }
 
     /**
-     * Load CSVValues mapping definition file into the memory
+     * Validate and fix the CSV files if 
+     * CSV files are set as the data source
      *
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async loadCSVValueMappingFileAsync(): Promise<void> {
-        let valueMappingFilePath = path.join(this.script.basePath, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
-        let csvRows = await Common.readCsvFileAsync(valueMappingFilePath);
-        if (csvRows.length > 0) {
-            this.logger.infoVerbose(RESOURCES.readingValuesMappingFile, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
-            csvRows.forEach(row => {
-                if (row["ObjectName"] && row["FieldName"]) {
-                    let key = String(row["ObjectName"]).trim() + String(row["FieldName"]).trim();
-                    if (!this.csvValuesMapping.has(key)) {
-                        this.csvValuesMapping.set(key, new Map<string, string>());
-                    }
-                    this.csvValuesMapping.get(key).set(String(row["RawValue"]).trim(), (String(row["Value"]) || "").trim());
+    async validateCSVFiles(): Promise<void> {
+        if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+
+            await this._mergeUserGroupCSVfiles();
+            await this._loadCSVValueMappingFileAsync();
+            this._copyCSVFilesToSourceSubDir();
+
+            if (!this.script.importCSVFilesAsIs) {
+
+                // Validate and repair source csv files
+                this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
+
+                await this._validateAndRepairSourceCSVFiles();
+
+                this.logger.infoVerbose(RESOURCES.validationAndFixingsourceCSVFilesCompleted);
+
+                if (this.script.validateCSVFilesOnly) {
+                    // Succeeded exit
+                    throw new SuccessExit();
                 }
-            });
-        }
-    }
 
-    /**
-     * Merge User.csv and Group.csv into single file
-     *
-     * @returns {Promise<void>}
-     * @memberof MigrationJob
-     */
-    async mergeUserGroupCSVfiles(): Promise<void> {
-        let filepath1 = path.join(this.script.basePath, "User.csv");
-        let filepath2 = path.join(this.script.basePath, "Group.csv");
-        let filepath3 = path.join(this.script.basePath, CONSTANTS.USER_AND_GROUP_FILENAME + ".csv");
-        await Common.mergeCsvFilesAsync(filepath1, filepath2, filepath3, true, "Id", "Name");
-    }
+                // Free memory from the csv file data
+                this.clearCachedCSVData();
 
-    /**
-     * Copy all source CSV files into the /source/ subdir
-     * to leave the original files unchanged after
-     * the validation and repairing
-     *
-     * @memberof MigrationJob
-     */
-    copyCSVFilesToSourceSubDir() {
-        this.tasks.forEach(task => {
-            fs.copyFileSync(task.data.csvFilename, task.data.sourceCsvFilename);
-        });
-    }
-
-    /**
-     * Check and repair all CSV source files.
-     *
-     * @returns {Promise<void>}
-     * @memberof MigrationJob
-     */
-    async validateAndRepairSourceCSVFiles(): Promise<void> {
-
-        let self = this;
-
-        // Analyse csv structure
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
-            this.csvIssues = this.csvIssues.concat(await task.validateCSV());
-        }
-
-        // if csv structure issues were found - prompt to abort the job 
-        let abortWasPrompted = false;
-        if (this.csvIssues.length > 0) {
-            await ___abortwithPrompt();
-            abortWasPrompted = true;
-        }
-
-        // Check and repair the source csvs
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
-            this.csvIssues = this.csvIssues.concat(await task.repairCSV(this.cachedCSVContent));
-        }
-
-        // Save the changed source csvs
-        await this.saveCachedCsvDataFiles();
-        this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
-
-        // if csv data issues were found - prompt to abort the job 
-        //  and save the report
-        if (this.csvIssues.length > 0) {
-            if (!abortWasPrompted) {
-                await ___abortwithPrompt();
             } else {
-                await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
-                this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+                this.logger.infoMinimal(RESOURCES.validatingSourceCSVFilesSkipped);
             }
-        } else {
-            this.logger.infoVerbose(RESOURCES.noIssuesFoundDuringCSVValidation);
         }
-
-        async function ___abortwithPrompt(): Promise<void> {
-            await Common.abortWithPrompt(self.logger,
-                RESOURCES.issuesFoundDuringCSVValidation,
-                self.script.promptOnIssuesInCSVFiles,
-                RESOURCES.continueTheJobPrompt,
-                "",
-                async () => {
-                    // Report csv issues
-                    await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
-                },
-                String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
-        }
-
     }
-
 
     /**
     * Retireve the total record count for each task in the job
@@ -256,6 +182,7 @@ export default class MigrationJob {
     async getTotalRecordsCount(): Promise<void> {
 
         this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.gettingRecordsCount);
 
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
@@ -302,7 +229,7 @@ export default class MigrationJob {
             const task = this.queryTasks[index];
             await task.retrieveRecords("forwards");
         }
-        this.logger.infoMinimal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
+        this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
 
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step2));
@@ -319,7 +246,7 @@ export default class MigrationJob {
         //     await task.retrieveRecords("backwards");
         // }
 
-        this.logger.infoMinimal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
+        this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
 
         // Total fetched message ----------
         this.logger.infoNormal(RESOURCES.newLine);
@@ -385,7 +312,93 @@ export default class MigrationJob {
 
 
 
+    // --------------------------- Private members -------------------------------------
+    private async _loadCSVValueMappingFileAsync(): Promise<void> {
+        let valueMappingFilePath = path.join(this.script.basePath, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
+        let csvRows = await Common.readCsvFileAsync(valueMappingFilePath);
+        if (csvRows.length > 0) {
+            this.logger.infoVerbose(RESOURCES.readingValuesMappingFile, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
+            csvRows.forEach(row => {
+                if (row["ObjectName"] && row["FieldName"]) {
+                    let key = String(row["ObjectName"]).trim() + String(row["FieldName"]).trim();
+                    if (!this.csvValuesMapping.has(key)) {
+                        this.csvValuesMapping.set(key, new Map<string, string>());
+                    }
+                    this.csvValuesMapping.get(key).set(String(row["RawValue"]).trim(), (String(row["Value"]) || "").trim());
+                }
+            });
+        }
+    }
 
+    private async _mergeUserGroupCSVfiles(): Promise<void> {
+        let filepath1 = path.join(this.script.basePath, "User.csv");
+        let filepath2 = path.join(this.script.basePath, "Group.csv");
+        let filepath3 = path.join(this.script.basePath, CONSTANTS.USER_AND_GROUP_FILENAME + ".csv");
+        await Common.mergeCsvFilesAsync(filepath1, filepath2, filepath3, true, "Id", "Name");
+    }
+
+    private _copyCSVFilesToSourceSubDir() {
+        this.tasks.forEach(task => {
+            if (fs.existsSync(task.data.csvFilename)){
+                fs.copyFileSync(task.data.csvFilename, task.data.sourceCsvFilename);
+            }
+        });
+    }
+
+    private async _validateAndRepairSourceCSVFiles(): Promise<void> {
+
+        let self = this;
+
+        // Analyse csv structure
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            this.csvIssues = this.csvIssues.concat(await task.validateCSV());
+        }
+
+        // if csv structure issues were found - prompt to abort the job 
+        let abortWasPrompted = false;
+        if (this.csvIssues.length > 0) {
+            await ___abortwithPrompt();
+            abortWasPrompted = true;
+        }
+
+        // Check and repair the source csvs
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            this.csvIssues = this.csvIssues.concat(await task.repairCSV(this.cachedCSVContent));
+        }
+
+        // Save the changed source csvs
+        await this.saveCachedCsvDataFiles();
+        this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
+
+        // if csv data issues were found - prompt to abort the job 
+        //  and save the report
+        if (this.csvIssues.length > 0) {
+            if (!abortWasPrompted) {
+                await ___abortwithPrompt();
+            } else {
+                await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
+                this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+            }
+        } else {
+            this.logger.infoVerbose(RESOURCES.noIssuesFoundDuringCSVValidation);
+        }
+
+        async function ___abortwithPrompt(): Promise<void> {
+            await Common.abortWithPrompt(self.logger,
+                RESOURCES.issuesFoundDuringCSVValidation,
+                self.script.promptOnIssuesInCSVFiles,
+                RESOURCES.continueTheJobPrompt,
+                "",
+                async () => {
+                    // Report csv issues
+                    await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
+                },
+                String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+        }
+
+    }
 }
 
 
