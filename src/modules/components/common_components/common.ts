@@ -529,20 +529,42 @@ export class Common {
     }
 
     /**
-     * Returns true if the field name is a complex field name
-     * (f.ex. Account__r.Name => true, 
+     * Returns true if the field name is a complex field name or __r field name
+     * (f.ex. Account__r.Name or $$Account__r.Name$Account__r.Id => true, 
      *        Id => false)
+     * 
      *
      * @static
      * @param {string} fieldName The field name
      * @returns {boolean}
      * @memberof CommonUtils
      */
-    public static isComplexField(fieldName: string): boolean {
+    public static isComplexOr__rField(fieldName: string): boolean {
         return fieldName && (fieldName.indexOf('.') >= 0
             || fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
-            || fieldName.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX));
+            || fieldName.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX)
+        );
     }
+
+
+    /**
+         * Returns true if the field name is a complex field name
+         * (f.ex. $$Account__r.Name$Account__r.Id => true, 
+         *        Id => false)
+         * 
+         *
+         * @static
+         * @param {string} fieldName The field name
+         * @returns {boolean}
+         * @memberof CommonUtils
+         */
+    public static isComplexField(fieldName: string): boolean {
+        return fieldName && (
+            fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
+            || fieldName.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX)
+        );
+    }
+
 
     /**
      * Transforms field name into the complex field 

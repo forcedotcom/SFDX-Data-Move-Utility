@@ -91,8 +91,28 @@ export default class SFieldDescribe {
         return Common.isComplexField(this.name);
     }
 
-    get isSelfReference(): boolean {
-        return this.isReference && !this.is__r && this.referencedObjectType == this.objectName;
+    get isComplexOr__r(): boolean {
+        return Common.isComplexOr__rField(this.name);
+    }
+
+    get isSimple(): boolean {
+        return !this.isComplexOr__r && !this.isReference;
+    }
+
+    get isSimpleReference(): boolean {
+        return this.isReference && !this.is__r;
+    }
+
+    get isSimpleSelfReference(): boolean {
+        return this.isSimpleReference && this.referencedObjectType == this.objectName;
+    }
+
+    get isExternalIdField(): boolean{
+        return this.scriptObject && this.scriptObject.externalId == this.name;
+    }
+
+    get isOriginalExternalIdField(): boolean{
+        return this.scriptObject && this.scriptObject.originalExternalId == this.name;
     }
 
     /**
@@ -111,13 +131,13 @@ export default class SFieldDescribe {
         }
     }
 
-     /**
-     * Account__r.Name => Account__c
-     *
-     * @readonly
-     * @type {string}
-     * @memberof SFieldDescribe
-     */
+    /**
+    * Account__r.Name => Account__c
+    *
+    * @readonly
+    * @type {string}
+    * @memberof SFieldDescribe
+    */
     get nameId(): string {
         let parts = this.name.split('.');
         if (!this.is__r || parts.length < 2) {
@@ -162,14 +182,14 @@ export default class SFieldDescribe {
         }
     }
 
-     /**
-     * Account__c => Account__r.Id 
-     * ("Name" is the original external id for Account defained in the script)
-     *
-     * @readonly
-     * @type {string}
-     * @memberof SFieldDescribe
-     */
+    /**
+    * Account__c => Account__r.Id 
+    * ("Name" is the original external id for Account defained in the script)
+    *
+    * @readonly
+    * @type {string}
+    * @memberof SFieldDescribe
+    */
     get fullIdName__r(): string {
         if (this.isReference) {
             return this.name__r + ".Id";
@@ -178,7 +198,7 @@ export default class SFieldDescribe {
         }
     }
 
-   
+
 
 }
 

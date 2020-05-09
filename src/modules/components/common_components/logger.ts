@@ -156,14 +156,11 @@ export enum RESOURCES {
     deletingFromTheTargetCompleted = "deletingFromTheTargetCompleted",
     deletingOldDataCompleted = "deletingOldDataCompleted",
     deletingOldDataSkipped = "deletingOldDataSkipped",
-    retrievingData = "retrievingData",
     mappingRawCsvValues = "mappingRawCsvValues",
     gettingRecordsCount = "gettingRecordsCount",
     totalRecordsAmount = "totalRecordsAmount",
     queryingAllQueryString = "queryingAllQueryString",
-    queryingFinished = "queryingFinished",
     executingQuery = "executingQuery",
-    retrievingDataCompleted = "retrievingDataCompleted",
     updatingTarget = "updatingTarget",
     writingToFile = "writingToFile",
     writingToFileCompleted = "writingToFileCompleted",
@@ -194,12 +191,17 @@ export enum RESOURCES {
     apiOperationFinished = "apiOperationFinished",
     invalidApiOperation = "invalidApiOperation",
     unexpectedApiError = "unexpectedApiError",
+    retrievingData = "retrievingData",    
+    retrievingDataCompleted = "retrievingDataCompleted",
     queryingAll = "queryingAll",  
     queryingIn = "queryingIn",
     queryingSelfReferenceRecords = "queryingSelfReferenceRecords",
+    queryingFinished = "queryingFinished",
+    queryingTotallyFetched = "queryingTotallyFetched",
     queryString = "queryString",
     csvFile = "from CSV file",
     org = "from Org"
+    
 
 
 }

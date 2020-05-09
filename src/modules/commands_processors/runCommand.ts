@@ -119,73 +119,9 @@ export class RunCommand {
 
         this.job = new Job({
             script: this.script
-        })
-
-        let lowerIndexForAnyObjects = 0;
-        let lowerIndexForReadonlyObjects = 0;
-
-        // Create task chain in the optimized order
-        // to put parent related objects before their children
-        this.script.objects.forEach(newObject => {
-
-            // New task object to insert into the task chain
-            let newTask: Task = new Task({
-                scriptObject: newObject,
-                job: this.job
-            });
-            if (newObject.operation == OPERATION.Readonly
-                || newObject.allRecords
-                || newObject.isExtraObject) {
-                newObject.processAllSource = true;
-                newObject.processAllTarget = true;
-            } else {
-                if (newObject.hasComplexExternalId) {
-                    newObject.processAllTarget = true;
-                }
-            }
-            if (newObject.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
-                // RecordType object is always at the beginning 
-                //   of the task chain
-                this.job.tasks.unshift(newTask);
-                lowerIndexForAnyObjects++;
-                lowerIndexForReadonlyObjects++;
-            } else if (newObject.isReadonlyObject) {
-                // Readonly objects are always at the beginning 
-                //   of the task chain 
-                //   but after RecordType
-                this.job.tasks.splice(lowerIndexForReadonlyObjects, 0, newTask);
-                lowerIndexForAnyObjects++;
-            } else if (this.job.tasks.length == 0) {
-                // First object in the task chain
-                this.job.tasks.push(newTask);
-            } else {
-                // The index where to insert the new object
-                let indexToInsert: number = this.job.tasks.length;
-                for (var existedTaskIndex = this.job.tasks.length - 1; existedTaskIndex >= lowerIndexForAnyObjects; existedTaskIndex--) {
-                    var existedTask = this.job.tasks[existedTaskIndex];
-                    // Check if the new object is parent lookup to the existed task
-                    let isNewObject_ParentLookup = existedTask.scriptObject.parentLookupObjects.some(x => x.name == newObject.name);
-                    // Check if the existed task is parent master-detail to the new object
-                    let isExistedTask_ParentMasterDetail = newObject.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name);
-                    if (isNewObject_ParentLookup && !isExistedTask_ParentMasterDetail) {
-                        // The new object is the parent lookup, but it is not a child master-detail 
-                        //                  => it should be before BEFORE the existed task (replace existed task with it)
-                        indexToInsert = existedTaskIndex;
-                    }
-                    // The existed task is the parent lookup or the parent master-detail 
-                    //                      => it should be AFTER the exited task (continue as is)
-                }
-                // Insert the new object 
-                //   into the task chain
-                //   at the calculated index
-                this.job.tasks.splice(indexToInsert, 0, newTask);
-            }
         });
 
-        this.logger.objectMinimal({
-            [this.logger.getResourceString(RESOURCES.executionOrder)]: this.job.tasks.map(x => x.sObjectName).join("; ")
-        });
-
+        this.job.setup();
     }
 
     /**
@@ -233,17 +169,8 @@ export class RunCommand {
     * @memberof RunCommand
     */
     async prepareJob(): Promise<void> {
-
         await this.job.getTotalRecordsCount();
-
-        this.logger.infoMinimal(RESOURCES.newLine);
-        this.logger.headerMinimal(RESOURCES.deletingOldData);
-
-        if (await this.job.deleteOldRecords()) {
-            this.logger.infoVerbose(RESOURCES.deletingOldDataCompleted);
-        } else {
-            this.logger.infoVerbose(RESOURCES.deletingOldDataSkipped);
-        }
+        await this.job.deleteOldRecords();
     }
 
     /**
@@ -253,11 +180,7 @@ export class RunCommand {
      * @memberof RunCommand
      */
     async executeJob(): Promise<void> {
-
-        // Retrieve records PASS 1
         await this.job.retrieveRecords();
-
-
     }
 
 }

@@ -38,7 +38,7 @@ export default class Run extends SfdxCommand {
     public static description = commandMessages.getMessage('commandDescription');
     public static longDescription = commandMessages.getMessage('commandLongDescription');
 
-    // NOTE: Add deprecation to the command if neededsfdx sfdmu:
+    // TODO: Add deprecation to the command if neededsfdx sfdmu:
     // public static deprecated = {
     //     version: 47,
     //     to: 'force:package:create'
@@ -50,7 +50,7 @@ export default class Run extends SfdxCommand {
             description: commandMessages.getMessage('sourceusernameFlagDescription'),
             longDescription: commandMessages.getMessage('sourceusernameFlagLongDescription'),
             default: '',
-            // NOTE: Add deprecation to the flag if needed
+            // TODO: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'
@@ -61,7 +61,7 @@ export default class Run extends SfdxCommand {
             description: commandMessages.getMessage('pathFlagDescription'),
             longDescription: commandMessages.getMessage('pathFlagLongDescription'),
             default: '',
-            // NOTE: Add deprecation to the flag if needed
+            // TODO: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'
@@ -86,7 +86,7 @@ export default class Run extends SfdxCommand {
         version: flags.boolean({
             description: commandMessages.getMessage("versionFlagDescription"),
             longDescription: commandMessages.getMessage("versionFlagLongDescription"),
-            // NOTE: Add deprecation to the flag if needed
+            // TODO: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'
@@ -99,7 +99,7 @@ export default class Run extends SfdxCommand {
         filelog: flags.boolean({
             description: commandMessages.getMessage("filelogFlagDescription"),
             longDescription: commandMessages.getMessage("filelogFlagLongDescription"),
-            // NOTE: Add deprecation to the flag if needed
+            // TODO: Add deprecation to the flag if needed
             // deprecated: {
             //     version: 43,
             //     to: 'force:package:create'

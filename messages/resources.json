@@ -146,14 +146,14 @@
     "deletingOldDataCompleted": "Deleting old data from the Target has been completed.",
     "deletingOldDataSkipped": "Deleting old data from the Target was skipped.",
 
-    "retrievingData": "Retrieving the source data %s...",
+
     "mappingRawCsvValues": "{%s} Transforming raw CSV values by the given mapping table.",
     "gettingRecordsCount": "{%s} Getting the total amount of records.",
     "totalRecordsAmount": "{%s} Total amount of the %s records: %s",
     "queryingAllQueryString": "{%s} Retrieving the %s data (ALL RECORDS) in progress... Query string: %s.",
-    "queryingFinished": "{%s} Retrieving the %s data has been completed. Totally fetched %s records.",
+
     "executingQuery": "{%s} Executing Query: %s.",
-    "retrievingDataCompleted": "Retrieving the source data %s has been completed...",
+
 
 
     "updatingTarget": "Updating the Target %s...",
@@ -187,9 +187,13 @@
     "apiOperationFinished": "{%s} The %s API operation has been finished.",
     "invalidApiOperation": "Invalid Api operation",
     "unexpectedApiError": "Unexpected Api error",
+    "retrievingData": "Retrieving the data %s...",
+    "retrievingDataCompleted": "Retrieving the data %s has been completed.",
     "queryingAll": "{%s} Retrieving the %s data from %s (%s: all records)...",
     "queryingIn": "{%s} Retrieving the %s data from %s (%s: filtered records)...",
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
+    "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s records.",
+    "queryingTotallyFetched": "{%s} Fetch summary: were totally fetched (source/target) %s records.",
     "queryString": "{%s} Query string: %s",
     "csvFile": "CSV file",
     "org": "Org"

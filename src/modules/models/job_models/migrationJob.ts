@@ -7,7 +7,7 @@
 
 
 import { Common } from "../../components/common_components/common";
-import { CONSTANTS } from "../../components/common_components/statics";
+import { CONSTANTS, OPERATION } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Script, ScriptObject, MigrationJobTask as Task } from "..";
 import * as path from 'path';
@@ -19,6 +19,7 @@ export default class MigrationJob {
 
     script: Script;
     tasks: Task[] = new Array<Task>();
+    queryTasks: Task[] = new Array<Task>();
     csvValuesMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
     csvIssues: Array<ICSVIssues> = new Array<ICSVIssues>();
     cachedCSVContent: CachedCSVContent = new CachedCSVContent();
@@ -40,7 +41,101 @@ export default class MigrationJob {
 
 
 
-    // ----------------------- Public methods -------------------------------------------    
+    // ----------------------- Public methods -------------------------------------------        
+    /**
+     * Setup this object
+     *
+     * @memberof MigrationJob
+     */
+    setup() {
+
+        this.script.job = this;
+
+        let lowerIndexForAnyObjects = 0;
+        let lowerIndexForReadonlyObjects = 0;
+
+        // Create task chain in the optimized order
+        // to put parent related objects before their children
+        this.script.objects.forEach(objectToAdd => {
+
+            // New task object to insert into the task chain
+            let newTask: Task = new Task({
+                scriptObject: objectToAdd,
+                job: this
+            });
+            if (objectToAdd.allRecords
+                || objectToAdd.isLimitedQuery
+                || !objectToAdd.hasParentLookupObjects) {
+                objectToAdd.processAllSource = true;
+                objectToAdd.processAllTarget = true;
+            } else {
+                objectToAdd.processAllSource = false;
+                if (objectToAdd.hasComplexExternalId || objectToAdd.hasAutonumberExternalId) {
+                    objectToAdd.processAllTarget = true;
+                } else {
+                    objectToAdd.processAllTarget = false;
+                }
+            }
+            if (objectToAdd.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
+                // RecordType object is always at the beginning 
+                //   of the task chain
+                this.tasks.unshift(newTask);
+                lowerIndexForAnyObjects++;
+                lowerIndexForReadonlyObjects++;
+            } else if (objectToAdd.isReadonlyObject) {
+                // Readonly objects are always at the beginning 
+                //   of the task chain 
+                //   but after RecordType
+                this.tasks.splice(lowerIndexForReadonlyObjects, 0, newTask);
+                lowerIndexForAnyObjects++;
+            } else if (this.tasks.length == 0) {
+                // First object in the task chain
+                this.tasks.push(newTask);
+            } else {
+                // The index where to insert the new object
+                let indexToInsert: number = this.tasks.length;
+                for (var existedTaskIndex = this.tasks.length - 1; existedTaskIndex >= lowerIndexForAnyObjects; existedTaskIndex--) {
+                    var existedTask = this.tasks[existedTaskIndex];
+                    // Check if the new object is parent lookup to the existed task
+                    let isObjectToAdd_ParentLookup = existedTask.scriptObject.parentLookupObjects.some(x => x.name == objectToAdd.name);
+                    // Check if the existed task is parent master-detail to the new object
+                    let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name) || existedTask.tempData.isMasterDetailTask;
+                    if (isObjectToAdd_ParentLookup && !isExistedTask_ParentMasterDetail) {
+                        // The new object is the parent lookup, but it is not a child master-detail 
+                        //                  => it should be before BEFORE the existed task (replace existed task with it)
+                        indexToInsert = existedTaskIndex;
+                    } else if (isExistedTask_ParentMasterDetail) {
+                        existedTask.tempData.isMasterDetailTask = true;
+                    }
+                    // The existed task is the parent lookup or the parent master-detail 
+                    //                      => it should be AFTER the exited task (continue as is)
+                }
+                // Insert the new object 
+                //   into the task chain
+                //   at the calculated index
+                this.tasks.splice(indexToInsert, 0, newTask);
+            }
+        });
+
+        // Create query task order
+        this.tasks.forEach(task => {
+            if (task.scriptObject.isReadonlyObject
+                || task.tempData.isMasterDetailTask
+                || !task.scriptObject.hasParentLookupObjects) {
+                this.queryTasks.push(task);
+            }
+        });
+        this.tasks.forEach(task => {
+            if (this.queryTasks.indexOf(task) < 0){
+                this.queryTasks.push(task);
+            }
+        });
+
+        this.logger.objectMinimal({
+            [this.logger.getResourceString(RESOURCES.executionOrder)]: this.tasks.map(x => x.sObjectName).join("; ")
+        });
+    }
+
     /**
      * Load CSVValues mapping definition file into the memory
      *
@@ -159,6 +254,9 @@ export default class MigrationJob {
     * @memberof MigrationJob
     */
     async getTotalRecordsCount(): Promise<void> {
+
+        this.logger.infoMinimal(RESOURCES.newLine);
+
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
             await task.getTotalRecordsCountAsync();
@@ -171,13 +269,22 @@ export default class MigrationJob {
     * @returns {Promise<void>}
     * @memberof MigrationJob
     */
-    async deleteOldRecords(): Promise<boolean> {
+    async deleteOldRecords(): Promise<void> {
+
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.deletingOldData);
+
         let deleted = false;
-        for (let index = 0; index < this.tasks.length; index++) {
+        for (let index = this.tasks.length - 1; index >= 0; index--) {
             const task = this.tasks[index];
             deleted = await task.deleteOldTargetRecords() || deleted;
         }
-        return deleted;
+
+        if (deleted) {
+            this.logger.infoVerbose(RESOURCES.deletingOldDataCompleted);
+        } else {
+            this.logger.infoVerbose(RESOURCES.deletingOldDataSkipped);
+        }
     }
 
     /**
@@ -187,13 +294,39 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     async retrieveRecords(): Promise<void> {
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
+
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step1));
+
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
             await task.retrieveRecords("forwards");
         }
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
+        this.logger.infoMinimal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
+
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step2));
+
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
             await task.retrieveRecords("backwards");
+        }
+
+        // TODO: Check if need second iteration for backwards to get all records ?????
+        // So uncomment this.
+        // for (let index = 0; index < this.tasks.length; index++) {
+        //     const task = this.tasks[index];
+        //     await task.retrieveRecords("backwards");
+        // }
+
+        this.logger.infoMinimal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
+
+        // Total fetched message ----------
+        this.logger.infoNormal(RESOURCES.newLine);
+
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            this.logger.infoNormal(RESOURCES.queryingTotallyFetched, task.sObjectName, String(task.sourceData.extIdRecordsMap.size + "/" + task.targetData.extIdRecordsMap.size));
         }
     }
 

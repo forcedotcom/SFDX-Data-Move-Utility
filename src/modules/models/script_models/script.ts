@@ -21,6 +21,8 @@ import {
 } from 'soql-parser-js';
 import { ScriptOrg, ScriptObject } from "..";
 import { CommandInitializationError } from "../common_models/errors";
+import MigrationJob from "../job_models/migrationJob";
+
 
 
 
@@ -60,6 +62,7 @@ export default class Script {
     targetOrg: ScriptOrg;
     basePath: string = "";
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
+    job: MigrationJob;
 
     get bulkApiVersionNumber() : number {
         return +(this.bulkApiVersion || '1.0');

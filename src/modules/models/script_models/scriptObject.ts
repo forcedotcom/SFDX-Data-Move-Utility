@@ -13,7 +13,7 @@ import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
-import {  RESOURCES } from "../../components/common_components/logger";
+import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
     parseQuery,
@@ -21,7 +21,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe } from "..";
+import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask } from "..";
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 
@@ -62,6 +62,10 @@ export default class ScriptObject {
     isExtraObject: boolean = false;
     processAllSource: boolean = false;
     processAllTarget: boolean = false;
+
+    get task(): MigrationJobTask {
+        return this.script.job.getTaskBySObjectName(this.name);
+    }
 
     get externalIdSFieldDescribe(): SFieldDescribe {
         return this.isDescribed
@@ -135,11 +139,16 @@ export default class ScriptObject {
     }
 
     get hasComplexExternalId(): boolean {
-        return Common.isComplexField(this.externalId);
+        return Common.isComplexOr__rField(this.externalId);
+    }
+
+    get hasAutonumberExternalId(): boolean {
+        let extIdField = this.externalIdSFieldDescribe;
+        return extIdField.autoNumber || extIdField.name == "Id";
     }
 
     get hasComplexOriginalExternalId(): boolean {
-        return Common.isComplexField(this.originalExternalId);
+        return Common.isComplexOr__rField(this.originalExternalId);
     }
 
     get isDescribed(): boolean {
@@ -172,6 +181,12 @@ export default class ScriptObject {
 
     get complexOriginalExternalId(): string {
         return Common.getComplexField(this.originalExternalId);
+    }
+
+    get hasParentLookupObjects() : boolean {
+        return [...this.fieldsInQueryMap.values()].some(field => {
+            return field.isSimpleReference;
+        });
     }
 
 
@@ -349,7 +364,7 @@ export default class ScriptObject {
         if (!this.isReadonlyObject && !this.isSpecialObject) {
             let fieldsInQuery = [].concat(this.fieldsInQuery);
             fieldsInQuery.forEach(x => {
-                if (!Common.isComplexField(x) && !describe.fieldsMap.has(x)) {
+                if (!Common.isComplexOr__rField(x) && !describe.fieldsMap.has(x)) {
 
 
                     if (x.name == this.externalId) {
