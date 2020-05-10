@@ -974,6 +974,26 @@ export class Common {
         }
     }
 
+    /**
+     * Parsed value and retrieves clear value.
+     * For example for the field RecordType.DeveloperName: "AccountRT;Account" => "AccountRT"
+     *
+     * @static
+     * @param {string} sObjectName The sObject name
+     * @param {*} rawFieldValue The raw field value to transform
+     * @param {string} fieldName The field name
+     * @returns {string}
+     * @memberof Common
+     */
+    public static getFieldValue(sObjectName: string, rawFieldValue: any, fieldName: string) : string {
+        if (!rawFieldValue) return rawFieldValue;
+        if (sObjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && fieldName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
+            //"AccountRT;Account" => "AccountRT"
+            return String(rawFieldValue).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0];
+        }
+        return rawFieldValue;
+    }
+
 
     public static splitMulti(str: string, separators: Array<string>) {
         var tempChar = 't3mp'; //prevent short text separator in split down

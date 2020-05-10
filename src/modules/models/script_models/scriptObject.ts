@@ -183,7 +183,14 @@ export default class ScriptObject {
         return Common.getComplexField(this.originalExternalId);
     }
 
-    get hasParentLookupObjects() : boolean {
+    /**
+     * This object has some relationships to other sobjects
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof ScriptObject
+     */
+    get hasParentLookupObjects(): boolean {
         return [...this.fieldsInQueryMap.values()].some(field => {
             return field.isSimpleReference;
         });
@@ -361,11 +368,12 @@ export default class ScriptObject {
     // ----------------------- Private members -------------------------------------------
     private _validateFields(describe: SObjectDescribe, isSource: boolean) {
 
-        if (!this.isReadonlyObject && !this.isSpecialObject) {
+        if (!this.isExtraObject && !this.isSpecialObject) {
+
             let fieldsInQuery = [].concat(this.fieldsInQuery);
+
             fieldsInQuery.forEach(x => {
                 if (!Common.isComplexOr__rField(x) && !describe.fieldsMap.has(x)) {
-
 
                     if (x.name == this.externalId) {
                         // Missing externalId field. Exception.

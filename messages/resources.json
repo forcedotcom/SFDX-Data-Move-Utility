@@ -168,11 +168,13 @@
     "usingBulkApi": "* Using Bulk Api v%s *",
 
 
-
-    "source": "Source",
-    "target": "Target",
-    "Step1": "Step 1",
-    "Step2": "Step 2",
+    "separator": "=============",
+    "source": "SOURCE",
+    "target": "TARGET",
+    "Step1": "STEP 1",
+    "Step2": "STEP 2",
+    "Pass1": "PASS 1",
+    "Pass2": "PASS 2",
     "gettingOrgMetadata": "Getting and analysing objects metadata...",
     "apiOperationFailed": "{%s} The %s API operation FAILED.",
     "apiOperationProcessError": "{%s} The %s API operation FAILED with message: %s.",
@@ -192,7 +194,7 @@
     "queryingIn": "{%s} Retrieving the %s data from %s (%s: filtered records)...",
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s records.",
-    "queryingTotallyFetched": "{%s} Fetch summary: were totally fetched (source/target) %s records.",
+    "queryingTotallyFetched": "{%s} Fetch summary: totally fetched (source/target) %s records.",
     "queryString": "{%s} Query string: %s",
     "csvFile": "CSV file",
     "org": "Org",

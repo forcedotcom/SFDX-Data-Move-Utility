@@ -64,6 +64,7 @@ export default class MigrationJob {
                 job: this
             });
             if (objectToAdd.allRecords
+                || objectToAdd.isSpecialObject
                 || objectToAdd.isLimitedQuery
                 || !objectToAdd.hasParentLookupObjects) {
                 objectToAdd.processAllSource = true;
@@ -222,35 +223,47 @@ export default class MigrationJob {
      */
     async retrieveRecords(): Promise<void> {
 
+        // SOURCE FORWARDS ***********
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step1));
-
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
             await task.retrieveRecords("forwards");
         }
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
 
+        // SOURCE BACKWARDS ***********  
+        // PASS 1  ------//    
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step2));
 
+        this.logger.infoNormal(RESOURCES.Pass1);
+        this.logger.infoNormal(RESOURCES.separator);
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            await task.retrieveRecords("backwards");
+        }
+        // PASS 2  ------// 
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.infoNormal(RESOURCES.Pass2);        
+        this.logger.infoNormal(RESOURCES.separator);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
             await task.retrieveRecords("backwards");
         }
 
-        // TODO: Check if need second iteration for backwards to get all records ?????
-        // So uncomment this.
-        // for (let index = 0; index < this.tasks.length; index++) {
-        //     const task = this.tasks[index];
-        //     await task.retrieveRecords("backwards");
-        // }
-
+        // TARGET ***********        
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.infoMinimal(RESOURCES.target);        
+        this.logger.infoMinimal(RESOURCES.separator);
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            await task.retrieveRecords("target");
+        }
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
 
-        // Total fetched message ----------
+        // TOTAL FETCHED SUMMARY ***********        
         this.logger.infoNormal(RESOURCES.newLine);
-
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
             this.logger.infoNormal(RESOURCES.queryingTotallyFetched, task.sObjectName, String(task.sourceData.extIdRecordsMap.size + "/" + task.targetData.extIdRecordsMap.size));
@@ -339,7 +352,7 @@ export default class MigrationJob {
 
     private _copyCSVFilesToSourceSubDir() {
         this.tasks.forEach(task => {
-            if (fs.existsSync(task.data.csvFilename)){
+            if (fs.existsSync(task.data.csvFilename)) {
                 fs.copyFileSync(task.data.csvFilename, task.data.sourceCsvFilename);
             }
         });

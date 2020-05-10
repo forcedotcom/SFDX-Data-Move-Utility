@@ -63,6 +63,14 @@ export default class MigrationJobTask {
         return this.scriptObject.operation;
     }
 
+    get externalId() : string {
+        return this.scriptObject.externalId;
+    }
+
+    get complexExternalId() : string {
+        return Common.getComplexField(this.scriptObject.externalId);
+    }
+
     data: TaskCommonData = new TaskCommonData(this);
     sourceData: TaskOrgData = new TaskOrgData(this, true);
     targetData: TaskOrgData = new TaskOrgData(this, false);
@@ -73,7 +81,7 @@ export default class MigrationJobTask {
         true if the script object 
         related to this task 
         has some child master-detail tasks
-         */    
+         */
         isMasterDetailTask: false
     }
 
@@ -184,7 +192,9 @@ export default class MigrationJobTask {
         }
 
         return csvIssues;
-        // ------------------ internal functions ------------------------- //
+
+
+        // ------------------ Internal functions ------------------------- //
         /**
          * Add Id column to the current csv file (if it is missing), 
          * then update all its child lookup "__r" columns in other csv files
@@ -425,16 +435,16 @@ export default class MigrationJobTask {
      * @returns {Array<string>}
      * @memberof MigrationJobTask
      */
-    createFilteredQueries(queryMode: "forwards" | "backwards", isSource: boolean): Array<string> {
+    createFilteredQueries(queryMode: "forwards" | "backwards" | "target"): Array<string> {
 
         let self = this;
         let queries = new Array<string>();
         let fieldsToQueryMap: Map<SFieldDescribe, Array<string>> = new Map<SFieldDescribe, Array<string>>();
+        let isSource = queryMode != "target";
 
         let prevTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) < this.job.tasks.indexOf(this));
         let nextTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) > this.job.tasks.indexOf(this));
 
-        // TODO:
         [...this.data.fieldsInQueryMap.values()].forEach(field => {
             if (isSource) {
                 // SOURCE
@@ -442,7 +452,7 @@ export default class MigrationJobTask {
                 if (field.isSimpleReference) {
                     // Only for simple reference lookup fields (f.ex.: Account__c)
                     if (!field.parentLookupObject.task.sourceData.allRecords || field.parentLookupObject.isLimitedQuery) {
-                        if (queryMode == "forwards") {
+                        if (queryMode != "forwards") {
                             // FORWARDS
                             // For forwards => build the query using all the PREVIOUS related tasks by the tasks order
                             if (prevTasks.indexOf(field.parentLookupObject.task) >= 0) {
@@ -464,8 +474,7 @@ export default class MigrationJobTask {
                 // For target => |TARGET Account|Name IN (|SOURCE Account|Name....)
                 if (field.isSimple && field.isExternalIdField) {
                     // Only for current object's external id (f.ex.: Name) - not complex and not Id - only simple
-                    // TODO:
-                    fieldsToQueryMap.set(field, [...this.sourceData.extIdRecordsMap.keys()]);
+                    fieldsToQueryMap.set(field, [...this.sourceData.extIdRecordsMap.keys()].map(value => Common.getFieldValue(this.sObjectName, value, field.name)));
                 }
             }
         });
@@ -573,13 +582,14 @@ export default class MigrationJobTask {
             }
         });
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
-        // FIXME: Enable rows below to delete records
 
+        // HACK: Enable rows below to delete records
         // let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
         // if (resultRecords == null) {
         //     // API ERROR. Exiting.
         //     this._apiOperationError(OPERATION.Delete);
         // }
+
         // Done
         this.logger.infoVerbose(RESOURCES.deletingFromTheTargetCompleted, this.sObjectName);
         return true;
@@ -592,142 +602,151 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async retrieveRecords(queryMode: "forwards" | "backwards"): Promise<void> {
+    async retrieveRecords(queryMode: "forwards" | "backwards" | "target"): Promise<void> {
 
         let self = this;
+
+        // TEST:
+        if (this.sObjectName == "TestObject_Description__c") {
+            let kk = "";
+        }
 
         // Checking status *********
         if (this.operation == OPERATION.Delete) return;
 
         let records: Array<any> = new Array<any>();
-        let hasRecords = false;
 
         // Read SOURCE DATA *********************************************************************************************
         // **************************************************************************************************************
-        if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
-            // Read from the SOURCE CSV FILE ***********************************
-            let query = this.createQuery();
-            // Start message ------
-            this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.resourceString_Step(queryMode));
-            let sfdx = new Sfdx(this.targetData.org);
-            records = await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap);
-            hasRecords = true;
-        } else {
-            // Read from the SOURCE ORG **********************************************
-            if (this.scriptObject.processAllSource && queryMode == "forwards") {
-                // All records *********** //
+        let hasRecords = false;        
+        if (queryMode != "target") {
+            // Read main data *************************************
+            // ****************************************************
+            if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
+                // Read from the SOURCE CSV FILE ***********************************
                 let query = this.createQuery();
                 // Start message ------
-                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org,
-                    this.data.resourceString_Step(queryMode));
-                // Query string message ------    
-                this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
-                // Fetch records                
-                let sfdx = new Sfdx(this.sourceData.org);
-                records = await sfdx.retrieveRecordsAsync(query, this.sourceData.useBulkQueryApi);
+                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.resourceString_Step(queryMode));
+                let sfdx = new Sfdx(this.targetData.org);
+                records = await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap);
                 hasRecords = true;
-            } else if (!this.scriptObject.processAllSource) {
-                // Filtered records ************ //
-                let queries = this.createFilteredQueries(queryMode, true);
-                if (queries.length > 0) {
+            } else {
+                // Read from the SOURCE ORG **********************************************
+                if (this.scriptObject.processAllSource && queryMode == "forwards") {
+                    // All records *********** //
+                    let query = this.createQuery();
                     // Start message ------
-                    this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
-                    // Fetch records
-                    records = await ___queryMany(queries, this.sourceData);
+                    this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org,
+                        this.data.resourceString_Step(queryMode));
+                    // Query string message ------    
+                    this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
+                    // Fetch records                
+                    let sfdx = new Sfdx(this.sourceData.org);
+                    records = await sfdx.retrieveRecordsAsync(query, this.sourceData.useBulkQueryApi);
                     hasRecords = true;
+                } else if (!this.scriptObject.processAllSource) {
+                    // Filtered records ************ //
+                    let queries = this.createFilteredQueries(queryMode);
+                    if (queries.length > 0) {
+                        // Start message ------
+                        this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
+                        // Fetch records
+                        records = await ___queryMany(queries, this.sourceData);
+                        hasRecords = true;
+                    }
                 }
             }
-        }
-        if (hasRecords) {
-            // Set external id map ---------
-            ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
-            // Completed message ------
-            this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.sourceData.resourceString_Source_Target, String(records.length));
+            if (hasRecords) {
+                // Set external id map ---------
+                ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
+                // Completed message ------
+                this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.sourceData.resourceString_Source_Target, String(records.length));
+            }
+
+            // Read SELF REFERENCE records from the SOURCE *************
+            // *********************************************************
+            if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org && queryMode == "forwards") {
+                records = new Array<any>();
+                let inValues: Array<string> = new Array<string>();
+                for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
+                    const describe = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
+                    if (describe.isSimpleSelfReference) {
+                        [...this.sourceData.idRecordsMap.values()].forEach(sourceRec => {
+                            if (sourceRec[describe.name]) {
+                                inValues.push(sourceRec[describe.name]);
+                            }
+                        });
+                    }
+                }
+                if (inValues.length > 0) {
+                    // Start message ------
+                    this.logger.infoNormal(RESOURCES.queryingSelfReferenceRecords, this.sObjectName, this.sourceData.resourceString_Source_Target);
+                    inValues = Common.distinctStringArray(inValues);
+                    let sfdx = new Sfdx(this.sourceData.org);
+                    let queries = Common.createFieldInQueries(this.data.fieldsInQuery, "Id", this.sObjectName, inValues);
+                    for (let queryIndex = 0; queryIndex < queries.length; queryIndex++) {
+                        const query = queries[queryIndex];
+                        // Query string message ------
+                        this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
+                        // Fetch records
+                        records = records.concat(await sfdx.retrieveRecordsAsync(query));
+                    }
+                    if (queries.length > 0) {
+                        // Set external id map ---------
+                        ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
+                        // Completed message ------
+                        this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.sourceData.resourceString_Source_Target, String(records.length));
+                    }
+                }
+            }
         }
 
 
         // Read TARGET DATA ***********************************************************************************
         // ****************************************************************************************************
-        hasRecords = false;
-        if (this.targetData.org.media == DATA_MEDIA_TYPE.Org && this.operation != OPERATION.Insert) {
-            // Read from the TARGET ORG *********
-            records = new Array<any>();
-            if (this.scriptObject.processAllTarget && queryMode == "forwards") {
-                // All records ****** //
-                let query = this.createQuery();
-                // Start message ------
-                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
-                // Query string message ------
-                this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
-                // Fetch records
-                let sfdx = new Sfdx(this.targetData.org);
-                records = await sfdx.retrieveRecordsAsync(query, this.targetData.useBulkQueryApi);
-                hasRecords = true;
-            } else if (!this.scriptObject.processAllTarget) {
-                // Filtered records ***** //
-                let queries = this.createFilteredQueries(queryMode, false);
-                if (queries.length > 0) {
+        if (queryMode == "target") {
+            hasRecords = false;
+            if (this.targetData.org.media == DATA_MEDIA_TYPE.Org && this.operation != OPERATION.Insert) {
+                // Read from the TARGET ORG *********
+                records = new Array<any>();
+                if (this.scriptObject.processAllTarget) {
+                    // All records ****** //
+                    let query = this.createQuery();
                     // Start message ------
-                    this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
-                    // Fetch records
-                    records = await ___queryMany(queries, this.targetData);
-                    hasRecords = true;
-                }
-            }
-        }
-        if (hasRecords) {
-            // Set external id map ---------
-            ___setExternalIdMap(records, this.targetData.extIdRecordsMap, this.targetData.idRecordsMap);
-            // Completed message ------
-            this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.targetData.resourceString_Source_Target, String(records.length));
-        }
-
-
-        // Read SELF REFERENCE records from the SOURCE *************************************************************************
-        // ****************************************************************************************************
-        if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org && queryMode == "forwards") {
-            records = new Array<any>();
-            let inValues: Array<string> = new Array<string>();
-            for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
-                const describe = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
-                if (describe.isSimpleSelfReference) {
-                    [...this.sourceData.idRecordsMap.values()].forEach(sourceRec => {
-                        if (sourceRec[describe.name]) {
-                            inValues.push(sourceRec[describe.name]);
-                        }
-                    });
-                }
-            }
-            if (inValues.length > 0) {
-                // Start message ------
-                this.logger.infoNormal(RESOURCES.queryingSelfReferenceRecords, this.sObjectName, this.sourceData.resourceString_Source_Target);
-                inValues = Common.distinctStringArray(inValues);
-                let sfdx = new Sfdx(this.sourceData.org);
-                let queries = Common.createFieldInQueries(this.data.fieldsInQuery, "Id", this.sObjectName, inValues);
-                for (let queryIndex = 0; queryIndex < queries.length; queryIndex++) {
-                    const query = queries[queryIndex];
+                    this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
                     // Query string message ------
                     this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                     // Fetch records
-                    records = records.concat(await sfdx.retrieveRecordsAsync(query));
+                    let sfdx = new Sfdx(this.targetData.org);
+                    records = await sfdx.retrieveRecordsAsync(query, this.targetData.useBulkQueryApi);
+                    hasRecords = true;
+                } else {
+                    // Filtered records ***** //
+                    let queries = this.createFilteredQueries(queryMode);
+                    if (queries.length > 0) {
+                        // Start message ------
+                        this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
+                        // Fetch records
+                        records = await ___queryMany(queries, this.targetData);
+                        hasRecords = true;
+                    }
                 }
-                if (queries.length > 0) {
-                    // Set external id map ---------
-                    ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
-                    // Completed message ------
-                    this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.sourceData.resourceString_Source_Target, String(records.length));
-                }
+            }
+            if (hasRecords) {
+                // Set external id map ---------
+                ___setExternalIdMap(records, this.targetData.extIdRecordsMap, this.targetData.idRecordsMap);
+                // Completed message ------
+                this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.targetData.resourceString_Source_Target, String(records.length));
             }
         }
 
 
-        // ------------------------ Internal function --------------------------
+        // ------------------------ Internal functions --------------------------
         function ___setExternalIdMap(records: Array<any>,
             sourceExtIdRecordsMap: Map<string, string>,
             sourceIdRecordsMap: Map<string, string>) {
-
             records.forEach(record => {
-                let value = self.getRecordValue(record, self.scriptObject.externalId); //FIXME: Bug
+                let value = self.getRecordValue(record, self.complexExternalId);
                 if (value) {
                     sourceExtIdRecordsMap.set(value, record["Id"]);
                 }
@@ -749,6 +768,10 @@ export default class MigrationJobTask {
             }
             return records;
         }
+    }
+
+    async updateRecords(): Promise<void> {
+
     }
 
     /**
@@ -923,7 +946,7 @@ class TaskCommonData {
     get resourceString_org(): string {
         return this.task.logger.getResourceString(RESOURCES.org);
     }
-    resourceString_Step(mode: "forwards" | "backwards"): string {
+    resourceString_Step(mode: "forwards" | "backwards" | "target"): string {
         return mode == "forwards" ? this.task.logger.getResourceString(RESOURCES.Step1)
             : this.task.logger.getResourceString(RESOURCES.Step2);
     }

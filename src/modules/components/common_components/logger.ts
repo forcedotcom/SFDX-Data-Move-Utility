@@ -172,10 +172,13 @@ export enum RESOURCES {
 
 
     // ----------------------
+    separator = "separator",
     source = "source",
     target = "target",
     Step1 = "Step1",
     Step2 = "Step2",
+    Pass1 = "Pass1",
+    Pass2 = "Pass2",
     gettingOrgMetadata = "gettingOrgMetadata",
     apiOperationFailed = "apiOperationFailed",
     apiOperationProcessError = "apiOperationProcessError",

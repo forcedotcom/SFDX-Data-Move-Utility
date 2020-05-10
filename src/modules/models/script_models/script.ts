@@ -6,7 +6,7 @@
  */
 
 
- 
+
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
@@ -64,11 +64,11 @@ export default class Script {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     job: MigrationJob;
 
-    get bulkApiVersionNumber() : number {
+    get bulkApiVersionNumber(): number {
         return +(this.bulkApiVersion || '1.0');
     }
 
-    
+
     // ----------------------- Public methods -------------------------------------------    
     /**
      * Setup this object
@@ -90,10 +90,10 @@ export default class Script {
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         this.apiVersion = apiVersion || this.apiVersion;
 
-
-        // Remove excluded objects
+        // Remove excluded objects and unsupported objects
         this.objects = this.objects.filter(object => {
-            let included = (!object.excluded || object.operation == OPERATION.Readonly);
+            let included = (!object.excluded || object.operation == OPERATION.Readonly)
+                && CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(object.name) < 0;
             if (!included) {
                 this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
             }
@@ -104,6 +104,9 @@ export default class Script {
         if (this.objects.length == 0) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.noObjectsDefinedInPackageFile));
         }
+
+        // Make each object appear only once in the script
+        this.objects = Common.distinctArray(this.objects, "name");
 
         // Assign orgs
         Object.assign(this.sourceOrg, {
@@ -123,17 +126,9 @@ export default class Script {
         await this.targetOrg.setupAsync();
 
         // Setup objects
-        for (let index = 0; index < this.objects.length; index++) {
-            const object = this.objects[index];
+        this.objects.forEach(object => {
             object.setup(this);
-        }
-
-        // Remove unsupported objects
-        this.objects = this.objects.filter(x => CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(x.name) < 0);
-
-        // Make each object appear only once in the script
-        this.objects = Common.distinctArray(this.objects, "name");
-
+        });
     }
 
     /**
@@ -199,7 +194,7 @@ export default class Script {
                                 order: "ASC"
                             });
                             thisField.parentLookupObject.query = composeQuery(thisField.parentLookupObject.parsedQuery);
-                            
+
                         }
 
                     }
@@ -216,7 +211,8 @@ export default class Script {
                     thisObject.query = composeQuery(thisObject.parsedQuery);
 
                     // Linking between related fields and objects
-                    let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(thisField.parentLookupObject.externalId);
+                    let externalIdFieldName = Common.getComplexField(thisField.parentLookupObject.externalId);
+                    let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName);
 
                     let __rSField = thisObject.fieldsInQueryMap.get(__rFieldName);
                     __rSField.objectName = thisObject.name;
@@ -234,7 +230,7 @@ export default class Script {
         }
 
         // Remove duplicate fields
-        this.objects.forEach(object=>{
+        this.objects.forEach(object => {
             object.parsedQuery.fields = Common.distinctArray(object.parsedQuery.fields, "field");
             object.query = composeQuery(object.parsedQuery);
         });
