@@ -23,7 +23,7 @@
         "jsforce": "^1.9.3",
         "linq.ts": "^1.0.0",
         "reflect-metadata": "^0.1.13",
-        "simple-crypto-js": "^2.2.0",
+        "simple-crypto-js": "^2.3.0",
         "soql-parser-js": "^1.2.1",
         "tslib": "^1"
     },
