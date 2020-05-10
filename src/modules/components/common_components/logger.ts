@@ -26,31 +26,46 @@ import { CONSTANTS } from './statics';
  */
 export enum RESOURCES {
 
+    newLine = "newLine",
+    separator = "separator",
+    source = "source",
+    target = "target",
+    Step1 = "Step1",
+    Step2 = "Step2",
+    Pass1 = "Pass1",
+    Pass2 = "Pass2",
+    csvFile = "from CSV file",
+    org = "from Org",
+    sourceOrg = "sourceOrg",
+    targetOrg = "targetOrg",
+    scriptFile = "scriptFile",
+
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptSelectedOption = "defaultPromptSelectedOption",
     promptMessageFormat = "promptMessageFormat",
     promptDefaultOptionFormat = "promptDefaultOptionFormat",
+
     loggerInfoString = "loggerInfoString",
     loggerInfoStringWithDate = "loggerInfoStringWithDate",
     loggerWarnString = "loggerWarnString",
     loggerWarnStringWithDate = "loggerWarnStringWithDate",
     loggerErrorString = "loggerErrorString",
     loggerErrorStringWithDate = "loggerErrorStringWithDate",
-
-    fileLoggerInfoString = "fileLoggerInfoString",
-    fileLoggerWarnSring = "fileLoggerWarnSring",
-    fileLoggerErrorSring = "fileLoggerErrorSring",
-
     loggerImportantInfoString = "loggerImportantInfoString",
     loggerImportantInfoStringWithDate = "loggerImportantInfoStringWithDate",
-    fileLoggerInfoStringWithoutDate =  "fileLoggerInfoStringWithoutDate",
-    fileLoggerWarnSringWithoutDate =  "fileLoggerWarnSringWithoutDate",
-    fileLoggerErrorSringWithoutDate = "fileLoggerErrorSringWithoutDate",
-        
+   
     loggerStackTraceString = "loggerStackTraceString",
     loggerTimeElapsedString = "loggerTimeElapsedString",
     loggerCommandStartedString = "loggerCommandStartedString",
     loggerCommandCompletedString = "loggerCommandCompletedString",
+
+    fileLoggerInfoString = "fileLoggerInfoString",
+    fileLoggerWarnSring = "fileLoggerWarnSring",
+    fileLoggerErrorSring = "fileLoggerErrorSring",
+    fileLoggerInfoStringWithoutDate =  "fileLoggerInfoStringWithoutDate",
+    fileLoggerWarnSringWithoutDate =  "fileLoggerWarnSringWithoutDate",
+    fileLoggerErrorSringWithoutDate = "fileLoggerErrorSringWithoutDate",
+        
     successfullyCompletedResult = "successfullyCompletedResult",
     commandInitializationErrorResult = "commandInitializationErrorResult",
     orgMetadataErrorResult = "orgMetadataErrorResult",
@@ -59,26 +74,18 @@ export enum RESOURCES {
     commandUnresolvableWarningResult = "commandUnresolvableWarningResult",    
     commandAbortedByUserErrorResult = "commandAbortedByUserErrorResult",
     commandUnexpectedErrorResult = "commandUnexpectedErrorResult",
-    commandInProgress = "commandInProgress",
-    nothingToDelete = "nothingToDelete",
-    unprocessedRecord = "unprocessedRecord",
-    invalidRecordHashcode = "invalidRecordHashcode",
 
 
-    // ------------------------------------ //
+    commandInProgress = "commandInProgress",    
     packageScript = "packageScript",
     pluginVersion = "pluginVersion",
-    newLine = "newLine",
     workingPathDoesNotExist = "workingPathDoesNotExist",
     packageFileDoesNotExist = "packageFileDoesNotExist",
     loadingPackageFile = "loadingPackageFile",
     objectWillBeExcluded = "objectWillBeExcluded",
     noObjectsDefinedInPackageFile = "noObjectsDefinedInPackageFile",
-    sourceOrg = "sourceOrg",
-    targetOrg = "targetOrg",
-    scriptFile = "scriptFile",
+
     tryingToConnectCLI = "tryingToConnectCLI",
-    
     successfullyConnected = "successfullyConnected",
     tryingToConnectCLIFailed = "tryingToConnectCLIFailed",
     // TODO: Implement this!
@@ -86,7 +93,8 @@ export enum RESOURCES {
     accessToOrgExpired = "accessToOrgExpired",
     MalformedQuery = "MalformedQuery",
     MalformedDeleteQuery = "MalformedDeleteQuery",
-
+    
+    gettingOrgMetadata = "gettingOrgMetadata",
     gettingMetadataForSObject = "gettingMetadataForSObject",
     noExternalKey = "noExternalKey",
     objectSourceDoesNotExist = "objectSourceDoesNotExist",
@@ -95,10 +103,12 @@ export enum RESOURCES {
     fieldSourceDoesNtoExist = "fieldSourceDoesNtoExist",
     fieldTargetDoesNtoExist = "fieldTargetDoesNtoExist",
     missingFieldsToProcess = "missingFieldsToProcess",
+
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",
-    
+
     readingValuesMappingFile = "readingValuesMappingFile",
+    mappingRawCsvValues = "mappingRawCsvValues",
     validatingAndFixingSourceCSVFiles = "validatingAndFixingSourceCSVFiles",
     validatingSourceCSVFilesSkipped = "validatingSourceCSVFilesSkipped",
     writingToCSV = "writingToCSV",
@@ -111,26 +121,12 @@ export enum RESOURCES {
     cantUpdateChildLookupCSVColumn = "cantUpdateChildLookupCSVColumn",
     csvFilesWereUpdated = "csvFilesWereUpdated",
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
-    deletingOldData = "deletingOldData",
-    deletingTargetSObject = "deletingTargetSObject",
 
-    deletingFromTheTargetNRecordsWillBeDeleted = "deletingFromTheTargetNRecordsWillBeDeleted",
-    deletingFromTheTargetCompleted = "deletingFromTheTargetCompleted",
-    deletingOldDataCompleted = "deletingOldDataCompleted",
-    deletingOldDataSkipped = "deletingOldDataSkipped",
-
-
-    // ----------------------
     executionOrder = "executionOrder",
-    queryingOrder = "queryingOrder",
-    separator = "separator",
-    source = "source",
-    target = "target",
-    Step1 = "Step1",
-    Step2 = "Step2",
-    Pass1 = "Pass1",
-    Pass2 = "Pass2",
-    gettingOrgMetadata = "gettingOrgMetadata",
+    queryingOrder = "queryingOrder",  
+
+    unprocessedRecord = "unprocessedRecord",
+    invalidRecordHashcode = "invalidRecordHashcode",
     apiOperationFailed = "apiOperationFailed",
     apiOperationProcessError = "apiOperationProcessError",
     apiOperationJobCreated = "apiOperationJobCreated",
@@ -143,6 +139,18 @@ export enum RESOURCES {
     apiOperationFinished = "apiOperationFinished",
     invalidApiOperation = "invalidApiOperation",
     unexpectedApiError = "unexpectedApiError",
+
+    gettingRecordsCount = "gettingRecordsCount",
+    totalRecordsAmount = "totalRecordsAmount",
+
+    deletingOldData = "deletingOldData",
+    deletingTargetSObject = "deletingTargetSObject",
+    deletingFromTheTargetNRecordsWillBeDeleted = "deletingFromTheTargetNRecordsWillBeDeleted",
+    deletingFromTheTargetCompleted = "deletingFromTheTargetCompleted",
+    deletingOldDataCompleted = "deletingOldDataCompleted",
+    deletingOldDataSkipped = "deletingOldDataSkipped",
+    nothingToDelete = "nothingToDelete",
+
     retrievingData = "retrievingData",    
     retrievingDataCompleted = "retrievingDataCompleted",
     queryingAll = "queryingAll",  
@@ -150,14 +158,7 @@ export enum RESOURCES {
     queryingSelfReferenceRecords = "queryingSelfReferenceRecords",
     queryingFinished = "queryingFinished",
     queryingTotallyFetched = "queryingTotallyFetched",
-    queryString = "queryString",
-    csvFile = "from CSV file",
-    org = "from Org",
-    gettingRecordsCount = "gettingRecordsCount",
-    totalRecordsAmount = "totalRecordsAmount"
-
-    
-
+    queryString = "queryString"
 
 }
 

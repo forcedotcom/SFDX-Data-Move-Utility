@@ -25,6 +25,7 @@ import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
 import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError } from '../../models';
+import readline = require('readline');
 
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
@@ -617,8 +618,8 @@ export class Common {
                 });
                 resolve([...records]);
             } else {
-                let lineReader = require('readline').createInterface({
-                    input: require('fs').createReadStream(filePath),
+                let lineReader = readline.createInterface({
+                    input: fs.createReadStream(filePath, { encoding: 'utf8' })
                 });
                 let lineCounter = 0; let wantedLines = [];
                 lineReader.on('line', function (line: any) {

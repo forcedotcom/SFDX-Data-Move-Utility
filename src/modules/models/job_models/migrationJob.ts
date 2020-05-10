@@ -366,6 +366,7 @@ export default class MigrationJob {
         }
     }
 
+    
     private async _mergeUserGroupCSVfiles(): Promise<void> {
         let filepath1 = path.join(this.script.basePath, "User.csv");
         let filepath2 = path.join(this.script.basePath, "Group.csv");

@@ -123,8 +123,10 @@ export default class MigrationJobTask {
         // Not checking for all fields in the query (like RecordType.DevelopeName).
         [...this.data.fieldsToUpdateMap.keys()].forEach(fieldName => {
             const columnExists = Object.keys(csvColumnsRow[0]).some(columnName => {
+                columnName = columnName.trim();
                 let nameParts = columnName.split('.');
-                return columnName == fieldName || nameParts.some(namePart => namePart == fieldName);
+                return columnName == fieldName
+                    || nameParts.some(namePart => namePart == fieldName);
             });
             if (!columnExists) {
                 // Column is missing in the csv file
@@ -171,6 +173,14 @@ export default class MigrationJobTask {
 
         let firstRow = currentFileMap.values().next().value;
 
+        // Removes extra spaces from column headers
+        ___trimColumnNames(firstRow);
+
+        if (this.scriptObject.useCSVValuesMapping && this.job.csvValuesMapping.size > 0) {
+            // Update csv rows with csv value mapping
+            ___updateWithCSVValueMapping(firstRow);
+        }
+
         if (!firstRow.hasOwnProperty("Id")) {
             // Add missing id column 
             ___addMissingIdColumn();
@@ -195,6 +205,55 @@ export default class MigrationJobTask {
 
 
         // ------------------ Internal functions ------------------------- //
+        /**
+         * Updates csv rows according to provided value mapping file
+         *
+         * @param {*} firstRow
+         */
+        function ___updateWithCSVValueMapping(firstRow: any) {
+            self.logger.infoNormal(RESOURCES.mappingRawCsvValues, self.sObjectName);
+            let fields = Object.keys(firstRow);
+            let csvRows = [...currentFileMap.values()];
+            fields.forEach(field => {
+                let key = self.sObjectName + field;
+                let valuesMap = self.job.csvValuesMapping.get(key);
+                if (valuesMap && valuesMap.size > 0) {
+                    csvRows.forEach((csvRow: any) => {
+                        let rawValue = (String(csvRow[field]) || "").trim();
+                        if (valuesMap.has(rawValue)) {
+                            csvRow[field] = valuesMap.get(rawValue);
+                        }
+                    });
+                }
+            });
+            cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
+        }
+
+        /**
+         * Trim csv header columns to remove extra unvisible symbols and spaces
+         *
+         * @param {*} firstRow
+         */
+        function ___trimColumnNames(firstRow: any) {
+            let columnsToUpdate = new Array<string>();
+            Object.keys(firstRow).forEach(field => {
+                if (field != field.trim()) {
+                    columnsToUpdate.push(field);
+                }
+            });
+            if (columnsToUpdate.length > 0) {
+                let csvRows = [...currentFileMap.values()];
+                columnsToUpdate.forEach(column => {
+                    let newColumn = column.trim();
+                    csvRows.forEach((csvRow: any) => {
+                        csvRow[newColumn] = csvRow[column];
+                        delete csvRow[column];
+                    });
+                });
+                cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
+            }
+        }
+
         /**
          * Add Id column to the current csv file (if it is missing), 
          * then update all its child lookup "__r" columns in other csv files
@@ -469,7 +528,7 @@ export default class MigrationJobTask {
             let apiSf = new Sfdx(this.sourceData.org);
             let ret = await apiSf.queryAsync(queryOrNumber, false);
             this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
-            if (this.scriptObject.parsedQuery.limit){
+            if (this.scriptObject.parsedQuery.limit) {
                 this.sourceTotalRecorsCount = Math.min(this.sourceTotalRecorsCount, this.scriptObject.parsedQuery.limit);
             }
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
@@ -480,7 +539,7 @@ export default class MigrationJobTask {
             let apiSf = new Sfdx(this.targetData.org);
             let ret = await apiSf.queryAsync(queryOrNumber, false);
             this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
-            if (this.scriptObject.parsedQuery.limit){
+            if (this.scriptObject.parsedQuery.limit) {
                 this.targetTotalRecorsCount = Math.min(this.targetTotalRecorsCount, this.scriptObject.parsedQuery.limit);
             }
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
