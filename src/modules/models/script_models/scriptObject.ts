@@ -50,7 +50,7 @@ export default class ScriptObject {
     useCSVValuesMapping: boolean = false;
     allRecords: boolean = true;
     /**
-     * creatable=true;updateable=true;custom=true;readonly=true;lookup=true
+     * creatable:true;updateable:true;custom:true;readonly:true;lookup:true;person:false
      *
      * @type {string}
      * @memberof ScriptObject
@@ -422,6 +422,7 @@ export default class ScriptObject {
                     && ___compare(field.custom, pattern.custom)
                     && ___compare(field.isReadonly, pattern.readonly)
                     && ___compare(field.isReference, pattern.lookup)
+                    && ___compare(field.name.indexOf('__pc') >= 0, pattern.person)
                     && fields.indexOf(field.name) < 0) {
                     this.parsedQuery.fields = this.parsedQuery.fields.concat(getComposedField(field.name));
                     isChanged = true;
