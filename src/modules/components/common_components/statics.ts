@@ -51,6 +51,9 @@ export const CONSTANTS = {
         "User",
         "RecordType"
     ],
+    NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE: [
+        "RecordType"
+    ],
 
     SHORT_QUERY_STRING_MAXLENGTH: 250,
     MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900

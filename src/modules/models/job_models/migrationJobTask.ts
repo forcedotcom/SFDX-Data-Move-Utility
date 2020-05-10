@@ -63,11 +63,11 @@ export default class MigrationJobTask {
         return this.scriptObject.operation;
     }
 
-    get externalId() : string {
+    get externalId(): string {
         return this.scriptObject.externalId;
     }
 
-    get complexExternalId() : string {
+    get complexExternalId(): string {
         return Common.getComplexField(this.scriptObject.externalId);
     }
 
@@ -425,75 +425,6 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Returns array of filtered queries
-     * for given query mode
-     *
-     * @param {("forwards" | "backwards")} queryMode Produce query for query mode
-     *                                      forward:   parent <== child (before, prev)
-     *                                      backward:  child ==> parent (after, next)
-     * @param {boolean} isSource Produce query for source / target
-     * @returns {Array<string>}
-     * @memberof MigrationJobTask
-     */
-    createFilteredQueries(queryMode: "forwards" | "backwards" | "target"): Array<string> {
-
-        let self = this;
-        let queries = new Array<string>();
-        let fieldsToQueryMap: Map<SFieldDescribe, Array<string>> = new Map<SFieldDescribe, Array<string>>();
-        let isSource = queryMode != "target";
-
-        let prevTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) < this.job.tasks.indexOf(this));
-        let nextTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) > this.job.tasks.indexOf(this));
-
-        [...this.data.fieldsInQueryMap.values()].forEach(field => {
-            if (isSource) {
-                // SOURCE
-                // For source => |SOURCE Case|Account__c IN (|SOURCE Account|Id....)            
-                if (field.isSimpleReference) {
-                    // Only for simple reference lookup fields (f.ex.: Account__c)
-                    if (!field.parentLookupObject.task.sourceData.allRecords || field.parentLookupObject.isLimitedQuery) {
-                        if (queryMode != "forwards") {
-                            // FORWARDS
-                            // For forwards => build the query using all the PREVIOUS related tasks by the tasks order
-                            if (prevTasks.indexOf(field.parentLookupObject.task) >= 0) {
-                                // The parent task is before => create child lookup query for all Id values of the parent lookup object
-                                fieldsToQueryMap.set(field, [...field.parentLookupObject.task.sourceData.idRecordsMap.keys()]);
-                            }
-                        } else {
-                            // BACKWARDS
-                            // For backwards => build the query using all the NEXT related tasks by the tasks order
-                            if (nextTasks.indexOf(field.parentLookupObject.task) >= 0) {
-                                // The parent task is before => create child lookup query for all Id values of the parent lookup object
-                                fieldsToQueryMap.set(field, [...field.parentLookupObject.task.sourceData.idRecordsMap.keys()]);
-                            }
-                        }
-                    }
-                }
-            } else {
-                // TARGET
-                // For target => |TARGET Account|Name IN (|SOURCE Account|Name....)
-                if (field.isSimple && field.isExternalIdField) {
-                    // Only for current object's external id (f.ex.: Name) - not complex and not Id - only simple
-                    fieldsToQueryMap.set(field, [...this.sourceData.extIdRecordsMap.keys()].map(value => Common.getFieldValue(this.sObjectName, value, field.name)));
-                }
-            }
-        });
-
-        if (isSource && self.scriptObject.isLimitedQuery) {
-            queries.push(this.createQuery());
-        }
-        fieldsToQueryMap.forEach((inValues, field) => {
-            if (inValues.length > 0) {
-                Common.createFieldInQueries(self.data.fieldsInQuery, field.name, this.sObjectName, inValues).forEach(query => {
-                    queries.push(query);
-                });
-            }
-        });
-        return queries;
-
-    }
-
-    /**
      * Converts full query string into short form
      * to be displayed in the stdout
      *
@@ -532,20 +463,26 @@ export default class MigrationJobTask {
     */
     async getTotalRecordsCountAsync(): Promise<void> {
 
-        let query = this.createQuery(['COUNT(Id) CNT'], true);
+        let queryOrNumber = this.createQuery(['COUNT(Id) CNT'], true);
 
         if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org) {
             let apiSf = new Sfdx(this.sourceData.org);
-            let ret = await apiSf.queryAsync(query, false);
+            let ret = await apiSf.queryAsync(queryOrNumber, false);
             this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
+            if (this.scriptObject.parsedQuery.limit){
+                this.sourceTotalRecorsCount = Math.min(this.sourceTotalRecorsCount, this.scriptObject.parsedQuery.limit);
+            }
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
                 this.sourceData.resourceString_Source_Target, String(this.sourceTotalRecorsCount));
         }
 
         if (this.targetData.org.media == DATA_MEDIA_TYPE.Org) {
             let apiSf = new Sfdx(this.targetData.org);
-            let ret = await apiSf.queryAsync(query, false);
+            let ret = await apiSf.queryAsync(queryOrNumber, false);
             this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
+            if (this.scriptObject.parsedQuery.limit){
+                this.targetTotalRecorsCount = Math.min(this.targetTotalRecorsCount, this.scriptObject.parsedQuery.limit);
+            }
             this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
                 this.targetData.resourceString_Source_Target, String(this.targetTotalRecorsCount));
         }
@@ -583,7 +520,7 @@ export default class MigrationJobTask {
         });
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
 
-        // HACK: Enable rows below to delete records
+        // TODO*PUTBACKIT! Enable rows below to delete records
         // let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
         // if (resultRecords == null) {
         //     // API ERROR. Exiting.
@@ -599,10 +536,18 @@ export default class MigrationJobTask {
      * Retrieve records for this task
      * 
      * @param {number} queryMode The mode of record processing
+     * @param {boolean} reversed If TRUE - queries from the child related object to parent object
+     *                           (selects all parent objects that exist in the child objects)
+     *                                      forward:   parent <== *child (before, prev)
+     *                                      backward:  *child ==> parent (after, next)
+     *                           If FALSE - queries from the parent related object to child object
+     *                           (selects all child objects that exist in the parent objects)
+     *                                      forward:   child ==> *parent (before, prev)
+     *                                      backward:  *parent <== child (after, next)
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async retrieveRecords(queryMode: "forwards" | "backwards" | "target"): Promise<void> {
+    async retrieveRecords(queryMode: "forwards" | "backwards" | "target", reversed: boolean): Promise<void> {
 
         let self = this;
 
@@ -618,8 +563,14 @@ export default class MigrationJobTask {
 
         // Read SOURCE DATA *********************************************************************************************
         // **************************************************************************************************************
-        let hasRecords = false;        
+        let hasRecords = false;
         if (queryMode != "target") {
+
+            // TODO*REMOVEME
+            // if (this.sObjectName == "Language__c") {
+            //     let ttt = "";
+            // }
+
             // Read main data *************************************
             // ****************************************************
             if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
@@ -646,21 +597,21 @@ export default class MigrationJobTask {
                     hasRecords = true;
                 } else if (!this.scriptObject.processAllSource) {
                     // Filtered records ************ //
-                    let queries = this.createFilteredQueries(queryMode);
+                    let queries = this._createFilteredQueries(queryMode, reversed);
                     if (queries.length > 0) {
                         // Start message ------
                         this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
                         // Fetch records
-                        records = await ___queryMany(queries, this.sourceData);
+                        records = await ___retrieveFilteredRecords(queries, this.sourceData);
                         hasRecords = true;
                     }
                 }
             }
             if (hasRecords) {
                 // Set external id map ---------
-                ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
+                let newRecordsCount = ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
                 // Completed message ------
-                this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.sourceData.resourceString_Source_Target, String(records.length));
+                this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.sourceData.resourceString_Source_Target, String(newRecordsCount));
             }
 
             // Read SELF REFERENCE records from the SOURCE *************
@@ -693,9 +644,9 @@ export default class MigrationJobTask {
                     }
                     if (queries.length > 0) {
                         // Set external id map ---------
-                        ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
+                        let newRecordsCount = ___setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
                         // Completed message ------
-                        this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.sourceData.resourceString_Source_Target, String(records.length));
+                        this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.sourceData.resourceString_Source_Target, String(newRecordsCount));
                     }
                 }
             }
@@ -722,41 +673,50 @@ export default class MigrationJobTask {
                     hasRecords = true;
                 } else {
                     // Filtered records ***** //
-                    let queries = this.createFilteredQueries(queryMode);
+                    let queries = this._createFilteredQueries(queryMode, reversed);
                     if (queries.length > 0) {
                         // Start message ------
                         this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
                         // Fetch records
-                        records = await ___queryMany(queries, this.targetData);
+                        records = await ___retrieveFilteredRecords(queries, this.targetData);
                         hasRecords = true;
                     }
                 }
             }
             if (hasRecords) {
                 // Set external id map ---------
-                ___setExternalIdMap(records, this.targetData.extIdRecordsMap, this.targetData.idRecordsMap);
+                let newRecordsCount = ___setExternalIdMap(records, this.targetData.extIdRecordsMap, this.targetData.idRecordsMap);
                 // Completed message ------
-                this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.targetData.resourceString_Source_Target, String(records.length));
+                this.logger.infoNormal(RESOURCES.queryingFinished, this.sObjectName, this.targetData.resourceString_Source_Target, String(newRecordsCount));
             }
         }
 
 
         // ------------------------ Internal functions --------------------------
+        /**
+         * @returns {number} New records count
+         */
         function ___setExternalIdMap(records: Array<any>,
             sourceExtIdRecordsMap: Map<string, string>,
-            sourceIdRecordsMap: Map<string, string>) {
+            sourceIdRecordsMap: Map<string, string>): number {
+
+            let newRecordsCount = 0;
             records.forEach(record => {
                 let value = self.getRecordValue(record, self.complexExternalId);
                 if (value) {
                     sourceExtIdRecordsMap.set(value, record["Id"]);
                 }
                 if (record["Id"]) {
-                    sourceIdRecordsMap.set(record["Id"], record);
+                    if (!sourceIdRecordsMap.has(record["Id"])) {
+                        sourceIdRecordsMap.set(record["Id"], record);
+                        newRecordsCount++;
+                    }
                 }
             });
+            return newRecordsCount;
         }
 
-        async function ___queryMany(queries: string[], orgData: TaskOrgData): Promise<Array<any>> {
+        async function ___retrieveFilteredRecords(queries: string[], orgData: TaskOrgData): Promise<Array<any>> {
             let sfdx = new Sfdx(orgData.org);
             let records = new Array<any>();
             for (let index = 0; index < queries.length; index++) {
@@ -764,13 +724,29 @@ export default class MigrationJobTask {
                 // Query message ------
                 self.logger.infoVerbose(RESOURCES.queryString, self.sObjectName, self.createShortQueryString(query));
                 // Fetch records
-                records = records.concat(await sfdx.retrieveRecordsAsync(query, orgData.useBulkQueryApi));
+                records = records.concat(await sfdx.retrieveRecordsAsync(query, false));
             }
             return records;
         }
+
     }
 
+    /**
+     * Perform record update
+     *
+     * @returns {Promise<void>}
+     * @memberof MigrationJobTask
+     */
     async updateRecords(): Promise<void> {
+        // TODO: Implement updateRecords()
+
+
+
+        // ------------------------ Internal functions --------------------------
+        async function ___filterTargetRecords() {
+            // TODO: Implement ___filterTargetRecords
+            //targetRecordsFilter....
+        }
 
     }
 
@@ -900,6 +876,91 @@ export default class MigrationJobTask {
     private _apiOperationError(operation: OPERATION) {
         throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.apiEngine.getStrOperation()));
     }
+
+    private _createFilteredQueries(queryMode: "forwards" | "backwards" | "target", reversed: boolean): Array<string> {
+
+        let self = this;
+        let queries = new Array<string>();
+        let fieldsToQueryMap: Map<SFieldDescribe, Array<string>> = new Map<SFieldDescribe, Array<string>>();
+        let isSource = queryMode != "target";
+
+        let prevTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) < this.job.tasks.indexOf(this));
+        let nextTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) > this.job.tasks.indexOf(this));
+
+        if (reversed) {
+            if (CONSTANTS.NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(this.sObjectName) < 0) {
+                // ONLY SOURCE + FORWARDS FOR reversed == true !
+                let fields: SFieldDescribe[] = Common.flatMap([...this.data.fieldsInQueryMap.values()]
+                    .filter(field => field.child__rSFields.length > 0), (field: SFieldDescribe) => {
+                        return field.child__rSFields.map(f => f.idSField);
+                    });
+                let values = new Array<string>();
+                fields.forEach((field: SFieldDescribe) => {
+                    values = values.concat([...field.scriptObject.task.sourceData.idRecordsMap.values()]
+                        .map((value: any) => value[field.nameId])
+                        .filter(value => !!value));
+                });
+                values = Common.distinctStringArray(values);
+                fieldsToQueryMap.set(new SFieldDescribe({
+                    name: "Id"
+                }), values);
+            }
+        } else {
+            [...this.data.fieldsInQueryMap.values()].forEach(field => {
+                if (isSource) {
+                    // SOURCE
+                    // For source => |SOURCE Case|Account__c IN (|SOURCE Account|Id....)            
+                    if (field.isSimpleReference && CONSTANTS.NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(field.referencedObjectType) < 0) {
+
+                        // TODO*REMOVEME
+                        // if (this.sObjectName == "Language__c") {
+                        //     let ttt = "";
+                        // }
+
+                        // Only for simple reference lookup fields (f.ex.: Account__c)
+                        if (!field.parentLookupObject.task.sourceData.allRecords || field.parentLookupObject.isLimitedQuery) {
+                            if (queryMode != "forwards") {
+                                // FORWARDS
+                                // For forwards => build the query using all the PREVIOUS related tasks by the tasks order
+                                if (prevTasks.indexOf(field.parentLookupObject.task) >= 0) {
+                                    // The parent task is before => create child lookup query for all Id values of the parent lookup object
+                                    fieldsToQueryMap.set(field, [...field.parentLookupObject.task.sourceData.idRecordsMap.keys()]);
+                                }
+                            } else {
+                                // BACKWARDS
+                                // For backwards => build the query using all the NEXT related tasks by the tasks order
+                                if (nextTasks.indexOf(field.parentLookupObject.task) >= 0) {
+                                    // The parent task is before => create child lookup query for all Id values of the parent lookup object
+                                    fieldsToQueryMap.set(field, [...field.parentLookupObject.task.sourceData.idRecordsMap.keys()]);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // TARGET
+                    // For target => |TARGET Account|Name IN (|SOURCE Account|Name....)
+                    if (field.isSimple && field.isExternalIdField) {
+                        // Only for current object's external id (f.ex.: Name) - not complex and not Id - only simple
+                        fieldsToQueryMap.set(field, [...this.sourceData.extIdRecordsMap.keys()].map(value => Common.getFieldValue(this.sObjectName, value, field.name)));
+                    }
+                }
+            });
+        }
+
+        if (isSource && self.scriptObject.isLimitedQuery && !reversed) {
+            queries.push(this.createQuery());
+        }
+        fieldsToQueryMap.forEach((inValues, field) => {
+            if (inValues.length > 0) {
+                Common.createFieldInQueries(self.data.fieldsInQuery, field.name, this.sObjectName, inValues).forEach(query => {
+                    queries.push(query);
+                });
+            }
+        });
+        return queries;
+
+    }
+
 }
 
 // ---------------------------------------- Helper classes ---------------------------------------------------- //

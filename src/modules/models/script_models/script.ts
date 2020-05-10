@@ -175,10 +175,13 @@ export default class Script {
                         thisField.parentLookupObject = new ScriptObject();
                         this.objects.push(thisField.parentLookupObject);
                         let externalId = referencedObjectType != CONSTANTS.RECORD_TYPE_SOBJECT_NAME ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME : CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
+                        // TODO: CHECKIT! May cause problem like with Language__c
+                        // FIXME: This is not working with Language__c
+                        let allRecords = CONSTANTS.SPECIAL_OBJECTS.indexOf(referencedObjectType) >= 0;
                         Object.assign(thisField.parentLookupObject, <ScriptObject>{
                             name: referencedObjectType,
                             isExtraObject: true,
-                            allRecords: true,
+                            allRecords,
                             query: `SELECT Id, ${externalId} FROM ${referencedObjectType}`,
                             operation: OPERATION.Readonly,
                             externalId

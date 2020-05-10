@@ -49,6 +49,15 @@ export default class ScriptObject {
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
     allRecords: boolean = true;
+    /**
+     * creatable=true;updateable=true;custom=true;readonly=true;lookup=true
+     *
+     * @type {string}
+     * @memberof ScriptObject
+     */
+    selectAll: string;
+    excludedSelectAllFields: Array<string>;
+    includedSelectAllFields: Array<string>;
 
 
     // -----------------------------------
@@ -62,6 +71,20 @@ export default class ScriptObject {
     isExtraObject: boolean = false;
     processAllSource: boolean = false;
     processAllTarget: boolean = false;
+
+    get selectAllPatternObject(): any {
+        if (!this.selectAll) return null;
+        return this.selectAll.split(';').reduce((obj, sides) => {
+            let side = sides.split('=').map(x => x.trim().toLowerCase()).filter(x => !!x);
+            if (side.length > 1) {
+                obj[side[0]] = side[1];
+            }
+            return obj;
+        }, {
+            excludedSelectAllFields: this.excludedSelectAllFields || new Array<string>(),
+            includedSelectAllFields: this.includedSelectAllFields || new Array<string>(),
+        });
+    }
 
     get task(): MigrationJobTask {
         return this.script.job.getTaskBySObjectName(this.name);
@@ -184,7 +207,7 @@ export default class ScriptObject {
     }
 
     /**
-     * This object has some relationships to other sobjects
+     * This object has some parent relationships to other sobjects
      *
      * @readonly
      * @type {boolean}
@@ -196,6 +219,22 @@ export default class ScriptObject {
         });
     }
 
+    /**
+     * This object has some child relationships to other sobjects
+     *
+     * @readonly
+     * @type {boolean}
+     * @memberof ScriptObject
+     */
+    get hasChildLookupObjects(): boolean {
+        return [...this.fieldsInQueryMap.values()].some(field => {
+            return field.child__rSFields.length > 0;
+        });
+    }
+
+    get isObjectWithoutRelationships() : boolean {
+        return !this.hasParentLookupObjects && !this.hasChildLookupObjects;
+    }
 
 
     // ----------------------- Public methods -------------------------------------------    
@@ -368,6 +407,10 @@ export default class ScriptObject {
     // ----------------------- Private members -------------------------------------------
     private _validateFields(describe: SObjectDescribe, isSource: boolean) {
 
+        if (this.fieldsInQuery.length == 0) {
+            throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.missingFieldsToProcess, this.name));
+        }
+
         if (!this.isExtraObject && !this.isSpecialObject) {
 
             let fieldsInQuery = [].concat(this.fieldsInQuery);
@@ -376,7 +419,7 @@ export default class ScriptObject {
                 if (!Common.isComplexOr__rField(x) && !describe.fieldsMap.has(x)) {
 
                     if (x.name == this.externalId) {
-                        // Missing externalId field. Exception.
+                        // Missing externalId field. 
                         throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.noExternalKey, this.name, this.strOperation));
                     }
 
@@ -390,15 +433,6 @@ export default class ScriptObject {
                     Common.removeBy(this.parsedQuery.fields, "field", x);
                 }
             });
-
-            if (this.fieldsToUpdate.length == 0) {
-                throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.missingFieldsToProcess, this.name));
-            }
-
-        } else {
-            if (this.fieldsInQuery.length == 0) {
-                throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.missingFieldsToProcess, this.name));
-            }
         }
     }
 

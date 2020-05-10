@@ -1,22 +1,13 @@
 {
 
-    "errorMissingRequiredFlag": "Missing required flag: %s",
-
-    "pluginVersion": "Plugin version: %s v%s",
-    "newLine": "",
-
     "defaultPromptOptions": "y/n",
     "defaultPromptSelectedOption": "n",
-
     "promptMessageFormat": "%s (%s)?",
     "promptDefaultOptionFormat": "%s",
-
     "loggerInfoString": "%s",
     "loggerInfoStringWithDate": "[%s] %s",
-
     "loggerWarnString": "[WARN] %s",
     "loggerWarnStringWithDate": "[%s] [WARN] %s",
-
     "loggerErrorString": "[ERROR] %s",
     "loggerErrorStringWithDate": "[%s] [ERROR] %s",
 
@@ -24,63 +15,33 @@
     "fileLoggerWarnSring": "\n[%s][WARN] %s",
     "fileLoggerErrorSring": "\n[%s][ERROR] %s",
 
+    "loggerImportantInfoString": "%s",
+    "loggerImportantInfoStringWithDate": "[%s] %s",
     "fileLoggerInfoStringWithoutDate": "\n%s",
     "fileLoggerWarnSringWithoutDate": "\n[WARN] %s",
     "fileLoggerErrorSringWithoutDate": "\n[ERROR] %s",
 
-
-    "loggerImportantInfoString": "%s",
-    "loggerImportantInfoStringWithDate": "[%s] %s",
-
     "loggerStackTraceString": "[STACK TRACE] %s",
-
     "loggerTimeElapsedString": "Total time elapsed: %s.",
     "loggerCommandStartedString": "Execution of the command %s has been started.",
     "loggerCommandCompletedString": "Execution of the command %s has been finished. Exit code %s (%s).",
-
-
     "successfullyCompletedResult": "Command succeeded.",
     "commandInitializationErrorResult": "Command initialization error: %s.",
     "orgMetadataErrorResult": "Mismatch org metadata error: %s.",
+
     "commandExecutionErrorResult": "Error during execution of the command: %s.",
     "commandUnresolvableWarningResult": "Execution of the command was ABORTED due to an unresolvable warning: %s.",
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
-
     "commandInProgress": "Command in progress...",
-
-    "readyToInsert": "{%s} Ready to insert %s records.",
-    "readyToUpdate": "{%s} Ready to update %s records.",
-    "nothingToInsert": "{%s} Nothing to insert.",
-    "nothingToUpdate": "{%s} Nothing to update.",
     "nothingToDelete": "{%s} Nothing to delete.",
-
-
-    "usingRestApi": "* Using REST Api *",
-    "usingQueryBulkApi": "* Using Bulk Query Api *",
-    "usingCollectionApi": "* Using Collection Query Api *",
-    "apiOperationProgress": "[Job# %s:%s] {%s} API operation progress: %s records completed, %s records failed.",
-
-    "apiOperationError": "[Job# %s:%s] {%s} API operation FAILED: %s records completed, %s records failed.",
-    "apiOperationError2": "[Job# %s:%s] {%s} Batch# %s was INCOMPLETE having %s failed records.",
-    "apiOperationError3": "[Job# %s:%s] {%s} Job# %s was INCOMPLETE having %s failed records.",
-    "apiUnexpectedOperationError": "[Job# %s:%s] {%s} [ERROR] %s.",
-
-    "jobStarted": "[Job# %s:%s] {%s} The job has been started.",
-    "batchStarted": "[Batch# %s:%s] {%s} The batch has been started.",
-    "jobStopped": "[Job# %s:%s] {%s} The job has been finished.",
-    "batchDataUploading": "[Job# %s:%s] {%s} Batch data uploading... This may take a while.",
-    "batchDataProcessing": "[Job# %s:%s] {%s} Data upload has been completed. Batch data processing...",
-    "jobResultsRetrieving": "[Job# %s:%s] {%s} Batch data processing has been completed. Retrieving results... This may take a while.",
-    "jobError": "Bulk Api unexpected error.",
-
     "unprocessedRecord": "Unprocessed record.",
     "invalidRecordHashcode": "Invalid record hashcode. Unable to find matching record from the response returned by the bulk job.",
 
 
-
-
     "packageScript": "Package script",
+    "pluginVersion": "Plugin version: %s v%s",
+    "newLine": "",
     "workingPathDoesNotExist": "The specified working directory does not exist.",
     "packageFileDoesNotExist": "Missing package.json file in the working directory.",
     "loadingPackageFile": "Loading and validating the package script...",
@@ -90,84 +51,49 @@
     "targetOrg": "%s.",
     "scriptFile": "%s.",
     "tryingToConnectCLI": "Connecting to %s using SFDX CLI...",
+
     "successfullyConnected": "Successfully connected to %s.",
     "tryingToConnectCLIFailed": "Attempt to connect to %s failed. Please, try to refresh your local SFDX CLI connection.",
     "sourceTargetCouldNotBeTheSame": "The source and the target could not be the same.",
-    "accessToSourceExpired": "Access token to the Source Org has expired or the user has no access.",
-    "accessToTargetExpired": "Access token to the Taget Org has expired or the user has no access.",
     "accessToOrgExpired": "Access token to the %s has expired or the user has no access.",
     "MalformedQuery": "Malformed select query for the sObject %s: %s, error: %s.",
     "MalformedDeleteQuery": "Malformed delete query for the sObject %s: %s, error: %s.",
-    "executingPackageScript": "Executing the package script...",
-    "preparing": "Preparing...",
 
     "gettingMetadataForSObject": "Getting metadata for %s (%s)",
     "noExternalKey": "Object %s has no required external Id field definition.",
     "objectSourceDoesNotExist": "Object %s is missing in the Source.",
     "objectTargetDoesNotExist": "Object %s is missing in the Target.",
-    "analysingOrgMetadata": "Getting and analysing object fields metadata...",
     "processingSObject": "Processing the sObject %s...",
     "fieldSourceDoesNtoExist": "Field %s.%s is missing in the Source.",
     "fieldTargetDoesNtoExist": "Field %s.%s is missing in the Target.",
     "missingFieldsToProcess": "There are no fields to process for %s.",
-    "referencedFieldDoesNotExist": "Field %s.%s references the SObject of type %s which has no required external Id field definition.",
-
     "dataMigrationProcessStarted": "Preparing data migration job...",
     "buildingMigrationStaregy": "Building migration strategy...",
-    "executionOrder": "Execution order",
 
     "readingValuesMappingFile": "Reading the values mapping CSV file (%s)",
-
     "validatingAndFixingSourceCSVFiles": "Validating and repairing of the source CSV files...",
     "validatingSourceCSVFilesSkipped": "Validation of the source CSV files was skipped.",
     "writingToCSV": "Writing to %s...",
     "noIssuesFoundDuringCSVValidation": "There are no issues found during the last validation of the source CSV files.",
     "issuesFoundDuringCSVValidation": "During the validation of the source CSV files %s issues were found. See %s file for the details.",
     "continueTheJobPrompt": "Continue the job",
-    "AbortedByTheUser": "The job was aborted by the user",
     "csvFileIsEmpty": "CSV FILE IS EMPTY OR DOES NOT EXIST",
     "columnsMissingInCSV": "COLUMN DEFINED IN THE SCRIPT IS MISSING IN THE CSV FILE",
-    "csvFileForParentSObjectIsEmpty": "CSV FILE FOR THE PARENT SOBJECT IS MISSING OR EMPTY",
-    "missingCSVColumnForParentLookupField": "MISSING COLUMN FOR THE PARENT LOOKUP FIELD",
     "missingParentRecordForGivenLookupValue": "MISSING PARENT LOOKUP RECORD",
-    "invalidColumnFormat": "COLUMN %s HAS INVALID FORMAT",
-    "columnWillNotBeProcessed": "COLUMN %s WILL NOT BE PROCESSED BECAUSE THE FIELD %s IS MISSING IN THE SCRIPT",
     "cantUpdateChildLookupCSVColumn": "ID COLUMN FOR THE PARENT LOOKUP OBJECT WAS DYNAMICALLY ADDED INTO THE CSV FILE. CAN'T UPDATE THE CHILD LOOKUP ID COLUMN BECAUSE THE NECESSARY REFERENCE EXTERNAL ID COLUMN WAS NOT FOUND.",
     "csvFilesWereUpdated": "Amount of updated source CSV files: %s",
     "validationAndFixingsourceCSVFilesCompleted": "Validating and repairing of the source CSV files have finished.",
-
     "deletingOldData": "Deleting old data from the Target...",
     "deletingTargetSObject": "{%s} Deleting old sObject data from the Target.",
-    "queryingTargetSObject": "{%s} Querying records for deletion in progress... Query string: %s.",
-    "queryingTargetSObjectCompleted": "{%s} Querying records for deletion has been completed. Number of records retrieved: %s.",
+
     "deletingFromTheTargetNRecordsWillBeDeleted": "{%s} Number of records need to be deleted: %s.",
-    "queryError": "Query error: %s.",
     "deletingFromTheTargetCompleted": "{%s} Deleting old sObject data from the Target has been completed.",
     "deletingOldDataCompleted": "Deleting old data from the Target has been completed.",
     "deletingOldDataSkipped": "Deleting old data from the Target was skipped.",
 
 
-    "mappingRawCsvValues": "{%s} Transforming raw CSV values by the given mapping table.",
-    "queryingAllQueryString": "{%s} Retrieving the %s data (ALL RECORDS) in progress... Query string: %s.",
-
-    "executingQuery": "{%s} Executing Query: %s.",
-
-
-
-    "updatingTarget": "Updating the Target %s...",
-    "writingToFile": "{%s} Writing to the file %s.",
-    "writingToFileCompleted": "{%s} Writing to the file %s has been completed.",
-    "updatingTargetObject": "{%s} %s the target sObject...",
-    "updatingTargetObjectCompleted": "{%s} %s the target sObject has been completed. Totally processed %s records.",
-    "fieldIsMissingInTheSourceRecords": "FIELD %s IS MISSING IN THE SOURCE RECORD",
-    "missingParentLookupRecord": "{%s} Found missing parent lookup records for the field %s in the Target org. The amount of the missing parent lookup records is %s of total %s records.",
-    "seeFileForTheDetails": "See %s file for the details.",
-    "missingParentLookupRecords": "Missing parent lookup records",
-    "updatingTargetCompleted": "Updating the Target %s has been completed.",
-    "finalizing": "Finalizing...",
-    "usingBulkApi": "* Using Bulk Api v%s *",
-
-
+    "executionOrder": "Order of objects to update data",
+    "queryingOrder": "Order of objects to retrieve data",
     "separator": "=============",
     "source": "SOURCE",
     "target": "TARGET",
@@ -193,12 +119,12 @@
     "queryingAll": "{%s} Retrieving the %s data from %s (%s: all records)...",
     "queryingIn": "{%s} Retrieving the %s data from %s (%s: filtered records)...",
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
-    "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s records.",
+    "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s new records.",
     "queryingTotallyFetched": "{%s} Fetch summary: totally fetched (source/target) %s records.",
     "queryString": "{%s} Query string: %s",
     "csvFile": "CSV file",
     "org": "Org",
-    "gettingRecordsCount": "Getting the total amount of records...",
+    "gettingRecordsCount": "Getting the total amount of records limited by the object's SOQL query...",
     "totalRecordsAmount": "{%s} Total amount of the %s records: %s"
 
 

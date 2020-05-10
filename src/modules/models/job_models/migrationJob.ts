@@ -65,8 +65,10 @@ export default class MigrationJob {
             });
             if (objectToAdd.allRecords
                 || objectToAdd.isSpecialObject
-                || objectToAdd.isLimitedQuery
-                || !objectToAdd.hasParentLookupObjects) {
+                // TODO*CHECKIT!
+                //|| objectToAdd.isLimitedQuery
+                || objectToAdd.isObjectWithoutRelationships 
+                ) {
                 objectToAdd.processAllSource = true;
                 objectToAdd.processAllTarget = true;
             } else {
@@ -120,9 +122,12 @@ export default class MigrationJob {
 
         // Create query task order
         this.tasks.forEach(task => {
-            if (task.scriptObject.isReadonlyObject
-                || task.tempData.isMasterDetailTask
-                || !task.scriptObject.hasParentLookupObjects) {
+            // TODO*CHECKIT!
+            // if (task.scriptObject.isReadonlyObject
+            //     || task.tempData.isMasterDetailTask
+            //     || !task.scriptObject.hasParentLookupObjects) {
+            if (task.sourceData.allRecords
+                || task.scriptObject.isLimitedQuery) {
                 this.queryTasks.push(task);
             }
         });
@@ -132,6 +137,10 @@ export default class MigrationJob {
             }
         });
 
+        // Output execution orders
+        this.logger.objectMinimal({
+            [this.logger.getResourceString(RESOURCES.queryingOrder)]: this.queryTasks.map(x => x.sObjectName).join("; ")
+        });
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.executionOrder)]: this.tasks.map(x => x.sObjectName).join("; ")
         });
@@ -228,7 +237,7 @@ export default class MigrationJob {
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step1));
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            await task.retrieveRecords("forwards");
+            await task.retrieveRecords("forwards", false);
         }
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
 
@@ -241,24 +250,29 @@ export default class MigrationJob {
         this.logger.infoNormal(RESOURCES.separator);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            await task.retrieveRecords("backwards");
+            await task.retrieveRecords("backwards", false);
         }
         // PASS 2  ------// 
         this.logger.infoNormal(RESOURCES.newLine);
-        this.logger.infoNormal(RESOURCES.Pass2);        
+        this.logger.infoNormal(RESOURCES.Pass2);
         this.logger.infoNormal(RESOURCES.separator);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            await task.retrieveRecords("backwards");
+            await task.retrieveRecords("backwards", false);
+        }
+        // PASS 3* (reverse forwards)  -----//
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            await task.retrieveRecords("forwards", true);
         }
 
         // TARGET ***********        
         this.logger.infoMinimal(RESOURCES.newLine);
-        this.logger.infoMinimal(RESOURCES.target);        
+        this.logger.infoMinimal(RESOURCES.target);
         this.logger.infoMinimal(RESOURCES.separator);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            await task.retrieveRecords("target");
+            await task.retrieveRecords("target", false);
         }
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
 
@@ -266,10 +280,19 @@ export default class MigrationJob {
         this.logger.infoNormal(RESOURCES.newLine);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            this.logger.infoNormal(RESOURCES.queryingTotallyFetched, task.sObjectName, String(task.sourceData.extIdRecordsMap.size + "/" + task.targetData.extIdRecordsMap.size));
+            this.logger.infoNormal(RESOURCES.queryingTotallyFetched,
+                task.sObjectName,
+                String(task.sourceData.extIdRecordsMap.size + "/" + task.targetData.extIdRecordsMap.size));
         }
     }
 
+    async updateRecords(): Promise<void> {
+        // TODO: Implement updateRecords()
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            await task.updateRecords();
+        }
+    }
 
     /**
      * Returns a task by the given sObject name

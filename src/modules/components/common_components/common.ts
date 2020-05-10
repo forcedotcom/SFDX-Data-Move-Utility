@@ -985,7 +985,7 @@ export class Common {
      * @returns {string}
      * @memberof Common
      */
-    public static getFieldValue(sObjectName: string, rawFieldValue: any, fieldName: string) : string {
+    public static getFieldValue(sObjectName: string, rawFieldValue: any, fieldName: string): string {
         if (!rawFieldValue) return rawFieldValue;
         if (sObjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && fieldName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
             //"AccountRT;Account" => "AccountRT"
@@ -1062,6 +1062,13 @@ export class Common {
         return [...queryGen()];
     }
 
+    /**
+    * Polyfill of flatMap ES2019 function
+    *
+    * @static
+    * @memberof Common
+    */
+    public static flatMap = (arr: Array<any>, f: any) => arr.reduce((x, y) => [...x, ...f(y)], []);
 
 
 }

@@ -154,8 +154,7 @@ export class RunCommand {
      */
     async executeJob(): Promise<void> {
         await this.job.retrieveRecords();
-
-
+        await this.job.updateRecords();
         this.logger.infoMinimal(RESOURCES.newLine);
     }
 

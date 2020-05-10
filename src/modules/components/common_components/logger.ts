@@ -28,16 +28,12 @@ export enum RESOURCES {
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptSelectedOption = "defaultPromptSelectedOption",
-
     promptMessageFormat = "promptMessageFormat",
     promptDefaultOptionFormat = "promptDefaultOptionFormat",
-
     loggerInfoString = "loggerInfoString",
     loggerInfoStringWithDate = "loggerInfoStringWithDate",
-
     loggerWarnString = "loggerWarnString",
     loggerWarnStringWithDate = "loggerWarnStringWithDate",
-
     loggerErrorString = "loggerErrorString",
     loggerErrorStringWithDate = "loggerErrorStringWithDate",
 
@@ -47,47 +43,24 @@ export enum RESOURCES {
 
     loggerImportantInfoString = "loggerImportantInfoString",
     loggerImportantInfoStringWithDate = "loggerImportantInfoStringWithDate",
-
+    fileLoggerInfoStringWithoutDate =  "fileLoggerInfoStringWithoutDate",
+    fileLoggerWarnSringWithoutDate =  "fileLoggerWarnSringWithoutDate",
+    fileLoggerErrorSringWithoutDate = "fileLoggerErrorSringWithoutDate",
+        
     loggerStackTraceString = "loggerStackTraceString",
-
     loggerTimeElapsedString = "loggerTimeElapsedString",
     loggerCommandStartedString = "loggerCommandStartedString",
     loggerCommandCompletedString = "loggerCommandCompletedString",
-
     successfullyCompletedResult = "successfullyCompletedResult",
     commandInitializationErrorResult = "commandInitializationErrorResult",
     orgMetadataErrorResult = "orgMetadataErrorResult",
+
     commandExecutionErrorResult = "commandExecutionErrorResult",
+    commandUnresolvableWarningResult = "commandUnresolvableWarningResult",    
     commandAbortedByUserErrorResult = "commandAbortedByUserErrorResult",
     commandUnexpectedErrorResult = "commandUnexpectedErrorResult",
-    commandUnresolvableWarningResult = "commandUnresolvableWarningResult",
-
     commandInProgress = "commandInProgress",
-
-    readyToInsert = "readyToInsert",
-    readyToUpdate = "readyToUpdate",
-    nothingToInsert = "nothingToInsert",
-    nothingToUpdate = "nothingToUpdate",
     nothingToDelete = "nothingToDelete",
-
-    usingBulkApi = "usingBulkApi",
-    usingRestApi = "usingRestApi",
-    usingQueryBulkApi = "usingQueryBulkApi",
-    usingCollectionApi = "usingCollectionApi",
-    apiOperationProgress = "apiOperationProgress",
-    apiOperationError = "apiOperationError",
-    apiOperationError2 = "apiOperationError2",
-    apiOperationError3 = "apiOperationError3",
-    apiUnexpectedOperationError = "apiUnexpectedOperationError",
-
-    jobStarted = "jobStarted",
-    batchStarted = "batchStarted",
-    jobStopped = "jobStopped",
-    batchDataUploading = "batchDataUploading",
-    batchDataProcessing = "batchDataProcessing",
-    jobResultsRetrieving = "jobResultsRetrieving",
-    jobError = "jobError",
-
     unprocessedRecord = "unprocessedRecord",
     invalidRecordHashcode = "invalidRecordHashcode",
 
@@ -105,29 +78,26 @@ export enum RESOURCES {
     targetOrg = "targetOrg",
     scriptFile = "scriptFile",
     tryingToConnectCLI = "tryingToConnectCLI",
+    
     successfullyConnected = "successfullyConnected",
     tryingToConnectCLIFailed = "tryingToConnectCLIFailed",
+    // TODO: Implement this!
     sourceTargetCouldNotBeTheSame = "sourceTargetCouldNotBeTheSame",
-    accessToSourceExpired = "accessToSourceExpired",
-    accessToTargetExpired = "accessToTargetExpired",
     accessToOrgExpired = "accessToOrgExpired",
     MalformedQuery = "MalformedQuery",
     MalformedDeleteQuery = "MalformedDeleteQuery",
-    executingPackageScript = "executingPackageScript",
-    preparing = "preparing",
+
     gettingMetadataForSObject = "gettingMetadataForSObject",
     noExternalKey = "noExternalKey",
     objectSourceDoesNotExist = "objectSourceDoesNotExist",
     objectTargetDoesNotExist = "objectTargetDoesNotExist",
-    analysingOrgMetadata = "analysingOrgMetadata",
     processingSObject = "processingSObject",
     fieldSourceDoesNtoExist = "fieldSourceDoesNtoExist",
     fieldTargetDoesNtoExist = "fieldTargetDoesNtoExist",
     missingFieldsToProcess = "missingFieldsToProcess",
-    referencedFieldDoesNotExist = "referencedFieldDoesNotExist",
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",
-    executionOrder = "executionOrder",
+    
     readingValuesMappingFile = "readingValuesMappingFile",
     validatingAndFixingSourceCSVFiles = "validatingAndFixingSourceCSVFiles",
     validatingSourceCSVFilesSkipped = "validatingSourceCSVFilesSkipped",
@@ -135,43 +105,24 @@ export enum RESOURCES {
     noIssuesFoundDuringCSVValidation = "noIssuesFoundDuringCSVValidation",
     issuesFoundDuringCSVValidation = "issuesFoundDuringCSVValidation",
     continueTheJobPrompt = "continueTheJobPrompt",
-    AbortedByTheUser = "AbortedByTheUser",
     csvFileIsEmpty = "csvFileIsEmpty",
     columnsMissingInCSV = "columnsMissingInCSV",
-    csvFileForParentSObjectIsEmpty = "csvFileForParentSObjectIsEmpty",
-    missingCSVColumnForParentLookupField = "missingCSVColumnForParentLookupField",
     missingParentRecordForGivenLookupValue = "missingParentRecordForGivenLookupValue",
-    invalidColumnFormat = "invalidColumnFormat",
-    columnWillNotBeProcessed = "columnWillNotBeProcessed",
     cantUpdateChildLookupCSVColumn = "cantUpdateChildLookupCSVColumn",
     csvFilesWereUpdated = "csvFilesWereUpdated",
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
     deletingOldData = "deletingOldData",
     deletingTargetSObject = "deletingTargetSObject",
-    queryingTargetSObject = "queryingTargetSObject",
-    queryingTargetSObjectCompleted = "queryingTargetSObjectCompleted",
+
     deletingFromTheTargetNRecordsWillBeDeleted = "deletingFromTheTargetNRecordsWillBeDeleted",
-    queryError = "queryError",
     deletingFromTheTargetCompleted = "deletingFromTheTargetCompleted",
     deletingOldDataCompleted = "deletingOldDataCompleted",
     deletingOldDataSkipped = "deletingOldDataSkipped",
-    mappingRawCsvValues = "mappingRawCsvValues",
-    queryingAllQueryString = "queryingAllQueryString",
-    executingQuery = "executingQuery",
-    updatingTarget = "updatingTarget",
-    writingToFile = "writingToFile",
-    writingToFileCompleted = "writingToFileCompleted",
-    updatingTargetObject = "updatingTargetObject",
-    updatingTargetObjectCompleted = "updatingTargetObjectCompleted",
-    fieldIsMissingInTheSourceRecords = "fieldIsMissingInTheSourceRecords",
-    seeFileForTheDetails = "seeFileForTheDetails",
-    missingParentLookupRecord = "missingParentLookupRecord",
-    updatingTargetCompleted = "updatingTargetCompleted",
-    finalizing = "finalizing",
-
 
 
     // ----------------------
+    executionOrder = "executionOrder",
+    queryingOrder = "queryingOrder",
     separator = "separator",
     source = "source",
     target = "target",
@@ -251,9 +202,9 @@ class FileLogger {
             const d = Common.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
-                m = this.resources.getMessage("fileLoggerInfoString", [d, message]);
+                m = this.resources.getMessage(RESOURCES.fileLoggerInfoString, [d, message]);
             } else {
-                m = this.resources.getMessage("fileLoggerInfoStringWithoutDate", [message]);
+                m = this.resources.getMessage(RESOURCES.fileLoggerInfoStringWithoutDate, [message]);
             }
             fs.appendFileSync(this.fileName, m);
         }
@@ -271,9 +222,9 @@ class FileLogger {
             const d = Common.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
-                m = this.resources.getMessage("fileLoggerWarnSring", [d, message]);
+                m = this.resources.getMessage(RESOURCES.fileLoggerWarnSring, [d, message]);
             } else {
-                m = this.resources.getMessage("fileLoggerWarnSringWithoutDate", [message]);
+                m = this.resources.getMessage(RESOURCES.fileLoggerWarnSringWithoutDate, [message]);
             }
             fs.appendFileSync(this.fileName, m);
         }
@@ -291,9 +242,9 @@ class FileLogger {
             const d = Common.formatDateTimeShort(new Date());
             let m: string;
             if (message.trim()) {
-                m = this.resources.getMessage("fileLoggerErrorSring", [d, message]);
+                m = this.resources.getMessage(RESOURCES.fileLoggerErrorSring, [d, message]);
             } else {
-                m = this.resources.getMessage("fileLoggerErrorSringWithoutDate", [message]);
+                m = this.resources.getMessage(RESOURCES.fileLoggerErrorSringWithoutDate, [message]);
             }
             fs.appendFileSync(this.fileName, m);
         }
