@@ -46,7 +46,7 @@ export default class SFieldDescribe {
     /**
      * Parent lookup ScriptObject for reference field
      */
-    parentLookupObject: ScriptObject;
+    parentLookupObject: ScriptObject = new ScriptObject();
 
     /**
      * For the externalId field -> holds the list of all the child __r sfields
@@ -159,7 +159,7 @@ export default class SFieldDescribe {
      * @memberof SFieldDescribe
      */
     get fullName__r(): string {
-        if (this.isReference) {
+        if (this.isReference && this.parentLookupObject.isInitialized) {
             return this.name__r + "." + Common.getComplexField(this.parentLookupObject.externalId);
         } else {
             return this.name__r;
@@ -175,7 +175,7 @@ export default class SFieldDescribe {
      * @memberof SFieldDescribe
      */
     get fullOriginalName__r(): string {
-        if (this.isReference) {
+        if (this.isReference && this.parentLookupObject.isInitialized) {
             return this.name__r + "." + Common.getComplexField(this.parentLookupObject.originalExternalId);
         } else {
             return this.name__r;

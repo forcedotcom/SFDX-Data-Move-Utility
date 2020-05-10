@@ -578,6 +578,7 @@ export class Common {
      * @memberof CommonUtils
      */
     public static getComplexField(fieldName: string): string {
+        if (!fieldName) return fieldName;        
         if (fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0) {
             return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
                 + fieldName.replace(

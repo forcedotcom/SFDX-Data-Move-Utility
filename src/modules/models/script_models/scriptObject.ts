@@ -49,6 +49,7 @@ export default class ScriptObject {
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
     allRecords: boolean = true;
+    // TODO: Add to READ.ME file!
     /**
      * creatable:true;updateable:true;custom:true;readonly:true;lookup:true;person:false
      *
