@@ -55,9 +55,9 @@ export default class ScriptObject {
      * @type {string}
      * @memberof ScriptObject
      */
-    selectAll: string;
-    excludedSelectAllFields: Array<string>;
-    includedSelectAllFields: Array<string>;
+    multiselectPattern: string;
+    excludedFieldsFromMultiselect: Array<string> = new Array<string>();
+
 
 
     // -----------------------------------
@@ -72,18 +72,15 @@ export default class ScriptObject {
     processAllSource: boolean = false;
     processAllTarget: boolean = false;
 
-    get selectAllPatternObject(): any {
-        if (!this.selectAll) return null;
-        return this.selectAll.split(';').reduce((obj, sides) => {
-            let side = sides.split('=').map(x => x.trim().toLowerCase()).filter(x => !!x);
+    get multiselectPatternObject(): any {
+        if (!this.multiselectPattern) return null;
+        return this.multiselectPattern.split(';').reduce((obj, sides) => {
+            let side = sides.split(':').map(x => x.trim().toLowerCase()).filter(x => !!x);
             if (side.length > 1) {
                 obj[side[0]] = side[1];
             }
             return obj;
-        }, {
-            excludedSelectAllFields: this.excludedSelectAllFields || new Array<string>(),
-            includedSelectAllFields: this.includedSelectAllFields || new Array<string>(),
-        });
+        }, {});
     }
 
     get task(): MigrationJobTask {
@@ -232,7 +229,7 @@ export default class ScriptObject {
         });
     }
 
-    get isObjectWithoutRelationships() : boolean {
+    get isObjectWithoutRelationships(): boolean {
         return !this.hasParentLookupObjects && !this.hasChildLookupObjects;
     }
 
@@ -335,6 +332,9 @@ export default class ScriptObject {
                         this.targetSObjectDescribe = this.sourceSObjectDescribe;
                     }
 
+                    // Add "select all" fields
+                    this._addFieldsFromSelectAllPattern(this.sourceSObjectDescribe);
+
                     // Check fields existance
                     this._validateFields(this.sourceSObjectDescribe, true);
 
@@ -359,6 +359,9 @@ export default class ScriptObject {
 
                     if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
                         this.sourceSObjectDescribe = this.targetSObjectDescribe;
+
+                        // Add "select all" fields
+                        this._addFieldsFromSelectAllPattern(this.targetSObjectDescribe);
                     }
 
                     // Check fields existance
@@ -405,6 +408,35 @@ export default class ScriptObject {
     }
 
     // ----------------------- Private members -------------------------------------------
+    private _addFieldsFromSelectAllPattern(describe: SObjectDescribe) {
+        if (this.multiselectPattern) {
+            let isChanged = false;
+            let fields = [].concat(this.fieldsInQuery);
+            let pattern = this.multiselectPatternObject;
+            [...describe.fieldsMap.values()].forEach(field => {
+                if (this.excludedFieldsFromMultiselect.indexOf(field.name) >= 0) {
+                    return false;
+                }
+                if (___compare(field.updateable, pattern.updateable)
+                    && ___compare(field.creatable, pattern.creatable)
+                    && ___compare(field.custom, pattern.custom)
+                    && ___compare(field.isReadonly, pattern.readonly)
+                    && ___compare(field.isReference, pattern.lookup)
+                    && fields.indexOf(field.name) < 0) {
+                    this.parsedQuery.fields = this.parsedQuery.fields.concat(getComposedField(field.name));
+                    isChanged = true;
+                }
+            });
+            if (isChanged) {
+                this.query = composeQuery(this.parsedQuery);
+            }
+        }
+
+        function ___compare(fieldV, patternV) {
+            return fieldV && patternV == "true" || !fieldV && patternV == "false" || typeof patternV == "undefined";
+        }
+    }
+
     private _validateFields(describe: SObjectDescribe, isSource: boolean) {
 
         if (this.fieldsInQuery.length == 0) {

@@ -196,6 +196,7 @@ export default class MigrationJobTask {
         // Add missing lookup columns 
         for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
             const sField = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
+            // BUG: Failed when adding multiselect column on DELHAIZE-CASE-LOAD 
             if (sField.isReference && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
                 await ___addMissingLookupColumnsAsync(sField);
             }
