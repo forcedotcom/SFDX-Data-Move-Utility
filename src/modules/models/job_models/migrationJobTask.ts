@@ -610,11 +610,6 @@ export default class MigrationJobTask {
 
         let self = this;
 
-        // TEST:
-        if (this.sObjectName == "TestObject_Description__c") {
-            let kk = "";
-        }
-
         // Checking status *********
         if (this.operation == OPERATION.Delete) return;
 
@@ -624,12 +619,6 @@ export default class MigrationJobTask {
         // **************************************************************************************************************
         let hasRecords = false;
         if (queryMode != "target") {
-
-            // TODO*REMOVEME
-            // if (this.sObjectName == "Language__c") {
-            //     let ttt = "";
-            // }
-
             // Read main data *************************************
             // ****************************************************
             if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
@@ -797,13 +786,13 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     async updateRecords(): Promise<void> {
-        // TODO: Implement updateRecords()
+        // HACK: Implement updateRecords()
 
 
 
         // ------------------------ Internal functions --------------------------
         async function ___filterTargetRecords() {
-            // TODO: Implement ___filterTargetRecords
+            // HACK: Implement ___filterTargetRecords
             //targetRecordsFilter....
         }
 
@@ -970,12 +959,6 @@ export default class MigrationJobTask {
                     // SOURCE
                     // For source => |SOURCE Case|Account__c IN (|SOURCE Account|Id....)            
                     if (field.isSimpleReference && CONSTANTS.NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(field.referencedObjectType) < 0) {
-
-                        // TODO*REMOVEME
-                        // if (this.sObjectName == "Language__c") {
-                        //     let ttt = "";
-                        // }
-
                         // Only for simple reference lookup fields (f.ex.: Account__c)
                         if (!field.parentLookupObject.task.sourceData.allRecords || field.parentLookupObject.isLimitedQuery) {
                             if (queryMode != "forwards") {

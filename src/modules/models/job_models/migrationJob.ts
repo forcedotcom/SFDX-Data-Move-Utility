@@ -65,8 +65,6 @@ export default class MigrationJob {
             });
             if (objectToAdd.allRecords
                 || objectToAdd.isSpecialObject
-                // TODO*CHECKIT!
-                //|| objectToAdd.isLimitedQuery
                 || objectToAdd.isObjectWithoutRelationships 
                 ) {
                 objectToAdd.processAllSource = true;
@@ -122,10 +120,6 @@ export default class MigrationJob {
 
         // Create query task order
         this.tasks.forEach(task => {
-            // TODO*CHECKIT!
-            // if (task.scriptObject.isReadonlyObject
-            //     || task.tempData.isMasterDetailTask
-            //     || !task.scriptObject.hasParentLookupObjects) {
             if (task.sourceData.allRecords
                 || task.scriptObject.isLimitedQuery) {
                 this.queryTasks.push(task);
@@ -287,7 +281,7 @@ export default class MigrationJob {
     }
 
     async updateRecords(): Promise<void> {
-        // TODO: Implement updateRecords()
+        // HACK: Implement updateRecords()
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
             await task.updateRecords();

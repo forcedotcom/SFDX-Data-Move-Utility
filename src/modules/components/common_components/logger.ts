@@ -88,7 +88,6 @@ export enum RESOURCES {
     tryingToConnectCLI = "tryingToConnectCLI",
     successfullyConnected = "successfullyConnected",
     tryingToConnectCLIFailed = "tryingToConnectCLIFailed",
-    // TODO: Implement this!
     sourceTargetCouldNotBeTheSame = "sourceTargetCouldNotBeTheSame",
     accessToOrgExpired = "accessToOrgExpired",
     MalformedQuery = "MalformedQuery",

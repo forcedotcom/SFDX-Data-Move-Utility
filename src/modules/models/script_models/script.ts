@@ -90,6 +90,10 @@ export default class Script {
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         this.apiVersion = apiVersion || this.apiVersion;
 
+        if (sourceUsername.toLowerCase() == targetUsername.toLowerCase()){
+            throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
+        }
+
         // Remove excluded objects and unsupported objects
         this.objects = this.objects.filter(object => {
             let included = (!object.excluded || object.operation == OPERATION.Readonly)
