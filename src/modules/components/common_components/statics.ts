@@ -44,15 +44,34 @@ export const CONSTANTS = {
         'Profile',
         'RecordType',
         'User',
-        'Group'
+        'Group',
+        'DandBCompany'
     ],
     SPECIAL_OBJECTS: [
         "Group",
         "User",
         "RecordType"
     ],
-    NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE: [
+    OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE: [
         "RecordType"
+    ],
+    OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT: [
+        'RecordType',
+        'User',
+        'Group',
+        'DandBCompany'
+    ],
+    MULTISELECT_SOQL_KEYWORDS: [
+        "readonly_true",
+        "readonly_false",
+        "custom_true",
+        "custom_false",
+        "updateable_true",
+        "updateable_false",
+        "createable_true",
+        "createable_false",
+        "lookup_true",
+        "lookup_false"
     ],
 
     SHORT_QUERY_STRING_MAXLENGTH: 250,

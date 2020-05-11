@@ -49,15 +49,8 @@ export default class ScriptObject {
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
     allRecords: boolean = true;
-    // TODO: Add to READ.ME file!
-    /**
-     * creatable:true;updateable:true;custom:true;readonly:true;lookup:true;person:false
-     *
-     * @type {string}
-     * @memberof ScriptObject
-     */
-    multiselectPattern: string;
-    excludedFieldsFromMultiselect: Array<string> = new Array<string>();
+    excludedFields: Array<string> = new Array<string>();
+
 
 
 
@@ -73,16 +66,13 @@ export default class ScriptObject {
     processAllSource: boolean = false;
     processAllTarget: boolean = false;
 
-    get multiselectPatternObject(): any {
-        if (!this.multiselectPattern) return null;
-        return this.multiselectPattern.split(';').reduce((obj, sides) => {
-            let side = sides.split(':').map(x => x.trim().toLowerCase()).filter(x => !!x);
-            if (side.length > 1) {
-                obj[side[0]] = side[1];
-            }
-            return obj;
-        }, {});
-    }
+    /**
+     * all,* + keywords listed in the  MULTISELECT_SOQL_KEYWORDS
+     *
+     * @type {string}
+     * @memberof ScriptObject
+     */
+    multiselectPattern: any;
 
     get task(): MigrationJobTask {
         return this.script.job.getTaskBySObjectName(this.name);
@@ -258,9 +248,10 @@ export default class ScriptObject {
             this.externalId = "Id";
         }
 
-        // Parse query string
         try {
-            this.parsedQuery = parseQuery(this.query);
+            // Parse query string    
+            this.parsedQuery = this._parseQuery(this.query);
+
             if (this.operation == OPERATION.Delete) {
                 this.deleteOldData = true;
                 this.parsedQuery.fields = [getComposedField("Id")];
@@ -334,7 +325,7 @@ export default class ScriptObject {
                     }
 
                     // Add "select all" fields
-                    this._addFieldsFromSelectAllPattern(this.sourceSObjectDescribe);
+                    this._filterQueryFields(this.sourceSObjectDescribe);
 
                     // Check fields existance
                     this._validateFields(this.sourceSObjectDescribe, true);
@@ -362,7 +353,7 @@ export default class ScriptObject {
                         this.sourceSObjectDescribe = this.targetSObjectDescribe;
 
                         // Add "select all" fields
-                        this._addFieldsFromSelectAllPattern(this.targetSObjectDescribe);
+                        this._filterQueryFields(this.targetSObjectDescribe);
                     }
 
                     // Check fields existance
@@ -409,33 +400,35 @@ export default class ScriptObject {
     }
 
     // ----------------------- Private members -------------------------------------------
-    private _addFieldsFromSelectAllPattern(describe: SObjectDescribe) {
+    private _filterQueryFields(describe: SObjectDescribe) {
         if (this.multiselectPattern) {
-            let isChanged = false;
             let fields = [].concat(this.fieldsInQuery);
-            let pattern = this.multiselectPatternObject;
+            let pattern = this.multiselectPattern;
             [...describe.fieldsMap.values()].forEach(field => {
-                if (this.excludedFieldsFromMultiselect.indexOf(field.name) >= 0) {
-                    return false;
-                }
-                if (___compare(field.updateable, pattern.updateable)
+                if (typeof pattern.all != "undefined" && pattern.all
+                    || ___compare(field.updateable, pattern.updateable)
                     && ___compare(field.creatable, pattern.creatable)
                     && ___compare(field.custom, pattern.custom)
                     && ___compare(field.isReadonly, pattern.readonly)
                     && ___compare(field.isReference, pattern.lookup)
                     && ___compare(field.name.indexOf('__pc') >= 0, pattern.person)
                     && fields.indexOf(field.name) < 0) {
-                    this.parsedQuery.fields = this.parsedQuery.fields.concat(getComposedField(field.name));
-                    isChanged = true;
+
+                    if (!(field.isReference && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(field.referencedObjectType) >= 0)) {
+                        this.parsedQuery.fields.push(getComposedField(field.name));
+                    }
+
                 }
             });
-            if (isChanged) {
-                this.query = composeQuery(this.parsedQuery);
-            }
         }
+        this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
+            this.excludedFields.indexOf(field.field) < 0
+        );
+        this.query = composeQuery(this.parsedQuery);
 
-        function ___compare(fieldV, patternV) {
-            return fieldV && patternV == "true" || !fieldV && patternV == "false" || typeof patternV == "undefined";
+        // ---------------------- Internal functions --------------------------- //        
+        function ___compare(fieldV: any, patternV: any) {
+            return fieldV == patternV || typeof patternV == "undefined";
         }
     }
 
@@ -467,6 +460,32 @@ export default class ScriptObject {
                     Common.removeBy(this.parsedQuery.fields, "field", x);
                 }
             });
+        }
+    }
+
+    private _parseQuery(query): Query {
+        let self = this;
+        let parsedQuery = parseQuery(query);
+        let fields = [].concat(parsedQuery.fields);
+        parsedQuery.fields = [getComposedField("Id")];
+        fields.forEach(field => {
+            let fieldName = ((<SOQLField>field).field).toLowerCase();
+            if (fieldName == "all") {
+                ___set("all_true");
+            } else if (CONSTANTS.MULTISELECT_SOQL_KEYWORDS.indexOf(fieldName) >= 0) {
+                ___set(fieldName);
+            } else if (fieldName != "id") {
+                parsedQuery.fields.push(getComposedField((<SOQLField>field).field));
+            }
+        });
+        this.query = composeQuery(parsedQuery);
+        return parsedQuery;
+
+        // ---------------------- Internal functions --------------------------- //
+        function ___set(value: string) {
+            self.multiselectPattern = self.multiselectPattern || {};
+            let parts = value.split('_');
+            self.multiselectPattern[parts[0]] = parts[1] == "true";
         }
     }
 

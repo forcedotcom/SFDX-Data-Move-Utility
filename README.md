@@ -1,21 +1,11 @@
 # ![SFDMU](src/images/logo.png)SFDMU - the Salesforce DX Data Move Utility
 
-This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox / prod) with data imported from another org. It supports all important insert / update / upsert / delete operations **also for multiple related sObjects**.
+This **SFDX Plugin** is <u>**the advanced alternative to the Salesforce Data Loader**</u> , that will assist you to populate your org (scratch / dev / sandbox / prod) with data imported from another org.
+It supports all important insert / update / upsert / delete operations **also for multiple related sObjects**.
 
 ----
 
-**You can now find [here](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) the new desktop GUI application that will help you to manage the plugin configuration files and to run and monitor the migration process, that will make usage of this Plugin simple and convenient.**
-
-----
-
-* **New in version 2.6.0**  - Plugin will use for CRUD by default the <u>Salesforce Bulk Api v2.0</u> in Beta mode. 
-  If you are experiencing any issue with the current v2.0 implementation, let us know. 
-  You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.
-* **New in version 2.6.8** - Added support for the Bulk Query Api V1.0 for large data sets from 100000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
-* **New in version 2.7.0** - Added support for Person accounts. 
-
-----
-
+###### **Download also [The SFDMU Plugin desktop GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) that will help you to configure the Plugin settings and to run and monitor the migration process.**
 
 
 
@@ -208,8 +198,9 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | **ScriptObject**.mockCSVData         | Boolean                    | Optional, default false  | Enables export of data to CSV files with masked values instead of the original. |
 | **ScriptObject**.targetRecordsFilter | String                     | Optional                 | Additional SOQL query you can use to filter out unwanted  target data just before sending them to the Target.<br /><br />*Target data means the  records are directly provided in API request (Bulk API request or REST request) to update the target environment or to generate the target CSV file.* |
 | **ScriptObject**.excluded            | Boolean                    | Optional, Default false  | Set to true to exclude corresponding sObject from the migration process. <br /><br />*This parameter useful when you want to exclude certain sObject from the process leaving its definition in the export.json file.* |
+| **ScriptObject**.excludedFields      | Array<String>              | Optional                 | Array of field names that should be excluded from the original SOQL query.<br />Allows to filter fields when using **multiselect keywords** in the query (see the details below) |
 | **ScriptObject**.useCSVValuesMapping | Boolean                    | Optional, Default false  | When set to true and CSV files are used as data source - it enables changing the raw values from the CSV file according to the mapping table coming from the additional CSV file. Data will be loaded after the transformation is done (see details below). |
-| **ScriptObject**.mockFields          | **Array (MockField[])**    |                          | Defines SObject fields that need to update with a fake data (see mocking feature below) |
+| **ScriptObject**.mockFields          | Array (MockField[])        |                          | Defines SObject fields that need to update with a fake data (see mocking feature below) |
 | **MockField**.name                   | String                     | Mandatory                | The name of the field to mock (see mocking feature below)    |
 | **MockField**.pattern                | String                     | Mandatory                | The pattern to create mock data for this field (see mocking feature below) |
 | **MockField**.excludedRegex          | String                     | Optional                 | The JS regex expression to **exclude** the values that **should not** be masked. |
@@ -222,7 +213,7 @@ Of course the Plugin has also a huge amount of advanced features which give you 
 | createTargetCSVFiles                 | Boolean                    | Optional, Default false  | If true the Plugin will produce CSV file containing target records for each processed sObject with error information (if occured) per record. |
 | bulkApiV1BatchSize                   | Integer                    | Optional, Default 9500   | The maximal size of each batch while processing the records by the Bulk Api V1 |
 | bulkApiVersion                       | Float                      | Optional, Default 2.0    | The version of Salesforce Bulk Api to use. Valid values are: 1.0 and 2.0 |
-| importCSVFilesAsIs                   | Boolean                    | Optional, Default false  | Sometimes you have source CSV files that are completely ready to be uploaded as is to the Target, which means that all values in these CSV files are correct (including search identifiers) and they don’t need additional verification or transformation. Typically, the standard Salesforce data loader uses this behavior, considering the CSV file ready to use. <br /> To import CSV files as is, set importCSVFilesAsIs = true <br /> Otherwise, before loading the plugin will make pre-processing of the data, which includes verification, processing relationships between the imported objects, etc. |
+| importCSVFilesAsIs                   | Boolean                    | Optional, Default false  | Set to true to skip validation and fixing of the source CSV files and use these files as is to import the data into the Target org. Typically, the standard Salesforce Data Loader uses this behavior, considering the CSV file ready to use.<br />If set to false, before loading the Plugin will make pre-processing of the data, which includes verification, linking between the files to find appropriate relationships between the imported sobjects, etc. |
 
 
 
@@ -473,7 +464,13 @@ The plugin provides a variety of information about common warnings and errors th
 
   
 
+## Updates
 
+* **New in version 2.6.0**  - Plugin will use for CRUD by default the <u>Salesforce Bulk Api v2.0</u> in Beta mode. 
+  If you are experiencing any issue with the current v2.0 implementation, let us know. 
+  You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.
+* **New in version 2.6.8** - Added support for the Bulk Query Api V1.0 for large data sets from 100000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
+* **New in version 2.7.0** - Added support for Person accounts. 
 
 
 

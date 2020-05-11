@@ -939,7 +939,7 @@ export default class MigrationJobTask {
         let nextTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) > this.job.tasks.indexOf(this));
 
         if (reversed) {
-            if (CONSTANTS.NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(this.sObjectName) < 0) {
+            if (CONSTANTS.OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(this.sObjectName) < 0) {
                 // ONLY SOURCE + FORWARDS FOR reversed == true !
                 let fields: SFieldDescribe[] = Common.flatMap([...this.data.fieldsInQueryMap.values()]
                     .filter(field => field.child__rSFields.length > 0), (field: SFieldDescribe) => {
@@ -961,7 +961,7 @@ export default class MigrationJobTask {
                 if (isSource) {
                     // SOURCE
                     // For source => |SOURCE Case|Account__c IN (|SOURCE Account|Id....)            
-                    if (field.isSimpleReference && CONSTANTS.NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(field.referencedObjectType) < 0) {
+                    if (field.isSimpleReference && CONSTANTS.OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(field.referencedObjectType) < 0) {
                         // Only for simple reference lookup fields (f.ex.: Account__c)
                         if (!field.parentLookupObject.task.sourceData.allRecords || field.parentLookupObject.isLimitedQuery) {
                             if (queryMode != "forwards") {
