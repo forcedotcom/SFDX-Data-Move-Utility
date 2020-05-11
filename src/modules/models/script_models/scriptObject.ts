@@ -463,7 +463,7 @@ export default class ScriptObject {
         }
     }
 
-    private _parseQuery(query): Query {
+    private _parseQuery(query : string): Query {
         let self = this;
         let parsedQuery = parseQuery(query);
         let fields = [].concat(parsedQuery.fields);
@@ -482,9 +482,9 @@ export default class ScriptObject {
         return parsedQuery;
 
         // ---------------------- Internal functions --------------------------- //
-        function ___set(value: string) {
+        function ___set(fieldName: string) {
             self.multiselectPattern = self.multiselectPattern || {};
-            let parts = value.split('_');
+            let parts = fieldName.split('_');
             self.multiselectPattern[parts[0]] = parts[1] == "true";
         }
     }
