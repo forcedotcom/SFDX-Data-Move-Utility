@@ -606,7 +606,7 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async retrieveRecords(queryMode: "forwards" | "backwards" | "target", reversed: boolean): Promise<void> {
+    async retrieveRecords(queryMode: "forwards" | "backwards" | "target", reversed: boolean): Promise<boolean> {
 
         let self = this;
 
@@ -623,12 +623,14 @@ export default class MigrationJobTask {
             // ****************************************************
             if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
                 // Read from the SOURCE CSV FILE ***********************************
-                let query = this.createQuery();
-                // Start message ------
-                this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.resourceString_Step(queryMode));
-                let sfdx = new Sfdx(this.targetData.org);
-                records = await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap);
-                hasRecords = true;
+                if (!reversed) {
+                    let query = this.createQuery();
+                    // Start message ------
+                    this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.resourceString_Step(queryMode));
+                    let sfdx = new Sfdx(this.targetData.org);
+                    records = await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap);
+                    hasRecords = true;
+                }
             } else {
                 // Read from the SOURCE ORG **********************************************
                 if (this.scriptObject.processAllSource && queryMode == "forwards") {
@@ -739,6 +741,7 @@ export default class MigrationJobTask {
             }
         }
 
+        return hasRecords;
 
         // ------------------------ Internal functions --------------------------
         /**

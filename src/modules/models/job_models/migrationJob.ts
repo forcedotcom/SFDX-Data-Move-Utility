@@ -65,8 +65,8 @@ export default class MigrationJob {
             });
             if (objectToAdd.allRecords
                 || objectToAdd.isSpecialObject
-                || objectToAdd.isObjectWithoutRelationships 
-                ) {
+                || objectToAdd.isObjectWithoutRelationships
+            ) {
                 objectToAdd.processAllSource = true;
                 objectToAdd.processAllTarget = true;
             } else {
@@ -226,16 +226,25 @@ export default class MigrationJob {
      */
     async retrieveRecords(): Promise<void> {
 
+
+        // STEP 1:::::::::
         // SOURCE FORWARDS ***********
+        let retrieved: boolean = false;
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step1));
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            await task.retrieveRecords("forwards", false);
+            retrieved = await task.retrieveRecords("forwards", false) || retrieved;
         }
-        this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
+        if (!retrieved){
+            this.logger.infoNormal(RESOURCES.noRecords);
+        }
+        this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));            
 
+        
+        // STEP 2:::::::::
         // SOURCE BACKWARDS ***********  
+        retrieved = false;
         // PASS 1  ------//    
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step2));
@@ -244,34 +253,57 @@ export default class MigrationJob {
         this.logger.infoNormal(RESOURCES.separator);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            await task.retrieveRecords("backwards", false);
+            retrieved = await task.retrieveRecords("backwards", false) || retrieved;
         }
+        if (!retrieved) {
+            this.logger.infoNormal(RESOURCES.noRecords);
+        }
+
         // PASS 2  ------// 
+        retrieved = false;
         this.logger.infoNormal(RESOURCES.newLine);
         this.logger.infoNormal(RESOURCES.Pass2);
         this.logger.infoNormal(RESOURCES.separator);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            await task.retrieveRecords("backwards", false);
+            retrieved = await task.retrieveRecords("backwards", false) || retrieved;
         }
-        // PASS 3* (reverse forwards)  -----//
-        for (let index = 0; index < this.queryTasks.length; index++) {
-            const task = this.queryTasks[index];
-            await task.retrieveRecords("forwards", true);
+        if (!retrieved) {
+            this.logger.infoNormal(RESOURCES.noRecords);
         }
 
-        // TARGET ***********        
+        // SOURCE REVERSE FORWARDS ***********  
+        // PASS 3 -----//
+        retrieved = false;
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.infoNormal(RESOURCES.Pass3);
+        this.logger.infoNormal(RESOURCES.separator);
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            retrieved = await task.retrieveRecords("forwards", true) || retrieved;
+        }
+        if (!retrieved) {
+            this.logger.infoNormal(RESOURCES.noRecords);
+        }
+
+        // STEP 1:::::::::
+        // TARGET ONLY FORWARDS ***********        
+        retrieved = false;
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.infoMinimal(RESOURCES.target);
         this.logger.infoMinimal(RESOURCES.separator);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            await task.retrieveRecords("target", false);
+            retrieved = await task.retrieveRecords("target", false) || retrieved;
+        }
+        if (!retrieved) {
+            this.logger.infoNormal(RESOURCES.noRecords);
         }
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
 
         // TOTAL FETCHED SUMMARY ***********        
         this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.fetchingSummary);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
             this.logger.infoNormal(RESOURCES.queryingTotallyFetched,
@@ -360,7 +392,7 @@ export default class MigrationJob {
         }
     }
 
-    
+
     private async _mergeUserGroupCSVfiles(): Promise<void> {
         let filepath1 = path.join(this.script.basePath, "User.csv");
         let filepath2 = path.join(this.script.basePath, "Group.csv");

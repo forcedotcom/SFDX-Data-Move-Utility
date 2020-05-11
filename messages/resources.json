@@ -7,11 +7,14 @@
     "Step2": "STEP 2",
     "Pass1": "PASS 1",
     "Pass2": "PASS 2",
+    "Pass3": "PASS 3",
     "csvFile": "CSV file",
     "org": "Org",
     "sourceOrg": "%s.",
     "targetOrg": "%s.",
     "scriptFile": "%s.",
+    "skipped": "Skipped",
+    "noRecords": "No records",
 
     "defaultPromptOptions": "y/n",
     "defaultPromptSelectedOption": "n",
@@ -128,7 +131,8 @@
     "queryingIn": "{%s} Retrieving the %s data from %s (%s: filtered records)...",
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s new records.",
-    "queryingTotallyFetched": "{%s} Fetch summary: totally fetched (source/target) %s records.",
-    "queryString": "{%s} Query string: %s"
+    "queryingTotallyFetched": "{%s} Total retrieved (source/target): %s records.",
+    "queryString": "{%s} Query string: %s",
+    "fetchingSummary": "Data retrieving summary"
 
 }

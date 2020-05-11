@@ -34,11 +34,14 @@ export enum RESOURCES {
     Step2 = "Step2",
     Pass1 = "Pass1",
     Pass2 = "Pass2",
-    csvFile = "from CSV file",
-    org = "from Org",
+    Pass3 = "Pass3",
+    csvFile = "csvFile",
+    org = "org",
     sourceOrg = "sourceOrg",
     targetOrg = "targetOrg",
     scriptFile = "scriptFile",
+    skipped = "skipped",
+    noRecords = "noRecords",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptSelectedOption = "defaultPromptSelectedOption",
@@ -157,7 +160,8 @@ export enum RESOURCES {
     queryingSelfReferenceRecords = "queryingSelfReferenceRecords",
     queryingFinished = "queryingFinished",
     queryingTotallyFetched = "queryingTotallyFetched",
-    queryString = "queryString"
+    queryString = "queryString",
+    fetchingSummary = "fetchingSummary"
 
 }
 
@@ -641,6 +645,17 @@ export class Logger {
      */
     headerMinimal(message: string, ...tokens: string[]): void {
         this.log.apply(this, [message, LOG_MESSAGE_TYPE.HEADER, LOG_MESSAGE_VERBOSITY.MINIMAL, ...tokens]);
+    }
+
+    /**
+     * Logs message as styled header  and NORMAL verbosity
+     *
+     * @param {string} message Message to output
+     * @param {...string[]} tokens Tokens for the command resource
+     * @memberof MessageUtils
+     */
+    headerNormal(message: string, ...tokens: string[]): void {
+        this.log.apply(this, [message, LOG_MESSAGE_TYPE.HEADER, LOG_MESSAGE_VERBOSITY.NORMAL, ...tokens]);
     }
 
     /**

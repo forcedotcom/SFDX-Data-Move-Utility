@@ -159,7 +159,7 @@ export default class SFieldDescribe {
      * @memberof SFieldDescribe
      */
     get fullName__r(): string {
-        if (this.isReference && this.parentLookupObject.isInitialized) {
+        if (this.isReference) {
             return this.name__r + "." + Common.getComplexField(this.parentLookupObject.externalId);
         } else {
             return this.name__r;
@@ -175,7 +175,7 @@ export default class SFieldDescribe {
      * @memberof SFieldDescribe
      */
     get fullOriginalName__r(): string {
-        if (this.isReference && this.parentLookupObject.isInitialized) {
+        if (this.isReference) {
             return this.name__r + "." + Common.getComplexField(this.parentLookupObject.originalExternalId);
         } else {
             return this.name__r;
