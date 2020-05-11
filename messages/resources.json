@@ -132,7 +132,7 @@
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s new records.",
     "queryingTotallyFetched": "{%s} Total retrieved (source/target): %s records.",
-    "queryString": "{%s} Query string: %s",
+    "queryString": "{%s} Query string: %s.",
     "fetchingSummary": "Data retrieving summary"
 
 }
