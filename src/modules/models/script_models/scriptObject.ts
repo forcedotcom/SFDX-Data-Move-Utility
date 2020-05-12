@@ -317,8 +317,8 @@ export default class ScriptObject {
                         this.targetSObjectDescribe = this.sourceSObjectDescribe;
                     }
 
-                    // Add "select all" fields
-                    this._filterQueryFields(this.sourceSObjectDescribe);
+                    // Add fields by the multiselect keywords + filter query
+                    this._addOrRemmoveFields(this.sourceSObjectDescribe);
 
                     // Check fields existance
                     this._validateFields(this.sourceSObjectDescribe, true);
@@ -345,8 +345,8 @@ export default class ScriptObject {
                     if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
                         this.sourceSObjectDescribe = this.targetSObjectDescribe;
 
-                        // Add "select all" fields
-                        this._filterQueryFields(this.targetSObjectDescribe);
+                        // Add fields by the multiselect keywords + filter query
+                        this._addOrRemmoveFields(this.targetSObjectDescribe);
                     }
 
                     // Check fields existance
@@ -393,7 +393,7 @@ export default class ScriptObject {
     }
 
     // ----------------------- Private members -------------------------------------------
-    private _filterQueryFields(describe: SObjectDescribe) {
+    private _addOrRemmoveFields(describe: SObjectDescribe) {
         if (this.multiselectPattern) {
             let fieldsInOriginalQuery = [].concat(this.fieldsInQuery);
             let pattern = this.multiselectPattern;
