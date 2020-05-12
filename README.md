@@ -297,7 +297,7 @@ You can use here unlimited number of fields separated by semicolon.
 
 
 
-#### Data mocking feature.
+#### Data mocking (masking) feature.
 
 If you're developing an application, you'll want to make sure you're testing it under conditions that closely simulate a production environment. In production, you'll probably have a sensitive data that usually you do not want to expose in the testing environment. To help with this use case I have added the option to mask real record value with a fake one before uploading it to the target.
 
@@ -400,6 +400,50 @@ Available values for the step parameter are:
 
 
 
+#### Multiselect feature.
+
+If you have a large amount of field in your SOQL query,  this can become tedious to maintain. To help with this case we have added a set of the special ***multiselect keywords*** that you can add as a field into your SELECT query.  Each keyword will be then replaced at runtime with real object fields according to the actual object metadata and these fields will be automatically injected into the query. This a quite similar to wildcards that can be used to select files in the computer file system. 
+Adding multiple keywords will allow you to select smaller subsets of fields, since they act as combined by the && (AND) operator, for example to select only the custom lookup fields use the following query: 
+*SELECT custom_true, lookup_true FROM Account*
+
+Use **excludedFields** property of ScriptObject to exclude certain fields from the query AFTER they were selected with multiselect keywords. Note , that excludedFields will also exclude fields even they are included in the query explicitly not by using the multiselect keywords.
+
+----
+
+<u>**The full list of the supported multiselect keywords:**</u>
+
+**all** - selects all fields of the object.
+
+**readonly_true** - selects all fields that are createable and are not autonumber or  formula.
+
+**readonly_false** - the opposite to **readonly_false**.
+
+**custom_true** or **custom_false** - to select  only custom fields.
+
+**createable_true** / **createable_false** - to select only all createable fields (all fields having createable=true property of  DescribeSObjectResult  class).
+
+**updateable_true** or **updateable_false** - to select only all updateable fields (all fields having .updateable=true property of  DescribeSObjectResult  class).
+
+**lookup_true** or **lookup_false** - to select only all lookup and master-detail fields.
+
+----
+
+
+Below some examples of queries that leverages *multiselect keywords* feature:
+
+```sql
+/* Selects Id, Name and also all custom non-lookup fields of the Account */
+SELECT Id, Name, custom_true, lookup_false FROM Account
+```
+```sql
+/* Selects Id, Name and also all standard lookup/master-detail fields of the Account */
+SELECT Id, Name, custom_false, lookup_true FROM Account
+```
+```sql
+/* Selects Id, Name and also all createable fields of the Account */
+SELECT Id, Name, createable_true FROM Account
+```
+
 
 
 #### Automatic CSV source transformation feature.
@@ -464,13 +508,19 @@ The plugin provides a variety of information about common warnings and errors th
 
   
 
-## Updates
+## Version history
 
+* **New in version 2.8.0** - Deep project refactoring. Added the multiselect feature.
+  
+* **New in version 2.7.0** - Added support for Person accounts. 
+  
+* **New in version 2.6.8** - Added support for the Bulk Query Api V1.0 for large data sets from 100000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
+  
 * **New in version 2.6.0**  - Plugin will use for CRUD by default the <u>Salesforce Bulk Api v2.0</u> in Beta mode. 
   If you are experiencing any issue with the current v2.0 implementation, let us know. 
   You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.
-* **New in version 2.6.8** - Added support for the Bulk Query Api V1.0 for large data sets from 100000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
-* **New in version 2.7.0** - Added support for Person accounts. 
+
+  
 
 
 

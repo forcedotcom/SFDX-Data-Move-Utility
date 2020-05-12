@@ -402,20 +402,20 @@ export default class ScriptObject {
     // ----------------------- Private members -------------------------------------------
     private _filterQueryFields(describe: SObjectDescribe) {
         if (this.multiselectPattern) {
-            let fields = [].concat(this.fieldsInQuery);
+            let fieldsInOriginalQuery = [].concat(this.fieldsInQuery);
             let pattern = this.multiselectPattern;
-            [...describe.fieldsMap.values()].forEach(field => {
+            [...describe.fieldsMap.values()].forEach(fieldDescribe => {
                 if (typeof pattern.all != "undefined" && pattern.all
-                    || ___compare(field.updateable, pattern.updateable)
-                    && ___compare(field.creatable, pattern.creatable)
-                    && ___compare(field.custom, pattern.custom)
-                    && ___compare(field.isReadonly, pattern.readonly)
-                    && ___compare(field.isReference, pattern.lookup)
-                    && ___compare(field.name.indexOf('__pc') >= 0, pattern.person)
-                    && fields.indexOf(field.name) < 0) {
+                    || ___compare(fieldDescribe.updateable, pattern.updateable)
+                    && ___compare(fieldDescribe.creatable, pattern.creatable)
+                    && ___compare(fieldDescribe.custom, pattern.custom)
+                    && ___compare(fieldDescribe.isReadonly, pattern.readonly)
+                    && ___compare(fieldDescribe.isReference, pattern.lookup)
+                    && ___compare(fieldDescribe.name.indexOf('__pc') >= 0, pattern.person)
+                    && fieldsInOriginalQuery.indexOf(fieldDescribe.name) < 0) {
 
-                    if (!(field.isReference && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(field.referencedObjectType) >= 0)) {
-                        this.parsedQuery.fields.push(getComposedField(field.name));
+                    if (!(fieldDescribe.isReference && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0)) {
+                        this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
                     }
 
                 }
@@ -427,8 +427,8 @@ export default class ScriptObject {
         this.query = composeQuery(this.parsedQuery);
 
         // ---------------------- Internal functions --------------------------- //        
-        function ___compare(fieldV: any, patternV: any) {
-            return fieldV == patternV || typeof patternV == "undefined";
+        function ___compare(fieldDescribeProperty: any, patternValue: any) {
+            return fieldDescribeProperty == patternValue || typeof patternValue == "undefined";
         }
     }
 
