@@ -16,7 +16,7 @@ import {
     composeQuery,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, ScriptOrg, Script } from "..";
+import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, ScriptOrg, Script, ScriptMockField } from "..";
 import SFieldDescribe from "../script_models/sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
@@ -27,9 +27,11 @@ import { IApiEngine } from "../api_models/interfaces";
 import ApiInfo from "../api_models/apiInfo";
 import { BulkApiV1_0Engine } from "../../components/api_engines/bulkApiV1_0Engine";
 import { RestApiEngine } from "../../components/api_engines/restApiEngine";
+const alasql = require("alasql");
+import casual = require("casual");
+import { MockGenerator } from '../../components/common_components/mockGenerator';
 
-
-
+MockGenerator.createCustomGenerators(casual);
 
 export default class MigrationJobTask {
 
@@ -524,7 +526,7 @@ export default class MigrationJobTask {
 
         let queryOrNumber = this.createQuery(['COUNT(Id) CNT'], true);
 
-        if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org) {
+        if (this.sourceData.media == DATA_MEDIA_TYPE.Org) {
             let apiSf = new Sfdx(this.sourceData.org);
             let ret = await apiSf.queryAsync(queryOrNumber, false);
             this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
@@ -535,7 +537,7 @@ export default class MigrationJobTask {
                 this.sourceData.resourceString_Source_Target, String(this.sourceTotalRecorsCount));
         }
 
-        if (this.targetData.org.media == DATA_MEDIA_TYPE.Org) {
+        if (this.targetData.media == DATA_MEDIA_TYPE.Org) {
             let apiSf = new Sfdx(this.targetData.org);
             let ret = await apiSf.queryAsync(queryOrNumber, false);
             this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
@@ -555,7 +557,7 @@ export default class MigrationJobTask {
      */
     async deleteOldTargetRecords(): Promise<boolean> {
         // Checking
-        if (!(this.targetData.org.media == DATA_MEDIA_TYPE.Org
+        if (!(this.targetData.media == DATA_MEDIA_TYPE.Org
             && this.scriptObject.operation != OPERATION.Readonly
             && this.scriptObject.deleteOldData)) {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
@@ -621,7 +623,7 @@ export default class MigrationJobTask {
         if (queryMode != "target") {
             // Read main data *************************************
             // ****************************************************
-            if (this.sourceData.org.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
+            if (this.sourceData.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
                 // Read from the SOURCE CSV FILE ***********************************
                 if (!reversed) {
                     let query = this.createQuery();
@@ -666,7 +668,7 @@ export default class MigrationJobTask {
 
             // Read SELF REFERENCE records from the SOURCE *************
             // *********************************************************
-            if (this.sourceData.org.media == DATA_MEDIA_TYPE.Org && queryMode == "forwards") {
+            if (this.sourceData.media == DATA_MEDIA_TYPE.Org && queryMode == "forwards") {
                 records = new Array<any>();
                 let inValues: Array<string> = new Array<string>();
                 for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
@@ -707,7 +709,7 @@ export default class MigrationJobTask {
         // ****************************************************************************************************
         if (queryMode == "target") {
             hasRecords = false;
-            if (this.targetData.org.media == DATA_MEDIA_TYPE.Org && this.operation != OPERATION.Insert) {
+            if (this.targetData.media == DATA_MEDIA_TYPE.Org && this.operation != OPERATION.Insert) {
                 // Read from the TARGET ORG *********
                 records = new Array<any>();
                 if (this.scriptObject.processAllTarget) {
@@ -780,6 +782,8 @@ export default class MigrationJobTask {
             return records;
         }
 
+
+
     }
 
     /**
@@ -788,15 +792,143 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async updateRecords(): Promise<void> {
-        // HACK: Implement updateRecords()
+    async updateRecords(updateMode: "forwards" | "backwards"): Promise<void> {
 
+        let self = this;
 
+        if (this.targetData.media == DATA_MEDIA_TYPE.File && updateMode == "forwards") {
+            // Write to target file
+            this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
+            // Filter target records
+            let records = await ___filterTargetRecords([...this.sourceData.idRecordsMap.values()]);
+            // Mock records
+            records = [...___mockRecords(records).keys()];
+            // Write to target csv file
+            await ___writeToTargetCSVFile(records);
+            // Write to output csv file
+            await Common.writeCsvFileAsync(self.data.csvFilename, records, true);
+            return;
+        }
+        return;
 
         // ------------------------ Internal functions --------------------------
-        async function ___filterTargetRecords() {
-            // HACK: Implement ___filterTargetRecords
-            //targetRecordsFilter....
+        async function ___filterTargetRecords(records: Array<any>): Promise<Array<any>> {
+            return new Promise<Array<any>>(resolve => {
+                if (!self.scriptObject.targetRecordsFilter || records.length == 0) {
+                    resolve(records);
+                    return;
+                }
+                try {
+                    return alasql(`SELECT * FROM ? WHERE ${self.scriptObject.targetRecordsFilter}`, [records], function (selectedRecords: any) {
+                        resolve(selectedRecords);
+                        return;
+                    });
+                } catch (ex) {
+                    resolve(records);
+                    return;
+                }
+            });
+        }
+
+        async function ___writeToTargetCSVFile(records: Array<any>): Promise<void> {
+            if (self.script.createTargetCSVFiles) {
+                await Common.writeCsvFileAsync(self.data.targetCSVFilename(self.operation), records, true);
+            }
+        }
+
+        function ___mockRecords(records: Array<any>, recordIds?: Array<string>): Map<object, object> {
+
+            let mockRecordToOriginalRecordMap: Map<object, object> = new Map<object, object>();
+
+            if (records.length == 0) {
+                return mockRecordToOriginalRecordMap;
+            }
+
+            recordIds = recordIds || records.map(x => x["Id"]);
+            let recordProperties = Object.keys(records[0]);
+
+            if (self.scriptObject.updateWithMockData) {
+                let mockFields: Map<string, {
+                    fn: string,
+                    regIncl: string,
+                    regExcl: string,
+                    disallowMockAllRecord: boolean,
+                    allowMockAllRecord: boolean
+                }> = new Map<string, {
+                    fn: string,
+                    regIncl: string,
+                    regExcl: string,
+                    disallowMockAllRecord: boolean,
+                    allowMockAllRecord: boolean
+                }>();
+
+                [...self.data.fieldsToUpdateMap.values()].forEach(fieldDescribe => {
+                    let mockField = ___getMockPatternByFieldName(fieldDescribe.name);
+                    if (recordProperties.indexOf(mockField.name) >= 0 && mockField.pattern) {
+                        let fn = mockField.pattern;
+                        if (CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
+                            fn = fn.replace(/\(/, `('${mockField.name}',`);
+                        }
+                        mockField.excludedRegex = mockField.excludedRegex || '';
+                        mockField.includedRegex = mockField.includedRegex || '';
+                        mockFields.set(mockField.name, {
+                            fn,
+                            regExcl: mockField.excludedRegex.split(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
+                            regIncl: mockField.includedRegex.split(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
+                            disallowMockAllRecord: mockField.excludedRegex.indexOf(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG) >= 0,
+                            allowMockAllRecord: mockField.includedRegex.indexOf(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG) >= 0,
+                        });
+                    }
+                });
+                MockGenerator.resetCounter();
+                records.forEach((originalRecord: any, index: number) => {
+                    let mockedRecord = Object.assign({}, originalRecord);
+                    let doNotMock = false;
+                    let mockAllRecord = false;
+                    let m: Map<string, boolean> = new Map<string, boolean>();
+                    [...mockFields.keys()].forEach(name => {
+                        if (!doNotMock) {
+                            let mockField = mockFields.get(name);
+                            let value = String(mockedRecord[name]);
+                            let excluded = mockField.regExcl && (new RegExp(mockField.regExcl, 'ig').test(value));
+                            let included = mockField.regIncl && (new RegExp(mockField.regIncl, 'ig').test(value));
+                            if (included && mockField.allowMockAllRecord) {
+                                mockAllRecord = true;
+                            }
+                            if (excluded && mockField.disallowMockAllRecord) {
+                                doNotMock = true;
+                            } else {
+                                if (mockAllRecord || (!mockField.regExcl || !excluded) && (!mockField.regIncl || included)) {
+                                    m.set(name, true);
+                                }
+                            }
+                        }
+                    });
+                    if (!doNotMock) {
+                        [...mockFields.keys()].forEach(name => {
+                            if (mockAllRecord || m.has(name)) {
+                                let mockField = mockFields.get(name);
+                                if (mockField.fn == "ids") {
+                                    mockedRecord[name] = recordIds[index];
+                                } else {
+                                    mockedRecord[name] = eval(`casual.${mockField.fn}`);
+                                }
+                            }
+                        });
+                    }
+
+                    mockRecordToOriginalRecordMap.set(mockedRecord, originalRecord);
+                });
+            } else {
+                records.forEach((record: any) => {
+                    mockRecordToOriginalRecordMap.set(record, record);
+                });
+            }
+            return mockRecordToOriginalRecordMap;
+        }
+
+        function ___getMockPatternByFieldName(fieldName: string): ScriptMockField {
+            return self.scriptObject.mockFields.filter(field => field.name == fieldName)[0] || new ScriptMockField();
         }
 
     }
@@ -1088,6 +1220,9 @@ class TaskOrgData {
     }
     get allRecords(): boolean {
         return this.isSource ? this.task.scriptObject.processAllSource : this.task.scriptObject.processAllTarget;
+    }
+    get media(): DATA_MEDIA_TYPE {
+        return this.org.media;
     }
 
 

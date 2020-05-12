@@ -133,6 +133,10 @@
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s new records.",
     "queryingTotallyFetched": "{%s} Total retrieved (source/target): %s records.",
     "queryString": "{%s} Query string: %s.",
-    "fetchingSummary": "Data retrieving summary"
+    "fetchingSummary": "Data retrieving summary",
+
+    "updatingTarget": "Updating the Target %s...",
+    "updatingTargetCompleted": "Updating the Target (%s) has been completed.",
+    "writingToFile": "{%s} Writing to the file %s."
 
 }

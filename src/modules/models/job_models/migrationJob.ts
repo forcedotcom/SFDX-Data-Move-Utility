@@ -313,11 +313,28 @@ export default class MigrationJob {
     }
 
     async updateRecords(): Promise<void> {
-        // HACK: Implement updateRecords()
+        // STEP 1:::::::::
+        // FORWARDS ***********
+        this.logger.infoMinimal(RESOURCES.newLine);        
+        this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            await task.updateRecords();
+            await task.updateRecords("forwards");
         }
+        // Update completed message
+        this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step1));
+
+
+        // STEP 2:::::::::
+        // BACKWARDS ***********
+        this.logger.infoMinimal(RESOURCES.newLine);        
+        this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step2));
+        for (let index = 0; index < this.tasks.length; index++) {
+            const task = this.tasks[index];
+            await task.updateRecords("backwards");
+        }
+        // Update completed message
+        this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2));
     }
 
     /**

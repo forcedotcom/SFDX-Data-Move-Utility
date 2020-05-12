@@ -40,6 +40,12 @@ export const CONSTANTS = {
     COMPLEX_FIELDS_QUERY_PREFIX: '$$',
     COMPLEX_FIELDS_SEPARATOR: ';',
 
+    MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
+    SPECIAL_MOCK_COMMANDS: [
+        "c_seq_number", 
+        "c_seq_date"
+    ],
+
     NOT_SUPPORTED_OBJECTS: [
         'Profile',
         'RecordType',

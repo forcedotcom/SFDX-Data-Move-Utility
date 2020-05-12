@@ -161,7 +161,11 @@ export enum RESOURCES {
     queryingFinished = "queryingFinished",
     queryingTotallyFetched = "queryingTotallyFetched",
     queryString = "queryString",
-    fetchingSummary = "fetchingSummary"
+    fetchingSummary = "fetchingSummary",
+
+    updatingTarget = "updatingTarget",
+    updatingTargetCompleted = "updatingTargetCompleted",
+    writingToFile = "writingToFile"
 
 }
 
