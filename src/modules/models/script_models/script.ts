@@ -168,7 +168,7 @@ export default class Script {
                 // Group + User => User
                 const referencedObjectType = thisField.referencedObjectType == "Group" ? "User" : thisField.referencedObjectType;
 
-                if (thisField.isReference) {
+                if (thisField.lookup) {
 
                     // Search for the parent ScriptObject
                     thisField.parentLookupObject = this.objects.filter(x => x.name == referencedObjectType)[0];
@@ -224,7 +224,7 @@ export default class Script {
                     __rSField.scriptObject = thisObject;
                     __rSField.custom = thisField.custom;
                     __rSField.parentLookupObject = thisField.parentLookupObject;
-                    __rSField.isReference = true;
+                    __rSField.lookup = true;
 
                     thisField.__rSField = __rSField;
                     __rSField.idSField = thisField;

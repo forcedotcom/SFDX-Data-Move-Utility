@@ -71,7 +71,9 @@ export const CONSTANTS = {
         "createable_true",
         "createable_false",
         "lookup_true",
-        "lookup_false"
+        "lookup_false",
+        "person_true",
+        "person_false"
     ],
 
     SHORT_QUERY_STRING_MAXLENGTH: 250,

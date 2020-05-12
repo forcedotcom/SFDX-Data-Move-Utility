@@ -293,13 +293,12 @@ export class Sfdx {
             f.type = field.type;
             f.label = field.label;
             f.custom = field.custom;
-            f.isReference = field.referenceTo != null;
             f.updateable = field.updateable;
             f.autoNumber = field["autoNumber"];
             f.creatable = field.createable;
             f.calculated = field.calculated;
             f.cascadeDelete = field.cascadeDelete;
-            f.isReference = field.referenceTo != null && field.referenceTo.length > 0;
+            f.lookup = field.referenceTo != null && field.referenceTo.length > 0;
             f.referencedObjectType = field.referenceTo[0];
 
             sObjectDescribe.fieldsMap.set(f.name, f);

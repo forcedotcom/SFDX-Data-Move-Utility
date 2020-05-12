@@ -35,7 +35,7 @@ export default class SFieldDescribe {
     custom: boolean = false;
     calculated: boolean = false;
 
-    isReference: boolean = false;
+    lookup: boolean = false;
     referencedObjectType: string = "";
 
     /**
@@ -67,20 +67,20 @@ export default class SFieldDescribe {
      */
     idSField: SFieldDescribe;
 
-    get is__r(): boolean {
-        return !!this.idSField;
+    get readonly() {
+        return !(this.creatable && !this.isFormula && !this.autoNumber);
     }
 
-    get isMasterDetail() {
-        return this.isReference && (!this.updateable || this.cascadeDelete);
+    get person(){
+        return this.nameId.endsWith('__pc');
     }
 
     get isFormula() {
         return this.calculated;
     }
 
-    get isReadonly() {
-        return !(this.creatable && !this.isFormula && !this.autoNumber);
+    get isMasterDetail() {
+        return this.lookup && (!this.updateable || this.cascadeDelete);
     }
 
     get isBoolean() {
@@ -91,16 +91,20 @@ export default class SFieldDescribe {
         return Common.isComplexField(this.name);
     }
 
+    get is__r(): boolean {
+        return !!this.idSField;
+    }
+
     get isComplexOr__r(): boolean {
         return Common.isComplexOr__rField(this.name);
     }
 
     get isSimple(): boolean {
-        return !this.isComplexOr__r && !this.isReference;
+        return !this.isComplexOr__r && !this.lookup;
     }
 
     get isSimpleReference(): boolean {
-        return this.isReference && !this.is__r;
+        return this.lookup && !this.is__r;
     }
 
     get isSimpleSelfReference(): boolean {
@@ -159,7 +163,7 @@ export default class SFieldDescribe {
      * @memberof SFieldDescribe
      */
     get fullName__r(): string {
-        if (this.isReference) {
+        if (this.lookup) {
             return this.name__r + "." + Common.getComplexField(this.parentLookupObject.externalId);
         } else {
             return this.name__r;
@@ -175,7 +179,7 @@ export default class SFieldDescribe {
      * @memberof SFieldDescribe
      */
     get fullOriginalName__r(): string {
-        if (this.isReference) {
+        if (this.lookup) {
             return this.name__r + "." + Common.getComplexField(this.parentLookupObject.originalExternalId);
         } else {
             return this.name__r;
@@ -191,7 +195,7 @@ export default class SFieldDescribe {
     * @memberof SFieldDescribe
     */
     get fullIdName__r(): string {
-        if (this.isReference) {
+        if (this.lookup) {
             return this.name__r + ".Id";
         } else {
             return this.name__r;

@@ -65,13 +65,6 @@ export default class ScriptObject {
     isExtraObject: boolean = false;
     processAllSource: boolean = false;
     processAllTarget: boolean = false;
-
-    /**
-     * all,* + keywords listed in the  MULTISELECT_SOQL_KEYWORDS
-     *
-     * @type {string}
-     * @memberof ScriptObject
-     */
     multiselectPattern: any;
 
     get task(): MigrationJobTask {
@@ -114,7 +107,7 @@ export default class ScriptObject {
             let name = (<SOQLField>x).field;
             let describe = this.sourceSObjectDescribe.fieldsMap.get(name)
                 || this.targetSObjectDescribe && this.targetSObjectDescribe.fieldsMap && this.targetSObjectDescribe.fieldsMap.get(name);
-            if (!describe || describe.isReadonly) {
+            if (!describe || describe.readonly) {
                 return null;
             }
             return (<SOQLField>x).field;
@@ -172,7 +165,7 @@ export default class ScriptObject {
 
     get parentLookupObjects(): ScriptObject[] {
         return Common.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
-            if (x.isReference) {
+            if (x.lookup) {
                 return x.parentLookupObject;
             }
         }).filter(x => !!x), 'name');
@@ -405,16 +398,11 @@ export default class ScriptObject {
             let fieldsInOriginalQuery = [].concat(this.fieldsInQuery);
             let pattern = this.multiselectPattern;
             [...describe.fieldsMap.values()].forEach(fieldDescribe => {
-                if (typeof pattern.all != "undefined" && pattern.all
-                    || ___compare(fieldDescribe.updateable, pattern.updateable)
-                    && ___compare(fieldDescribe.creatable, pattern.creatable)
-                    && ___compare(fieldDescribe.custom, pattern.custom)
-                    && ___compare(fieldDescribe.isReadonly, pattern.readonly)
-                    && ___compare(fieldDescribe.isReference, pattern.lookup)
-                    && ___compare(fieldDescribe.name.indexOf('__pc') >= 0, pattern.person)
+                if ((___compare(pattern.all != "undefined", pattern.all == true)
+                    || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))
                     && fieldsInOriginalQuery.indexOf(fieldDescribe.name) < 0) {
 
-                    if (!(fieldDescribe.isReference && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0)) {
+                    if (!(fieldDescribe.lookup && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0)) {
                         this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
                     }
 
@@ -427,8 +415,11 @@ export default class ScriptObject {
         this.query = composeQuery(this.parsedQuery);
 
         // ---------------------- Internal functions --------------------------- //        
-        function ___compare(fieldDescribeProperty: any, patternValue: any) {
-            return fieldDescribeProperty == patternValue || typeof patternValue == "undefined";
+        function ___compare(fieldDescribeProperty: any, patternProperty: any, negative: boolean = false): boolean {
+            if (!negative)
+                return fieldDescribeProperty == patternProperty || typeof patternProperty == "undefined";
+            else
+                return fieldDescribeProperty != patternProperty && typeof fieldDescribeProperty != "undefined";
         }
     }
 
@@ -463,7 +454,7 @@ export default class ScriptObject {
         }
     }
 
-    private _parseQuery(query : string): Query {
+    private _parseQuery(query: string): Query {
         let self = this;
         let parsedQuery = parseQuery(query);
         let fields = [].concat(parsedQuery.fields);
