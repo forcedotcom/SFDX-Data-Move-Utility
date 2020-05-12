@@ -633,7 +633,7 @@ export default class MigrationJobTask {
                 }
             } else {
                 // Read from the SOURCE ORG **********************************************
-                if (this.scriptObject.processAllSource && queryMode == "forwards") {
+                if (this.scriptObject.processAllSource && queryMode == "forwards" && !reversed) {
                     // All records *********** //
                     let query = this.createQuery();
                     // Start message ------

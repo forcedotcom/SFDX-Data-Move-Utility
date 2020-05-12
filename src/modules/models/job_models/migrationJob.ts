@@ -286,7 +286,7 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.noRecords);
         }
 
-        // STEP 1:::::::::
+        // STEP 3:::::::::
         // TARGET ONLY FORWARDS ***********        
         retrieved = false;
         this.logger.infoMinimal(RESOURCES.newLine);

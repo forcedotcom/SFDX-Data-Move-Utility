@@ -400,7 +400,7 @@ export default class ScriptObject {
             [...describe.fieldsMap.values()].forEach(fieldDescribe => {
                 if ((___compare(pattern.all != "undefined", pattern.all == true)
                     || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))
-                    && fieldsInOriginalQuery.indexOf(fieldDescribe.name) < 0) {
+                    && ___compare(fieldsInOriginalQuery.indexOf(fieldDescribe.name) < 0, true)) {
                     if (!(fieldDescribe.lookup && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0)) {
                         this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
                     }
