@@ -84,7 +84,8 @@ export default class MigrationJobTask {
         related to this task 
         has some child master-detail tasks
          */
-        isMasterDetailTask: false
+        isMasterDetailTask: false,
+        filteredQueryValueCache: new Map<string, Set<string>>()
     }
 
 
@@ -781,35 +782,37 @@ export default class MigrationJobTask {
             }
             return records;
         }
-
-
-
     }
 
     /**
      * Perform record update
      *
-     * @returns {Promise<void>}
+     * @returns {Promise<number>} Total amount of updated records
      * @memberof MigrationJobTask
      */
-    async updateRecords(updateMode: "forwards" | "backwards"): Promise<void> {
+    async updateRecords(updateMode: "forwards" | "backwards"): Promise<number> {
 
         let self = this;
 
         if (this.targetData.media == DATA_MEDIA_TYPE.File && updateMode == "forwards") {
-            // Write to target file
-            this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
-            // Filter target records
-            let records = await ___filterTargetRecords([...this.sourceData.idRecordsMap.values()]);
-            // Mock records
-            records = [...___mockRecords(records).keys()];
-            // Write to target csv file
-            await ___writeToTargetCSVFile(records);
-            // Write to output csv file
-            await Common.writeCsvFileAsync(self.data.csvFilename, records, true);
-            return;
+            // Write to target CSV file ********************************
+            // *********************************************************
+            if (this.operation != OPERATION.Delete) {
+                this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
+                // Filter target records
+                let records = await ___filterTargetRecords([...this.sourceData.idRecordsMap.values()]);
+                // Mock records
+                records = [...___mockRecords(records).keys()];
+                // Write to target csv file
+                await ___writeToTargetCSVFile(records);
+                // Write to output csv file
+                await Common.writeCsvFileAsync(self.data.csvFilename, records, true);
+                return records.length;
+            }
+            return 0;
         }
-        return;
+
+        return 0;
 
         // ------------------------ Internal functions --------------------------
         async function ___filterTargetRecords(records: Array<any>): Promise<Array<any>> {
@@ -1062,7 +1065,6 @@ export default class MigrationJobTask {
 
     private _createFilteredQueries(queryMode: "forwards" | "backwards" | "target", reversed: boolean): Array<string> {
 
-        let self = this;
         let queries = new Array<string>();
         let fieldsToQueryMap: Map<SFieldDescribe, Array<string>> = new Map<SFieldDescribe, Array<string>>();
         let isSource = queryMode != "target";
@@ -1124,12 +1126,25 @@ export default class MigrationJobTask {
             });
         }
 
-        if (isSource && self.scriptObject.isLimitedQuery && !reversed) {
+        if (isSource && this.scriptObject.isLimitedQuery && !reversed) {
             queries.push(this.createQuery());
         }
         fieldsToQueryMap.forEach((inValues, field) => {
+            // Filter by cached values => get out all duplicated IN values thet
+            // were previously queried
+            let key = field.name;
+            let valueCache = this.tempData.filteredQueryValueCache.get(key);
+            if (!valueCache) {
+                valueCache = new Set<string>();
+                this.tempData.filteredQueryValueCache.set(key, valueCache);
+            }
+            inValues = inValues.filter(inValue => !valueCache.has(inValue));
             if (inValues.length > 0) {
-                Common.createFieldInQueries(self.data.fieldsInQuery, field.name, this.sObjectName, inValues).forEach(query => {
+                inValues.forEach(inValue => {
+                    valueCache.add(inValue);
+                });
+                // Create and add query
+                Common.createFieldInQueries(this.data.fieldsInQuery, field.name, this.sObjectName, inValues).forEach(query => {
                     queries.push(query);
                 });
             }

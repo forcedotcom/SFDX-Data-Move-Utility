@@ -137,6 +137,7 @@
 
     "updatingTarget": "Updating the Target %s...",
     "updatingTargetCompleted": "Updating the Target (%s) has been completed.",
-    "writingToFile": "{%s} Writing to the file %s."
+    "writingToFile": "{%s} Writing to the file %s.",
+    "nothingUpdated": "Nothing was updated"
 
 }

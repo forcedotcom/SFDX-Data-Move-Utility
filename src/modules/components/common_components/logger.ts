@@ -165,7 +165,8 @@ export enum RESOURCES {
 
     updatingTarget = "updatingTarget",
     updatingTargetCompleted = "updatingTargetCompleted",
-    writingToFile = "writingToFile"
+    writingToFile = "writingToFile",
+    nothingUpdated = "nothingUpdated"
 
 }
 

@@ -317,24 +317,31 @@ export default class MigrationJob {
         // FORWARDS ***********
         this.logger.infoMinimal(RESOURCES.newLine);        
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
+        let updated = 0;
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            await task.updateRecords("forwards");
+            updated += (await task.updateRecords("forwards"));
         }
-        // Update completed message
-        this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step1));
-
+        // Update completed message        
+        if (updated > 0)
+            this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step1));
+        else
+            this.logger.infoNormal(RESOURCES.nothingUpdated);
 
         // STEP 2:::::::::
         // BACKWARDS ***********
+        updated = 0;
         this.logger.infoMinimal(RESOURCES.newLine);        
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step2));
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            await task.updateRecords("backwards");
+            updated += (await task.updateRecords("backwards"));
         }
         // Update completed message
-        this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2));
+        if (updated > 0)
+            this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2));
+        else
+            this.logger.infoNormal(RESOURCES.nothingUpdated);
     }
 
     /**
