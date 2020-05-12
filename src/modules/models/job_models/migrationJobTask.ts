@@ -885,7 +885,7 @@ export default class MigrationJobTask {
                     let mockedRecord = Object.assign({}, originalRecord);
                     let doNotMock = false;
                     let mockAllRecord = false;
-                    let m: Map<string, boolean> = new Map<string, boolean>();
+                    let fieldsToMockMap: Map<string, boolean> = new Map<string, boolean>();
                     [...mockFields.keys()].forEach(name => {
                         if (!doNotMock) {
                             let mockField = mockFields.get(name);
@@ -899,14 +899,14 @@ export default class MigrationJobTask {
                                 doNotMock = true;
                             } else {
                                 if (mockAllRecord || (!mockField.regExcl || !excluded) && (!mockField.regIncl || included)) {
-                                    m.set(name, true);
+                                    fieldsToMockMap.set(name, true);
                                 }
                             }
                         }
                     });
                     if (!doNotMock) {
                         [...mockFields.keys()].forEach(name => {
-                            if (mockAllRecord || m.has(name)) {
+                            if (mockAllRecord || fieldsToMockMap.has(name)) {
                                 let mockField = mockFields.get(name);
                                 if (mockField.fn == "ids") {
                                     mockedRecord[name] = recordIds[index];
