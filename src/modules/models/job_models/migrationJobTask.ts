@@ -783,7 +783,7 @@ export default class MigrationJobTask {
             //  Write to target CSV file *********** ///
             if (this.operation != OPERATION.Delete && updateMode == "forwards") {
                 this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
-                // Filter target records
+                // Filter records
                 let records = await ___filterRecords(this.sourceData.records);
                 // Mock records
                 records = [...___mockRecords(records).keys()];
@@ -903,6 +903,7 @@ export default class MigrationJobTask {
             let filtered = await ___filterRecords([...tempMap.keys()]);
             // Mock records
             filtered = [...___mockRecords(filtered).keys()];
+            // Remapping back
             filtered.forEach(cloned => {
                 let originalCloned = cloned___IdMap.get(cloned[CONSTANTS.__ID_FIELD]);
                 processedData.recordsMap.set(cloned, tempMap.get(originalCloned));
