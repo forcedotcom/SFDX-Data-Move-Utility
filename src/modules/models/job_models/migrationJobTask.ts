@@ -803,22 +803,22 @@ export default class MigrationJobTask {
         let processedRecords = 0;
         if (this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete) {
 
-            //  Deploy to target org ************* ///
-            // Process non-person accounts/contacts + other objects
-            let updateData = await ___createProcessedData(false);
-            if (updateData.missingParentLookups.length > 0) {
+            //  Update the Target org ************* ///
+            // Non-person Accounts/Contacts + other objects
+            let processedData = await ___createProcessedData(false);
+            if (processedData.missingParentLookups.length > 0) {
                 //TODO: Warn user about missing lookup records
             }
-            processedRecords += (await ___processData(updateData));
+            processedRecords += (await ___processData(processedData));
 
-            // Process person accounts/contacts only
+            // Person Accounts/Contacts only
             if (this.isPersonAccountOrContact) {
                 // Create update data for Person accounts                
-                updateData = await ___createProcessedData(true);
-                if (updateData.missingParentLookups.length > 0) {
+                processedData = await ___createProcessedData(true);
+                if (processedData.missingParentLookups.length > 0) {
                     //TODO: Warn user about missing lookup records
                 }
-                processedRecords += (await ___processData(updateData));
+                processedRecords += (await ___processData(processedData));
             }
 
         }
@@ -868,8 +868,8 @@ export default class MigrationJobTask {
                 cloned___IdMap.set(record[CONSTANTS.__ID_FIELD], record);
             });
 
-            // Create recordsMap: cloned => source. ********** ///
-            // Also update target lookup id fields by the source.
+            // Create recordsMap: cloned => source ********** ///
+            // Also update target lookup id fields by the source
             if (self.isPersonAccountOrContact) {
                 if (processPersonAccounts) {
                     // For only non-person Acounts/Contacts: only IsPersonAccount == null
@@ -925,7 +925,7 @@ export default class MigrationJobTask {
                 }
             });
 
-            // Ready ********** ///
+            // Records are ready ********** ///
             return processedData;
         }
 
