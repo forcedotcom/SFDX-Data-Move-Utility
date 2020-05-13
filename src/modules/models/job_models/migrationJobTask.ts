@@ -852,18 +852,20 @@ export default class MigrationJobTask {
                     });
             }
 
-            // Create raw map of : clone_of_source => source ********* ///
+            // Create temporary map: cloned => source ********* ///
             let tempMap = Common.cloneArrayOfObjects(self.sourceData.records, processedData.fieldNames);
+
+            // Create ___Id map
             let cloned___IdMap = new Map<string, any>();
             [...tempMap.keys()].forEach(record => {
                 cloned___IdMap.set(record[CONSTANTS.__ID_FIELD], record);
             });
 
-            // Create targetRecordsMap map of : cloned_of_source => source. ********** ///
+            // Create recordsMap: cloned => source. ********** ///
             // Also update target lookup id fields by the source.
             if (self.isPersonAccountOrContact) {
                 if (processPersonAccounts) {
-                    // For only non-person acounts / contacts : only items with IsPersonAccount == null
+                    // For only non-person Acounts/Contacts: only IsPersonAccount == null
                     tempMap.forEach((source, cloned) => {
                         if (!source["IsPersonAccount"]) {
                             ___updateLookupIdFields(processedData, source, cloned);
@@ -871,7 +873,7 @@ export default class MigrationJobTask {
                         }
                     });
                 } else {
-                    // For only person acounts / contacts : only items with IsPersonAccount != null
+                    // For only person Acounts/Contacts: only IsPersonAccount != null
                     tempMap.forEach((source, cloned) => {
                         if (!!source["IsPersonAccount"]) {
                             ___updateLookupIdFields(processedData, source, cloned);
@@ -880,14 +882,14 @@ export default class MigrationJobTask {
                     });
                 }
             } else {
-                // For other objects: all items from the raw map
+                // For other objects: ALL items from the raw map
                 tempMap.forEach((source, cloned) => {
                     ___updateLookupIdFields(processedData, source, cloned);
                     processedData.recordsMap.set(cloned, source);
                 });
             }
 
-            // Post-process the target records ********** ///
+            // Finalising to prepare the target records ********** ///
             tempMap = processedData.recordsMap;
             processedData.recordsMap = new Map<any, any>();
             // Filter records
@@ -898,7 +900,8 @@ export default class MigrationJobTask {
                 let originalCloned = cloned___IdMap.get(cloned[CONSTANTS.__ID_FIELD]);
                 processedData.recordsMap.set(cloned, tempMap.get(originalCloned));
             });
-            // Remove ___id and Id fields + set to-insert and to-update records
+            // Remove ___id and Id fields +
+            // Set recordsToInsert and recordsToUpdate
             processedData.recordsMap.forEach((sourceRecord, clonedSourceRecord) => {
                 delete clonedSourceRecord[CONSTANTS.__ID_FIELD];
                 let targetRecord = self.data.sourceToTargetRecordMap.get(sourceRecord);
