@@ -952,6 +952,7 @@ export default class MigrationJobTask {
                         "Parent ExternalId field": idField.parentLookupObject.externalId,
                         "Parent lookup object": idField.parentLookupObject.name
                     };
+                    cloned[idField.nameId] = null;
                     processedData.missingParentLookups.push(missing);
                 }
             });
