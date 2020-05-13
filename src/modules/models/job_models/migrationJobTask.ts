@@ -805,20 +805,20 @@ export default class MigrationJobTask {
 
             //  Update the Target org ************* ///
             // Non-person Accounts/Contacts + other objects
-            let processedData = await ___createProcessedData(false);
-            if (processedData.missingParentLookups.length > 0) {
+            let data = await ___createData(false);
+            if (data.missingParentLookups.length > 0) {
                 //TODO: Warn user about missing lookup records
             }
-            processedRecords += (await ___processData(processedData));
+            processedRecords += (await ___processData(data));
 
             // Person Accounts/Contacts only
             if (this.isPersonAccountOrContact) {
                 // Create update data for Person accounts                
-                processedData = await ___createProcessedData(true);
-                if (processedData.missingParentLookups.length > 0) {
+                data = await ___createData(true);
+                if (data.missingParentLookups.length > 0) {
                     //TODO: Warn user about missing lookup records
                 }
-                processedRecords += (await ___processData(processedData));
+                processedRecords += (await ___processData(data));
             }
 
         }
@@ -826,7 +826,7 @@ export default class MigrationJobTask {
 
 
         // ------------------------ Internal functions --------------------------
-        async function ___createProcessedData(processPersonAccounts: boolean): Promise<ProcessedData> {
+        async function ___createData(personAccounts: boolean): Promise<ProcessedData> {
 
             let processedData = new ProcessedData();
 
@@ -871,7 +871,7 @@ export default class MigrationJobTask {
             // Create recordsMap: cloned => source ********** ///
             // Also update target lookup id fields by the source
             if (self.isPersonAccountOrContact) {
-                if (processPersonAccounts) {
+                if (personAccounts) {
                     // For only non-person Acounts/Contacts: only IsPersonAccount == null
                     tempMap.forEach((source, cloned) => {
                         if (!source["IsPersonAccount"]) {
@@ -929,6 +929,14 @@ export default class MigrationJobTask {
             return processedData;
         }
 
+        /**
+        * @returns {Promise<number>} Number of records actually processed
+        */
+        async function ___processData(data: ProcessedData): Promise<number> {
+            // TODO: Implement this
+            return 0;
+        }
+
         function ___updateLookupIdFields(processedData: ProcessedData, source: any, cloned: any) {
             processedData.lookupIdFields.forEach(idField => {
                 let found = false;
@@ -962,13 +970,7 @@ export default class MigrationJobTask {
             });
         }
 
-        /**
-        * @returns {Promise<number>} Number of records actually processed
-        */
-        async function ___processData(processedData: ProcessedData): Promise<number> {
-            // TODO: Implement this
-            return null;
-        }
+
 
         async function ___filterRecords(records: Array<any>): Promise<Array<any>> {
             return new Promise<Array<any>>(resolve => {
