@@ -822,7 +822,7 @@ export default class MigrationJobTask {
         async function ___createProcessedData(processPersonAccounts: boolean): Promise<ProcessedData> {
 
             let processedData = new ProcessedData();
-            
+
             // Get sFields to update *********** ///
             processedData.sFields = self.data.sFieldsToUpdate.filter((field: SFieldDescribe) => {
                 if (updateMode == "forwards")
@@ -898,8 +898,7 @@ export default class MigrationJobTask {
                 let originalCloned = cloned___IdMap.get(cloned[CONSTANTS.__ID_FIELD]);
                 processedData.recordsMap.set(cloned, tempMap.get(originalCloned));
             });
-
-            // Remove ___id and Id fields + set to-insert and to-update records ********* ///
+            // Remove ___id and Id fields + set to-insert and to-update records
             processedData.recordsMap.forEach((sourceRecord, clonedSourceRecord) => {
                 delete clonedSourceRecord[CONSTANTS.__ID_FIELD];
                 let targetRecord = self.data.sourceToTargetRecordMap.get(sourceRecord);
