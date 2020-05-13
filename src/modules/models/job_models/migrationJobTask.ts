@@ -787,6 +787,10 @@ export default class MigrationJobTask {
                 let records = await ___filterRecords(this.sourceData.records);
                 // Mock records
                 records = [...___mockRecords(records).keys()];
+                // Remove extra columns
+                records.forEach(record => {
+                    delete records[CONSTANTS.__ID_FIELD];
+                });
                 // Write to target csv file
                 await ___writeToTargetCSVFile(records);
                 // Write to output csv file
@@ -904,8 +908,7 @@ export default class MigrationJobTask {
                 processedData.recordsMap.set(cloned, tempMap.get(originalCloned));
             });
 
-            // Remove ___id and Id fields +
-            // Set recordsToInsert and recordsToUpdate
+            // Remove extra fields + set recordsToInsert and recordsToUpdate
             processedData.recordsMap.forEach((sourceRecord, clonedSourceRecord) => {
                 delete clonedSourceRecord[CONSTANTS.__ID_FIELD];
                 let targetRecord = self.data.sourceToTargetRecordMap.get(sourceRecord);
