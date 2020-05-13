@@ -779,6 +779,7 @@ export default class MigrationJobTask {
         let self = this;
 
         if (this.targetData.media == DATA_MEDIA_TYPE.File) {
+
             //  Write to target CSV file *********** ///
             if (this.operation != OPERATION.Delete && updateMode == "forwards") {
                 this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
@@ -797,6 +798,7 @@ export default class MigrationJobTask {
 
         let processedRecords = 0;
         if (this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete) {
+
             //  Deploy to target org ************* ///
             // Process non-person accounts/contacts + other objects
             let updateData = await ___createProcessedData(false);
@@ -804,6 +806,7 @@ export default class MigrationJobTask {
                 //TODO: Warn user about missing lookup records
             }
             processedRecords += (await ___processData(updateData));
+
             // Process person accounts/contacts only
             if (this.isPersonAccountOrContact) {
                 // Create update data for Person accounts                
@@ -900,17 +903,20 @@ export default class MigrationJobTask {
                 let originalCloned = cloned___IdMap.get(cloned[CONSTANTS.__ID_FIELD]);
                 processedData.recordsMap.set(cloned, tempMap.get(originalCloned));
             });
+
             // Remove ___id and Id fields +
             // Set recordsToInsert and recordsToUpdate
             processedData.recordsMap.forEach((sourceRecord, clonedSourceRecord) => {
                 delete clonedSourceRecord[CONSTANTS.__ID_FIELD];
                 let targetRecord = self.data.sourceToTargetRecordMap.get(sourceRecord);
-                if (updateMode == "backwards") {
+                if (targetRecord && updateMode == "backwards") {
+                    clonedSourceRecord["Id"] = targetRecord["Id"];
                     processedData.recordsToUpdate.push(clonedSourceRecord);
                 } else if (!targetRecord && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
                     delete clonedSourceRecord["Id"];
                     processedData.recordsToInsert.push(clonedSourceRecord);
                 } else if (targetRecord && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
+                    clonedSourceRecord["Id"] = targetRecord["Id"];
                     processedData.recordsToUpdate.push(clonedSourceRecord);
                 }
             });
