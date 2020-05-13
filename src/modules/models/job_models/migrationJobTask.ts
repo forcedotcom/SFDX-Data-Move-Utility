@@ -53,6 +53,11 @@ export default class MigrationJobTask {
         return this.scriptObject && this.scriptObject.name;
     }
 
+    get isPersonAccountOrContact(): boolean {
+        return this.script.isPersonAccountEnabled
+            && (this.sObjectName == "Account" || this.sObjectName == "Contact");
+    }
+
     get script(): Script {
         return this.scriptObject.script;
     }
@@ -794,10 +799,10 @@ export default class MigrationJobTask {
 
         let self = this;
 
-        if (this.targetData.media == DATA_MEDIA_TYPE.File && updateMode == "forwards") {
+        if (this.targetData.media == DATA_MEDIA_TYPE.File) {
             // Write to target CSV file ********************************
             // *********************************************************
-            if (this.operation != OPERATION.Delete) {
+            if (this.operation != OPERATION.Delete && updateMode == "forwards") {
                 this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
                 // Filter target records
                 let records = await ___filterTargetRecords([...this.sourceData.idRecordsMap.values()]);
@@ -812,9 +817,69 @@ export default class MigrationJobTask {
             return 0;
         }
 
-        return 0;
+        let processedRecords = 0;
+        if (this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete) {
+            // Deploy to target org *************************************
+            // *********************************************************
+
+            // --------------- Process non-person accounts/contacts + other objects  ----------
+            // --------------------------------------------------------------------------------
+            let updateData = ___createUpdateData(false);
+            processedRecords += (await ___processUpdataData(updateData));
+
+            // --------------- Process person accounts/contacts only ----------
+            // --------------------------------------------------------------------------------
+            if (this.isPersonAccountOrContact) {
+                // Create update data for Person accounts                
+                updateData = ___createUpdateData(true);
+                processedRecords += (await ___processUpdataData(updateData));
+            }
+
+        }
+        return processedRecords;
+
 
         // ------------------------ Internal functions --------------------------
+        function ___createUpdateData(processPersonAccounts: boolean): UpdateData {
+
+            let prevTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) < this.job.tasks.indexOf(this));
+            let nextTasks = this.job.tasks.filter(task => this.job.tasks.indexOf(task) > this.job.tasks.indexOf(this));
+            let updateData = new UpdateData();
+
+            // Get fields to update: simple fields or reference fields with the parent lookup BEFORE
+            updateData.fieldsToUpdate = [...this.data.fieldsToUpdateMap.values()].filter(field => {
+                if (updateMode == "forwards")
+                    return field.isSimple || field.isSimpleReference && prevTasks.indexOf(field.parentLookupObject.task) >= 0;
+                else
+                    return field.isSimpleReference && nextTasks.indexOf(field.parentLookupObject.task) >= 0;
+            });
+
+            // Filter fields for person accounts/contacts
+            if (this.isPersonAccountOrContact) {
+
+                updateData.fieldsToUpdate = this.sObjectName == "Account" ?
+                    updateData.fieldsToUpdate.filter(field => {
+                        // For Person account
+                        return !field.person && CONSTANTS.NOT_SUPPORTED_FIELDS_FOR_PERSON_ACCOUNTS.indexOf(field.nameId) < 0;
+                    }) : updateData.fieldsToUpdate.filter(field => {
+                        // For Person contact
+                        return CONSTANTS.NOT_SUPPORTED_FIELDS_FOR_PERSON_CONTACTS.indexOf(field.nameId) < 0;
+                    });
+
+            }
+
+            if (this.isPersonAccountOrContact && processPersonAccounts) {
+
+            }
+
+            return updateData;
+        }
+
+        async function ___processUpdataData(updateData: UpdateData): Promise<number> {
+            // TODO: Implement this
+
+        }
+
         async function ___filterTargetRecords(records: Array<any>): Promise<Array<any>> {
             return new Promise<Array<any>>(resolve => {
                 if (!self.scriptObject.targetRecordsFilter || records.length == 0) {
@@ -933,7 +998,6 @@ export default class MigrationJobTask {
         function ___getMockPatternByFieldName(fieldName: string): ScriptMockField {
             return self.scriptObject.mockFields.filter(field => field.name == fieldName)[0] || new ScriptMockField();
         }
-
     }
 
     /**
@@ -1132,11 +1196,10 @@ export default class MigrationJobTask {
         fieldsToQueryMap.forEach((inValues, field) => {
             // Filter by cached values => get out all duplicated IN values thet
             // were previously queried
-            let key = field.name;
-            let valueCache = this.tempData.filteredQueryValueCache.get(key);
+            let valueCache = this.tempData.filteredQueryValueCache.get(field.name);
             if (!valueCache) {
                 valueCache = new Set<string>();
-                this.tempData.filteredQueryValueCache.set(key, valueCache);
+                this.tempData.filteredQueryValueCache.set(field.name, valueCache);
             }
             inValues = inValues.filter(inValue => !valueCache.has(inValue));
             if (inValues.length > 0) {
@@ -1241,4 +1304,12 @@ class TaskOrgData {
     }
 
 
+}
+
+
+// --------------------------------- Helper classes ---------------------------------------- //
+class UpdateData {
+    sourceRecords: Array<any> = new Array<any>();
+    targetRecords: Array<any> = new Array<any>();
+    fieldsToUpdate: Array<SFieldDescribe>;
 }

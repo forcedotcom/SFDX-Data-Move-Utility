@@ -28,7 +28,7 @@ export const CONSTANTS = {
     USER_AND_GROUP_FILENAME: 'UserAndGroup',
     CSV_ISSUES_ERRORS_FILENAME: 'CSVIssuesReport.csv',
     RECORD_TYPE_SOBJECT_NAME: "RecordType",
-    
+
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
     MAX_FETCH_SIZE: 100000,
     QUERY_BULK_API_THRESHOLD: 30000,
@@ -42,9 +42,10 @@ export const CONSTANTS = {
 
     MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
     SPECIAL_MOCK_COMMANDS: [
-        "c_seq_number", 
+        "c_seq_number",
         "c_seq_date"
     ],
+
 
     NOT_SUPPORTED_OBJECTS: [
         'Profile',
@@ -67,6 +68,7 @@ export const CONSTANTS = {
         'Group',
         'DandBCompany'
     ],
+
     MULTISELECT_SOQL_KEYWORDS: [
         "readonly_true",
         "readonly_false",
@@ -80,6 +82,17 @@ export const CONSTANTS = {
         "lookup_false",
         "person_true",
         "person_false"
+    ],
+
+    NOT_SUPPORTED_FIELDS_FOR_PERSON_ACCOUNTS: [
+        "FirstName",
+        "LastName",
+        "IsPersonAccount",
+        "Salutation"
+    ],
+    NOT_SUPPORTED_FIELDS_FOR_PERSON_CONTACTS: [
+        "IsPersonAccount",
+        "Name"
     ],
 
     SHORT_QUERY_STRING_MAXLENGTH: 250,

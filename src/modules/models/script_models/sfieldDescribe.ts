@@ -72,7 +72,8 @@ export default class SFieldDescribe {
     }
 
     get person(){
-        return this.nameId.endsWith('__pc');
+        return this.nameId.endsWith('__pc') 
+            || this.nameId.startsWith('Person') && !this.custom;
     }
 
     get isFormula() {

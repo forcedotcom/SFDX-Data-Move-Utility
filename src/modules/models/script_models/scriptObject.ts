@@ -244,28 +244,32 @@ export default class ScriptObject {
         try {
             // Parse query string    
             this.parsedQuery = this._parseQuery(this.query);
-
-            if (this.operation == OPERATION.Delete) {
-                this.deleteOldData = true;
-                this.parsedQuery.fields = [getComposedField("Id")];
-            }
-            // Add record Id field to the query
-            if (!this.fieldsInQuery.some(x => x == "Id")) {
-                this.parsedQuery.fields.push(getComposedField("Id"));
-            }
-            // Add external Id field to the query
-            if (this.hasComplexExternalId) {
-                this.parsedQuery.fields.push(getComposedField(this.complexExternalId));
-            } else {
-                this.parsedQuery.fields.push(getComposedField(this.externalId));
-            }
-            // Add original external id field to the query
-            this.parsedQuery.fields.push(getComposedField(this.complexOriginalExternalId));
-            // Make each field appear only once in the query
-            this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
+        if (this.operation == OPERATION.Delete) {
+            this.deleteOldData = true;
+            this.parsedQuery.fields = [getComposedField("Id")];
+        }
+        // Add record Id field to the query
+        if (!this.fieldsInQuery.some(x => x == "Id")) {
+            this.parsedQuery.fields.push(getComposedField("Id"));
+        }
+        // Add external Id field to the query
+        if (this.hasComplexExternalId) {
+            this.parsedQuery.fields.push(getComposedField(this.complexExternalId));
+        } else {
+            this.parsedQuery.fields.push(getComposedField(this.externalId));
+        }
+        // Add original external id field to the query
+        this.parsedQuery.fields.push(getComposedField(this.complexOriginalExternalId));
+        // Add IsPersonAccount field
+        if (this.script.isPersonAccountEnabled && (this.name == "Account" || this.name == "Contact")) {
+            this.parsedQuery.fields.push(getComposedField("IsPersonAccount"));
+        }
+        // Make each field appear only once in the query
+        this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
+
 
         // Update object
         this.query = composeQuery(this.parsedQuery);
@@ -281,7 +285,7 @@ export default class ScriptObject {
                     this.parsedDeleteQuery = parseQuery(this.query);
                 }
                 this.parsedDeleteQuery.fields = [getComposedField("Id")];
-                if (this.script.sourceOrg.isPersonAccountEnabled && this.name == "Contact") {
+                if (this.script.isPersonAccountEnabled && this.name == "Contact") {
                     this.parsedDeleteQuery.where = Common.composeWhereClause(this.parsedDeleteQuery.where, "IsPersonAccount", "false", "=", "BOOLEAN", "AND");
                 }
                 this.deleteQuery = composeQuery(this.parsedDeleteQuery);

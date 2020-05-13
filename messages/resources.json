@@ -67,6 +67,7 @@
     "accessToOrgExpired": "Access token to the %s has expired or the user has no access.",
     "MalformedQuery": "Malformed select query for the sObject %s: %s, error: %s.",
     "MalformedDeleteQuery": "Malformed delete query for the sObject %s: %s, error: %s.",
+    "needBothOrgsToSupportPersonAccounts": "Only the % org has person accounts enabled, but the both orgs (Source and Target) must have person accounts enabled.",
 
     "gettingOrgMetadata": "Getting and analysing objects metadata...",
     "gettingMetadataForSObject": "Getting metadata for %s (%s)",

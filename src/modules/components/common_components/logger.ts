@@ -95,6 +95,7 @@ export enum RESOURCES {
     accessToOrgExpired = "accessToOrgExpired",
     MalformedQuery = "MalformedQuery",
     MalformedDeleteQuery = "MalformedDeleteQuery",
+    needBothOrgsToSupportPersonAccounts = "needBothOrgsToSupportPersonAccounts",
     
     gettingOrgMetadata = "gettingOrgMetadata",
     gettingMetadataForSObject = "gettingMetadataForSObject",

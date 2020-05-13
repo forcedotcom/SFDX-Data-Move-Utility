@@ -225,8 +225,6 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     async retrieveRecords(): Promise<void> {
-
-
         // STEP 1:::::::::
         // SOURCE FORWARDS ***********
         let retrieved: boolean = false;

@@ -101,6 +101,9 @@ export class RunCommand {
         // Describe sobjects
         await this.script.processObjectsMetadataAsync();
 
+        // Vaidate orgs
+        this.script.verifyOrgs();
+
     }
 
     /**

@@ -64,6 +64,10 @@ export default class Script {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     job: MigrationJob;
 
+    get isPersonAccountEnabled(): boolean {
+        return this.sourceOrg.isPersonAccountEnabled;
+    }
+
     get bulkApiVersionNumber(): number {
         return +(this.bulkApiVersion || '1.0');
     }
@@ -90,7 +94,7 @@ export default class Script {
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         this.apiVersion = apiVersion || this.apiVersion;
 
-        if (sourceUsername.toLowerCase() == targetUsername.toLowerCase()){
+        if (sourceUsername.toLowerCase() == targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
         }
 
@@ -128,6 +132,7 @@ export default class Script {
         // Setup orgs
         await this.sourceOrg.setupAsync();
         await this.targetOrg.setupAsync();
+
 
         // Setup objects
         this.objects.forEach(object => {
@@ -242,5 +247,31 @@ export default class Script {
 
     }
 
+    /**
+     * Checks orgs consistency
+     *
+     * @memberof Script
+     */
+    verifyOrgs() {
+        
+        // ***** Verifying person accounts
+        if (this.objects.filter(obj => obj.name == "Account" || obj.name == "Contact")) {
+            // Verify target org
+            if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled
+                && this.targetOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled) {
+                // Missing PA in Target
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts, 
+                            this.logger.getResourceString(RESOURCES.source)));
+            }
+            // Verify source org
+            if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled
+                && this.targetOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled) {
+                // Missing PA in Source
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts, 
+                            this.logger.getResourceString(RESOURCES.target)));
+            }
+        }
+
+    }
 }
 
