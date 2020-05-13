@@ -827,7 +827,7 @@ export default class MigrationJobTask {
             let processedData = new ProcessedData();
 
             // Get sFields to update *********** ///
-            processedData.sFields = self.data.sFieldsToUpdate.filter((field: SFieldDescribe) => {
+            processedData.fields = self.data.sFieldsToUpdate.filter((field: SFieldDescribe) => {
                 if (updateMode == "forwards")
                     // Step 1 : Simple sFields or reference fields with the parent lookup BEFORE
                     return field.isSimple || field.isSimpleReference && self.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0;
@@ -840,16 +840,16 @@ export default class MigrationJobTask {
 
             // Add Record Id sField ************ ///
             if (self.operation != OPERATION.Insert) {
-                processedData.sFields.push(self.data.sFieldsInQuery.filter(field => field.nameId == "Id")[0]);
+                processedData.fields.push(self.data.sFieldsInQuery.filter(field => field.nameId == "Id")[0]);
             }
 
             // Filter fields for person accounts/contacts ************ ///
             if (self.isPersonAccountOrContact) {
-                processedData.sFields = self.sObjectName == "Account" ?
-                    processedData.sFields.filter((field: SFieldDescribe) => {
+                processedData.fields = self.sObjectName == "Account" ?
+                    processedData.fields.filter((field: SFieldDescribe) => {
                         // For Person account
                         return !field.person && CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.indexOf(field.nameId) < 0;
-                    }) : processedData.sFields.filter(field => {
+                    }) : processedData.fields.filter(field => {
                         // For Person contact
                         return CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_CONTACT.indexOf(field.nameId) < 0;
                     });
@@ -896,10 +896,10 @@ export default class MigrationJobTask {
             tempMap = processedData.recordsMap;
             processedData.recordsMap = new Map<any, any>();
             // Filter records
-            let filteredRecords = await ___filterRecords([...tempMap.keys()]);
+            let filtered = await ___filterRecords([...tempMap.keys()]);
             // Mock records
-            filteredRecords = [...___mockRecords(filteredRecords).keys()];
-            filteredRecords.forEach(cloned => {
+            filtered = [...___mockRecords(filtered).keys()];
+            filtered.forEach(cloned => {
                 let originalCloned = cloned___IdMap.get(cloned[CONSTANTS.__ID_FIELD]);
                 processedData.recordsMap.set(cloned, tempMap.get(originalCloned));
             });
@@ -911,13 +911,13 @@ export default class MigrationJobTask {
                 let targetRecord = self.data.sourceToTargetRecordMap.get(sourceRecord);
                 if (targetRecord && updateMode == "backwards") {
                     clonedSourceRecord["Id"] = targetRecord["Id"];
-                    processedData.recordsToUpdate.push(clonedSourceRecord);
+                    processedData.updateRecords.push(clonedSourceRecord);
                 } else if (!targetRecord && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
                     delete clonedSourceRecord["Id"];
-                    processedData.recordsToInsert.push(clonedSourceRecord);
+                    processedData.insertRecords.push(clonedSourceRecord);
                 } else if (targetRecord && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
                     clonedSourceRecord["Id"] = targetRecord["Id"];
-                    processedData.recordsToUpdate.push(clonedSourceRecord);
+                    processedData.updateRecords.push(clonedSourceRecord);
                 }
             });
 
@@ -1460,19 +1460,19 @@ export class TaskOrgData {
 export class ProcessedData {
 
     recordsMap: Map<any, any> = new Map<any, any>();
-    sFields: Array<SFieldDescribe>;
+    fields: Array<SFieldDescribe>;
 
-    recordsToUpdate: Array<any> = new Array<any>();
-    recordsToInsert: Array<any> = new Array<any>();
+    updateRecords: Array<any> = new Array<any>();
+    insertRecords: Array<any> = new Array<any>();
 
     missingParentLookups: IMissingParentLookupRecords[] = new Array<IMissingParentLookupRecords>();
 
     get lookupIdFields(): Array<SFieldDescribe> {
-        return this.sFields.filter(field => field.isSimpleReference);
+        return this.fields.filter(field => field.isSimpleReference);
     }
 
     get fieldNames(): Array<string> {
-        return this.sFields.map(field => field.nameId);
+        return this.fields.map(field => field.nameId);
     }
 }
 
