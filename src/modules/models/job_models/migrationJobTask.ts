@@ -799,17 +799,18 @@ export default class MigrationJobTask {
             }
             return 0;
         }
-
-        let processedRecords = 0;
+        
+        //  Update the Target org ************* ///
+        let amountOfProcessedRecords = 0;
+        
         if (this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete) {
 
-            //  Update the Target org ************* ///
             // Non-person Accounts/Contacts + other objects
             let data = await ___createData(false);
             if (data.missingParentLookups.length > 0) {
                 //TODO: Warn user about missing lookup records
             }
-            processedRecords += (await ___processData(data));
+            amountOfProcessedRecords += (await ___processData(data));
 
             // Person Accounts/Contacts only
             if (this.isPersonAccountOrContact) {
@@ -818,11 +819,11 @@ export default class MigrationJobTask {
                 if (data.missingParentLookups.length > 0) {
                     //TODO: Warn user about missing lookup records
                 }
-                processedRecords += (await ___processData(data));
+                amountOfProcessedRecords += (await ___processData(data));
             }
 
         }
-        return processedRecords;
+        return amountOfProcessedRecords;
 
 
         // ------------------------ Internal functions --------------------------
