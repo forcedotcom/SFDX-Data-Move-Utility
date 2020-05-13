@@ -578,7 +578,7 @@ export class Common {
      * @memberof CommonUtils
      */
     public static getComplexField(fieldName: string): string {
-        if (!fieldName) return fieldName;        
+        if (!fieldName) return fieldName;
         if (fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0) {
             return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
                 + fieldName.replace(
@@ -1072,6 +1072,32 @@ export class Common {
     */
     public static flatMap = (arr: Array<any>, f: any) => arr.reduce((x, y) => [...x, ...f(y)], []);
 
+    /**
+    * Clones array of objects by creating a new one.
+    * Each item of the new list is a clone of the original one 
+    * and has no properties that marked as to be excluded.
+    * 
+    * @param  {Array<any>} objects List of objects to clone
+    * @param  {Array<string>} propsToInclude Optional properties to include in the target objects
+    * @returns Map<any, any> Map cloned => oroginal
+    */
+    public static cloneArrayOfObjects(objects: Array<any>, propsToInclude: Array<string> = new Array<string>()): Map<any, any> {
+        let cloneToOriginalMap = new Map<any, any>();
+        objects.forEach(original => {
+            let cloned = Object.assign({}, original);
+            if (propsToInclude.length == 0){
+                cloneToOriginalMap.set(cloned, original);
+                return;
+            }
+            Object.keys(cloned).forEach(key => {
+                if (propsToInclude.indexOf(key) < 0) {
+                    delete cloned[key];
+                }
+            });
+            cloneToOriginalMap.set(cloned, original);
+        });
+        return cloneToOriginalMap;
+    }
 
 }
 

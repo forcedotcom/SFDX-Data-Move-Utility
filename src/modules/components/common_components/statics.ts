@@ -84,16 +84,18 @@ export const CONSTANTS = {
         "person_false"
     ],
 
-    NOT_SUPPORTED_FIELDS_FOR_PERSON_ACCOUNTS: [
+    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT: [
         "FirstName",
         "LastName",
         "IsPersonAccount",
         "Salutation"
     ],
-    NOT_SUPPORTED_FIELDS_FOR_PERSON_CONTACTS: [
+    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_CONTACT: [
         "IsPersonAccount",
         "Name"
     ],
+
+    __ID_FIELD: "___Id",
 
     SHORT_QUERY_STRING_MAXLENGTH: 250,
     MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900

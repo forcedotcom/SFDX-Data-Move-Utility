@@ -137,7 +137,12 @@ export default class SFieldDescribe {
     }
 
     /**
-    * Account__r.Name => Account__c
+    * Ensured to be always set to original
+    * field api name, regardless of being 
+    * a _r field or an original field:
+    * f.ex. Account__r.Name => Account__c
+    *       Id => Id,
+    *       Account__c => Account__c         
     *
     * @readonly
     * @type {string}
