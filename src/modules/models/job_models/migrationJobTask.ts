@@ -802,24 +802,24 @@ export default class MigrationJobTask {
         if (this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete) {
             // Non-person Accounts/Contacts + other objects //////////
             // Create data ****
-            let data = await ___createData(false);
+            let data = await ___createUpdateData(false);
             if (data.missingParentLookups.length > 0) {
                 // Warn user
                 await warnUserCallbackAsync(data);
             }
             // Process data ****
-            totalProcessedRecordsAmount += (await ___processData(data));
+            totalProcessedRecordsAmount += (await ___updatetOrg(data));
 
             // Person Accounts/Contacts only /////////////           
             if (this.isPersonAccountOrContact) {
                 // Create data ****
-                data = await ___createData(true);
+                data = await ___createUpdateData(true);
                 if (data.missingParentLookups.length > 0) {
                     // Warn user
                     await warnUserCallbackAsync(data);
                 }
                 // Process data ****
-                totalProcessedRecordsAmount += (await ___processData(data));
+                totalProcessedRecordsAmount += (await ___updatetOrg(data));
             }
 
         }
@@ -827,7 +827,7 @@ export default class MigrationJobTask {
 
 
         // ------------------------ Internal functions --------------------------
-        async function ___createData(personAccounts: boolean): Promise<ProcessedData> {
+        async function ___createUpdateData(personAccounts: boolean): Promise<ProcessedData> {
 
             let processedData = new ProcessedData();
 
@@ -933,7 +933,7 @@ export default class MigrationJobTask {
         /**
         * @returns {Promise<number>} Number of records actually processed
         */
-        async function ___processData(data: ProcessedData): Promise<number> {
+        async function ___updatetOrg(data: ProcessedData): Promise<number> {
             let totalProcessedAmount = 0;
             if (data.recordsToInsert.length > 0) {
                 self.createApiEngine(self.targetData.org, OPERATION.Insert, data.recordsToInsert.length, true);
@@ -943,6 +943,9 @@ export default class MigrationJobTask {
                     self._apiOperationError(OPERATION.Insert);
                 }
                 totalProcessedAmount += targetRecords.length;
+                if (self.sObjectName == "TestObject2__c"){
+                    let eee = "";
+                }
                 self._setExternalIdMap(targetRecords, self.targetData.extIdRecordsMap, self.targetData.idRecordsMap);
                 targetRecords.forEach(target => {
                     let source = data.clonedToSourceMap.get(target);
@@ -986,7 +989,7 @@ export default class MigrationJobTask {
                 }
                 if (parentId && !found) {
                     let csvRow: IMissingParentLookupRecordCsvRow = {
-                        "Date": Common.formatDateTime(new Date()),
+                        "Date update": Common.formatDateTime(new Date()),
                         "Child ExternalId field": idField.fullName__r,
                         "Child lookup field": idField.nameId,
                         "Child lookup object": idField.scriptObject.name,

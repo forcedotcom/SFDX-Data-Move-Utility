@@ -552,7 +552,7 @@ export default class MigrationJob {
  * @interface ICSVIssueCsvRow
  */
 export interface ICSVIssueCsvRow {
-    "Date": string,
+    "Date update": string,
     "Child value": string,
     "Child sObject": string,
     "Child field": string,
@@ -569,7 +569,7 @@ export interface ICSVIssueCsvRow {
  * @interface IMissingParentLookupRecordCsvRow
  */
 export interface IMissingParentLookupRecordCsvRow {
-    "Date": string,
+    "Date update": string,
     "Child lookup object": string;
     "Child lookup field": string;
     "Child ExternalId field": string;
