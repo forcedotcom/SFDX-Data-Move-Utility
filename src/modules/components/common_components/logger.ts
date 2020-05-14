@@ -165,6 +165,7 @@ export enum RESOURCES {
     fetchingSummary = "fetchingSummary",
 
     updatingTarget = "updatingTarget",
+    updatingTargetObjectCompleted = "updatingTargetObjectCompleted",
     updatingTargetCompleted = "updatingTargetCompleted",
     writingToFile = "writingToFile",
     nothingUpdated = "nothingUpdated",

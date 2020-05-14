@@ -104,7 +104,7 @@
     "invalidRecordHashcode": "Invalid record hashcode. Unable to find matching record from the response returned by the bulk job.",
     "apiOperationFailed": "{%s} The %s API operation FAILED.",
     "apiOperationProcessError": "{%s} The %s API operation FAILED with message: %s.",
-    "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created. Creating  batch...",
+    "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created.",
     "apiOperationBatchCreated": "[Batch# %s:%s] {%s} The batch has been created. Uploading data...",
     "apiOperationDataUploaded": "[Batch# %s:%s] {%s} The data has been uploaded. Processing...",
     "apiOperationInProgress": "[Batch# %s:%s] {%s} Processing... %s records succeeded, %s records failed.",
@@ -137,7 +137,8 @@
     "fetchingSummary": "Data retrieving summary",
 
     "updatingTarget": "Updating the Target %s...",
-    "updatingTargetCompleted": "Updating the Target (%s) has been completed.",
+    "updatingTargetObjectCompleted": "{%s} Updating the Target has been completed. Processed %s records.",
+    "updatingTargetCompleted": "Updating the Target (%s) has been completed. Total processed %s records.",
     "writingToFile": "{%s} Writing to the file %s.",
     "nothingUpdated": "Nothing was updated",
     "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details."

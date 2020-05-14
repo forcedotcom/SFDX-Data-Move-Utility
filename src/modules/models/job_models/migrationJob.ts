@@ -319,13 +319,13 @@ export default class MigrationJob {
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
 
-        let updated = 0;
+        let totalProcessedRecordsAmount = 0;
         let abortWasPrompted = false;
         let allMissingParentLookups: IMissingParentLookupRecords[] = new Array<IMissingParentLookupRecords>();
 
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            updated += (await task.updateRecords("forwards", async (data: ProcessedData) => {
+            let processedRecordsAmount = (await task.updateRecords("forwards", async (data: ProcessedData) => {
                 allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
                 if (abortWasPrompted) {
                     ___warn(data, task.sObjectName);
@@ -334,9 +334,11 @@ export default class MigrationJob {
                 await ___abortwithPrompt(data, task.sObjectName);
                 abortWasPrompted = true;
             }));
+            this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+            totalProcessedRecordsAmount += processedRecordsAmount;
         }
-        if (updated > 0)
-            this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step1));
+        if (totalProcessedRecordsAmount > 0)
+            this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
@@ -344,11 +346,11 @@ export default class MigrationJob {
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step2));
 
-        updated = 0;
+        totalProcessedRecordsAmount = 0;
 
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            updated += (await task.updateRecords("backwards", async (data: ProcessedData) => {
+            let processedRecordsAmount = (await task.updateRecords("backwards", async (data: ProcessedData) => {
                 allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
                 if (abortWasPrompted) {
                     ___warn(data, task.sObjectName);
@@ -358,13 +360,16 @@ export default class MigrationJob {
                 await ___abortwithPrompt(data, task.sObjectName);
                 abortWasPrompted = true;
             }));
+            this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+            totalProcessedRecordsAmount += processedRecordsAmount;
         }
-        if (updated > 0)
-            this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2));
+        if (totalProcessedRecordsAmount > 0)
+            this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2), String(totalProcessedRecordsAmount));
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
         // Save missing lookups report csv 
+        this.logger.infoVerbose(RESOURCES.newLine);
         await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups);
 
 
