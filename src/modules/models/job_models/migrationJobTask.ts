@@ -943,6 +943,7 @@ export default class MigrationJobTask {
                     self._apiOperationError(OPERATION.Insert);
                 }
                 totalProcessedAmount += targetRecords.length;
+                // TODO*TEST: REMOVE IT
                 if (self.sObjectName == "TestObject2__c"){
                     let eee = "";
                 }
