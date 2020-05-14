@@ -17,6 +17,6 @@ export { default as ScriptOrg } from "./script_models/scriptOrg";
 export { default as SFieldDescribe } from "./script_models/sfieldDescribe";
 export { default as SObjectDescribe } from "./script_models/sobjectDescribe";
 export { default as MigrationJobTask } from "./job_models/migrationJobTask";
-export { default as MigrationJob, ICSVIssues } from "./job_models/migrationJob";
+export { default as MigrationJob, ICSVIssuesCsvRow as ICSVIssues } from "./job_models/migrationJob";
 
 

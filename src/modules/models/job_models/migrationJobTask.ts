@@ -20,7 +20,7 @@ import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, S
 import SFieldDescribe from "../script_models/sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
-import { CachedCSVContent } from "./migrationJob";
+import { CachedCSVContent, IMissingParentLookupRecordCsvRow } from "./migrationJob";
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";
 import { IApiEngine } from "../api_models/interfaces";
@@ -30,7 +30,7 @@ import { RestApiEngine } from "../../components/api_engines/restApiEngine";
 const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
-import { setFlagsFromString } from 'v8';
+
 
 MockGenerator.createCustomGenerators(casual);
 
@@ -862,11 +862,11 @@ export default class MigrationJobTask {
 
             // Prepare records //////////////
             // Map: cloned => source 
-            let tempMap = Common.cloneArrayOfObjects(self.sourceData.records, processedData.fieldNames);
+            let tempClonedToSourceMap = Common.cloneArrayOfObjects(self.sourceData.records, processedData.fieldNames);
 
             // Map: "___Id" => cloned
             let ___IdToClonedMap = new Map<string, any>();
-            [...tempMap.keys()].forEach(cloned => {
+            [...tempClonedToSourceMap.keys()].forEach(cloned => {
                 ___IdToClonedMap.set(cloned[CONSTANTS.__ID_FIELD], cloned);
             });
 
@@ -875,7 +875,7 @@ export default class MigrationJobTask {
             if (self.isPersonAccountOrContact) {
                 if (personAccounts) {
                     // Only non-person Acounts/Contacts (IsPersonAccount == null)
-                    tempMap.forEach((source, cloned) => {
+                    tempClonedToSourceMap.forEach((source, cloned) => {
                         if (!source["IsPersonAccount"]) {
                             ___updateLookupIdFields(processedData, source, cloned);
                             processedData.clonedToSourceMap.set(cloned, source);
@@ -883,7 +883,7 @@ export default class MigrationJobTask {
                     });
                 } else {
                     // Only person Acounts/Contacts (IsPersonAccount != null)
-                    tempMap.forEach((source, cloned) => {
+                    tempClonedToSourceMap.forEach((source, cloned) => {
                         if (!!source["IsPersonAccount"]) {
                             ___updateLookupIdFields(processedData, source, cloned);
                             processedData.clonedToSourceMap.set(cloned, source);
@@ -892,20 +892,20 @@ export default class MigrationJobTask {
                 }
             } else {
                 // Other objects (all items)
-                tempMap.forEach((source, cloned) => {
+                tempClonedToSourceMap.forEach((source, cloned) => {
                     ___updateLookupIdFields(processedData, source, cloned);
                     processedData.clonedToSourceMap.set(cloned, source);
                 });
             }
 
             // Filter records /////////////
-            tempMap = processedData.clonedToSourceMap;
+            tempClonedToSourceMap = processedData.clonedToSourceMap;
             processedData.clonedToSourceMap = new Map<any, any>();
-            let clonedRecords = await ___filterRecords([...tempMap.keys()]);
+            let clonedRecords = await ___filterRecords([...tempClonedToSourceMap.keys()]);
             clonedRecords = ___mockRecords(clonedRecords);
             clonedRecords.forEach(cloned => {
-                let initCloned = ___IdToClonedMap.get(cloned[CONSTANTS.__ID_FIELD]);
-                let source = tempMap.get(initCloned);
+                let initialCloned = ___IdToClonedMap.get(cloned[CONSTANTS.__ID_FIELD]);
+                let source = tempClonedToSourceMap.get(initialCloned);
                 processedData.clonedToSourceMap.set(cloned, source);
             });
 
@@ -916,19 +916,17 @@ export default class MigrationJobTask {
                 if (target && updateMode == "backwards") {
                     cloned["Id"] = target["Id"];
                     processedData.recordsToUpdate.push(cloned);
-                    processedData.clonedToTargetMap.set(cloned, target);
                 } else if (!target && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
                     delete cloned["Id"];
                     processedData.recordsToInsert.push(cloned);
                 } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
                     cloned["Id"] = target["Id"];
                     processedData.recordsToUpdate.push(cloned);
-                    processedData.clonedToTargetMap.set(cloned, target);
                 }
             });
 
             // Free memory and return
-            tempMap = new Map<any, any>();
+            tempClonedToSourceMap = null;
             return processedData;
         }
 
@@ -987,7 +985,8 @@ export default class MigrationJobTask {
                     }
                 }
                 if (parentId && !found) {
-                    let missing: IMissingParentLookupRecords = {
+                    let csvRow: IMissingParentLookupRecordCsvRow = {
+                        "Date": Common.formatDateTime(new Date()),
                         "Child ExternalId field": idField.fullName__r,
                         "Child lookup field": idField.nameId,
                         "Child lookup object": idField.scriptObject.name,
@@ -995,7 +994,7 @@ export default class MigrationJobTask {
                         "Parent ExternalId field": idField.parentLookupObject.externalId,
                         "Parent lookup object": idField.parentLookupObject.name
                     };
-                    processedData.missingParentLookups.push(missing);
+                    processedData.missingParentLookups.push(csvRow);
                 }
             });
         }
@@ -1022,32 +1021,15 @@ export default class MigrationJobTask {
             }
         }
 
-        function ___mockRecords(records: Array<any>, recordIds?: Array<string>): Array<any> {
-
+        function ___mockRecords(records: Array<any>): Array<any> {
             let updatedRecords = new Array<any>();
-
             if (records.length == 0) {
                 return updatedRecords;
             }
-
-            recordIds = recordIds || records.map(x => x["Id"]);
+            let recordIds = records.map(x => x["Id"]);
             let recordProperties = Object.keys(records[0]);
-
             if (self.scriptObject.updateWithMockData && self.scriptObject.mockFields.length > 0) {
-                let mockFields: Map<string, {
-                    fn: string,
-                    regIncl: string,
-                    regExcl: string,
-                    disallowMockAllRecord: boolean,
-                    allowMockAllRecord: boolean
-                }> = new Map<string, {
-                    fn: string,
-                    regIncl: string,
-                    regExcl: string,
-                    disallowMockAllRecord: boolean,
-                    allowMockAllRecord: boolean
-                }>();
-
+                let fieldNameToMockFieldMap: Map<string, IMockField> = new Map<string, IMockField>();
                 [...self.data.fieldsToUpdateMap.values()].forEach(fieldDescribe => {
                     let mockField = ___getMockPatternByFieldName(fieldDescribe.name);
                     if (recordProperties.indexOf(mockField.name) >= 0 && mockField.pattern) {
@@ -1057,7 +1039,7 @@ export default class MigrationJobTask {
                         }
                         mockField.excludedRegex = mockField.excludedRegex || '';
                         mockField.includedRegex = mockField.includedRegex || '';
-                        mockFields.set(mockField.name, {
+                        fieldNameToMockFieldMap.set(mockField.name, <IMockField>{
                             fn,
                             regExcl: mockField.excludedRegex.split(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
                             regIncl: mockField.includedRegex.split(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
@@ -1072,10 +1054,10 @@ export default class MigrationJobTask {
                     let doNotMock = false;
                     let mockAllRecord = false;
                     let fieldsToMockMap: Map<string, boolean> = new Map<string, boolean>();
-                    [...mockFields.keys()].forEach(name => {
+                    [...fieldNameToMockFieldMap.keys()].forEach(fieldName => {
                         if (!doNotMock) {
-                            let mockField = mockFields.get(name);
-                            let value = String(updatedRecord[name]);
+                            let mockField = fieldNameToMockFieldMap.get(fieldName);
+                            let value = String(updatedRecord[fieldName]);
                             let excluded = mockField.regExcl && (new RegExp(mockField.regExcl, 'ig').test(value));
                             let included = mockField.regIncl && (new RegExp(mockField.regIncl, 'ig').test(value));
                             if (included && mockField.allowMockAllRecord) {
@@ -1085,19 +1067,19 @@ export default class MigrationJobTask {
                                 doNotMock = true;
                             } else {
                                 if (mockAllRecord || (!mockField.regExcl || !excluded) && (!mockField.regIncl || included)) {
-                                    fieldsToMockMap.set(name, true);
+                                    fieldsToMockMap.set(fieldName, true);
                                 }
                             }
                         }
                     });
                     if (!doNotMock) {
-                        [...mockFields.keys()].forEach(name => {
-                            if (mockAllRecord || fieldsToMockMap.has(name)) {
-                                let mockField = mockFields.get(name);
+                        [...fieldNameToMockFieldMap.keys()].forEach(fieldName => {
+                            if (mockAllRecord || fieldsToMockMap.has(fieldName)) {
+                                let mockField = fieldNameToMockFieldMap.get(fieldName);
                                 if (mockField.fn == "ids") {
-                                    updatedRecord[name] = recordIds[index];
+                                    updatedRecord[fieldName] = recordIds[index];
                                 } else {
-                                    updatedRecord[name] = eval(`casual.${mockField.fn}`);
+                                    updatedRecord[fieldName] = eval(`casual.${mockField.fn}`);
                                 }
                             }
                         });
@@ -1330,8 +1312,8 @@ export default class MigrationJobTask {
     }
 
     /**
-       * @returns {number} New records count
-       */
+     * @returns {number} New records count
+     */
     private _setExternalIdMap(records: Array<any>,
         sourceExtIdRecordsMap: Map<string, string>,
         sourceIdRecordsMap: Map<string, string>,
@@ -1492,14 +1474,13 @@ export class TaskOrgData {
 export class ProcessedData {
 
     clonedToSourceMap: Map<any, any> = new Map<any, any>();
-    clonedToTargetMap: Map<any, any> = new Map<any, any>();
 
     fields: Array<SFieldDescribe>;
 
     recordsToUpdate: Array<any> = new Array<any>();
     recordsToInsert: Array<any> = new Array<any>();
 
-    missingParentLookups: IMissingParentLookupRecords[] = new Array<IMissingParentLookupRecords>();
+    missingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
 
     get lookupIdFields(): Array<SFieldDescribe> {
         return this.fields.filter(field => field.isSimpleReference);
@@ -1510,11 +1491,10 @@ export class ProcessedData {
     }
 }
 
-export interface IMissingParentLookupRecords {
-    "Child lookup object": string;
-    "Child lookup field": string;
-    "Child ExternalId field": string;
-    "Parent lookup object": string;
-    "Parent ExternalId field": string;
-    "Missing parent ExternalId value": string;
+interface IMockField {
+    fn: string;
+    regIncl: string;
+    regExcl: string;
+    disallowMockAllRecord: boolean;
+    allowMockAllRecord: boolean;
 }

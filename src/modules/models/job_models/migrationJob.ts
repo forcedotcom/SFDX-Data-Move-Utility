@@ -12,7 +12,7 @@ import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
-import { ProcessedData, IMissingParentLookupRecords } from "./migrationJobTask";
+import { ProcessedData } from "./migrationJobTask";
 
 
 
@@ -22,7 +22,7 @@ export default class MigrationJob {
     tasks: Task[] = new Array<Task>();
     queryTasks: Task[] = new Array<Task>();
     csvValuesMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
-    csvIssues: Array<ICSVIssues> = new Array<ICSVIssues>();
+    csvIssues: Array<ICSVIssueCsvRow> = new Array<ICSVIssueCsvRow>();
     cachedCSVContent: CachedCSVContent = new CachedCSVContent();
 
     constructor(init: Partial<MigrationJob>) {
@@ -318,21 +318,22 @@ export default class MigrationJob {
         // STEP 1::::::::: FORWARDS
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
-
+        
+        let noAbortPrompt = false;
         let totalProcessedRecordsAmount = 0;
-        let abortWasPrompted = false;
-        let allMissingParentLookups: IMissingParentLookupRecords[] = new Array<IMissingParentLookupRecords>();
+
+        let allMissingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
 
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
             let processedRecordsAmount = (await task.updateRecords("forwards", async (data: ProcessedData) => {
                 allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
-                if (abortWasPrompted) {
+                if (noAbortPrompt) {
                     ___warn(data, task.sObjectName);
                     return;
                 }
-                await ___abortwithPrompt(data, task.sObjectName);
-                abortWasPrompted = true;
+                await ___promptToAbort(data, task.sObjectName);
+                noAbortPrompt = true;
             }));
             this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
             totalProcessedRecordsAmount += processedRecordsAmount;
@@ -348,40 +349,39 @@ export default class MigrationJob {
 
         totalProcessedRecordsAmount = 0;
 
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
-            let processedRecordsAmount = (await task.updateRecords("backwards", async (data: ProcessedData) => {
-                allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
-                if (abortWasPrompted) {
-                    ___warn(data, task.sObjectName);
-                    return;
-                }
-                // Prompt user to abort operation     
-                await ___abortwithPrompt(data, task.sObjectName);
-                abortWasPrompted = true;
-            }));
-            this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
-            totalProcessedRecordsAmount += processedRecordsAmount;
+        if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
+            for (let index = 0; index < this.tasks.length; index++) {
+                const task = this.tasks[index];
+                let processedRecordsAmount = (await task.updateRecords("backwards", async (data: ProcessedData) => {
+                    allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
+                    if (noAbortPrompt) {
+                        ___warn(data, task.sObjectName);
+                        return;
+                    }
+                    await ___promptToAbort(data, task.sObjectName);
+                    noAbortPrompt = true;
+                }));
+                this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+                totalProcessedRecordsAmount += processedRecordsAmount;
+            }
         }
         if (totalProcessedRecordsAmount > 0)
             this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2), String(totalProcessedRecordsAmount));
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
-        // Save missing lookups report csv 
         this.logger.infoVerbose(RESOURCES.newLine);
         await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups);
 
 
         // ---------------------- Internal functions -------------------------------------- //
-        async function ___abortwithPrompt(data: ProcessedData, sObjectName: string): Promise<void> {
+        async function ___promptToAbort(data: ProcessedData, sObjectName: string): Promise<void> {
             await Common.abortWithPrompt(self.logger,
                 RESOURCES.missingParentLookupsPrompt,
                 self.script.promptOnMissingParentObjects,
                 RESOURCES.continueTheJobPrompt,
                 "",
                 async () => {
-                    // Report csv issues
                     await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups);
                 },
                 sObjectName,
@@ -497,10 +497,10 @@ export default class MigrationJob {
         }
 
         // if csv structure issues were found - prompt to abort the job 
-        let abortWasPrompted = false;
+        let noAbortPrompt = false;
         if (this.csvIssues.length > 0) {
-            await ___abortwithPrompt();
-            abortWasPrompted = true;
+            await ___promptToAbort();
+            noAbortPrompt = true;
         }
 
         // Check and repair the source csvs
@@ -516,8 +516,8 @@ export default class MigrationJob {
         // if csv data issues were found - prompt to abort the job 
         //  and save the report
         if (this.csvIssues.length > 0) {
-            if (!abortWasPrompted) {
-                await ___abortwithPrompt();
+            if (!noAbortPrompt) {
+                await ___promptToAbort();
             } else {
                 await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
                 this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
@@ -526,7 +526,7 @@ export default class MigrationJob {
             this.logger.infoVerbose(RESOURCES.noIssuesFoundDuringCSVValidation);
         }
 
-        async function ___abortwithPrompt(): Promise<void> {
+        async function ___promptToAbort(): Promise<void> {
             await Common.abortWithPrompt(self.logger,
                 RESOURCES.issuesFoundDuringCSVValidation,
                 self.script.promptOnIssuesInCSVFiles,
@@ -549,9 +549,9 @@ export default class MigrationJob {
  * The format of columns for a CSV issues report file
  *
  * @export
- * @interface ICSVIssues
+ * @interface ICSVIssueCsvRow
  */
-export interface ICSVIssues {
+export interface ICSVIssueCsvRow {
     "Date": string,
     "Child value": string,
     "Child sObject": string,
@@ -560,6 +560,22 @@ export interface ICSVIssues {
     "Parent sObject": string,
     "Parent field": string,
     "Error": string
+}
+
+/**
+ * The format of missing lookup records CSV file
+ *
+ * @export
+ * @interface IMissingParentLookupRecordCsvRow
+ */
+export interface IMissingParentLookupRecordCsvRow {
+    "Date": string,
+    "Child lookup object": string;
+    "Child lookup field": string;
+    "Child ExternalId field": string;
+    "Parent lookup object": string;
+    "Parent ExternalId field": string;
+    "Missing parent ExternalId value": string;
 }
 
 export class CachedCSVContent {
