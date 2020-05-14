@@ -12,6 +12,7 @@ import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
+import { ProcessedData, IMissingParentLookupRecords } from "./migrationJobTask";
 
 
 
@@ -234,12 +235,12 @@ export default class MigrationJob {
             const task = this.queryTasks[index];
             retrieved = await task.retrieveRecords("forwards", false) || retrieved;
         }
-        if (!retrieved){
+        if (!retrieved) {
             this.logger.infoNormal(RESOURCES.noRecords);
         }
-        this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));            
+        this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
 
-        
+
         // STEP 2:::::::::
         // SOURCE BACKWARDS ***********  
         retrieved = false;
@@ -311,35 +312,85 @@ export default class MigrationJob {
     }
 
     async updateRecords(): Promise<void> {
-        // STEP 1:::::::::
-        // FORWARDS ***********
-        this.logger.infoMinimal(RESOURCES.newLine);        
+
+        let self = this;
+
+        // STEP 1::::::::: FORWARDS
+        this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
+
         let updated = 0;
+        let abortWasPrompted = false;
+        let allMissingParentLookups: IMissingParentLookupRecords[] = new Array<IMissingParentLookupRecords>();
+
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            updated += (await task.updateRecords("forwards"));
+            updated += (await task.updateRecords("forwards", async (data: ProcessedData) => {
+                allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
+                if (abortWasPrompted) {
+                    ___warn(data, task.sObjectName);
+                    return;
+                }
+                await ___abortwithPrompt(data, task.sObjectName);
+                abortWasPrompted = true;
+            }));
         }
-        // Update completed message        
         if (updated > 0)
             this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step1));
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
-        // STEP 2:::::::::
-        // BACKWARDS ***********
-        updated = 0;
-        this.logger.infoMinimal(RESOURCES.newLine);        
+        // STEP 2::::::::: BACKWARDS
+        this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step2));
+
+        updated = 0;
+
         for (let index = 0; index < this.tasks.length; index++) {
             const task = this.tasks[index];
-            updated += (await task.updateRecords("backwards"));
+            updated += (await task.updateRecords("backwards", async (data: ProcessedData) => {
+                allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
+                if (abortWasPrompted) {
+                    ___warn(data, task.sObjectName);
+                    return;
+                }
+                // Prompt user to abort operation     
+                await ___abortwithPrompt(data, task.sObjectName);
+                abortWasPrompted = true;
+            }));
         }
-        // Update completed message
         if (updated > 0)
             this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2));
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
+
+        // Save missing lookups report csv 
+        await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups);
+
+
+        // ---------------------- Internal functions -------------------------------------- //
+        async function ___abortwithPrompt(data: ProcessedData, sObjectName: string): Promise<void> {
+            await Common.abortWithPrompt(self.logger,
+                RESOURCES.missingParentLookupsPrompt,
+                self.script.promptOnMissingParentObjects,
+                RESOURCES.continueTheJobPrompt,
+                "",
+                async () => {
+                    // Report csv issues
+                    await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups);
+                },
+                sObjectName,
+                String(data.missingParentLookups.length),
+                CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME);
+        }
+
+        function ___warn(data: ProcessedData, sObjectName: string) {
+            self.logger.warn(RESOURCES.missingParentLookupsPrompt,
+                sObjectName,
+                String(data.missingParentLookups.length),
+                CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME);
+        }
+
     }
 
     /**

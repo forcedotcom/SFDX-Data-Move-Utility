@@ -27,6 +27,8 @@ export const CONSTANTS = {
     VALUE_MAPPING_CSV_FILENAME: 'ValueMapping.csv',
     USER_AND_GROUP_FILENAME: 'UserAndGroup',
     CSV_ISSUES_ERRORS_FILENAME: 'CSVIssuesReport.csv',
+    MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME : "MissingParentRecordsReport.csv",
+
     RECORD_TYPE_SOBJECT_NAME: "RecordType",
 
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,

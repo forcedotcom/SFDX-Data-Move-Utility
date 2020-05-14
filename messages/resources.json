@@ -139,6 +139,7 @@
     "updatingTarget": "Updating the Target %s...",
     "updatingTargetCompleted": "Updating the Target (%s) has been completed.",
     "writingToFile": "{%s} Writing to the file %s.",
-    "nothingUpdated": "Nothing was updated"
+    "nothingUpdated": "Nothing was updated",
+    "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details."
 
 }

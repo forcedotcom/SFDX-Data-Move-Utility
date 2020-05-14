@@ -771,59 +771,59 @@ export default class MigrationJobTask {
     /**
      * Perform record update
      *
+     * @param {("forwards" | "backwards")} updateMode
+     * @param {(data : ProcessedData) => boolean} warnUserCallbackAsync true to abort the job
      * @returns {Promise<number>} Total amount of updated records
      * @memberof MigrationJobTask
      */
-    async updateRecords(updateMode: "forwards" | "backwards"): Promise<number> {
+    async updateRecords(updateMode: "forwards" | "backwards", warnUserCallbackAsync: (data: ProcessedData) => void): Promise<number> {
 
         let self = this;
 
         if (this.targetData.media == DATA_MEDIA_TYPE.File) {
-
-            //  Write to target CSV file *********** ///
+            //  WRITE CSV ::::::::::
             if (this.operation != OPERATION.Delete && updateMode == "forwards") {
                 this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
-                // Filter records
                 let records = await ___filterRecords(this.sourceData.records);
-                // Mock records
                 records = [...___mockRecords(records).keys()];
-                // Remove extra columns
                 records.forEach(record => {
                     delete records[CONSTANTS.__ID_FIELD];
                 });
-                // Write to target csv file
                 await ___writeToTargetCSVFile(records);
-                // Write to output csv file
                 await Common.writeCsvFileAsync(self.data.csvFilename, records, true);
                 return records.length;
             }
             return 0;
         }
-        
-        //  Update the Target org ************* ///
-        let amountOfProcessedRecords = 0;
-        
-        if (this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete) {
 
-            // Non-person Accounts/Contacts + other objects
+        //  UPDATE ORG :::::::::
+        let totalProcessedRecordsAmount = 0;
+
+        if (this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete) {
+            // Non-person Accounts/Contacts + other objects //////////
+            // Create data ****
             let data = await ___createData(false);
             if (data.missingParentLookups.length > 0) {
-                //TODO: Warn user about missing lookup records
+                // Warn user
+                await warnUserCallbackAsync(data);
             }
-            amountOfProcessedRecords += (await ___processData(data));
-
-            // Person Accounts/Contacts only
+            // Process data ****
+            totalProcessedRecordsAmount += (await ___processData(data));
+            
+            // Person Accounts/Contacts only /////////////           
             if (this.isPersonAccountOrContact) {
-                // Create update data for Person accounts                
+                // Create data ****
                 data = await ___createData(true);
                 if (data.missingParentLookups.length > 0) {
-                    //TODO: Warn user about missing lookup records
+                    // Warn user
+                    await warnUserCallbackAsync(data);
                 }
-                amountOfProcessedRecords += (await ___processData(data));
+                // Process data ****
+                totalProcessedRecordsAmount += (await ___processData(data));
             }
 
         }
-        return amountOfProcessedRecords;
+        return totalProcessedRecordsAmount;
 
 
         // ------------------------ Internal functions --------------------------
@@ -831,24 +831,24 @@ export default class MigrationJobTask {
 
             let processedData = new ProcessedData();
 
-            // Get sFields to update *********** ///
+            // Get sFields to update /////////
             processedData.fields = self.data.sFieldsToUpdate.filter((field: SFieldDescribe) => {
                 if (updateMode == "forwards")
-                    // Step 1 : Simple sFields or reference fields with the parent lookup BEFORE
+                    // For Step 1 : Simple sFields or reference fields with the parent lookup BEFORE
                     return field.isSimple || field.isSimpleReference && self.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0;
                 else
-                    // Step 2 : Reference sFields with the parent lookup AFTER
+                    // For Step 2 : Reference sFields with the parent lookup AFTER
                     return field.isSimpleReference && self.data.nextTasks.indexOf(field.parentLookupObject.task) >= 0;
             }).concat(new SFieldDescribe({
                 name: CONSTANTS.__ID_FIELD
             }));
 
-            // Add Record Id sField ************ ///
+            // Add recordId sField //////////
             if (self.operation != OPERATION.Insert) {
                 processedData.fields.push(self.data.sFieldsInQuery.filter(field => field.nameId == "Id")[0]);
             }
 
-            // Filter fields for person accounts/contacts ************ ///
+            // Fields for person accounts/contacts /////////
             if (self.isPersonAccountOrContact) {
                 processedData.fields = self.sObjectName == "Account" ?
                     processedData.fields.filter((field: SFieldDescribe) => {
@@ -860,20 +860,21 @@ export default class MigrationJobTask {
                     });
             }
 
-            // Create temporary map: cloned => source ********* ///
+            // Prepare data //////////////
+            // Map: cloned => source 
             let tempMap = Common.cloneArrayOfObjects(self.sourceData.records, processedData.fieldNames);
 
-            // Create ___Id map
+            // Map: ___Id => cloned
             let cloned___IdMap = new Map<string, any>();
-            [...tempMap.keys()].forEach(record => {
-                cloned___IdMap.set(record[CONSTANTS.__ID_FIELD], record);
+            [...tempMap.keys()].forEach(cloned => {
+                cloned___IdMap.set(cloned[CONSTANTS.__ID_FIELD], cloned);
             });
 
-            // Create recordsMap: cloned => source ********** ///
-            // Also update target lookup id fields by the source
+            // Map: cloned => source 
+            //    + update lookup Id fields (f.ex. Account__c)
             if (self.isPersonAccountOrContact) {
                 if (personAccounts) {
-                    // For only non-person Acounts/Contacts: only IsPersonAccount == null
+                    // Only non-person Acounts/Contacts (IsPersonAccount == null)
                     tempMap.forEach((source, cloned) => {
                         if (!source["IsPersonAccount"]) {
                             ___updateLookupIdFields(processedData, source, cloned);
@@ -881,7 +882,7 @@ export default class MigrationJobTask {
                         }
                     });
                 } else {
-                    // For only person Acounts/Contacts: only IsPersonAccount != null
+                    // Only person Acounts/Contacts (IsPersonAccount != null)
                     tempMap.forEach((source, cloned) => {
                         if (!!source["IsPersonAccount"]) {
                             ___updateLookupIdFields(processedData, source, cloned);
@@ -890,27 +891,24 @@ export default class MigrationJobTask {
                     });
                 }
             } else {
-                // For other objects: ALL items from the raw map
+                // Other objects (all items)
                 tempMap.forEach((source, cloned) => {
                     ___updateLookupIdFields(processedData, source, cloned);
                     processedData.recordsMap.set(cloned, source);
                 });
             }
 
-            // Finalising to prepare the target records ********** ///
+            // Fliter records /////////////
             tempMap = processedData.recordsMap;
             processedData.recordsMap = new Map<any, any>();
-            // Filter records
             let filtered = await ___filterRecords([...tempMap.keys()]);
-            // Mock records
             filtered = [...___mockRecords(filtered).keys()];
-            // Remapping back
             filtered.forEach(cloned => {
                 let originalCloned = cloned___IdMap.get(cloned[CONSTANTS.__ID_FIELD]);
                 processedData.recordsMap.set(cloned, tempMap.get(originalCloned));
             });
 
-            // Remove extra fields + set recordsToInsert and recordsToUpdate
+            // Finalizing: Create separated record sets to Update/Insert /////////////
             processedData.recordsMap.forEach((sourceRecord, clonedSourceRecord) => {
                 delete clonedSourceRecord[CONSTANTS.__ID_FIELD];
                 let targetRecord = self.data.sourceToTargetRecordMap.get(sourceRecord);
@@ -926,7 +924,6 @@ export default class MigrationJobTask {
                 }
             });
 
-            // Records are ready ********** ///
             return processedData;
         }
 
@@ -970,8 +967,6 @@ export default class MigrationJobTask {
                 }
             });
         }
-
-
 
         async function ___filterRecords(records: Array<any>): Promise<Array<any>> {
             return new Promise<Array<any>>(resolve => {
