@@ -721,6 +721,7 @@ export default class MigrationJobTask {
                 records = new Array<any>();
                 if (this.scriptObject.processAllTarget) {
                     // All records ****** //
+                    //let query = this.createQuery(["Id", this.complexExternalId]); // TODO: check this option
                     let query = this.createQuery();
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
@@ -732,6 +733,7 @@ export default class MigrationJobTask {
                     hasRecords = true;
                 } else {
                     // Filtered records ***** //
+                    //let queries = this._createFilteredQueries(queryMode, reversed, ["Id", this.complexExternalId]); // TODO: check this option
                     let queries = this._createFilteredQueries(queryMode, reversed);
                     if (queries.length > 0) {
                         // Start message ------
@@ -943,10 +945,6 @@ export default class MigrationJobTask {
                     self._apiOperationError(OPERATION.Insert);
                 }
                 totalProcessedAmount += targetRecords.length;
-                // TODO*TEST: REMOVE IT
-                if (self.sObjectName == "TestObject2__c"){
-                    let eee = "";
-                }
                 self._setExternalIdMap(targetRecords, self.targetData.extIdRecordsMap, self.targetData.idRecordsMap);
                 targetRecords.forEach(target => {
                     let source = data.clonedToSourceMap.get(target);
@@ -1229,7 +1227,7 @@ export default class MigrationJobTask {
         throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.apiEngine.getStrOperation()));
     }
 
-    private _createFilteredQueries(queryMode: "forwards" | "backwards" | "target", reversed: boolean): Array<string> {
+    private _createFilteredQueries(queryMode: "forwards" | "backwards" | "target", reversed: boolean, fieldNames?: string[]): Array<string> {
 
         let queries = new Array<string>();
         let fieldsToQueryMap: Map<SFieldDescribe, Array<string>> = new Map<SFieldDescribe, Array<string>>();
@@ -1290,7 +1288,7 @@ export default class MigrationJobTask {
         }
 
         if (isSource && this.scriptObject.isLimitedQuery && !reversed) {
-            queries.push(this.createQuery());
+            queries.push(this.createQuery(fieldNames));
         }
         fieldsToQueryMap.forEach((inValues, field) => {
             // Filter by cached values => get out all duplicated IN values thet
@@ -1306,7 +1304,7 @@ export default class MigrationJobTask {
                     valueCache.add(inValue);
                 });
                 // Create and add query
-                Common.createFieldInQueries(this.data.fieldsInQuery, field.name, this.sObjectName, inValues).forEach(query => {
+                Common.createFieldInQueries(fieldNames || this.data.fieldsInQuery, field.name, this.sObjectName, inValues).forEach(query => {
                     queries.push(query);
                 });
             }
@@ -1335,7 +1333,7 @@ export default class MigrationJobTask {
                     sourceIdRecordsMap.set(record["Id"], record);
                     record[CONSTANTS.__ID_FIELD] = record["Id"];
                     if (isTarget) {
-                        let extIdValue = this.getRecordValue(record, this.externalId);
+                        let extIdValue = this.getRecordValue(record, this.complexExternalId);
                         if (extIdValue) {
                             let sourceId = this.sourceData.extIdRecordsMap.get(extIdValue);
                             if (sourceId) {
