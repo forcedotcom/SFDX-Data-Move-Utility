@@ -838,7 +838,7 @@ export default class MigrationJobTask {
                     return field.isSimple || field.isSimpleReference && self.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0;
                 else
                     // For Step 2 : Reference sFields with the parent lookup AFTER
-                    return field.isSimpleReference && self.data.nextTasks.indexOf(field.parentLookupObject.task) >= 0;
+                    return field.isSimpleReference && self.data.nextTasks.concat(self).indexOf(field.parentLookupObject.task) >= 0;
             }).concat(new SFieldDescribe({
                 name: CONSTANTS.__ID_FIELD
             }));
