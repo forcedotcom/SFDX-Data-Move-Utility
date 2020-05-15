@@ -42,6 +42,8 @@ export enum RESOURCES {
     scriptFile = "scriptFile",
     skipped = "skipped",
     noRecords = "noRecords",
+    insert = "insert",
+    update = "update",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptSelectedOption = "defaultPromptSelectedOption",
@@ -56,7 +58,7 @@ export enum RESOURCES {
     loggerErrorStringWithDate = "loggerErrorStringWithDate",
     loggerImportantInfoString = "loggerImportantInfoString",
     loggerImportantInfoStringWithDate = "loggerImportantInfoStringWithDate",
-   
+
     loggerStackTraceString = "loggerStackTraceString",
     loggerTimeElapsedString = "loggerTimeElapsedString",
     loggerCommandStartedString = "loggerCommandStartedString",
@@ -65,21 +67,21 @@ export enum RESOURCES {
     fileLoggerInfoString = "fileLoggerInfoString",
     fileLoggerWarnSring = "fileLoggerWarnSring",
     fileLoggerErrorSring = "fileLoggerErrorSring",
-    fileLoggerInfoStringWithoutDate =  "fileLoggerInfoStringWithoutDate",
-    fileLoggerWarnSringWithoutDate =  "fileLoggerWarnSringWithoutDate",
+    fileLoggerInfoStringWithoutDate = "fileLoggerInfoStringWithoutDate",
+    fileLoggerWarnSringWithoutDate = "fileLoggerWarnSringWithoutDate",
     fileLoggerErrorSringWithoutDate = "fileLoggerErrorSringWithoutDate",
-        
+
     successfullyCompletedResult = "successfullyCompletedResult",
     commandInitializationErrorResult = "commandInitializationErrorResult",
     orgMetadataErrorResult = "orgMetadataErrorResult",
 
     commandExecutionErrorResult = "commandExecutionErrorResult",
-    commandUnresolvableWarningResult = "commandUnresolvableWarningResult",    
+    commandUnresolvableWarningResult = "commandUnresolvableWarningResult",
     commandAbortedByUserErrorResult = "commandAbortedByUserErrorResult",
     commandUnexpectedErrorResult = "commandUnexpectedErrorResult",
 
 
-    commandInProgress = "commandInProgress",    
+    commandInProgress = "commandInProgress",
     packageScript = "packageScript",
     pluginVersion = "pluginVersion",
     workingPathDoesNotExist = "workingPathDoesNotExist",
@@ -96,7 +98,7 @@ export enum RESOURCES {
     MalformedQuery = "MalformedQuery",
     MalformedDeleteQuery = "MalformedDeleteQuery",
     needBothOrgsToSupportPersonAccounts = "needBothOrgsToSupportPersonAccounts",
-    
+
     gettingOrgMetadata = "gettingOrgMetadata",
     gettingMetadataForSObject = "gettingMetadataForSObject",
     noExternalKey = "noExternalKey",
@@ -126,7 +128,7 @@ export enum RESOURCES {
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
 
     executionOrder = "executionOrder",
-    queryingOrder = "queryingOrder",  
+    queryingOrder = "queryingOrder",
 
     unprocessedRecord = "unprocessedRecord",
     invalidRecordHashcode = "invalidRecordHashcode",
@@ -154,9 +156,9 @@ export enum RESOURCES {
     deletingOldDataSkipped = "deletingOldDataSkipped",
     nothingToDelete = "nothingToDelete",
 
-    retrievingData = "retrievingData",    
+    retrievingData = "retrievingData",
     retrievingDataCompleted = "retrievingDataCompleted",
-    queryingAll = "queryingAll",  
+    queryingAll = "queryingAll",
     queryingIn = "queryingIn",
     queryingSelfReferenceRecords = "queryingSelfReferenceRecords",
     queryingFinished = "queryingFinished",
@@ -165,6 +167,7 @@ export enum RESOURCES {
     fetchingSummary = "fetchingSummary",
 
     updatingTarget = "updatingTarget",
+    updatingTargetNRecordsWillBeUpdated = "updatingTargetNRecordsWillBeUpdated",
     updatingTargetObjectCompleted = "updatingTargetObjectCompleted",
     updatingTargetCompleted = "updatingTargetCompleted",
     writingToFile = "writingToFile",

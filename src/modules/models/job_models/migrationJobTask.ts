@@ -587,7 +587,6 @@ export default class MigrationJobTask {
             }
         });
 
-        // TODO*PUTBACKIT! Enable rows below to delete records
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
         let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
         if (resultRecords == null) {
@@ -635,7 +634,7 @@ export default class MigrationJobTask {
                 if (!reversed) {
                     let query = this.createQuery();
                     // Start message ------
-                    this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.resourceString_Step(queryMode));
+                    this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.getResourceString_Step(queryMode));
                     let sfdx = new Sfdx(this.targetData.org);
                     records = await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap);
                     hasRecords = true;
@@ -647,7 +646,7 @@ export default class MigrationJobTask {
                     let query = this.createQuery();
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org,
-                        this.data.resourceString_Step(queryMode));
+                        this.data.getResourceString_Step(queryMode));
                     // Query string message ------    
                     this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                     // Fetch records                
@@ -659,7 +658,7 @@ export default class MigrationJobTask {
                     let queries = this._createFilteredQueries(queryMode, reversed);
                     if (queries.length > 0) {
                         // Start message ------
-                        this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
+                        this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                         // Fetch records
                         records = await ___retrieveFilteredRecords(queries, this.sourceData);
                         hasRecords = true;
@@ -724,7 +723,7 @@ export default class MigrationJobTask {
                     //let query = this.createQuery(["Id", this.complexExternalId]); // TODO: check this option
                     let query = this.createQuery();
                     // Start message ------
-                    this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
+                    this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                     // Query string message ------
                     this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                     // Fetch records
@@ -737,7 +736,7 @@ export default class MigrationJobTask {
                     let queries = this._createFilteredQueries(queryMode, reversed);
                     if (queries.length > 0) {
                         // Start message ------
-                        this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.resourceString_Step(queryMode));
+                        this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                         // Fetch records
                         records = await ___retrieveFilteredRecords(queries, this.targetData);
                         hasRecords = true;
@@ -789,7 +788,7 @@ export default class MigrationJobTask {
                 let records = await ___filterRecords(this.sourceData.records);
                 records = ___mockRecords(records);
                 records.forEach(record => {
-                    delete records[CONSTANTS.__ID_FIELD];
+                    delete records[CONSTANTS.__ID_FIELD_NAME];
                 });
                 await ___writeToTargetCSVFile(records);
                 await Common.writeCsvFileAsync(self.data.csvFilename, records, true);
@@ -810,7 +809,7 @@ export default class MigrationJobTask {
                 await warnUserCallbackAsync(data);
             }
             // Process data ****
-            totalProcessedRecordsAmount += (await ___updatetOrg(data));
+            totalProcessedRecordsAmount += (await ___updatetData(data));
 
             // Person Accounts/Contacts only /////////////           
             if (this.isPersonAccountOrContact) {
@@ -821,7 +820,7 @@ export default class MigrationJobTask {
                     await warnUserCallbackAsync(data);
                 }
                 // Process data ****
-                totalProcessedRecordsAmount += (await ___updatetOrg(data));
+                totalProcessedRecordsAmount += (await ___updatetData(data));
             }
 
         }
@@ -829,7 +828,7 @@ export default class MigrationJobTask {
 
 
         // ------------------------ Internal functions --------------------------
-        async function ___createUpdateData(personAccounts: boolean): Promise<ProcessedData> {
+        async function ___createUpdateData(processPersonAccounts: boolean): Promise<ProcessedData> {
 
             let processedData = new ProcessedData();
 
@@ -842,7 +841,7 @@ export default class MigrationJobTask {
                     // For Step 2 : Reference sFields with the parent lookup AFTER
                     return field.isSimpleReference && self.data.nextTasks.concat(self).indexOf(field.parentLookupObject.task) >= 0;
             }).concat(new SFieldDescribe({
-                name: CONSTANTS.__ID_FIELD
+                name: CONSTANTS.__ID_FIELD_NAME
             }));
 
             // Add recordId sField //////////
@@ -863,82 +862,96 @@ export default class MigrationJobTask {
             }
 
             // Prepare records //////////////
-            // Map: cloned => source 
-            let tempClonedToSourceMap = Common.cloneArrayOfObjects(self.sourceData.records, processedData.fieldNames);
+            if (processedData.fields.some(field => field.name != "Id" && field.name != CONSTANTS.__ID_FIELD_NAME)) {
+                // Map: cloned => source 
+                let tempClonedToSourceMap = Common.cloneArrayOfObjects(self.sourceData.records, processedData.fieldNames);
 
-            // Map: "___Id" => cloned
-            let ___IdToClonedMap = new Map<string, any>();
-            [...tempClonedToSourceMap.keys()].forEach(cloned => {
-                ___IdToClonedMap.set(cloned[CONSTANTS.__ID_FIELD], cloned);
-            });
+                // Map: "___Id" => cloned
+                let ___IdToClonedMap = new Map<string, any>();
+                [...tempClonedToSourceMap.keys()].forEach(cloned => {
+                    ___IdToClonedMap.set(cloned[CONSTANTS.__ID_FIELD_NAME], cloned);
+                });
 
-            // Map: cloned => source 
-            //    + update lookup Id fields (f.ex. Account__c)
-            if (self.isPersonAccountOrContact) {
-                if (personAccounts) {
-                    // Only non-person Acounts/Contacts (IsPersonAccount == null)
-                    tempClonedToSourceMap.forEach((source, cloned) => {
-                        if (!source["IsPersonAccount"]) {
-                            ___updateLookupIdFields(processedData, source, cloned);
-                            processedData.clonedToSourceMap.set(cloned, source);
-                        }
-                    });
+                // Map: cloned => source 
+                //    + update lookup Id fields (f.ex. Account__c)
+                if (self.isPersonAccountOrContact) {
+                    // Person accounts are supported -- /
+                    if (processPersonAccounts) {
+                        // Only non-person Acounts/Contacts (IsPersonAccount == null)
+                        tempClonedToSourceMap.forEach((source, cloned) => {
+                            if (!source["IsPersonAccount"]) {
+                                ___updateLookupIdFields(processedData, source, cloned);
+                                processedData.clonedToSourceMap.set(cloned, source);
+                            }
+                        });
+                    } else {
+                        // Only person Acounts/Contacts (IsPersonAccount != null)
+                        tempClonedToSourceMap.forEach((source, cloned) => {
+                            if (!!source["IsPersonAccount"]) {
+                                ___updateLookupIdFields(processedData, source, cloned);
+                                processedData.clonedToSourceMap.set(cloned, source);
+                            }
+                        });
+                    }
                 } else {
-                    // Only person Acounts/Contacts (IsPersonAccount != null)
+                    // Person accounts are not supported -- /
+                    // All objects including Accounts/Contacts (all items)
                     tempClonedToSourceMap.forEach((source, cloned) => {
-                        if (!!source["IsPersonAccount"]) {
-                            ___updateLookupIdFields(processedData, source, cloned);
-                            processedData.clonedToSourceMap.set(cloned, source);
-                        }
+                        ___updateLookupIdFields(processedData, source, cloned);
+                        processedData.clonedToSourceMap.set(cloned, source);
                     });
                 }
-            } else {
-                // Other objects (all items)
-                tempClonedToSourceMap.forEach((source, cloned) => {
-                    ___updateLookupIdFields(processedData, source, cloned);
+
+                // Filter records /////////////
+                tempClonedToSourceMap = processedData.clonedToSourceMap;
+                processedData.clonedToSourceMap = new Map<any, any>();
+
+
+                let clonedRecords = await ___filterRecords([...tempClonedToSourceMap.keys()]);
+                clonedRecords = ___mockRecords(clonedRecords);
+                clonedRecords.forEach(cloned => {
+                    let initialCloned = ___IdToClonedMap.get(cloned[CONSTANTS.__ID_FIELD_NAME]);
+                    let source = tempClonedToSourceMap.get(initialCloned);
                     processedData.clonedToSourceMap.set(cloned, source);
+                });
+
+                // Finalizing: Create separated record sets to Update/Insert /////////////
+                processedData.processPersonAccounts = processPersonAccounts;
+                processedData.clonedToSourceMap.forEach((source, cloned) => {
+                    delete cloned[CONSTANTS.__ID_FIELD_NAME];
+                    let target = self.data.sourceToTargetRecordMap.get(source);
+                    if (target && updateMode == "backwards") {
+                        if (target["Id"]) {
+                            cloned["Id"] = target["Id"];
+                            processedData.recordsToUpdate.push(cloned);
+                        }
+                    } else if (!target && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
+                        delete cloned["Id"];
+                        processedData.recordsToInsert.push(cloned);
+                    } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
+                        if (target["Id"]) {
+                            cloned["Id"] = target["Id"];
+                            processedData.recordsToUpdate.push(cloned);
+                        }
+                    }
                 });
             }
 
-            // Filter records /////////////
-            tempClonedToSourceMap = processedData.clonedToSourceMap;
-            processedData.clonedToSourceMap = new Map<any, any>();
-            let clonedRecords = await ___filterRecords([...tempClonedToSourceMap.keys()]);
-            clonedRecords = ___mockRecords(clonedRecords);
-            clonedRecords.forEach(cloned => {
-                let initialCloned = ___IdToClonedMap.get(cloned[CONSTANTS.__ID_FIELD]);
-                let source = tempClonedToSourceMap.get(initialCloned);
-                processedData.clonedToSourceMap.set(cloned, source);
-            });
-
-            // Finalizing: Create separated record sets to Update/Insert /////////////
-            processedData.clonedToSourceMap.forEach((source, cloned) => {
-                delete cloned[CONSTANTS.__ID_FIELD];
-                let target = self.data.sourceToTargetRecordMap.get(source);
-                if (target && updateMode == "backwards") {
-                    cloned["Id"] = target["Id"];
-                    processedData.recordsToUpdate.push(cloned);
-                } else if (!target && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
-                    delete cloned["Id"];
-                    processedData.recordsToInsert.push(cloned);
-                } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
-                    cloned["Id"] = target["Id"];
-                    processedData.recordsToUpdate.push(cloned);
-                }
-            });
-
-            // Free memory and return
-            tempClonedToSourceMap = null;
             return processedData;
         }
 
         /**
         * @returns {Promise<number>} Number of records actually processed
         */
-        async function ___updatetOrg(data: ProcessedData): Promise<number> {
+        async function ___updatetData(data: ProcessedData): Promise<number> {
             let totalProcessedAmount = 0;
+            let targetFilenameSuffix = data.processPersonAccounts ? CONSTANTS.CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX : "";
             if (data.recordsToInsert.length > 0) {
-                self.createApiEngine(self.targetData.org, OPERATION.Insert, data.recordsToInsert.length, true);
+                self.logger.infoVerbose(RESOURCES.updatingTargetNRecordsWillBeUpdated, 
+                    self.sObjectName,
+                    self.logger.getResourceString(RESOURCES.insert),
+                    String((data.recordsToInsert.length)));
+                self.createApiEngine(self.targetData.org, OPERATION.Insert, data.recordsToInsert.length, true, targetFilenameSuffix);
                 let targetRecords = await self.apiEngine.executeCRUD(data.recordsToInsert, self.apiProgressCallback);
                 if (targetRecords == null) {
                     // API ERROR. Exiting.
@@ -954,7 +967,11 @@ export default class MigrationJobTask {
                 });
             }
             if (data.recordsToUpdate.length > 0) {
-                self.createApiEngine(self.targetData.org, OPERATION.Update, data.recordsToUpdate.length, false);
+                self.logger.infoVerbose(RESOURCES.updatingTargetNRecordsWillBeUpdated, 
+                    self.sObjectName,
+                    self.logger.getResourceString(RESOURCES.update),
+                    String((data.recordsToUpdate.length)));
+                self.createApiEngine(self.targetData.org, OPERATION.Update, data.recordsToUpdate.length, false, targetFilenameSuffix);
                 let targetRecords = await self.apiEngine.executeCRUD(data.recordsToUpdate, self.apiProgressCallback);
                 if (targetRecords == null) {
                     // API ERROR. Exiting.
@@ -1019,7 +1036,7 @@ export default class MigrationJobTask {
 
         async function ___writeToTargetCSVFile(records: Array<any>): Promise<void> {
             if (self.script.createTargetCSVFiles) {
-                await Common.writeCsvFileAsync(self.data.targetCSVFilename(self.operation), records, true);
+                await Common.writeCsvFileAsync(self.data.getTargetCSVFilename(self.operation), records, true);
             }
         }
 
@@ -1113,7 +1130,7 @@ export default class MigrationJobTask {
      * @returns {IApiEngine}
      * @memberof MigrationJobTask
      */
-    createApiEngine(org: ScriptOrg, operation: OPERATION, amountOfRecordsToProcess: number, updateRecordId: boolean): IApiEngine {
+    createApiEngine(org: ScriptOrg, operation: OPERATION, amountOfRecordsToProcess: number, updateRecordId: boolean, targetFilenameSuffix?: string): IApiEngine {
 
         if (amountOfRecordsToProcess > this.script.bulkThreshold && !this.script.alwaysUseRestApiToUpdateRecords) {
             // Use bulk api
@@ -1126,7 +1143,7 @@ export default class MigrationJobTask {
                         operation,
                         pollingIntervalMs: this.script.pollingIntervalMs,
                         updateRecordId,
-                        targetCSVFullFilename: this.data.targetCSVFilename(operation),
+                        targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                         createTargetCSVFiles: this.script.createTargetCSVFiles
                     });
                     break;
@@ -1139,7 +1156,7 @@ export default class MigrationJobTask {
                         pollingIntervalMs: this.script.pollingIntervalMs,
                         updateRecordId,
                         bulkApiV1BatchSize: this.script.bulkApiV1BatchSize,
-                        targetCSVFullFilename: this.data.targetCSVFilename(operation),
+                        targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                         createTargetCSVFiles: this.script.createTargetCSVFiles
                     });
                     break;
@@ -1154,7 +1171,7 @@ export default class MigrationJobTask {
                 pollingIntervalMs: this.script.pollingIntervalMs,
                 updateRecordId,
                 allOrNone: this.script.allOrNone,
-                targetCSVFullFilename: this.data.targetCSVFilename(operation),
+                targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                 createTargetCSVFiles: this.script.createTargetCSVFiles
             });
         }
@@ -1331,7 +1348,7 @@ export default class MigrationJobTask {
                 }
                 if (!sourceIdRecordsMap.has(record["Id"])) {
                     sourceIdRecordsMap.set(record["Id"], record);
-                    record[CONSTANTS.__ID_FIELD] = record["Id"];
+                    record[CONSTANTS.__ID_FIELD_NAME] = record["Id"];
                     if (isTarget) {
                         let extIdValue = this.getRecordValue(record, this.complexExternalId);
                         if (extIdValue) {
@@ -1345,7 +1362,7 @@ export default class MigrationJobTask {
                     newRecordsCount++;
                 }
             } else {
-                record[CONSTANTS.__ID_FIELD] = Common.makeId(18);
+                record[CONSTANTS.__ID_FIELD_NAME] = Common.makeId(18);
             }
         });
         return newRecordsCount;
@@ -1398,12 +1415,12 @@ export class TaskData {
         return this.task.getCSVFilename(filepath, CONSTANTS.CSV_SOURCE_FILE_SUFFIX);
     }
 
-    targetCSVFilename(operation: OPERATION): string {
+    getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
         let filepath = path.join(this.task.script.basePath, CONSTANTS.CSV_TARGET_SUB_DIRECTORY);
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
-        return this.task.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
+        return this.task.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}${fileNameSuffix || ""}`);
     }
 
     get resourceString_csvFile(): string {
@@ -1414,7 +1431,7 @@ export class TaskData {
         return this.task.logger.getResourceString(RESOURCES.org);
     }
 
-    resourceString_Step(mode: "forwards" | "backwards" | "target"): string {
+    getResourceString_Step(mode: "forwards" | "backwards" | "target"): string {
         return mode == "forwards" ? this.task.logger.getResourceString(RESOURCES.Step1)
             : this.task.logger.getResourceString(RESOURCES.Step2);
     }
@@ -1474,6 +1491,8 @@ export class TaskOrgData {
 }
 
 export class ProcessedData {
+
+    processPersonAccounts: boolean = false;
 
     clonedToSourceMap: Map<any, any> = new Map<any, any>();
 

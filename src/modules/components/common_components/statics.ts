@@ -8,6 +8,7 @@
 
 
 export const CONSTANTS = {
+
     DEFAULT_USER_PROMPT_TIMEOUT_MS: 6000,
     DEFAULT_POLLING_INTERVAL_MS: 5000,
     DEFAULT_BULK_API_THRESHOLD_RECORDS: 200,
@@ -15,13 +16,19 @@ export const CONSTANTS = {
     DEFAULT_BULK_API_V1_BATCH_SIZE: 9500,
     DEFAULT_API_VERSION: '47.0',
     DEFAULT_EXTERNAL_ID_FIELD_NAME: "Name",
+
+    __ID_FIELD_NAME: "___Id",
     DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName",
+    COMPLEX_FIELDS_QUERY_SEPARATOR: '$',
+    COMPLEX_FIELDS_QUERY_PREFIX: '$$',
+    COMPLEX_FIELDS_SEPARATOR: ';',
 
     SCRIPT_FILE_NAME: 'export.json',
     CSV_SOURCE_SUB_DIRECTORY: "source",
     CSV_TARGET_SUB_DIRECTORY: "target",
     CSV_SOURCE_FILE_SUFFIX: "_source",
     CSV_TARGET_FILE_SUFFIX: "_target",
+    CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX: "_person",
     FILE_LOG_SUBDIRECTORY: "logs",
     FILE_LOG_FILEEXTENSION: "log",
     VALUE_MAPPING_CSV_FILENAME: 'ValueMapping.csv',
@@ -29,18 +36,14 @@ export const CONSTANTS = {
     CSV_ISSUES_ERRORS_FILENAME: 'CSVIssuesReport.csv',
     MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME : "MissingParentRecordsReport.csv",
 
-    RECORD_TYPE_SOBJECT_NAME: "RecordType",
-
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
     MAX_FETCH_SIZE: 100000,
     QUERY_BULK_API_THRESHOLD: 30000,
     BULK_API_V2_BLOCK_SIZE: 1000,
     BULK_API_V2_MAX_CSV_SIZE_IN_BYTES: 145000000,
     POLL_TIMEOUT: 3000000,
-
-    COMPLEX_FIELDS_QUERY_SEPARATOR: '$',
-    COMPLEX_FIELDS_QUERY_PREFIX: '$$',
-    COMPLEX_FIELDS_SEPARATOR: ';',
+    SHORT_QUERY_STRING_MAXLENGTH: 250,
+    MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,
 
     MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
     SPECIAL_MOCK_COMMANDS: [
@@ -48,7 +51,7 @@ export const CONSTANTS = {
         "c_seq_date"
     ],
 
-
+    RECORD_TYPE_SOBJECT_NAME: "RecordType",
     NOT_SUPPORTED_OBJECTS: [
         'Profile',
         'RecordType',
@@ -71,6 +74,17 @@ export const CONSTANTS = {
         'DandBCompany'
     ],
 
+    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT: [
+        "FirstName",
+        "LastName",
+        "IsPersonAccount",
+        "Salutation"
+    ],
+    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_CONTACT: [
+        "IsPersonAccount",
+        "Name"
+    ],
+
     MULTISELECT_SOQL_KEYWORDS: [
         "readonly_true",
         "readonly_false",
@@ -84,24 +98,7 @@ export const CONSTANTS = {
         "lookup_false",
         "person_true",
         "person_false"
-    ],
-
-    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT: [
-        "FirstName",
-        "LastName",
-        "IsPersonAccount",
-        "Salutation"
-    ],
-    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_CONTACT: [
-        "IsPersonAccount",
-        "Name"
-    ],
-
-    __ID_FIELD: "___Id",
-
-    SHORT_QUERY_STRING_MAXLENGTH: 250,
-    MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900
-
+    ]    
 }
 
 export enum DATA_MEDIA_TYPE {

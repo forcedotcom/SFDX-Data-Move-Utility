@@ -101,14 +101,19 @@ export default class MigrationJob {
                     // Check if the new object is parent lookup to the existed task
                     let isObjectToAdd_ParentLookup = existedTask.scriptObject.parentLookupObjects.some(x => x.name == objectToAdd.name);
                     // Check if the existed task is parent master-detail to the new object
-                    let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name) || existedTask.tempData.isMasterDetailTask;
+                    //let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name) 
+                    //                                      || existedTask.tempData.isMasterDetailTask; //TODO: Check this option
+                    let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name);
                     if (isObjectToAdd_ParentLookup && !isExistedTask_ParentMasterDetail) {
                         // The new object is the parent lookup, but it is not a child master-detail 
                         //                  => it should be before BEFORE the existed task (replace existed task with it)
                         indexToInsert = existedTaskIndex;
-                    } else if (isExistedTask_ParentMasterDetail) {
+                    } 
+                    /* // TODO: Check this option
+                    else if (isExistedTask_ParentMasterDetail) {
                         existedTask.tempData.isMasterDetailTask = true;
                     }
+                    */
                     // The existed task is the parent lookup or the parent master-detail 
                     //                      => it should be AFTER the exited task (continue as is)
                 }
@@ -318,7 +323,7 @@ export default class MigrationJob {
         // STEP 1::::::::: FORWARDS
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
-        
+
         let noAbortPrompt = false;
         let totalProcessedRecordsAmount = 0;
 
@@ -335,7 +340,9 @@ export default class MigrationJob {
                 await ___promptToAbort(data, task.sObjectName);
                 noAbortPrompt = true;
             }));
-            this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+            if (processedRecordsAmount > 0){
+                this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+            }
             totalProcessedRecordsAmount += processedRecordsAmount;
         }
         if (totalProcessedRecordsAmount > 0)
@@ -361,7 +368,9 @@ export default class MigrationJob {
                     await ___promptToAbort(data, task.sObjectName);
                     noAbortPrompt = true;
                 }));
-                this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+                if (processedRecordsAmount > 0){
+                    this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+                }
                 totalProcessedRecordsAmount += processedRecordsAmount;
             }
         }
