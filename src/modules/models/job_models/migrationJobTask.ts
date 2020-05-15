@@ -590,7 +590,6 @@ export default class MigrationJobTask {
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
         let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
         if (resultRecords == null) {
-            // API ERROR. Exiting.
             this._apiOperationError(OPERATION.Delete);
         }
 
@@ -831,8 +830,9 @@ export default class MigrationJobTask {
         async function ___createUpdateData(processPersonAccounts: boolean): Promise<ProcessedData> {
 
             let processedData = new ProcessedData();
-
-            // Get list of sFields to process /////////
+            processedData.processPersonAccounts = processPersonAccounts;
+            
+            // Prepare fields /////////
             processedData.fields = self.data.sFieldsToUpdate.filter((field: SFieldDescribe) => {
                 if (updateMode == "forwards")
                     // For Step 1 : Simple sFields or reference fields with the parent lookup BEFORE
@@ -844,12 +844,12 @@ export default class MigrationJobTask {
                 name: CONSTANTS.__ID_FIELD_NAME
             }));
 
-            // Add recordId sField //////////
+            // Add recordId field //////////
             if (self.operation != OPERATION.Insert) {
                 processedData.fields.push(self.data.sFieldsInQuery.filter(field => field.nameId == "Id")[0]);
             }
 
-            // Fields for person accounts/contacts /////////
+            // Get out unsupported fields for person accounts/contacts /////////
             if (self.isPersonAccountOrContact) {
                 processedData.fields = self.sObjectName == "Account" ?
                     processedData.fields.filter((field: SFieldDescribe) => {
@@ -862,7 +862,9 @@ export default class MigrationJobTask {
             }
 
             // Prepare records //////////////
+            // (Only if any field to update exist)
             if (processedData.fields.some(field => field.name != "Id" && field.name != CONSTANTS.__ID_FIELD_NAME)) {
+
                 // Map: cloned => source 
                 let tempClonedToSourceMap = Common.cloneArrayOfObjects(self.sourceData.records, processedData.fieldNames);
 
@@ -906,7 +908,6 @@ export default class MigrationJobTask {
                 tempClonedToSourceMap = processedData.clonedToSourceMap;
                 processedData.clonedToSourceMap = new Map<any, any>();
 
-
                 let clonedRecords = await ___filterRecords([...tempClonedToSourceMap.keys()]);
                 clonedRecords = ___mockRecords(clonedRecords);
                 clonedRecords.forEach(cloned => {
@@ -915,13 +916,12 @@ export default class MigrationJobTask {
                     processedData.clonedToSourceMap.set(cloned, source);
                 });
 
-                // Finalizing: Create separated record sets to Update/Insert /////////////
-                processedData.processPersonAccounts = processPersonAccounts;
+                // Create separated record sets to Update/Insert /////////////
                 processedData.clonedToSourceMap.forEach((source, cloned) => {
                     delete cloned[CONSTANTS.__ID_FIELD_NAME];
                     let target = self.data.sourceToTargetRecordMap.get(source);
                     if (target && updateMode == "backwards") {
-                        if (target["Id"]) {
+                        if (target["Id"] && ___compareRecords(target, cloned)) {
                             cloned["Id"] = target["Id"];
                             processedData.recordsToUpdate.push(cloned);
                         }
@@ -929,12 +929,13 @@ export default class MigrationJobTask {
                         delete cloned["Id"];
                         processedData.recordsToInsert.push(cloned);
                     } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
-                        if (target["Id"]) {
+                        if (target["Id"] && ___compareRecords(target, cloned)) {
                             cloned["Id"] = target["Id"];
                             processedData.recordsToUpdate.push(cloned);
                         }
                     }
                 });
+
             }
 
             return processedData;
@@ -944,20 +945,25 @@ export default class MigrationJobTask {
         * @returns {Promise<number>} Number of records actually processed
         */
         async function ___updatetData(data: ProcessedData): Promise<number> {
+
             let totalProcessedAmount = 0;
             let targetFilenameSuffix = data.processPersonAccounts ? CONSTANTS.CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX : "";
+
+            // Inserting ////////
             if (data.recordsToInsert.length > 0) {
-                self.logger.infoVerbose(RESOURCES.updatingTargetNRecordsWillBeUpdated, 
+                self.logger.infoVerbose(RESOURCES.updatingTargetNRecordsWillBeUpdated,
                     self.sObjectName,
                     self.logger.getResourceString(RESOURCES.insert),
                     String((data.recordsToInsert.length)));
+
                 self.createApiEngine(self.targetData.org, OPERATION.Insert, data.recordsToInsert.length, true, targetFilenameSuffix);
                 let targetRecords = await self.apiEngine.executeCRUD(data.recordsToInsert, self.apiProgressCallback);
+
                 if (targetRecords == null) {
-                    // API ERROR. Exiting.
                     self._apiOperationError(OPERATION.Insert);
                 }
                 totalProcessedAmount += targetRecords.length;
+
                 self._setExternalIdMap(targetRecords, self.targetData.extIdRecordsMap, self.targetData.idRecordsMap);
                 targetRecords.forEach(target => {
                     let source = data.clonedToSourceMap.get(target);
@@ -966,20 +972,22 @@ export default class MigrationJobTask {
                     }
                 });
             }
+
+            // Updating ///////
             if (data.recordsToUpdate.length > 0) {
-                self.logger.infoVerbose(RESOURCES.updatingTargetNRecordsWillBeUpdated, 
+                self.logger.infoVerbose(RESOURCES.updatingTargetNRecordsWillBeUpdated,
                     self.sObjectName,
                     self.logger.getResourceString(RESOURCES.update),
                     String((data.recordsToUpdate.length)));
+
                 self.createApiEngine(self.targetData.org, OPERATION.Update, data.recordsToUpdate.length, false, targetFilenameSuffix);
                 let targetRecords = await self.apiEngine.executeCRUD(data.recordsToUpdate, self.apiProgressCallback);
+
                 if (targetRecords == null) {
-                    // API ERROR. Exiting.
                     self._apiOperationError(OPERATION.Update);
                 }
                 totalProcessedAmount += targetRecords.length;
             }
-
 
             return totalProcessedAmount;
         }
@@ -1114,6 +1122,21 @@ export default class MigrationJobTask {
 
         function ___getMockPatternByFieldName(fieldName: string): ScriptMockField {
             return self.scriptObject.mockFields.filter(field => field.name == fieldName)[0] || new ScriptMockField();
+        }
+
+        /**
+         * @returns {boolean} true = > not equal
+         */
+        function ___compareRecords(target: any, cloned: any): boolean {
+            if (target && !cloned || cloned && !target) {
+                return true;
+            }
+            return Object.keys(cloned).some(key => {
+                if (key != "Id" && key != CONSTANTS.__ID_FIELD_NAME) {
+                    return target[key] != cloned[key];
+                }
+                return false;
+            });
         }
     }
 

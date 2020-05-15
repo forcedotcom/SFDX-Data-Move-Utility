@@ -1085,7 +1085,7 @@ export class Common {
         let cloneToOriginalMap = new Map<any, any>();
         objects.forEach(original => {
             let cloned = Object.assign({}, original);
-            if (propsToInclude.length == 0){
+            if (propsToInclude.length == 0) {
                 cloneToOriginalMap.set(cloned, original);
                 return;
             }
@@ -1098,6 +1098,29 @@ export class Common {
         });
         return cloneToOriginalMap;
     }
+
+    /**
+     * Remove folder with all files
+     *
+     * @static
+     * @param {string} path
+     * @memberof Common
+     */
+    public static deleteFolderRecursive(path: string) {
+        if (fs.existsSync(path)) {
+            fs.readdirSync(path).forEach(function (file, index) {
+                var curPath = path + "/" + file;
+                if (fs.lstatSync(curPath).isDirectory()) {
+                    // Recursive call
+                    this.deleteFolderRecursive(curPath);
+                } else {
+                    // Delete file
+                    fs.unlinkSync(curPath);
+                }
+            });
+            fs.rmdirSync(path);
+        }
+    };
 
 }
 

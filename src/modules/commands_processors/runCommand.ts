@@ -145,6 +145,7 @@ export class RunCommand {
     * @memberof RunCommand
     */
     async prepareJob(): Promise<void> {
+        this.job.deleteTargetCSVDirectory();
         await this.job.getTotalRecordsCount();
         await this.job.deleteOldRecords();
     }

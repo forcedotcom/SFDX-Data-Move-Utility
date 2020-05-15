@@ -108,7 +108,7 @@ export default class MigrationJob {
                         // The new object is the parent lookup, but it is not a child master-detail 
                         //                  => it should be before BEFORE the existed task (replace existed task with it)
                         indexToInsert = existedTaskIndex;
-                    } 
+                    }
                     /* // TODO: Check this option
                     else if (isExistedTask_ParentMasterDetail) {
                         existedTask.tempData.isMasterDetailTask = true;
@@ -340,7 +340,7 @@ export default class MigrationJob {
                 await ___promptToAbort(data, task.sObjectName);
                 noAbortPrompt = true;
             }));
-            if (processedRecordsAmount > 0){
+            if (processedRecordsAmount > 0) {
                 this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
             }
             totalProcessedRecordsAmount += processedRecordsAmount;
@@ -368,7 +368,7 @@ export default class MigrationJob {
                     await ___promptToAbort(data, task.sObjectName);
                     noAbortPrompt = true;
                 }));
-                if (processedRecordsAmount > 0){
+                if (processedRecordsAmount > 0) {
                     this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
                 }
                 totalProcessedRecordsAmount += processedRecordsAmount;
@@ -459,7 +459,15 @@ export default class MigrationJob {
         this.cachedCSVContent.clear();
     }
 
-
+    /**
+    * Remove target directory
+    *
+    * @memberof MigrationJob
+    */
+    deleteTargetCSVDirectory() {
+        let filepath = path.join(this.script.basePath, CONSTANTS.CSV_TARGET_SUB_DIRECTORY);
+        Common.deleteFolderRecursive(filepath);
+    }
 
     // --------------------------- Private members -------------------------------------
     private async _loadCSVValueMappingFileAsync(): Promise<void> {
