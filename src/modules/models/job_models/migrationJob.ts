@@ -12,7 +12,7 @@ import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
-import { ProcessedData } from "./migrationJobTask";
+import MigrationJobTask, { ProcessedData } from "./migrationJobTask";
 
 
 
@@ -50,8 +50,9 @@ export default class MigrationJob {
      */
     setup() {
 
-        this.script.job = this;
+        let self = this;
 
+        this.script.job = this;
         let lowerIndexForAnyObjects = 0;
         let lowerIndexForReadonlyObjects = 0;
 
@@ -103,8 +104,10 @@ export default class MigrationJob {
                     // Check if the existed task is parent master-detail to the new object
                     //let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name) 
                     //                                      || existedTask.tempData.isMasterDetailTask; //TODO: Check this option
-                    let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name);
-                    if (isObjectToAdd_ParentLookup && !isExistedTask_ParentMasterDetail) {
+
+                    //let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name);
+                    //if (isObjectToAdd_ParentLookup && !isExistedTask_ParentMasterDetail) {
+                    if (isObjectToAdd_ParentLookup) {
                         // The new object is the parent lookup, but it is not a child master-detail 
                         //                  => it should be before BEFORE the existed task (replace existed task with it)
                         indexToInsert = existedTaskIndex;
@@ -123,6 +126,12 @@ export default class MigrationJob {
                 this.tasks.splice(indexToInsert, 0, newTask);
             }
         });
+
+        // Put master-detail lookups before
+        let swapped = true;
+        for (let iteration = 0; iteration < 10 || !swapped; iteration++) {
+            swapped = ___putMasterDetailsBefore();
+        }
 
         // Create query task order
         this.tasks.forEach(task => {
@@ -144,6 +153,31 @@ export default class MigrationJob {
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.executionOrder)]: this.tasks.map(x => x.sObjectName).join("; ")
         });
+        
+        //throw new Error();
+
+
+        // ------------------------------- Internal functions --------------------------------------- //
+        function ___putMasterDetailsBefore() : boolean{
+            let swapped = false;
+            let tempTasks: Array<MigrationJobTask> = [].concat(self.tasks);
+            for (let leftIndex = 0; leftIndex < tempTasks.length - 1; leftIndex++) {
+                const leftTask = tempTasks[leftIndex];
+                for (let rightIndex = leftIndex + 1; rightIndex < tempTasks.length; rightIndex++) {
+                    const rightTask = tempTasks[rightIndex];
+                    let rightIsParentMasterDetailOfLeft = leftTask.scriptObject.parentMasterDetailObjects.some(object => object.name == rightTask.sObjectName);
+                    let leftTaskIndex = self.tasks.indexOf(leftTask);
+                    let rightTaskIndex = self.tasks.indexOf(rightTask);
+                    if (rightIsParentMasterDetailOfLeft){
+                        // Swape places and put right before left
+                        self.tasks.splice(rightTaskIndex, 1);
+                        self.tasks.splice(leftTaskIndex, 0, rightTask);
+                        swapped = true;
+                    } 
+                }
+            }
+            return swapped;
+        }
     }
 
     /**
@@ -231,8 +265,9 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     async retrieveRecords(): Promise<void> {
-        // STEP 1:::::::::
-        // SOURCE FORWARDS ***********
+
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // STEP 1 SOURCE FORWARDS  :::::::::::::::::::::::::::::::::::::::::::::::::
         let retrieved: boolean = false;
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step1));
@@ -246,10 +281,10 @@ export default class MigrationJob {
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
 
 
-        // STEP 2:::::::::
-        // SOURCE BACKWARDS ***********  
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // STEP 2 SOURCE BACKWARDS ::::::::::::::::::::::::::::::::::::::::::::::::
+        // PASS 1 --- 
         retrieved = false;
-        // PASS 1  ------//    
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step2));
 
@@ -263,7 +298,7 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.noRecords);
         }
 
-        // PASS 2  ------// 
+        // PASS 2 --- 
         retrieved = false;
         this.logger.infoNormal(RESOURCES.newLine);
         this.logger.infoNormal(RESOURCES.Pass2);
@@ -276,8 +311,7 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.noRecords);
         }
 
-        // SOURCE REVERSE FORWARDS ***********  
-        // PASS 3 -----//
+        // PASS 3 --- SOURCE FORWARDS (REVERSE A)
         retrieved = false;
         this.logger.infoNormal(RESOURCES.newLine);
         this.logger.infoNormal(RESOURCES.Pass3);
@@ -290,8 +324,22 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.noRecords);
         }
 
-        // STEP 3:::::::::
-        // TARGET ONLY FORWARDS ***********        
+        // PASS 4 --- SOURCE FORWARDS (REVERSE B) 
+        retrieved = false;
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.infoNormal(RESOURCES.Pass4);
+        this.logger.infoNormal(RESOURCES.separator);
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            retrieved = await task.retrieveRecords("forwards", true) || retrieved;
+        }
+        if (!retrieved) {
+            this.logger.infoNormal(RESOURCES.noRecords);
+        }
+
+
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // STEP 3 TARGET ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         retrieved = false;
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.infoMinimal(RESOURCES.target);
@@ -305,7 +353,9 @@ export default class MigrationJob {
         }
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
 
-        // TOTAL FETCHED SUMMARY ***********        
+
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // TOTAL FETCHED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
         this.logger.infoNormal(RESOURCES.newLine);
         this.logger.headerNormal(RESOURCES.fetchingSummary);
         for (let index = 0; index < this.queryTasks.length; index++) {
@@ -320,7 +370,8 @@ export default class MigrationJob {
 
         let self = this;
 
-        // STEP 1::::::::: FORWARDS
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // STEP 1 FORWARDS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
 
@@ -350,7 +401,9 @@ export default class MigrationJob {
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
-        // STEP 2::::::::: BACKWARDS
+
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::            
+        // STEP 2 BACKWARDS :::::::::::::::::::::::::::::::::::::::::::::::::::::::
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step2));
 

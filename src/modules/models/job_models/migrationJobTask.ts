@@ -622,6 +622,11 @@ export default class MigrationJobTask {
 
         let records: Array<any> = new Array<any>();
 
+        // TODO:*TEST
+        if (this.sObjectName == "Account"){
+            let u = "";
+        }
+
         // Read SOURCE DATA *********************************************************************************************
         // **************************************************************************************************************
         let hasRecords = false;
@@ -719,7 +724,6 @@ export default class MigrationJobTask {
                 records = new Array<any>();
                 if (this.scriptObject.processAllTarget) {
                     // All records ****** //
-                    //let query = this.createQuery(["Id", this.complexExternalId]); // TODO: check this option
                     let query = this.createQuery();
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
@@ -731,7 +735,6 @@ export default class MigrationJobTask {
                     hasRecords = true;
                 } else {
                     // Filtered records ***** //
-                    //let queries = this._createFilteredQueries(queryMode, reversed, ["Id", this.complexExternalId]); // TODO: check this option
                     let queries = this._createFilteredQueries(queryMode, reversed);
                     if (queries.length > 0) {
                         // Start message ------
@@ -753,7 +756,6 @@ export default class MigrationJobTask {
         return hasRecords;
 
         // ------------------------ Internal functions --------------------------
-
         async function ___retrieveFilteredRecords(queries: string[], orgData: TaskOrgData): Promise<Array<any>> {
             let sfdx = new Sfdx(orgData.org);
             let records = new Array<any>();
@@ -831,7 +833,7 @@ export default class MigrationJobTask {
 
             let processedData = new ProcessedData();
             processedData.processPersonAccounts = processPersonAccounts;
-            
+
             // Prepare fields /////////
             processedData.fields = self.data.sFieldsToUpdate.filter((field: SFieldDescribe) => {
                 if (updateMode == "forwards")
@@ -877,7 +879,7 @@ export default class MigrationJobTask {
                 // Map: cloned => source 
                 //    + update lookup Id fields (f.ex. Account__c)
                 if (self.isPersonAccountOrContact) {
-                    // Person accounts are supported -- /
+                    // Person accounts are supported --------- *** /
                     if (processPersonAccounts) {
                         // Only non-person Acounts/Contacts (IsPersonAccount == null)
                         tempClonedToSourceMap.forEach((source, cloned) => {
@@ -896,7 +898,7 @@ export default class MigrationJobTask {
                         });
                     }
                 } else {
-                    // Person accounts are not supported -- /
+                    // Person accounts are not supported ---------- *** /
                     // All objects including Accounts/Contacts (all items)
                     tempClonedToSourceMap.forEach((source, cloned) => {
                         ___updateLookupIdFields(processedData, source, cloned);
