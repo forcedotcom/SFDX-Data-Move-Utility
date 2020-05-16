@@ -9,7 +9,7 @@ import {
     ApiInfo,
     ApiResultRecord,
     IApiEngineInitParameters
-    } from '../../models/api_models';
+} from '../../models/api_models';
 import { Common, ICsvChunk } from '../common_components/common';
 import { CONSTANTS, OPERATION, RESULT_STATUSES } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
@@ -50,7 +50,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
     getEngineName(): string {
         return "Bulk API V2.0";
     }
-  
+
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let chunks = Common.createCsvStringsFromArray(allRecords,
             CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
@@ -77,7 +77,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                 jobState: "OperationStarted"
             }));
         }
-    
+
 
         // Create bulk job ******************************************
         let jobResult = await this.createBulkJobAsync(this.sObjectName, this.strOperation.toLowerCase());
@@ -157,7 +157,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         }
         csvChunk.records.forEach((record, index) => {
             if (batchResult.resultRecords[index].isSuccess) {
-                record["Errors"] = null;                
+                record["Errors"] = null;
                 if (self.operation == OPERATION.Insert && self.updateRecordId) {
                     record["Id"] = batchResult.resultRecords[index].id;
                 }
@@ -177,7 +177,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                 batchId: jobResult.batchId
             }));
         }
-        
+
         // SUCCESS RESULT
         return csvChunk.records;
     }

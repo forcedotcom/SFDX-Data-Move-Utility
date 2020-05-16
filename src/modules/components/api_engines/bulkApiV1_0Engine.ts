@@ -165,6 +165,16 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                     }
                 });
                 if (progressCallback) {
+                    if (self.numberJobRecordsFailed > 0)  {
+                        // Some records are failed
+                        progressCallback(new ApiInfo({
+                            jobState: "JobComplete",
+                            numberRecordsProcessed: self.numberJobRecordsSucceeded,
+                            numberRecordsFailed: self.numberJobRecordsFailed,
+                            jobId: job.id,
+                            batchId: batch.id
+                        }));
+                    }                    
                     // Progress message: operation finished
                     progressCallback(new ApiInfo({
                         jobState: "OperationFinished",

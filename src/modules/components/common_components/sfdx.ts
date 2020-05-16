@@ -8,16 +8,9 @@
 
 import {
     composeQuery,
-    Condition,
     Field as SOQLField,
-    FieldType,
     getComposedField,
-    LiteralType,
-    LogicalOperator,
-    Operator,
     parseQuery,
-    Query,
-    WhereClause
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
@@ -251,7 +244,7 @@ export class Sfdx {
             let fields = parsedQuery.fields.map(field => (<SOQLField>field)["rawValue"] || (<SOQLField>field).field);
             records.forEach(record => {
                 fields.forEach(field => {
-                    record[field] = record[field] || null;
+                    record[field] = typeof record[field] == "undefined" ? null : record[field];
                 });
             });
             return records;

@@ -93,7 +93,7 @@
     "noIssuesFoundDuringCSVValidation": "There are no issues found during the last validation of the source CSV files.",
     "issuesFoundDuringCSVValidation": "During the validation of the source CSV files %s issues were found. See %s file for the details.",
     "continueTheJobPrompt": "Continue the job",
-    "csvFileIsEmpty": "CSV FILE IS EMPTY OR DOES NOT EXIST",
+    "csvFileIsEmpty": "CSV FILE DOES NOT EXIST",
     "columnsMissingInCSV": "COLUMN DEFINED IN THE SCRIPT IS MISSING IN THE CSV FILE",
     "missingParentRecordForGivenLookupValue": "MISSING PARENT LOOKUP RECORD",
     "cantUpdateChildLookupCSVColumn": "ID COLUMN FOR THE PARENT LOOKUP OBJECT WAS DYNAMICALLY ADDED INTO THE CSV FILE. CAN'T UPDATE THE CHILD LOOKUP ID COLUMN BECAUSE THE NECESSARY REFERENCE EXTERNAL ID COLUMN WAS NOT FOUND.",

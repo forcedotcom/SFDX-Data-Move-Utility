@@ -121,6 +121,16 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                     }
                 });
                 if (progressCallback) {
+                    if (self.numberJobRecordsFailed > 0)  {
+                        // Some records are failed
+                        progressCallback(new ApiInfo({
+                            jobState: "JobComplete",
+                            numberRecordsProcessed: self.numberJobRecordsSucceeded,
+                            numberRecordsFailed: self.numberJobRecordsFailed,
+                            jobId: apiInfo.jobId,
+                            batchId: apiInfo.batchId
+                        }));
+                    }
                     // Progress message: operation finished
                     progressCallback(new ApiInfo({
                         jobState: "OperationFinished",

@@ -510,13 +510,13 @@ The plugin provides a variety of information about common warnings and errors th
 
 ## Version history
 
-* **New in version 2.8.0** - Deep project refactoring. Added the multiselect feature.
+* **New in version 2.8.0** - The code of the Plugin is completely rewritten and optimized.  Added the **Multiselect** feature.  Performance improvements and bug fixes.									
   
-* **New in version 2.7.0** - Added support for Person accounts. 
+* **New in version 2.7.0** - Added support for **Person Accounts**. 
   
-* **New in version 2.6.8** - Added support for the Bulk Query Api V1.0 for large data sets from 100000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
+* **New in version 2.6.8** - Added support for the **Bulk Query Api** for large data sets from 30000 records. Below this the standard REST Api will be used to query records. We plan to upgrade for supporting the modern Bulk Query Api V2.0 soon.
   
-* **New in version 2.6.0**  - Plugin will use for CRUD by default the <u>Salesforce Bulk Api v2.0</u> in Beta mode. 
+* **New in version 2.6.0**  - Plugin will use for CRUD by default the Salesforce **Bulk Api v2.0** in Beta mode. 
   If you are experiencing any issue with the current v2.0 implementation, let us know. 
   You still can switch back to  the legacy Bulk Api v1.0 using the parameter bulkApiVersion = "1.0" of the script.
 

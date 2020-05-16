@@ -101,22 +101,11 @@ export default class MigrationJob {
                     var existedTask = this.tasks[existedTaskIndex];
                     // Check if the new object is parent lookup to the existed task
                     let isObjectToAdd_ParentLookup = existedTask.scriptObject.parentLookupObjects.some(x => x.name == objectToAdd.name);
-                    // Check if the existed task is parent master-detail to the new object
-                    //let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name) 
-                    //                                      || existedTask.tempData.isMasterDetailTask; //TODO: Check this option
-
-                    //let isExistedTask_ParentMasterDetail = objectToAdd.parentMasterDetailObjects.some(x => x.name == existedTask.scriptObject.name);
-                    //if (isObjectToAdd_ParentLookup && !isExistedTask_ParentMasterDetail) {
                     if (isObjectToAdd_ParentLookup) {
-                        // The new object is the parent lookup, but it is not a child master-detail 
+                        // The new object is the parent lookup 
                         //                  => it should be before BEFORE the existed task (replace existed task with it)
                         indexToInsert = existedTaskIndex;
                     }
-                    /* // TODO: Check this option
-                    else if (isExistedTask_ParentMasterDetail) {
-                        existedTask.tempData.isMasterDetailTask = true;
-                    }
-                    */
                     // The existed task is the parent lookup or the parent master-detail 
                     //                      => it should be AFTER the exited task (continue as is)
                 }
@@ -129,7 +118,7 @@ export default class MigrationJob {
 
         // Put master-detail lookups before
         let swapped = true;
-        for (let iteration = 0; iteration < 10 || !swapped; iteration++) {
+        for (let iteration = 0; iteration < 10 || swapped; iteration++) {
             swapped = ___putMasterDetailsBefore();
         }
 

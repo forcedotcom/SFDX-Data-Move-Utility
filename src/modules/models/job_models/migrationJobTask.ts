@@ -108,10 +108,7 @@ export default class MigrationJobTask {
         let csvIssues = new Array<ICSVIssues>();
 
         // Check csv file --------------------------------------
-        // Read the csv header row
-        let csvColumnsRow = await Common.readCsvFileAsync(this.data.sourceCsvFilename, 1);
-
-        if (csvColumnsRow.length == 0) {
+        if (!fs.existsSync(this.data.sourceCsvFilename)) {
             // Missing or empty file
             csvIssues.push({
                 Date: Common.formatDateTime(new Date()),
@@ -126,6 +123,8 @@ export default class MigrationJobTask {
             return csvIssues;
         }
 
+        // Read the csv header row
+        let csvColumnsRow = await Common.readCsvFileAsync(this.data.sourceCsvFilename, 1);
 
         // Check columns in the csv file ------------------------
         // Only checking for the mandatory fields (to be updated), 
@@ -622,11 +621,6 @@ export default class MigrationJobTask {
 
         let records: Array<any> = new Array<any>();
 
-        // TODO:*TEST
-        if (this.sObjectName == "Account"){
-            let u = "";
-        }
-
         // Read SOURCE DATA *********************************************************************************************
         // **************************************************************************************************************
         let hasRecords = false;
@@ -789,7 +783,7 @@ export default class MigrationJobTask {
                 let records = await ___filterRecords(this.sourceData.records);
                 records = ___mockRecords(records);
                 records.forEach(record => {
-                    delete records[CONSTANTS.__ID_FIELD_NAME];
+                    delete record[CONSTANTS.__ID_FIELD_NAME];
                 });
                 await ___writeToTargetCSVFile(records);
                 await Common.writeCsvFileAsync(self.data.csvFilename, records, true);
@@ -965,7 +959,7 @@ export default class MigrationJobTask {
                     self._apiOperationError(OPERATION.Insert);
                 }
                 totalProcessedAmount += targetRecords.length;
-
+   
                 self._setExternalIdMap(targetRecords, self.targetData.extIdRecordsMap, self.targetData.idRecordsMap);
                 targetRecords.forEach(target => {
                     let source = data.clonedToSourceMap.get(target);
