@@ -16,11 +16,11 @@ import {
     composeQuery,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptObject, MigrationJob as Job, ICSVIssues, CommandExecutionError, ScriptOrg, Script, ScriptMockField } from "..";
+import { ScriptObject, MigrationJob as Job, CommandExecutionError, ScriptOrg, Script, ScriptMockField } from "..";
 import SFieldDescribe from "../script_models/sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
-import { CachedCSVContent, IMissingParentLookupRecordCsvRow } from "./migrationJob";
+import { CachedCSVContent, IMissingParentLookupRecordCsvRow, ICSVIssueCsvRow } from "./migrationJob";
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";
 import { IApiEngine } from "../api_models/interfaces";
@@ -103,15 +103,15 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async validateCSV(): Promise<Array<ICSVIssues>> {
+    async validateCSV(): Promise<Array<ICSVIssueCsvRow>> {
 
-        let csvIssues = new Array<ICSVIssues>();
+        let csvIssues = new Array<ICSVIssueCsvRow>();
 
         // Check csv file --------------------------------------
         if (!fs.existsSync(this.data.sourceCsvFilename)) {
             // Missing or empty file
             csvIssues.push({
-                Date: Common.formatDateTime(new Date()),
+                "Date update": Common.formatDateTime(new Date()),
                 "Child sObject": this.sObjectName,
                 "Child field": null,
                 "Child value": null,
@@ -139,7 +139,7 @@ export default class MigrationJobTask {
             if (!columnExists) {
                 // Column is missing in the csv file
                 csvIssues.push({
-                    Date: Common.formatDateTime(new Date()),
+                    "Date update": Common.formatDateTime(new Date()),
                     "Child sObject": this.sObjectName,
                     "Child field": fieldName,
                     "Child value": null,
@@ -160,13 +160,13 @@ export default class MigrationJobTask {
      * - Adds missing lookup columns like: Account__r.Name, Account__c
      *
      * @param {CachedCSVContent} cachedCSVContent The cached content of the source csv fiels
-     * @returns {Promise<Array<ICSVIssues>>}
+     * @returns {Promise<Array<ICSVIssueCsvRow>>}
      * @memberof MigrationJobTask
      */
-    async repairCSV(cachedCSVContent: CachedCSVContent): Promise<Array<ICSVIssues>> {
+    async repairCSV(cachedCSVContent: CachedCSVContent): Promise<Array<ICSVIssueCsvRow>> {
 
         let self = this;
-        let csvIssues = new Array<ICSVIssues>();
+        let csvIssues = new Array<ICSVIssueCsvRow>();
 
         let currentFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap,
             this.data.sourceCsvFilename,
@@ -314,7 +314,7 @@ export default class MigrationJobTask {
                             let parentCsvRow = parentCSVRowsMap.get(desiredExternalIdValue);
                             if (!parentCsvRow) {
                                 csvIssues.push({
-                                    Date: Common.formatDateTime(new Date()),
+                                    "Date update": Common.formatDateTime(new Date()),
                                     "Child sObject": self.sObjectName,
                                     "Child field": columnName__r,
                                     "Child value": desiredExternalIdValue,
@@ -346,7 +346,7 @@ export default class MigrationJobTask {
                             let parentCsvRow = parentFileMap.get(idValue);
                             if (!parentCsvRow) {
                                 csvIssues.push({
-                                    Date: Common.formatDateTime(new Date()),
+                                    "Date update": Common.formatDateTime(new Date()),
                                     "Child sObject": self.sObjectName,
                                     "Child field": columnNameId,
                                     "Child value": idValue,
@@ -409,7 +409,7 @@ export default class MigrationJobTask {
                             });
                         } else {
                             csvIssues.push({
-                                Date: Common.formatDateTime(new Date()),
+                                "Date update": Common.formatDateTime(new Date()),
                                 "Child sObject": childTask.sObjectName,
                                 "Child field": columnChildOriginalName__r,
                                 "Child value": null,
