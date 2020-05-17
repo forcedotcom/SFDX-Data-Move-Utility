@@ -859,6 +859,9 @@ export default class MigrationJobTask {
                         // For Person accounts
                         return !field.person && CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.indexOf(field.nameId) < 0;
                     });
+                } else {
+                    // Person contact => not need to insert / update
+                    return processedData;
                 }
             }
 
