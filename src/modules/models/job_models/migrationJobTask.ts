@@ -886,7 +886,7 @@ export default class MigrationJobTask {
                                 ___updateLookupIdFields(processedData, source, cloned);
                                 // Always ensure that account Name field is not empty, 
                                 //   join FirstName + LastName fields into Name field if necessary
-                                ___updatePrsonAccountFields(cloned, source, processedData.fieldNames, false);
+                                ___updatePrsonAccountFields(processedData, source, cloned, false);
                                 processedData.clonedToSourceMap.set(cloned, source);
                             }
                         });
@@ -897,7 +897,7 @@ export default class MigrationJobTask {
                                 ___updateLookupIdFields(processedData, source, cloned);
                                 // Always ensure that account FirstName / LastName fields are not empty, 
                                 //   split Name field if necessary
-                                ___updatePrsonAccountFields(cloned, source, processedData.fieldNames, true);
+                                ___updatePrsonAccountFields(processedData, source, cloned, true);
                                 processedData.clonedToSourceMap.set(cloned, source);
                             }
                         });
@@ -999,13 +999,13 @@ export default class MigrationJobTask {
             return totalProcessedAmount;
         }
 
-        function ___updatePrsonAccountFields(cloned: any, source: any, fieldNames: Array<string>, isPersonRecord: boolean) {
+        function ___updatePrsonAccountFields(processedData: ProcessedData, source: any, cloned: any, isPersonRecord: boolean) {
             if (self.sObjectName == "Account") {
                 if (isPersonRecord) {
                     // Person account record
                     // Name of Person account => split into First name / Last name                    
                     if (!cloned["FirstName"] && !cloned["LastName"]
-                        && fieldNames.indexOf("FirstName") >= 0 // Currently updating First/Last names fo account
+                        && processedData.fieldNames.indexOf("FirstName") >= 0 // Currently updating First/Last names fo account
                     ) {
 
                         let parts = (source["Name"] || '').split(' ');
@@ -1016,7 +1016,7 @@ export default class MigrationJobTask {
                 } else {
                     // Business account record
                     // First name & last name of Business account => join into Name
-                    if (fieldNames.indexOf("Name") >= 0){
+                    if (processedData.fieldNames.indexOf("Name") >= 0){
                         cloned["Name"] = cloned["Name"] || `${source["FirstName"]} ${source["LastName"]}`;
                         cloned["Name"] = !(cloned["Name"] || '').trim() ? Common.makeId(10) : cloned["Name"];
                     }
