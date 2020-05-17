@@ -847,14 +847,21 @@ export default class MigrationJobTask {
 
             // Get out unsupported fields for person accounts/contacts /////////
             if (self.isPersonAccountOrContact) {
-                processedData.fields = self.sObjectName == "Account" ?
-                    processedData.fields.filter((field: SFieldDescribe) => {
-                        // For Person account
+                if (!processPersonAccounts) {
+                    processedData.fields = self.sObjectName == "Account" ?
+                        processedData.fields.filter((field: SFieldDescribe) => {
+                            // For Business accounts
+                            return !field.person && CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_ACCOUNT.indexOf(field.nameId) < 0;
+                        }) : processedData.fields.filter(field => {
+                            // For Business contacts
+                            return CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_CONTACT.indexOf(field.nameId) < 0;
+                        });
+                } else if (self.sObjectName == "Account") {
+                    processedData.fields = processedData.fields.filter(field => {
+                        // For Person accounts
                         return !field.person && CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.indexOf(field.nameId) < 0;
-                    }) : processedData.fields.filter(field => {
-                        // For Person contact
-                        return CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_CONTACT.indexOf(field.nameId) < 0;
                     });
+                }
             }
 
             // Prepare records //////////////
@@ -874,7 +881,7 @@ export default class MigrationJobTask {
                 //    + update lookup Id fields (f.ex. Account__c)
                 if (self.isPersonAccountOrContact) {
                     // Person accounts are supported --------- *** /
-                    if (processPersonAccounts) {
+                    if (!processPersonAccounts) {
                         // Only non-person Acounts/Contacts (IsPersonAccount == null)
                         tempClonedToSourceMap.forEach((source, cloned) => {
                             if (!source["IsPersonAccount"]) {
@@ -959,7 +966,7 @@ export default class MigrationJobTask {
                     self._apiOperationError(OPERATION.Insert);
                 }
                 totalProcessedAmount += targetRecords.length;
-   
+
                 self._setExternalIdMap(targetRecords, self.targetData.extIdRecordsMap, self.targetData.idRecordsMap);
                 targetRecords.forEach(target => {
                     let source = data.clonedToSourceMap.get(target);

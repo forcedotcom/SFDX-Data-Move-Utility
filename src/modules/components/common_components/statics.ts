@@ -74,13 +74,17 @@ export const CONSTANTS = {
         'DandBCompany'
     ],
 
-    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT: [
+    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_ACCOUNT: [
         "FirstName",
         "LastName",
         "IsPersonAccount",
         "Salutation"
     ],
-    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_CONTACT: [
+    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_CONTACT: [
+        "IsPersonAccount",
+        "Name"
+    ],
+    FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT: [
         "IsPersonAccount",
         "Name"
     ],

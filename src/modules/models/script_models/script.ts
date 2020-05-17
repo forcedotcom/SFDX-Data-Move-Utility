@@ -65,7 +65,7 @@ export default class Script {
     job: MigrationJob;
 
     get isPersonAccountEnabled(): boolean {
-        return this.sourceOrg.isPersonAccountEnabled;
+        return this.sourceOrg.isPersonAccountEnabled || this.targetOrg.isPersonAccountEnabled;
     }
 
     get bulkApiVersionNumber(): number {
