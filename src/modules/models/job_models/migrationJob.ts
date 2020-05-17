@@ -175,7 +175,7 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     prepareJob() {
-        this.deleteSourceCSVDirectory();
+        this.deleteTargetCSVDirectory();
     }
 
     /**
