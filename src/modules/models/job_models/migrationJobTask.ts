@@ -862,6 +862,14 @@ export default class MigrationJobTask {
                 }
             }
 
+            // Remove master-detail fields for Update / Upsert
+            // (to avoid master-detail reparenting if not available)
+            if (self.operation != OPERATION.Insert) {
+                processedData.fields = processedData.fields.filter(field => {
+                    return !(field.isMasterDetail && !field.updateable);
+                });
+            }
+
             // Prepare records //////////////
             // (Only if any field to update exist)
             if (processedData.fields.some(field => field.name != "Id" && field.name != CONSTANTS.__ID_FIELD_NAME)) {
@@ -1016,7 +1024,7 @@ export default class MigrationJobTask {
                 } else {
                     // Business account record
                     // First name & last name of Business account => join into Name
-                    if (processedData.fieldNames.indexOf("Name") >= 0){
+                    if (processedData.fieldNames.indexOf("Name") >= 0) {
                         cloned["Name"] = cloned["Name"] || `${source["FirstName"]} ${source["LastName"]}`;
                         cloned["Name"] = !(cloned["Name"] || '').trim() ? Common.makeId(10) : cloned["Name"];
                     }
@@ -1046,13 +1054,13 @@ export default class MigrationJobTask {
                 if (parentId && !found) {
                     let csvRow: IMissingParentLookupRecordCsvRow = {
                         "Date update": Common.formatDateTime(new Date()),
-                        "Child Record Id": source["Id"],
-                        "Child ExternalId field": idField.fullName__r,
-                        "Child lookup field": idField.nameId,
-                        "Child lookup object": idField.scriptObject.name,
-                        "Missing parent ExternalId value": source[idField.fullName__r],
-                        "Parent ExternalId field": idField.parentLookupObject.externalId,
-                        "Parent lookup object": idField.parentLookupObject.name
+                        "Id": source["Id"],
+                        "Child ExternalId": idField.fullName__r,
+                        "Child lookup": idField.nameId,
+                        "Child SObject": idField.scriptObject.name,
+                        "Missing value": source[idField.fullName__r] || source[idField.nameId],
+                        "Parent ExternalId": idField.parentLookupObject.externalId,
+                        "Parent SObject": idField.parentLookupObject.name
                     };
                     processedData.missingParentLookups.push(csvRow);
                 }
