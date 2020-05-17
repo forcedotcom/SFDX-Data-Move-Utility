@@ -54,11 +54,6 @@ export default class MigrationJobTask {
         return this.scriptObject && this.scriptObject.name;
     }
 
-    get isPersonAccountOrContact(): boolean {
-        return this.script.isPersonAccountEnabled
-            && (this.sObjectName == "Account" || this.sObjectName == "Contact");
-    }
-
     get script(): Script {
         return this.scriptObject.script;
     }
@@ -125,6 +120,9 @@ export default class MigrationJobTask {
 
         // Read the csv header row
         let csvColumnsRow = await Common.readCsvFileAsync(this.data.sourceCsvFilename, 1);
+        if (csvColumnsRow.length == 0) {
+            return csvIssues;
+        }
 
         // Check columns in the csv file ------------------------
         // Only checking for the mandatory fields (to be updated), 
@@ -807,7 +805,7 @@ export default class MigrationJobTask {
             totalProcessedRecordsAmount += (await ___updatetData(data));
 
             // Person Accounts/Contacts only /////////////           
-            if (this.isPersonAccountOrContact) {
+            if (this.data.isPersonAccountOrContact) {
                 // Create data ****
                 data = await ___createUpdateData(true);
                 if (data.missingParentLookups.length > 0) {
@@ -846,7 +844,7 @@ export default class MigrationJobTask {
             }
 
             // Get out unsupported fields for person accounts/contacts /////////
-            if (self.isPersonAccountOrContact) {
+            if (self.data.isPersonAccountOrContact) {
                 if (!processPersonAccounts) {
                     processedData.fields = self.sObjectName == "Account" ?
                         processedData.fields.filter((field: SFieldDescribe) => {
@@ -879,21 +877,27 @@ export default class MigrationJobTask {
 
                 // Map: cloned => source 
                 //    + update lookup Id fields (f.ex. Account__c)
-                if (self.isPersonAccountOrContact) {
+                if (self.data.isPersonAccountOrContact) {
                     // Person accounts are supported --------- *** /
                     if (!processPersonAccounts) {
-                        // Only non-person Acounts/Contacts (IsPersonAccount == null)
+                        // Process obnly Business Acounts/Contacts  (IsPersonAccount == false)
                         tempClonedToSourceMap.forEach((source, cloned) => {
                             if (!source["IsPersonAccount"]) {
                                 ___updateLookupIdFields(processedData, source, cloned);
+                                // Always ensure that account Name field is not empty, 
+                                //   join FirstName + LastName fields into Name field if necessary
+                                ___updatePrsonAccountFields(cloned, source, processedData.fieldNames, false);
                                 processedData.clonedToSourceMap.set(cloned, source);
                             }
                         });
                     } else {
-                        // Only person Acounts/Contacts (IsPersonAccount != null)
+                        // Process only Person Accounts/Contacts (IsPersonAccount == true)
                         tempClonedToSourceMap.forEach((source, cloned) => {
                             if (!!source["IsPersonAccount"]) {
                                 ___updateLookupIdFields(processedData, source, cloned);
+                                // Always ensure that account FirstName / LastName fields are not empty, 
+                                //   split Name field if necessary
+                                ___updatePrsonAccountFields(cloned, source, processedData.fieldNames, true);
                                 processedData.clonedToSourceMap.set(cloned, source);
                             }
                         });
@@ -993,6 +997,31 @@ export default class MigrationJobTask {
             }
 
             return totalProcessedAmount;
+        }
+
+        function ___updatePrsonAccountFields(cloned: any, source: any, fieldNames: Array<string>, isPersonRecord: boolean) {
+            if (self.sObjectName == "Account") {
+                if (isPersonRecord) {
+                    // Person account record
+                    // Name of Person account => split into First name / Last name                    
+                    if (!cloned["FirstName"] && !cloned["LastName"]
+                        && fieldNames.indexOf("FirstName") >= 0 // Currently updating First/Last names fo account
+                    ) {
+
+                        let parts = (source["Name"] || '').split(' ');
+                        cloned["FirstName"] = parts[0] || '';
+                        cloned["LastName"] = parts[1] || '';
+                        cloned["FirstName"] = !cloned["FirstName"] && !cloned["LastName"] ? Common.makeId(10) : cloned["FirstName"];
+                    }
+                } else {
+                    // Business account record
+                    // First name & last name of Business account => join into Name
+                    if (fieldNames.indexOf("Name") >= 0){
+                        cloned["Name"] = cloned["Name"] || `${source["FirstName"]} ${source["LastName"]}`;
+                        cloned["Name"] = !(cloned["Name"] || '').trim() ? Common.makeId(10) : cloned["Name"];
+                    }
+                }
+            }
         }
 
         function ___updateLookupIdFields(processedData: ProcessedData, source: any, cloned: any) {
@@ -1469,6 +1498,16 @@ export class TaskData {
     get nextTasks(): MigrationJobTask[] {
         return this.task.job.tasks.filter(task => this.task.job.tasks.indexOf(task) > this.task.job.tasks.indexOf(this.task));
     }
+
+    get isPersonAccountEnabled(): boolean {
+        return this.task.script.isPersonAccountEnabled;
+    }
+
+    get isPersonAccountOrContact(): boolean {
+        return this.task.script.isPersonAccountEnabled
+            && (this.task.sObjectName == "Account" || this.task.sObjectName == "Contact");
+    }
+
 }
 
 export class TaskOrgData {
