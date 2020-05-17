@@ -27,7 +27,8 @@ import { CommandInitializationError, OrgMetadataError } from "../common_models/e
 
 
 /**
- * Parsed object from the script file 
+ * Parsed object 
+ * from the script file 
  *
  * @export
  * @class ScriptObject
@@ -50,7 +51,6 @@ export default class ScriptObject {
     useCSVValuesMapping: boolean = false;
     allRecords: boolean = true;
     excludedFields: Array<string> = new Array<string>();
-
 
 
 

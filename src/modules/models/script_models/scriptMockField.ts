@@ -7,12 +7,14 @@
 
  
 /**
- * Parsed mock field object from the script file
+ * Parsed MockField object 
+ * from the script file
  *
  * @export
  * @class ScriptMockField
  */
 export default class ScriptMockField {
+    // ------------- JSON --------------
     name: string = "";
     pattern: string = "";
     excludedRegex: string = "";

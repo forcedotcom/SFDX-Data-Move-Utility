@@ -10,12 +10,13 @@ import { DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import { Script, OrgInfo } from "..";
-import { IOrgConnectionData } from "../common_models/interfaces";
 import { CommandInitializationError } from "../common_models/errors";
+import { IOrgConnectionData } from "../common_models/helper_interfaces";
 
 
 /**
- * The org object which is parsed from the script file 
+ * Parsed org object 
+ * from the script file 
  *
  * @export
  * @class ScriptOrg
@@ -26,6 +27,8 @@ export default class ScriptOrg {
     name: string = "";
     instanceUrl: string = "";
     accessToken: string = "";
+
+    
 
     // -----------------------------------
     script: Script;

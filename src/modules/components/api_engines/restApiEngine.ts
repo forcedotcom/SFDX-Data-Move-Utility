@@ -5,11 +5,11 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
-import { CsvChunks, ICsvChunk } from '../common_components/common';
-import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
+import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { OPERATION } from '../common_components/statics';
 import { RESOURCES } from '../common_components/logger';
 import { Sfdx } from '../common_components/sfdx';
+import { CsvChunks } from '../../models';
 
 
 

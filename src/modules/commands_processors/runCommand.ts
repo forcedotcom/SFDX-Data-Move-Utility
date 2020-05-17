@@ -18,7 +18,7 @@ import { CommandInitializationError } from '../models/common_models/errors';
 
 
 /**
- * Class to process SFDMU:RUN CLI command
+ * SFDMU:RUN CLI command
  *
  * @export
  * @class RunCommand
@@ -31,17 +31,10 @@ export class RunCommand {
     sourceUsername: string;
     apiVersion: string;
     script: models.Script;
-
-    /**
-     * Holds the current MigrationJob object instance
-     *
-     * @type {Job}
-     * @memberof RunCommand
-     */
     job: Job;
 
     /**
-     *Creates an instance of RunCommand.
+     * New instance of RunCommand.
      * @param {Logger} logger The MessageUtils instance
      * @param {string} basePath The absolute or relative path where the export.json file does exist (from the command line)
      * @param {string} sourceUsername The username/SFDX instance name of the source env (from the command line)
@@ -63,9 +56,10 @@ export class RunCommand {
     }
 
 
+    
     // ----------------------- Public methods -------------------------------------------    
     /**
-     * Setup the command
+     * Setup the Command
      *
      * @returns {Promise<void>}
      * @memberof RunCommand
@@ -107,9 +101,7 @@ export class RunCommand {
     }
 
     /**
-     * Analyse the current script structure and create 
-     * the optimised list of tasks
-     * to perform during the migration process
+     * Create an optimised list of migration tasks
      *
      * @returns {Promise<void>}
      * @memberof RunCommand
@@ -145,7 +137,7 @@ export class RunCommand {
     * @memberof RunCommand
     */
     async prepareJob(): Promise<void> {
-        this.job.deleteTargetCSVDirectory();
+        this.job.prepareJob();
         await this.job.getTotalRecordsCount();
         await this.job.deleteOldRecords();
     }

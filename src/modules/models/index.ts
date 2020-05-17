@@ -8,7 +8,7 @@
 
 
 export * from "./common_models/errors";
-export * from "./common_models/interfaces";
+export * from "./common_models/helpers_classes";
 export { default as OrgInfo } from "./common_models/orgInfo";
 export { default as Script } from "./script_models/script";
 export { default as ScriptMockField } from "./script_models/scriptMockField";
@@ -17,6 +17,6 @@ export { default as ScriptOrg } from "./script_models/scriptOrg";
 export { default as SFieldDescribe } from "./script_models/sfieldDescribe";
 export { default as SObjectDescribe } from "./script_models/sobjectDescribe";
 export { default as MigrationJobTask } from "./job_models/migrationJobTask";
-export { default as MigrationJob, ICSVIssueCsvRow } from "./job_models/migrationJob";
+export { default as MigrationJob } from "./job_models/migrationJob";
 
 

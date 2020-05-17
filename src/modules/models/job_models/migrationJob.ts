@@ -9,10 +9,11 @@
 import { Common } from "../../components/common_components/common";
 import { CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
-import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit } from "..";
+import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
-import MigrationJobTask, { ProcessedData } from "./migrationJobTask";
+import MigrationJobTask from "./migrationJobTask";
+import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_models/helper_interfaces";
 
 
 
@@ -142,12 +143,11 @@ export default class MigrationJob {
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.executionOrder)]: this.tasks.map(x => x.sObjectName).join("; ")
         });
-        
-        //throw new Error();
+
 
 
         // ------------------------------- Internal functions --------------------------------------- //
-        function ___putMasterDetailsBefore() : boolean{
+        function ___putMasterDetailsBefore(): boolean {
             let swapped = false;
             let tempTasks: Array<MigrationJobTask> = [].concat(self.tasks);
             for (let leftIndex = 0; leftIndex < tempTasks.length - 1; leftIndex++) {
@@ -157,16 +157,25 @@ export default class MigrationJob {
                     let rightIsParentMasterDetailOfLeft = leftTask.scriptObject.parentMasterDetailObjects.some(object => object.name == rightTask.sObjectName);
                     let leftTaskIndex = self.tasks.indexOf(leftTask);
                     let rightTaskIndex = self.tasks.indexOf(rightTask);
-                    if (rightIsParentMasterDetailOfLeft){
+                    if (rightIsParentMasterDetailOfLeft) {
                         // Swape places and put right before left
                         self.tasks.splice(rightTaskIndex, 1);
                         self.tasks.splice(leftTaskIndex, 0, rightTask);
                         swapped = true;
-                    } 
+                    }
                 }
             }
             return swapped;
         }
+    }
+
+    /**
+     * Prepare execution of the job
+     *
+     * @memberof MigrationJob
+     */
+    prepareJob() {
+        this.deleteSourceCSVDirectory();
     }
 
     /**
@@ -177,8 +186,10 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     async validateCSVFiles(): Promise<void> {
+
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
 
+            this.deleteSourceCSVDirectory();
             await this._mergeUserGroupCSVfiles();
             await this._loadCSVValueMappingFileAsync();
             this._copyCSVFilesToSourceSubDir();
@@ -452,7 +463,7 @@ export default class MigrationJob {
     /**
      * Returns a task by the given sObject name
      *
-     * @param {string} sObjectName The sobject name
+     * @param {string} sObjectName 
      * @returns
      * @memberof MigrationJob
      */
@@ -464,7 +475,7 @@ export default class MigrationJob {
      * Save csv file from the data of the input array
      *
      * @param {string} fileName It is just a filename (test.csv) not the full path
-     * @param {Array<any>} data The data to write to csv file
+     * @param {Array<any>} data 
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
@@ -511,6 +522,17 @@ export default class MigrationJob {
         Common.deleteFolderRecursive(filepath);
     }
 
+    /**
+   * Remove source directory
+   *
+   * @memberof MigrationJob
+   */
+    deleteSourceCSVDirectory() {
+        let filepath = path.join(this.script.basePath, CONSTANTS.CSV_SOURCE_SUB_DIRECTORY);
+        Common.deleteFolderRecursive(filepath);
+    }
+
+
     // --------------------------- Private members -------------------------------------
     private async _loadCSVValueMappingFileAsync(): Promise<void> {
         let valueMappingFilePath = path.join(this.script.basePath, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
@@ -528,7 +550,6 @@ export default class MigrationJob {
             });
         }
     }
-
 
     private async _mergeUserGroupCSVfiles(): Promise<void> {
         let filepath1 = path.join(this.script.basePath, "User.csv");
@@ -597,79 +618,5 @@ export default class MigrationJob {
                 },
                 String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
         }
-
-    }
-}
-
-
-
-// --------------------------- Helper classes -------------------------------------
-/**
- * The format of columns for a CSV issues report file
- *
- * @export
- * @interface ICSVIssueCsvRow
- */
-export interface ICSVIssueCsvRow {
-    "Date update": string,
-    "Child value": string,
-    "Child sObject": string,
-    "Child field": string,
-    "Parent value": string,
-    "Parent sObject": string,
-    "Parent field": string,
-    "Error": string
-}
-
-/**
- * The format of missing lookup records CSV file
- *
- * @export
- * @interface IMissingParentLookupRecordCsvRow
- */
-export interface IMissingParentLookupRecordCsvRow {
-    "Date update": string,
-    "Id": string,
-    "Child SObject": string;
-    "Child lookup": string;
-    "Child ExternalId": string;
-    "Parent SObject": string;
-    "Parent ExternalId": string;
-    "Missing value": string;
-}
-
-export class CachedCSVContent {
-
-    constructor() {
-        this.clear();
-    }
-
-    csvDataCacheMap: Map<string, Map<string, any>>;
-    updatedFilenames: Set<string>;
-    idCounter: number;
-
-
-    /**
-     * Generates next Id string in format I[DXXXXXXXXXXXXXXXX]
-     * where XXXX... - is the next autonumber
-     *
-     * @readonly
-     * @type {string}
-     * @memberof CachedCSVContent
-     */
-    get nextId(): string {
-        return "ID" + Common.addLeadnigZeros(this.idCounter++, 16);
-    }
-
-
-    /**
-     * Clear all data
-     *
-     * @memberof CachedCSVContent
-     */
-    clear() {
-        this.csvDataCacheMap = new Map<string, Map<string, any>>();
-        this.updatedFilenames = new Set<string>();
-        this.idCounter = 1;
     }
 }

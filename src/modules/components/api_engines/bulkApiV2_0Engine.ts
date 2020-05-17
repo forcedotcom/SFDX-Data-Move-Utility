@@ -10,9 +10,9 @@ import {
     ApiResultRecord,
     IApiEngineInitParameters
 } from '../../models/api_models';
-import { Common, ICsvChunk } from '../common_components/common';
+import { Common } from '../common_components/common';
 import { CONSTANTS, OPERATION, RESULT_STATUSES } from '../common_components/statics';
-import { IApiEngine, IApiJobCreateResult } from '../../models/api_models/interfaces';
+import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { RESOURCES } from '../common_components/logger';
 import parse = require('csv-parse/lib/sync');
 
@@ -244,9 +244,9 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         let self = this;
         this.sourceRecords = records;
         if (this.operationType == "insert") {
-            this.sourceRecordsHashmap = Common.mapArrayItemsByHashcode(records, undefined);
+            this.sourceRecordsHashmap = Common.arrayToMapByHashcode(records, undefined);
         } else {
-            this.sourceRecordsHashmap = Common.mapArrayItemsByPropertyName(records, "Id");
+            this.sourceRecordsHashmap = Common.arrayToMapByProperty(records, "Id");
         }
         return new Promise(resolve => {
             request.put({
@@ -457,14 +457,14 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                         let map: Map<object, object>;
 
                         if (self.operationType == "insert") {
-                            map = Common.mapArraysByHashcode(undefined, allRecords, [
+                            map = Common.compareArraysByHashcode(undefined, allRecords, [
                                 "sf__Created",
                                 "sf__Id",
                                 "sf__Error",
                                 "sf__Unprocessed"
                             ], self.sourceRecordsHashmap);
                         } else {
-                            map = Common.mapArraysByItemProperty(undefined, allRecords, "Id", self.sourceRecordsHashmap);
+                            map = Common.compareArraysByProperty(undefined, allRecords, "Id", self.sourceRecordsHashmap);
                         }
                         let resultRecords = self.sourceRecords.map(sourceRecord => {
                             let targetRecord = map.get(sourceRecord);

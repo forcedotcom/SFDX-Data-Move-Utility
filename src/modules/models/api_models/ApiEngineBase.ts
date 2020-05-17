@@ -6,11 +6,11 @@
  */
 import { OPERATION } from "../../components/common_components/statics";
 import { Logger } from "../../components/common_components/logger";
-import { IApiJobCreateResult, IApiEngineInitParameters } from "./interfaces";
+import { IApiJobCreateResult, IApiEngineInitParameters, ICsvChunk } from "./helper_interfaces";
 import { ApiInfo, IApiEngine } from ".";
-import { ICsvChunk, Common } from "../../components/common_components/common";
-import { IOrgConnectionData } from "../common_models/interfaces";
+import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
+import { IOrgConnectionData } from "../common_models/helper_interfaces";
 
 
 

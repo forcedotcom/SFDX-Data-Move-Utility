@@ -190,7 +190,7 @@ export default class Run extends SfdxCommand {
 
         } catch (e) {
 
-            // Exit - error
+            // Exit - errors
             switch (e.constructor) {
 
                 case SuccessExit:

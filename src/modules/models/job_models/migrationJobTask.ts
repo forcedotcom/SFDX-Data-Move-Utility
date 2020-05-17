@@ -16,21 +16,20 @@ import {
     composeQuery,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptObject, MigrationJob as Job, CommandExecutionError, ScriptOrg, Script, ScriptMockField } from "..";
+import { ScriptObject, MigrationJob as Job, CommandExecutionError, ScriptOrg, Script, ScriptMockField, TaskData, TaskOrgData, CachedCSVContent, ProcessedData } from "..";
 import SFieldDescribe from "../script_models/sfieldDescribe";
 import * as path from 'path';
 import * as fs from 'fs';
-import { CachedCSVContent, IMissingParentLookupRecordCsvRow, ICSVIssueCsvRow } from "./migrationJob";
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";
-import { IApiEngine } from "../api_models/interfaces";
+import { IApiEngine } from "../api_models/helper_interfaces";
 import ApiInfo from "../api_models/apiInfo";
 import { BulkApiV1_0Engine } from "../../components/api_engines/bulkApiV1_0Engine";
 import { RestApiEngine } from "../../components/api_engines/restApiEngine";
 const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
-
+import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField } from '../common_models/helper_interfaces';
 
 MockGenerator.createCustomGenerators(casual);
 
@@ -80,12 +79,6 @@ export default class MigrationJobTask {
 
     //------------------
     tempData = {
-        /**
-        true if the script object 
-        related to this task 
-        has some child master-detail tasks
-         */
-        isMasterDetailTask: false,
         filteredQueryValueCache: new Map<string, Set<string>>()
     }
 
@@ -424,7 +417,6 @@ export default class MigrationJobTask {
                 }
             }
         }
-
     }
 
     /**
@@ -843,7 +835,7 @@ export default class MigrationJobTask {
                 processedData.fields.push(self.data.sFieldsInQuery.filter(field => field.nameId == "Id")[0]);
             }
 
-            // Get out unsupported fields for person accounts/contacts /////////
+            // Remove unsupported fields for person accounts/contacts /////////
             if (self.data.isPersonAccountOrContact) {
                 if (!processPersonAccounts) {
                     processedData.fields = self.sObjectName == "Account" ?
@@ -860,7 +852,7 @@ export default class MigrationJobTask {
                         return !field.person && CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.indexOf(field.nameId) < 0;
                     });
                 } else {
-                    // Person contact => not need to insert / update
+                    // Person contact => skip from the processing
                     return processedData;
                 }
             }
@@ -1434,165 +1426,4 @@ export default class MigrationJobTask {
         });
         return newRecordsCount;
     }
-}
-
-// ---------------------------------------- Helper classes & interfaces ---------------------------------------------------- //
-export class TaskData {
-
-    task: MigrationJobTask;
-    sourceToTargetRecordMap: Map<any, any> = new Map<any, any>();
-
-    constructor(task: MigrationJobTask) {
-        this.task = task;
-    }
-
-    get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
-        return this.task.scriptObject.fieldsToUpdateMap;
-    }
-
-    get fieldsInQueryMap(): Map<string, SFieldDescribe> {
-        return this.task.scriptObject.fieldsInQueryMap;
-    }
-
-    get sFieldsInQuery(): SFieldDescribe[] {
-        return [...this.fieldsInQueryMap.values()];
-    }
-
-    get fieldsToUpdate(): string[] {
-        return this.task.scriptObject.fieldsToUpdate;
-    }
-
-    get sFieldsToUpdate(): SFieldDescribe[] {
-        return [...this.fieldsToUpdateMap.values()];
-    }
-
-    get fieldsInQuery(): string[] {
-        return this.task.scriptObject.fieldsInQuery;
-    }
-
-    get csvFilename(): string {
-        return this.task.getCSVFilename(this.task.script.basePath);
-    }
-
-    get sourceCsvFilename(): string {
-        let filepath = path.join(this.task.script.basePath, CONSTANTS.CSV_SOURCE_SUB_DIRECTORY);
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
-        }
-        return this.task.getCSVFilename(filepath, CONSTANTS.CSV_SOURCE_FILE_SUFFIX);
-    }
-
-    getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
-        let filepath = path.join(this.task.script.basePath, CONSTANTS.CSV_TARGET_SUB_DIRECTORY);
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
-        }
-        return this.task.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}${fileNameSuffix || ""}`);
-    }
-
-    get resourceString_csvFile(): string {
-        return this.task.logger.getResourceString(RESOURCES.csvFile);
-    }
-
-    get resourceString_org(): string {
-        return this.task.logger.getResourceString(RESOURCES.org);
-    }
-
-    getResourceString_Step(mode: "forwards" | "backwards" | "target"): string {
-        return mode == "forwards" ? this.task.logger.getResourceString(RESOURCES.Step1)
-            : this.task.logger.getResourceString(RESOURCES.Step2);
-    }
-
-    get prevTasks(): MigrationJobTask[] {
-        return this.task.job.tasks.filter(task => this.task.job.tasks.indexOf(task) < this.task.job.tasks.indexOf(this.task));
-    }
-
-    get nextTasks(): MigrationJobTask[] {
-        return this.task.job.tasks.filter(task => this.task.job.tasks.indexOf(task) > this.task.job.tasks.indexOf(this.task));
-    }
-
-    get isPersonAccountEnabled(): boolean {
-        return this.task.script.isPersonAccountEnabled;
-    }
-
-    get isPersonAccountOrContact(): boolean {
-        return this.task.script.isPersonAccountEnabled
-            && (this.task.sObjectName == "Account" || this.task.sObjectName == "Contact");
-    }
-
-}
-
-export class TaskOrgData {
-
-    task: MigrationJobTask;
-    isSource: boolean;
-
-    extIdRecordsMap: Map<string, string> = new Map<string, string>();
-    idRecordsMap: Map<string, any> = new Map<string, any>();
-
-    constructor(task: MigrationJobTask, isSource: boolean) {
-        this.task = task;
-        this.isSource = isSource;
-    }
-
-    get org(): ScriptOrg {
-        return this.isSource ? this.task.script.sourceOrg : this.task.script.targetOrg;
-    }
-
-    get useBulkQueryApi(): boolean {
-        return this.isSource ? this.task.sourceTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD :
-            this.task.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
-    }
-
-    get fieldsMap(): Map<string, SFieldDescribe> {
-        return this.isSource ? this.task.scriptObject.sourceSObjectDescribe.fieldsMap :
-            this.task.scriptObject.targetSObjectDescribe.fieldsMap;
-    }
-
-    get resourceString_Source_Target(): string {
-        return this.isSource ? this.task.logger.getResourceString(RESOURCES.source) :
-            this.task.logger.getResourceString(RESOURCES.target);
-    }
-
-    get allRecords(): boolean {
-        return this.isSource ? this.task.scriptObject.processAllSource : this.task.scriptObject.processAllTarget;
-    }
-
-    get media(): DATA_MEDIA_TYPE {
-        return this.org.media;
-    }
-
-    get records(): Array<any> {
-        return [...this.idRecordsMap.values()];
-    }
-}
-
-export class ProcessedData {
-
-    processPersonAccounts: boolean = false;
-
-    clonedToSourceMap: Map<any, any> = new Map<any, any>();
-
-    fields: Array<SFieldDescribe>;
-
-    recordsToUpdate: Array<any> = new Array<any>();
-    recordsToInsert: Array<any> = new Array<any>();
-
-    missingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
-
-    get lookupIdFields(): Array<SFieldDescribe> {
-        return this.fields.filter(field => field.isSimpleReference);
-    }
-
-    get fieldNames(): Array<string> {
-        return this.fields.map(field => field.nameId);
-    }
-}
-
-interface IMockField {
-    fn: string;
-    regIncl: string;
-    regExcl: string;
-    disallowMockAllRecord: boolean;
-    allowMockAllRecord: boolean;
 }

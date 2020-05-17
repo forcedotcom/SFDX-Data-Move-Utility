@@ -24,7 +24,7 @@ import { CONSTANTS } from './statics';
 import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
 import { Logger, RESOURCES } from './logger';
-import { CommandAbortedByUserError } from '../../models';
+import { CommandAbortedByUserError, CsvChunks } from '../../models';
 import readline = require('readline');
 
 
@@ -33,7 +33,7 @@ const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 
 /**
- * Common utility functions
+ * Common utilities
  */
 export class Common {
 
@@ -79,7 +79,7 @@ export class Common {
     }
 
     /**
-    * @static Returns the current active plugin information
+    * @static Returns the plugin info
     * 
     * @param {typeof SfdxCommand} command
     * @returns {{
@@ -124,7 +124,7 @@ export class Common {
     }
 
     /**
-    * @static Calculates and returns difference between two dates in format [HH:mm:ss.mmm]
+    * @static Returns a difference between two dates in format [HH:mm:ss.mmm]
     * 
     * @param  {Date} dateStart Start date
     * @param  {Date} dateEnd End date
@@ -145,7 +145,8 @@ export class Common {
     }
 
     /**
-     * @static Returns the full command line string, which was used to start the current SFDX Command
+     * @static Returns the full command line string, 
+     * which has been used to start the current SFDX CLI command
      *
      * @static
      * @returns {string}
@@ -190,7 +191,7 @@ export class Common {
      * @static Transforms array of arrays to single array of objects. 
      * The first member of the source array holds the property names.
      *
-     * @param {Array<any>} array The array to transform in format [[],[],[]]
+     * @param {Array<any>} array The array to transform in format: [[],[],[]]
      * @returns {Array<object>} 
      * @memberof CommonUtils
      */
@@ -207,15 +208,15 @@ export class Common {
     }
 
     /**
-     * @static Creates a Map for the input array of objects: 
-     * object_hashcode => object
+     * @static Converts array to map with object hashcode as a map key: 
+     *         [object_hashcode => object]
      * 
-     * @param {Array<object>} array Array to process
+     * @param {Array<object>} array 
      * @param {Array<string>} [propsToExclude] Properties to exclude from hashcode calculation when creating the map key
      * @returns {Map<string, object>} 
      * @memberof CommonUtils
      */
-    public static mapArrayItemsByHashcode(array: Array<object>, propsToExclude?: Array<string>): Map<string, object> {
+    public static arrayToMapByHashcode(array: Array<object>, propsToExclude?: Array<string>): Map<string, object> {
         let m = new Map<string, object>();
         array.forEach(x => {
             let hash = String(this.getObjectHashcode(x, propsToExclude));
@@ -230,16 +231,15 @@ export class Common {
     }
 
     /**
-     * Creates map for the input array of objects:
-     * object_property => object
-     *
-     * @static
-     * @param {Array<object>} array Array to process
+     * @static Converts array to map with object property as a key:
+     *         object_property => object
+     * 
+     * @param {Array<object>} array 
      * @param {Array<string>} [propertyName] Property used to build the key of the map
      * @returns {Map<string, object>} 
      * @memberof CommonUtils
      */
-    public static mapArrayItemsByPropertyName(array: Array<object>, propertyName: string): Map<string, object> {
+    public static arrayToMapByProperty(array: Array<object>, propertyName: string): Map<string, object> {
         let m = new Map<string, object>();
         array.forEach(x => {
             let key = String(x[propertyName]);
@@ -254,9 +254,7 @@ export class Common {
     }
 
     /**
-     * @static Compares each member of two arrays an returns  
-     * a mapping between equal objects in the both arrays detected
-     * using object hashcode
+     * @static Returns a mapping between objects compared by object hashcode
      * 
      * @param {Array<object>} arrayOfKeys First array - become keys for the output map
      * @param {Array<object>} arrayOfValues Second array - become values for the output map
@@ -266,7 +264,7 @@ export class Common {
      * @returns {Map<object, object>}
      * @memberof CommonUtils
      */
-    public static mapArraysByHashcode(
+    public static compareArraysByHashcode(
         arrayOfKeys: Array<object>,
         arrayOfValues: Array<object>,
         propsToExclude?: Array<string>,
@@ -277,10 +275,10 @@ export class Common {
         arrayOfValues = arrayOfValues || new Array<object>();
 
         if (!mkeys) {
-            mkeys = this.mapArrayItemsByHashcode(arrayOfKeys, propsToExclude);
+            mkeys = this.arrayToMapByHashcode(arrayOfKeys, propsToExclude);
         }
         if (!mvalues) {
-            mvalues = this.mapArrayItemsByHashcode(arrayOfValues, propsToExclude);
+            mvalues = this.arrayToMapByHashcode(arrayOfValues, propsToExclude);
         }
 
         let retMap: Map<object, object> = new Map<object, object>();
@@ -293,7 +291,7 @@ export class Common {
     }
 
     /**
-    * @static Created mapping between members of two arrays compared by the given object property
+    * @static Created a mapping between members of two arrays compared by the given object property
     *
     * @param {Array<object>} arrayOfKeys First array - become keys for the output map
     * @param {Array<object>} arrayOfValues Second array - become values for the output map
@@ -303,7 +301,7 @@ export class Common {
     * @returns {Map<object, object>}
     * @memberof CommonUtils
     */
-    public static mapArraysByItemProperty(
+    public static compareArraysByProperty(
         arrayOfKeys: Array<object>,
         arrayOfValues: Array<object>,
         propertyName: string,
@@ -314,10 +312,10 @@ export class Common {
         arrayOfValues = arrayOfValues || new Array<object>();
 
         if (!mkeys) {
-            mkeys = this.mapArrayItemsByPropertyName(arrayOfKeys, propertyName);
+            mkeys = this.arrayToMapByProperty(arrayOfKeys, propertyName);
         }
         if (!mvalues) {
-            mvalues = this.mapArrayItemsByPropertyName(arrayOfValues, propertyName);
+            mvalues = this.arrayToMapByProperty(arrayOfValues, propertyName);
         }
 
         let retMap: Map<object, object> = new Map<object, object>();
@@ -333,27 +331,27 @@ export class Common {
      * Returns numeric hashcode of the input string
      *
      * @static
-     * @param {string} str Input string
+     * @param {string} inputString 
      * @returns {number}
      * @memberof CommonUtils
      */
-    public static getStringHashcode(str: string): number {
-        return !str ? 0 : str.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
+    public static getStringHashcode(inputString: string): number {
+        return !inputString ? 0 : inputString.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
     }
 
     /**
-     * @static Creates numeric hashcode of the object based on its string representation
+     * @static Returns numeric hashcode of the input object
      * 
-     * @param {object} object Object to get hashcode for it
+     * @param {object} inputObject 
      * @param {Array<string>} [propsToExclude=new Array<string>()] Poperties to exclude from the hashing
      * @returns {number}
      * @memberof CommonUtils
      */
-    public static getObjectHashcode(object: object, propsToExclude: Array<string> = new Array<string>()): number {
-        if (!object) return 0;
-        let keys = Object.keys(object).filter(k => propsToExclude.indexOf(k) < 0).sort();
+    public static getObjectHashcode(inputObject: object, propsToExclude: Array<string> = new Array<string>()): number {
+        if (!inputObject) return 0;
+        let keys = Object.keys(inputObject).filter(k => propsToExclude.indexOf(k) < 0).sort();
         let str = keys.map(k => {
-            let v = object[k];
+            let v = inputObject[k];
             return v == "TRUE" || v == true ? "true"
                 : v == "FALSE" || v == false ? "false"
                     : !isNaN(v) ? String(+v)
@@ -394,21 +392,20 @@ export class Common {
 
     /**
     * @static Modifies existing WHERE clause by adding extra rule.
-    * Ex:
+    * 
+    * Example:
     *   fieldName = "Source__c" 
     *   values = ['Source1', 'Source2']
     *   source query = "WHERE Account.Name = 'Account'"
     *   operator = "AND"
-    * 
-    *   returned query:  "WHERE (Account.Name = 'Account') AND (Source__c IN ('Source1', 'Source2'))"
-    * 
-    * Also can add any other extra rule like WHERE .... AND (x = ...)
+    *  ==== >
+    *   returns following query:  "WHERE (Account.Name = 'Account') AND (Source__c IN ('Source1', 'Source2'))"
     * 
     * @param {WhereClause} where Source query to modify
     * @param {string} fieldName Field name
-    * @param {Array<string> | string} values Values to compare
-    * @param {operator} [Operator="IN"] (Default="IN") The operator for the extra WHERE
-    * @param {LogicalOperator} [logicalOperator="OR"] (Default="OR") Logical operator to apply between the original WHERE and the new WHERE..IN
+    * @param {Array<string> | string} values Values to compare against the field
+    * @param {operator} [Operator="IN"] The operator for the extra WHERE
+    * @param {LogicalOperator} [logicalOperator="OR"] Logical operator to apply between the original WHERE clause and the new one
     * @returns {WhereClause} Returns modified WHERE clause
     * @memberof CommonUtils
     */
@@ -445,8 +442,8 @@ export class Common {
      * @static Returns distinct array of objects by the given object property
      * 
      * @template T
-     * @param {Array<T>} array The source array
-     * @param {string} distinctByProp The property to make distinct by it
+     * @param {Array<T>} array 
+     * @param {string} distinctByProp 
      * @returns {Array<T>}
      * @memberof CommonUtils
      */
@@ -460,7 +457,7 @@ export class Common {
      * Returns array of distinct string values
      *
      * @static
-     * @param {string[]} array The source array
+     * @param {string[]} array 
      * @returns {Array<string>}
      * @memberof CommonUtils
      */
@@ -471,30 +468,14 @@ export class Common {
     /**
      * @static Removes all objects from the array which are matched given property value
      * 
-     * @param {Array<object>} arr The input array
-     * @param {string} field The field name
-     * @param {string} value The value to remove by it
+     * @param {Array<object>} arr 
+     * @param {string} field 
+     * @param {string} value 
      * @returns {Array<object>}
      * @memberof CommonUtils
      */
     public static removeBy(arr: Array<object>, field: string, value: string): Array<object> {
         return arr.splice(arr.findIndex(item => item[field] == value), 1);
-    }
-
-    /**
-     * @static Converts array to map
-     * 
-     * @template T
-     * @param {Array<T>} arr 
-     * @param {string} keyField The field to use for map key
-     * @returns {Map<string, T>}
-     * @memberof CommonUtils
-     */
-    public static arrayToMap<T>(arr: Array<T>, keyField: string): Map<string, T> {
-        return arr.reduce((mapAccumulator: Map<string, T>, obj) => {
-            mapAccumulator.set(String(obj[keyField]), obj);
-            return mapAccumulator;
-        }, new Map<string, T>());
     }
 
     /**
@@ -531,12 +512,11 @@ export class Common {
 
     /**
      * Returns true if the field name is a complex field name or __r field name
-     * (f.ex. Account__r.Name or $$Account__r.Name$Account__r.Id => true, 
-     *        Id => false)
+     * (f.ex: for "Account__r.Name" and  "$$Account__r.Name$Account__r.Id" => will return true, 
+     *        for "Id"  => will return false)
      * 
-     *
      * @static
-     * @param {string} fieldName The field name
+     * @param {string} fieldName 
      * @returns {boolean}
      * @memberof CommonUtils
      */
@@ -547,18 +527,16 @@ export class Common {
         );
     }
 
-
     /**
-         * Returns true if the field name is a complex field name
-         * (f.ex. $$Account__r.Name$Account__r.Id => true, 
-         *        Id => false)
-         * 
-         *
-         * @static
-         * @param {string} fieldName The field name
-         * @returns {boolean}
-         * @memberof CommonUtils
-         */
+     * Returns true if the field name is a complex field name
+     * (f.ex. for "$$Account__r.Name$Account__r.Id" => will return true, 
+     *        for "Id" => will return false)
+     * 
+     * @static
+     * @param {string} fieldName 
+     * @returns {boolean}
+     * @memberof CommonUtils
+     */
     public static isComplexField(fieldName: string): boolean {
         return fieldName && (
             fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
@@ -569,8 +547,8 @@ export class Common {
 
     /**
      * Transforms field name into the complex field 
-     * (f.ex. Account__r.Name;Account__r.Id => $$Account__r.Name$Account__r.Id
-     *        Account__r.Name => Account__r.Name)
+     * (f.ex. "Account__r.Name;Account__r.Id" => become "$$Account__r.Name$Account__r.Id"
+     *        "Account__r.Name" => become "Account__r.Name")
      *
      * @static
      * @param {string} fieldName
@@ -590,19 +568,19 @@ export class Common {
     }
 
     /**
-      * @static Reads csv file from disk
-      * Can read both entire file or wanted amount of lines
+      * @static Reads CSV file from the disk.
+      * Can read both entire file or wanted amount of lines.
       * 
-      * @param  {string} filePath Full path to CSV to read
+      * @param  {string} filePath Full path to the CSV file
       * @param  {number=0} linesAmountToRead 
-      * @param  {Map<string,string>?} acceptedColumnsToColumnsTypeMap Map between column to be imported from 
-      *             the csv to its expected type. Type can be 'string', 'boolean' etc
+      * @param  {Map<string,string>?} columnToColumnDataTypeMap The mapping between each CSV column and column data type.
+      *                                                         Available types are those from the SF DisplayType enum.
       * @returns Array<object>
       * @memberof CommonUtils
       */
     public static async readCsvFileAsync(filePath: string,
         linesAmountToRead: number = 0,
-        acceptedColumnsToColumnsTypeMap?: Map<string, string>): Promise<Array<object>> {
+        columnToColumnDataTypeMap?: Map<string, string>): Promise<Array<object>> {
 
         return new Promise<Array<object>>(resolve => {
             if (!fs.existsSync(filePath)) {
@@ -650,7 +628,7 @@ export class Common {
             }
         });
 
-        // ----------------- internal functions -------------------------//
+        // ----------------- Internal functions -------------------------//
         function ___csvCast(value: any, context: any) {
             if (context.header || typeof context.column == "undefined") {
                 return value;
@@ -658,7 +636,7 @@ export class Common {
             if (value == "#N/A") {
                 return null;
             }
-            let fieldType = acceptedColumnsToColumnsTypeMap && acceptedColumnsToColumnsTypeMap.get(context.column);
+            let fieldType = columnToColumnDataTypeMap && columnToColumnDataTypeMap.get(context.column);
             if (fieldType == "boolean") {
                 if (value == "1" || value == "TRUE" || value == "true")
                     return true;
@@ -672,14 +650,14 @@ export class Common {
         }
 
         function ___columns(header: any) {
-            if (!acceptedColumnsToColumnsTypeMap) {
+            if (!columnToColumnDataTypeMap) {
                 return header;
             }
             return header.map((column: any) => {
                 if (column.indexOf('.') >= 0
                     || column.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR) >= 0
                     || column.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
-                    || acceptedColumnsToColumnsTypeMap.has(column))
+                    || columnToColumnDataTypeMap.has(column))
                     return column;
                 else {
                     return undefined;
@@ -689,12 +667,13 @@ export class Common {
     }
 
     /**
-     * @static Writes array of objects to csv file
+     * @static Writes array of objects into CSV file
      * 
-     * @param  {string} filePath Full file path to write to
-     * @param  {Array<object>} array Array of objects to write to the csv file
+     * @param  {string} filePath Full CSV file path
+     * @param  {Array<object>} array Array of objects to write into the csv file
      * @param  {boolean=false} createEmptyFileOnEmptyArray Set to true forces creating empty file 
-     *                          if the input array is empty or undefined otherwise nothing acts
+     *                                                     even the input array is empty or undefined, 
+     *                                                     otherwise no file will be created
      * @memberof CommonUtils 
      */
     public static async writeCsvFileAsync(filePath: string,
@@ -727,7 +706,7 @@ export class Common {
      * @param  {string} source2FilePath Full path to the second csv
      * @param  {string} targetFilePath Full path to the target merged csv to create
      * @param  {boolean} deleteSourceFiles Set true to delete all source files after successfull merging
-     * @param  {Array<string>} ...columns Acceptable columns from the source and the target to insert into the resulting csv file
+     * @param  {Array<string>} columns[] Set the list of CSV columns that must be inserted from the both source CSV files
      * @memberof CommonUtils
      */
     public static async mergeCsvFilesAsync(source1FilePath: string,
@@ -766,10 +745,9 @@ export class Common {
 
     /**
      * @static Transforms array of objects into array of CSV strings. 
-     * Method splits the input array into chunks and to limit maximal size 
-     * of each produced csv string after base64 encoding.
+     * Method generates multiple chunks of CSV string, which each of them is limited 
+     * by the given size in bytes after base64 encoding.
      *
-     * @static
      * @param {Array<object>} array The array of objects to transform
      * @param {number} maxCsvStringSizeInBytes The maximal size of each CSV string in bytes
      * @param {number} blockSize The array block size. Used for calculation of the resulting csv string.
@@ -837,7 +815,8 @@ export class Common {
 
     /**
      * @static Read csv file only once and cache it into the Map.
-     * If the file was previously read and it is in the cache it retrieved from cache instead of reading file again
+     * If the file was previously read and it is in the cache
+     * it retrieved from cache instead of reading file again.
      * 
      * @param  {Map<string, Map<string, any>}  csvDataCacheMap
      * @param  {string} fileName File name to read
@@ -1115,55 +1094,16 @@ export class Common {
                     this.deleteFolderRecursive(curPath);
                 } else {
                     // Delete file
-                    fs.unlinkSync(curPath);
+                    try { fs.unlinkSync(curPath); } catch (ex) { }
                 }
             });
-            fs.rmdirSync(path);
+            try { fs.rmdirSync(path); } catch (ex) { }
         }
-    };
+    }
 
 }
 
 
 
 // ---------------------------- Helper classes -------------------------------
-/**
- * Represents the set of chunks of CSV file
- *
- * @export
- * @class CsvChunks
- */
-export class CsvChunks {
-    constructor(init?: Partial<CsvChunks>) {
-        Object.assign(this, init);
-    }
-    chunks: Array<ICsvChunk> = [];
-    header: Array<string> = new Array<string>();
-    /**
-     * Converts array chunks into CsvChunk object
-     */
-    fromArrayChunks(arrayChunks: Array<Array<any>>): CsvChunks {
-        if (arrayChunks.length == 0) return;
-        this.chunks = [].concat(arrayChunks.map(records => <ICsvChunk>{
-            csvString: "",
-            records
-        }));
-        this.header = Object.keys(arrayChunks[0][0]);
-        return this;
-    }
-    fromArray(array: Array<any>): CsvChunks {
-        return this.fromArrayChunks([array]);
-    }
-}
-
-/**
- * Single chunk of CSV
- *
- * @export
- * @interface ICsvChunk
- */
-export interface ICsvChunk {
-    records: Array<object>,
-    csvString: string
-}
 

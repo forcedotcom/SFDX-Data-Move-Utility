@@ -5,25 +5,13 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import { ApiInfo } from '.';
-import { CsvChunks, ICsvChunk } from '../../components/common_components/common';
-import { IOrgConnectionData } from '../common_models/interfaces';
 import { Logger } from '../../components/common_components/logger';
 import { OPERATION } from '../../components/common_components/statics';
+import { IOrgConnectionData } from '../common_models/helper_interfaces';
+import { CsvChunks } from '..';
 
 
 
-/**
- * Returned after creating an Api job
- *
- * @export
- * @interface IApiJobCreateResult
- */
-export interface IApiJobCreateResult {
-    chunks: CsvChunks,
-    apiInfo: ApiInfo,
-    connection?: any,
-    allRecords?: Array<any>
-}
 
 /**
  * The Api process engine reference
@@ -92,12 +80,7 @@ export interface IApiEngine {
     getStrOperation(): string;
 
 }
-/**
- * Parameters to initialize Api process engine instance
- *
- * @export
- * @interface IApiProcessParameters
- */
+
 export interface IApiEngineInitParameters {
     logger: Logger,
     connectionData: IOrgConnectionData,
@@ -111,6 +94,14 @@ export interface IApiEngineInitParameters {
     allOrNone?: boolean
 }
 
+export interface ICsvChunk {
+    records: Array<object>,
+    csvString: string
+}
 
-
-
+export interface IApiJobCreateResult {
+    chunks: CsvChunks,
+    apiInfo: ApiInfo,
+    connection?: any,
+    allRecords?: Array<any>
+}
