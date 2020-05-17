@@ -118,7 +118,7 @@ export default class MigrationJob {
 
         // Put master-detail lookups before
         let swapped = true;
-        for (let iteration = 0; iteration < 10 || swapped; iteration++) {
+        for (let iteration = 0; iteration < 10 && swapped; iteration++) {
             swapped = ___putMasterDetailsBefore();
         }
 
