@@ -14,8 +14,9 @@ import {
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
-import { IOrgConnectionData, SFieldDescribe, SObjectDescribe, ScriptOrg } from '../../models';
+import { SFieldDescribe, SObjectDescribe, ScriptOrg } from '../../models';
 import { Common } from './common';
+import { IOrgConnectionData } from '../../models/common_models/helper_interfaces';
 
 var jsforce = require("jsforce");
 
@@ -317,11 +318,5 @@ export class Sfdx {
             maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
         });
     }
-
-
-
-    // ------------------------------------- Private members ------------------------------------------------
-
-
 
 }
