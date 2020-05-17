@@ -880,7 +880,7 @@ export default class MigrationJobTask {
                 if (self.data.isPersonAccountOrContact) {
                     // Person accounts are supported --------- *** /
                     if (!processPersonAccounts) {
-                        // Process obnly Business Acounts/Contacts  (IsPersonAccount == false)
+                        // Process only Business Acounts/Contacts  (IsPersonAccount == false)
                         tempClonedToSourceMap.forEach((source, cloned) => {
                             if (!source["IsPersonAccount"]) {
                                 ___updateLookupIdFields(processedData, source, cloned);
@@ -1046,6 +1046,7 @@ export default class MigrationJobTask {
                 if (parentId && !found) {
                     let csvRow: IMissingParentLookupRecordCsvRow = {
                         "Date update": Common.formatDateTime(new Date()),
+                        "Child Record Id": source["Id"],
                         "Child ExternalId field": idField.fullName__r,
                         "Child lookup field": idField.nameId,
                         "Child lookup object": idField.scriptObject.name,

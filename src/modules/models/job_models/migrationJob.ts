@@ -629,6 +629,7 @@ export interface ICSVIssueCsvRow {
  */
 export interface IMissingParentLookupRecordCsvRow {
     "Date update": string,
+    "Child Record Id": string,
     "Child lookup object": string;
     "Child lookup field": string;
     "Child ExternalId field": string;
