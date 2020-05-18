@@ -54,7 +54,7 @@ export default class Script {
     createTargetCSVFiles: boolean = true;
     importCSVFilesAsIs = false;
     alwaysUseRestApiToUpdateRecords: false;
-    excludeIdsFromCSVFiles: boolean =  true;
+    excludeIdsFromCSVFiles: boolean =  false;
 
 
     // -----------------------------------
