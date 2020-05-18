@@ -256,18 +256,18 @@ export default class Script {
     verifyOrgs() {
         
         // ***** Verifying person accounts
-        if (this.objects.filter(obj => obj.name == "Account" || obj.name == "Contact")) {
+        if (this.objects.some(obj => obj.name == "Account" || obj.name == "Contact")) {
             // Verify target org
             if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled
                 && this.targetOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled) {
-                // Missing PA in Target
+                // Missing Person Account support in the Target
                 throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts, 
                             this.logger.getResourceString(RESOURCES.source)));
             }
             // Verify source org
             if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled
                 && this.targetOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled) {
-                // Missing PA in Source
+                // Missing Person Account support in the Source
                 throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts, 
                             this.logger.getResourceString(RESOURCES.target)));
             }
