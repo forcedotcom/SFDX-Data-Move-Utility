@@ -173,8 +173,9 @@ export enum RESOURCES {
     updatingTargetCompleted = "updatingTargetCompleted",
     writingToFile = "writingToFile",
     nothingUpdated = "nothingUpdated",
-    missingParentLookupsPrompt = "missingParentLookupsPrompt"
-
+    missingParentLookupsPrompt = "missingParentLookupsPrompt",
+    updatingSummary = "updatingSummary",
+    updatingTotallyUpdated = "updatingTotallyUpdated"
 }
 
 

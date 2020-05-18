@@ -135,7 +135,7 @@
     "queryingIn": "{%s} Retrieving the %s data from %s (%s: filtered records)...",
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s new records.",
-    "queryingTotallyFetched": "{%s} Total retrieved (source/target): %s records.",
+    "queryingTotallyFetched": "{%s} Total retrieved within all steps (source/target): %s records.",
     "queryString": "{%s} Query string: %s.",
     "fetchingSummary": "Data retrieving summary",
 
@@ -145,6 +145,9 @@
     "updatingTargetCompleted": "Updating the Target (%s) has been completed. Total processed %s records.",
     "writingToFile": "{%s} Writing to the file %s.",
     "nothingUpdated": "Nothing was updated",
-    "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details."
+    "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details.",
+    "updatingSummary": "Data processing summary",
+    "updatingTotallyUpdated": "{%s} Total processed within all steps (inserted + updated): %s records"
+
 
 }

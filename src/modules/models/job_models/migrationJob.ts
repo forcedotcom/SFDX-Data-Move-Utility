@@ -362,7 +362,7 @@ export default class MigrationJob {
             const task = this.queryTasks[index];
             this.logger.infoNormal(RESOURCES.queryingTotallyFetched,
                 task.sObjectName,
-                String(task.sourceData.extIdRecordsMap.size + "/" + task.targetData.extIdRecordsMap.size));
+                String(task.sourceData.idRecordsMap.size + "/" + task.targetData.idRecordsMap.size));
         }
     }
 
@@ -377,6 +377,7 @@ export default class MigrationJob {
 
         let noAbortPrompt = false;
         let totalProcessedRecordsAmount = 0;
+        let totalProcessedRecordsByObjectsMap = new Map<string, number>();
 
         let allMissingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
 
@@ -395,6 +396,7 @@ export default class MigrationJob {
                 this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
             }
             totalProcessedRecordsAmount += processedRecordsAmount;
+            totalProcessedRecordsByObjectsMap.set(task.sObjectName, processedRecordsAmount);
         }
         if (totalProcessedRecordsAmount > 0)
             this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
@@ -425,6 +427,7 @@ export default class MigrationJob {
                     this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
                 }
                 totalProcessedRecordsAmount += processedRecordsAmount;
+                totalProcessedRecordsByObjectsMap.set(task.sObjectName, totalProcessedRecordsByObjectsMap.get(task.sObjectName) + processedRecordsAmount);
             }
         }
         if (totalProcessedRecordsAmount > 0)
@@ -432,6 +435,18 @@ export default class MigrationJob {
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // TOTAL PROCESSED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.updatingSummary);
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            this.logger.infoNormal(RESOURCES.updatingTotallyUpdated,
+                task.sObjectName,
+                String(totalProcessedRecordsByObjectsMap.get(task.sObjectName)));
+        }
+
+        // Done message
         this.logger.infoVerbose(RESOURCES.newLine);
         await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups);
 
