@@ -511,6 +511,8 @@ The plugin provides a variety of information about common warnings and errors th
 
 ## Version history
 
+* **New in version 2.8.3** - Added excludeIdsFromCSVFiles property.
+  
 * **New in version 2.8.0** - The code of the Plugin is completely rewritten and optimized.  Added the **Multiselect** feature. Removed useless encryption feature. Business logic improvements and bug fixes.
   
 * **New in version 2.7.0** - Added support for **Person Accounts**. 
