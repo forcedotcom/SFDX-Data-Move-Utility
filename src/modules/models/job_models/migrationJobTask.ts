@@ -272,9 +272,9 @@ export default class MigrationJobTask {
          * @returns {Promise<void>}
          */
         async function ___addMissingLookupColumnsAsync(sField: SFieldDescribe): Promise<void> {
-            let columnName__r = sField.fullName__r;
+            let columnName__r = sField.fullOriginalName__r;
             let columnNameId = sField.nameId;
-            let parentExternalId = sField.parentLookupObject.externalId;
+            let parentExternalId = sField.parentLookupObject.complexOriginalExternalId;
             let parentTask = self.job.getTaskBySObjectName(sField.parentLookupObject.name);
             if (parentTask) {
                 let parentFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, parentTask.data.sourceCsvFilename);
@@ -374,7 +374,7 @@ export default class MigrationJobTask {
             let columnChildOriginalName__r = childIdSField.fullOriginalName__r;
             let columnChildIdName__r = childIdSField.fullIdName__r;
             let columnChildNameId = childIdSField.nameId;
-            let parentOriginalExternalIdColumnName = self.scriptObject.originalExternalId;
+            let parentOriginalExternalIdColumnName = self.scriptObject.complexOriginalExternalId;
             if (parentOriginalExternalIdColumnName != "Id") {
                 let childTask = self.job.getTaskBySObjectName(childIdSField.scriptObject.name);
                 if (childTask) {
@@ -772,9 +772,7 @@ export default class MigrationJobTask {
                 this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
                 let records = await ___filterRecords(this.sourceData.records);
                 records = ___mockRecords(records);
-                records.forEach(record => {
-                    delete record[CONSTANTS.__ID_FIELD_NAME];
-                });
+                records = ___removeCSVFileColumns(records);
                 await ___writeToTargetCSVFile(records);
                 await Common.writeCsvFileAsync(self.data.csvFilename, records, true);
                 return records.length;
@@ -859,11 +857,9 @@ export default class MigrationJobTask {
 
             // Remove master-detail fields for Update / Upsert
             // (to avoid master-detail reparenting if not available)
-            if (self.operation != OPERATION.Insert) {
-                processedData.fields = processedData.fields.filter(field => {
-                    return !(field.isMasterDetail && !field.updateable);
-                });
-            }
+            let notUpdateableFields = processedData.fields.filter(field => {
+                return field.isMasterDetail && !field.updateable;
+            }).map(field => field.nameId);
 
             // Prepare records //////////////
             // (Only if any field to update exist)
@@ -933,6 +929,7 @@ export default class MigrationJobTask {
                     if (target && updateMode == "backwards") {
                         if (target["Id"] && ___compareRecords(target, cloned)) {
                             cloned["Id"] = target["Id"];
+                            ___removeRecordFields(cloned, notUpdateableFields);
                             processedData.recordsToUpdate.push(cloned);
                         }
                     } else if (!target && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
@@ -941,6 +938,7 @@ export default class MigrationJobTask {
                     } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
                         if (target["Id"] && ___compareRecords(target, cloned)) {
                             cloned["Id"] = target["Id"];
+                            ___removeRecordFields(cloned, notUpdateableFields);
                             processedData.recordsToUpdate.push(cloned);
                         }
                     }
@@ -1076,6 +1074,33 @@ export default class MigrationJobTask {
                     resolve(records);
                 }
             });
+        }
+
+        function ___removeRecordFields(record: any, fieldsToRemove: Array<string>) {
+            if (fieldsToRemove.length == 0) return;
+            fieldsToRemove.forEach(field => {
+                delete record[field];
+            });
+        }
+
+        function ___removeCSVFileColumns(records: Array<any>): Array<any> {
+            // Create the list of columns to remove from the CSV file
+            let fieldNamesToRemove = self.script.excludeIdsFromCSVFiles ? self.data.sFieldsInQuery.filter(field => {
+                /* Account__c (all lookup id fields, not when ExternalId == Id)*/
+                return (field.name == "Id" || field.isSimpleReference) && !field.isOriginalExternalIdField
+                    /* Account__r.Id (only when Original Externalid != Id and ExternalID == Id)*/
+                    || field.is__r && field.parentLookupObject.externalId == "Id" && field.parentLookupObject.originalExternalId != "Id";
+            }).map(field => field.name) : new Array<string>();
+
+            // Add ___Id column
+            fieldNamesToRemove = fieldNamesToRemove.concat(CONSTANTS.__ID_FIELD_NAME);
+
+            // Remove properties corresponds to the selected columns
+            records.forEach(record => {
+                fieldNamesToRemove.forEach(fieldName => delete record[fieldName]);
+            });
+
+            return records;
         }
 
         async function ___writeToTargetCSVFile(records: Array<any>): Promise<void> {

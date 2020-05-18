@@ -208,7 +208,5 @@ export default class SFieldDescribe {
         }
     }
 
-
-
 }
 

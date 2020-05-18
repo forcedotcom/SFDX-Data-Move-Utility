@@ -15,10 +15,6 @@ import { IMissingParentLookupRecordCsvRow } from "./helper_interfaces";
 import { ICsvChunk } from "../api_models";
 
 
-// ----------------------- Interfaces -------------------------------//
-
-
-// ----------------------- Classes -------------------------------//
 export class TaskData {
 
     task: MigrationJobTask;
@@ -69,7 +65,7 @@ export class TaskData {
         if (!fs.existsSync(filepath)) {
             fs.mkdirSync(filepath);
         }
-        return this.task.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}${fileNameSuffix || ""}`);
+        return this.task.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}${fileNameSuffix || ""}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
     }
 
     get resourceString_csvFile(): string {
@@ -169,6 +165,8 @@ export class ProcessedData {
     get fieldNames(): Array<string> {
         return this.fields.map(field => field.nameId);
     }
+
+  
 }
 
 export class CachedCSVContent {
@@ -208,7 +206,7 @@ export class CachedCSVContent {
 }
 
 export class CsvChunks {
-    
+
     constructor(init?: Partial<CsvChunks>) {
         Object.assign(this, init);
     }
