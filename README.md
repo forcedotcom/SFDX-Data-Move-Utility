@@ -69,7 +69,6 @@ Running the Plugin from the command console / terminal:
 
 ## Installation guide:
 
-----
 
 ### Prerequisites:
 
