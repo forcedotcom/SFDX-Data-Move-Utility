@@ -1,13 +1,18 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
+```bash
+### Applied mandatory patch: 2.8.324 => 2.8.33 
+### Please, update your earlier local version!
+```
 #### For the detailed documentation visit the project WIKI:  https://github.com/hknokh/SFDMU-Wiki/wiki
 
 #### Download also the SFDMU Desktop GUI Application:   https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App
 
 ----
 
-## Introduction:
 
+
+## Introduction:
 
 **The SFDMU (SFDX Data Move Utility)** **is advanced and very handy alternative to the traditional Salesforce Data Loader application**. 
 

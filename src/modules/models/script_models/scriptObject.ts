@@ -56,7 +56,13 @@ export default class ScriptObject {
 
     // -----------------------------------
     script: Script;
-    name: string = "";
+    get name(): string {
+        if (this.parsedQuery) {
+            return this.parsedQuery.sObject;
+        } else {
+            return parseQuery(this.query).sObject;
+        }
+    };
     sourceSObjectDescribe: SObjectDescribe;
     targetSObjectDescribe: SObjectDescribe;
     originalExternalId: string = "";
@@ -273,7 +279,6 @@ export default class ScriptObject {
 
         // Update object
         this.query = composeQuery(this.parsedQuery);
-        this.name = this.parsedQuery.sObject;
         this.script.objectsMap.set(this.name, this);
 
         // Parse delete query string
