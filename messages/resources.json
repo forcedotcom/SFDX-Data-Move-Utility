@@ -62,6 +62,8 @@
     "loadingPackageFile": "Loading and validating the package script...",
     "objectWillBeExcluded": "sObject %s will be excluded from the process.",
     "noObjectsDefinedInPackageFile": "There are no objects defined to process.",
+    "scriptJSONFormatError": "The package JSON file is not well formatted. Error message: %s.",
+    "scriptJSONReadError": "The package JSON file could not be read. Error message: %s.",
 
     "tryingToConnectCLI": "Connecting to %s using SFDX CLI...",
     "successfullyConnected": "Successfully connected to %s.",

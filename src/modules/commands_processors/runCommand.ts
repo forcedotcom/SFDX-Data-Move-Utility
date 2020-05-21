@@ -56,7 +56,7 @@ export class RunCommand {
     }
 
 
-    
+
     // ----------------------- Public methods -------------------------------------------    
     /**
      * Setup the Command
@@ -79,9 +79,19 @@ export class RunCommand {
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.loadingPackageFile);
 
-        let json = fs.readFileSync(filePath, 'utf8');
-        let jsonObject = JSON.parse(json);
-        this.script = plainToClass(models.Script, jsonObject);
+        let json: string;
+        try {
+            json = fs.readFileSync(filePath, 'utf8');
+        } catch (ex) {
+            throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
+        }
+
+        try {
+            let jsonObject = JSON.parse(json);
+            this.script = plainToClass(models.Script, jsonObject);
+        } catch (ex) {
+            throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONFormatError, ex.message));
+        }
 
         // Setup script object
         await this.script.setupAsync(this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);

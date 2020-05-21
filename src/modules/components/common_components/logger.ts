@@ -90,6 +90,8 @@ export enum RESOURCES {
     loadingPackageFile = "loadingPackageFile",
     objectWillBeExcluded = "objectWillBeExcluded",
     noObjectsDefinedInPackageFile = "noObjectsDefinedInPackageFile",
+    scriptJSONFormatError = "scriptJSONFormatError",
+    scriptJSONReadError = "scriptJSONReadError",
 
     tryingToConnectCLI = "tryingToConnectCLI",
     successfullyConnected = "successfullyConnected",
