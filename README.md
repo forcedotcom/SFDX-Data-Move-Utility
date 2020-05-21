@@ -1,7 +1,7 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
 ```bash
-### Applied mandatory patch: 2.8.234 => 2.8.3 
+### Applied mandatory patch: 2.8.324 => 2.8.33 
 ### Please, update your earlier local version!
 ```
 #### For the detailed documentation visit the project WIKI:  https://github.com/hknokh/SFDMU-Wiki/wiki
