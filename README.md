@@ -1,7 +1,7 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
 ```bash
-### Applied mandatory patch: 2.8.324 => 2.8.33 
+### Applied mandatory patch: 2.8.324 - >= 2.8.33 
 ### Please, update your earlier local version!
 ```
 #### For the detailed documentation visit the project WIKI:  https://github.com/hknokh/SFDMU-Wiki/wiki
@@ -72,7 +72,7 @@ Running the Plugin from the command console / terminal:
 
 
 
-## Installation guide:
+## Installation:
 
 
 ### Prerequisites:
@@ -85,7 +85,7 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfd
 
 
 
-### Installation:
+### Installation as SFDX plugin:
 
 ```bash
 # If you already have previous version of the Plugin installed on your local machine and want to update it, first uninstall the previous version:
@@ -93,5 +93,48 @@ $ sfdx plugins:uninstall sfdmu
 
 # Install the latest version of the Plugin:
 $ sfdx plugins:install sfdmu
+```
+
+
+
+### Installation with the source code:
+
+```bash
+# If you have any old Plugin installation, take some preliminary steps before installing from the current git source.
+# Uninstall all previously installed SFDMU instances from the SFDX CLI.
+$ sfdx plugins:uninstall sfdmu
+# If once you have linked any old source code of the Plugin, make sure that it is already unlinked from the Salesforce CLI. Go to your local directory which contains the old Plugin sources and type:
+$ sfdx plugins:unlink
+
+
+# Now you are ready to install the new version of the Plugin from the current repository.
+#1. Clone the git locally: 
+$ git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility
+
+#2. Make the installation directory current:
+$ cd sf-data-move-utility
+
+#3. Install npm modules: 
+$ npm install
+
+#4. Link the Plugin to the Salesforce CLI: 
+$ sfdx plugins:link
+```
+
+
+
+## Debugging.
+
+```bash
+# Follow the instructions how to debug the Plugin using VSCode:
+
+# 1. Clone the source code from the git repo (see above).
+
+# 2. In the VSCode find "File" => "Preferences" => "Settings" => "Node Debug" and put "Auto Attach" property to "On"
+
+# 3. Set necessary break points in the .ts files of the project. 
+
+# 4. To start debugging the source code just add --dev-suspend flag to each CLI command that runs the SFDMU Plugin. 
+
 ```
 
