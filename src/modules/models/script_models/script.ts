@@ -137,7 +137,7 @@ export default class Script {
             object.setup(this);
         });
 
-        // Make each object appear only once in the script 
+        // Make each object appear only once in the script
         this.objects = Common.distinctArray(this.objects, "name");
     }
 
