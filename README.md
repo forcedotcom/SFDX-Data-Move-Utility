@@ -1,8 +1,8 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
-For the detailed documentation visit the project WIKI:  https://github.com/hknokh/SFDMU-Wiki/wiki
+#### For the detailed documentation visit the project WIKI:  https://github.com/hknokh/SFDMU-Wiki/wiki
 
-Download also the SFDMU Desktop GUI Application:   https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App
+#### Download also the SFDMU Desktop GUI Application:   https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App
 
 ----
 
