@@ -6,7 +6,7 @@
 
 ----
 
-### Introduction:
+## Introduction:
 
 
 **The SFDMU (SFDX Data Move Utility)** **is advanced and very handy alternative to the traditional Salesforce Data Loader application**. 
@@ -15,7 +15,7 @@ This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox /
 
 
 
-#### Use case.
+### Use case.
 
 Creating of a scratch org, dev org or even a sandbox today is a pretty fast and simple action. On the other hand the newly created organization has only metadata ready-to-use, has no real data that is always strongly required to develop and debug any Salesforce application. It makes no sense to manually create or load data traditional way (with the Salesforce Data Loader) for each new org because the data easily can be taken in whole or in part from  production or from the sandbox and imported into the new organization. 
 
@@ -29,13 +29,13 @@ At current moment, there is no effective tool for both inserting and updating de
 
 
 
-####  The SFDMU Plugin is the best solution.
+###  The SFDMU Plugin is the best solution.
 
 It provides the most convenient way to export data from **multiple related** sObjects between Salesforce orgs (even unlinked).  Unlike other similar tools it can easily and quickly perform all important operations like: INSERT / UPDATE / UPSERT / DELETE.
 
 
 
-#### The Highlights of the Plugin:
+### The Highlights of the Plugin:
 
 - Supports **direct data migration** from Salesforce org to another Salesforce org without intermediate CSV files.
 - Allow to migrate **multiple objects at once**.
@@ -55,7 +55,7 @@ It provides the most convenient way to export data from **multiple related** sOb
 
 
 
-#### Watch the demo. The Plugin in action:
+### Watch the demo. The Plugin in action:
 
 Running the Plugin from the command console / terminal:
 
@@ -67,11 +67,11 @@ Running the Plugin from the command console / terminal:
 
 
 
-### Installation guide:
+## Installation guide:
 
 ----
 
-#### Prerequisites:
+### Prerequisites:
 
 Before using this plugin you need to perform standard procedure of installing SFDX CLI on your local machine from  here:
 
@@ -81,7 +81,7 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfd
 
 
 
-#### Installation:
+### Installation:
 
 ```bash
 # If you already have previous version of the Plugin installed on your local machine and want to update it, first uninstall the previous version:
