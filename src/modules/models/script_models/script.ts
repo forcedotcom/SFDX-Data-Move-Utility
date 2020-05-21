@@ -187,7 +187,6 @@ export default class Script {
                         let externalId = referencedObjectType != CONSTANTS.RECORD_TYPE_SOBJECT_NAME ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME : CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
                         let allRecords = CONSTANTS.SPECIAL_OBJECTS.indexOf(referencedObjectType) >= 0;
                         Object.assign(thisField.parentLookupObject, <ScriptObject>{
-                            name: referencedObjectType,
                             isExtraObject: true,
                             allRecords,
                             query: `SELECT Id, ${externalId} FROM ${referencedObjectType}`,
