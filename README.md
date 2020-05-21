@@ -29,7 +29,7 @@ At current moment, there is no effective tool for both inserting and updating de
 
 
 
-###  The SFDMU Plugin is the best solution.
+###  Why the SFDMU Plugin is the best solution?
 
 It provides the most convenient way to export data from **multiple related** sObjects between Salesforce orgs (even unlinked).  Unlike other similar tools it can easily and quickly perform all important operations like: INSERT / UPDATE / UPSERT / DELETE.
 
