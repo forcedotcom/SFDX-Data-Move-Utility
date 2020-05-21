@@ -114,9 +114,6 @@ export default class Script {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.noObjectsDefinedInPackageFile));
         }
 
-        // Make each object appear only once in the script
-        this.objects = Common.distinctArray(this.objects, "name");
-
         // Assign orgs
         Object.assign(this.sourceOrg, {
             script: this,
@@ -139,6 +136,9 @@ export default class Script {
         this.objects.forEach(object => {
             object.setup(this);
         });
+
+        // Make each object appear only once in the script
+        this.objects = Common.distinctArray(this.objects, "name");
     }
 
     /**
