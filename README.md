@@ -95,8 +95,6 @@ $ sfdx plugins:uninstall sfdmu
 $ sfdx plugins:install sfdmu
 ```
 
-
-
 ### Installation with the source code:
 
 ```bash
@@ -121,9 +119,7 @@ $ npm install
 $ sfdx plugins:link
 ```
 
-
-
-## Debugging.
+### Debugging.
 
 ```bash
 # Follow the instructions how to debug the Plugin using VSCode:
