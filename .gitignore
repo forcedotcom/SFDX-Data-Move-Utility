@@ -7,12 +7,10 @@
 /tmp
 node_modules
 /export*.json
-/__Data
-/sf-data-move-utility
 ._*
 .DS_Store
-/_TEMP
-/OLD!!!!
 /bin
 /logs
-
+/source
+/target
+/development
