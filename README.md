@@ -110,7 +110,7 @@ $ sfdx plugins:unlink
 $ git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility
 
 #2. Make the installation directory current:
-$ cd sf-data-move-utility
+$ cd SFDX-Data-Move-Utility
 
 #3. Install npm modules: 
 $ npm install
