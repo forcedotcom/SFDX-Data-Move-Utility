@@ -1,8 +1,12 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
 ```bash
-### Applied mandatory patch: 2.8.324 - >= 2.8.33 
-### Please, update your earlier local version!
+### -------------------------------------------- ###
+### ------ Latest stable version: 2.8.336 ------ ###
+### -------------------------------------------- ###
+
+### Applied mandatory patch starting from the version 2.8.330
+### All earlier versions (< 2.8.330) are outdated and may not functioning properly
 ```
 #### For the detailed documentation visit the project WIKI: https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki
 
