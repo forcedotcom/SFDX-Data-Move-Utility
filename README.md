@@ -4,7 +4,7 @@
 ### Applied mandatory patch: 2.8.324 - >= 2.8.33 
 ### Please, update your earlier local version!
 ```
-#### For the detailed documentation visit the project WIKI:  https://github.com/hknokh/SFDMU-Wiki/wiki
+#### For the detailed documentation visit the project WIKI: https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki
 
 #### Download also the SFDMU Desktop GUI Application:   https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App
 
