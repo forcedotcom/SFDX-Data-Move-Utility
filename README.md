@@ -8,9 +8,9 @@
 ### Applied mandatory patch starting from the version 2.8.330
 ### All earlier versions (< 2.8.330) are outdated and may not functioning properly
 ```
-#### For the detailed documentation visit the project WIKI: https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki
+#### For the detailed documentation visit the project WIKI: [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 
-#### Download also the SFDMU Desktop GUI Application:   https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App
+#### Download also the SFDMU Desktop GUI Application:  [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 
 ----
 
