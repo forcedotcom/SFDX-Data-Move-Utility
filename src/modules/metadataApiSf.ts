@@ -1,6 +1,6 @@
 import * as SfdmModels from './models/index';
 import { CommonUtils } from './common';
-var zlib = require('zlib');
+var zlib = require('zlib'); 
 
 
 export const ALL_SUPPORTED_METADATA_TYPES = [
