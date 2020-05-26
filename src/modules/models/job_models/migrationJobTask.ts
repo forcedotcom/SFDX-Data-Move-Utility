@@ -523,25 +523,35 @@ export default class MigrationJobTask {
         let queryOrNumber = this.createQuery(['COUNT(Id) CNT'], true);
 
         if (this.sourceData.media == DATA_MEDIA_TYPE.Org) {
-            let apiSf = new Sfdx(this.sourceData.org);
-            let ret = await apiSf.queryAsync(queryOrNumber, false);
-            this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
-            if (this.scriptObject.parsedQuery.limit) {
-                this.sourceTotalRecorsCount = Math.min(this.sourceTotalRecorsCount, this.scriptObject.parsedQuery.limit);
+            try {
+                let apiSf = new Sfdx(this.sourceData.org);
+                let ret = await apiSf.queryAsync(queryOrNumber, false);
+                this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
+                if (this.scriptObject.parsedQuery.limit) {
+                    this.sourceTotalRecorsCount = Math.min(this.sourceTotalRecorsCount, this.scriptObject.parsedQuery.limit);
+                }
+                this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
+                    this.sourceData.resourceString_Source_Target, String(this.sourceTotalRecorsCount));
+            } catch (ex) {
+                // Aggregate queries does not suppoted
+                this.sourceTotalRecorsCount = this.scriptObject.parsedQuery.limit || 0;
             }
-            this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
-                this.sourceData.resourceString_Source_Target, String(this.sourceTotalRecorsCount));
         }
 
         if (this.targetData.media == DATA_MEDIA_TYPE.Org) {
-            let apiSf = new Sfdx(this.targetData.org);
-            let ret = await apiSf.queryAsync(queryOrNumber, false);
-            this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
-            if (this.scriptObject.parsedQuery.limit) {
-                this.targetTotalRecorsCount = Math.min(this.targetTotalRecorsCount, this.scriptObject.parsedQuery.limit);
+            try {
+                let apiSf = new Sfdx(this.targetData.org);
+                let ret = await apiSf.queryAsync(queryOrNumber, false);
+                this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
+                if (this.scriptObject.parsedQuery.limit) {
+                    this.targetTotalRecorsCount = Math.min(this.targetTotalRecorsCount, this.scriptObject.parsedQuery.limit);
+                }
+                this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
+                    this.targetData.resourceString_Source_Target, String(this.targetTotalRecorsCount));
+            } catch (ex) {
+                // Aggregate queries does not suppoted
+                this.targetTotalRecorsCount = this.scriptObject.parsedQuery.limit || 0;
             }
-            this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
-                this.targetData.resourceString_Source_Target, String(this.targetTotalRecorsCount));
         }
     }
 
