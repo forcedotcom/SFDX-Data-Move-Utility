@@ -239,12 +239,17 @@ export default class Script {
             }
         }
 
-        // Remove duplicate fields
+        // Finalizing ....
         this.objects.forEach(object => {
+            // Remove duplicate fields
             object.parsedQuery.fields = Common.distinctArray(object.parsedQuery.fields, "field");
             object.query = composeQuery(object.parsedQuery);
-        });
 
+            // Warn user if there are no any fields to update
+            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0){
+                this.logger.warn(RESOURCES.noUpdateableFieldsInTheSObject, object.name);
+            }
+        });
     }
 
     /**
