@@ -782,6 +782,7 @@ export default class MigrationJobTask {
 
         //  UPDATE ORG :::::::::
         let totalProcessedRecordsAmount = 0;
+        let totalNonProcessedRecordsAmount = 0;
 
         if (this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete) {
             // Non-person Accounts/Contacts + other objects //////////
@@ -791,8 +792,9 @@ export default class MigrationJobTask {
                 // Warn user
                 await warnUserCallbackAsync(data);
             }
-            // Process data ****
+            // Process data - main ****
             totalProcessedRecordsAmount += (await ___updatetData(data));
+            totalNonProcessedRecordsAmount += data.nonProcessedRecordsAmount;
 
             // Person Accounts/Contacts only /////////////           
             if (this.data.isPersonAccountOrContact) {
@@ -802,8 +804,14 @@ export default class MigrationJobTask {
                     // Warn user
                     await warnUserCallbackAsync(data);
                 }
-                // Process data ****
+                // Process data - person accounts ****
                 totalProcessedRecordsAmount += (await ___updatetData(data));
+                totalNonProcessedRecordsAmount += data.nonProcessedRecordsAmount;
+            }
+
+            // Warn the about skipped equal records
+            if (totalNonProcessedRecordsAmount > 0) {
+                this.logger.infoNormal(RESOURCES.skippedUpdatesWarning, this.sObjectName, String(totalNonProcessedRecordsAmount));
             }
 
         }
@@ -924,6 +932,7 @@ export default class MigrationJobTask {
 
                 // Create separated record sets to Update/Insert /////////////
                 processedData.clonedToSourceMap.forEach((source, cloned) => {
+                    source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = typeof source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] == "undefined" ? false : source[CONSTANTS.__IS_PROCESSED_FIELD_NAME];
                     delete cloned[CONSTANTS.__ID_FIELD_NAME];
                     let target = self.data.sourceToTargetRecordMap.get(source);
                     if (target && updateMode == "backwards") {
@@ -931,15 +940,18 @@ export default class MigrationJobTask {
                             cloned["Id"] = target["Id"];
                             ___removeRecordFields(cloned, notUpdateableFields);
                             processedData.recordsToUpdate.push(cloned);
+                            source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
                         }
                     } else if (!target && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
                         delete cloned["Id"];
                         processedData.recordsToInsert.push(cloned);
+                        source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
                     } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
                         if (target["Id"] && ___compareRecords(target, cloned)) {
                             cloned["Id"] = target["Id"];
                             ___removeRecordFields(cloned, notUpdateableFields);
                             processedData.recordsToUpdate.push(cloned);
+                            source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
                         }
                     }
                 });
@@ -1093,7 +1105,7 @@ export default class MigrationJobTask {
             }).map(field => field.name) : new Array<string>();
 
             // Add ___Id column
-            fieldNamesToRemove = fieldNamesToRemove.concat(CONSTANTS.__ID_FIELD_NAME);
+            fieldNamesToRemove = fieldNamesToRemove.concat(CONSTANTS.__ID_FIELD_NAME, CONSTANTS.__IS_PROCESSED_FIELD_NAME);
 
             // Remove properties corresponds to the selected columns
             records.forEach(record => {

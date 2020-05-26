@@ -90,6 +90,7 @@ export enum RESOURCES {
     loadingPackageFile = "loadingPackageFile",
     objectWillBeExcluded = "objectWillBeExcluded",
     noObjectsDefinedInPackageFile = "noObjectsDefinedInPackageFile",
+    noUpdateableFieldsInTheSObject = "noUpdateableFieldsInTheSObject",
     scriptJSONFormatError = "scriptJSONFormatError",
     scriptJSONReadError = "scriptJSONReadError",
 
@@ -175,6 +176,7 @@ export enum RESOURCES {
     updatingTargetCompleted = "updatingTargetCompleted",
     writingToFile = "writingToFile",
     nothingUpdated = "nothingUpdated",
+    skippedUpdatesWarning = "skippedUpdatesWarning",
     missingParentLookupsPrompt = "missingParentLookupsPrompt",
     updatingSummary = "updatingSummary",
     updatingTotallyUpdated = "updatingTotallyUpdated"

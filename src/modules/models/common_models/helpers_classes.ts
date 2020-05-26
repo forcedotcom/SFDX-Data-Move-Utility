@@ -166,7 +166,10 @@ export class ProcessedData {
         return this.fields.map(field => field.nameId);
     }
 
-  
+    get nonProcessedRecordsAmount(): number {
+        return [...this.clonedToSourceMap.values()].filter(record => record[CONSTANTS.__IS_PROCESSED_FIELD_NAME] == false).length;
+    }
+
 }
 
 export class CachedCSVContent {
