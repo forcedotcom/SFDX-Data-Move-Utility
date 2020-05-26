@@ -2,11 +2,9 @@
 
 ```bash
 ### ------------------------------------------------------------------------------- ###
-### ------ Latest stable version: 2.8.34 ------------------------------------------ ###
+### ------ Latest stable version: 2.8.341 ------------------------------------------ ###
 ### ------ !! Highly recommended always keeping your local copy up-to-date !! ----- ###
 ### ------------------------------------------------------------------------------- ###
-
-### Improved User Experience since the version 2.8.34
 
 ### Applied mandatory patch starting from the version 2.8.330
 ### (All earlier versions < 2.8.330 are outdated and may not functioning properly)
