@@ -223,6 +223,10 @@ export default class ScriptObject {
         return !this.hasParentLookupObjects && !this.hasChildLookupObjects;
     }
 
+    get hasToBeUpdated() : boolean {
+        return this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete;
+    }
+
 
     // ----------------------- Public methods -------------------------------------------    
     /**
