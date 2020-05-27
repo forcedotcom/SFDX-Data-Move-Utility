@@ -111,8 +111,9 @@ export default class ScriptObject {
         }
         return this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
-            let describe = this.sourceSObjectDescribe.fieldsMap.get(name)
-                || this.targetSObjectDescribe && this.targetSObjectDescribe.fieldsMap && this.targetSObjectDescribe.fieldsMap.get(name);
+            let describe = this.targetSObjectDescribe
+                && this.targetSObjectDescribe.fieldsMap
+                && this.targetSObjectDescribe.fieldsMap.get(name);
             if (!describe || describe.readonly) {
                 return null;
             }
@@ -223,7 +224,7 @@ export default class ScriptObject {
         return !this.hasParentLookupObjects && !this.hasChildLookupObjects;
     }
 
-    get hasToBeUpdated() : boolean {
+    get hasToBeUpdated(): boolean {
         return this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete;
     }
 
