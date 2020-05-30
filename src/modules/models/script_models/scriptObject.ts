@@ -112,8 +112,9 @@ export default class ScriptObject {
         }
         return this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
-            let describe = this.sourceSObjectDescribe.fieldsMap.get(name)
-                || this.targetSObjectDescribe && this.targetSObjectDescribe.fieldsMap && this.targetSObjectDescribe.fieldsMap.get(name);
+            let describe = this.targetSObjectDescribe
+                && this.targetSObjectDescribe.fieldsMap
+                && this.targetSObjectDescribe.fieldsMap.get(name);
             if (!describe || describe.readonly) {
                 return null;
             }
