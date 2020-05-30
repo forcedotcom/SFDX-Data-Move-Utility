@@ -72,6 +72,7 @@ export default class ScriptObject {
     processAllSource: boolean = false;
     processAllTarget: boolean = false;
     multiselectPattern: any;
+    referenceFieldToObjectMap: Map<string, string> = new Map<string, string>();
 
     get task(): MigrationJobTask {
         return this.script.job.getTaskBySObjectName(this.name);
@@ -223,7 +224,7 @@ export default class ScriptObject {
         return !this.hasParentLookupObjects && !this.hasChildLookupObjects;
     }
 
-    get hasToBeUpdated() : boolean {
+    get hasToBeUpdated(): boolean {
         return this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete;
     }
 
@@ -324,14 +325,14 @@ export default class ScriptObject {
                 try {
                     // Retrieve sobject metadata
                     this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
-                    [...this.sourceSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
+                    this._updateSObjectDescribe(this.sourceSObjectDescribe);
 
                     if (this.script.targetOrg.media == DATA_MEDIA_TYPE.File) {
                         this.targetSObjectDescribe = this.sourceSObjectDescribe;
                     }
 
                     // Add fields by the multiselect keywords + filter query
-                    this._addOrRemmoveFields(this.sourceSObjectDescribe);
+                    this._addOrRemoveFields(this.sourceSObjectDescribe);
 
                     // Check fields existance
                     this._validateFields(this.sourceSObjectDescribe, true);
@@ -353,13 +354,13 @@ export default class ScriptObject {
                 try {
                     // Retrieve sobject metadata
                     this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
-                    [...this.targetSObjectDescribe.fieldsMap.values()].forEach(x => x.scriptObject = this);
+                    this._updateSObjectDescribe(this.targetSObjectDescribe);
 
                     if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
                         this.sourceSObjectDescribe = this.targetSObjectDescribe;
 
                         // Add fields by the multiselect keywords + filter query
-                        this._addOrRemmoveFields(this.targetSObjectDescribe);
+                        this._addOrRemoveFields(this.targetSObjectDescribe);
                     }
 
                     // Check fields existance
@@ -406,7 +407,7 @@ export default class ScriptObject {
     }
 
     // ----------------------- Private members -------------------------------------------
-    private _addOrRemmoveFields(describe: SObjectDescribe) {
+    private _addOrRemoveFields(describe: SObjectDescribe) {
         if (this.multiselectPattern) {
             let fieldsInOriginalQuery = [].concat(this.fieldsInQuery);
             let pattern = this.multiselectPattern;
@@ -432,6 +433,15 @@ export default class ScriptObject {
             else
                 return fieldDescribeProperty != patternProperty && typeof fieldDescribeProperty != "undefined";
         }
+    }
+
+    private _updateSObjectDescribe(describe: SObjectDescribe) {
+        [...this.sourceSObjectDescribe.fieldsMap.values()].forEach(x => {
+            x.scriptObject = this;
+            if (x.lookup && this.referenceFieldToObjectMap.has(x.name)){
+                x.referencedObjectType = this.referenceFieldToObjectMap.get(x.name);
+            }
+        });
     }
 
     private _validateFields(describe: SObjectDescribe, isSource: boolean) {
@@ -477,7 +487,13 @@ export default class ScriptObject {
             } else if (CONSTANTS.MULTISELECT_SOQL_KEYWORDS.indexOf(fieldName) >= 0) {
                 ___set(fieldName);
             } else if (fieldName != "id") {
-                parsedQuery.fields.push(getComposedField((<SOQLField>field).field));
+                fieldName = (<SOQLField>field).field;
+                let parts = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR);
+                if (parts.length > 1) {
+                    self.referenceFieldToObjectMap.set(parts[0], parts[1]);
+                    fieldName = parts[0];
+                }
+                parsedQuery.fields.push(getComposedField(fieldName));
             }
         });
         this.query = composeQuery(parsedQuery);

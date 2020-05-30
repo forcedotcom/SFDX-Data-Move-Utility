@@ -14,7 +14,7 @@ import {
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
-import { SFieldDescribe, SObjectDescribe, ScriptOrg } from '../../models';
+import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError } from '../../models';
 import { Common } from './common';
 import { IOrgConnectionData } from '../../models/common_models/helper_interfaces';
 
@@ -95,17 +95,20 @@ export class Sfdx {
         useBulkQueryApi: boolean = false,
         csvFullFilename?: string,
         sFieldsDescribeMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {
-
         let self = this;
-        if (csvFullFilename && sFieldsDescribeMap) {
-            return await ___readAndFormatCsvRecordsAsync();
+        try {
+            if (csvFullFilename && sFieldsDescribeMap) {
+                return await ___readAndFormatCsvRecordsAsync();
+            }
+            let records = [].concat(await ___queryAsync(soql));
+            if (soql.indexOf("FROM Group") >= 0) {
+                soql = soql.replace("FROM Group", "FROM User");
+                records = records.concat(await ___queryAsync(soql));
+            }
+            return records;
+        } catch (ex) {
+            throw new CommandExecutionError(ex.message);
         }
-        let records = [].concat(await ___queryAsync(soql));
-        if (soql.indexOf("FROM Group") >= 0) {
-            soql = soql.replace("FROM Group", "FROM User");
-            records = records.concat(await ___queryAsync(soql));
-        }
-        return records;
 
         // ------------------ internal functions ------------------------- //
         async function ___queryAsync(soql: string): Promise<Array<any>> {

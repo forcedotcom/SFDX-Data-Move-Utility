@@ -2,12 +2,10 @@
 
 ```bash
 ### ------------------------------------------------------------------------------- ###
-### ------ Latest stable version: 2.8.341 ------------------------------------------ ###
+### ------ Latest stable version: 2.8.4 ------------------------------------------- ###
 ### ------ !! Highly recommended always keeping your local copy up-to-date !! ----- ###
+### -------!! All older versions may not functioning properly !! ------------------ ###
 ### ------------------------------------------------------------------------------- ###
-
-### Applied mandatory patch starting from the version 2.8.330
-### (All earlier versions < 2.8.330 are outdated and may not functioning properly)
 ```
 #### For the detailed documentation visit the project WIKI: [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 
