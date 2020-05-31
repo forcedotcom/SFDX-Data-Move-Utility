@@ -1,10 +1,13 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
 ```bash
-### --------------------------------------------------------- ###
-### ------------ *** The latest version: 3.0.0 *** ---------- ###
-### ------ *** Always keep your local copy up-to-date *** --- ###
-### --------------------------------------------------------- ###
+### --------------------------------------------------- ###
+### - *** LATEST PRODUCTION VERSION: 3.0.0        *** - ###
+### - *** Current repository version 3.0.1        *** - ###
+### --------------------------------------------------- ###
+### - *** Always make sure, that you have         *** - ###
+### - *** the latest PRODUCTION version installed *** - ###
+### --------------------------------------------------- ###
 ```
 #### For the detailed documentation visit the project WIKI: [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 
@@ -16,9 +19,47 @@
 
 ## Introduction:
 
-**The SFDMU (SFDX Data Move Utility)** **is advanced and very handy alternative to the traditional Salesforce Data Loader application**. 
+**The SFDMU Plugin (SFDX Data Move Utility) is the advanced and very handy alternative to the traditional Salesforce Data Loader application**. 
 
-This SFDX Plugin will assist you to populate your org (scratch / dev / sandbox / prod) with data imported from another org or CSV files. It supports all important CRUD operations **Insert** / **Update** / **Upsert** / **Delete** operations **also for multiple related sObjects**.
+This SFDX Plugin will help you to populate your org (scratch / dev / sandbox / prod) with data imported from another org or CSV files. It supports all important CRUD operations **Insert** / **Update** / **Upsert** / **Delete** operations **also for multiple related sObjects**.
+
+
+
+### The Highlights of the tool:
+
+- Supports **direct data migration** from Salesforce org to another Salesforce org without intermediate CSV files.
+
+- Allow to migrate **multiple objects at once**.
+
+- Supports data **Export/Import  to/from  CSV files.**
+
+- **Does not require a special External Id** **field for Update/Upsert** operations to bind related SObjects. **Any type of field with unique values, such as a Name, even formula or auto-number can be used as External Id.** The Plugin internally compares the records from the Source and Target based on the specified field and performs the necessary CRUD operations on the Target.
+
+- Handles **circular references between SObjects**, for example when Object1 has a child relationship to Object2, then the Object2 has a child relationship to Object3 and the Object3 has a parent relationship back to the Object1.
+
+- Supports data migration **preserving Record Type** for each record.
+
+- Handles **self-referenced fields**, for instance  Account.ParentId. 
+
+- Supports **composite external Id keys**. 
+
+- Full **Person Account** support. Can process record sets contain mixed Business & Person Accounts.
+
+- Supports **record owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
+
+- Has built-in  **data anonymization feature**  to replace real source data (for example from  the Production environment)  with random values during updating the Target.
+
+- Automatic **CSV source file transformation** option. 
+
+- Customized binding of **polymorphic lookup fields**, for instance FeedItem.ParentId.
+
+- **Secured and safe**. All operations are performed on the client's machine, there is no cloud interaction, so all is completely safe.
+
+- **User-friendly configuration.**  Fully configurable using simple JSON file.
+
+- **Fast performance.** Processes only a selected subset of records and fields that need to be inserted or updated and does not touch others.
+
+  [See the project WIKI for the full documentation](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 
 
 
@@ -40,24 +81,7 @@ At current moment, there is no effective tool for both inserting and updating de
 
 It provides the most convenient way to export data from **multiple related** sObjects between Salesforce orgs (even unlinked).  Unlike other similar tools it can easily and quickly perform all important operations like: INSERT / UPDATE / UPSERT / DELETE.
 
-
-
-### The Highlights of the Plugin:
-
-- Supports **direct data migration** from Salesforce org to another Salesforce org without intermediate CSV files.
-- Allow to migrate **multiple objects at once**.
-- Supports data **Export/Import  to/from  CSV files.**
-- **Does not require a special External Id** **field for Update/Upsert** operations to bind related SObjects. **Any type of field with unique values, such as a Name, even formula or auto-number can be used as External Id.** The Plugin internally compares the records from the Source and Target based on the specified field and performs the necessary CRUD operations on the Target.
-- Handles **circular references between SObjects**, for example when Object1 has a child relationship to Object2, then the Object2 has a child relationship to Object3 and the Object3 has a parent relationship back to the Object1.
-- Supports data migration **preserving Record Type** for each record.
-- Handles **self-referenced fields**, i.e  Account.ParentId. 
-- Supports **Person Accounts**.
-- Supports **record owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
-- Has built-in  **data anonymization feature**  to replace real source data (for example from  the Production env)  with random values during updating the Target.
-- **Secured and safe**. All operations are performed on the client's machine, there is no cloud interaction, so all is completely safe.
-- **User-friendly configuration.**  Fully configurable using simple JSON file.
-- **Fast performance.** Processes only a selected subset of records that need to be inserted or updated and does not touch others.
-- And much more (see the details in other Wiki articles)...
+Implemented a huge amount of advanced features never were before in any of the existing tools, which make your data migration very quick and easy.
 
 
 
@@ -90,7 +114,7 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfd
 ### Installation as SFDX plugin:
 
 ```bash
-# If you already have previous version of the Plugin installed on your local machine and want to update it, first uninstall the previous version:
+# If you already have outdated version of the Plugin installed on your local machine and want to update it, first uninstall the existing version:
 $ sfdx plugins:uninstall sfdmu
 
 # Install the latest version of the Plugin:
