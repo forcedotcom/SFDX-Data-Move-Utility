@@ -55,6 +55,7 @@ export default class Script {
     importCSVFilesAsIs = false;
     alwaysUseRestApiToUpdateRecords: false;
     excludeIdsFromCSVFiles: boolean =  false;
+    fileLog: boolean = true;
 
 
     // -----------------------------------
@@ -94,6 +95,7 @@ export default class Script {
         this.sourceOrg = this.orgs.filter(x => x.name == sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         this.apiVersion = apiVersion || this.apiVersion;
+        this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
 
         if (sourceUsername.toLowerCase() == targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));

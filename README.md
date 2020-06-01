@@ -2,8 +2,8 @@
 
 ```bash
 ### --------------------------------------------------- ###
-### - *** LATEST PRODUCTION VERSION: 3.0.0        *** - ###
-### - *** Current repository version 3.0.1        *** - ###
+### - *** LATEST PRODUCTION VERSION: 3.1.0        *** - ###
+### - *** Current repository version 3.1.0        *** - ###
 ### --------------------------------------------------- ###
 ### - *** Always make sure, that you have         *** - ###
 ### - *** the latest PRODUCTION version installed *** - ###
