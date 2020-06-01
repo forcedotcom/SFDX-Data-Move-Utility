@@ -437,7 +437,7 @@ export default class ScriptObject {
     }
 
     private _updateSObjectDescribe(describe: SObjectDescribe) {
-        [...this.sourceSObjectDescribe.fieldsMap.values()].forEach(x => {
+        [...describe.fieldsMap.values()].forEach(x => {
             x.scriptObject = this;
             if (x.lookup && this.referenceFieldToObjectMap.has(x.name)){
                 x.referencedObjectType = this.referenceFieldToObjectMap.get(x.name);
