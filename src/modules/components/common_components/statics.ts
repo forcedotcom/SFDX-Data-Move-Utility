@@ -5,6 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { IBlobField } from "../../models/common_models/helper_interfaces";
+
 
 
 export const CONSTANTS = {
@@ -36,9 +38,10 @@ export const CONSTANTS = {
     VALUE_MAPPING_CSV_FILENAME: 'ValueMapping.csv',
     USER_AND_GROUP_FILENAME: 'UserAndGroup',
     CSV_ISSUES_ERRORS_FILENAME: 'CSVIssuesReport.csv',
-    MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME : "MissingParentRecordsReport.csv",
+    MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME: "MissingParentRecordsReport.csv",
 
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
+    MAX_PARALLEL_DOWNLOAD_THREADS: 10,
     MAX_FETCH_SIZE: 100000,
     QUERY_BULK_API_THRESHOLD: 30000,
     BULK_API_V2_BLOCK_SIZE: 1000,
@@ -46,7 +49,7 @@ export const CONSTANTS = {
     POLL_TIMEOUT: 3000000,
     SHORT_QUERY_STRING_MAXLENGTH: 250,
     MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,
-
+    
     MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
     SPECIAL_MOCK_COMMANDS: [
         "c_seq_number",
@@ -104,7 +107,15 @@ export const CONSTANTS = {
         "lookup_false",
         "person_true",
         "person_false"
-    ]    
+    ],
+
+    BLOB_FIELDS: new Array<IBlobField>(
+        {
+            objectName: "Attachment",
+            fieldName: "Body",
+            dataType: "base64"
+        }
+    )
 }
 
 export enum DATA_MEDIA_TYPE {

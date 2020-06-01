@@ -16,7 +16,7 @@ import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
 import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError } from '../../models';
 import { Common } from './common';
-import { IOrgConnectionData } from '../../models/common_models/helper_interfaces';
+import { IOrgConnectionData, IBlobField } from '../../models/common_models/helper_interfaces';
 
 var jsforce = require("jsforce");
 
@@ -117,6 +117,7 @@ export class Sfdx {
             let records = (await self.queryAsync(soql, useBulkQueryApi)).records;
             records = ___parseRecords(records, soql);
             records = ___formatRecords(records, soqlFormat);
+            records = await ___retrieveBlobFieldData(records, soqlFormat[3]);
             return records;
         }
 
@@ -212,7 +213,7 @@ export class Sfdx {
                         recordTypeExtIdPropName);
                 }
             });
-            // {rpcess complex keys}
+            // Process complex keys}
             if (soqlFormat[1].size == 0) {
                 return records;
             }
@@ -251,6 +252,37 @@ export class Sfdx {
                     record[field] = typeof record[field] == "undefined" ? null : record[field];
                 });
             });
+            return records;
+        }
+
+        async function ___retrieveBlobFieldData(records: Array<any>, sObjectName: string): Promise<Array<any>> {
+            let blobFields = CONSTANTS.BLOB_FIELDS.filter(field =>
+                records.length > 0
+                && field.objectName == sObjectName
+                && records[0].hasOwnProperty(field.fieldName));
+            if (blobFields.length == 0) {
+                return records;
+            }
+            let recordIdToRecordMap = new Map<string, any>();
+            records.forEach(record => {
+                let recordId = record["Id"];
+                if (recordId) {
+                    recordIdToRecordMap.set(recordId, record);
+                }
+            });
+
+            const ids = [...recordIdToRecordMap.keys()];
+            for (let blobFieldIndex = 0; blobFieldIndex < blobFields.length; blobFieldIndex++) {
+                const blobField = blobFields[blobFieldIndex];
+                const blobData = await self.downloadBlobFieldDataAsync(ids, blobField);
+                blobData.forEach((blobValue, id) => {
+                    let record = recordIdToRecordMap.get(id);
+                    if (record) {
+                        record[blobField.fieldName] = blobValue;
+                    }
+                });
+            }
+
             return records;
         }
     }
@@ -305,7 +337,7 @@ export class Sfdx {
 
 
     /**
-     * Creates jforce connection instance
+     * @static Creates jforce connection instance
      *
      * @param {string} instanceUrl
      * @param {string} accessToken
@@ -321,5 +353,41 @@ export class Sfdx {
             maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
         });
     }
+
+    /**
+     * The function downloads blob (binary) data of the given field.
+     * The function works in parallel mode.
+     * 
+     * @param {Array<string>} recordIds The record ids to download the data
+     * @param {IBlobField} blobField The data about the field
+     * @returns {Promise<Map<string, string>>} Returns map between the record Id 
+     *                                          and the base64 string representations 
+     *                                          of the corresponding binary data
+     * @memberof Sfdx
+     */
+    async downloadBlobFieldDataAsync(recordIds: Array<string>, blobField: IBlobField): Promise<Map<string, string>> {
+
+        let self = this;
+        const queue = recordIds.map(recordId => () => ___getData(recordId, blobField));
+        const downloadedBlobs: Array<[string, string]> = await Common.parallelAsync(queue, CONSTANTS.MAX_PARALLEL_DOWNLOAD_THREADS);
+        return new Map<string, string>(downloadedBlobs);
+
+        // ------------------ internal functions ------------------------- //        
+        async function ___getData(recordId: string, blobField: IBlobField): Promise<[string, string]> {
+            return new Promise<[string, string]>(resolve => {
+                var conn = self.org.getConnection();
+                let blob = conn.sobject(blobField.objectName).record(recordId).blob(blobField.fieldName);
+                let buffers = new Array<any>();
+                blob.on('data', function (data: any) {
+                    buffers.push(data);
+                });
+                blob.on('end', function () {
+                    resolve([recordId, Buffer.concat(buffers).toString(blobField.dataType)]);
+                });
+            });
+        }
+    }
+
+
 
 }
