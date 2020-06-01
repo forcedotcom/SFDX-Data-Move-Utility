@@ -1,7 +1,7 @@
 {
     "name": "sfdmu",
     "description": "The advanced Salesforce Data Loader SFDX Plugin (SFDMU) will assist you to populate your org (scratch/development/sandbox/production) with data imported from another org or CSV files. Supports Delete, Insert, Update and Upsert for multiple related sObjects.",
-    "version": "3.1.2",
+    "version": "3.2.0",
     "author": "hknokh@salesforce.com",
     "bugs": "https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues",
     "dependencies": {
@@ -21,10 +21,9 @@
         "es6-shim": "^0.35.5",
         "glob": "^7.1.4",
         "jsforce": "^1.9.3",
-        "linq.ts": "^1.0.0",
         "madge": "^3.8.0",
+        "promise-parallel-throttle": "^3.3.0",
         "reflect-metadata": "^0.1.13",
-        "simple-crypto-js": "^2.2.0",
         "soql-parser-js": "^1.2.1",
         "tslib": "^1"
     },

@@ -136,11 +136,13 @@
     "retrievingDataCompleted": "Retrieving the data %s has been completed.",
     "queryingAll": "{%s} Retrieving the %s data from %s (%s: all records)...",
     "queryingIn": "{%s} Retrieving the %s data from %s (%s: filtered records)...",
+    "retrievingBinaryData": "{%s} Retrieving binary data. It may take a while...",
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s new records.",
     "queryingTotallyFetched": "{%s} Total retrieved within all steps (source/target): %s records.",
     "queryString": "{%s} Query string: %s.",
     "fetchingSummary": "Data retrieving summary",
+
 
     "updatingTarget": "Updating the Target %s...",
     "updatingTargetNRecordsWillBeUpdated": "{%s} Number of records to %s: %s.",

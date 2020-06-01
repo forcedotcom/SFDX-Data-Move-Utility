@@ -27,7 +27,7 @@
     "apiversionFlagLongDescription": "[Optional] If specified overrides apiVersion parameter of the export.json file. Used for all api requests made by this command.",
 
     "filelogFlagDescription": "[Optional] Enable additional logging into log file",
-    "filelogFlagLongDescription": "[Optional] In addition stdout/stderr this flag will turn on logging into .log file. Each command run will create separated log file inside /log subdirectory related to the with the working export.json file. A verbosity control is disabled for log files: all messages will be logged, even --quite flag was specified.",
+    "filelogFlagLongDescription": "[Optional] In addition stdout/stderr this flag will turn on logging into .log file. Each command run will create separated log file inside /log subdirectory related to the working export.json file. A verbosity control is disabled for log files: all messages will be logged, even --quite flag was specified.",
 
     "nopromptFlagDescription": "[Optional] Skip prompt inputs or confirmation",
     "nopromptLongFlagDescription": "[Optional] Flag to skip prompting for more inputs or confirmation. Command will continue using the default options.",

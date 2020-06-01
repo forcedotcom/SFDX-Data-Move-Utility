@@ -26,7 +26,7 @@ import glob = require("glob");
 import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError, CsvChunks } from '../../models';
 import readline = require('readline');
-
+import * as Throttle from 'promise-parallel-throttle';
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
@@ -1101,9 +1101,18 @@ export class Common {
         }
     }
 
+    /**
+     * @static Runs async functions in parallel with maximum simultaneous runnings
+     * 
+     * @param {Array<Throttle.Task<any>>} tasks The async functions to run
+     * @param {number} [maxInProgress=5] The maximum parallelism
+     * @returns {Promise<any>} The array of results turned by all promises
+     * @memberof Common
+     */
+    public static async parallelAsync(tasks: Array<Throttle.Task<any>>, maxInProgress: number = 5): Promise<Array<any>> {
+        return await Throttle.all(tasks, {
+            maxInProgress
+        });
+    }
+
 }
-
-
-
-// ---------------------------- Helper classes -------------------------------
-

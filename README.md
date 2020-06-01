@@ -1,13 +1,15 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
 ```bash
-### --------------------------------------------------- ###
-### - *** LATEST PRODUCTION VERSION: 3.1.2        *** - ###
-### - *** Current repository version 3.1.2        *** - ###
-### --------------------------------------------------- ###
-### - *** Always make sure, that you have         *** - ###
-### - *** the latest PRODUCTION version installed *** - ###
-### --------------------------------------------------- ###
+### ---------------------------------------------------------------- ###
+### - *** LATEST PRODUCTION VERSION: 3.2.0                     *** - ###
+### - *** Current repository version 3.2.0                     *** - ###
+### - *** Latest updates: Added support for Notes & Attachments*** - ###
+### - ***                 Dependencies were updated            *** - ###
+### ---------------------------------------------------------------- ###
+### - *** Always make sure, that you have                      *** - ###
+### - *** the latest PRODUCTION version installed              *** - ###
+### ---------------------------------------------------------------- ###
 ```
 #### For the detailed documentation visit the project WIKI: [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 
@@ -44,6 +46,8 @@ This SFDX Plugin will help you to populate your org (scratch / dev / sandbox / p
 - Supports **composite external Id keys**. 
 
 - Full **Person Account** support. Can process record sets contain mixed Business & Person Accounts.
+
+- Supports migration of **Notes & Attachments.**
 
 - Supports **record owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
 
@@ -114,7 +118,8 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfd
 ### Installation as SFDX plugin:
 
 ```bash
-# If you already have outdated version of the Plugin installed on your local machine and want to update it, first uninstall the existing version:
+# If you already have outdated version of the Plugin installed on your local machine
+# and want to update it, first uninstall the existing version:
 $ sfdx plugins:uninstall sfdmu
 
 # Install the latest version of the Plugin:
@@ -124,24 +129,27 @@ $ sfdx plugins:install sfdmu
 ### Installation with the source code:
 
 ```bash
-# If you have any old Plugin installation, take some preliminary steps before installing from the current git source.
+# If you have any old Plugin installation, take some preliminary steps 
+# before installing from the current git source.
 # Uninstall all previously installed SFDMU instances from the SFDX CLI.
 $ sfdx plugins:uninstall sfdmu
-# If once you have linked any old source code of the Plugin, make sure that it is already unlinked from the Salesforce CLI. Go to your local directory which contains the old Plugin sources and type:
+# If once you have linked any old source code of the Plugin, make sure that it is already
+# unlinked from the Salesforce CLI. 
+# Go to your local directory which contains the old Plugin sources and type:
 $ sfdx plugins:unlink
 
 
 # Now you are ready to install the new version of the Plugin from the current repository.
-#1. Clone the git locally: 
+# 1. Clone the git locally: 
 $ git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility
 
-#2. Make the installation directory current:
+# 2. Make the installation directory current:
 $ cd SFDX-Data-Move-Utility
 
-#3. Install npm modules: 
+# 3. Install npm modules: 
 $ npm install
 
-#4. Link the Plugin to the Salesforce CLI: 
+# 4. Link the Plugin to the Salesforce CLI: 
 $ sfdx plugins:link
 ```
 
@@ -152,11 +160,12 @@ $ sfdx plugins:link
 
 # 1. Clone the source code from the git repo (see above).
 
-# 2. In the VSCode find "File" => "Preferences" => "Settings" => "Node Debug" and put "Auto Attach" property to "On"
+# 2. In the VSCode find "File" => "Preferences" => "Settings" => "Node Debug" and put 	      "Auto Attach" property to "On"
 
 # 3. Set necessary break points in the .ts files of the project. 
 
-# 4. To start debugging the source code just add --dev-suspend flag to each CLI command that runs the SFDMU Plugin. 
+# 4. To start debugging the source code just add --dev-suspend flag 
+#    to each CLI command that runs the SFDMU Plugin. 
 
 ```
 
