@@ -164,6 +164,7 @@ export enum RESOURCES {
     retrievingDataCompleted = "retrievingDataCompleted",
     queryingAll = "queryingAll",
     queryingIn = "queryingIn",
+    retrievingBinaryData = "retrievingBinaryData",
     queryingSelfReferenceRecords = "queryingSelfReferenceRecords",
     queryingFinished = "queryingFinished",
     queryingTotallyFetched = "queryingTotallyFetched",

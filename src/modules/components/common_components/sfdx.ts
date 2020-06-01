@@ -17,6 +17,7 @@ import { DescribeSObjectResult, QueryResult } from 'jsforce';
 import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError } from '../../models';
 import { Common } from './common';
 import { IOrgConnectionData, IBlobField } from '../../models/common_models/helper_interfaces';
+import { Logger, RESOURCES } from './logger';
 
 var jsforce = require("jsforce");
 
@@ -24,6 +25,10 @@ var jsforce = require("jsforce");
 export class Sfdx {
 
     org: ScriptOrg;
+
+    get logger() : Logger {
+        return this.org.script.logger;
+    }
 
     constructor(org: ScriptOrg) {
         this.org = org;
@@ -256,6 +261,10 @@ export class Sfdx {
         }
 
         async function ___retrieveBlobFieldData(records: Array<any>, sObjectName: string): Promise<Array<any>> {
+
+            // Message
+            self.logger.infoVerbose(RESOURCES.retrievingBinaryData, sObjectName);
+
             let blobFields = CONSTANTS.BLOB_FIELDS.filter(field =>
                 records.length > 0
                 && field.objectName == sObjectName
