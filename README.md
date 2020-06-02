@@ -1,15 +1,14 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
 ```bash
-### ---------------------------------------------------------------- ###
-### - *** LATEST PRODUCTION VERSION: 3.2.0                     *** - ###
-### - *** Current repository version 3.2.0                     *** - ###
-### - *** Latest updates: Added support for Notes & Attachments*** - ###
-### - ***                 Dependencies were updated            *** - ###
-### ---------------------------------------------------------------- ###
-### - *** Always make sure, that you have                      *** - ###
-### - *** the latest PRODUCTION version installed              *** - ###
-### ---------------------------------------------------------------- ###
+### ----------------------------------------------------------------- ###
+### - *** Current repository version 3.2.1                      *** - ###
+### - *** Latest updates: Added support for Notes & Attachments *** - ###
+### - ***                 + Minor bug fix                       *** - ###
+### ----------------------------------------------------------------- ###
+### - *** Always make sure, that you have                       *** - ###
+### - *** the latest PRODUCTION version installed               *** - ###
+### ----------------------------------------------------------------- ###
 ```
 #### For the detailed documentation visit the project WIKI: [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 
