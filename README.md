@@ -7,7 +7,7 @@
 ### - ***                 + Minor bug fix                       *** - ###
 ### ----------------------------------------------------------------- ###
 ### - *** Always make sure, that you have                       *** - ###
-### - *** the latest PRODUCTION version installed               *** - ###
+### - *** the latest version installed                          *** - ###
 ### ----------------------------------------------------------------- ###
 ```
 #### For the detailed documentation visit the project WIKI: [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
