@@ -262,9 +262,6 @@ export class Sfdx {
 
         async function ___retrieveBlobFieldData(records: Array<any>, sObjectName: string): Promise<Array<any>> {
 
-            // Message
-            self.logger.infoVerbose(RESOURCES.retrievingBinaryData, sObjectName);
-
             let blobFields = CONSTANTS.BLOB_FIELDS.filter(field =>
                 records.length > 0
                 && field.objectName == sObjectName
@@ -272,6 +269,10 @@ export class Sfdx {
             if (blobFields.length == 0) {
                 return records;
             }
+
+            // Message
+            self.logger.infoVerbose(RESOURCES.retrievingBinaryData, sObjectName);
+
             let recordIdToRecordMap = new Map<string, any>();
             records.forEach(record => {
                 let recordId = record["Id"];
