@@ -101,6 +101,11 @@ export class TaskData {
     get fieldsToCompareSourceWithTarget(): Array<string>{
         return CONSTANTS.FIELDS_TO_COMPARE_SOURCE_WITH_TARGET_RECORDS.get(this.task.sObjectName) || new Array<string>();
     }
+    
+    get fieldsExcludedFromTargetQuery(): Array<string>{
+        return CONSTANTS.FIELDS_EXCLUDED_FROM_TARGET_QUERY.get(this.task.sObjectName) || new Array<string>();
+    }
+
 
 }
 

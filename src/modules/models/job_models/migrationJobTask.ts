@@ -715,10 +715,11 @@ export default class MigrationJobTask {
             hasRecords = false;
             if (this.targetData.media == DATA_MEDIA_TYPE.Org && this.operation != OPERATION.Insert) {
                 // Read from the TARGET ORG *********
+                let fieldsInQuery =  this.data.fieldsInQuery.filter(field => this.data.fieldsExcludedFromTargetQuery.indexOf(field) < 0);
+                let query = this.createQuery(fieldsInQuery);
                 records = new Array<any>();
                 if (this.scriptObject.processAllTarget) {
-                    // All records ****** //
-                    let query = this.createQuery();
+                    // All records ****** //                  
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                     // Query string message ------
@@ -729,7 +730,7 @@ export default class MigrationJobTask {
                     hasRecords = true;
                 } else {
                     // Filtered records ***** //
-                    let queries = this._createFilteredQueries(queryMode, reversed);
+                    let queries = this._createFilteredQueries(queryMode, reversed, fieldsInQuery);
                     if (queries.length > 0) {
                         // Start message ------
                         this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
