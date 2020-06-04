@@ -137,6 +137,14 @@ export default class ScriptObject {
         return ScriptObject.getStrOperation(this.operation);
     }
 
+    get strOperationInsertOrUpdate(): string {
+        if (this.operation == OPERATION.Insert) {
+            return ScriptObject.getStrOperation(OPERATION.Insert);
+        } else {
+            return ScriptObject.getStrOperation(OPERATION.Update);
+        }
+    }
+
     get isLimitedQuery(): boolean {
         return this.parsedQuery
             && (this.parsedQuery.limit > 0 || !!this.parsedQuery.where);
@@ -377,6 +385,14 @@ export default class ScriptObject {
         }
     }
 
+    getMandatoryQueryFields(): Array<string> {
+        let prop = `MANDATORY_QUERY_FIELDS_FOR_${this.strOperationInsertOrUpdate.toUpperCase()}`;
+        return CONSTANTS[prop] && CONSTANTS[prop].get(this.name) || new Array<string>();
+    }
+
+
+
+    // ----------------------- Static members -------------------------------------------    
     /**
      * Converts numeric enum value into string
      *
@@ -385,7 +401,7 @@ export default class ScriptObject {
      * @returns
      * @memberof ScriptObject
      */
-    public static getStrOperation(operation: OPERATION) {
+    public static getStrOperation(operation: OPERATION): string {
         if ((typeof operation != "string") == true) {
             return OPERATION[operation].toString();
         }
@@ -407,8 +423,11 @@ export default class ScriptObject {
         return operation;
     }
 
+
     // ----------------------- Private members -------------------------------------------
     private _addOrRemoveFields(describe: SObjectDescribe) {
+
+        // Add multiselect fields
         if (this.multiselectPattern) {
             let fieldsInOriginalQuery = [].concat(this.fieldsInQuery);
             let pattern = this.multiselectPattern;
@@ -422,9 +441,20 @@ export default class ScriptObject {
                 }
             });
         }
+
+        // Filter excluded fields
         this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
             this.excludedFields.indexOf(field.field) < 0
         );
+
+        // Add mandatory fields
+        this.getMandatoryQueryFields().forEach((fieldName: string) => {
+            if (this.fieldsInQuery.indexOf(fieldName) < 0) {
+                this.parsedQuery.fields.push(getComposedField(fieldName));
+            }
+        });
+
+        // Create new query string
         this.query = composeQuery(this.parsedQuery);
 
         // ---------------------- Internal functions --------------------------- //        
@@ -439,7 +469,7 @@ export default class ScriptObject {
     private _updateSObjectDescribe(describe: SObjectDescribe) {
         [...describe.fieldsMap.values()].forEach(x => {
             x.scriptObject = this;
-            if (x.lookup && this.referenceFieldToObjectMap.has(x.name)){
+            if (x.lookup && this.referenceFieldToObjectMap.has(x.name)) {
                 x.referencedObjectType = this.referenceFieldToObjectMap.get(x.name);
             }
         });

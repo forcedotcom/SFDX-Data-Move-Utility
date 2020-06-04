@@ -846,7 +846,8 @@ export default class MigrationJobTask {
                 name: CONSTANTS.__ID_FIELD_NAME
             }));
 
-            // Add recordId field //////////
+
+            // Add record Id field ////////
             if (self.operation != OPERATION.Insert) {
                 processedData.fields.push(self.data.sFieldsInQuery.filter(field => field.nameId == "Id")[0]);
             }
@@ -873,18 +874,27 @@ export default class MigrationJobTask {
                 }
             }
 
-            // Remove master-detail fields for Update / Upsert
+            // Remove master-detail fields for Update / Upsert  ////////////////
             // (to avoid master-detail reparenting if not available)
             let notUpdateableFields = processedData.fields.filter(field => {
                 return field.isMasterDetail && !field.updateable;
             }).map(field => field.nameId);
 
+
+            // Field do not Insert //////////////
+            let fieldsToCompareRecords = self.data.fieldsToCompareSourceWithTarget;
+            // Non-insertable is the same as fields to compare but not included in the Update             
+            let notIsertableFields = fieldsToCompareRecords.filter(field => !processedData.fields.some(f => f.nameId == field));
+            notUpdateableFields = notUpdateableFields.concat(notIsertableFields); // Must include both non-updateable & non-insertable
+
             // Prepare records //////////////
             // (Only if any field to update exist)
+            let fieldNamesToClone = processedData.fieldNames.concat(notIsertableFields);
+
             if (processedData.fields.some(field => field.name != "Id" && field.name != CONSTANTS.__ID_FIELD_NAME)) {
 
                 // Map: cloned => source 
-                let tempClonedToSourceMap = Common.cloneArrayOfObjects(self.sourceData.records, processedData.fieldNames);
+                let tempClonedToSourceMap = Common.cloneArrayOfObjects(self.sourceData.records, fieldNamesToClone);
 
                 // Map: "___Id" => cloned
                 let ___IdToClonedMap = new Map<string, any>();
@@ -946,7 +956,7 @@ export default class MigrationJobTask {
                     delete cloned[CONSTANTS.__ID_FIELD_NAME];
                     let target = self.data.sourceToTargetRecordMap.get(source);
                     if (target && updateMode == "backwards") {
-                        if (target["Id"] && ___compareRecords(target, cloned)) {
+                        if (target["Id"] && ___compareRecords(target, cloned, fieldsToCompareRecords)) {
                             cloned["Id"] = target["Id"];
                             ___removeRecordFields(cloned, notUpdateableFields);
                             processedData.recordsToUpdate.push(cloned);
@@ -954,10 +964,11 @@ export default class MigrationJobTask {
                         }
                     } else if (!target && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
                         delete cloned["Id"];
+                        ___removeRecordFields(cloned, notIsertableFields);
                         processedData.recordsToInsert.push(cloned);
                         source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
                     } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
-                        if (target["Id"] && ___compareRecords(target, cloned)) {
+                        if (target["Id"] && ___compareRecords(target, cloned, fieldsToCompareRecords)) {
                             cloned["Id"] = target["Id"];
                             ___removeRecordFields(cloned, notUpdateableFields);
                             processedData.recordsToUpdate.push(cloned);
@@ -1210,16 +1221,18 @@ export default class MigrationJobTask {
         /**
          * @returns {boolean} true = > not equal
          */
-        function ___compareRecords(target: any, cloned: any): boolean {
+        function ___compareRecords(target: any, cloned: any, fieldsToCompareRecords: Array<string>): boolean {
             if (target && !cloned || cloned && !target) {
                 return true;
             }
-            return Object.keys(cloned).some(key => {
-                if (key != "Id" && key != CONSTANTS.__ID_FIELD_NAME) {
-                    return target[key] != cloned[key];
-                }
-                return false;
-            });
+            return Object.keys(cloned)
+                .filter(key => fieldsToCompareRecords.length == 0 || fieldsToCompareRecords.indexOf(key) >= 0)
+                .some(key => {
+                    if (key != "Id" && key != CONSTANTS.__ID_FIELD_NAME) {
+                        return target[key] != cloned[key];
+                    }
+                    return false;
+                });
         }
     }
 

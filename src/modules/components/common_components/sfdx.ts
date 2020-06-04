@@ -26,7 +26,7 @@ export class Sfdx {
 
     org: ScriptOrg;
 
-    get logger() : Logger {
+    get logger(): Logger {
         return this.org.script.logger;
     }
 
@@ -262,6 +262,7 @@ export class Sfdx {
 
         async function ___retrieveBlobFieldData(records: Array<any>, sObjectName: string): Promise<Array<any>> {
 
+
             let blobFields = CONSTANTS.BLOB_FIELDS.filter(field =>
                 records.length > 0
                 && field.objectName == sObjectName
@@ -269,10 +270,8 @@ export class Sfdx {
             if (blobFields.length == 0) {
                 return records;
             }
-
             // Message
             self.logger.infoVerbose(RESOURCES.retrievingBinaryData, sObjectName);
-
             let recordIdToRecordMap = new Map<string, any>();
             records.forEach(record => {
                 let recordId = record["Id"];
@@ -378,12 +377,12 @@ export class Sfdx {
     async downloadBlobFieldDataAsync(recordIds: Array<string>, blobField: IBlobField): Promise<Map<string, string>> {
 
         let self = this;
-        const queue = recordIds.map(recordId => () => ___getData(recordId, blobField));
-        const downloadedBlobs: Array<[string, string]> = await Common.parallelAsync(queue, CONSTANTS.MAX_PARALLEL_DOWNLOAD_THREADS);
+        const queue = recordIds.map(recordId => () => ___getBlobData(recordId, blobField));
+        const downloadedBlobs: Array<[string, string]> = await Common.parallelTasksAsync(queue, CONSTANTS.MAX_PARALLEL_DOWNLOAD_THREADS);
         return new Map<string, string>(downloadedBlobs);
 
         // ------------------ internal functions ------------------------- //        
-        async function ___getData(recordId: string, blobField: IBlobField): Promise<[string, string]> {
+        async function ___getBlobData(recordId: string, blobField: IBlobField): Promise<[string, string]> {
             return new Promise<[string, string]>(resolve => {
                 var conn = self.org.getConnection();
                 let blob = conn.sobject(blobField.objectName).record(recordId).blob(blobField.fieldName);
