@@ -672,7 +672,12 @@ export default class MigrationJobTask {
 
             // Read SELF REFERENCE records from the SOURCE *************
             // *********************************************************
-            if (this.sourceData.media == DATA_MEDIA_TYPE.Org && queryMode == "forwards") {
+            if (this.sourceData.media == DATA_MEDIA_TYPE.Org && queryMode == "forwards"
+                // When there is allRecords source mode 
+                //     => no any addtional records should be fetched,
+                //        so need to skip retrieving the self-reference records a well...
+                && !this.sourceData.allRecords
+            ) {
                 records = new Array<any>();
                 let inValues: Array<string> = new Array<string>();
                 for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
@@ -715,7 +720,7 @@ export default class MigrationJobTask {
             hasRecords = false;
             if (this.targetData.media == DATA_MEDIA_TYPE.Org && this.operation != OPERATION.Insert) {
                 // Read from the TARGET ORG *********
-                let fieldsInQuery =  this.data.fieldsInQuery.filter(field => this.data.fieldsExcludedFromTargetQuery.indexOf(field) < 0);
+                let fieldsInQuery = this.data.fieldsInQuery.filter(field => this.data.fieldsExcludedFromTargetQuery.indexOf(field) < 0);
                 let query = this.createQuery(fieldsInQuery);
                 records = new Array<any>();
                 if (this.scriptObject.processAllTarget) {
