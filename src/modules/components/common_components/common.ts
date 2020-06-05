@@ -1106,10 +1106,10 @@ export class Common {
      * 
      * @param {Array<Throttle.Task<any>>} tasks The async functions to run
      * @param {number} [maxInProgress=5] The maximum parallelism
-     * @returns {Promise<any>} The array of results turned by all promises
+     * @returns {Promise<any>} The summarized array of all results returned by all promises
      * @memberof Common
      */
-    public static async parallelAsync(tasks: Array<Throttle.Task<any>>, maxInProgress: number = 5): Promise<Array<any>> {
+    public static async parallelTasksAsync(tasks: Array<Throttle.Task<any>>, maxInProgress: number = 5): Promise<Array<any>> {
         return await Throttle.all(tasks, {
             maxInProgress
         });

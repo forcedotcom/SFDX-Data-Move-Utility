@@ -2,9 +2,9 @@
 
 ```bash
 ### ----------------------------------------------------------------- ###
-### - *** Current repository version 3.2.1                      *** - ###
-### - *** Latest updates: Added support for Notes & Attachments *** - ###
-### - ***                 + Minor bug fix                       *** - ###
+### - *** Current repository version 3.2.2                      *** - ###
+### - *** Latest updates: Fixes in support of Notes&Attachments *** - ###
+### - ***                 + Other minor bug fixes and updates   *** - ###
 ### ----------------------------------------------------------------- ###
 ### - *** Always make sure, that you have                       *** - ###
 ### - *** the latest version installed                          *** - ###
@@ -46,7 +46,7 @@ This SFDX Plugin will help you to populate your org (scratch / dev / sandbox / p
 
 - Full **Person Account** support. Can process record sets contain mixed Business & Person Accounts.
 
-- Supports migration of **Notes & Attachments.**
+- Supports migration of **Notes & Attachments** (Attachments in the Salesforce Classic only).
 
 - Supports **record owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
 

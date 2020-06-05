@@ -8,7 +8,6 @@
 import { IBlobField } from "../../models/common_models/helper_interfaces";
 
 
-
 export const CONSTANTS = {
 
     DEFAULT_USER_PROMPT_TIMEOUT_MS: 6000,
@@ -41,7 +40,7 @@ export const CONSTANTS = {
     MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME: "MissingParentRecordsReport.csv",
 
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
-    MAX_PARALLEL_DOWNLOAD_THREADS: 10,
+    MAX_PARALLEL_DOWNLOAD_THREADS: 5,
     MAX_FETCH_SIZE: 100000,
     QUERY_BULK_API_THRESHOLD: 30000,
     BULK_API_V2_BLOCK_SIZE: 1000,
@@ -49,7 +48,7 @@ export const CONSTANTS = {
     POLL_TIMEOUT: 3000000,
     SHORT_QUERY_STRING_MAXLENGTH: 250,
     MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,
-    
+
     MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
     SPECIAL_MOCK_COMMANDS: [
         "c_seq_number",
@@ -115,7 +114,46 @@ export const CONSTANTS = {
             fieldName: "Body",
             dataType: "base64"
         }
-    )
+    ),
+
+    MANDATORY_QUERY_FIELDS_FOR_INSERT: new Map<string, Array<string>>([
+        ["Attachment", new Array<string>(
+            "Body",
+            "ParentId",
+            "Name"
+        )],
+        ["Note", new Array<string>(
+            "Body",
+            "ParentId",
+            "Title"
+        )]
+    ]),
+
+    MANDATORY_QUERY_FIELDS_FOR_UPDATE: new Map<string, Array<string>>([
+        ["Attachment", new Array<string>(
+            "BodyLength",
+            "Name"
+        )]
+    ]),
+
+    // Some fields like Attachment.Body can't be compared to detect similar records.
+    // Fields below are the comparable fields for the specific objects.
+    FIELDS_TO_COMPARE_SOURCE_WITH_TARGET_RECORDS: new Map<string, Array<string>>([
+        ["Attachment", new Array<string>(
+            "BodyLength",
+            "Name"
+        )]
+    ]),
+
+    // Some fields like Attachment.Body are not necessary to be fetched from the Target,
+    // since they are not of comparable type and are overloading the API.
+    // We need to exclude such fields from querying the Target.
+    FIELDS_EXCLUDED_FROM_TARGET_QUERY: new Map<string, Array<string>>([
+        ["Attachment", new Array<string>(
+            "Body"
+        )]
+    ])
+
 }
 
 export enum DATA_MEDIA_TYPE {
@@ -153,9 +191,3 @@ export enum MESSAGE_IMPORTANCE {
     Warn,
     Error
 }
-
-
-
-
-
-
