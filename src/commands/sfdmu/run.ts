@@ -147,10 +147,10 @@ export default class Run extends SfdxCommand {
 
         try {
 
+            let pinfo = Common.getPluginInfo(this.statics);
+
             // Process --version flag
             if (this.flags.version) {
-
-                let pinfo = Common.getPluginInfo(this.statics);
 
                 // Exit - success
                 logger.commandExitMessage(
@@ -173,6 +173,9 @@ export default class Run extends SfdxCommand {
 
             let commandResult: any;
             this.command = new RunCommand(logger, this.flags.path, this.flags.sourceusername, this.flags.targetusername, this.flags.apiversion);
+
+            logger.infoMinimal(RESOURCES.newLine);
+            logger.objectMinimal({ [logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
 
             await this.command.setupAsync();
             await this.command.createJobAsync();

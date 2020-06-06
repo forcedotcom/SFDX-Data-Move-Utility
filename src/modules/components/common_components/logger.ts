@@ -85,6 +85,7 @@ export enum RESOURCES {
     commandInProgress = "commandInProgress",
     packageScript = "packageScript",
     pluginVersion = "pluginVersion",
+    runningVersion = "runningVersion",
     workingPathDoesNotExist = "workingPathDoesNotExist",
     packageFileDoesNotExist = "packageFileDoesNotExist",
     loadingPackageFile = "loadingPackageFile",

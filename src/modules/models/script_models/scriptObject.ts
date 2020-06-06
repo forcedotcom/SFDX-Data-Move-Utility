@@ -49,7 +49,14 @@ export default class ScriptObject {
     targetRecordsFilter: string = "";
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
-    allRecords: boolean = true;
+    
+    /**
+     * [Obsolete] Replaced with "master".
+     * Preserved for backwards compability
+     */
+    allRecords: boolean;
+    master: boolean = true;
+
     excludedFields: Array<string> = new Array<string>();
 
 
@@ -252,6 +259,7 @@ export default class ScriptObject {
         // Initialize object
         this.script = script;
         this.originalExternalId = this.externalId;
+        this.allRecords = typeof this.allRecords == "undefined" ? this.master : this.allRecords;
 
         // Fixes operation value
         this.operation = ScriptObject.getOperation(this.operation);
