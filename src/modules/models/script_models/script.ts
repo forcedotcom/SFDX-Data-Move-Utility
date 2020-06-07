@@ -22,6 +22,7 @@ import {
 import { ScriptOrg, ScriptObject } from "..";
 import { CommandInitializationError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
+import { IPluginInfo } from "../common_models/helper_interfaces";
 
 
 
@@ -87,7 +88,7 @@ export default class Script {
      * @returns {Promise<void>}
      * @memberof Script
      */
-    async setupAsync(logger: Logger, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<void> {
+    async setupAsync(pinfo: IPluginInfo, logger: Logger, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<void> {
 
         // Initialize script
         this.logger = logger;
@@ -96,6 +97,10 @@ export default class Script {
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         this.apiVersion = apiVersion || this.apiVersion;
         this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
+
+        // Message about the running version      
+        this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
+        this.logger.infoMinimal(RESOURCES.newLine);
 
         if (sourceUsername.toLowerCase() == targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
