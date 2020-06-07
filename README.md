@@ -2,7 +2,7 @@
 
 ```bash
 ### ----------------------------------------------------------------- ###
-### - *** Current repository version 3.3.0                      *** - ###
+### - *** Current repository version 3.3.1                      *** - ###
 ### - *** Latest updates:"allRecords" was replaced with "master"*** - ###
 ### - ***                + minor updates                        *** - ###
 ### ----------------------------------------------------------------- ###

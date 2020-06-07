@@ -14,6 +14,7 @@ import * as models from '../models';
 import { CONSTANTS } from '../components/common_components/statics';
 import { MigrationJob as Job } from '../models';
 import { CommandInitializationError } from '../models/common_models/errors';
+import { IPluginInfo } from '../models/common_models/helper_interfaces';
 
 
 
@@ -26,6 +27,7 @@ import { CommandInitializationError } from '../models/common_models/errors';
 export class RunCommand {
 
     logger: Logger;
+    pinfo : IPluginInfo;
     basePath: string;
     targetUsername: string;
     sourceUsername: string;
@@ -42,12 +44,15 @@ export class RunCommand {
      * @param {string} apiVersion The sf api version to use across all api operations (from the command line)
      * @memberof RunCommand
      */
-    constructor(logger: Logger,
+    constructor(
+        pinfo: IPluginInfo,
+        logger: Logger,
         basePath: string,
         sourceUsername: string,
         targetUsername: string,
         apiVersion: string) {
 
+        this.pinfo = pinfo;
         this.logger = logger;
         this.basePath = (path.isAbsolute(basePath) ? basePath : path.join(process.cwd(), basePath.toString())).replace(/([^"]+)(.*)/, "$1");
         this.targetUsername = targetUsername;
@@ -94,7 +99,7 @@ export class RunCommand {
         }
 
         // Setup script object
-        await this.script.setupAsync(this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);
+        await this.script.setupAsync(this.pinfo, this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);
 
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.source)]: this.logger.getResourceString(RESOURCES.sourceOrg, this.script.sourceOrg.name),

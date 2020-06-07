@@ -27,6 +27,7 @@ import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError, CsvChunks } from '../../models';
 import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
+import { IPluginInfo } from '../../models/common_models/helper_interfaces';
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
@@ -90,14 +91,9 @@ export class Common {
     *     }}
     * @memberof CommonUtils
     */
-    public static getPluginInfo(command: typeof SfdxCommand): {
-        pluginName: string,
-        commandName: string,
-        version: string,
-        path: string
-    } {
+    public static getPluginInfo(command: typeof SfdxCommand): IPluginInfo {
         var pjson = require(path.join(command.plugin.root, '/package.json'));
-        return {
+        return <IPluginInfo>{
             commandName: command.name.toLowerCase(),
             pluginName: command.plugin.name,
             version: pjson.version,

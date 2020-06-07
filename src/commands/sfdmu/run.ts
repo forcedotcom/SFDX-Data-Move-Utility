@@ -172,10 +172,7 @@ export default class Run extends SfdxCommand {
             }
 
             let commandResult: any;
-            this.command = new RunCommand(logger, this.flags.path, this.flags.sourceusername, this.flags.targetusername, this.flags.apiversion);
-
-            logger.infoMinimal(RESOURCES.newLine);
-            logger.objectMinimal({ [logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
+            this.command = new RunCommand(pinfo, logger, this.flags.path, this.flags.sourceusername, this.flags.targetusername, this.flags.apiversion);
 
             await this.command.setupAsync();
             await this.command.createJobAsync();
