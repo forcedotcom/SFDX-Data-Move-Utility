@@ -151,10 +151,10 @@
     "updatingTargetCompleted": "Updating the Target (%s) has been completed. Total processed %s records.",
     "writingToFile": "{%s} Writing to the file %s.",
     "nothingUpdated": "Nothing was updated",
-    "skippedUpdatesWarning": "{%s} [INFO] There are %s skipped updates, since no records to update were found in the Target or they are the same as in the Source.",
+    "skippedUpdatesWarning": "{%s} [INFO] There are %s skipped target updates, since no matching was found between the source and the target records by the given ExternalId key, or the data is the same.",
     "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details.",
     "updatingSummary": "Data processing summary",
-    "updatingTotallyUpdated": "{%s} Total processed within all steps (inserted + updated): %s records"
+    "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records"
 
 
 }
