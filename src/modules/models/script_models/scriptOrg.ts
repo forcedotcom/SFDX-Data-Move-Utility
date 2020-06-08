@@ -65,7 +65,10 @@ export default class ScriptOrg {
      * @returns {Promise<void>}
      * @memberof ScriptOrg
      */
-    async setupAsync(): Promise<void> {
+    async setupAsync(isSource: boolean): Promise<void> {
+        // Setup variables
+        this.isSource = isSource;
+
         // Setup and verify org connection
         await this._setupConnection();
     }
