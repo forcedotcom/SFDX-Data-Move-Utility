@@ -138,9 +138,8 @@ export default class Script {
         });
 
         // Setup orgs
-        await this.sourceOrg.setupAsync();
-        await this.targetOrg.setupAsync();
-
+        await this.sourceOrg.setupAsync(true);
+        await this.targetOrg.setupAsync(false);
 
         // Setup objects
         this.objects.forEach(object => {

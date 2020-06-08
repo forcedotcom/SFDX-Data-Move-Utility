@@ -18,6 +18,7 @@
     "noRecords": "No records",
     "insert": "Insert",
     "update": "Update",
+    "personContact": "Person Contact",
 
     "defaultPromptOptions": "y/n",
     "defaultPromptSelectedOption": "n",
@@ -137,6 +138,7 @@
     "retrievingDataCompleted": "Retrieving the data %s has been completed.",
     "queryingAll": "{%s} Retrieving the %s data from %s (%s: all records)...",
     "queryingIn": "{%s} Retrieving the %s data from %s (%s: filtered records)...",
+    "queryingIn2": "{%s} Retrieving the %s data (filtered records)...",
     "retrievingBinaryData": "{%s} Retrieving binary data. It may take a while...",
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s...",
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s new records.",

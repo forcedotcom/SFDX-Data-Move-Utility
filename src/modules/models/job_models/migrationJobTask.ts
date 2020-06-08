@@ -614,8 +614,6 @@ export default class MigrationJobTask {
      */
     async retrieveRecords(queryMode: "forwards" | "backwards" | "target", reversed: boolean): Promise<boolean> {
 
-        let self = this;
-
         // Checking status *********
         if (this.operation == OPERATION.Delete) return;
 
@@ -658,7 +656,7 @@ export default class MigrationJobTask {
                         // Start message ------
                         this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                         // Fetch records
-                        records = await ___retrieveFilteredRecords(queries, this.sourceData);
+                        records = await this._retrieveFilteredRecords(queries, this.sourceData);
                         hasRecords = true;
                     }
                 }
@@ -740,7 +738,7 @@ export default class MigrationJobTask {
                         // Start message ------
                         this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                         // Fetch records
-                        records = await ___retrieveFilteredRecords(queries, this.targetData);
+                        records = await this._retrieveFilteredRecords(queries, this.targetData);
                         hasRecords = true;
                     }
                 }
@@ -755,19 +753,6 @@ export default class MigrationJobTask {
 
         return hasRecords;
 
-        // ------------------------ Internal functions --------------------------
-        async function ___retrieveFilteredRecords(queries: string[], orgData: TaskOrgData): Promise<Array<any>> {
-            let sfdx = new Sfdx(orgData.org);
-            let records = new Array<any>();
-            for (let index = 0; index < queries.length; index++) {
-                const query = queries[index];
-                // Query message ------
-                self.logger.infoVerbose(RESOURCES.queryString, self.sObjectName, self.createShortQueryString(query));
-                // Fetch records
-                records = records.concat(await sfdx.retrieveRecordsAsync(query, false));
-            }
-            return records;
-        }
     }
 
     /**
@@ -809,7 +794,7 @@ export default class MigrationJobTask {
                 await warnUserCallbackAsync(data);
             }
             // Process data - main ****
-            totalProcessedRecordsAmount += (await ___updatetData(data));
+            totalProcessedRecordsAmount += (await ___updateData(data));
             totalNonProcessedRecordsAmount += data.nonProcessedRecordsAmount;
 
             // Person Accounts/Contacts only /////////////           
@@ -821,8 +806,15 @@ export default class MigrationJobTask {
                     await warnUserCallbackAsync(data);
                 }
                 // Process data - person accounts ****
-                totalProcessedRecordsAmount += (await ___updatetData(data));
+                totalProcessedRecordsAmount += (await ___updateData(data));
                 totalNonProcessedRecordsAmount += data.nonProcessedRecordsAmount;
+
+                // Add Person Contacts when inserting Person Accounts
+                if (this.operation == OPERATION.Insert && this.sObjectName == "Account") {
+                    // Lest processed person accounts...
+                    await ___insertPersonContactsFromPersonAccounts(data);
+                }
+
             }
 
             // Warn the about skipped equal records
@@ -991,7 +983,7 @@ export default class MigrationJobTask {
         /**
         * @returns {Promise<number>} Number of records actually processed
         */
-        async function ___updatetData(data: ProcessedData): Promise<number> {
+        async function ___updateData(data: ProcessedData): Promise<number> {
 
             let totalProcessedAmount = 0;
             let targetFilenameSuffix = data.processPersonAccounts ? CONSTANTS.CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX : "";
@@ -1016,6 +1008,7 @@ export default class MigrationJobTask {
                     let source = data.clonedToSourceMap.get(target);
                     if (source) {
                         self.data.sourceToTargetRecordMap.set(source, target);
+                        data.insertedRecordsSourceToTargetMap.set(source, target);
                     }
                 });
             }
@@ -1037,6 +1030,61 @@ export default class MigrationJobTask {
             }
 
             return totalProcessedAmount;
+        }
+
+        /**
+         * After the Person Accounts inserted the Person Contacts are automatically added.
+         * Need to query and add them to the local data storage.
+         *
+         * @param {ProcessedData} personAccountsInsertData The last person account insert result
+         * @returns {Promise<number>} Number of records actually processed
+         */
+        async function ___insertPersonContactsFromPersonAccounts(personAccountsInsertData: ProcessedData): Promise<number> {
+            let contactTask = self.job.tasks.filter(task => task.sObjectName == "Contact")[0];
+            if (contactTask) {
+                let targetPersonAccountIdTosourceContactMap: Map<string, any> = new Map<string, any>();
+                let targetAccountIds = new Array<string>();
+                contactTask.sourceData.records.forEach(sourceContact => {
+                    let accountId = sourceContact["AccountId"];
+                    if (accountId && !contactTask.data.sourceToTargetRecordMap.has(sourceContact)) {
+                        let sourceAccount = self.sourceData.idRecordsMap.get(accountId);
+                        let targetAccount = personAccountsInsertData.insertedRecordsSourceToTargetMap.get(sourceAccount);
+                        if (targetAccount) {
+                            let targetAccountId = targetAccount["Id"];
+                            if (targetAccountId) {
+                                targetPersonAccountIdTosourceContactMap.set(targetAccountId, sourceContact);
+                                targetAccountIds.push(targetAccountId);
+                            }
+                        }
+                    }
+                });
+                // Query on Person Contacts
+                let queries = Common.createFieldInQueries(contactTask.data.fieldsInQuery, "AccountId", contactTask.sObjectName, targetAccountIds);
+                if (queries.length > 0) {
+                    // Start message ------
+                    self.logger.infoNormal(RESOURCES.queryingIn2, self.sObjectName, self.logger.getResourceString(RESOURCES.personContact));
+                    // Fetch records
+                    let records = await self._retrieveFilteredRecords(queries, self.targetData);
+                    if (records.length > 0) {
+                        //Set external id map --------- TARGET
+                        self._setExternalIdMap(records, contactTask.targetData.extIdRecordsMap, contactTask.targetData.idRecordsMap, true);
+                        //Completed message ------
+                        let newRecordsCount = 0;
+                        records.forEach(targetContact => {
+                            let accountId = targetContact["AccountId"];
+                            let sourceContact = targetPersonAccountIdTosourceContactMap.get(accountId);
+                            if (sourceContact && !contactTask.data.sourceToTargetRecordMap.has(sourceContact)) {
+                                contactTask.data.sourceToTargetRecordMap.set(sourceContact, targetContact);
+                                sourceContact[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
+                                newRecordsCount++;
+                            }
+                        });
+                        self.logger.infoNormal(RESOURCES.queryingFinished, self.sObjectName, self.logger.getResourceString(RESOURCES.personContact), String(newRecordsCount));                        
+                        return newRecordsCount;
+                    }
+                }
+            }
+            return 0;
         }
 
         function ___updatePrsonAccountFields(processedData: ProcessedData, source: any, cloned: any, isPersonRecord: boolean) {
@@ -1458,38 +1506,51 @@ export default class MigrationJobTask {
     /**
      * @returns {number} New records count
      */
-    private _setExternalIdMap(records: Array<any>,
+    private _setExternalIdMap(targetRecords: Array<any>,
         sourceExtIdRecordsMap: Map<string, string>,
         sourceIdRecordsMap: Map<string, string>,
         isTarget: boolean = false): number {
 
         let newRecordsCount = 0;
 
-        records.forEach(record => {
-            if (record["Id"]) {
-                let value = this.getRecordValue(record, this.complexExternalId);
+        targetRecords.forEach(targetRecord => {
+            if (targetRecord["Id"]) {
+                let value = this.getRecordValue(targetRecord, this.complexExternalId);
                 if (value) {
-                    sourceExtIdRecordsMap.set(value, record["Id"]);
+                    sourceExtIdRecordsMap.set(value, targetRecord["Id"]);
                 }
-                if (!sourceIdRecordsMap.has(record["Id"])) {
-                    sourceIdRecordsMap.set(record["Id"], record);
-                    record[CONSTANTS.__ID_FIELD_NAME] = record["Id"];
+                if (!sourceIdRecordsMap.has(targetRecord["Id"])) {
+                    sourceIdRecordsMap.set(targetRecord["Id"], targetRecord);
+                    targetRecord[CONSTANTS.__ID_FIELD_NAME] = targetRecord["Id"];
                     if (isTarget) {
-                        let extIdValue = this.getRecordValue(record, this.complexExternalId);
+                        let extIdValue = this.getRecordValue(targetRecord, this.complexExternalId);
                         if (extIdValue) {
                             let sourceId = this.sourceData.extIdRecordsMap.get(extIdValue);
                             if (sourceId) {
                                 let sourceRecord = this.sourceData.idRecordsMap.get(sourceId);
-                                this.data.sourceToTargetRecordMap.set(sourceRecord, record);
+                                this.data.sourceToTargetRecordMap.set(sourceRecord, targetRecord);
                             }
                         }
                     }
                     newRecordsCount++;
                 }
             } else {
-                record[CONSTANTS.__ID_FIELD_NAME] = Common.makeId(18);
+                targetRecord[CONSTANTS.__ID_FIELD_NAME] = Common.makeId(18);
             }
         });
         return newRecordsCount;
+    }
+
+    async _retrieveFilteredRecords(queries: string[], orgData: TaskOrgData): Promise<Array<any>> {
+        let sfdx = new Sfdx(orgData.org);
+        let records = new Array<any>();
+        for (let index = 0; index < queries.length; index++) {
+            const query = queries[index];
+            // Query message ------
+            this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
+            // Fetch records
+            records = records.concat(await sfdx.retrieveRecordsAsync(query, false));
+        }
+        return records;
     }
 }

@@ -2,9 +2,8 @@
 
 ```bash
 ### ----------------------------------------------------------------- ###
-### - *** Current repository version 3.3.2                      *** - ###
-### - *** Latest updates:"allRecords" was replaced with "master"*** - ###
-### - ***                + some minor patches                   *** - ###
+### - *** Current repository version 3.3.3                      *** - ###
+### - *** Latest updates: Fixes in the Person Accounts support  *** - ###
 ### ----------------------------------------------------------------- ###
 ### - *** Always make sure, that you have                       *** - ###
 ### - *** the latest version installed                          *** - ###

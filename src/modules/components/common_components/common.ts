@@ -1002,6 +1002,10 @@ export class Common {
         sObjectName: string,
         valuesIN: Array<string>): Array<string> {
 
+        if (valuesIN.length == 0) {
+            return new Array<string>();
+        }
+
         let tempQuery = <Query>{
             fields: selectFields.map(field => getComposedField(field)),
             where: <WhereClause>{},

@@ -45,6 +45,7 @@ export enum RESOURCES {
     noRecords = "noRecords",
     insert = "insert",
     update = "update",
+    personContact = "personContact",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptSelectedOption = "defaultPromptSelectedOption",
@@ -165,6 +166,7 @@ export enum RESOURCES {
     retrievingDataCompleted = "retrievingDataCompleted",
     queryingAll = "queryingAll",
     queryingIn = "queryingIn",
+    queryingIn2 = "queryingIn2",
     retrievingBinaryData = "retrievingBinaryData",
     queryingSelfReferenceRecords = "queryingSelfReferenceRecords",
     queryingFinished = "queryingFinished",
