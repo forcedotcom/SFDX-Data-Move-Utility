@@ -1008,7 +1008,7 @@ export default class MigrationJobTask {
                     let source = data.clonedToSourceMap.get(target);
                     if (source) {
                         self.data.sourceToTargetRecordMap.set(source, target);
-                        data.insertedRecordsTargetToSourceMap.set(target, source);
+                        data.insertedRecordsSourceToTargetMap.set(source, target);
                     }
                 });
             }
@@ -1042,27 +1042,45 @@ export default class MigrationJobTask {
         async function ___insertPersonContactsFromPersonAccounts(personAccountsInsertData: ProcessedData): Promise<number> {
             let contactTask = self.job.tasks.filter(task => task.sObjectName == "Contact")[0];
             if (contactTask) {
-                let personAccountIdToAccountMap: Map<string, any> = new Map<string, any>();
-                let personAccountIds = [...personAccountsInsertData.insertedRecordsTargetToSourceMap.keys()].map(target => {
-                    let accId = String(target["Id"]);
-                    personAccountIdToAccountMap.set(accId, target);
-                    return accId;
+                let targetPersonAccountIdTosourceContactMap: Map<string, any> = new Map<string, any>();
+                let targetAccountIds = new Array<string>();
+                contactTask.sourceData.records.forEach(sourceContact => {
+                    let accountId = sourceContact["AccountId"];
+                    if (accountId && !contactTask.data.sourceToTargetRecordMap.has(sourceContact)) {
+                        let sourceAccount = self.sourceData.idRecordsMap.get(accountId);
+                        let targetAccount = personAccountsInsertData.insertedRecordsSourceToTargetMap.get(sourceAccount);
+                        if (targetAccount) {
+                            let targetAccountId = targetAccount["Id"];
+                            if (targetAccountId) {
+                                targetPersonAccountIdTosourceContactMap.set(targetAccountId, sourceContact);
+                                targetAccountIds.push(targetAccountId);
+                            }
+                        }
+                    }
                 });
-                let fieldsInQuery = contactTask.data.fieldsInQuery.concat("AccountId");
-                let queries = Common.createFieldInQueries(fieldsInQuery, "AccountId", self.sObjectName, personAccountIds);
+                // Query on Person Contacts
+                let queries = Common.createFieldInQueries(contactTask.data.fieldsInQuery, "AccountId", contactTask.sObjectName, targetAccountIds);
                 if (queries.length > 0) {
                     // Start message ------
                     self.logger.infoNormal(RESOURCES.queryingIn2, self.sObjectName, self.logger.getResourceString(RESOURCES.personContact));
                     // Fetch records
                     let records = await self._retrieveFilteredRecords(queries, self.targetData);
                     if (records.length > 0) {
-                        
-
-                        // Set external id map --------- TARGET
-                        let newRecordsCount = self._setExternalIdMap(records, contactTask.targetData.extIdRecordsMap, contactTask.targetData.idRecordsMap, true);
-                        // Completed message ------
-                        self.logger.infoNormal(RESOURCES.queryingFinished, self.sObjectName, self.logger.getResourceString(RESOURCES.personContact), String(newRecordsCount));
-                        return records.length;
+                        //Set external id map --------- TARGET
+                        self._setExternalIdMap(records, contactTask.targetData.extIdRecordsMap, contactTask.targetData.idRecordsMap, true);
+                        //Completed message ------
+                        let newRecordsCount = 0;
+                        records.forEach(targetContact => {
+                            let accountId = targetContact["AccountId"];
+                            let sourceContact = targetPersonAccountIdTosourceContactMap.get(accountId);
+                            if (sourceContact && !contactTask.data.sourceToTargetRecordMap.has(sourceContact)) {
+                                contactTask.data.sourceToTargetRecordMap.set(sourceContact, targetContact);
+                                sourceContact[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
+                                newRecordsCount++;
+                            }
+                        });
+                        self.logger.infoNormal(RESOURCES.queryingFinished, self.sObjectName, self.logger.getResourceString(RESOURCES.personContact), String(newRecordsCount));                        
+                        return newRecordsCount;
                     }
                 }
             }
@@ -1488,36 +1506,36 @@ export default class MigrationJobTask {
     /**
      * @returns {number} New records count
      */
-    private _setExternalIdMap(records: Array<any>,
+    private _setExternalIdMap(targetRecords: Array<any>,
         sourceExtIdRecordsMap: Map<string, string>,
         sourceIdRecordsMap: Map<string, string>,
         isTarget: boolean = false): number {
 
         let newRecordsCount = 0;
 
-        records.forEach(record => {
-            if (record["Id"]) {
-                let value = this.getRecordValue(record, this.complexExternalId);
+        targetRecords.forEach(targetRecord => {
+            if (targetRecord["Id"]) {
+                let value = this.getRecordValue(targetRecord, this.complexExternalId);
                 if (value) {
-                    sourceExtIdRecordsMap.set(value, record["Id"]);
+                    sourceExtIdRecordsMap.set(value, targetRecord["Id"]);
                 }
-                if (!sourceIdRecordsMap.has(record["Id"])) {
-                    sourceIdRecordsMap.set(record["Id"], record);
-                    record[CONSTANTS.__ID_FIELD_NAME] = record["Id"];
+                if (!sourceIdRecordsMap.has(targetRecord["Id"])) {
+                    sourceIdRecordsMap.set(targetRecord["Id"], targetRecord);
+                    targetRecord[CONSTANTS.__ID_FIELD_NAME] = targetRecord["Id"];
                     if (isTarget) {
-                        let extIdValue = this.getRecordValue(record, this.complexExternalId);
+                        let extIdValue = this.getRecordValue(targetRecord, this.complexExternalId);
                         if (extIdValue) {
                             let sourceId = this.sourceData.extIdRecordsMap.get(extIdValue);
                             if (sourceId) {
                                 let sourceRecord = this.sourceData.idRecordsMap.get(sourceId);
-                                this.data.sourceToTargetRecordMap.set(sourceRecord, record);
+                                this.data.sourceToTargetRecordMap.set(sourceRecord, targetRecord);
                             }
                         }
                     }
                     newRecordsCount++;
                 }
             } else {
-                record[CONSTANTS.__ID_FIELD_NAME] = Common.makeId(18);
+                targetRecord[CONSTANTS.__ID_FIELD_NAME] = Common.makeId(18);
             }
         });
         return newRecordsCount;

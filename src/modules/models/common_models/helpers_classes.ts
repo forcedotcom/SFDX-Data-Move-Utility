@@ -167,7 +167,7 @@ export class ProcessedData {
 
     missingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
     
-    insertedRecordsTargetToSourceMap: Map<any, any> = new Map<any, any>();
+    insertedRecordsSourceToTargetMap: Map<any, any> = new Map<any, any>();
 
     get lookupIdFields(): Array<SFieldDescribe> {
         return this.fields.filter(field => field.isSimpleReference);

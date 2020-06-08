@@ -49,7 +49,7 @@ export default class ScriptObject {
     targetRecordsFilter: string = "";
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
-    
+
     /**
      * [Obsolete] Replaced with "master".
      * Preserved for backwards compability
@@ -58,6 +58,7 @@ export default class ScriptObject {
     master: boolean = true;
 
     excludedFields: Array<string> = new Array<string>();
+
 
 
 
@@ -80,6 +81,7 @@ export default class ScriptObject {
     processAllTarget: boolean = false;
     multiselectPattern: any;
     referenceFieldToObjectMap: Map<string, string> = new Map<string, string>();
+    excludedFieldsFromUpdate: Array<string> = new Array<string>();
 
     get task(): MigrationJobTask {
         return this.script.job.getTaskBySObjectName(this.name);
@@ -122,7 +124,9 @@ export default class ScriptObject {
             let describe = this.targetSObjectDescribe
                 && this.targetSObjectDescribe.fieldsMap
                 && this.targetSObjectDescribe.fieldsMap.get(name);
-            if (!describe || describe.readonly) {
+            if (!describe
+                || describe.readonly
+                || this.excludedFieldsFromUpdate.indexOf(name) >= 0) {
                 return null;
             }
             return (<SOQLField>x).field;
@@ -291,13 +295,24 @@ export default class ScriptObject {
         }
         // Add original external id field to the query
         this.parsedQuery.fields.push(getComposedField(this.complexOriginalExternalId));
-        // Add IsPersonAccount field
+
+        // Additional fields for Person Accounts & Contacts
         if (this.script.isPersonAccountEnabled && (this.name == "Account" || this.name == "Contact")) {
+            // Add IsPersonAccount field            
             this.parsedQuery.fields.push(getComposedField("IsPersonAccount"));
+            // Person Contacts >
+            if (this.name == "Contact") {
+                if (!this.fieldsInQuery.some(fieldName => fieldName == "AccountId")) {
+                    // Add AccountId field to the query
+                    this.parsedQuery.fields.push(getComposedField("AccountId"));
+                    // This field should be excluded from the update...
+                    this.excludedFieldsFromUpdate.push("AccountId");
+                }
+            }
         }
+
         // Make each field appear only once in the query
         this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
-
 
         // Update object
         this.query = composeQuery(this.parsedQuery);
