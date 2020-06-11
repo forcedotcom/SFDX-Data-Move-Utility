@@ -1017,7 +1017,7 @@ export class Common {
         function* queryGen() {
             while (true) {
                 for (let whereClausLength = 0; whereClausLength < CONSTANTS.MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH;) {
-                    let value = String(valuesIN[whereValuesCounter] || "");
+                    let value = String(valuesIN[whereValuesCounter] || "").replace("'", "\\'");
                     whereValues.push(value);
                     whereClausLength += value.length + 4;
                     whereValuesCounter++;
