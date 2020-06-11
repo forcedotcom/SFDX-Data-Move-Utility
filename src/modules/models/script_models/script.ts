@@ -296,10 +296,21 @@ export default class Script {
     */
     loadFieldMappingConfiguration() {
         this.objects.forEach(object => {
-            if (object.useFieldMapping) {
-                
+            if (object.useFieldMapping && object.fieldMapping.length > 0) {
+                if (!this.sourceTargetFieldMapping.has(object.name)) {
+                    this.sourceTargetFieldMapping.set(object.name, new ObjectFieldMapping(object.name, object.name));
+                }
+                object.fieldMapping.forEach(mapping => {
+                    if (mapping.targetObject) {
+                        this.sourceTargetFieldMapping.get(object.name).targetSObjectName = mapping.targetObject;
+                    }
+                    if (mapping.sourceField && mapping.targetField) {
+                        this.sourceTargetFieldMapping.get(object.name).fieldMapping.set(mapping.sourceField, mapping.targetField);
+                    }
+                });
             }
         });
     }
+
 }
 

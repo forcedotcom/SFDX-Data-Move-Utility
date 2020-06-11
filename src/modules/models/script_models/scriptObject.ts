@@ -24,7 +24,7 @@ import {
 import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappingItem } from "..";
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
-
+import * as deepClone from 'deep.clone';
 
 /**
  * Parsed object 
@@ -258,6 +258,33 @@ export default class ScriptObject {
 
     get hasValueMapping(): boolean {
         return this.useCSVValuesMapping || this.useValuesMapping;
+    }
+
+    get targetQuery(): string {
+        if (!this.parsedQuery || !this.useFieldMapping) {
+            return this.query;
+        }
+        let targetParsedQuery = deepClone.deepCloneSync(this.parsedQuery, {
+            absolute: true,
+        });
+        targetParsedQuery.sObject = this.targetObjectName;
+        targetParsedQuery.fields = [];
+        [...this.fieldsInQueryMap.values()].forEach(field => {
+            targetParsedQuery.fields.push(getComposedField(field.targetName));
+        });
+        return composeQuery(targetParsedQuery);
+    }
+
+    get targetObjectName() : string {
+        if (!this.useFieldMapping) {
+            return this.name;
+        }
+
+        let mapping = this.script.sourceTargetFieldMapping.get(this.name);
+        if (mapping){
+            return mapping.targetSObjectName;
+        }
+        return this.name;
     }
 
 
