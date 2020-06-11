@@ -62,4 +62,10 @@ export interface IPluginInfo {
     path: string
 }
 
+export  interface IQueryFieldMapping {
+    query : string,
+    newToOldFieldMap: Map<string, string>
+}
+
+
 

@@ -9,7 +9,7 @@
 import { Common } from "../../components/common_components/common";
 import { CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
-import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData } from "..";
+import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
 import MigrationJobTask from "./migrationJobTask";
@@ -176,22 +176,26 @@ export default class MigrationJob {
      */
     prepareJob() {
         this.deleteTargetCSVDirectory();
+        this.createSourceTargetMappingFields();
     }
 
     /**
-     * Validate and fix the CSV files if 
-     * CSV files are set as the data source
+     * Process and fix the CSV files including configuration CSV
      *
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async validateCSVFiles(): Promise<void> {
+    async processCSVFiles(): Promise<void> {
+
+        // Load mapping files
+        await this._loadValueMappingFileAsync();
+        await this._loadSourceTargetFieldMappingFileAsync();
 
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
 
+            // Prepare source CSV files
             this.deleteSourceCSVDirectory();
             await this._mergeUserGroupCSVfiles();
-            await this._loadCSVValueMappingFileAsync();
             this._copyCSVFilesToSourceSubDir();
 
             if (!this.script.importCSVFilesAsIs) {
@@ -453,7 +457,7 @@ export default class MigrationJob {
 
         // ---------------------- Internal functions -------------------------------------- //
         async function ___promptToAbort(data: ProcessedData, sObjectName: string): Promise<void> {
-            await Common.abortWithPrompt(self.logger,
+            await Common.abortWithPrompt(
                 RESOURCES.missingParentLookupsPrompt,
                 self.script.promptOnMissingParentObjects,
                 RESOURCES.continueTheJobPrompt,
@@ -547,20 +551,107 @@ export default class MigrationJob {
         Common.deleteFolderRecursive(filepath);
     }
 
+    /**
+     * Updates target field names 
+     * for all fields for all fields 
+     *
+     * @memberof MigrationJob
+     */
+    createSourceTargetMappingFields() {
+        let self = this;
+        if (this.script.sourceTargetFieldMapping.size > 0) {
+            this.script.objects.forEach(object => {
+                object.fieldsInQueryMap.forEach(field => {
+                    let parts = field.name.split('.');
+                    if (field.isSimple || field.isSimpleReference) {
+                        // Simple fields, lookups and non-lookups (Account__c, TEST__c)
+                        let ret = ___mapField(object.name, field.nameId);
+                        if (ret.changed) {
+                            field.m_targetName = ret.fieldName;
+                        }
+                    } else {
+                        // Complex or __r Account__r.Name__c
+                        // Account__r //////
+                        let ret = ___mapField(object.name, field.nameId);
+                        if (ret.changed) {
+                            parts[0] = Common.getFieldName__r(null, ret.fieldName);
+                        }
+                        // Name__c //////
+                        if (!Common.isComplexField(parts[1])) {
+                            let ret = ___mapField(field.parentLookupObject.name, parts[1]);
+                            if (ret.changed) {
+                                parts[1] = ret.fieldName;
+                            }
+                        }
+                        field.m_targetName = parts.join('.');
+                    }
+                });
+            });
+        }
+
+        // --------------------------- Internal functions -------------------------------------        
+        function ___mapField(objectName: string, fieldName: string): { fieldName: string, changed: boolean } {
+            fieldName = Common.getFieldNameId(null, fieldName);
+            let objectFieldMapping = self.script.sourceTargetFieldMapping.get(objectName) || new ObjectFieldMapping("", "");
+            let changed = false;
+            objectFieldMapping.fieldMapping.forEach((value, key) => {
+                if (fieldName == key) {
+                    fieldName = value;
+                    changed = true;
+                }
+            });
+            return {
+                fieldName,
+                changed
+            }
+        }
+    }
+
 
     // --------------------------- Private members -------------------------------------
-    private async _loadCSVValueMappingFileAsync(): Promise<void> {
+    private async _loadValueMappingFileAsync(): Promise<void> {
         let valueMappingFilePath = path.join(this.script.basePath, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
         let csvRows = await Common.readCsvFileAsync(valueMappingFilePath);
         if (csvRows.length > 0) {
             this.logger.infoVerbose(RESOURCES.readingValuesMappingFile, CONSTANTS.VALUE_MAPPING_CSV_FILENAME);
             csvRows.forEach(row => {
                 if (row["ObjectName"] && row["FieldName"]) {
-                    let key = String(row["ObjectName"]).trim() + String(row["FieldName"]).trim();
-                    if (!this.csvValuesMapping.has(key)) {
-                        this.csvValuesMapping.set(key, new Map<string, string>());
+                    let objectName = String(row["ObjectName"]).trim();
+                    let fieldName = String(row["FieldName"]).trim();
+                    let scriptObject = this.script.objectsMap.get(objectName);
+                    if (scriptObject && scriptObject.hasValueMapping) {
+                        let key = objectName + fieldName;
+                        if (!this.csvValuesMapping.has(key)) {
+                            this.csvValuesMapping.set(key, new Map<string, string>());
+                        }
+                        this.csvValuesMapping.get(key).set(String(row["RawValue"]).trim(), (String(row["Value"]) || "").trim());
                     }
-                    this.csvValuesMapping.get(key).set(String(row["RawValue"]).trim(), (String(row["Value"]) || "").trim());
+                }
+            });
+        }
+    }
+
+    private async _loadSourceTargetFieldMappingFileAsync(): Promise<void> {
+        let filePath = path.join(this.script.basePath, CONSTANTS.FIELD_MAPPING_FILENAME);
+        let csvRows = await Common.readCsvFileAsync(filePath);
+        if (csvRows.length > 0) {
+            this.logger.infoVerbose(RESOURCES.readingFieldsMappingFile, CONSTANTS.FIELD_MAPPING_FILENAME);
+            csvRows.forEach(row => {
+                if (row["ObjectName"] && row["Target"]) {
+                    let objectName = String(row["ObjectName"]).trim();
+                    let scriptObject = this.script.objectsMap.get(objectName);
+                    if (scriptObject && scriptObject.useFieldMapping) {
+                        let target = String(row["Target"]).trim();
+                        if (!row["FieldName"]) {
+                            this.script.sourceTargetFieldMapping.set(objectName, new ObjectFieldMapping(objectName, target));
+                        } else {
+                            let fieldName = String(row["FieldName"]).trim();
+                            if (!this.script.sourceTargetFieldMapping.has(objectName)) {
+                                this.script.sourceTargetFieldMapping.set(objectName, new ObjectFieldMapping(objectName, objectName));
+                            }
+                            this.script.sourceTargetFieldMapping.get(objectName).fieldMapping.set(fieldName, target);
+                        }
+                    }
                 }
             });
         }
@@ -622,7 +713,7 @@ export default class MigrationJob {
         }
 
         async function ___promptToAbort(): Promise<void> {
-            await Common.abortWithPrompt(self.logger,
+            await Common.abortWithPrompt(
                 RESOURCES.issuesFoundDuringCSVValidation,
                 self.script.promptOnIssuesInCSVFiles,
                 RESOURCES.continueTheJobPrompt,

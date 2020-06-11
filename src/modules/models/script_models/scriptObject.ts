@@ -21,7 +21,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask } from "..";
+import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappingItem } from "..";
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 
@@ -38,6 +38,10 @@ export default class ScriptObject {
     // ------------- JSON --------------
     @Type(() => ScriptMockField)
     mockFields: ScriptMockField[] = new Array<ScriptMockField>();
+    
+    // TODO: Document this
+    @Type(() => ScriptMappingItem)
+    fieldMapping: ScriptMappingItem[] = new Array<ScriptMappingItem>();
 
     query: string = "";
     deleteQuery: string = "";
@@ -49,6 +53,10 @@ export default class ScriptObject {
     targetRecordsFilter: string = "";
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
+
+    // TODO: Add this to the documentation. Put it to false on production.
+    useFieldMapping: boolean = true;
+    useValuesMapping: boolean = true;
 
     /**
      * [Obsolete] Replaced with "master".
@@ -246,6 +254,10 @@ export default class ScriptObject {
 
     get hasToBeUpdated(): boolean {
         return this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete;
+    }
+
+    get hasValueMapping(): boolean {
+        return this.useCSVValuesMapping || this.useValuesMapping;
     }
 
 

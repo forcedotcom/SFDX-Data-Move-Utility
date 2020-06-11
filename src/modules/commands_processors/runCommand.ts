@@ -110,6 +110,9 @@ export class RunCommand {
         // Describe sobjects
         await this.script.processObjectsMetadataAsync();
 
+        // Load mapping configuration
+        this.script.loadFieldMappingConfiguration();
+
         // Vaidate orgs
         this.script.verifyOrgs();
 
@@ -135,14 +138,13 @@ export class RunCommand {
     }
 
     /**
-     * Validate and fix the CSV files if 
-     * CSV files are set as the data source
+     * Process and fix the CSV files including configuration CSV
      *
      * @returns {Promise<void>}
      * @memberof RunCommand
      */
-    async validateCSVFiles(): Promise<void> {
-        await this.job.validateCSVFiles();
+    async processCSVFiles(): Promise<void> {
+        await this.job.processCSVFiles();
     }
 
     /**

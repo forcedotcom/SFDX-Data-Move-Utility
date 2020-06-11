@@ -19,7 +19,7 @@ import {
     OrderByClause,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptOrg, ScriptObject } from "..";
+import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
 import { IPluginInfo } from "../common_models/helper_interfaces";
@@ -55,7 +55,7 @@ export default class Script {
     createTargetCSVFiles: boolean = true;
     importCSVFilesAsIs = false;
     alwaysUseRestApiToUpdateRecords: false;
-    excludeIdsFromCSVFiles: boolean =  false;
+    excludeIdsFromCSVFiles: boolean = false;
     fileLog: boolean = true;
 
 
@@ -65,6 +65,7 @@ export default class Script {
     targetOrg: ScriptOrg;
     basePath: string = "";
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
+    sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
 
     get isPersonAccountEnabled(): boolean {
@@ -252,10 +253,12 @@ export default class Script {
             object.query = composeQuery(object.parsedQuery);
 
             // Warn user if there are no any fields to update
-            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0){
+            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0) {
                 this.logger.warn(RESOURCES.noUpdateableFieldsInTheSObject, object.name);
             }
         });
+
+
     }
 
     /**
@@ -264,25 +267,39 @@ export default class Script {
      * @memberof Script
      */
     verifyOrgs() {
-        
+
         // ***** Verifying person accounts
         if (this.objects.some(obj => obj.name == "Account" || obj.name == "Contact")) {
             // Verify target org
             if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled
                 && this.targetOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled) {
                 // Missing Person Account support in the Target
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts, 
-                            this.logger.getResourceString(RESOURCES.source)));
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts,
+                    this.logger.getResourceString(RESOURCES.source)));
             }
             // Verify source org
             if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled
                 && this.targetOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled) {
                 // Missing Person Account support in the Source
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts, 
-                            this.logger.getResourceString(RESOURCES.target)));
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts,
+                    this.logger.getResourceString(RESOURCES.target)));
             }
         }
 
+    }
+
+    /**
+    * Load input FieldMapping 
+    * configuration from the Script
+    *
+    * @memberof Script
+    */
+    loadFieldMappingConfiguration() {
+        this.objects.forEach(object => {
+            if (object.useFieldMapping) {
+                
+            }
+        });
     }
 }
 

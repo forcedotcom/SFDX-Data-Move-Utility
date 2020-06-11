@@ -67,12 +67,22 @@ export default class SFieldDescribe {
      */
     idSField: SFieldDescribe;
 
+    // Used for the Target field mapping
+    m_targetName: string;
+    get targetName(): string {
+        return this.m_targetName || this.name;
+    }
+
+    get isMappedField(): boolean {
+        return this.name != this.targetName;
+    }
+
     get readonly() {
         return !(this.creatable && !this.isFormula && !this.autoNumber);
     }
 
-    get person(){
-        return this.nameId.endsWith('__pc') 
+    get person() {
+        return this.nameId.endsWith('__pc')
             || this.nameId.startsWith('Person') && !this.custom;
     }
 
@@ -112,11 +122,11 @@ export default class SFieldDescribe {
         return this.isSimpleReference && this.referencedObjectType == this.objectName;
     }
 
-    get isExternalIdField(): boolean{
+    get isExternalIdField(): boolean {
         return this.scriptObject && this.scriptObject.externalId == this.name;
     }
 
-    get isOriginalExternalIdField(): boolean{
+    get isOriginalExternalIdField(): boolean {
         return this.scriptObject && this.scriptObject.originalExternalId == this.name;
     }
 
@@ -128,12 +138,7 @@ export default class SFieldDescribe {
      * @memberof SFieldDescribe
      */
     get name__r(): string {
-        let name = this.name.split('.')[0];
-        if (this.custom) {
-            return name.replace("__pc", "__pr").replace("__c", "__r");
-        } else {
-            return Common.trimEndStr(name, "Id");
-        }
+        return Common.getFieldName__r(this);
     }
 
     /**
@@ -149,15 +154,7 @@ export default class SFieldDescribe {
     * @memberof SFieldDescribe
     */
     get nameId(): string {
-        let parts = this.name.split('.');
-        if (!this.is__r || parts.length < 2) {
-            return this.name;
-        }
-        if (this.custom) {
-            return parts[0].replace("__pr", "__pc").replace("__r", "__c");
-        } else {
-            return parts[0] + "Id";
-        }
+        return Common.getFieldNameId(this);
     }
 
     /**

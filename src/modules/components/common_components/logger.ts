@@ -118,7 +118,9 @@ export enum RESOURCES {
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",
 
+    readingCsvFileError = "readingCsvFileError",
     readingValuesMappingFile = "readingValuesMappingFile",
+    readingFieldsMappingFile = "readingFieldsMappingFile",
     mappingRawCsvValues = "mappingRawCsvValues",
     validatingAndFixingSourceCSVFiles = "validatingAndFixingSourceCSVFiles",
     validatingSourceCSVFilesSkipped = "validatingSourceCSVFilesSkipped",
