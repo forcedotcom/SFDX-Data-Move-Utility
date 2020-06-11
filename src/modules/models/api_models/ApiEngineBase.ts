@@ -91,6 +91,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
         // Create CRUD job
         await this.createCRUDApiJobAsync(allRecords);
+        
         // Execute CRUD job
         let resultRecords = await this.processCRUDApiJobAsync(progressCallback);
 

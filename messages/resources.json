@@ -136,9 +136,9 @@
     "deletingOldDataSkipped": "Deleting old data from the Target was skipped.",
     "nothingToDelete": "{%s} Nothing to delete.",
 
-    "mappingQuery": "{%s} Mapping query string: %s...",
-    "mappingSourceRecords": "{%s} Mapping source records...",
-    "mappingTargetRecords": "{%s} Mapping target records...",
+    "mappingQuery": "{%s} Mapping query string... The target object: %s. The target query string: %s.",
+    "mappingSourceRecords": "{%s} Mapping records to be sent to the API... The target object: %s.",
+    "mappingTargetRecords": "{%s} Mapping records returned from the API... The target object: %s.",
     "retrievingData": "Retrieving the data %s...",
     "retrievingDataCompleted": "Retrieving the data %s has been completed.",
     "queryingAll": "{%s} Retrieving the %s data from %s (%s: all records)...",

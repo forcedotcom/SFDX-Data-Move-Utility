@@ -1558,7 +1558,7 @@ export default class MigrationJobTask {
         return records;
     }
 
-    private _sourceQueryToTarget(query: string, sourceSObjectName: string): IFieldMappingResult {
+    private _mapSourceQueryToTarget(query: string, sourceSObjectName: string): IFieldMappingResult {
         let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
         if (mapping && mapping.hasChange) {
             let scriptObject = this.script.objectsMap.get(sourceSObjectName);
@@ -1576,6 +1576,7 @@ export default class MigrationJobTask {
                 });
                 targetParsedQuery.fields = fields;
                 query = composeQuery(targetParsedQuery);
+                this.logger.infoNormal(RESOURCES.mappingQuery, this.sObjectName, mapping.targetSObjectName, this.createShortQueryString(query));
                 return {
                     targetSObjectName: mapping.targetSObjectName,
                     query
@@ -1588,11 +1589,12 @@ export default class MigrationJobTask {
         };
     }
 
-    private _sourceRecordsToTarget(records: Array<any>, sourceSObjectName: string): IFieldMappingResult {
+    private _mapSsourceRecordsToTarget(records: Array<any>, sourceSObjectName: string): IFieldMappingResult {
         let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
         if (mapping && mapping.hasChange) {
             let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
+                this.logger.infoNormal(RESOURCES.mappingSourceRecords, this.sObjectName, mapping.targetSObjectName);
                 let fieldMapping = scriptObject.sourceTargetFieldNameMap;
                 records.forEach(record => {
                     fieldMapping.forEach((newProp, oldProp) => {
@@ -1614,11 +1616,12 @@ export default class MigrationJobTask {
         };
     }
 
-    private _targetRecordsToSource(records: Array<any>, sourceSObjectName: string): IFieldMappingResult {
+    private _mapTargetRecordsToSource(records: Array<any>, sourceSObjectName: string): IFieldMappingResult {
         let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
         if (mapping && mapping.hasChange) {
             let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
+                this.logger.infoNormal(RESOURCES.mappingTargetRecords, this.sObjectName, mapping.targetSObjectName);
                 let fieldMapping = scriptObject.sourceTargetFieldNameMap;
                 records.forEach(record => {
                     fieldMapping.forEach((newProp, oldProp) => {
@@ -1641,9 +1644,9 @@ export default class MigrationJobTask {
     }
 
     private _targetFieldMapping: IFieldMapping = <IFieldMapping>{
-        sourceQueryToTarget: this._sourceQueryToTarget.bind(this),
-        sourceRecordsToTarget: this._sourceRecordsToTarget.bind(this),
-        targetRecordsToSource: this._targetRecordsToSource.bind(this)
+        sourceQueryToTarget: this._mapSourceQueryToTarget.bind(this),
+        sourceRecordsToTarget: this._mapSsourceRecordsToTarget.bind(this),
+        targetRecordsToSource: this._mapTargetRecordsToSource.bind(this)
     }
 
 }
