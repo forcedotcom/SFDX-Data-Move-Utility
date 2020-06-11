@@ -2,8 +2,8 @@
 
 ```bash
 ### ----------------------------------------------------------------- ###
-### - *** Current repository version 3.3.4                      *** - ###
-### - *** Latest updates: Import fixes                          *** - ###
+### - *** Current repository version 3.3.5                      *** - ###
+### - *** Latest updates: Important bug fix                     *** - ###
 ### ----------------------------------------------------------------- ###
 ### - *** Always make sure, that you have                       *** - ###
 ### - *** the latest version installed                          *** - ###
@@ -166,4 +166,3 @@ $ sfdx plugins:link
 #    to each CLI command that runs the SFDMU Plugin. 
 
 ```
-
