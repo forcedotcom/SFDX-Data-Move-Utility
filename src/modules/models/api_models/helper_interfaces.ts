@@ -7,7 +7,7 @@
 import { ApiInfo } from '.';
 import { Logger } from '../../components/common_components/logger';
 import { OPERATION } from '../../components/common_components/statics';
-import { IOrgConnectionData } from '../common_models/helper_interfaces';
+import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
 
 
@@ -91,7 +91,8 @@ export interface IApiEngineInitParameters {
     targetCSVFullFilename: string,
     createTargetCSVFiles: boolean,
     bulkApiV1BatchSize?: number,
-    allOrNone?: boolean
+    allOrNone?: boolean,
+    targetFieldMapping? : IFieldMapping
 }
 
 export interface ICsvChunk {

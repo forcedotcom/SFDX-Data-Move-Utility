@@ -29,7 +29,7 @@ import { RestApiEngine } from "../../components/api_engines/restApiEngine";
 const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
-import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField } from '../common_models/helper_interfaces';
+import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping } from '../common_models/helper_interfaces';
 
 MockGenerator.createCustomGenerators(casual);
 
@@ -728,7 +728,7 @@ export default class MigrationJobTask {
                     // Query string message ------
                     this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                     // Fetch records
-                    let sfdx = new Sfdx(this.targetData.org);
+                    let sfdx = new Sfdx(this.targetData.org, this._targetFieldMapping);
                     records = await sfdx.retrieveRecordsAsync(query, this.targetData.useBulkQueryApi);
                     hasRecords = true;
                 } else {
@@ -737,8 +737,8 @@ export default class MigrationJobTask {
                     if (queries.length > 0) {
                         // Start message ------
                         this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
-                        // Fetch records
-                        records = await this._retrieveFilteredRecords(queries, this.targetData);
+                        // Fetch target records
+                        records = await this._retrieveFilteredRecords(queries, this.targetData, this._targetFieldMapping);
                         hasRecords = true;
                     }
                 }
@@ -1063,8 +1063,8 @@ export default class MigrationJobTask {
                 if (queries.length > 0) {
                     // Start message ------
                     self.logger.infoNormal(RESOURCES.queryingIn2, self.sObjectName, self.logger.getResourceString(RESOURCES.personContact));
-                    // Fetch records
-                    let records = await self._retrieveFilteredRecords(queries, self.targetData);
+                    // Fetch target records
+                    let records = await self._retrieveFilteredRecords(queries, self.targetData, self._targetFieldMapping);
                     if (records.length > 0) {
                         //Set external id map --------- TARGET
                         self._setExternalIdMap(records, contactTask.targetData.extIdRecordsMap, contactTask.targetData.idRecordsMap, true);
@@ -1317,7 +1317,8 @@ export default class MigrationJobTask {
                         pollingIntervalMs: this.script.pollingIntervalMs,
                         updateRecordId,
                         targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
-                        createTargetCSVFiles: this.script.createTargetCSVFiles
+                        createTargetCSVFiles: this.script.createTargetCSVFiles,
+                        targetFieldMapping: this._targetFieldMapping
                     });
                     break;
                 default: // Bulk Api V1.0
@@ -1330,7 +1331,8 @@ export default class MigrationJobTask {
                         updateRecordId,
                         bulkApiV1BatchSize: this.script.bulkApiV1BatchSize,
                         targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
-                        createTargetCSVFiles: this.script.createTargetCSVFiles
+                        createTargetCSVFiles: this.script.createTargetCSVFiles,
+                        targetFieldMapping: this._targetFieldMapping
                     });
                     break;
             }
@@ -1345,7 +1347,8 @@ export default class MigrationJobTask {
                 updateRecordId,
                 allOrNone: this.script.allOrNone,
                 targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
-                createTargetCSVFiles: this.script.createTargetCSVFiles
+                createTargetCSVFiles: this.script.createTargetCSVFiles,
+                targetFieldMapping: this._targetFieldMapping
             });
         }
         this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
@@ -1541,8 +1544,8 @@ export default class MigrationJobTask {
         return newRecordsCount;
     }
 
-    async _retrieveFilteredRecords(queries: string[], orgData: TaskOrgData): Promise<Array<any>> {
-        let sfdx = new Sfdx(orgData.org);
+    private async _retrieveFilteredRecords(queries: string[], orgData: TaskOrgData, targetFieldMapping?: IFieldMapping): Promise<Array<any>> {
+        let sfdx = new Sfdx(orgData.org, targetFieldMapping);
         let records = new Array<any>();
         for (let index = 0; index < queries.length; index++) {
             const query = queries[index];
@@ -1553,4 +1556,23 @@ export default class MigrationJobTask {
         }
         return records;
     }
+
+    private _sourceQueryToTarget(query: string, sourceObjectName: string) : IFieldMappingResult {
+        
+    }
+
+    private _sourceRecordsToTarget(records: Array<any>, sourceObjectName: string) : IFieldMappingResult {
+        
+    }
+
+    private _targetRecordsToSource(records: Array<any>, sourceObjectName: string) : IFieldMappingResult {
+        
+    }
+
+    private _targetFieldMapping: IFieldMapping = <IFieldMapping> {
+        sourceQueryToTarget : this._sourceQueryToTarget,
+        sourceRecordsToTarget: this._sourceRecordsToTarget,
+        targetRecordsToSource: this._targetRecordsToSource
+    }
+
 }

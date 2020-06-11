@@ -10,7 +10,7 @@ import { IApiJobCreateResult, IApiEngineInitParameters, ICsvChunk } from "./help
 import { ApiInfo, IApiEngine } from ".";
 import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
-import { IOrgConnectionData } from "../common_models/helper_interfaces";
+import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
 
 
 
@@ -20,7 +20,7 @@ import { IOrgConnectionData } from "../common_models/helper_interfaces";
  * @export
  * @class ApiProcessBase
  */
-export default class ApiEngineBase implements IApiEngine {
+export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
     pollingIntervalMs: number
     bulkApiV1BatchSize: number;
@@ -66,7 +66,14 @@ export default class ApiEngineBase implements IApiEngine {
         this.allOrNone = init.allOrNone;
         this.createTargetCSVFiles = init.createTargetCSVFiles;
         this.targetCSVFullFilename = init.targetCSVFullFilename;
+        if (init.targetFieldMapping){
+            Object.assign(this, init.targetFieldMapping);
+        }
     }
+
+    sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query };
+    sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records };
+    targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records };
 
     // ----------------------- Interface IApiProcess ----------------------------------
     getEngineName(): string {
