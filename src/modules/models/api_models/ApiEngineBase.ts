@@ -28,6 +28,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     operation: OPERATION;
     updateRecordId: boolean;
     sObjectName: string;
+    oldSObjectName: string;
     targetCSVFullFilename: string;
     createTargetCSVFiles: boolean;
     logger: Logger;
@@ -66,23 +67,39 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         this.allOrNone = init.allOrNone;
         this.createTargetCSVFiles = init.createTargetCSVFiles;
         this.targetCSVFullFilename = init.targetCSVFullFilename;
-        if (init.targetFieldMapping){
+        if (init.targetFieldMapping) {
             Object.assign(this, init.targetFieldMapping);
         }
     }
 
-    sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query };
-    sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records };
-    targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records };
+    sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query, targetSObjectName: sourceObjectName };
+    sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
+    targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
 
     // ----------------------- Interface IApiProcess ----------------------------------
     getEngineName(): string {
         return "REST API";
     }
 
-    async executeCRUD(allRcords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
-        await this.createCRUDApiJobAsync(allRcords);
-        return await this.processCRUDApiJobAsync(progressCallback);
+    async executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
+
+        // Map source records
+        this.oldSObjectName = this.sObjectName;
+        let mappedRecords = this.sourceRecordsToTarget(allRecords, this.sObjectName);
+        this.sObjectName = mappedRecords.targetSObjectName;
+        allRecords = mappedRecords.records;
+
+        // Create CRUD job
+        await this.createCRUDApiJobAsync(allRecords);
+        // Execute CRUD job
+        let resultRecords = await this.processCRUDApiJobAsync(progressCallback);
+
+        // Map target records
+        this.sObjectName = this.oldSObjectName;
+        resultRecords = this.targetRecordsToSource(resultRecords, this.sObjectName).records;
+
+        // Return
+        return resultRecords;
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {

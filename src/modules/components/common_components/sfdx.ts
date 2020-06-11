@@ -32,14 +32,14 @@ export class Sfdx implements IFieldMapping {
 
     constructor(org: ScriptOrg, targetFieldMapping?: IFieldMapping) {
         this.org = org;
-        if (targetFieldMapping){
+        if (targetFieldMapping) {
             Object.assign(this, targetFieldMapping);
         }
     }
 
-    sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query };
-    sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records };
-    targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records };
+    sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query, targetSObjectName: sourceObjectName };
+    sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
+    targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
 
     /**
      *  Performs SOQL query and returns records
@@ -112,11 +112,17 @@ export class Sfdx implements IFieldMapping {
             if (csvFullFilename && sFieldsDescribeMap) {
                 return await ___readAndFormatCsvRecordsAsync();
             }
+            // Map query /////
+            let parsedQuery = parseQuery(soql);
+            soql = this.sourceQueryToTarget(soql, parsedQuery.sObject).query;
+            // Query records /////
             let records = [].concat(await ___queryAsync(soql));
             if (soql.indexOf("FROM Group") >= 0) {
                 soql = soql.replace("FROM Group", "FROM User");
                 records = records.concat(await ___queryAsync(soql));
             }
+            // Map records /////
+            records = this.targetRecordsToSource(records, parsedQuery.sObject).records;
             return records;
         } catch (ex) {
             throw new CommandExecutionError(ex.message);

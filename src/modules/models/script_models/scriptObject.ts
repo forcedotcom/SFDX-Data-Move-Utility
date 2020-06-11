@@ -39,7 +39,7 @@ export default class ScriptObject {
     @Type(() => ScriptMockField)
     mockFields: ScriptMockField[] = new Array<ScriptMockField>();
 
-    // TODO: Document this
+    // TODO: Document this property!
     @Type(() => ScriptMappingItem)
     fieldMapping: ScriptMappingItem[] = new Array<ScriptMappingItem>();
 
@@ -54,7 +54,7 @@ export default class ScriptObject {
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
 
-    // TODO: Add this to the documentation. Put it to false on production.
+    // TODO: Document this property! Put it to false on production!
     useFieldMapping: boolean = true;
     useValuesMapping: boolean = true;
 
@@ -289,6 +289,10 @@ export default class ScriptObject {
 
     get isMapped(): boolean {
         return this.script.sourceTargetFieldMapping.size > 0;
+    }
+
+    get sourceTargetFieldNameMap(): Map<string, string> {
+        return new Map<string, string>([...this.fieldsInQueryMap.values()].map(field => [field.name, field.targetName]));
     }
 
 

@@ -71,7 +71,7 @@ export interface IFieldMapping {
 export interface IFieldMappingResult {
     query?: string;
     records?: Array<any>;
-    targetObjectName?: string;
+    targetSObjectName?: string;
 }
 
 

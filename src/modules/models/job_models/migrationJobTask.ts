@@ -1558,10 +1558,10 @@ export default class MigrationJobTask {
         return records;
     }
 
-    private _sourceQueryToTarget(query: string, sourceObjectName: string): IFieldMappingResult {
-        let mapping = this.script.sourceTargetFieldMapping.get(sourceObjectName);
+    private _sourceQueryToTarget(query: string, sourceSObjectName: string): IFieldMappingResult {
+        let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
         if (mapping && mapping.hasChange) {
-            let scriptObject = this.script.objectsMap.get(sourceObjectName);
+            let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
                 let targetParsedQuery = parseQuery(query);
                 targetParsedQuery.sObject = mapping.targetSObjectName;
@@ -1576,41 +1576,74 @@ export default class MigrationJobTask {
                 });
                 targetParsedQuery.fields = fields;
                 query = composeQuery(targetParsedQuery);
+                return {
+                    targetSObjectName: mapping.targetSObjectName,
+                    query
+                };
             }
         }
         return {
+            targetSObjectName: sourceSObjectName,
             query
         };
     }
 
-    private _sourceRecordsToTarget(records: Array<any>, sourceObjectName: string): IFieldMappingResult {
-        // TODO: Implement
-        let mapping = this.script.sourceTargetFieldMapping.get(sourceObjectName);
+    private _sourceRecordsToTarget(records: Array<any>, sourceSObjectName: string): IFieldMappingResult {
+        let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
         if (mapping && mapping.hasChange) {
-            let scriptObject = this.script.objectsMap.get(sourceObjectName);
+            let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
-
+                let fieldMapping = scriptObject.sourceTargetFieldNameMap;
+                records.forEach(record => {
+                    fieldMapping.forEach((newProp, oldProp) => {
+                        if (newProp != oldProp && record.hasOwnProperty(oldProp)) {
+                            record[newProp] = record[oldProp];
+                            delete record[oldProp];
+                        }
+                    });
+                });
+                return {
+                    targetSObjectName: mapping.targetSObjectName,
+                    records
+                };
             }
         }
-        return null;
+        return {
+            targetSObjectName: sourceSObjectName,
+            records
+        };
     }
 
-    private _targetRecordsToSource(records: Array<any>, sourceObjectName: string): IFieldMappingResult {
-        // TODO: Implement
-        let mapping = this.script.sourceTargetFieldMapping.get(sourceObjectName);
+    private _targetRecordsToSource(records: Array<any>, sourceSObjectName: string): IFieldMappingResult {
+        let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
         if (mapping && mapping.hasChange) {
-            let scriptObject = this.script.objectsMap.get(sourceObjectName);
+            let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
-                
+                let fieldMapping = scriptObject.sourceTargetFieldNameMap;
+                records.forEach(record => {
+                    fieldMapping.forEach((newProp, oldProp) => {
+                        if (newProp != oldProp && record.hasOwnProperty(newProp)) {
+                            record[oldProp] = record[newProp];
+                            delete record[newProp];
+                        }
+                    });
+                });
+                return {
+                    targetSObjectName: mapping.targetSObjectName,
+                    records
+                };
             }
         }
-        return null;
+        return {
+            targetSObjectName: sourceSObjectName,
+            records
+        };
     }
 
     private _targetFieldMapping: IFieldMapping = <IFieldMapping>{
-        sourceQueryToTarget: this._sourceQueryToTarget,
-        sourceRecordsToTarget: this._sourceRecordsToTarget,
-        targetRecordsToSource: this._targetRecordsToSource
+        sourceQueryToTarget: this._sourceQueryToTarget.bind(this),
+        sourceRecordsToTarget: this._sourceRecordsToTarget.bind(this),
+        targetRecordsToSource: this._targetRecordsToSource.bind(this)
     }
 
 }
