@@ -7,14 +7,15 @@
 
 
 
-import { Query } from 'soql-parser-js';
+import { Query, parseQuery } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../../components/common_components/statics";
 import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
     composeQuery,
-    getComposedField
+    getComposedField,
+    Field as SOQLField
 } from 'soql-parser-js';
 import { ScriptObject, MigrationJob as Job, CommandExecutionError, ScriptOrg, Script, ScriptMockField, TaskData, TaskOrgData, CachedCSVContent, ProcessedData } from "..";
 import SFieldDescribe from "../script_models/sfieldDescribe";
@@ -29,7 +30,7 @@ import { RestApiEngine } from "../../components/api_engines/restApiEngine";
 const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
-import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping } from '../common_models/helper_interfaces';
+import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
 
 MockGenerator.createCustomGenerators(casual);
 
@@ -1079,7 +1080,7 @@ export default class MigrationJobTask {
                                 newRecordsCount++;
                             }
                         });
-                        self.logger.infoNormal(RESOURCES.queryingFinished, self.sObjectName, self.logger.getResourceString(RESOURCES.personContact), String(newRecordsCount));                        
+                        self.logger.infoNormal(RESOURCES.queryingFinished, self.sObjectName, self.logger.getResourceString(RESOURCES.personContact), String(newRecordsCount));
                         return newRecordsCount;
                     }
                 }
@@ -1557,20 +1558,57 @@ export default class MigrationJobTask {
         return records;
     }
 
-    private _sourceQueryToTarget(query: string, sourceObjectName: string) : IFieldMappingResult {
-        
+    private _sourceQueryToTarget(query: string, sourceObjectName: string): IFieldMappingResult {
+        let mapping = this.script.sourceTargetFieldMapping.get(sourceObjectName);
+        if (mapping && mapping.hasChange) {
+            let scriptObject = this.script.objectsMap.get(sourceObjectName);
+            if (scriptObject) {
+                let targetParsedQuery = parseQuery(query);
+                targetParsedQuery.sObject = mapping.targetSObjectName;
+                let fields = [];
+                targetParsedQuery.fields.forEach((field: SOQLField) => {
+                    let describe = scriptObject.fieldsInQueryMap.get(field.field);
+                    if (describe) {
+                        fields.push(getComposedField(describe.targetName));
+                    } else {
+                        fields.push(getComposedField(field.field));
+                    }
+                });
+                targetParsedQuery.fields = fields;
+                query = composeQuery(targetParsedQuery);
+            }
+        }
+        return {
+            query
+        };
     }
 
-    private _sourceRecordsToTarget(records: Array<any>, sourceObjectName: string) : IFieldMappingResult {
-        
+    private _sourceRecordsToTarget(records: Array<any>, sourceObjectName: string): IFieldMappingResult {
+        // TODO: Implement
+        let mapping = this.script.sourceTargetFieldMapping.get(sourceObjectName);
+        if (mapping && mapping.hasChange) {
+            let scriptObject = this.script.objectsMap.get(sourceObjectName);
+            if (scriptObject) {
+
+            }
+        }
+        return null;
     }
 
-    private _targetRecordsToSource(records: Array<any>, sourceObjectName: string) : IFieldMappingResult {
-        
+    private _targetRecordsToSource(records: Array<any>, sourceObjectName: string): IFieldMappingResult {
+        // TODO: Implement
+        let mapping = this.script.sourceTargetFieldMapping.get(sourceObjectName);
+        if (mapping && mapping.hasChange) {
+            let scriptObject = this.script.objectsMap.get(sourceObjectName);
+            if (scriptObject) {
+                
+            }
+        }
+        return null;
     }
 
-    private _targetFieldMapping: IFieldMapping = <IFieldMapping> {
-        sourceQueryToTarget : this._sourceQueryToTarget,
+    private _targetFieldMapping: IFieldMapping = <IFieldMapping>{
+        sourceQueryToTarget: this._sourceQueryToTarget,
         sourceRecordsToTarget: this._sourceRecordsToTarget,
         targetRecordsToSource: this._targetRecordsToSource
     }

@@ -38,7 +38,7 @@ export default class ScriptObject {
     // ------------- JSON --------------
     @Type(() => ScriptMockField)
     mockFields: ScriptMockField[] = new Array<ScriptMockField>();
-    
+
     // TODO: Document this
     @Type(() => ScriptMappingItem)
     fieldMapping: ScriptMappingItem[] = new Array<ScriptMappingItem>();
@@ -256,7 +256,7 @@ export default class ScriptObject {
         return this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete;
     }
 
-    get hasValueMapping(): boolean {
+    get hasUseValueMapping(): boolean {
         return this.useCSVValuesMapping || this.useValuesMapping;
     }
 
@@ -275,16 +275,20 @@ export default class ScriptObject {
         return composeQuery(targetParsedQuery);
     }
 
-    get targetObjectName() : string {
+    get targetObjectName(): string {
         if (!this.useFieldMapping) {
             return this.name;
         }
 
         let mapping = this.script.sourceTargetFieldMapping.get(this.name);
-        if (mapping){
+        if (mapping) {
             return mapping.targetSObjectName;
         }
         return this.name;
+    }
+
+    get isMapped(): boolean {
+        return this.script.sourceTargetFieldMapping.size > 0;
     }
 
 
@@ -386,15 +390,16 @@ export default class ScriptObject {
 
         if (this.isDescribed) return;
 
-        // Describe object in the source org
         if (!this.isDescribed) {
 
             if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
-
-                let apisf = new Sfdx(this.script.sourceOrg);
-                this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
+                // Describe object in the source org
                 try {
+
                     // Retrieve sobject metadata
+                    let apisf = new Sfdx(this.script.sourceOrg);
+                    this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
+
                     this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
                     this._updateSObjectDescribe(this.sourceSObjectDescribe);
 
@@ -420,10 +425,20 @@ export default class ScriptObject {
             if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
 
                 // Describe object in the target org        
-                let apisf = new Sfdx(this.script.targetOrg);
-                this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
                 try {
+
+                    if (this.isMapped) {
+                        // TODO: When field mapping is available for this object =>
+                        // skip object description & validation.
+                        // But may be added in future.
+                        this.targetSObjectDescribe = this.sourceSObjectDescribe;
+                        return;
+                    }
+
                     // Retrieve sobject metadata
+                    let apisf = new Sfdx(this.script.targetOrg);
+                    this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
+
                     this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
                     this._updateSObjectDescribe(this.targetSObjectDescribe);
 

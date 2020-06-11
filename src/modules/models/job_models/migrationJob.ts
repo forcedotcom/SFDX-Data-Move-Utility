@@ -189,7 +189,6 @@ export default class MigrationJob {
 
         // Load mapping files
         await this._loadValueMappingFileAsync();
-        await this._loadSourceTargetFieldMappingFileAsync();
 
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
 
@@ -619,38 +618,12 @@ export default class MigrationJob {
                     let objectName = String(row["ObjectName"]).trim();
                     let fieldName = String(row["FieldName"]).trim();
                     let scriptObject = this.script.objectsMap.get(objectName);
-                    if (scriptObject && scriptObject.hasValueMapping) {
+                    if (scriptObject && scriptObject.hasUseValueMapping) {
                         let key = objectName + fieldName;
                         if (!this.csvValuesMapping.has(key)) {
                             this.csvValuesMapping.set(key, new Map<string, string>());
                         }
                         this.csvValuesMapping.get(key).set(String(row["RawValue"]).trim(), (String(row["Value"]) || "").trim());
-                    }
-                }
-            });
-        }
-    }
-
-    private async _loadSourceTargetFieldMappingFileAsync(): Promise<void> {
-        let filePath = path.join(this.script.basePath, CONSTANTS.FIELD_MAPPING_FILENAME);
-        let csvRows = await Common.readCsvFileAsync(filePath);
-        if (csvRows.length > 0) {
-            this.logger.infoVerbose(RESOURCES.readingFieldsMappingFile, CONSTANTS.FIELD_MAPPING_FILENAME);
-            csvRows.forEach(row => {
-                if (row["ObjectName"] && row["Target"]) {
-                    let objectName = String(row["ObjectName"]).trim();
-                    let scriptObject = this.script.objectsMap.get(objectName);
-                    if (scriptObject && scriptObject.useFieldMapping) {
-                        let target = String(row["Target"]).trim();
-                        if (!row["FieldName"]) {
-                            this.script.sourceTargetFieldMapping.set(objectName, new ObjectFieldMapping(objectName, target));
-                        } else {
-                            let fieldName = String(row["FieldName"]).trim();
-                            if (!this.script.sourceTargetFieldMapping.has(objectName)) {
-                                this.script.sourceTargetFieldMapping.set(objectName, new ObjectFieldMapping(objectName, objectName));
-                            }
-                            this.script.sourceTargetFieldMapping.get(objectName).fieldMapping.set(fieldName, target);
-                        }
                     }
                 }
             });

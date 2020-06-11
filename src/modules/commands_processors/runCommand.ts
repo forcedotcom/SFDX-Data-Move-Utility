@@ -107,11 +107,12 @@ export class RunCommand {
             [this.logger.getResourceString(RESOURCES.packageScript)]: this.logger.getResourceString(RESOURCES.scriptFile, filePath)
         });
 
-        // Describe sobjects
-        await this.script.processObjectsMetadataAsync();
-
         // Load mapping configuration
         this.script.loadFieldMappingConfiguration();
+        await this.script.loadFieldMappingConfigurationFileAsync();
+
+        // Describe sobjects
+        await this.script.processObjectsMetadataAsync();
 
         // Vaidate orgs
         this.script.verifyOrgs();

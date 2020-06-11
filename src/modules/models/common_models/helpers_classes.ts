@@ -254,6 +254,10 @@ export class ObjectFieldMapping {
     sourceSObjectName: string;
     fieldMapping: Map<string, string> = new Map<string, string>();
 
+    get hasChange() : boolean{
+        return this.sourceSObjectName != this.targetSObjectName || this.fieldMapping.size > 0;
+    }
+
 }
 
 

@@ -163,7 +163,10 @@ export enum RESOURCES {
     deletingOldDataCompleted = "deletingOldDataCompleted",
     deletingOldDataSkipped = "deletingOldDataSkipped",
     nothingToDelete = "nothingToDelete",
-
+    
+    mappingQuery = "mappingQuery",
+    mappingSourceRecords = "mappingSourceRecords",
+    mappingTargetRecords = "mappingTargetRecords",
     retrievingData = "retrievingData",
     retrievingDataCompleted = "retrievingDataCompleted",
     queryingAll = "queryingAll",

@@ -23,7 +23,7 @@ import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
 import { IPluginInfo } from "../common_models/helper_interfaces";
-
+import * as path from 'path';
 
 
 
@@ -289,8 +289,7 @@ export default class Script {
     }
 
     /**
-    * Load input FieldMapping 
-    * configuration from the Script
+    * Load Field Mapping configuration from the Script
     *
     * @memberof Script
     */
@@ -310,6 +309,38 @@ export default class Script {
                 });
             }
         });
+    }
+
+    /**
+     * Load Field Mapping configuration from the csv file
+     *
+     * @returns {Promise<void>}
+     * @memberof Script
+     */
+    async loadFieldMappingConfigurationFileAsync(): Promise<void> {
+        let filePath = path.join(this.basePath, CONSTANTS.FIELD_MAPPING_FILENAME);
+        let csvRows = await Common.readCsvFileAsync(filePath);
+        if (csvRows.length > 0) {
+            this.logger.infoVerbose(RESOURCES.readingFieldsMappingFile, CONSTANTS.FIELD_MAPPING_FILENAME);
+            csvRows.forEach(row => {
+                if (row["ObjectName"] && row["Target"]) {
+                    let objectName = String(row["ObjectName"]).trim();
+                    let scriptObject = this.objectsMap.get(objectName);
+                    if (scriptObject && scriptObject.useFieldMapping) {
+                        let target = String(row["Target"]).trim();
+                        if (!row["FieldName"]) {
+                            this.sourceTargetFieldMapping.set(objectName, new ObjectFieldMapping(objectName, target));
+                        } else {
+                            let fieldName = String(row["FieldName"]).trim();
+                            if (!this.sourceTargetFieldMapping.has(objectName)) {
+                                this.sourceTargetFieldMapping.set(objectName, new ObjectFieldMapping(objectName, objectName));
+                            }
+                            this.sourceTargetFieldMapping.get(objectName).fieldMapping.set(fieldName, target);
+                        }
+                    }
+                }
+            });
+        }
     }
 
 }

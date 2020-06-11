@@ -136,6 +136,9 @@
     "deletingOldDataSkipped": "Deleting old data from the Target was skipped.",
     "nothingToDelete": "{%s} Nothing to delete.",
 
+    "mappingQuery": "{%s} Mapping query string: %s...",
+    "mappingSourceRecords": "{%s} Mapping source records...",
+    "mappingTargetRecords": "{%s} Mapping target records...",
     "retrievingData": "Retrieving the data %s...",
     "retrievingDataCompleted": "Retrieving the data %s has been completed.",
     "queryingAll": "{%s} Retrieving the %s data from %s (%s: all records)...",

@@ -73,7 +73,7 @@ export default class SFieldDescribe {
         return this.m_targetName || this.name;
     }
 
-    get isMappedField(): boolean {
+    get isMapped(): boolean {
         return this.name != this.targetName;
     }
 
