@@ -2,8 +2,8 @@
 
 ```bash
 ### ----------------------------------------------------------------- ###
-### - *** Current repository version 3.3.3                      *** - ###
-### - *** Latest updates: Fixes in the Person Accounts support  *** - ###
+### - *** Current repository version 3.3.4                      *** - ###
+### - *** Latest updates: Import fixes                          *** - ###
 ### ----------------------------------------------------------------- ###
 ### - *** Always make sure, that you have                       *** - ###
 ### - *** the latest version installed                          *** - ###
