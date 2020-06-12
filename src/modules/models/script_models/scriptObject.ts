@@ -523,6 +523,21 @@ export default class ScriptObject {
             });
         }
 
+        // Add compound fields
+        let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
+        this.parsedQuery.fields = [];
+        fieldsInOriginalQuery.forEach(fieldName => {
+            let fields = CONSTANTS.COMPOUND_FIELDS.get(fieldName);
+            if (fields) {
+                fields.forEach(f => {
+                    this.parsedQuery.fields.push(getComposedField(f));
+                });
+            } else {
+                this.parsedQuery.fields.push(getComposedField(fieldName));
+            }
+        });
+
+
         // Filter excluded fields
         this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
             this.excludedFields.indexOf(field.field) < 0

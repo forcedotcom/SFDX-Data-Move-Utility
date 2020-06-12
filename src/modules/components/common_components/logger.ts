@@ -122,6 +122,7 @@ export enum RESOURCES {
     readingValuesMappingFile = "readingValuesMappingFile",
     readingFieldsMappingFile = "readingFieldsMappingFile",
     mappingRawCsvValues = "mappingRawCsvValues",
+    mappingRawValues = "mappingRawValues",
     validatingAndFixingSourceCSVFiles = "validatingAndFixingSourceCSVFiles",
     validatingSourceCSVFilesSkipped = "validatingSourceCSVFilesSkipped",
     writingToCSV = "writingToCSV",

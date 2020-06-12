@@ -94,6 +94,7 @@
     "readingValuesMappingFile": "Reading the values mapping CSV file (%s)",
     "readingFieldsMappingFile": "Reading the fields mapping CSV file (%s)",
     "mappingRawCsvValues": "{%s} Transforming raw CSV values by the given mapping table.",
+    "mappingRawValues": "{%s} Transforming raw values by the given mapping table.",
     "validatingAndFixingSourceCSVFiles": "Validating and repairing of the source CSV files...",
     "validatingSourceCSVFilesSkipped": "Validation of the source CSV files was skipped.",
     "writingToCSV": "Writing to %s...",

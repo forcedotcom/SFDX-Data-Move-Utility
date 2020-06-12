@@ -22,7 +22,7 @@ export default class MigrationJob {
     script: Script;
     tasks: Task[] = new Array<Task>();
     queryTasks: Task[] = new Array<Task>();
-    csvValuesMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
+    valueMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
     csvIssues: Array<ICSVIssueCsvRow> = new Array<ICSVIssueCsvRow>();
     cachedCSVContent: CachedCSVContent = new CachedCSVContent();
 
@@ -620,10 +620,10 @@ export default class MigrationJob {
                     let scriptObject = this.script.objectsMap.get(objectName);
                     if (scriptObject && scriptObject.hasUseValueMapping) {
                         let key = objectName + fieldName;
-                        if (!this.csvValuesMapping.has(key)) {
-                            this.csvValuesMapping.set(key, new Map<string, string>());
+                        if (!this.valueMapping.has(key)) {
+                            this.valueMapping.set(key, new Map<string, string>());
                         }
-                        this.csvValuesMapping.get(key).set(String(row["RawValue"]).trim(), (String(row["Value"]) || "").trim());
+                        this.valueMapping.get(key).set(String(row["RawValue"]).trim(), (String(row["Value"]) || "").trim());
                     }
                 }
             });

@@ -2,8 +2,10 @@
 
 ```bash
 ### ----------------------------------------------------------------- ###
-### - *** Current repository version 3.3.3                      *** - ###
-### - *** Latest updates: Fixes in the Person Accounts support  *** - ###
+### - *** Current repository version 3.4.0                      *** - ###
+### - *** Latest updates: New Field Mapping Feature,            *** - ###
+### - ***                 new Value Mapping Feature,            *** - ###
+### - ***                 built-in support for address fields   *** - ###
 ### ----------------------------------------------------------------- ###
 ### - *** Always make sure, that you have                       *** - ###
 ### - *** the latest version installed                          *** - ###

@@ -154,7 +154,40 @@ export const CONSTANTS = {
         ["Attachment", new Array<string>(
             "Body"
         )]
-    ])
+    ]),
+
+    COMPOUND_FIELDS: new Map<string, Array<string>>([
+        ["BillingAddress", new Array<string>(
+            "BillingGeocodeAccuracy",
+            "BillingCity",
+            "BillingCountry",
+            "BillingLatitude",
+            "BillingLongitude",
+            "BillingPostalCode",
+            "BillingState",
+            "BillingStreet"
+        )],
+        ["ShippingAddress", new Array<string>(
+            "ShippingGeocodeAccuracy",
+            "ShippingCity",
+            "ShippingCountry",
+            "ShippingLatitude",
+            "ShippingLongitude",
+            "ShippingPostalCode",
+            "ShippingState",
+            "ShippingStreet"
+        )],
+        ["MailingAddress", new Array<string>(
+            "MailingGeocodeAccuracy",
+            "MailingCity",
+            "MailingCountry",
+            "MailingLatitude",
+            "MailingLongitude",
+            "MailingPostalCode",
+            "MailingState",
+            "MailingStreet"
+        )]
+    ]), 
 
 }
 
