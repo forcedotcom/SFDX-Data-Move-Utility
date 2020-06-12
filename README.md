@@ -39,6 +39,8 @@ This SFDX Plugin will help you to populate your org (scratch / dev / sandbox / p
 
 - Handles **circular references between SObjects**, for example when Object1 has a child relationship to Object2, then the Object2 has a child relationship to Object3 and the Object3 has a parent relationship back to the Object1.
 
+- Supports customized **Fields and Object Mapping**, when the name of the objects and fields in the Source and the Target are different.
+
 - Supports data migration **preserving Record Type** for each record.
 
 - Handles **self-referenced fields**, for instance  Account.ParentId. 
