@@ -292,7 +292,11 @@ export default class ScriptObject {
     }
 
     get sourceTargetFieldNameMap(): Map<string, string> {
-        return new Map<string, string>([...this.fieldsInQueryMap.values()].map(field => [field.name, field.targetName]));
+        let m = new Map<string, string>();
+        this.fieldsInQueryMap.forEach(field => {
+            m.set(field.name, field.targetName);
+        });
+        return m;
     }
 
 
