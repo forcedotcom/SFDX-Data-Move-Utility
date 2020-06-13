@@ -21,10 +21,10 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask } from "..";
+import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappingItem } from "..";
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
-
+import * as deepClone from 'deep.clone';
 
 /**
  * Parsed object 
@@ -39,6 +39,10 @@ export default class ScriptObject {
     @Type(() => ScriptMockField)
     mockFields: ScriptMockField[] = new Array<ScriptMockField>();
 
+    // TODO: Document this property!
+    @Type(() => ScriptMappingItem)
+    fieldMapping: ScriptMappingItem[] = new Array<ScriptMappingItem>();
+
     query: string = "";
     deleteQuery: string = "";
     operation: OPERATION = OPERATION.Readonly;
@@ -49,6 +53,10 @@ export default class ScriptObject {
     targetRecordsFilter: string = "";
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
+
+    // TODO: Document this property! Put it to false on production!
+    useFieldMapping: boolean = true;
+    useValuesMapping: boolean = true;
 
     /**
      * [Obsolete] Replaced with "master".
@@ -248,6 +256,45 @@ export default class ScriptObject {
         return this.operation != OPERATION.Readonly && this.operation != OPERATION.Delete;
     }
 
+    get hasUseValueMapping(): boolean {
+        return this.useCSVValuesMapping || this.useValuesMapping;
+    }
+
+    get targetQuery(): string {
+        if (!this.parsedQuery || !this.useFieldMapping) {
+            return this.query;
+        }
+        let targetParsedQuery = deepClone.deepCloneSync(this.parsedQuery, {
+            absolute: true,
+        });
+        targetParsedQuery.sObject = this.targetObjectName;
+        targetParsedQuery.fields = [];
+        [...this.fieldsInQueryMap.values()].forEach(field => {
+            targetParsedQuery.fields.push(getComposedField(field.targetName));
+        });
+        return composeQuery(targetParsedQuery);
+    }
+
+    get targetObjectName(): string {
+        if (!this.useFieldMapping) {
+            return this.name;
+        }
+
+        let mapping = this.script.sourceTargetFieldMapping.get(this.name);
+        if (mapping) {
+            return mapping.targetSObjectName;
+        }
+        return this.name;
+    }
+
+    get isMapped(): boolean {
+        return this.script.sourceTargetFieldMapping.size > 0;
+    }
+
+    get sourceTargetFieldNameMap(): Map<string, string> {
+        return new Map<string, string>([...this.fieldsInQueryMap.values()].map(field => [field.name, field.targetName]));
+    }
+
 
     // ----------------------- Public methods -------------------------------------------    
     /**
@@ -347,15 +394,16 @@ export default class ScriptObject {
 
         if (this.isDescribed) return;
 
-        // Describe object in the source org
         if (!this.isDescribed) {
 
             if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
-
-                let apisf = new Sfdx(this.script.sourceOrg);
-                this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
+                // Describe object in the source org
                 try {
+
                     // Retrieve sobject metadata
+                    let apisf = new Sfdx(this.script.sourceOrg);
+                    this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
+
                     this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
                     this._updateSObjectDescribe(this.sourceSObjectDescribe);
 
@@ -381,10 +429,20 @@ export default class ScriptObject {
             if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
 
                 // Describe object in the target org        
-                let apisf = new Sfdx(this.script.targetOrg);
-                this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
                 try {
+
+                    if (this.isMapped) {
+                        // TODO: When field mapping is available for this object =>
+                        // skip object description & validation.
+                        // But may be added in future.
+                        this.targetSObjectDescribe = this.sourceSObjectDescribe;
+                        return;
+                    }
+
                     // Retrieve sobject metadata
+                    let apisf = new Sfdx(this.script.targetOrg);
+                    this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
+
                     this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
                     this._updateSObjectDescribe(this.targetSObjectDescribe);
 
@@ -464,6 +522,21 @@ export default class ScriptObject {
                 }
             });
         }
+
+        // Add compound fields
+        let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
+        this.parsedQuery.fields = [];
+        fieldsInOriginalQuery.forEach(fieldName => {
+            let fields = CONSTANTS.COMPOUND_FIELDS.get(fieldName);
+            if (fields) {
+                fields.forEach(f => {
+                    this.parsedQuery.fields.push(getComposedField(f));
+                });
+            } else {
+                this.parsedQuery.fields.push(getComposedField(fieldName));
+            }
+        });
+
 
         // Filter excluded fields
         this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>

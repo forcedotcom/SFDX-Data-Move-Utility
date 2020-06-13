@@ -12,6 +12,7 @@ export * from "./common_models/helpers_classes";
 export { default as OrgInfo } from "./common_models/orgInfo";
 export { default as Script } from "./script_models/script";
 export { default as ScriptMockField } from "./script_models/scriptMockField";
+export { default as ScriptMappingItem } from "./script_models/scriptMappingItem";
 export { default as ScriptObject } from "./script_models/scriptObject";
 export { default as ScriptOrg } from "./script_models/scriptOrg";
 export { default as SFieldDescribe } from "./script_models/sfieldDescribe";

@@ -38,6 +38,8 @@ export const CONSTANTS = {
     USER_AND_GROUP_FILENAME: 'UserAndGroup',
     CSV_ISSUES_ERRORS_FILENAME: 'CSVIssuesReport.csv',
     MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME: "MissingParentRecordsReport.csv",
+    // TODO: Document this that there is 2 optionj to set mapping
+    FIELD_MAPPING_FILENAME: "FieldMapping.csv",
 
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
     MAX_PARALLEL_DOWNLOAD_THREADS: 5,
@@ -152,7 +154,40 @@ export const CONSTANTS = {
         ["Attachment", new Array<string>(
             "Body"
         )]
-    ])
+    ]),
+
+    COMPOUND_FIELDS: new Map<string, Array<string>>([
+        ["BillingAddress", new Array<string>(
+            "BillingGeocodeAccuracy",
+            "BillingCity",
+            "BillingCountry",
+            "BillingLatitude",
+            "BillingLongitude",
+            "BillingPostalCode",
+            "BillingState",
+            "BillingStreet"
+        )],
+        ["ShippingAddress", new Array<string>(
+            "ShippingGeocodeAccuracy",
+            "ShippingCity",
+            "ShippingCountry",
+            "ShippingLatitude",
+            "ShippingLongitude",
+            "ShippingPostalCode",
+            "ShippingState",
+            "ShippingStreet"
+        )],
+        ["MailingAddress", new Array<string>(
+            "MailingGeocodeAccuracy",
+            "MailingCity",
+            "MailingCountry",
+            "MailingLatitude",
+            "MailingLongitude",
+            "MailingPostalCode",
+            "MailingState",
+            "MailingStreet"
+        )]
+    ]), 
 
 }
 

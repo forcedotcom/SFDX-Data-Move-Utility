@@ -2,8 +2,10 @@
 
 ```bash
 ### ----------------------------------------------------------------- ###
-### - *** Current repository version 3.3.5                      *** - ###
-### - *** Latest updates: Important bug fix                     *** - ###
+### - *** Current repository version 3.4.0                      *** - ###
+### - *** Latest updates: New Field Mapping Feature,            *** - ###
+### - ***                 new Value Mapping Feature,            *** - ###
+### - ***                 support for compound address fields   *** - ###
 ### ----------------------------------------------------------------- ###
 ### - *** Always make sure, that you have                       *** - ###
 ### - *** the latest version installed                          *** - ###
@@ -21,11 +23,11 @@
 
 **The SFDMU Plugin (SFDX Data Move Utility) is the advanced and very handy alternative to the traditional Salesforce Data Loader application**. 
 
-This SFDX Plugin will help you to populate your org (scratch / dev / sandbox / prod) with data imported from another org or CSV files. It supports all important CRUD operations **Insert** / **Update** / **Upsert** / **Delete** operations **also for multiple related sObjects**.
+This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox / production)** with data imported from another org or CSV files. It supports all important CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**)  **also for multiple related sObjects**.
 
 
 
-### The Highlights of the tool:
+### The Highlights of the Tool:
 
 - Supports **direct data migration** from Salesforce org to another Salesforce org without intermediate CSV files.
 
@@ -36,6 +38,8 @@ This SFDX Plugin will help you to populate your org (scratch / dev / sandbox / p
 - **Does not require a special External Id** **field for Update/Upsert** operations to bind related SObjects. **Any type of field with unique values, such as a Name, even formula or auto-number can be used as External Id.** The Plugin internally compares the records from the Source and Target based on the specified field and performs the necessary CRUD operations on the Target.
 
 - Handles **circular references between SObjects**, for example when Object1 has a child relationship to Object2, then the Object2 has a child relationship to Object3 and the Object3 has a parent relationship back to the Object1.
+
+- Supports customized **Fields and Object Mapping**, when the name of the objects and fields in the Source and the Target are different.
 
 - Supports data migration **preserving Record Type** for each record.
 
@@ -124,6 +128,8 @@ $ sfdx plugins:uninstall sfdmu
 $ sfdx plugins:install sfdmu
 ```
 
+
+
 ### Installation with the source code:
 
 ```bash
@@ -151,6 +157,8 @@ $ npm install
 $ sfdx plugins:link
 ```
 
+
+
 ### Debugging.
 
 ```bash
@@ -166,3 +174,4 @@ $ sfdx plugins:link
 #    to each CLI command that runs the SFDMU Plugin. 
 
 ```
+

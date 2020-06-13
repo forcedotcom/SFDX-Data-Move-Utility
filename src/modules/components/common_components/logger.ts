@@ -118,8 +118,11 @@ export enum RESOURCES {
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",
 
+    readingCsvFileError = "readingCsvFileError",
     readingValuesMappingFile = "readingValuesMappingFile",
+    readingFieldsMappingFile = "readingFieldsMappingFile",
     mappingRawCsvValues = "mappingRawCsvValues",
+    mappingRawValues = "mappingRawValues",
     validatingAndFixingSourceCSVFiles = "validatingAndFixingSourceCSVFiles",
     validatingSourceCSVFilesSkipped = "validatingSourceCSVFilesSkipped",
     writingToCSV = "writingToCSV",
@@ -161,7 +164,10 @@ export enum RESOURCES {
     deletingOldDataCompleted = "deletingOldDataCompleted",
     deletingOldDataSkipped = "deletingOldDataSkipped",
     nothingToDelete = "nothingToDelete",
-
+    
+    mappingQuery = "mappingQuery",
+    mappingSourceRecords = "mappingSourceRecords",
+    mappingTargetRecords = "mappingTargetRecords",
     retrievingData = "retrievingData",
     retrievingDataCompleted = "retrievingDataCompleted",
     queryingAll = "queryingAll",

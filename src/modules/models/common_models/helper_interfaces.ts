@@ -42,11 +42,11 @@ export interface IMissingParentLookupRecordCsvRow {
     "Missing value": string;
 }
 
-export interface IBlobField{
+export interface IBlobField {
     objectName: string,
     fieldName: string,
-    
-   
+
+
 
     /**
      * Currently there is only base64 data type,
@@ -61,5 +61,18 @@ export interface IPluginInfo {
     version: string,
     path: string
 }
+
+export interface IFieldMapping {
+    sourceQueryToTarget: (query: string, sourceObjectName: string) => IFieldMappingResult;
+    sourceRecordsToTarget: (records: Array<any>, sourceObjectName: string) => IFieldMappingResult;
+    targetRecordsToSource: (records: Array<any>, sourceObjectName: string) => IFieldMappingResult;
+}
+
+export interface IFieldMappingResult {
+    query?: string;
+    records?: Array<any>;
+    targetSObjectName?: string;
+}
+
 
 

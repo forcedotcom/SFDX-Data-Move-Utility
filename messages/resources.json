@@ -90,8 +90,11 @@
     "dataMigrationProcessStarted": "Preparing data migration job...",
     "buildingMigrationStaregy": "Building migration strategy...",
 
+    "readingCsvFileError": "Error occured while reading the CSV file %s: %s",
     "readingValuesMappingFile": "Reading the values mapping CSV file (%s)",
+    "readingFieldsMappingFile": "Reading the fields mapping CSV file (%s)",
     "mappingRawCsvValues": "{%s} Transforming raw CSV values by the given mapping table.",
+    "mappingRawValues": "{%s} Transforming raw values by the given mapping table.",
     "validatingAndFixingSourceCSVFiles": "Validating and repairing of the source CSV files...",
     "validatingSourceCSVFilesSkipped": "Validation of the source CSV files was skipped.",
     "writingToCSV": "Writing to %s...",
@@ -134,6 +137,9 @@
     "deletingOldDataSkipped": "Deleting old data from the Target was skipped.",
     "nothingToDelete": "{%s} Nothing to delete.",
 
+    "mappingQuery": "{%s} Mapping query string... The target object: %s. The target query string: %s.",
+    "mappingSourceRecords": "{%s} Mapping records to be sent to the API... The target object: %s.",
+    "mappingTargetRecords": "{%s} Mapping records returned from the API... The target object: %s.",
     "retrievingData": "Retrieving the data %s...",
     "retrievingDataCompleted": "Retrieving the data %s has been completed.",
     "queryingAll": "{%s} Retrieving the %s data from %s (%s: all records)...",

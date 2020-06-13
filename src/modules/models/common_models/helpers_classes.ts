@@ -243,6 +243,27 @@ export class CsvChunks {
     }
 }
 
+export class ObjectFieldMapping {
+
+    constructor(sourceSObjectName: string, targetSObjectName: string) {
+        this.sourceSObjectName = sourceSObjectName;
+        this.targetSObjectName = targetSObjectName;
+    }
+
+    targetSObjectName: string;
+    sourceSObjectName: string;
+    fieldMapping: Map<string, string> = new Map<string, string>();
+
+    get hasChange() : boolean{
+        return this.sourceSObjectName != this.targetSObjectName || this.fieldMapping.size > 0;
+    }
+
+}
+
+
+
+
+
 
 
 

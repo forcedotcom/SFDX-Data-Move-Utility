@@ -19,11 +19,11 @@ import {
     OrderByClause,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptOrg, ScriptObject } from "..";
+import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
 import { IPluginInfo } from "../common_models/helper_interfaces";
-
+import * as path from 'path';
 
 
 
@@ -55,7 +55,7 @@ export default class Script {
     createTargetCSVFiles: boolean = true;
     importCSVFilesAsIs = false;
     alwaysUseRestApiToUpdateRecords: false;
-    excludeIdsFromCSVFiles: boolean =  false;
+    excludeIdsFromCSVFiles: boolean = false;
     fileLog: boolean = true;
 
 
@@ -65,6 +65,7 @@ export default class Script {
     targetOrg: ScriptOrg;
     basePath: string = "";
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
+    sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
 
     get isPersonAccountEnabled(): boolean {
@@ -252,10 +253,12 @@ export default class Script {
             object.query = composeQuery(object.parsedQuery);
 
             // Warn user if there are no any fields to update
-            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0){
+            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0) {
                 this.logger.warn(RESOURCES.noUpdateableFieldsInTheSObject, object.name);
             }
         });
+
+
     }
 
     /**
@@ -264,25 +267,81 @@ export default class Script {
      * @memberof Script
      */
     verifyOrgs() {
-        
+
         // ***** Verifying person accounts
         if (this.objects.some(obj => obj.name == "Account" || obj.name == "Contact")) {
             // Verify target org
             if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled
                 && this.targetOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled) {
                 // Missing Person Account support in the Target
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts, 
-                            this.logger.getResourceString(RESOURCES.source)));
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts,
+                    this.logger.getResourceString(RESOURCES.source)));
             }
             // Verify source org
             if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled
                 && this.targetOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled) {
                 // Missing Person Account support in the Source
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts, 
-                            this.logger.getResourceString(RESOURCES.target)));
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts,
+                    this.logger.getResourceString(RESOURCES.target)));
             }
         }
 
     }
+
+    /**
+    * Load Field Mapping configuration from the Script
+    *
+    * @memberof Script
+    */
+    loadFieldMappingConfiguration() {
+        this.objects.forEach(object => {
+            if (object.useFieldMapping && object.fieldMapping.length > 0) {
+                if (!this.sourceTargetFieldMapping.has(object.name)) {
+                    this.sourceTargetFieldMapping.set(object.name, new ObjectFieldMapping(object.name, object.name));
+                }
+                object.fieldMapping.forEach(mapping => {
+                    if (mapping.targetObject) {
+                        this.sourceTargetFieldMapping.get(object.name).targetSObjectName = mapping.targetObject;
+                    }
+                    if (mapping.sourceField && mapping.targetField) {
+                        this.sourceTargetFieldMapping.get(object.name).fieldMapping.set(mapping.sourceField, mapping.targetField);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Load Field Mapping configuration from the csv file
+     *
+     * @returns {Promise<void>}
+     * @memberof Script
+     */
+    async loadFieldMappingConfigurationFileAsync(): Promise<void> {
+        let filePath = path.join(this.basePath, CONSTANTS.FIELD_MAPPING_FILENAME);
+        let csvRows = await Common.readCsvFileAsync(filePath);
+        if (csvRows.length > 0) {
+            this.logger.infoVerbose(RESOURCES.readingFieldsMappingFile, CONSTANTS.FIELD_MAPPING_FILENAME);
+            csvRows.forEach(row => {
+                if (row["ObjectName"] && row["Target"]) {
+                    let objectName = String(row["ObjectName"]).trim();
+                    let scriptObject = this.objectsMap.get(objectName);
+                    if (scriptObject && scriptObject.useFieldMapping) {
+                        let target = String(row["Target"]).trim();
+                        if (!row["FieldName"]) {
+                            this.sourceTargetFieldMapping.set(objectName, new ObjectFieldMapping(objectName, target));
+                        } else {
+                            let fieldName = String(row["FieldName"]).trim();
+                            if (!this.sourceTargetFieldMapping.has(objectName)) {
+                                this.sourceTargetFieldMapping.set(objectName, new ObjectFieldMapping(objectName, objectName));
+                            }
+                            this.sourceTargetFieldMapping.get(objectName).fieldMapping.set(fieldName, target);
+                        }
+                    }
+                }
+            });
+        }
+    }
+
 }
 

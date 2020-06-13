@@ -24,7 +24,7 @@ import { CONSTANTS } from './statics';
 import parse = require('csv-parse/lib/sync');
 import glob = require("glob");
 import { Logger, RESOURCES } from './logger';
-import { CommandAbortedByUserError, CsvChunks } from '../../models';
+import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionError } from '../../models';
 import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
 import { IPluginInfo } from '../../models/common_models/helper_interfaces';
@@ -37,6 +37,8 @@ const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
  * Common utilities
  */
 export class Common {
+
+    static logger: Logger;
 
     /**
     * @static Splits array to multiple chunks by max chunk size
@@ -583,44 +585,48 @@ export class Common {
                 resolve(new Array<object>());
                 return;
             }
-            if (linesAmountToRead == 0) {
-                let input = fs.readFileSync(filePath, 'utf8');
-                input = input.replace(/^\uFEFF/, '');
-                const records = parse(input, {
-                    columns: ___columns,
-                    skip_empty_lines: true,
-                    cast: ___csvCast
-                });
-                resolve([...records]);
-            } else {
-                let lineReader = readline.createInterface({
-                    input: fs.createReadStream(filePath, { encoding: 'utf8' })
-                });
-                let lineCounter = 0; let wantedLines = [];
-                lineReader.on('line', function (line: any) {
-                    lineCounter++;
-                    wantedLines.push(line);
-                    if (lineCounter == linesAmountToRead) {
-                        lineReader.close();
-                    }
-                });
-                lineReader.on('close', function () {
-                    if (wantedLines.length == 1) {
-                        let output = [wantedLines[0].split(',').reduce((acc, field) => {
-                            acc[field] = null;
-                            return acc;
-                        }, {})];
-                        resolve(output);
-                        return;
-                    }
-                    let input = wantedLines.join('\n');
+            try {
+                if (linesAmountToRead == 0) {
+                    let input = fs.readFileSync(filePath, 'utf8');
+                    input = input.replace(/^\uFEFF/, '');
                     const records = parse(input, {
-                        columns: true,
+                        columns: ___columns,
                         skip_empty_lines: true,
                         cast: ___csvCast
                     });
                     resolve([...records]);
-                });
+                } else {
+                    let lineReader = readline.createInterface({
+                        input: fs.createReadStream(filePath, { encoding: 'utf8' })
+                    });
+                    let lineCounter = 0; let wantedLines = [];
+                    lineReader.on('line', function (line: any) {
+                        lineCounter++;
+                        wantedLines.push(line);
+                        if (lineCounter == linesAmountToRead) {
+                            lineReader.close();
+                        }
+                    });
+                    lineReader.on('close', function () {
+                        if (wantedLines.length == 1) {
+                            let output = [wantedLines[0].split(',').reduce((acc, field) => {
+                                acc[field] = null;
+                                return acc;
+                            }, {})];
+                            resolve(output);
+                            return;
+                        }
+                        let input = wantedLines.join('\n');
+                        const records = parse(input, {
+                            columns: true,
+                            skip_empty_lines: true,
+                            cast: ___csvCast
+                        });
+                        resolve([...records]);
+                    });
+                }
+            } catch (ex) {
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.readingCsvFileError, filePath, ex.message));
             }
         });
 
@@ -874,36 +880,35 @@ export class Common {
     }
 
     /**
-     * 
-     * @static Displays yes/no user prompt to abort 
-     *          the operation with warning
-     * 
-     * @param {Logger} logger
-     * @param {string} warnMessage The message for warning
-     * @param {boolean} showPrompt true to show prompt, false to continue with warning
-     * @param {string} promptMessage  The yes/no prompt message
-     * @param {string} errorMessage The error message when user selected to abort the operation (choosen "no")
-     * @param {...string[]} warnTokens The tokens for the warning message
-     * @returns {Promise<void>}
-     * @memberof CommonUtils
-     */
-    public static async abortWithPrompt(logger: Logger,
-        warnMessage: string,
+    * 
+    * @static Displays yes/no user prompt to abort 
+    *          the operation with warning
+    * 
+    * @param {Logger} logger
+    * @param {string} warnMessage The message for warning
+    * @param {boolean} showPrompt true to show prompt, false to continue with warning
+    * @param {string} promptMessage  The yes/no prompt message
+    * @param {string} errorMessage The error message when user selected to abort the operation (choosen "no")
+    * @param {...string[]} warnTokens The tokens for the warning message
+    * @returns {Promise<void>}
+    * @memberof CommonUtils
+    */
+    public static async abortWithPrompt(warnMessage: string,
         showPrompt: boolean,
         promptMessage: string,
         errorMessage: string,
         onBeforeAbortAsync: () => Promise<void>,
         ...warnTokens: string[]): Promise<void> {
-        logger.warn.apply(logger, [warnMessage, ...warnTokens]);
+        this.logger.warn.apply(this.logger, [warnMessage, ...warnTokens]);
         if (showPrompt) {
-            if (!(await logger.yesNoPromptAsync(promptMessage))) {
-                logger.log(RESOURCES.newLine);
+            if (!(await this.logger.yesNoPromptAsync(promptMessage))) {
+                this.logger.log(RESOURCES.newLine);
                 if (onBeforeAbortAsync) {
                     await onBeforeAbortAsync();
                 }
-                throw new CommandAbortedByUserError(logger.getResourceString(errorMessage));
+                throw new CommandAbortedByUserError(this.logger.getResourceString(errorMessage));
             }
-            logger.log(RESOURCES.newLine);
+            this.logger.log(RESOURCES.newLine);
         }
     }
 
@@ -1113,6 +1118,75 @@ export class Common {
         return await Throttle.all(tasks, {
             maxInProgress
         });
+    }
+
+    /**
+         * @static Transforms field name into __r field
+         * f. ex.: Account__c => Account__r
+         *              ParentId => Parent
+         * 
+         * @param {SFieldDescribe} [fieldDescribe] The field description [optional]
+         * @param {string} [fieldName] The field name [optional]
+         * @returns {string}
+         * @memberof Common
+         */
+    public static getFieldName__r(fieldDescribe?: SFieldDescribe, fieldName?: string): string {
+        if (fieldDescribe) {
+            let name = fieldDescribe.name.split('.')[0];
+            if (fieldDescribe.custom) {
+                return name.replace("__pc", "__pr").replace("__c", "__r");
+            } else {
+                return Common.trimEndStr(name, "Id");
+            }
+        } else if (fieldName) {
+            let name = fieldName.split('.')[0];
+            if (!fieldName.endsWith("Id")) {
+                return name.replace("__pc", "__pr").replace("__c", "__r");
+            } else {
+                return Common.trimEndStr(name, "Id");
+            }
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * @static Transforms __r field name into simple lookup Id field
+     * f.ex.: Account__r.Name => Account__c
+     *       Id => Id,
+     *       Account__c => Account__c         
+
+     * @param {SFieldDescribe} [fieldDescribe] The field description [optional]
+     * @param {string} [fieldName] The field name [optional]
+     * @returns {string}
+     * @memberof Common
+     */
+    public static getFieldNameId(fieldDescribe?: SFieldDescribe, fieldName?: string): string {
+        if (fieldDescribe) {
+            let parts = fieldDescribe.name.split('.');
+            if (!fieldDescribe.is__r || parts.length < 2) {
+                return fieldDescribe.name;
+            }
+            if (fieldDescribe.custom) {
+                return parts[0].replace("__pr", "__pc").replace("__r", "__c");
+            } else {
+                return parts[0] + "Id";
+            }
+        } else if (fieldName) {
+            fieldName = fieldName.split('.')[0];
+            if (fieldName.endsWith("Id")) {
+                return fieldName;
+            } else if (fieldName.endsWith("__pr") || fieldName.endsWith("__r")) {
+                return fieldName.replace("__pr", "__pc").replace("__r", "__c");
+            } else if (!fieldName.endsWith("__pc") && !fieldName.endsWith("__c")
+                && fieldName.endsWith("__s")) {
+                return fieldName + "Id";
+            } else {
+                return fieldName;
+            }
+        } else {
+            return "";
+        }
     }
 
 }

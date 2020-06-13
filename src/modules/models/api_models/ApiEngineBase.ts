@@ -10,7 +10,7 @@ import { IApiJobCreateResult, IApiEngineInitParameters, ICsvChunk } from "./help
 import { ApiInfo, IApiEngine } from ".";
 import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
-import { IOrgConnectionData } from "../common_models/helper_interfaces";
+import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
 
 
 
@@ -20,7 +20,7 @@ import { IOrgConnectionData } from "../common_models/helper_interfaces";
  * @export
  * @class ApiProcessBase
  */
-export default class ApiEngineBase implements IApiEngine {
+export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
     pollingIntervalMs: number
     bulkApiV1BatchSize: number;
@@ -28,6 +28,7 @@ export default class ApiEngineBase implements IApiEngine {
     operation: OPERATION;
     updateRecordId: boolean;
     sObjectName: string;
+    oldSObjectName: string;
     targetCSVFullFilename: string;
     createTargetCSVFiles: boolean;
     logger: Logger;
@@ -66,16 +67,40 @@ export default class ApiEngineBase implements IApiEngine {
         this.allOrNone = init.allOrNone;
         this.createTargetCSVFiles = init.createTargetCSVFiles;
         this.targetCSVFullFilename = init.targetCSVFullFilename;
+        if (init.targetFieldMapping) {
+            Object.assign(this, init.targetFieldMapping);
+        }
     }
+
+    sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query, targetSObjectName: sourceObjectName };
+    sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
+    targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
 
     // ----------------------- Interface IApiProcess ----------------------------------
     getEngineName(): string {
         return "REST API";
     }
 
-    async executeCRUD(allRcords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
-        await this.createCRUDApiJobAsync(allRcords);
-        return await this.processCRUDApiJobAsync(progressCallback);
+    async executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
+
+        // Map source records
+        this.oldSObjectName = this.sObjectName;
+        let mappedRecords = this.sourceRecordsToTarget(allRecords, this.sObjectName);
+        this.sObjectName = mappedRecords.targetSObjectName;
+        allRecords = mappedRecords.records;
+
+        // Create CRUD job
+        await this.createCRUDApiJobAsync(allRecords);
+        
+        // Execute CRUD job
+        let resultRecords = await this.processCRUDApiJobAsync(progressCallback);
+
+        // Map target records
+        this.sObjectName = this.oldSObjectName;
+        resultRecords = this.targetRecordsToSource(resultRecords, this.sObjectName).records;
+
+        // Return
+        return resultRecords;
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {

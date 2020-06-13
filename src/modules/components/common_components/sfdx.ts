@@ -16,13 +16,13 @@ import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
 import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError } from '../../models';
 import { Common } from './common';
-import { IOrgConnectionData, IBlobField } from '../../models/common_models/helper_interfaces';
+import { IOrgConnectionData, IBlobField, IFieldMapping, IFieldMappingResult } from '../../models/common_models/helper_interfaces';
 import { Logger, RESOURCES } from './logger';
 
 var jsforce = require("jsforce");
 
 
-export class Sfdx {
+export class Sfdx implements IFieldMapping {
 
     org: ScriptOrg;
 
@@ -30,9 +30,16 @@ export class Sfdx {
         return this.org.script.logger;
     }
 
-    constructor(org: ScriptOrg) {
+    constructor(org: ScriptOrg, targetFieldMapping?: IFieldMapping) {
         this.org = org;
+        if (targetFieldMapping) {
+            Object.assign(this, targetFieldMapping);
+        }
     }
+
+    sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query, targetSObjectName: sourceObjectName };
+    sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
+    targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
 
     /**
      *  Performs SOQL query and returns records
@@ -105,11 +112,17 @@ export class Sfdx {
             if (csvFullFilename && sFieldsDescribeMap) {
                 return await ___readAndFormatCsvRecordsAsync();
             }
+            // Map query /////
+            let parsedQuery = parseQuery(soql);
+            soql = this.sourceQueryToTarget(soql, parsedQuery.sObject).query;
+            // Query records /////
             let records = [].concat(await ___queryAsync(soql));
             if (soql.indexOf("FROM Group") >= 0) {
                 soql = soql.replace("FROM Group", "FROM User");
                 records = records.concat(await ___queryAsync(soql));
             }
+            // Map records /////
+            records = this.targetRecordsToSource(records, parsedQuery.sObject).records;
             return records;
         } catch (ex) {
             throw new CommandExecutionError(ex.message);
