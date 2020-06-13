@@ -5,7 +5,7 @@
 ### - *** Current repository version 3.4.0                      *** - ###
 ### - *** Latest updates: New Field Mapping Feature,            *** - ###
 ### - ***                 new Value Mapping Feature,            *** - ###
-### - ***                 built-in support for address fields   *** - ###
+### - ***                 support for compound address fields   *** - ###
 ### ----------------------------------------------------------------- ###
 ### - *** Always make sure, that you have                       *** - ###
 ### - *** the latest version installed                          *** - ###
@@ -23,11 +23,11 @@
 
 **The SFDMU Plugin (SFDX Data Move Utility) is the advanced and very handy alternative to the traditional Salesforce Data Loader application**. 
 
-This SFDX Plugin will help you to populate your org (scratch / dev / sandbox / prod) with data imported from another org or CSV files. It supports all important CRUD operations **Insert** / **Update** / **Upsert** / **Delete** operations **also for multiple related sObjects**.
+This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox / production)** with data imported from another org or CSV files. It supports all important CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**)  **also for multiple related sObjects**.
 
 
 
-### The Highlights of the tool:
+### The Highlights of the Tool:
 
 - Supports **direct data migration** from Salesforce org to another Salesforce org without intermediate CSV files.
 
@@ -128,6 +128,8 @@ $ sfdx plugins:uninstall sfdmu
 $ sfdx plugins:install sfdmu
 ```
 
+
+
 ### Installation with the source code:
 
 ```bash
@@ -154,6 +156,8 @@ $ npm install
 # 4. Link the Plugin to the Salesforce CLI: 
 $ sfdx plugins:link
 ```
+
+
 
 ### Debugging.
 
