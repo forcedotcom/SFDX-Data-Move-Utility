@@ -115,7 +115,7 @@
     "invalidRecordHashcode": "Invalid record hashcode. Unable to find matching record from the response returned by the bulk job.",
     "apiOperationFailed": "{%s} The %s API operation FAILED.",
     "apiOperationProcessError": "{%s} The %s API operation FAILED with message: %s.",
-    "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created.",
+    "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created. Uploading data...",
     "apiOperationBatchCreated": "[Batch# %s:%s] {%s} The batch has been created. Uploading data...",
     "apiOperationDataUploaded": "[Batch# %s:%s] {%s} The data has been uploaded. Processing...",
     "apiOperationInProgress": "[Batch# %s:%s] {%s} Processing... %s records succeeded, %s records failed.",

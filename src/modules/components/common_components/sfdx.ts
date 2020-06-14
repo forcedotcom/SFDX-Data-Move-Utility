@@ -56,6 +56,7 @@ export class Sfdx implements IFieldMapping {
         const makeQueryAsync = (soql: string) => new Promise((resolve, reject) => {
 
             let conn = self.org.getConnection();
+            conn.bulk.pollTimeout = CONSTANTS.BULK_QUERY_API_POLL_TIMEOUT;
 
             let records = [];
 
@@ -63,6 +64,7 @@ export class Sfdx implements IFieldMapping {
                 conn.bulk.query(soql).on("record", function (record: any) {
                     records.push(record);
                 }).on("end", function () {
+                    ___fixRecords(records);
                     resolve(<QueryResult<object>>{
                         done: true,
                         records: records,
@@ -75,6 +77,7 @@ export class Sfdx implements IFieldMapping {
                 let query = conn.query(soql).on("record", function (record: any) {
                     records.push(record);
                 }).on("end", function () {
+                    ___fixRecords(records);
                     resolve(<QueryResult<object>>{
                         done: true,
                         records: records,
@@ -90,6 +93,18 @@ export class Sfdx implements IFieldMapping {
         });
 
         return <QueryResult<object>>(await makeQueryAsync(soql));
+
+        function ___fixRecords(records: Array<any>){
+            if (records.length == 0) return;
+            let props = Object.keys(records[0]);
+            records.forEach(record => {
+                props.forEach(prop => {
+                    if (record[prop] === ""){
+                        record[prop] = null;
+                    }
+                });
+            });
+        }
     }
 
     /**
