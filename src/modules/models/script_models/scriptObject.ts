@@ -39,7 +39,6 @@ export default class ScriptObject {
     @Type(() => ScriptMockField)
     mockFields: ScriptMockField[] = new Array<ScriptMockField>();
 
-    // TODO: Document this property!
     @Type(() => ScriptMappingItem)
     fieldMapping: ScriptMappingItem[] = new Array<ScriptMappingItem>();
 
@@ -54,9 +53,8 @@ export default class ScriptObject {
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
 
-    // TODO: Document this property! Put it to false on production!
-    useFieldMapping: boolean = true;
-    useValuesMapping: boolean = true;
+    useFieldMapping: boolean = false;
+    useValuesMapping: boolean = false;
 
     /**
      * [Obsolete] Replaced with "master".
@@ -436,9 +434,7 @@ export default class ScriptObject {
                 try {
 
                     if (this.isMapped) {
-                        // TODO: When field mapping is available for this object =>
-                        // skip object description & validation.
-                        // But may be added in future.
+                        // TODO: Implement target validation when there is a field mapping
                         this.targetSObjectDescribe = this.sourceSObjectDescribe;
                         return;
                     }

@@ -6,8 +6,7 @@
  */
 
 
- // TODO: Document this class!
-/**
+ /**
  * Parsed FieldMapping object of the script.
  * Represents field mapping
  *
