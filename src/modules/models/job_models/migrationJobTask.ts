@@ -749,8 +749,6 @@ export default class MigrationJobTask {
                 }
             }
             if (hasRecords) {
-                // Map records  --------
-                this._mapRecords(records);
                 // Set external id map --------- TARGET
                 let newRecordsCount = this._setExternalIdMap(records, this.targetData.extIdRecordsMap, this.targetData.idRecordsMap, true);
                 // Completed message ------

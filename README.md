@@ -1,14 +1,12 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
 ```bash
-### ----------------------------------------------------------------- ###
-### - *** Current repository version 3.4.1                      *** - ###
-### - *** Latest updates: Fixed timeout issue on large data sets*** - ###
-### - *** Fixed issue when getting the data using Bulk Query API*** - ###
-### ----------------------------------------------------------------- ###
-### - *** Always make sure, that you have                       *** - ###
-### - *** the latest version installed                          *** - ###
-### ----------------------------------------------------------------- ###
+### ------------------------------------------- ###
+### - *** Latest version: v3.4.2          *** - ###
+### ------------------------------------------- ###
+### - *** Always make sure, that you have *** - ###
+### - *** the latest version installed    *** - ###
+### ------------------------------------------- ###
 ```
 #### For the detailed documentation visit the project WIKI: [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki](https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 
@@ -173,23 +171,3 @@ $ sfdx plugins:link
 #    to each CLI command that runs the SFDMU Plugin. 
 
 ```
-
-
-
-#### Troubleshooting.
-
-##### Handling of large data sets.
-
-Sometimes, when processing a large data set, for example a large CSV file (~>100Mb), you may face nodejs memory issue, such as: "*Allocation failed - JavaScript heap out of memory*".
-
-In this case you need to extend the memory allocation limit for the nodejs processes by executing the following command in the Terminal/Console:
-
-```bash
-# For the Windows OS:
-set NODE_OPTIONS=--max-old-space-size=8192
-# For the MAC/LINUX OS:
-export NODE_OPTIONS=--max-old-space-size=8192
-
-```
-
-This example of the command extends the maximum allowed memory size up to 8Gb.
