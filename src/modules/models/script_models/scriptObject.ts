@@ -21,7 +21,7 @@ import {
     Field as SOQLField,
     getComposedField
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappingItem } from "..";
+import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappingItem, ObjectFieldMapping } from "..";
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
@@ -89,6 +89,10 @@ export default class ScriptObject {
     referenceFieldToObjectMap: Map<string, string> = new Map<string, string>();
     excludedFieldsFromUpdate: Array<string> = new Array<string>();
 
+    get sourceTargetFieldMapping(): ObjectFieldMapping {
+        return this.script.sourceTargetFieldMapping.get(this.name) || new ObjectFieldMapping(this.name, this.name);
+    }
+
     get task(): MigrationJobTask {
         return this.script.job.getTaskBySObjectName(this.name);
     }
@@ -130,8 +134,15 @@ export default class ScriptObject {
             let describe = this.targetSObjectDescribe
                 && this.targetSObjectDescribe.fieldsMap
                 && this.targetSObjectDescribe.fieldsMap.get(name);
+            let enabledRule = this.useFieldMapping 
+                    && this.sourceTargetFieldMapping.hasChange 
+                    && this.sourceTargetFieldMapping.fieldMapping.has(name);
+                    // TEST:
+                    if (enabledRule){
+                        let kk = "";
+                    }
             if (!describe
-                || describe.readonly
+                || describe.readonly && !enabledRule
                 || this.excludedFieldsFromUpdate.indexOf(name) >= 0) {
                 return null;
             }
