@@ -1591,11 +1591,12 @@ export default class MigrationJobTask {
                 targetParsedQuery.sObject = mapping.targetSObjectName;
                 let fields = [];
                 targetParsedQuery.fields.forEach((field: SOQLField) => {
-                    let describe = scriptObject.fieldsInQueryMap.get(field.field);
+                    let rawValue = String(field["rawValue"] || field.field);
+                    let describe = scriptObject.fieldsInQueryMap.get(rawValue);
                     if (describe) {
                         fields.push(getComposedField(describe.targetName));
                     } else {
-                        fields.push(getComposedField(field.field));
+                        fields.push(getComposedField(rawValue));
                     }
                 });
                 targetParsedQuery.fields = fields;
