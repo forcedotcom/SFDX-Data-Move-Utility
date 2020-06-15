@@ -1288,7 +1288,7 @@ export default class MigrationJobTask {
                 .filter(key => fieldsToCompareRecords.length == 0 || fieldsToCompareRecords.indexOf(key) >= 0)
                 .some(key => {
                     if (key != "Id" && key != CONSTANTS.__ID_FIELD_NAME) {
-                        return target[key] != cloned[key];
+                        return target[key] != cloned[key] && target.hasOwnProperty(key);
                     }
                     return false;
                 });
