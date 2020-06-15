@@ -137,10 +137,6 @@ export default class ScriptObject {
             let enabledRule = this.useFieldMapping 
                     && this.sourceTargetFieldMapping.hasChange 
                     && this.sourceTargetFieldMapping.fieldMapping.has(name);
-                    // TEST:
-                    if (enabledRule){
-                        let kk = "";
-                    }
             if (!describe
                 || describe.readonly && !enabledRule
                 || this.excludedFieldsFromUpdate.indexOf(name) >= 0) {
