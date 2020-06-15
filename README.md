@@ -18,7 +18,7 @@
 
 ## Introduction:
 
-**The SFDMU Plugin (SFDX Data Move Utility) is the powerful salesforce data migration tool and it is advanced and very handy alternative to the traditional Salesforce Data Loader application** **and to the set of** **force:data:tree** **commands**. 
+**The SFDMU Plugin (SFDX Data Move Utility) is the powerful salesforce data migration tool and it is the innovative and very handy alternative to the traditional Salesforce Data Loader application as well as to the set of the force:data:tree commands.** 
 
 This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox / production)** with data imported from another org or CSV files. It supports all important CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**)  **also for multiple related sObjects**.
 
