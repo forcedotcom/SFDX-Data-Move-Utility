@@ -1514,14 +1514,14 @@ export default class MigrationJobTask {
     /**
      * @returns {number} New records count
      */
-    private _setExternalIdMap(targetRecords: Array<any>,
+    private _setExternalIdMap(records: Array<any>,
         sourceExtIdRecordsMap: Map<string, string>,
         sourceIdRecordsMap: Map<string, string>,
         isTarget: boolean = false): number {
 
         let newRecordsCount = 0;
 
-        targetRecords.forEach(targetRecord => {
+        records.forEach(targetRecord => {
             if (targetRecord["Id"]) {
                 let value = this.getRecordValue(targetRecord, this.complexExternalId);
                 if (value) {
@@ -1559,10 +1559,29 @@ export default class MigrationJobTask {
             let key = this.sObjectName + field;
             let valuesMap = this.job.valueMapping.get(key);
             if (valuesMap && valuesMap.size > 0) {
+                let sourceExtIdMap: Map<string, string>;
+                let nameId: string;
+                let describe = [...this.data.fieldsInQueryMap.values()].filter(f => {
+                    return f.name == field;
+                })[0];
+                if (describe.is__r) {
+                    let parentTask = this.job.getTaskBySObjectName(describe.parentLookupObject.name);
+                    if (parentTask) {
+                        sourceExtIdMap = parentTask.sourceData.extIdRecordsMap;
+                        nameId = describe.nameId;
+                    }
+                }
                 records.forEach((record: any) => {
                     let rawValue = (String(record[field]) || "").trim();
-                    if (valuesMap.has(rawValue)) {
-                        record[field] = valuesMap.get(rawValue);
+                    let newValue = valuesMap.get(rawValue);
+                    if (newValue) {
+                        record[field] = newValue;
+                    }
+                    if (nameId && record.hasOwnProperty(nameId)) {
+                        let newValueId = sourceExtIdMap.get(newValue);
+                        if (newValueId) {
+                            record[nameId] = newValueId;
+                        }
                     }
                 });
             }
