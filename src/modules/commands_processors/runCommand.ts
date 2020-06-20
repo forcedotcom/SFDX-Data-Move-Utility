@@ -129,7 +129,8 @@ export class RunCommand {
 
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.dataMigrationProcessStarted);
-        this.logger.infoVerbose(RESOURCES.buildingMigrationStaregy);
+
+        this.logger.infoNormal(RESOURCES.buildingMigrationStaregy);
 
         this.job = new Job({
             script: this.script
@@ -144,8 +145,8 @@ export class RunCommand {
      * @returns {Promise<void>}
      * @memberof RunCommand
      */
-    async processCSVFiles(): Promise<void> {
-        await this.job.processCSVFiles();
+    async processCSVFilesAsync(): Promise<void> {
+        await this.job.processCSVFilesAsync();
     }
 
     /**
@@ -154,10 +155,13 @@ export class RunCommand {
     * @returns {Promise<void>}
     * @memberof RunCommand
     */
-    async prepareJob(): Promise<void> {
+    async prepareJobAsync(): Promise<void> {
+        
+        this.logger.infoNormal(RESOURCES.preparingJob);
+
         this.job.prepareJob();
-        await this.job.getTotalRecordsCount();
-        await this.job.deleteOldRecords();
+        await this.job.getTotalRecordsCountAsync();
+        await this.job.deleteOldRecordsAsync();
     }
 
     /**
@@ -166,9 +170,12 @@ export class RunCommand {
      * @returns {Promise<void>}
      * @memberof RunCommand
      */
-    async executeJob(): Promise<void> {
-        await this.job.retrieveRecords();
-        await this.job.updateRecords();
+    async executeJobAsync(): Promise<void> {
+
+        this.logger.infoNormal(RESOURCES.executingJob);
+
+        await this.job.retrieveRecordsAsync();
+        await this.job.updateRecordsAsync();
         this.logger.infoMinimal(RESOURCES.newLine);
     }
 

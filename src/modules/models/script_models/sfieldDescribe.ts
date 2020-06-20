@@ -102,6 +102,10 @@ export default class SFieldDescribe {
         return Common.isComplexField(this.name);
     }
 
+    get isContainsComplex(): boolean {
+        return Common.isContainsComplexField(this.name);
+    }
+
     get is__r(): boolean {
         return !!this.idSField;
     }
