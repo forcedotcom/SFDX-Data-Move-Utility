@@ -108,6 +108,8 @@
     "csvFilesWereUpdated": "Amount of updated source CSV files: %s",
     "validationAndFixingsourceCSVFilesCompleted": "Validating and repairing of the source CSV files have finished.",
 
+    "preparingJob": "Preparing has been finished.",
+    "executingJob": "Ready to process the data.",
     "executionOrder": "Order of objects to update data",
     "queryingOrder": "Order of objects to retrieve data",
 

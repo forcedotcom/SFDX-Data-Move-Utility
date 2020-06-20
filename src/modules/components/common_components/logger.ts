@@ -136,6 +136,8 @@ export enum RESOURCES {
     csvFilesWereUpdated = "csvFilesWereUpdated",
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
 
+    preparingJob = "preparingJob",
+    executingJob = "executingJob",
     executionOrder = "executionOrder",
     queryingOrder = "queryingOrder",
 

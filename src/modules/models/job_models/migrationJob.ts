@@ -9,11 +9,12 @@
 import { Common } from "../../components/common_components/common";
 import { CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
-import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping } from "..";
+import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping, SFieldDescribe } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
 import MigrationJobTask from "./migrationJobTask";
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_models/helper_interfaces";
+import { sfdc } from "@salesforce/core";
 
 
 
@@ -185,7 +186,7 @@ export default class MigrationJob {
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async processCSVFiles(): Promise<void> {
+    async processCSVFilesAsync(): Promise<void> {
 
         // Load mapping files
         await this._loadValueMappingFileAsync();
@@ -226,7 +227,7 @@ export default class MigrationJob {
     * @returns {Promise<void>}
     * @memberof MigrationJob
     */
-    async getTotalRecordsCount(): Promise<void> {
+    async getTotalRecordsCountAsync(): Promise<void> {
 
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.gettingRecordsCount);
@@ -243,7 +244,7 @@ export default class MigrationJob {
     * @returns {Promise<void>}
     * @memberof MigrationJob
     */
-    async deleteOldRecords(): Promise<void> {
+    async deleteOldRecordsAsync(): Promise<void> {
 
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.deletingOldData);
@@ -267,7 +268,7 @@ export default class MigrationJob {
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async retrieveRecords(): Promise<void> {
+    async retrieveRecordsAsync(): Promise<void> {
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // STEP 1 SOURCE FORWARDS  :::::::::::::::::::::::::::::::::::::::::::::::::
@@ -369,7 +370,7 @@ export default class MigrationJob {
         }
     }
 
-    async updateRecords(): Promise<void> {
+    async updateRecordsAsync(): Promise<void> {
 
         let self = this;
 
@@ -557,7 +558,9 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     createSourceTargetMappingFields() {
+
         let self = this;
+
         if (this.script.sourceTargetFieldMapping.size > 0) {
             this.script.objects.forEach(object => {
                 object.fieldsInQueryMap.forEach(field => {
@@ -568,24 +571,34 @@ export default class MigrationJob {
                         if (ret.changed) {
                             field.m_targetName = ret.fieldName;
                         }
-                    } else {
-                        // Complex or __r Account__r.Name__c
-                        // Account__r //////
+                    } else if (field.is__r) {
+                        // __r field:  Account__r.Name__c to Account2__r.Name2__c
+                        // 1. Account__r => Account2__r //////
                         let ret = ___mapField(object.name, field.nameId);
                         if (ret.changed) {
                             parts[0] = Common.getFieldName__r(null, ret.fieldName);
                         }
-                        // Name__c //////
-                        if (!Common.isComplexField(parts[1])) {
-                            let ret = ___mapField(field.parentLookupObject.name, parts[1]);
-                            if (ret.changed) {
-                                parts[1] = ret.fieldName;
+                        // Name__c => Name2__c //////
+                        if (!field.isContainsComplex) {
+                            // => Name2__c
+                            if (!Common.isComplexField(parts[1])) {
+                                let ret = ___mapField(field.parentLookupObject.name, parts[1]);
+                                if (ret.changed) {
+                                    parts[1] = ret.fieldName;
+                                }
                             }
+                        } else {
+                            // Name2__r.$$Object__r.ExternalId__c$Object2__r.ExternalId2__c =>
+                            //  Name2__r.$$Object2__r.External_Id__c$Object2__r.External_Id2__c /////
+                            parts = [].concat(parts[0], ___mapComplexField(field.parentLookupObject.name, parts.slice(1).join('.')));
                         }
                         field.m_targetName = parts.join('.');
+                    } else if (field.isComplex) {
+                        // $$ExternalId__c$ExternalId2__c => $$External_Id__c$External_Id2__c
+                        field.m_targetName = ___mapComplexField(object.name, field.name);
                     }
                 });
-            });
+            })
         }
 
         // --------------------------- Internal functions -------------------------------------        
@@ -603,6 +616,69 @@ export default class MigrationJob {
                 fieldName,
                 changed
             }
+        }
+
+        function ___mapComplexField(objectName: string, fieldName: string) {
+
+            if (!objectName || !fieldName) {
+                return fieldName;
+            }
+
+            let parentObject_level1 = self.script.objectsMap.get(objectName);
+            if (!parentObject_level1 || !parentObject_level1.useFieldMapping) {
+                return fieldName;
+            }
+
+            let fieldNames = Common.getFieldFromComplexField(fieldName).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR);
+
+            fieldNames = fieldNames.map(fieldName => {
+                // Object__r.ExternalId__c //////
+                let parts = fieldName.split('.');
+                // Get "Object__c" from "Object__r"
+                let nameId = Common.getFieldNameId(null, parts[0]);
+                // Get "Object__c" field description
+                let sField = parentObject_level1.targetSObjectDescribe.fieldsMap.get(nameId);
+                if (!sField) {
+                    return parts.join('.');
+                }
+                if (sField.isSimple || sField.isSimpleReference) {
+                    // Object__c = simple field (Object__c) 
+                    //            or __r field (Object__r.ExternalId__c)
+                    let ret = ___mapField(objectName, nameId);
+                    if (ret.changed) {
+                        parts[0] = ret.fieldName;
+                    }
+                }
+                if (parts.length == 1) {
+                    // Object__c = simple field (Object__c)
+                    return parts.join('.');
+                }
+
+                // Object__c => Object__r ///////////
+                parts[0] = Common.getFieldName__r(null, parts[0]);
+
+                // Object__c = simple reference field (Object__r.ExternalId__c)
+                //             or very complex field (Object__r.ExternalId__r.Name__c)                
+                let parentObject_level2 = self.script.objectsMap.get(sField.referencedObjectType);
+                if (!parentObject_level2 || !parentObject_level2.useFieldMapping) {
+                    return parts.join('.');
+                }
+                // Get ExternalId__c description from the referenced object
+                sField = parentObject_level2.targetSObjectDescribe.fieldsMap.get(parts[1]);
+                if (!sField) {
+                    // Not referenced field => return as is
+                    return parts.join('.');
+                }
+                // ExternalId__c => External_Id__c
+                let ret = ___mapField(parentObject_level2.name, parts[1]);
+                if (ret.changed) {
+                    parts[1] = ret.fieldName;
+                }
+                return parts.join('.');
+            });
+
+            fieldName = Common.getComplexField(fieldNames.join(CONSTANTS.COMPLEX_FIELDS_SEPARATOR));
+            return fieldName;
         }
     }
 

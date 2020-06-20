@@ -35,6 +35,13 @@ import * as deepClone from 'deep.clone';
  */
 export default class ScriptObject {
 
+
+    constructor(name? : string){
+        if (name){
+            this.query = `SELECT Id FROM ${name}`;
+        }
+    }
+
     // ------------- JSON --------------
     @Type(() => ScriptMockField)
     mockFields: ScriptMockField[] = new Array<ScriptMockField>();
@@ -74,7 +81,11 @@ export default class ScriptObject {
         if (this.parsedQuery) {
             return this.parsedQuery.sObject;
         } else {
-            return parseQuery(this.query).sObject;
+            try {
+                return parseQuery(this.query).sObject;
+            } catch (ex) {
+                return "";
+            }
         }
     };
     sourceSObjectDescribe: SObjectDescribe;
@@ -134,9 +145,9 @@ export default class ScriptObject {
             let describe = this.targetSObjectDescribe
                 && this.targetSObjectDescribe.fieldsMap
                 && this.targetSObjectDescribe.fieldsMap.get(name);
-            let enabledRule = this.useFieldMapping 
-                    && this.sourceTargetFieldMapping.hasChange 
-                    && this.sourceTargetFieldMapping.fieldMapping.has(name);
+            let enabledRule = this.useFieldMapping
+                && this.sourceTargetFieldMapping.hasChange
+                && this.sourceTargetFieldMapping.fieldMapping.has(name);
             if (!describe
                 || describe.readonly && !enabledRule
                 || this.excludedFieldsFromUpdate.indexOf(name) >= 0) {

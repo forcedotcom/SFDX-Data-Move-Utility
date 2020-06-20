@@ -843,7 +843,7 @@ export default class MigrationJobTask {
                     // For Step 1 : Simple sFields or reference fields with the parent lookup BEFORE
                     return field.isSimple || field.isSimpleReference && self.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0;
                 else
-                    // For Step 2 : Reference sFields with the parent lookup AFTER
+                    // For Step 2 : Reference sFields with the parent lookup AFTER + self
                     return field.isSimpleReference && self.data.nextTasks.concat(self).indexOf(field.parentLookupObject.task) >= 0;
             }).concat(new SFieldDescribe({
                 name: CONSTANTS.__ID_FIELD_NAME
@@ -1288,7 +1288,7 @@ export default class MigrationJobTask {
                 .filter(key => fieldsToCompareRecords.length == 0 || fieldsToCompareRecords.indexOf(key) >= 0)
                 .some(key => {
                     if (key != "Id" && key != CONSTANTS.__ID_FIELD_NAME) {
-                        return target[key] != cloned[key] && target.hasOwnProperty(key);
+                        return target[key] != cloned[key];// && target.hasOwnProperty(key);
                     }
                     return false;
                 });

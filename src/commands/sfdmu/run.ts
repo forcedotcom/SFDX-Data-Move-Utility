@@ -176,9 +176,9 @@ export default class Run extends SfdxCommand {
 
             await this.command.setupAsync();
             await this.command.createJobAsync();
-            await this.command.processCSVFiles();
-            await this.command.prepareJob();
-            await this.command.executeJob();
+            await this.command.processCSVFilesAsync();
+            await this.command.prepareJobAsync();
+            await this.command.executeJobAsync();
 
             // Exit - success
             Common.logger.commandExitMessage(

@@ -526,8 +526,23 @@ export class Common {
     }
 
     /**
+     * Returns true if the field name is a  __r field name
+     * (f.ex: for "Account__r.Name" => will return true, 
+     *        for "Id"  => will return false)
+     * 
+     * @static
+     * @param {string} fieldName 
+     * @returns {boolean}
+     * @memberof CommonUtils
+     */    
+    public static is__rField(fieldName: string): boolean {
+        return fieldName && fieldName.indexOf('.') >= 0;
+    }
+
+    /**
      * Returns true if the field name is a complex field name
      * (f.ex. for "$$Account__r.Name$Account__r.Id" => will return true, 
+     *       for "Parent.$$Account__r.Name$Account__r.Id" => will return false,
      *        for "Id" => will return false)
      * 
      * @static
@@ -540,6 +555,20 @@ export class Common {
             fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0
             || fieldName.startsWith(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX)
         );
+    }
+
+    /**
+   * Returns true if the field name contains complex field name
+   * (f.ex. for "Parent.$$Account__r.Name$Account__r.Id" => will return true, 
+   *        for "Id" => will return false)
+   * 
+   * @static
+   * @param {string} fieldName 
+   * @returns {boolean}
+   * @memberof CommonUtils
+   */
+    public static isContainsComplexField(fieldName: string): boolean {
+        return fieldName && fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX) >= 0;
     }
 
 
@@ -558,11 +587,30 @@ export class Common {
         if (fieldName.indexOf(CONSTANTS.COMPLEX_FIELDS_SEPARATOR) >= 0) {
             return CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX
                 + fieldName.replace(
-                    new RegExp(`${CONSTANTS.COMPLEX_FIELDS_SEPARATOR}`, 'g'),
+                    new RegExp(`[${CONSTANTS.COMPLEX_FIELDS_SEPARATOR}]`, 'g'),
                     CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR
                 );
         }
         return fieldName;
+    }
+
+    /**
+    * Transforms complex field name into the  field  name
+    * (f.ex. "$$Account__r.Name$Account__r.Id" => become "Account__r.Name;Account__r.Id"
+    *        "Account__r.Name" => become "Account__r.Name")
+    *
+    * @static
+    * @param {string} fieldName
+    * @returns {string}
+    * @memberof CommonUtils
+    */
+    public static getFieldFromComplexField(fieldName: string) {
+        if (!fieldName || !Common.isContainsComplexField(fieldName)) return fieldName;
+        return fieldName.replace(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX, '')
+            .replace(
+                new RegExp(`[${CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR}]`, 'g'),
+                CONSTANTS.COMPLEX_FIELDS_SEPARATOR
+            );
     }
 
     /**
@@ -1179,7 +1227,7 @@ export class Common {
             } else if (fieldName.endsWith("__pr") || fieldName.endsWith("__r")) {
                 return fieldName.replace("__pr", "__pc").replace("__r", "__c");
             } else if (!fieldName.endsWith("__pc") && !fieldName.endsWith("__c")
-                && fieldName.endsWith("__s")) {
+                && !fieldName.endsWith("__s")) {
                 return fieldName + "Id";
             } else {
                 return fieldName;
