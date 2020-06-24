@@ -21,6 +21,7 @@
     "personContact": "Person Contact",
 
     "defaultPromptOptions": "y/n",
+    "defaultPromptNopromptOption": "y",
     "defaultPromptSelectedOption": "n",
     "promptMessageFormat": "%s (%s)?",
     "promptDefaultOptionFormat": "%s",
