@@ -2,7 +2,7 @@
 
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v3.4.12         *** - ###
+### - *** Latest version: v3.4.13         *** - ###
 ### ------------------------------------------- ###
 ### - *** Always make sure, that you have *** - ###
 ### - *** the latest version installed    *** - ###
