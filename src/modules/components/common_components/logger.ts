@@ -48,7 +48,8 @@ export enum RESOURCES {
     personContact = "personContact",
 
     defaultPromptOptions = "defaultPromptOptions",
-    defaultPromptSelectedOption = "defaultPromptSelectedOption",
+    defaultPromptNopromptOption = "defaultPromptNopromptOption",
+    defaultPromptSelectedOption = "defaultPromptSelectedOption",    
     promptMessageFormat = "promptMessageFormat",
     promptDefaultOptionFormat = "promptDefaultOptionFormat",
 
@@ -392,6 +393,7 @@ export class Logger {
      * @param {string} message Message to prompt the user
      * @param {string} [options=getMessage('defaultPromptOptions')]  Options to choose, like 'y/n'
      * @param {string} [default=getMessage('defaultPromptSelectedOption')]  Default option if nothing entered, like 'n'
+     * @param {string} [nopromptDefault=getMessage('defaultPromptNopromptOption')]  Default option when noprompt flag is set
      * @param {number} [timeout=6000] Timeout in ms if user does not respond
      * @param {...string[]} tokens Tokens for the command resource
      * @returns {Promise<string>} 
@@ -401,18 +403,20 @@ export class Logger {
         message: string,
         options?: string,
         default?: string,
+        nopromptDefault?: string,
         timeout?: number
     }, ...tokens: string[]
     ): Promise<string> {
 
         params.options = params.options || this.getResourceString(RESOURCES.defaultPromptOptions);
         params.default = params.default || this.getResourceString(RESOURCES.defaultPromptSelectedOption);
+        params.nopromptDefault = params.nopromptDefault || this.getResourceString(RESOURCES.defaultPromptNopromptOption);
         params.timeout = params.timeout || CONSTANTS.DEFAULT_USER_PROMPT_TIMEOUT_MS;
         params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
 
         if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.NONE || this.noPromptFlag) {
             // Suppress propmts on --quite or --noprompt, immediately send the default value
-            return params.default;
+            return params.nopromptDefault;
         }
 
         try {
@@ -430,10 +434,11 @@ export class Logger {
 
     /**
     * Outputs simple "yes"/"no" prompt.
-    * If user has not responded - the default option ("no") is applied
+    * If user has not responded - the default option ("no") is applied.
+    * When --noprompt flag is set - default "yes" options is applied.
     *
     * @param {string} message  Message to prompt the user
-    * @returns {Promise<boolen>} Returns true if user has choosen "yes"
+    * @returns {Promise<boolen>} Returns true if user has choosen "yes" (continue job)
     * @memberof MessageUtils
     */
     async yesNoPromptAsync(message: string, ...tokens: string[]): Promise<boolean> {
