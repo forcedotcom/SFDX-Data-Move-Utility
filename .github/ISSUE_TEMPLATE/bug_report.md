@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG]"
+title: "[BUG]-The bug title"
 labels: bug
 assignees: hknokh
 
@@ -17,7 +17,7 @@ Describe steps to reproduce the behavior.
 A clear and concise description of what you expected to happen.
 
 **export.json**
-Attach your export.json file
+Attach your **export.json** file
 
 **Log file**
-Attach your full .log file.
+Attach your full **.log** file.
