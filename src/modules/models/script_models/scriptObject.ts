@@ -73,10 +73,11 @@ export default class ScriptObject {
     excludedFields: Array<string> = new Array<string>();
 
 
-
+   
 
     // -----------------------------------
-    script: Script;
+    script: Script;    
+
     get name(): string {
         if (this.parsedQuery) {
             return this.parsedQuery.sObject;
@@ -314,6 +315,22 @@ export default class ScriptObject {
         });
         return m;
     }
+
+    get defaultExternalId(): string {
+        if (this.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME){
+            return CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
+        }
+        if (!this.isDescribed) {
+            return "Id";
+        }
+        return ([].concat(
+            [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.nameField),
+            [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.autoNumber),
+            [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.unique))[0]
+            || { name: "Id" })["name"];
+    }
+
+
 
 
     // ----------------------- Public methods -------------------------------------------    

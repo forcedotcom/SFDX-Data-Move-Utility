@@ -174,24 +174,25 @@ export default class Script {
             const thisObject = this.objects[objectIndex];
             this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
 
-            for (let fieldIndex = 0; fieldIndex < thisObject.fieldsToUpdate.length; fieldIndex++) {
+            for (let fieldIndex = 0; fieldIndex < thisObject.fieldsInQuery.length; fieldIndex++) {
 
-                const thisField = thisObject.fieldsToUpdateMap.get(thisObject.fieldsToUpdate[fieldIndex]);
+                const thisField = thisObject.fieldsInQueryMap.get(thisObject.fieldsInQuery[fieldIndex]);
 
                 // Group + User => User
                 const referencedObjectType = thisField.referencedObjectType == "Group" ? "User" : thisField.referencedObjectType;
 
-                if (thisField.lookup) {
+                if (thisField.lookup && referencedObjectType) {
 
                     // Search for the parent ScriptObject
                     thisField.parentLookupObject = this.objects.filter(x => x.name == referencedObjectType)[0];
+                    
 
                     if (!thisField.parentLookupObject) {
 
                         // Add parent ScriptObject as READONLY since it is missing in the script
-                        thisField.parentLookupObject = new ScriptObject();
+                        thisField.parentLookupObject = new ScriptObject(referencedObjectType);
                         this.objects.push(thisField.parentLookupObject);
-                        let externalId = referencedObjectType != CONSTANTS.RECORD_TYPE_SOBJECT_NAME ? CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME : CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
+                        let externalId = thisField.parentLookupObject.defaultExternalId;
                         let allRecords = CONSTANTS.SPECIAL_OBJECTS.indexOf(referencedObjectType) >= 0;
                         Object.assign(thisField.parentLookupObject, <ScriptObject>{
                             isExtraObject: true,
@@ -200,7 +201,7 @@ export default class Script {
                             operation: OPERATION.Readonly,
                             externalId
                         });
-
+                        
                         if (referencedObjectType == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
                             let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
                             thisField.parentLookupObject.parsedQuery = parseQuery(thisField.parentLookupObject.query);
@@ -219,6 +220,17 @@ export default class Script {
                     // Setup and describe the parent ScriptObject
                     thisField.parentLookupObject.setup(this);
                     await thisField.parentLookupObject.describeAsync();
+
+                    // Validate and fix the default external id key for the parent object.
+                    if (thisField.parentLookupObject.isExtraObject 
+                            && thisField.parentLookupObject.externalId != thisField.parentLookupObject.defaultExternalId) {
+                        // Extra object => automatically get possible unique "name" field to make it external id
+                        thisField.parentLookupObject.externalId = thisField.parentLookupObject.defaultExternalId;
+                        thisField.parentLookupObject.script = null;
+                        // Setup the object again
+                        thisField.parentLookupObject.setup(this);
+                    }
+
 
                     // Add __r fields to the child object query
                     let __rFieldName = thisField.fullName__r;
