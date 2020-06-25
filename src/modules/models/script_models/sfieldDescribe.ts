@@ -32,6 +32,8 @@ export default class SFieldDescribe {
     creatable: boolean = false;
     cascadeDelete: boolean = false;
     autoNumber: boolean = false;
+    unique: boolean = false;
+    nameField: boolean = false;
     custom: boolean = false;
     calculated: boolean = false;
 

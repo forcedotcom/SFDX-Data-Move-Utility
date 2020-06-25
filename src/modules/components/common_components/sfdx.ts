@@ -356,6 +356,8 @@ export class Sfdx implements IFieldMapping {
             let f = new SFieldDescribe();
             f.objectName = describeResult.name;
             f.name = field.name;
+            f.nameField = field.nameField;
+            f.unique = field.unique;
             f.type = field.type;
             f.label = field.label;
             f.custom = field.custom;
