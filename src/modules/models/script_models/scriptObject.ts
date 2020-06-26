@@ -572,6 +572,12 @@ export default class ScriptObject {
             }
         });
 
+        // Add fields from source-target field mappings
+        this.sourceTargetFieldMapping.fieldMapping.forEach((targetFieldName, sourceFieldName)=>{
+            if (this.fieldsInQuery.indexOf(sourceFieldName) < 0){
+                this.parsedQuery.fields.push(getComposedField(sourceFieldName));
+            }
+        });
 
         // Filter excluded fields
         this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
