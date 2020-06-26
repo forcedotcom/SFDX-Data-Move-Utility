@@ -468,11 +468,11 @@ export default class ScriptObject {
                 // Describe object in the target org        
                 try {
 
-                    if (this.isMapped) {
-                        // TODO: Implement target validation when there is a field mapping
-                        this.targetSObjectDescribe = this.sourceSObjectDescribe;
-                        return;
-                    }
+                    // TODO: Implement target validation when there is a field mapping                    
+                    // if (this.isMapped) {
+                    //     this.targetSObjectDescribe = this.sourceSObjectDescribe;
+                    //     return;
+                    // }
 
                     // Retrieve sobject metadata
                     let apisf = new Sfdx(this.script.targetOrg);
