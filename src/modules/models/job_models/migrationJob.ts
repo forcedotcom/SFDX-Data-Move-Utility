@@ -9,7 +9,7 @@
 import { Common } from "../../components/common_components/common";
 import { CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
-import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping } from "..";
+import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping, SFieldDescribe } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
 import MigrationJobTask from "./migrationJobTask";
@@ -567,14 +567,14 @@ export default class MigrationJob {
                     let parts = field.name.split('.');
                     if (field.isSimple || field.isSimpleReference) {
                         // Simple fields, lookups and non-lookups (Account__c, TEST__c)
-                        let ret = ___mapField(object.name, field.nameId);
+                        let ret = ___mapField(object.name, null, field);
                         if (ret.changed) {
                             field.m_targetName = ret.fieldName;
                         }
                     } else if (field.is__r) {
                         // __r field:  Account__r.Name__c to Account2__r.Name2__c
                         // 1. Account__r => Account2__r //////
-                        let ret = ___mapField(object.name, field.nameId);
+                        let ret = ___mapField(object.name, null, field);
                         if (ret.changed) {
                             parts[0] = Common.getFieldName__r(null, ret.fieldName);
                         }
@@ -602,8 +602,8 @@ export default class MigrationJob {
         }
 
         // --------------------------- Internal functions -------------------------------------        
-        function ___mapField(objectName: string, fieldName: string): { fieldName: string, changed: boolean } {
-            fieldName = Common.getFieldNameId(null, fieldName);
+        function ___mapField(objectName: string, fieldName: string, field?: SFieldDescribe): { fieldName: string, changed: boolean } {
+            fieldName = Common.getFieldNameId(field, fieldName);
             let objectFieldMapping = self.script.sourceTargetFieldMapping.get(objectName) || new ObjectFieldMapping("", "");
             let changed = false;
             objectFieldMapping.fieldMapping.forEach((value, key) => {
