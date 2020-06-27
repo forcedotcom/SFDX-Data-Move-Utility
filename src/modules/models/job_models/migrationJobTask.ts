@@ -647,7 +647,7 @@ export default class MigrationJobTask {
                     // Query string message ------    
                     this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                     // Fetch records                
-                    let sfdx = new Sfdx(this.sourceData.org);
+                    let sfdx = new Sfdx(this.sourceData.org, this._sourceFieldMapping);
                     records = await sfdx.retrieveRecordsAsync(query, this.sourceData.useBulkQueryApi);
                     hasRecords = true;
                 } else if (!this.scriptObject.processAllSource) {
@@ -657,7 +657,7 @@ export default class MigrationJobTask {
                         // Start message ------
                         this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                         // Fetch records
-                        records = await this._retrieveFilteredRecords(queries, this.sourceData);
+                        records = await this._retrieveFilteredRecords(queries, this.sourceData, this._sourceFieldMapping);
                         hasRecords = true;
                     }
                 }
@@ -695,7 +695,7 @@ export default class MigrationJobTask {
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingSelfReferenceRecords, this.sObjectName, this.sourceData.resourceString_Source_Target);
                     inValues = Common.distinctStringArray(inValues);
-                    let sfdx = new Sfdx(this.sourceData.org);
+                    let sfdx = new Sfdx(this.sourceData.org, this._sourceFieldMapping);
                     let queries = Common.createFieldInQueries(this.data.fieldsInQuery, "Id", this.sObjectName, inValues);
                     for (let queryIndex = 0; queryIndex < queries.length; queryIndex++) {
                         const query = queries[queryIndex];
@@ -1604,6 +1604,43 @@ export default class MigrationJobTask {
         return records;
     }
 
+    private _transformQuery(query: string, sourceSObjectName: string) {
+        let sourceParsedQuery = parseQuery(query);
+        sourceSObjectName = sourceParsedQuery.sObject;
+        let scriptObject = this.script.objectsMap.get(sourceSObjectName);
+        if (scriptObject) {
+            let fields = [];
+            sourceParsedQuery.fields.forEach((field: SOQLField) => {
+                let rawValue = String(field["rawValue"] || field.field);
+                let describe = scriptObject.fieldsInQueryMap.get(rawValue);
+                describe = describe || [...scriptObject.fieldsInQueryMap.values()]
+                    .filter(field => field.__rNames.filter(x => x == rawValue)[0])
+                    .filter(x => !!x)[0];
+                if (describe) {
+
+                    // Start to transform fields///// 
+                    // 1. Trasnsform polymorfic fields
+                    if (describe.isPolymorphicField && describe.is__r) {
+                        fields.push(getComposedField(describe.getPolymorphicQueryField(rawValue)));
+                    } else {
+                        fields.push(getComposedField(rawValue));
+                    }
+                    // End to transform fields ////// 
+
+                } else {
+                    fields.push(getComposedField(rawValue));
+                }
+            });
+            sourceParsedQuery.fields = fields;
+            query = composeQuery(sourceParsedQuery);
+        }
+        return {
+            targetSObjectName: sourceSObjectName,
+            query
+        };
+    }
+
+
     private _mapSourceQueryToTarget(query: string, sourceSObjectName: string): IFieldMappingResult {
         let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
         if (mapping && mapping.hasChange) {
@@ -1705,7 +1742,13 @@ export default class MigrationJobTask {
     private _targetFieldMapping: IFieldMapping = <IFieldMapping>{
         sourceQueryToTarget: this._mapSourceQueryToTarget.bind(this),
         sourceRecordsToTarget: this._mapSourceRecordsToTarget.bind(this),
-        targetRecordsToSource: this._mapTargetRecordsToSource.bind(this)
+        targetRecordsToSource: this._mapTargetRecordsToSource.bind(this),
+        transformQuery: this._transformQuery.bind(this)
     }
+
+    private _sourceFieldMapping: IFieldMapping = <IFieldMapping>{
+        transformQuery: this._transformQuery.bind(this)
+    }
+
 
 }

@@ -66,6 +66,7 @@ export interface IFieldMapping {
     sourceQueryToTarget: (query: string, sourceObjectName: string) => IFieldMappingResult;
     sourceRecordsToTarget: (records: Array<any>, sourceObjectName: string) => IFieldMappingResult;
     targetRecordsToSource: (records: Array<any>, sourceObjectName: string) => IFieldMappingResult;
+    transformQuery: (query: string, sourceObjectName: string) => IFieldMappingResult;
 }
 
 export interface IFieldMappingResult {

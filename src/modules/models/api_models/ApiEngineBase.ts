@@ -75,6 +75,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query, targetSObjectName: sourceObjectName };
     sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
     targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
+    transformQuery: (query: string, sourceObjectName: string) => IFieldMappingResult;
 
     // ----------------------- Interface IApiProcess ----------------------------------
     getEngineName(): string {

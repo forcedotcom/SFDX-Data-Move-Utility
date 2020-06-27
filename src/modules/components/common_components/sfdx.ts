@@ -40,6 +40,7 @@ export class Sfdx implements IFieldMapping {
     sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query, targetSObjectName: sourceObjectName };
     sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
     targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
+    transformQuery: (query: string, sourceObjectName: string) => IFieldMappingResult;
 
     /**
      *  Performs SOQL query and returns records
@@ -203,6 +204,9 @@ export class Sfdx implements IFieldMapping {
 
             });
             let newQuery: string = composeQuery(newParsedQuery);
+            if (self.transformQuery){
+                newQuery = self.transformQuery(newQuery, newParsedQuery.sObject).query;
+            }
             return [newQuery, outputMap, originalFieldNamesToKeep, newParsedQuery.sObject];
         }
 

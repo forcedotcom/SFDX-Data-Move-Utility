@@ -8,6 +8,7 @@
 
 import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
+import { CONSTANTS } from "../../components/common_components/statics";
 
 
 /**
@@ -39,6 +40,7 @@ export default class SFieldDescribe {
 
     lookup: boolean = false;
     referencedObjectType: string = "";
+    polymorphicReferenceObjectType: string = "";
 
     /**
      * This ScriptObject
@@ -68,6 +70,16 @@ export default class SFieldDescribe {
      * Account__c
      */
     idSField: SFieldDescribe;
+
+    isPolymorphicField: boolean = false;
+
+    getPolymorphicQueryField(fieldName : string): string{
+        let parts = fieldName.split('.');
+        if (this.isPolymorphicField && this.is__r && parts.length > 1){            
+            return `TYPEOF ${parts[0]} WHEN ${this.polymorphicReferenceObjectType} THEN ${parts[1]} END`;
+        }
+        return fieldName;
+    }
 
     // Used for the Target field mapping
     m_targetName: string;
@@ -209,6 +221,20 @@ export default class SFieldDescribe {
         } else {
             return this.name__r;
         }
+    }
+
+    get __rNames(): string[] {
+        if (this.is__r) {
+            let parts = this.name.split('.');
+            if (parts.length <= 1) {
+                return [this.name];
+            }
+            return Common.flattenArrays(parts.slice(1).map(part => {
+                let fields = Common.getFieldFromComplexField(part);
+                return fields.split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR).map(field => `${parts[0]}.${field}`);
+            }));
+        }
+        return [];
     }
 
 }
