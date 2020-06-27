@@ -248,6 +248,8 @@ export default class Script {
                     __rSField.scriptObject = thisObject;
                     __rSField.custom = thisField.custom;
                     __rSField.parentLookupObject = thisField.parentLookupObject;
+                    __rSField.isPolymorphicField = thisField.isPolymorphicField;  
+                    __rSField.polymorphicReferenceObjectType = thisField.polymorphicReferenceObjectType;                  
                     __rSField.lookup = true;
 
                     thisField.__rSField = __rSField;

@@ -534,7 +534,7 @@ export class Common {
      * @param {string} fieldName 
      * @returns {boolean}
      * @memberof CommonUtils
-     */    
+     */
     public static is__rField(fieldName: string): boolean {
         return fieldName && fieldName.indexOf('.') >= 0;
     }
@@ -1103,6 +1103,16 @@ export class Common {
     * @memberof Common
     */
     public static flatMap = (arr: Array<any>, f: any) => arr.reduce((x, y) => [...x, ...f(y)], []);
+
+    /**
+     * Transforms array of arrays into array
+     * @param arrays 
+     */
+    public static flattenArrays(arrays: Array<any>): Array<any> {
+        return arrays.reduce(function (flat, toFlatten) {
+            return flat.concat(Array.isArray(toFlatten) ? Common.flattenArrays(toFlatten) : toFlatten);
+        }, []);
+    }
 
     /**
     * Clones array of objects by creating a new one.

@@ -468,12 +468,6 @@ export default class ScriptObject {
                 // Describe object in the target org        
                 try {
 
-                    // TODO: Implement target validation when there is a field mapping                    
-                    // if (this.isMapped) {
-                    //     this.targetSObjectDescribe = this.sourceSObjectDescribe;
-                    //     return;
-                    // }
-
                     // Retrieve sobject metadata
                     let apisf = new Sfdx(this.script.targetOrg);
                     this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
@@ -572,13 +566,6 @@ export default class ScriptObject {
             }
         });
 
-        // Add fields from source-target field mappings
-        this.sourceTargetFieldMapping.fieldMapping.forEach((targetFieldName, sourceFieldName)=>{
-            if (this.fieldsInQuery.indexOf(sourceFieldName) < 0){
-                this.parsedQuery.fields.push(getComposedField(sourceFieldName));
-            }
-        });
-
         // Filter excluded fields
         this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
             this.excludedFields.indexOf(field.field) < 0
@@ -608,6 +595,9 @@ export default class ScriptObject {
             x.scriptObject = this;
             if (x.lookup && this.referenceFieldToObjectMap.has(x.name)) {
                 x.referencedObjectType = this.referenceFieldToObjectMap.get(x.name);
+                // This is the polymorphic field
+                x.isPolymorphicField = true;
+                x.polymorphicReferenceObjectType = x.referencedObjectType;
             }
         });
     }
