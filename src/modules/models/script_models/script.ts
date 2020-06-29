@@ -130,12 +130,12 @@ export default class Script {
             script: this,
             name: sourceUsername,
             isSource: true,
-            media: sourceUsername.toLowerCase() == "csvfile" ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
+            media: sourceUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
         Object.assign(this.targetOrg, {
             script: this,
             name: targetUsername,
-            media: targetUsername.toLowerCase() == "csvfile" ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
+            media: targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
 
         // Setup orgs
@@ -248,8 +248,8 @@ export default class Script {
                     __rSField.scriptObject = thisObject;
                     __rSField.custom = thisField.custom;
                     __rSField.parentLookupObject = thisField.parentLookupObject;
-                    __rSField.isPolymorphicField = thisField.isPolymorphicField;  
-                    __rSField.polymorphicReferenceObjectType = thisField.polymorphicReferenceObjectType;                  
+                    __rSField.isPolymorphicField = thisField.isPolymorphicField;
+                    __rSField.polymorphicReferenceObjectType = thisField.polymorphicReferenceObjectType;
                     __rSField.lookup = true;
 
                     thisField.__rSField = __rSField;

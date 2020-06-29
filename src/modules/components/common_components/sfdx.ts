@@ -14,7 +14,7 @@ import {
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
-import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError } from '../../models';
+import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError, ObjectFieldMapping } from '../../models';
 import { Common } from './common';
 import { IOrgConnectionData, IBlobField, IFieldMapping, IFieldMappingResult } from '../../models/common_models/helper_interfaces';
 import { Logger, RESOURCES } from './logger';
@@ -95,12 +95,12 @@ export class Sfdx implements IFieldMapping {
 
         return <QueryResult<object>>(await makeQueryAsync(soql));
 
-        function ___fixRecords(records: Array<any>){
+        function ___fixRecords(records: Array<any>) {
             if (records.length == 0) return;
             let props = Object.keys(records[0]);
             records.forEach(record => {
                 props.forEach(prop => {
-                    if (record[prop] === ""){
+                    if (record[prop] === "") {
                         record[prop] = null;
                     }
                 });
@@ -204,7 +204,7 @@ export class Sfdx implements IFieldMapping {
 
             });
             let newQuery: string = composeQuery(newParsedQuery);
-            if (self.transformQuery){
+            if (self.transformQuery) {
                 newQuery = self.transformQuery(newQuery, newParsedQuery.sObject).query;
             }
             return [newQuery, outputMap, originalFieldNamesToKeep, newParsedQuery.sObject];
@@ -332,12 +332,11 @@ export class Sfdx implements IFieldMapping {
     * Describes given SObject by retrieving field descriptions
     * 
     * @param  {string} objectName Object API name to describe
-    * @param  {SfdmSOrg} sOrg sOrg instance
-    * @param  {Map<string, SObjectDescribe>} defaultDescibe
+    * @param  {Map<string, SObjectDescribe>} objectFieldMapping The mapping between the source and target object / field
     * @returns SfdmSObjectDescribe
     * @memberof ApiSf
     */
-    async describeSObjectAsync(objectName: string): Promise<SObjectDescribe> {
+    async describeSObjectAsync(objectName: string, objectFieldMapping?: ObjectFieldMapping): Promise<SObjectDescribe> {
 
         var conn = this.org.getConnection();
 
@@ -348,18 +347,30 @@ export class Sfdx implements IFieldMapping {
                 else
                     resolve(meta);
             }));
-        let describeResult: DescribeSObjectResult = <DescribeSObjectResult>(await describeAsync(objectName));
+
+        let targetObjectName = objectFieldMapping ? objectFieldMapping.targetSObjectName : objectName;
+        // Using the target object name...
+        let describeResult: DescribeSObjectResult = <DescribeSObjectResult>(await describeAsync(targetObjectName));
         let sObjectDescribe: SObjectDescribe = new SObjectDescribe({
-            name: describeResult.name,
+            // Using the source object name...
+            name: objectName,
             createable: describeResult.createable,
             custom: describeResult.custom,
             label: describeResult.label,
             updateable: describeResult.createable && describeResult.updateable
         });
+        let mapItems: Array<[string, string]> = objectFieldMapping && objectFieldMapping.fieldMapping && [...objectFieldMapping.fieldMapping.entries()] || [];
         describeResult.fields.forEach(field => {
             let f = new SFieldDescribe();
-            f.objectName = describeResult.name;
-            f.name = field.name;
+            // ------
+            f.objectName = objectName;
+            let fn = mapItems.filter(sourceToTargetItem => sourceToTargetItem[1] == field.name)[0];
+            if (fn){
+                f.name = fn[0];
+            } else {
+                f.name = field.name;
+            }            
+            // ------
             f.nameField = field.nameField;
             f.unique = field.unique;
             f.type = field.type;
@@ -372,7 +383,7 @@ export class Sfdx implements IFieldMapping {
             f.cascadeDelete = field.cascadeDelete;
             f.lookup = field.referenceTo != null && field.referenceTo.length > 0;
             f.referencedObjectType = field.referenceTo[0];
-
+            // ------
             sObjectDescribe.fieldsMap.set(f.name, f);
         });
         return sObjectDescribe;

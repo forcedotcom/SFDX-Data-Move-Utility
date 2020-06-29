@@ -472,7 +472,7 @@ export default class ScriptObject {
                     let apisf = new Sfdx(this.script.targetOrg);
                     this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
 
-                    this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name);
+                    this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name, this.sourceTargetFieldMapping);
                     this._updateSObjectDescribe(this.targetSObjectDescribe);
 
                     if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
@@ -592,10 +592,12 @@ export default class ScriptObject {
 
     private _updateSObjectDescribe(describe: SObjectDescribe) {
         [...describe.fieldsMap.values()].forEach(x => {
+            // General setups ////////
             x.scriptObject = this;
+
+            // Setup the polymorphic field /////           
             if (x.lookup && this.referenceFieldToObjectMap.has(x.name)) {
                 x.referencedObjectType = this.referenceFieldToObjectMap.get(x.name);
-                // This is the polymorphic field
                 x.isPolymorphicField = true;
                 x.polymorphicReferenceObjectType = x.referencedObjectType;
             }
