@@ -1457,7 +1457,9 @@ export default class MigrationJobTask {
                 if (isSource) {
                     // SOURCE
                     // For source => |SOURCE Case|Account__c IN (|SOURCE Account|Id....)            
-                    if (field.isSimpleReference && CONSTANTS.OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(field.referencedObjectType) < 0) {
+                    if (field.isSimpleReference
+                        && field.parentLookupObject.isInitialized
+                        && CONSTANTS.OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(field.referencedObjectType) < 0) {
                         // Only for simple reference lookup fields (f.ex.: Account__c)
                         if (!field.parentLookupObject.task.sourceData.allRecords || field.parentLookupObject.isLimitedQuery) {
                             if (queryMode != "forwards") {
