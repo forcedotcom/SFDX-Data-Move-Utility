@@ -187,7 +187,7 @@ export default class Script {
                     thisField.parentLookupObject = this.objects.filter(x => x.name == referencedObjectType)[0];
 
 
-                    if (!thisField.parentLookupObject) {
+                    if (!thisField.parentLookupObject || !thisField.parentLookupObject.name) {
 
                         // Add parent ScriptObject as READONLY since it is missing in the script
                         thisField.parentLookupObject = new ScriptObject(referencedObjectType);
