@@ -11,7 +11,7 @@
 - ##### For the detailed documentation, visit our Help Center: [https://help.sfdmu.com](https://help.sfdmu.com)
 
 
-- #####  Submit your issue or question here: [https://help.sfdmu.com/hc/en-us/requests/new](https://help.sfdmu.com/hc/en-us/requests/new)
+- #####  Submit any issue or question here: [https://help.sfdmu.com/hc/en-us/requests/new](https://help.sfdmu.com/hc/en-us/requests/new)
 
 
 - ##### Download also the SFDMU Desktop GUI Application: [https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)
