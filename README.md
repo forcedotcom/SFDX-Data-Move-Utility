@@ -2,15 +2,20 @@
 
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v3.4.20         *** - ###
+### - *** Latest version: v3.4.21         *** - ###
 ### ------------------------------------------- ###
 ### - *** Always make sure, that you have *** - ###
 ### - *** the latest version installed    *** - ###
 ### ------------------------------------------- ###
 ```
-#### For the detailed documentation visit our Help Center: [https://help.sfdmu.com](https://help.sfdmu.com)
+- ##### For the detailed documentation, visit our Help Center: [https://help.sfdmu.com](https://help.sfdmu.com)
 
-#### Download also the SFDMU Desktop GUI Application:  [https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)
+
+- #####  Submit your issue or question here: [https://help.sfdmu.com/hc/en-us/requests/new](https://help.sfdmu.com/hc/en-us/requests/new)
+
+
+- ##### Download also the SFDMU Desktop GUI Application: [https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)
+
 
 ----
 
