@@ -1,12 +1,11 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
-- ##### For the detailed documentation, visit our Help Center: [https://help.sfdmu.com](https://help.sfdmu.com)
-- #####  Submit your issues in the [SFDMU User Support Area](https://help.sfdmu.com/hc/en-us/requests/new).
+- ##### For the detailed documentation, visit the project Wiki: [https://github.com/forcedotcom/SFDX-Data-Move-Utility/wiki)
 - ##### Download also the SFDMU Desktop GUI Application: [https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)
 
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v3.4.29         *** - ###
+### - *** Latest version: v3.4.30         *** - ###
 ### ------------------------------------------- ###
 ### - *** Always make sure, that you have *** - ###
 ### - *** the latest version installed    *** - ###
