@@ -60,9 +60,6 @@ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox /
 
 - **Fast performance.** Processes only a selected subset of records and fields that need to be inserted or updated and does not touch others.
 
-  [See the SFDMU Help Center for the full documentation](https://help.sfdmu.com/)
-
-
 
 ### Use case.
 
