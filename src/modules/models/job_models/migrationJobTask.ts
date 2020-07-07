@@ -1576,12 +1576,39 @@ export default class MigrationJobTask {
                         nameId = describe.nameId;
                     }
                 }
+
+                // Regex
+                let regexp: RegExp;
+                let regexpReplaceValue: any;
+                valuesMap.forEach((newValue, rawValue) => {
+                    try {
+                        if (new RegExp(CONSTANTS.FIELDS_MAPPING_REGEX_PATTERN).test(rawValue)) {
+                            let pattern = rawValue.replace(new RegExp(CONSTANTS.FIELDS_MAPPING_REGEX_PATTERN), '$1');
+                            regexpReplaceValue = newValue;
+                            regexp = regexpReplaceValue && new RegExp(pattern, 'gi');
+                        }
+                    } catch (ex) { }
+                });
+
                 records.forEach((record: any) => {
+                    let newValue: any;
                     let rawValue = (String(record[field]) || "").trim();
-                    let newValue = valuesMap.get(rawValue);
+                    if (regexp) {
+                        // Use regex
+                        try {
+                            if (regexp.test(rawValue)) {
+                                newValue = rawValue.replace(regexp, regexpReplaceValue);
+                            }
+                        } catch (ex) { }
+                    }
+                    // Use regular replace
+                    newValue = newValue ? valuesMap.get(String(newValue)) || newValue : valuesMap.get(rawValue);
+
                     if (newValue) {
                         record[field] = newValue;
                     }
+
+                    // Replace lookups
                     if (nameId && record.hasOwnProperty(nameId)) {
                         let newValueId = sourceExtIdMap.get(newValue);
                         if (newValueId) {
