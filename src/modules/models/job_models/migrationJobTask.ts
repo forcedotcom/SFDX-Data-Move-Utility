@@ -1232,13 +1232,11 @@ export default class MigrationJobTask {
                 if (contactTask) {
                     records = records.filter(record => {
                         let targetContact = contactTask.targetData.idRecordsMap.get(record["ContactId"]);
-                        if (targetContact) {
-                            if (targetContact["AccountId"] == record["AccountId"]) {
-                                // This is the primary Contact for given Account, 
-                                //   so don't need to insert AccountRelationObject for this
-                                //     => record is not encessary, remove it
-                                return false;
-                            }
+                        if (targetContact && targetContact["AccountId"] == record["AccountId"]) {
+                            // This is the primary Contact for given Account, 
+                            //   so don't need to insert AccountRelationObject for this
+                            //     => record is not encessary, remove it
+                            return false;
                         }
                         // => Record is necessary, leave it
                         return true;
@@ -1247,7 +1245,7 @@ export default class MigrationJobTask {
             }
             return records;
         }
-        
+
         function __filterUpdates(records: Array<any>): Array<any> {
             // TODO: Optional, implement this if needed
             return records;
