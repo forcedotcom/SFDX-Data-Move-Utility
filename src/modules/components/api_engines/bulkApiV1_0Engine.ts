@@ -151,16 +151,16 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                 clearInterval(pollTimer);
                 records.forEach((record, index) => {
                     if (resultRecords[index].success) {
-                        record["Errors"] = null;
+                        record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                         if (self.operation == OPERATION.Insert && self.updateRecordId) {
                             record["Id"] = resultRecords[index].id;
                         }
                         self.numberJobRecordsSucceeded++;
                     } else {
                         if (resultRecords[index].errors) {
-                            record["Errors"] = resultRecords[index].errors.join('; ');
+                            record[CONSTANTS.ERRORS_FIELD_NAME] = resultRecords[index].errors.join('; ');
                         } else {
-                            record["Errors"] = null;
+                            record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                         }
                         self.numberJobRecordsFailed++;
                     }

@@ -6,7 +6,7 @@
  */
 import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
-import { OPERATION } from '../common_components/statics';
+import { OPERATION, CONSTANTS } from '../common_components/statics';
 import { RESOURCES } from '../common_components/logger';
 import { Sfdx } from '../common_components/sfdx';
 import { CsvChunks } from '../../models';
@@ -110,13 +110,13 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                 records = self._getResultRecordsArray(records);
                 records.forEach((record, index) => {
                     if (resultRecords[index].success) {
-                        record["Errors"] = null;
+                        record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                         if (self.operation == OPERATION.Insert && self.updateRecordId) {
                             record["Id"] = resultRecords[index].id;
                         }
                         self.numberJobRecordsSucceeded++;
                     } else {
-                        record["Errors"] = resultRecords[index].errors[0].message;
+                        record[CONSTANTS.ERRORS_FIELD_NAME] = resultRecords[index].errors[0].message;
                         self.numberJobRecordsFailed++;
                     }
                 });
