@@ -945,8 +945,12 @@ export default class MigrationJobTask {
                 tempClonedToSourceMap = processedData.clonedToSourceMap;
                 processedData.clonedToSourceMap = new Map<any, any>();
 
+                // Apply Records Filter
                 let clonedRecords = await ___filterRecords([...tempClonedToSourceMap.keys()]);
+                // Mock records
                 clonedRecords = ___mockRecords(clonedRecords);
+
+                // Create records map: cloned => source
                 clonedRecords.forEach(cloned => {
                     let initialCloned = ___IdToClonedMap.get(cloned[CONSTANTS.__ID_FIELD_NAME]);
                     let source = tempClonedToSourceMap.get(initialCloned);
@@ -980,6 +984,12 @@ export default class MigrationJobTask {
                     }
                 });
 
+
+                ///////////////
+                // Filter out unwanted records (for example of AccountContactRelation)
+                processedData.recordsToInsert = __filterInserts(processedData.recordsToInsert);
+                processedData.recordsToUpdate = __filterUpdates(processedData.recordsToUpdate);
+
             }
 
             return processedData;
@@ -1008,7 +1018,10 @@ export default class MigrationJobTask {
                 }
                 totalProcessedAmount += targetRecords.length;
 
+                // Set external ids ---
                 self._setExternalIdMap(targetRecords, self.targetData.extIdRecordsMap, self.targetData.idRecordsMap);
+
+                // Map records ---
                 targetRecords.forEach(target => {
                     let source = data.clonedToSourceMap.get(target);
                     if (source) {
@@ -1032,6 +1045,16 @@ export default class MigrationJobTask {
                     self._apiOperationError(OPERATION.Update);
                 }
                 totalProcessedAmount += targetRecords.length;
+
+                // Map records ---
+                // TODO: This is new update, check if it has no any negative impact
+                targetRecords.forEach(target => {
+                    let source = data.clonedToSourceMap.get(target);
+                    // Prevent override of previously mapped inserts
+                    if (source && !self.data.sourceToTargetRecordMap.has(source)) {
+                        self.data.sourceToTargetRecordMap.set(source, target);
+                    }
+                });
             }
 
             return totalProcessedAmount;
@@ -1199,6 +1222,35 @@ export default class MigrationJobTask {
             if (self.script.createTargetCSVFiles) {
                 await Common.writeCsvFileAsync(self.data.getTargetCSVFilename(self.operation), records, true);
             }
+        }
+
+        function __filterInserts(records: Array<any>): Array<any> {
+            // Remove unnecessary records from AccountContactRelation ///////////
+            if (self.sObjectName == "AccountContactRelation") {
+                // Remove primary Contacts
+                let contactTask = self.job.tasks.filter(task => task.sObjectName == "Contact")[0];
+                if (contactTask) {
+                    records = records.filter(record => {
+                        let targetContact = contactTask.targetData.idRecordsMap.get(record["ContactId"]);
+                        if (targetContact) {
+                            if (targetContact["AccountId"] == record["AccountId"]) {
+                                // This is the primary Contact for given Account, 
+                                //   so don't need to insert AccountRelationObject for this
+                                //     => record is not encessary, remove it
+                                return false;
+                            }
+                        }
+                        // => Record is necessary, leave it
+                        return true;
+                    });
+                }
+            }
+            return records;
+        }
+        
+        function __filterUpdates(records: Array<any>): Array<any> {
+            // TODO: Optional, implement this if needed
+            return records;
         }
 
         function ___mockRecords(records: Array<any>): Array<any> {

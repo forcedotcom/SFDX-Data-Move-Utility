@@ -157,15 +157,15 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         }
         csvChunk.records.forEach((record, index) => {
             if (batchResult.resultRecords[index].isSuccess) {
-                record["Errors"] = null;
+                record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                 if (self.operation == OPERATION.Insert && self.updateRecordId) {
                     record["Id"] = batchResult.resultRecords[index].id;
                 }
             } else {
                 if (batchResult.resultRecords[index].errorMessage) {
-                    record["Errors"] = batchResult.resultRecords[index].errorMessage;
+                    record[CONSTANTS.ERRORS_FIELD_NAME] = batchResult.resultRecords[index].errorMessage;
                 } else {
-                    record["Errors"] = null;
+                    record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                 }
             }
         });
