@@ -179,11 +179,19 @@ export default class Script {
                 const thisField = thisObject.fieldsInQueryMap.get(thisObject.fieldsInQuery[fieldIndex]);
 
                 // Group + User => User
-                const referencedObjectType = thisField.referencedObjectType == "Group" ? "User" : thisField.referencedObjectType;
+                let referencedObjectType = thisField.referencedObjectType == "Group" ? "User" : thisField.referencedObjectType;
 
                 if (thisField.lookup && referencedObjectType) {
 
-                    // Search for the parent ScriptObject
+                    // Search for the source ScriptObject in case if the FieldMapping is enabled
+                    this.sourceTargetFieldMapping.forEach((mapping: ObjectFieldMapping, sourceOjectName : string) =>{
+                        if (mapping.targetSObjectName == referencedObjectType && mapping.hasChange){
+                            referencedObjectType = sourceOjectName;
+                        }
+                    });
+
+
+                    // Find by referenced sObject type
                     thisField.parentLookupObject = this.objects.filter(x => x.name == referencedObjectType)[0];
 
 
