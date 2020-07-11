@@ -5,7 +5,7 @@
 
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v3.5.2          *** - ###
+### - *** Latest version: v3.5.3          *** - ###
 ### ------------------------------------------- ###
 ### - *** Always make sure, that you have *** - ###
 ### - *** the latest version installed    *** - ###
