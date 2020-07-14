@@ -204,7 +204,8 @@ export enum OPERATION {
     Update,
     Upsert,
     Readonly,
-    Delete
+    Delete,
+    Unknown
 }
 
 export enum RESULT_STATUSES {

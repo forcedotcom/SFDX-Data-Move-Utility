@@ -125,6 +125,14 @@ export default class Script {
         // Make each object appear only once in the script
         this.objects = Common.distinctArray(this.objects, "name");
 
+        // Check object operations spelling
+        this.objects.forEach(object => {
+            if (ScriptObject.getOperation(object.operation) == OPERATION.Unknown) {
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.invalidObjectOperation, 
+                        (object.operation || '').toString(), object.name));
+            }
+        });
+
         // Assign orgs
         Object.assign(this.sourceOrg, {
             script: this,
@@ -184,8 +192,8 @@ export default class Script {
                 if (thisField.lookup && referencedObjectType) {
 
                     // Search for the source ScriptObject in case if the FieldMapping is enabled
-                    this.sourceTargetFieldMapping.forEach((mapping: ObjectFieldMapping, sourceOjectName : string) =>{
-                        if (mapping.targetSObjectName == referencedObjectType && mapping.hasChange){
+                    this.sourceTargetFieldMapping.forEach((mapping: ObjectFieldMapping, sourceOjectName: string) => {
+                        if (mapping.targetSObjectName == referencedObjectType && mapping.hasChange) {
                             referencedObjectType = sourceOjectName;
                         }
                     });

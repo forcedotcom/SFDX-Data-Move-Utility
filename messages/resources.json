@@ -65,6 +65,7 @@
     "loadingPackageFile": "Loading and validating the package script...",
     "objectWillBeExcluded": "sObject %s will be excluded from the process.",
     "noObjectsDefinedInPackageFile": "There are no objects defined to process.",
+    "invalidObjectOperation": "Invalid operation %s is set for the object %s",
     "noUpdateableFieldsInTheSObject": "The SOQL query for sObject %s does not include any field can be updated or inserted.",
     "scriptJSONFormatError": "The package JSON file is not well formatted. Error message: %s.",
     "scriptJSONReadError": "The package JSON file could not be read. Error message: %s.",

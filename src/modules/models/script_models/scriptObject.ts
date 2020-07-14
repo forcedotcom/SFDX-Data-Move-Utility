@@ -36,8 +36,8 @@ import * as deepClone from 'deep.clone';
 export default class ScriptObject {
 
 
-    constructor(name? : string){
-        if (name){
+    constructor(name?: string) {
+        if (name) {
             this.query = `SELECT Id FROM ${name}`;
         }
     }
@@ -73,10 +73,10 @@ export default class ScriptObject {
     excludedFields: Array<string> = new Array<string>();
 
 
-   
+
 
     // -----------------------------------
-    script: Script;    
+    script: Script;
 
     get name(): string {
         if (this.parsedQuery) {
@@ -317,7 +317,7 @@ export default class ScriptObject {
     }
 
     get defaultExternalId(): string {
-        if (this.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME){
+        if (this.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
             return CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
         }
         if (!this.isDescribed) {
@@ -511,8 +511,12 @@ export default class ScriptObject {
      * @returns
      * @memberof ScriptObject
      */
-    public static getStrOperation(operation: OPERATION): string {
+    public static getStrOperation(operation: OPERATION | string): string {
+        operation = typeof operation == 'undefined' || operation == null ? '' : operation;
         if ((typeof operation != "string") == true) {
+            if (typeof OPERATION[operation] == 'undefined') {
+                return OPERATION.Unknown.toString();
+            }
             return OPERATION[operation].toString();
         }
         return operation.toString();
@@ -526,11 +530,15 @@ export default class ScriptObject {
      * @returns
      * @memberof ScriptObject
      */
-    public static getOperation(operation: OPERATION) {
+    public static getOperation(operation: OPERATION | string): OPERATION {
+        operation = typeof operation == 'undefined' || operation == null ? '' : operation;
         if ((typeof operation == "string") == true) {
+            if (typeof OPERATION[operation.toString()] == 'undefined') {
+                return OPERATION.Unknown;
+            }
             return OPERATION[operation.toString()];
         }
-        return operation;
+        return <OPERATION>operation;
     }
 
 

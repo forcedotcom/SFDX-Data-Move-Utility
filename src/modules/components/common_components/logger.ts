@@ -93,6 +93,7 @@ export enum RESOURCES {
     loadingPackageFile = "loadingPackageFile",
     objectWillBeExcluded = "objectWillBeExcluded",
     noObjectsDefinedInPackageFile = "noObjectsDefinedInPackageFile",
+    invalidObjectOperation = "invalidObjectOperation",
     noUpdateableFieldsInTheSObject = "noUpdateableFieldsInTheSObject",
     scriptJSONFormatError = "scriptJSONFormatError",
     scriptJSONReadError = "scriptJSONReadError",
