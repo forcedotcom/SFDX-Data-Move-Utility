@@ -814,12 +814,10 @@ export default class MigrationJobTask {
                 totalProcessedRecordsAmount += (await ___updateData(data));
                 totalNonProcessedRecordsAmount += data.nonProcessedRecordsAmount;
 
-                // Add Person Contacts when inserting Person Accounts
-                if (this.operation == OPERATION.Insert && this.sObjectName == "Account") {
-                    // Lest processed person accounts...
+                // Add Person Contacts when inserting/upserting Person Accounts ****
+                if ((this.operation == OPERATION.Insert || this.operation == OPERATION.Upsert) && this.sObjectName == "Account") {
                     await ___insertPersonContactsFromPersonAccounts(data);
                 }
-
             }
 
             // Warn the about skipped equal records
@@ -1095,7 +1093,7 @@ export default class MigrationJobTask {
                     let records = await self._retrieveFilteredRecords(queries, self.targetData, self._targetFieldMapping);
                     if (records.length > 0) {
                         //Set external id map --------- TARGET
-                        self._setExternalIdMap(records, contactTask.targetData.extIdRecordsMap, contactTask.targetData.idRecordsMap, true);
+                        contactTask._setExternalIdMap(records, contactTask.targetData.extIdRecordsMap, contactTask.targetData.idRecordsMap, true);
                         //Completed message ------
                         let newRecordsCount = 0;
                         records.forEach(targetContact => {

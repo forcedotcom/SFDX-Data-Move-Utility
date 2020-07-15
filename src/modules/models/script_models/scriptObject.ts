@@ -547,14 +547,13 @@ export default class ScriptObject {
 
         // Add multiselect fields
         if (this.multiselectPattern) {
-            let fieldsInOriginalQuery = [].concat(this.fieldsInQuery);
             let pattern = this.multiselectPattern;
             [...describe.fieldsMap.values()].forEach(fieldDescribe => {
                 if ((___compare(pattern.all != "undefined", pattern.all == true)
-                    || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))
-                    && ___compare(fieldsInOriginalQuery.indexOf(fieldDescribe.name) < 0, true)) {
+                    || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))) {
                     if (!(fieldDescribe.lookup && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0)) {
-                        this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
+                        this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));                        
+                        this.excludedFieldsFromUpdate = this.excludedFieldsFromUpdate.filter(fieldName => fieldName != fieldDescribe.name);
                     }
                 }
             });
@@ -563,6 +562,7 @@ export default class ScriptObject {
         // Add compound fields
         let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
         this.parsedQuery.fields = [];
+        
         fieldsInOriginalQuery.forEach(fieldName => {
             let fields = CONSTANTS.COMPOUND_FIELDS.get(fieldName);
             if (fields) {
@@ -585,6 +585,9 @@ export default class ScriptObject {
                 this.parsedQuery.fields.push(getComposedField(fieldName));
             }
         });
+
+        // Make each field appear only once
+        this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
 
         // Create new query string
         this.query = composeQuery(this.parsedQuery);
