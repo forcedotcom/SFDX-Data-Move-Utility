@@ -12,7 +12,7 @@
         "@salesforce/core": "^1.3.2",
         "@salesforce/dev-config": "^1.5.0",
         "@types/bunyan": "^1.8.6",
-        "alasql": "^0.5.5",
+        "alasql": "^0.6.0",
         "casual": "^1.6.2",
         "class-transformer": "^0.2.3",
         "csv-parse": "^4.4.7",
