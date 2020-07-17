@@ -157,9 +157,9 @@ export class Sfdx implements IFieldMapping {
 
         function ___formatSoql(soql: string): [string, Map<string, Array<string>>, Array<string>, string] {
             let newParsedQuery = parseQuery(soql);
-            if (newParsedQuery.where && newParsedQuery.where.left && newParsedQuery.where.left.openParen && !newParsedQuery.where.left.closeParen) {
-                newParsedQuery.where.left.closeParen = newParsedQuery.where.left.openParen;
-            }
+            // if (newParsedQuery.where && newParsedQuery.where.left && newParsedQuery.where.left.openParen && !newParsedQuery.where.left.closeParen) {
+            //     newParsedQuery.where.left.closeParen = newParsedQuery.where.left.openParen;
+            // }
             let originalFields: Array<SOQLField> = newParsedQuery.fields.map(x => {
                 return <SOQLField>x;
             });
