@@ -1361,7 +1361,8 @@ export default class MigrationJobTask {
      */
     createApiEngine(org: ScriptOrg, operation: OPERATION, amountOfRecordsToProcess: number, updateRecordId: boolean, targetFilenameSuffix?: string): IApiEngine {
 
-        if (amountOfRecordsToProcess > this.script.bulkThreshold && !this.script.alwaysUseRestApiToUpdateRecords) {
+        if ((amountOfRecordsToProcess > this.script.bulkThreshold && !this.script.alwaysUseRestApiToUpdateRecords)
+            && CONSTANTS.NOT_SUPPORTED_OBJECTS_IN_BULK_API.indexOf(this.sObjectName) < 0) {
             // Use bulk api
             switch (this.script.bulkApiVersionNumber) {
                 case 2: // Bulk Api V2.0

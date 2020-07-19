@@ -68,6 +68,9 @@ export const CONSTANTS = {
         'Group',
         'DandBCompany'
     ],
+    NOT_SUPPORTED_OBJECTS_IN_BULK_API : [
+        "Attachment"
+    ],
     SPECIAL_OBJECTS: [
         "Group",
         "User",
