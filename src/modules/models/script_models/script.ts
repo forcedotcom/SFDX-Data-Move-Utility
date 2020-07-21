@@ -53,8 +53,8 @@ export default class Script {
     validateCSVFilesOnly: boolean = false;
     apiVersion: string = CONSTANTS.DEFAULT_API_VERSION;
     createTargetCSVFiles: boolean = true;
-    importCSVFilesAsIs = false;
-    alwaysUseRestApiToUpdateRecords: false;
+    importCSVFilesAsIs: boolean = false;
+    alwaysUseRestApiToUpdateRecords: boolean = false;
     excludeIdsFromCSVFiles: boolean = false;
     fileLog: boolean = true;
 
@@ -128,8 +128,8 @@ export default class Script {
         // Check object operations spelling
         this.objects.forEach(object => {
             if (ScriptObject.getOperation(object.operation) == OPERATION.Unknown) {
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.invalidObjectOperation, 
-                        (object.operation || '').toString(), object.name));
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.invalidObjectOperation,
+                    (object.operation || '').toString(), object.name));
             }
         });
 
