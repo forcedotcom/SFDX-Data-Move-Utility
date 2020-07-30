@@ -14,7 +14,7 @@
         "@types/bunyan": "^1.8.6",
         "alasql": "^0.5.5",
         "casual": "^1.6.2",
-        "class-transformer": "^0.2.3",
+        "class-transformer": "^0.3.1",
         "csv-parse": "^4.4.7",
         "csv-writer": "^1.5.0",
         "deep.clone": "^2.1.2",
