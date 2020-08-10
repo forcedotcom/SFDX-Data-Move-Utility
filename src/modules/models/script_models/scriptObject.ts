@@ -52,7 +52,7 @@ export default class ScriptObject {
     query: string = "";
     deleteQuery: string = "";
     operation: OPERATION = OPERATION.Readonly;
-    externalId: string = CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME;
+    externalId: string;
     deleteOldData: boolean = false;
     updateWithMockData: boolean = false;
     mockCSVData: boolean = false;
@@ -100,6 +100,7 @@ export default class ScriptObject {
     multiselectPattern: any;
     referenceFieldToObjectMap: Map<string, string> = new Map<string, string>();
     excludedFieldsFromUpdate: Array<string> = new Array<string>();
+    originalExternalIdIsEmpty: boolean = false;
 
     get sourceTargetFieldMapping(): ObjectFieldMapping {
         return this.script.sourceTargetFieldMapping.get(this.name) || new ObjectFieldMapping(this.name, this.name);
@@ -346,6 +347,8 @@ export default class ScriptObject {
 
         // Initialize object
         this.script = script;
+        this.originalExternalIdIsEmpty = !this.externalId;
+        this.externalId = this.externalId || CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME;        
         this.originalExternalId = this.externalId;
         this.allRecords = typeof this.allRecords == "undefined" ? this.master : this.allRecords;
 
@@ -643,6 +646,8 @@ export default class ScriptObject {
                     Common.removeBy(this.parsedQuery.fields, "field", x);
                 }
             });
+
+            this.query = composeQuery(this.parsedQuery);
         }
     }
 

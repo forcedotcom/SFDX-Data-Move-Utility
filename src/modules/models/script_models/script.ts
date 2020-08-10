@@ -17,7 +17,8 @@ import {
     parseQuery,
     composeQuery,
     OrderByClause,
-    getComposedField
+    getComposedField,
+    Field as SOQLField
 } from 'soql-parser-js';
 import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError } from "../common_models/errors";
@@ -238,9 +239,17 @@ export default class Script {
                     await thisField.parentLookupObject.describeAsync();
 
                     // Validate and fix the default external id key for the parent object.
-                    if (thisField.parentLookupObject.isExtraObject
+                    if ((thisField.parentLookupObject.isExtraObject || thisField.parentLookupObject.originalExternalIdIsEmpty)
                         && thisField.parentLookupObject.externalId != thisField.parentLookupObject.defaultExternalId) {
                         // Extra object => automatically get possible unique "name" field to make it external id
+                        if (thisField.parentLookupObject.externalId != "Id") {
+                            // Remove old external id from the query
+                            thisField.parentLookupObject.parsedQuery.fields
+                                = thisField.parentLookupObject.parsedQuery.fields
+                                    .filter(field => (<SOQLField>field).field != thisField.parentLookupObject.externalId);
+                            thisField.parentLookupObject.query = composeQuery(thisField.parentLookupObject.parsedQuery);
+                        }
+                        // Replace old external id key
                         thisField.parentLookupObject.externalId = thisField.parentLookupObject.defaultExternalId;
                         thisField.parentLookupObject.script = null;
                         // Setup the object again
