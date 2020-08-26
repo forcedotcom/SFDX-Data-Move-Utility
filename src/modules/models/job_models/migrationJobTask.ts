@@ -462,10 +462,11 @@ export default class MigrationJobTask {
      *                                      of the current task
      * @param {boolean} [removeLimits=false]  true to remove LIMIT, OFFSET, ORDERBY clauses
      * @param {Query} [parsedQuery]  Default parsed query.
+     * @param {boolan} [useFieldMapping]  Transform query string according to the field mapping before return.
      * @returns {string}
      * @memberof MigrationJobTask
      */
-    createQuery(fieldNames?: Array<string>, removeLimits: boolean = false, parsedQuery?: Query): string {
+    createQuery(fieldNames?: Array<string>, removeLimits: boolean = false, parsedQuery?: Query, useFieldMapping: boolean = false): string {
         parsedQuery = parsedQuery || this.scriptObject.parsedQuery;
         let tempQuery = deepClone.deepCloneSync(parsedQuery, {
             absolute: true,
@@ -479,7 +480,11 @@ export default class MigrationJobTask {
             tempQuery.offset = undefined;
             tempQuery.orderBy = undefined;
         }
-        return composeQuery(tempQuery);
+        let query = composeQuery(tempQuery);
+        if (useFieldMapping) {
+            query = this._mapSourceQueryToTarget(query, parsedQuery.sObject).query;
+        }
+        return query;
     }
 
     /**
@@ -521,9 +526,8 @@ export default class MigrationJobTask {
     */
     async getTotalRecordsCountAsync(): Promise<void> {
 
-        let queryOrNumber = this.createQuery(['COUNT(Id) CNT'], true);
-
         if (this.sourceData.media == DATA_MEDIA_TYPE.Org) {
+            let queryOrNumber = this.createQuery(['COUNT(Id) CNT'], true);
             try {
                 let apiSf = new Sfdx(this.sourceData.org);
                 let ret = await apiSf.queryAsync(queryOrNumber, false);
@@ -540,6 +544,7 @@ export default class MigrationJobTask {
         }
 
         if (this.targetData.media == DATA_MEDIA_TYPE.Org) {
+            let queryOrNumber = this.createQuery(['COUNT(Id) CNT'], true, null, true);
             try {
                 let apiSf = new Sfdx(this.targetData.org);
                 let ret = await apiSf.queryAsync(queryOrNumber, false);
@@ -1731,9 +1736,11 @@ export default class MigrationJobTask {
                     let rawValue = String(field["rawValue"] || field.field);
                     let describe = scriptObject.fieldsInQueryMap.get(rawValue);
                     if (describe) {
-                        fields.push(getComposedField(describe.targetName));
+                        let targetField = describe.targetName + (field["alias"] ? " " + field["alias"] : "");
+                        fields.push(getComposedField(targetField));
                     } else {
-                        fields.push(getComposedField(rawValue));
+                        let targetField = rawValue + (field["alias"] ? " " + field["alias"] : "");
+                        fields.push(getComposedField(targetField));
                     }
                 });
                 targetParsedQuery.fields = fields;
