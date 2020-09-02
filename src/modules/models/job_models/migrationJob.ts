@@ -17,7 +17,6 @@ import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_mod
 
 
 
-
 export default class MigrationJob {
 
     script: Script;
@@ -67,6 +66,7 @@ export default class MigrationJob {
                 scriptObject: objectToAdd,
                 job: this
             });
+
             if (objectToAdd.allRecords
                 || objectToAdd.isSpecialObject
                 || objectToAdd.isObjectWithoutRelationships
@@ -81,13 +81,22 @@ export default class MigrationJob {
                     objectToAdd.processAllTarget = false;
                 }
             }
+
             if (objectToAdd.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
                 // RecordType object is always at the beginning 
                 //   of the task chain
                 this.tasks.unshift(newTask);
                 lowerIndexForAnyObjects++;
                 lowerIndexForReadonlyObjects++;
+            } else if (this.script.keepObjectOrderWhileExecute) {
+                // *** Using the explicit execution order as the objects appear in the Script *** //
+                // ************** //
+
+                this.tasks.push(newTask);
             } else if (objectToAdd.isReadonlyObject) {
+                // *** Using the smart automatic execution order *** //
+                // ************** //
+
                 // Readonly objects are always at the beginning 
                 //   of the task chain 
                 //   but after RecordType
@@ -118,24 +127,32 @@ export default class MigrationJob {
             }
         });
 
-        // Put master-detail lookups before
-        let swapped = true;
-        for (let iteration = 0; iteration < 10 && swapped; iteration++) {
-            swapped = ___putMasterDetailsBefore();
-        }
+        if (this.script.keepObjectOrderWhileExecute) {
+            // *** Use the explicit query order as the objects appear in the Script **** //            
+            // ************** //
+            this.queryTasks = this.tasks.map(task => task);
+        } else {
+            // *** Use smart automatic query order *** // 
+            // ************** //
+            // Put master-detail lookups before
+            let swapped = true;
+            for (let iteration = 0; iteration < 10 && swapped; iteration++) {
+                swapped = ___putMasterDetailsBefore();
+            }
 
-        // Create query task order
-        this.tasks.forEach(task => {
-            if (task.sourceData.allRecords
-                || task.scriptObject.isLimitedQuery) {
-                this.queryTasks.push(task);
-            }
-        });
-        this.tasks.forEach(task => {
-            if (this.queryTasks.indexOf(task) < 0) {
-                this.queryTasks.push(task);
-            }
-        });
+            // Create query task order
+            this.tasks.forEach(task => {
+                if (task.sourceData.allRecords
+                    || task.scriptObject.isLimitedQuery) {
+                    this.queryTasks.push(task);
+                }
+            });
+            this.tasks.forEach(task => {
+                if (this.queryTasks.indexOf(task) < 0) {
+                    this.queryTasks.push(task);
+                }
+            });
+        }
 
         // Output execution orders
         this.logger.objectMinimal({
