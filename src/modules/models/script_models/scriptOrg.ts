@@ -24,11 +24,21 @@ import { IOrgConnectionData } from "../common_models/helper_interfaces";
 export default class ScriptOrg {
 
     // ------------- JSON --------------
+
+    /**
+     * Org Username                 : if org section is specified in the export.json
+     * Org username/SFDX user alias : if org section is missing but the SFDX CLI connection is used
+     */
     name: string = "";
+
+    /**
+     * Always the Org Username
+     */
+    orgUserName: string = "";
+
     instanceUrl: string = "";
     accessToken: string = "";
 
-    
 
     // -----------------------------------
     script: Script;
@@ -104,7 +114,11 @@ export default class ScriptOrg {
         if (!this.isFileMedia) {
             try {
                 // Validate access token
-                await apiSf.queryAsync("SELECT Id FROM Account LIMIT 1", false);
+                // Normally, each SF user must have an access ot his own User record.
+                let records = await apiSf.queryAsync(`SELECT Id FROM User WHERE Username = '${this.orgUserName}'`, false);
+                if (records.records.length == 0) {
+                    throw new Error();
+                }
             } catch (ex) {
                 throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessToOrgExpired, this.name));
             }
@@ -120,6 +134,10 @@ export default class ScriptOrg {
 
     private async _setupConnection(): Promise<void> {
         if (!this.isFileMedia) {
+
+            // By default the org username has the same value as the name
+            this.orgUserName = this.name;
+
             if (!this.isConnected) {
                 // Connect with SFDX
                 this.script.logger.infoNormal(RESOURCES.tryingToConnectCLI, this.name);
@@ -130,7 +148,8 @@ export default class ScriptOrg {
                 } else {
                     Object.assign(this, {
                         accessToken: orgInfo.AccessToken,
-                        instanceUrl: orgInfo.InstanceUrl
+                        instanceUrl: orgInfo.InstanceUrl,
+                        userName: orgInfo.Username
                     });
                 }
             }

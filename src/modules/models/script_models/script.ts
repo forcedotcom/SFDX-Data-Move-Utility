@@ -58,6 +58,7 @@ export default class Script {
     alwaysUseRestApiToUpdateRecords: boolean = false;
     excludeIdsFromCSVFiles: boolean = false;
     fileLog: boolean = true;
+    keepObjectOrderWhileExecute: boolean = false;
 
 
     // -----------------------------------
