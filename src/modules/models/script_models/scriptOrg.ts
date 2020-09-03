@@ -149,7 +149,7 @@ export default class ScriptOrg {
                     Object.assign(this, {
                         accessToken: orgInfo.AccessToken,
                         instanceUrl: orgInfo.InstanceUrl,
-                        userName: orgInfo.Username
+                        orgUserName: orgInfo.Username
                     });
                 }
             }
