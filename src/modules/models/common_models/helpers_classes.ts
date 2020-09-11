@@ -6,8 +6,6 @@
  */
 
 import { MigrationJobTask, SFieldDescribe, ScriptObject, ScriptOrg } from "..";
-import * as path from 'path';
-import * as fs from 'fs';
 import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Common } from "../../components/common_components/common";
@@ -53,19 +51,13 @@ export class TaskData {
     }
 
     get sourceCsvFilename(): string {
-        let filepath = path.join(this.task.script.basePath, CONSTANTS.CSV_SOURCE_SUB_DIRECTORY);
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
-        }
-        return this.task.getCSVFilename(filepath, CONSTANTS.CSV_SOURCE_FILE_SUFFIX);
+        return this.task.getCSVFilename(this.task.script.sourceDirectory,
+            CONSTANTS.CSV_SOURCE_FILE_SUFFIX);
     }
 
     getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
-        let filepath = path.join(this.task.script.basePath, CONSTANTS.CSV_TARGET_SUB_DIRECTORY);
-        if (!fs.existsSync(filepath)) {
-            fs.mkdirSync(filepath);
-        }
-        return this.task.getCSVFilename(filepath, `_${ScriptObject.getStrOperation(operation).toLowerCase()}${fileNameSuffix || ""}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
+        return this.task.getCSVFilename(this.task.script.targetDirectory,
+            `_${ScriptObject.getStrOperation(operation).toLowerCase()}${fileNameSuffix || ""}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
     }
 
     get resourceString_csvFile(): string {
@@ -98,11 +90,11 @@ export class TaskData {
             && (this.task.sObjectName == "Account" || this.task.sObjectName == "Contact");
     }
 
-    get fieldsToCompareSourceWithTarget(): Array<string>{
+    get fieldsToCompareSourceWithTarget(): Array<string> {
         return CONSTANTS.FIELDS_TO_COMPARE_SOURCE_WITH_TARGET_RECORDS.get(this.task.sObjectName) || new Array<string>();
     }
-    
-    get fieldsExcludedFromTargetQuery(): Array<string>{
+
+    get fieldsExcludedFromTargetQuery(): Array<string> {
         return CONSTANTS.FIELDS_EXCLUDED_FROM_TARGET_QUERY.get(this.task.sObjectName) || new Array<string>();
     }
 
@@ -166,7 +158,7 @@ export class ProcessedData {
     recordsToInsert: Array<any> = new Array<any>();
 
     missingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
-    
+
     insertedRecordsSourceToTargetMap: Map<any, any> = new Map<any, any>();
 
     get lookupIdFields(): Array<SFieldDescribe> {
@@ -254,7 +246,7 @@ export class ObjectFieldMapping {
     sourceSObjectName: string;
     fieldMapping: Map<string, string> = new Map<string, string>();
 
-    get hasChange() : boolean{
+    get hasChange(): boolean {
         return this.sourceSObjectName != this.targetSObjectName || this.fieldMapping.size > 0;
     }
 

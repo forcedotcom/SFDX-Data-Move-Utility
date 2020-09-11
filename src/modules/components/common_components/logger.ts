@@ -137,6 +137,8 @@ export enum RESOURCES {
     cantUpdateChildLookupCSVColumn = "cantUpdateChildLookupCSVColumn",
     csvFilesWereUpdated = "csvFilesWereUpdated",
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
+    unableToDeleteTargetDirectory = "unableToDeleteTargetDirectory",
+    unableToDeleteSourceDirectory = "unableToDeleteSourceDirectory",
 
     preparingJob = "preparingJob",
     executingJob = "executingJob",

@@ -109,6 +109,8 @@
     "cantUpdateChildLookupCSVColumn": "ID COLUMN FOR THE PARENT LOOKUP OBJECT WAS DYNAMICALLY ADDED INTO THE CSV FILE. CAN'T UPDATE THE CHILD LOOKUP ID COLUMN BECAUSE THE NECESSARY REFERENCE EXTERNAL ID COLUMN WAS NOT FOUND.",
     "csvFilesWereUpdated": "Amount of updated source CSV files: %s",
     "validationAndFixingsourceCSVFilesCompleted": "Validating and repairing of the source CSV files have finished.",
+    "unableToDeleteTargetDirectory" : "Unable to clean-up the target directory: '%s'. Check whether any files is busy by another application.",
+    "unableToDeleteSourceDirectory": "Unable to clean-up the souce directory: '%s'. Check whether any files is busy by another application.",
 
     "preparingJob": "Preparing has been finished.",
     "executingJob": "Ready to process the data.",
