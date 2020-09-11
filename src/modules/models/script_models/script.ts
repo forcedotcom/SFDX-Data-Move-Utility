@@ -194,6 +194,15 @@ export default class Script {
      */
     async processAfterOrgConnected() {
 
+        // Perform clean-up the source directory if need --------------                        
+        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+            try {
+                Common.deleteFolderRecursive(this.sourceDirectoryPath, true);
+            } catch (ex) {
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.unableToDeleteSourceDirectory, this.sourceDirectoryPath));
+            }
+        }
+
         // Perform clean-up the target directory if need --------------                
         if (this.createTargetCSVFiles) {
             try {
@@ -203,14 +212,6 @@ export default class Script {
             }
         }
 
-        // Perform clean-up the source directory if need --------------                        
-        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
-            try {
-                Common.deleteFolderRecursive(this.sourceDirectoryPath, true);
-            } catch (ex) {
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.unableToDeleteSourceDirectory, this.sourceDirectoryPath));
-            }
-        }
     }
 
     /**
