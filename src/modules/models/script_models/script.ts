@@ -203,6 +203,7 @@ export default class Script {
             }
         }
 
+        // Perform clean-up the source directory if need --------------                        
         if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
             try {
                 Common.deleteFolderRecursive(this.sourceDirectoryPath, true);
