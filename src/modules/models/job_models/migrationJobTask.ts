@@ -882,8 +882,10 @@ export default class MigrationJobTask {
 
             // Remove master-detail fields for Update / Upsert  ////////////////
             // (to avoid master-detail reparenting if not available)
+            // 9/11/2020: Removed ALL  non-updateable fields to avoid the issue with updating of audit field.
             let notUpdateableFields = processedData.fields.filter(field => {
-                return field.isMasterDetail && !field.updateable;
+                //return field.isMasterDetail && !field.updateable;
+                return field.isDescribed && !field.updateable && field.name != "Id";
             }).map(field => field.nameId);
 
 

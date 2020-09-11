@@ -42,6 +42,12 @@ export default class SFieldDescribe {
     referencedObjectType: string = "";
     polymorphicReferenceObjectType: string = "";
 
+    /*
+        true if this field description was retrieved from the org,
+        excluding temporary fields created upon executing.
+    */    
+    isDescribed: boolean;
+
     /**
      * This ScriptObject
      */
