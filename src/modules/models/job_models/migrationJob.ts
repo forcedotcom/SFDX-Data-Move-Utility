@@ -193,7 +193,6 @@ export default class MigrationJob {
      * @memberof MigrationJob
      */
     prepareJob() {
-        this.deleteTargetCSVDirectory();
         this.createSourceTargetMappingFields();
     }
 
@@ -211,7 +210,6 @@ export default class MigrationJob {
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
 
             // Prepare source CSV files
-            this.deleteSourceCSVDirectory();
             await this._mergeUserGroupCSVfiles();
             this._copyCSVFilesToSourceSubDir();
 
@@ -548,25 +546,6 @@ export default class MigrationJob {
         this.cachedCSVContent.clear();
     }
 
-    /**
-    * Remove target directory
-    *
-    * @memberof MigrationJob
-    */
-    deleteTargetCSVDirectory() {
-        let filepath = path.join(this.script.basePath, CONSTANTS.CSV_TARGET_SUB_DIRECTORY);
-        Common.deleteFolderRecursive(filepath);
-    }
-
-    /**
-   * Remove source directory
-   *
-   * @memberof MigrationJob
-   */
-    deleteSourceCSVDirectory() {
-        let filepath = path.join(this.script.basePath, CONSTANTS.CSV_SOURCE_SUB_DIRECTORY);
-        Common.deleteFolderRecursive(filepath);
-    }
 
     /**
      * Updates target field names 

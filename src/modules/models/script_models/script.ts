@@ -21,11 +21,11 @@ import {
     Field as SOQLField
 } from 'soql-parser-js';
 import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
-import { CommandInitializationError } from "../common_models/errors";
+import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
 import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
-
+import * as fs from 'fs';
 
 
 /**
@@ -76,6 +76,28 @@ export default class Script {
 
     get bulkApiVersionNumber(): number {
         return +(this.bulkApiVersion || '1.0');
+    }
+
+    get targetDirectoryPath(): string {
+        return path.join(this.basePath, CONSTANTS.CSV_TARGET_SUB_DIRECTORY);
+    }
+
+    get targetDirectory(): string {
+        if (!fs.existsSync(this.targetDirectoryPath)) {
+            fs.mkdirSync(this.targetDirectoryPath);
+        }
+        return this.targetDirectoryPath;
+    }
+
+    get sourceDirectoryPath(): string {
+        return path.join(this.basePath, CONSTANTS.CSV_SOURCE_SUB_DIRECTORY);
+    }
+
+    get sourceDirectory(): string {
+        if (!fs.existsSync(this.sourceDirectoryPath)) {
+            fs.mkdirSync(this.sourceDirectoryPath);
+        }
+        return this.sourceDirectoryPath;
     }
 
 
@@ -148,6 +170,9 @@ export default class Script {
             media: targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
 
+        // Preprocessing...
+        await this.processAfterScriptLoaded();
+
         // Setup orgs
         await this.sourceOrg.setupAsync(true);
         await this.targetOrg.setupAsync(false);
@@ -156,7 +181,50 @@ export default class Script {
         this.objects.forEach(object => {
             object.setup(this);
         });
+
+        // Preprocessing...
+        await this.processAfterOrgConnected();
     }
+
+    /**
+     * The preprocessing functionality after the connect,
+     *  but before running any rest of tasks.
+     *
+     * @memberof Script
+     */
+    async processAfterOrgConnected() {
+
+        // Perform clean-up the source directory if need --------------                        
+        if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+            try {
+                Common.deleteFolderRecursive(this.sourceDirectoryPath, true);
+            } catch (ex) {
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteSourceDirectory, this.sourceDirectoryPath));
+            }
+        }
+
+        // Perform clean-up the target directory if need --------------                
+        if (this.createTargetCSVFiles) {
+            try {
+                Common.deleteFolderRecursive(this.targetDirectoryPath, true);
+            } catch (ex) {
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteTargetDirectory, this.targetDirectoryPath));
+            }
+        }
+
+    }
+
+    /**
+     * The preprocessing functionality after script is loaded, 
+     * but before the connect
+     *
+     * @memberof Script
+     */
+    async processAfterScriptLoaded() {
+        // TODO:
+    }
+
+
 
     /**
      * Retrieve and analyse the metadata of all objects in the script

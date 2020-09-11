@@ -1148,19 +1148,31 @@ export class Common {
      * @param {string} path
      * @memberof Common
      */
-    public static deleteFolderRecursive(path: string) {
+    public static deleteFolderRecursive(path: string, throwIOErrors?: boolean) {
         if (fs.existsSync(path)) {
-            fs.readdirSync(path).forEach(function (file, index) {
+            fs.readdirSync(path).forEach(file => {
                 var curPath = path + "/" + file;
                 if (fs.lstatSync(curPath).isDirectory()) {
                     // Recursive call
-                    this.deleteFolderRecursive(curPath);
+                    this.deleteFolderRecursive(curPath, throwIOErrors);
                 } else {
                     // Delete file
-                    try { fs.unlinkSync(curPath); } catch (ex) { }
+                    try {
+                        fs.unlinkSync(curPath);
+                    } catch (ex) {
+                        if (throwIOErrors){
+                            throw new Error(ex.message);
+                        }
+                    }
                 }
             });
-            try { fs.rmdirSync(path); } catch (ex) { }
+            try {
+                fs.rmdirSync(path);
+            } catch (ex) {
+                if (throwIOErrors){
+                    throw new Error(ex.message);
+                }
+            }
         }
     }
 
@@ -1246,5 +1258,6 @@ export class Common {
             return "";
         }
     }
+
 
 }
