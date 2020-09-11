@@ -384,6 +384,8 @@ export class Sfdx implements IFieldMapping {
             f.lookup = field.referenceTo != null && field.referenceTo.length > 0;
             f.referencedObjectType = field.referenceTo[0];
             // ------
+            f.isDescribed = true;
+            // ------
             sObjectDescribe.fieldsMap.set(f.name, f);
         });
         return sObjectDescribe;
