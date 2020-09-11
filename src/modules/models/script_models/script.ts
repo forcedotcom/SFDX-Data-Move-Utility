@@ -21,7 +21,7 @@ import {
     Field as SOQLField
 } from 'soql-parser-js';
 import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
-import { CommandInitializationError } from "../common_models/errors";
+import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
 import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
@@ -199,7 +199,7 @@ export default class Script {
             try {
                 Common.deleteFolderRecursive(this.sourceDirectoryPath, true);
             } catch (ex) {
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.unableToDeleteSourceDirectory, this.sourceDirectoryPath));
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteSourceDirectory, this.sourceDirectoryPath));
             }
         }
 
@@ -208,7 +208,7 @@ export default class Script {
             try {
                 Common.deleteFolderRecursive(this.targetDirectoryPath, true);
             } catch (ex) {
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.unableToDeleteTargetDirectory, this.targetDirectoryPath));
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteTargetDirectory, this.targetDirectoryPath));
             }
         }
 
