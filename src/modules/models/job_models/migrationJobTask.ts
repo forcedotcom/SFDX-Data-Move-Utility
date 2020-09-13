@@ -952,8 +952,12 @@ export default class MigrationJobTask {
 
                 // Apply Records Filter
                 let clonedRecords = await ___filterRecords([...tempClonedToSourceMap.keys()]);
+
                 // Mock records
                 clonedRecords = ___mockRecords(clonedRecords);
+
+                // Truncate records
+                clonedRecords = ___truncateRecords(clonedRecords);
 
                 // Create records map: cloned => source
                 clonedRecords.forEach(cloned => {
@@ -1256,6 +1260,24 @@ export default class MigrationJobTask {
             return records;
         }
 
+        function ___truncateRecords(records: Array<any>): Array<any> {
+            if (records.length == 0) {
+                return records;
+            }
+            if (self.script.allowFieldTruncation) {
+                let sfieldsToTruncate = self.data.sFieldsToUpdate.filter(field => field.isTextual
+                    && Object.keys(records[0]).indexOf(field.name) >= 0);
+                records.forEach(record => {
+                    sfieldsToTruncate.forEach(field => {
+                        if (field.length > 0) {
+                            record[field.name] = record[field.name] && String(record[field.name]).substr(0, field.length);
+                        }
+                    });
+                });
+            }
+            return records;
+        }
+
         function ___mockRecords(records: Array<any>): Array<any> {
             let updatedRecords = new Array<any>();
             if (records.length == 0) {
@@ -1265,7 +1287,7 @@ export default class MigrationJobTask {
             let recordProperties = Object.keys(records[0]);
             if (self.scriptObject.updateWithMockData && self.scriptObject.mockFields.length > 0) {
                 let fieldNameToMockFieldMap: Map<string, IMockField> = new Map<string, IMockField>();
-                [...self.data.fieldsToUpdateMap.values()].forEach(fieldDescribe => {
+                self.data.sFieldsToUpdate.forEach(fieldDescribe => {
                     let mockField = ___getMockPatternByFieldName(fieldDescribe.name);
                     if (recordProperties.indexOf(mockField.name) >= 0 && mockField.pattern) {
                         let fn = mockField.pattern;
@@ -1493,7 +1515,7 @@ export default class MigrationJobTask {
         if (reversed) {
             if (CONSTANTS.OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(this.sObjectName) < 0) {
                 // ONLY SOURCE + FORWARDS FOR reversed == true !
-                let fields: SFieldDescribe[] = Common.flatMap([...this.data.fieldsInQueryMap.values()]
+                let fields: SFieldDescribe[] = Common.flatMap(this.data.sFieldsInQuery
                     .filter(field => field.child__rSFields.length > 0), (field: SFieldDescribe) => {
                         return field.child__rSFields.map(f => f.idSField);
                     });
@@ -1509,7 +1531,7 @@ export default class MigrationJobTask {
                 }), values);
             }
         } else {
-            [...this.data.fieldsInQueryMap.values()].forEach(field => {
+            this.data.sFieldsInQuery.forEach(field => {
                 if (isSource) {
                     // SOURCE
                     // For source => |SOURCE Case|Account__c IN (|SOURCE Account|Id....)            
@@ -1622,7 +1644,7 @@ export default class MigrationJobTask {
             if (valuesMap && valuesMap.size > 0) {
                 let sourceExtIdMap: Map<string, string>;
                 let nameId: string;
-                let describe = [...this.data.fieldsInQueryMap.values()].filter(f => {
+                let describe = this.data.sFieldsInQuery.filter(f => {
                     return f.name == field;
                 })[0];
                 if (describe.is__r) {

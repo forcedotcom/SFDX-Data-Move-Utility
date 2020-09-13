@@ -28,6 +28,7 @@ import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionE
 import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
 import { IPluginInfo } from '../../models/common_models/helper_interfaces';
+const { closest } = require('fastest-levenshtein')
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
@@ -1024,6 +1025,21 @@ export class Common {
         return rawFieldValue;
     }
 
+    /**
+     * Returns true if this object is custom
+     *
+     * @static
+     * @param {string} objectName the name of the object
+     * @returns {boolean}
+     * @memberof Common
+     */
+    public static isCustomObject(objectName: string): boolean {
+        if (!objectName) return false;
+        return objectName.endsWith('__c')
+            || objectName.endsWith('__pc')
+            || objectName.endsWith('__s');
+    }
+
 
     public static splitMulti(str: string, separators: Array<string>) {
         var tempChar = 't3mp'; //prevent short text separator in split down
@@ -1160,7 +1176,7 @@ export class Common {
                     try {
                         fs.unlinkSync(curPath);
                     } catch (ex) {
-                        if (throwIOErrors){
+                        if (throwIOErrors) {
                             throw new Error(ex.message);
                         }
                     }
@@ -1169,7 +1185,7 @@ export class Common {
             try {
                 fs.rmdirSync(path);
             } catch (ex) {
-                if (throwIOErrors){
+                if (throwIOErrors) {
                     throw new Error(ex.message);
                 }
             }
@@ -1257,6 +1273,20 @@ export class Common {
         } else {
             return "";
         }
+    }
+
+    /**
+     * Returns closest match
+     *
+     * @static
+     * @param {string} itemToSearchFor Item to search for in the source array
+     * @param {Array<string>} arrayToSearchIn Array of items
+     * @returns {string}
+     * @memberof Common
+     */
+    public static searchClosest(itemToSearchFor: string, arrayToSearchIn: Array<string>): string {
+        if (!itemToSearchFor) return itemToSearchFor;
+        return closest(itemToSearchFor, arrayToSearchIn);
     }
 
 
