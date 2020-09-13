@@ -173,11 +173,13 @@ export default class ScriptOrg {
 
     private async _describeOrg(): Promise<void> {
         try {
-            let apiSf = new Sfdx(this);
-            this.orgDescribe = (await apiSf.describeOrgAsync()).reduce((acc, describe) => {
-                acc.set(describe.name, describe);
-                return acc;
-            }, new Map<string, SObjectDescribe>());
+            if (this.media == DATA_MEDIA_TYPE.Org) {
+                let apiSf = new Sfdx(this);
+                this.orgDescribe = (await apiSf.describeOrgAsync()).reduce((acc, describe) => {
+                    acc.set(describe.name, describe);
+                    return acc;
+                }, new Map<string, SObjectDescribe>());
+            }
         } catch (ex) { }
     }
 
