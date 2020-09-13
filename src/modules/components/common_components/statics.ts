@@ -26,7 +26,7 @@ export const CONSTANTS = {
     COMPLEX_FIELDS_QUERY_PREFIX: '$$',
     COMPLEX_FIELDS_SEPARATOR: ';',
     REFERENCE_FIELD_OBJECT_SEPARATOR: '$',
-    FIELDS_MAPPING_REGEX_PATTERN : '^\/(.*)\/$',
+    FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
 
     SCRIPT_FILE_NAME: 'export.json',
     CSV_SOURCE_SUB_DIRECTORY: "source",
@@ -68,7 +68,7 @@ export const CONSTANTS = {
         'Group',
         'DandBCompany'
     ],
-    NOT_SUPPORTED_OBJECTS_IN_BULK_API : [
+    NOT_SUPPORTED_OBJECTS_IN_BULK_API: [
         "Attachment"
     ],
     SPECIAL_OBJECTS: [
@@ -123,6 +123,14 @@ export const CONSTANTS = {
             dataType: "base64"
         }
     ),
+
+    TEXTUAL_FIELD_TYPES: ['string', 'id',
+        'url', 'textarea',
+        'picklist',
+        'reference',
+        'encryptedstring',
+        'phone',
+        'multipicklist'],
 
     MANDATORY_QUERY_FIELDS_FOR_INSERT: new Map<string, Array<string>>([
         ["Attachment", new Array<string>(
@@ -193,7 +201,7 @@ export const CONSTANTS = {
             "MailingState",
             "MailingStreet"
         )]
-    ]), 
+    ]),
 
 }
 

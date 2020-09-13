@@ -9,7 +9,7 @@ import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
-import { Script, OrgInfo } from "..";
+import { Script, OrgInfo, SObjectDescribe } from "..";
 import { CommandInitializationError } from "../common_models/errors";
 import { IOrgConnectionData } from "../common_models/helper_interfaces";
 
@@ -45,6 +45,7 @@ export default class ScriptOrg {
     media: DATA_MEDIA_TYPE = DATA_MEDIA_TYPE.Org;
     isSource: boolean = false;
     isPersonAccountEnabled: boolean = false;
+    orgDescribe: Map<string, SObjectDescribe> = new Map<string, SObjectDescribe>();
 
     get connectionData(): IOrgConnectionData {
         return {
@@ -66,6 +67,13 @@ export default class ScriptOrg {
         return this.media == DATA_MEDIA_TYPE.File;
     }
 
+    get isDescribed(): boolean {
+        return this.orgDescribe.size > 0;
+    }
+
+    get objectNamesList(): Array<string> {
+        return [...this.orgDescribe.keys()];
+    }
 
 
     // ----------------------- Public methods -------------------------------------------    
@@ -81,6 +89,9 @@ export default class ScriptOrg {
 
         // Setup and verify org connection
         await this._setupConnection();
+
+        // Get org describtion
+        await this._describeOrg();
     }
 
 
@@ -158,6 +169,16 @@ export default class ScriptOrg {
             await this._validateAccessTokenAsync();
             this.script.logger.infoNormal(RESOURCES.successfullyConnected, this.name);
         }
+    }
+
+    private async _describeOrg(): Promise<void> {
+        try {
+            let apiSf = new Sfdx(this);
+            this.orgDescribe = (await apiSf.describeOrgAsync()).reduce((acc, describe) => {
+                acc.set(describe.name, describe);
+                return acc;
+            }, new Map<string, SObjectDescribe>());
+        } catch (ex) { }
     }
 
 }

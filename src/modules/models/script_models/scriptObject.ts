@@ -26,6 +26,7 @@ import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
 
+
 /**
  * Parsed object 
  * from the script file 
@@ -348,7 +349,7 @@ export default class ScriptObject {
         // Initialize object
         this.script = script;
         this.originalExternalIdIsEmpty = !this.externalId;
-        this.externalId = this.externalId || CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME;        
+        this.externalId = this.externalId || CONSTANTS.DEFAULT_EXTERNAL_ID_FIELD_NAME;
         this.originalExternalId = this.externalId;
         this.allRecords = typeof this.allRecords == "undefined" ? this.master : this.allRecords;
 
@@ -436,6 +437,9 @@ export default class ScriptObject {
 
         if (!this.isDescribed) {
 
+            // Fix object name in case of incorrect writing in the SOQL
+            this._fixObjectName();
+
             if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org) {
                 // Describe object in the source org
                 try {
@@ -453,6 +457,9 @@ export default class ScriptObject {
 
                     // Add fields by the multiselect keywords + filter query
                     this._addOrRemoveFields(this.sourceSObjectDescribe);
+
+                    // Fix object fields in case of incorrect writing in the SOQL
+                    this._fixFieldNames(this.sourceSObjectDescribe);
 
                     // Check fields existance
                     this._validateFields(this.sourceSObjectDescribe, true);
@@ -483,6 +490,9 @@ export default class ScriptObject {
 
                         // Add fields by the multiselect keywords + filter query
                         this._addOrRemoveFields(this.targetSObjectDescribe);
+
+                        // Fix object fields
+                        this._fixFieldNames(this.targetSObjectDescribe);
                     }
 
                     // Check fields existance
@@ -545,6 +555,7 @@ export default class ScriptObject {
     }
 
 
+
     // ----------------------- Private members -------------------------------------------
     private _addOrRemoveFields(describe: SObjectDescribe) {
 
@@ -555,7 +566,7 @@ export default class ScriptObject {
                 if ((___compare(pattern.all != "undefined", pattern.all == true)
                     || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))) {
                     if (!(fieldDescribe.lookup && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0)) {
-                        this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));                        
+                        this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
                         this.excludedFieldsFromUpdate = this.excludedFieldsFromUpdate.filter(fieldName => fieldName != fieldDescribe.name);
                     }
                 }
@@ -565,7 +576,7 @@ export default class ScriptObject {
         // Add compound fields
         let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
         this.parsedQuery.fields = [];
-        
+
         fieldsInOriginalQuery.forEach(fieldName => {
             let fields = CONSTANTS.COMPOUND_FIELDS.get(fieldName);
             if (fields) {
@@ -602,6 +613,28 @@ export default class ScriptObject {
             else
                 return fieldDescribeProperty != patternProperty && typeof fieldDescribeProperty != "undefined";
         }
+    }
+
+    private _fixObjectName() {
+        if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org && this.script.sourceOrg.isDescribed) {
+            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.sourceOrg.objectNamesList);
+        } else if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org && this.script.targetOrg.isDescribed) {
+            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.targetOrg.objectNamesList);
+        }
+    }
+
+    private _fixFieldNames(describe: SObjectDescribe) {
+        let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
+        let availableFields = [...describe.fieldsMap.keys()];
+        this.parsedQuery.fields = new Array<SOQLField>();
+        fieldsInOriginalQuery.forEach(fieldName => {
+            if (!Common.isComplexOr__rField(fieldName)) {
+                fieldName = Common.searchClosest(fieldName, availableFields);
+            }
+            this.parsedQuery.fields.push(getComposedField(fieldName));
+        });
+        // Create new query string
+        this.query = composeQuery(this.parsedQuery);
     }
 
     private _updateSObjectDescribe(describe: SObjectDescribe) {

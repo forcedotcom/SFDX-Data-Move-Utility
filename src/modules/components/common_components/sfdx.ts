@@ -329,6 +329,29 @@ export class Sfdx implements IFieldMapping {
     }
 
     /**
+     * Get list of all objects in the org
+     *
+     * @returns {Promise<Array<SObjectDescribe>>}
+     * @memberof Sfdx
+     */
+    public async describeOrgAsync(): Promise<Array<SObjectDescribe>> {
+        let query = `SELECT  QualifiedApiName, Label 
+                    FROM EntityDefinition 
+                    WHERE IsDeprecatedAndHidden = false 
+                    ORDER BY QualifiedApiName`;
+        let records = await this.queryAsync(query, false);
+        return records.records.map((record: any) => {
+            return new SObjectDescribe({
+                label: String(record["Label"]),
+                name: String(record["QualifiedApiName"]),
+                createable: true,
+                updateable: true,
+                custom: Common.isCustomObject(String(record["QualifiedApiName"]))
+            });
+        });
+    }
+
+    /**
     * Describes given SObject by retrieving field descriptions
     * 
     * @param  {string} objectName Object API name to describe
@@ -365,11 +388,11 @@ export class Sfdx implements IFieldMapping {
             // ------
             f.objectName = objectName;
             let fn = mapItems.filter(sourceToTargetItem => sourceToTargetItem[1] == field.name)[0];
-            if (fn){
+            if (fn) {
                 f.name = fn[0];
             } else {
                 f.name = field.name;
-            }            
+            }
             // ------
             f.nameField = field.nameField;
             f.unique = field.unique;
@@ -383,6 +406,8 @@ export class Sfdx implements IFieldMapping {
             f.cascadeDelete = field.cascadeDelete;
             f.lookup = field.referenceTo != null && field.referenceTo.length > 0;
             f.referencedObjectType = field.referenceTo[0];
+            f.length = field.length || 0;
+
             // ------
             f.isDescribed = true;
             // ------

@@ -9,7 +9,7 @@
 import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
 import { CONSTANTS } from "../../components/common_components/statics";
-
+import {FieldType} from 'jsforce';
 
 /**
  * Description of the sobject field
@@ -27,7 +27,7 @@ export default class SFieldDescribe {
 
     objectName: string = "";
     name: string = "";
-    type: string = "";
+    type: FieldType | "dynamic";
     label: string = "";
     updateable: boolean = false;
     creatable: boolean = false;
@@ -41,6 +41,8 @@ export default class SFieldDescribe {
     lookup: boolean = false;
     referencedObjectType: string = "";
     polymorphicReferenceObjectType: string = "";
+
+    length: number;
 
     /*
         true if this field description was retrieved from the org,
@@ -116,6 +118,11 @@ export default class SFieldDescribe {
 
     get isBoolean() {
         return this.type == "boolean";
+    }
+
+    get isTextual(){
+        return CONSTANTS.TEXTUAL_FIELD_TYPES.indexOf(this.type) >= 0;
+
     }
 
     get isComplex(): boolean {

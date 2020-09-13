@@ -59,6 +59,7 @@ export default class Script {
     excludeIdsFromCSVFiles: boolean = false;
     fileLog: boolean = true;
     keepObjectOrderWhileExecute: boolean = false;
+    allowFieldTruncation: boolean = false;
 
 
     // -----------------------------------
@@ -241,6 +242,7 @@ export default class Script {
         for (let objectIndex = 0; objectIndex < this.objects.length; objectIndex++) {
 
             const thisObject = this.objects[objectIndex];
+            
             this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
 
             await thisObject.describeAsync();
