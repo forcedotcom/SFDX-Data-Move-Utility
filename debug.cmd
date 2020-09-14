@@ -2,7 +2,7 @@ echo off
 
 goto(){
 # Linux code here
-    node --inspect-brk "$(dirname $0)\bin\run" sfdmu:run %*
+    node --inspect-brk "bin/run" sfdmu:run $*
 }
 
 goto $@
