@@ -9,7 +9,7 @@ node_modules
 /export*.json
 ._*
 .DS_Store
-/bin
+bin
 /logs
 /source
 /target
