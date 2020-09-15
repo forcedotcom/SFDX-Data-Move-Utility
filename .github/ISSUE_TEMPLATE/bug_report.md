@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a report about the SFDMU Plugin to help us improve
 title: "[BUG]-The bug title"
 labels: bug
 assignees: hknokh
