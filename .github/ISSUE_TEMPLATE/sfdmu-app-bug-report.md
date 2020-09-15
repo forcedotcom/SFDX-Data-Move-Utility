@@ -1,9 +1,9 @@
 ---
 name: SFDMU App Bug report
 about: Create a report about SFDMU App to help us improve
-title: ''
-labels: ''
-assignees: ''
+title: "[APP-BUG]-The bug title"
+labels: bug
+assignees: hknokh
 
 ---
 
