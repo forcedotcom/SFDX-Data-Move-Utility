@@ -123,16 +123,13 @@ export default class ScriptOrg {
     private async _validateAccessTokenAsync(): Promise<void> {
         let apiSf = new Sfdx(this);
         if (!this.isFileMedia) {
+            
             try {
-                // Validate access token
-                // Normally, each SF user must have an access ot his own User record.
-                let records = await apiSf.queryAsync(`SELECT Id FROM User WHERE Username = '${this.orgUserName}'`, false);
-                if (records.records.length == 0) {
-                    throw new Error();
-                }
+                await apiSf.identityAsync();               
             } catch (ex) {
                 throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessToOrgExpired, this.name));
             }
+
             try {
                 // Check person account availability
                 await apiSf.queryAsync("SELECT IsPersonAccount FROM Account LIMIT 1", false);

@@ -75,5 +75,11 @@ export interface IFieldMappingResult {
     targetSObjectName?: string;
 }
 
+export interface IIdentityInfo {
+    user_id: string,
+    organization_id: string,
+    username: string,
+    display_name: string
+}
 
 
