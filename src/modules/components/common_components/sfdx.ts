@@ -16,7 +16,7 @@ import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
 import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError, ObjectFieldMapping } from '../../models';
 import { Common } from './common';
-import { IOrgConnectionData, IBlobField, IFieldMapping, IFieldMappingResult } from '../../models/common_models/helper_interfaces';
+import { IOrgConnectionData, IBlobField, IFieldMapping, IFieldMappingResult, IIdentityInfo } from '../../models/common_models/helper_interfaces';
 import { Logger, RESOURCES } from './logger';
 
 var jsforce = require("jsforce");
@@ -347,6 +347,25 @@ export class Sfdx implements IFieldMapping {
                 createable: true,
                 updateable: true,
                 custom: Common.isCustomObject(String(record["QualifiedApiName"]))
+            });
+        });
+    }
+
+    /**
+     * Performs Connection#identity query
+     *
+     * @returns {Promise<IIdentityInfo>}
+     * @memberof Sfdx
+     */
+    public async identityAsync(): Promise<IIdentityInfo> {
+        var conn = this.org.getConnection();
+        return new Promise((resolve, reject) => {
+            conn.identity(function (err: any, info: IIdentityInfo) {
+                if (err)
+                    reject(err);
+                else {
+                    resolve(info);
+                }
             });
         });
     }
