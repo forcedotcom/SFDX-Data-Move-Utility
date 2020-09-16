@@ -124,7 +124,7 @@
     "apiOperationJobCreated": "[Job# %s:%s] {%s} The job has been created. Uploading data...",
     "apiOperationBatchCreated": "[Batch# %s:%s] {%s} The batch has been created. Uploading data...",
     "apiOperationDataUploaded": "[Batch# %s:%s] {%s} The data has been uploaded. Processing...",
-    "apiOperationInProgress": "[Batch# %s:%s] {%s} Processing... %s records succeeded, %s records failed.",
+    "apiOperationInProgress": "[Batch# %s:%s] {%s} Processing... %s records processed, %s records failed.",
     "apiOperationCompleted": "[Batch# %s:%s] {%s} Completed. %s records succeeded, %s records failed.",
     "apiOperationWarnCompleted": "[Batch# %s:%s] {%s} Incompleted. %s records succeeded, %s records failed.",
     "apiOperationStarted": "{%s} The %s API operation has been started using %s.",
