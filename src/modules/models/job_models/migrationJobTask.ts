@@ -872,7 +872,8 @@ export default class MigrationJobTask {
                 } else if (self.sObjectName == "Account") {
                     processedData.fields = processedData.fields.filter(field => {
                         // For Person accounts
-                        return !field.person && CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.indexOf(field.nameId) < 0;
+                        //return !field.person && CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.indexOf(field.nameId) < 0;
+                        return CONSTANTS.FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.indexOf(field.nameId) < 0;
                     });
                 } else {
                     // Person contact => skip from the processing
