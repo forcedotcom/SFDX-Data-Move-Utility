@@ -56,6 +56,9 @@
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
 
+    "loadingAddonManifestFile" : "Loading addon manifest %s...",
+    "missingNecessaryComponent" : "The necessary component %s could not be found.",
+
     "commandInProgress": "Command in progress...",
     "packageScript": "Package script",
     "pluginVersion": "Plugin version: %s v%s",

@@ -1,0 +1,11 @@
+{
+    "addons" : [
+        {
+            "command" : "sfdmu:run",
+            "path" : "../../../addons/modules/sfdmuTestCoreAddon",
+            "priority" : 1,
+            "enabled" : true
+        }
+    ]
+
+}

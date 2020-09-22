@@ -29,6 +29,8 @@ export const CONSTANTS = {
     FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
 
     SCRIPT_FILE_NAME: 'export.json',
+    CORE_ADDON_MANIFEST_FILE_NAME: "../../../addons/addonsCore.json",
+    USER_ADDON_MANIFEST_FILE_NAME: "addons.json",
     CSV_SOURCE_SUB_DIRECTORY: "source",
     CSV_TARGET_SUB_DIRECTORY: "target",
     CSV_SOURCE_FILE_SUFFIX: "_source",
