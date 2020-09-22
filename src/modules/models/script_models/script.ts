@@ -27,6 +27,7 @@ import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
 import * as fs from 'fs';
 import { IPluginRuntime } from "../addons_models/addon_interfaces";
+import AddonManager from "../../components/common_components/addonManager";
 
 
 /**
@@ -71,6 +72,7 @@ export default class Script implements IPluginRuntime {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
+    addonManager: AddonManager;    
 
     get isPersonAccountEnabled(): boolean {
         return this.sourceOrg.isPersonAccountEnabled || this.targetOrg.isPersonAccountEnabled;
@@ -120,6 +122,10 @@ export default class Script implements IPluginRuntime {
         // Initialize script
         this.logger = logger;
         this.basePath = basePath;
+
+        // Create add on manager
+        this.addonManager = new AddonManager(this, this.logger);
+
         this.sourceOrg = this.orgs.filter(x => x.name == sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
         this.apiVersion = apiVersion || this.apiVersion;

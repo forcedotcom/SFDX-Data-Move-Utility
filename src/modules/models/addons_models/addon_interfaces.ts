@@ -13,7 +13,7 @@
  * @interface IPluginRuntime
  */
 export interface IPluginRuntime {
-
+    basePath: string
 }
 
 
@@ -26,4 +26,17 @@ export interface IPluginRuntime {
  */
 export interface IAddonModule {
 
+}
+
+
+export interface IAddonManifest {
+    addons: IAddonManifestDefinition[]
+}
+
+export interface IAddonManifestDefinition {
+    command: string,
+    path: string,
+    module: string,
+    priority: number,
+    enabled: boolean
 }

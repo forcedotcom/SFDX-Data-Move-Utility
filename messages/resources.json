@@ -19,6 +19,7 @@
     "insert": "Insert",
     "update": "Update",
     "personContact": "Person Contact",
+    "coreManifest": "[Core Manifest]",
 
     "defaultPromptOptions": "y/n",
     "defaultPromptNopromptOption": "y",

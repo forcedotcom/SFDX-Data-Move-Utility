@@ -46,10 +46,11 @@ export enum RESOURCES {
     insert = "insert",
     update = "update",
     personContact = "personContact",
+    coreManifest = "coreManifest",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptNopromptOption = "defaultPromptNopromptOption",
-    defaultPromptSelectedOption = "defaultPromptSelectedOption",    
+    defaultPromptSelectedOption = "defaultPromptSelectedOption",
     promptMessageFormat = "promptMessageFormat",
     promptDefaultOptionFormat = "promptDefaultOptionFormat",
 
@@ -117,6 +118,9 @@ export enum RESOURCES {
     fieldTargetDoesNtoExist = "fieldTargetDoesNtoExist",
     missingFieldsToProcess = "missingFieldsToProcess",
 
+    loadingAddonManifestFile = "loadingAddonManifestFile",
+    missingNecessaryComponent = "missingNecessaryComponent",
+
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",
 
@@ -170,7 +174,7 @@ export enum RESOURCES {
     deletingOldDataCompleted = "deletingOldDataCompleted",
     deletingOldDataSkipped = "deletingOldDataSkipped",
     nothingToDelete = "nothingToDelete",
-    
+
     mappingQuery = "mappingQuery",
     mappingSourceRecords = "mappingSourceRecords",
     mappingTargetRecords = "mappingTargetRecords",
