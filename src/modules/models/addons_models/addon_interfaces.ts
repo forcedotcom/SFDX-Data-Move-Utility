@@ -5,15 +5,25 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IAddonModule } from "../../../modules/models/addons_models/addon_interfaces";
+
+/**
+ * Provides access to the plugin runtime functions
+ *
+ * @export
+ * @interface IPluginRuntime
+ */
+export interface IPluginRuntime {
+
+}
+
 
 
 /**
- * Example of addon module
+ * The implementation of the addon module
  *
  * @export
- * @class SfdmuTestCoreAddon
+ * @interface IAddonModule
  */
-export default class SfdmuTestCoreAddon implements IAddonModule {
+export interface IAddonModule {
 
 }

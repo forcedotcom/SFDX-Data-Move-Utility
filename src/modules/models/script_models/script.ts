@@ -26,6 +26,7 @@ import MigrationJob from "../job_models/migrationJob";
 import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
 import * as fs from 'fs';
+import { IPluginRuntime } from "../addons_models/addon_interfaces";
 
 
 /**
@@ -34,7 +35,7 @@ import * as fs from 'fs';
  * @export
  * @class Script
  */
-export default class Script {
+export default class Script implements IPluginRuntime {
 
     // ------------- JSON --------------
     @Type(() => ScriptOrg)
