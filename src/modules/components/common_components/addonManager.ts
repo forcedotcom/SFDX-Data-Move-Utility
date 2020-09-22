@@ -1,5 +1,4 @@
 
-import { CommandInitializationError } from "../../models";
 /*
  * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
@@ -7,12 +6,12 @@ import { CommandInitializationError } from "../../models";
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IAddonManifest, IAddonModule, IPluginRuntime } from "../../models/addons_models/addon_interfaces";
+import { IAddonManifest, IAddonManifestDefinition, IAddonModule, IPluginRuntime } from "../../models/addons_models/addon_interfaces";
 import { Logger, RESOURCES } from "./logger";
 import * as path from 'path';
 import * as fs from 'fs';
 import { CONSTANTS } from "./statics";
-
+import { CommandInitializationError } from "../../models";
 
 
 
@@ -30,6 +29,14 @@ export default class AddonManager {
     manifests: IAddonManifest[] = new Array<IAddonManifest>();
     addons: IAddonModule[] = new Array<IAddonModule>();
 
+    /**
+     * Map : Function name => List of functions ordered by the addon priority
+     *
+     * @type {Map<string, Function[]>}
+     * @memberof AddonManager
+     */
+    moduleMethodsMap: Map<string, Function[]> = new Map<string, Function[]>();
+
     constructor(runtime: IPluginRuntime, logger: Logger) {
 
         // Setup
@@ -38,21 +45,27 @@ export default class AddonManager {
 
         // Load manifests
         this.manifests = [
-            // Core
-            this._loadManifestJsonFile(CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME, true),
-            // Users
-            this._loadManifestJsonFile(path.join(runtime.basePath, CONSTANTS.USER_ADDON_MANIFEST_FILE_NAME))
+            // Core manifest...
+            this._loadAddonManifest(CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME, true),
+            // Custom manifest...
+            this._loadAddonManifest(path.join(runtime.basePath, CONSTANTS.USER_ADDON_MANIFEST_FILE_NAME))
         ].filter(manifest => !!manifest);
 
         // Load modules from the manifests
-        
+        this.manifests.forEach(manifest => {
+            manifest.addons.forEach(addon => {
+                this.addons.push(this._loadAddonModule(addon));
+            });
+        });
+        this.addons = this.addons.filter(addon => addon);
+
 
     }
 
 
 
     // --------- Private members ------------ //
-    private _loadManifestJsonFile(manifestPath: string, isCore: boolean = false): IAddonManifest {
+    private _loadAddonManifest(manifestPath: string, isCore: boolean = false): IAddonManifest {
 
         if (!path.isAbsolute(manifestPath)) {
             manifestPath = path.resolve(__dirname, manifestPath);
@@ -73,6 +86,35 @@ export default class AddonManager {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
         }
     }
+
+    private _loadAddonModule(manifestDefinition: IAddonManifestDefinition): IAddonModule {
+        
+        try {
+
+            let moduleId = "";
+            
+            if (manifestDefinition.module) {
+                moduleId = manifestDefinition.module;
+            } else {
+                if (!path.isAbsolute(manifestDefinition.path)) {
+                    moduleId = path.resolve(__dirname, manifestDefinition.path);
+                } else {
+                    moduleId = manifestDefinition.path;
+                }
+            }
+
+            return <IAddonModule>require(moduleId);
+
+        } catch (ex) { }
+
+        return null;
+    }
+
+    private _createModuleMethodsMap(){
+
+    }
+
+
 
 }
 
