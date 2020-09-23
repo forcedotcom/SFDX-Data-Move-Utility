@@ -27,6 +27,7 @@ import { IPluginRuntime } from "../../models/addons_models/IPluginRuntime";
  */
 export default class AddonManager {
 
+    addonModuleRuntime: IPluginRuntime;
     runtime: IPluginRuntime;
     logger: Logger;
 
@@ -43,8 +44,9 @@ export default class AddonManager {
 
     constructor(runtime: IPluginRuntime, logger: Logger) {
 
-        // Setup ************************************************        
-        this.runtime = Common.extractObjectMembers(runtime, pluginRuntimeSharedMembers);
+        // Setup ************************************************   
+        this.runtime = runtime;     
+        this.addonModuleRuntime = Common.extractObjectMembers(runtime, pluginRuntimeSharedMembers);
         this.logger = logger;
 
         // Load manifests ***************************************
@@ -122,7 +124,7 @@ export default class AddonManager {
                 }
             }
 
-            return <AddonModuleBase> new (require(moduleId).default)(this.runtime);
+            return <AddonModuleBase> new (require(moduleId).default)(this.addonModuleRuntime);
 
         } catch (ex) { }
 
@@ -133,7 +135,7 @@ export default class AddonManager {
         let keys = [...this.addons.keys()].sort();
         keys.forEach(priority => {
             this.addons.get(priority).forEach((module: AddonModuleBase) => {
-                let functions = Common.getObjectMembers(module);
+                let functions = Common.getObjectProperties(module);
                 functions.forEach($function => {
                     if (!this.addonHandlersMap.has($function)) {
                         this.addonHandlersMap.set($function, []);

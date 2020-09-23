@@ -1298,7 +1298,7 @@ export class Common {
      * @returns {string[]}
      * @memberof Common
      */
-    public static getObjectMembers(instance: any, type: "function" | "object" | "string" = "function"): string[] {
+    public static getObjectProperties(instance: any, type: "function" | "object" | "string" = "function"): string[] {
         let members = [];
         let keys = Reflect.ownKeys(instance.__proto__).filter(name => name != "constructor");
         keys.forEach(member => {
@@ -1310,10 +1310,10 @@ export class Common {
     }
 
 
-    public static extractObjectMembers<T>(object : T, properties: Record<keyof T, boolean>){
+    public static extractObjectMembers<T>(object : T, propertiesToExtract: Record<keyof T, boolean>){
         return (function<TActual extends T>(value: TActual){
             let result = {} as T;
-            for (const property of Object.keys(properties) as Array<keyof T>) {
+            for (const property of Object.keys(propertiesToExtract) as Array<keyof T>) {
                 result[property] = value[property];
             }
             return result;
