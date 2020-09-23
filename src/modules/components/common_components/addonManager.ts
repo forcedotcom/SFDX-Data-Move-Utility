@@ -6,7 +6,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IAddonManifest, IAddonManifestDefinition, iPluginRuntimeMembers as pluginRuntimeSharedMembers } from "../../models/addons_models/addon_helpers";
+import { ADDON_MODULE_METHODS, IAddonManifest, IAddonManifestDefinition, IPLUGIN_RUNTIME_SHARED_MEMBERS as pluginRuntimeSharedMembers } from "../../models/addons_models/addon_helpers";
 import { Logger, RESOURCES } from "./logger";
 import * as path from 'path';
 import * as fs from 'fs';
@@ -40,12 +40,12 @@ export default class AddonManager {
      * @type {Map<string, Function[]>}
      * @memberof AddonManager
      */
-    addonHandlersMap: Map<string, Function[]> = new Map<string, Function[]>();
+    addonHandlersMap: Map<string, [Function, any][]> = new Map<string, [Function, any][]>();    
 
     constructor(runtime: IPluginRuntime, logger: Logger) {
 
         // Setup ************************************************   
-        this.runtime = runtime;     
+        this.runtime = runtime;
         this.addonModuleRuntime = Common.extractObjectMembers(runtime, pluginRuntimeSharedMembers);
         this.logger = logger;
 
@@ -74,10 +74,41 @@ export default class AddonManager {
 
         // Create addon modules method map ***********************
         this._createModuleMethodsMap();
-        
 
     }
 
+    async callAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, ...params: any[]): Promise<any> {
+
+        let fns = this.addonHandlersMap.get(method);
+        let lastResult: any;
+
+        for (let index = 0; index < fns.length; index++) {
+            let actualParams = [].concat(params);
+            const fn = fns[index];
+            if (index > 0) {
+                actualParams = actualParams.slice(1);
+                actualParams.unshift(lastResult);
+            }
+            lastResult = await fn[0].apply(fn[1], actualParams);
+        }
+        return lastResult;
+    }
+
+    callAddonModuleMethod(method: ADDON_MODULE_METHODS, ...params: any[]): any[] {
+        let fns = this.addonHandlersMap.get(method);
+        let lastResult: any;
+
+        for (let index = 0; index < fns.length; index++) {
+            let actualParams = [].concat(params);
+            const fn = fns[index];
+            if (index > 0) {
+                actualParams = actualParams.slice(1);
+                actualParams.unshift(lastResult);
+            }
+            lastResult = fn[0].apply(fn[1], actualParams);
+        }
+        return lastResult;
+    }
 
 
     // --------- Private members ------------ //
@@ -124,7 +155,7 @@ export default class AddonManager {
                 }
             }
 
-            return <AddonModuleBase> new (require(moduleId).default)(this.addonModuleRuntime);
+            return <AddonModuleBase>new (require(moduleId).default)(this.addonModuleRuntime);
 
         } catch (ex) { }
 
@@ -140,7 +171,7 @@ export default class AddonManager {
                     if (!this.addonHandlersMap.has($function)) {
                         this.addonHandlersMap.set($function, []);
                     }
-                    this.addonHandlersMap.get($function).push(module[$function]);
+                    this.addonHandlersMap.get($function).push([module[$function], module]);
                 });
             });
         });

@@ -28,6 +28,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import AddonManager from "../../components/common_components/addonManager";
 import { IPluginRuntime } from "../addons_models/IPluginRuntime";
+import { ADDON_MODULE_METHODS } from "../addons_models/addon_helpers";
+import { IScriptRunInfo } from "../addons_models/AddonModuleBase";
 
 
 /**
@@ -72,7 +74,7 @@ export default class Script implements IPluginRuntime {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
-    addonManager: AddonManager;    
+    addonManager: AddonManager;
 
     get isPersonAccountEnabled(): boolean {
         return this.sourceOrg.isPersonAccountEnabled || this.targetOrg.isPersonAccountEnabled;
@@ -125,6 +127,18 @@ export default class Script implements IPluginRuntime {
 
         // Create add on manager
         this.addonManager = new AddonManager(this, this.logger);
+
+        // --- Call Addons OnScriptSetup/ --- //
+        let scriptInfo: IScriptRunInfo = {
+            apiVersion,
+            sourceUsername,
+            targetUsername
+        };
+        scriptInfo = await this.addonManager.callAddonModuleMethodAsync(ADDON_MODULE_METHODS.onScriptSetup, scriptInfo);
+        sourceUsername = scriptInfo.sourceUsername;
+        targetUsername = scriptInfo.targetUsername;
+        apiVersion = scriptInfo.apiVersion;
+        // --- /Call OnScriptSetup --- //
 
         this.sourceOrg = this.orgs.filter(x => x.name == sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
@@ -249,7 +263,7 @@ export default class Script implements IPluginRuntime {
         for (let objectIndex = 0; objectIndex < this.objects.length; objectIndex++) {
 
             const thisObject = this.objects[objectIndex];
-            
+
             this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
 
             await thisObject.describeAsync();

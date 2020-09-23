@@ -10,7 +10,6 @@ import { IPluginRuntime } from "./IPluginRuntime";
 export interface IScriptRunInfo {
     sourceUsername: string,
     targetUsername: string,
-    basePath: string,
     apiVersion: string
 }
 
