@@ -26,8 +26,8 @@ import MigrationJob from "../job_models/migrationJob";
 import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
 import * as fs from 'fs';
-import { IPluginRuntime } from "../addons_models/addon_interfaces";
 import AddonManager from "../../components/common_components/addonManager";
+import { IPluginRuntime } from "../addons_models/IPluginRuntime";
 
 
 /**

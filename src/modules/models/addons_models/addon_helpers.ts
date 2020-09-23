@@ -6,29 +6,6 @@
  */
 
 
-/**
- * Provides access to the plugin runtime functions
- *
- * @export
- * @interface IPluginRuntime
- */
-export interface IPluginRuntime {
-    basePath: string
-}
-
-
-
-/**
- * The implementation of the addon module
- *
- * @export
- * @interface IAddonModule
- */
-export interface IAddonModule {
-
-}
-
-
 export interface IAddonManifest {
     addons: IAddonManifestDefinition[]
 }
@@ -38,5 +15,10 @@ export interface IAddonManifestDefinition {
     path: string,
     module: string,
     priority: number,
-    enabled: boolean
+    enabled: boolean,
+    isCore: boolean
+}
+
+export const iPluginRuntimeMembers = {
+    basePath: true
 }

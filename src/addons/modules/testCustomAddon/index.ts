@@ -1,5 +1,10 @@
-import { IAddonModule } from "../../../modules/models/addons_models/addon_interfaces";
+import { AddonModuleBase, IScriptRunInfo } from "../../../modules/models/addons_models/AddonModuleBase";
 
-export default class TestCustomAddon implements IAddonModule {
+
+export default class TestCustomAddon extends AddonModuleBase {
+    async onScriptSetup(runInfo: IScriptRunInfo): Promise<IScriptRunInfo>{
+        console.log("TestCustomAddon : runInfo=" + runInfo);
+        return runInfo;
+    }
 
 }

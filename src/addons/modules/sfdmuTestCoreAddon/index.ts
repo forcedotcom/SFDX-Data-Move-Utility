@@ -5,7 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IAddonModule } from "../../../modules/models/addons_models/addon_interfaces";
+import { AddonModuleBase, IScriptRunInfo } from "../../../modules/models/addons_models/AddonModuleBase";
+
 
 
 /**
@@ -14,6 +15,11 @@ import { IAddonModule } from "../../../modules/models/addons_models/addon_interf
  * @export
  * @class SfdmuTestCoreAddon
  */
-export default class SfdmuTestCoreAddon implements IAddonModule {
+export default class SfdmuTestCoreAddon extends AddonModuleBase {
+    
+    async onScriptSetup(runInfo: IScriptRunInfo): Promise<IScriptRunInfo>{
+        console.log("SfdmuTestCoreAddon : runInfo=" + runInfo);
+        return runInfo;
+    }
 
 }

@@ -6,12 +6,16 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IAddonManifest, IAddonManifestDefinition, IAddonModule, IPluginRuntime } from "../../models/addons_models/addon_interfaces";
+import { IAddonManifest, IAddonManifestDefinition, iPluginRuntimeMembers as pluginRuntimeSharedMembers } from "../../models/addons_models/addon_helpers";
 import { Logger, RESOURCES } from "./logger";
 import * as path from 'path';
 import * as fs from 'fs';
 import { CONSTANTS } from "./statics";
 import { CommandInitializationError } from "../../models";
+import { Common } from "./common";
+import { AddonModuleBase } from "../../models/addons_models/AddonModuleBase";
+import { IPluginRuntime } from "../../models/addons_models/IPluginRuntime";
+
 
 
 
@@ -27,7 +31,7 @@ export default class AddonManager {
     logger: Logger;
 
     manifests: IAddonManifest[] = new Array<IAddonManifest>();
-    addons: IAddonModule[] = new Array<IAddonModule>();
+    addons: Map<number, AddonModuleBase[]> = new Map<number, AddonModuleBase[]>();
 
     /**
      * Map : Function name => List of functions ordered by the addon priority
@@ -35,15 +39,15 @@ export default class AddonManager {
      * @type {Map<string, Function[]>}
      * @memberof AddonManager
      */
-    moduleMethodsMap: Map<string, Function[]> = new Map<string, Function[]>();
+    addonHandlersMap: Map<string, Function[]> = new Map<string, Function[]>();
 
     constructor(runtime: IPluginRuntime, logger: Logger) {
 
-        // Setup
-        this.runtime = runtime;
+        // Setup ************************************************        
+        this.runtime = Common.extractObjectMembers(runtime, pluginRuntimeSharedMembers);
         this.logger = logger;
 
-        // Load manifests
+        // Load manifests ***************************************
         this.manifests = [
             // Core manifest...
             this._loadAddonManifest(CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME, true),
@@ -51,14 +55,24 @@ export default class AddonManager {
             this._loadAddonManifest(path.join(runtime.basePath, CONSTANTS.USER_ADDON_MANIFEST_FILE_NAME))
         ].filter(manifest => !!manifest);
 
-        // Load modules from the manifests
+        // Load modules from the manifests ***********************
         this.manifests.forEach(manifest => {
             manifest.addons.forEach(addon => {
-                this.addons.push(this._loadAddonModule(addon));
+                if (addon.enabled) {
+                    let module = this._loadAddonModule(addon);
+                    if (module) {
+                        if (!this.addons.has(addon.priority)) {
+                            this.addons.set(addon.priority, []);
+                        }
+                        this.addons.get(addon.priority).push(this._loadAddonModule(addon));
+                    }
+                }
             });
         });
-        this.addons = this.addons.filter(addon => addon);
 
+        // Create addon modules method map ***********************
+        this._createModuleMethodsMap();
+        
 
     }
 
@@ -81,18 +95,23 @@ export default class AddonManager {
         this.logger.infoMinimal(RESOURCES.loadingAddonManifestFile, isCore ? this.logger.getResourceString(RESOURCES.coreManifest) : manifestPath);
 
         try {
-            return <IAddonManifest>JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            let manifest = <IAddonManifest>JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            manifest.addons.forEach(addon => {
+                addon.isCore = isCore;
+                addon.priority = (addon.priority || 1) + (isCore ? 0 : CONSTANTS.USER_ADDON_PRIORITY_OFFSET);
+            });
+            return manifest;
         } catch (ex) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
         }
     }
 
-    private _loadAddonModule(manifestDefinition: IAddonManifestDefinition): IAddonModule {
-        
+    private _loadAddonModule(manifestDefinition: IAddonManifestDefinition): AddonModuleBase {
+
         try {
 
             let moduleId = "";
-            
+
             if (manifestDefinition.module) {
                 moduleId = manifestDefinition.module;
             } else {
@@ -103,18 +122,27 @@ export default class AddonManager {
                 }
             }
 
-            return <IAddonModule>require(moduleId);
+            return <AddonModuleBase> new (require(moduleId).default)(this.runtime);
 
         } catch (ex) { }
 
         return null;
     }
 
-    private _createModuleMethodsMap(){
-
+    private _createModuleMethodsMap() {
+        let keys = [...this.addons.keys()].sort();
+        keys.forEach(priority => {
+            this.addons.get(priority).forEach((module: AddonModuleBase) => {
+                let functions = Common.getObjectMembers(module);
+                functions.forEach($function => {
+                    if (!this.addonHandlersMap.has($function)) {
+                        this.addonHandlersMap.set($function, []);
+                    }
+                    this.addonHandlersMap.get($function).push(module[$function]);
+                });
+            });
+        });
     }
-
-
 
 }
 
