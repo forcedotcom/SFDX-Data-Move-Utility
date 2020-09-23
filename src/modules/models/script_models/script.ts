@@ -29,7 +29,7 @@ import * as fs from 'fs';
 import AddonManager from "../../components/common_components/addonManager";
 import { IPluginRuntime } from "../addons_models/IPluginRuntime";
 import { ADDON_MODULE_METHODS } from "../addons_models/addon_helpers";
-import { IScriptRunInfo } from "../addons_models/AddonModuleBase";
+import { IScriptRunInfo } from "../addons_models/IAddonModule";
 
 
 /**

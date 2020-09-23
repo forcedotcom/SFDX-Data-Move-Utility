@@ -1,4 +1,3 @@
-import { IPluginRuntime } from "./IPluginRuntime";
 /*
  * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
@@ -14,11 +13,7 @@ export interface IScriptRunInfo {
 }
 
 
-export abstract class AddonModuleBase {
-    runtime : IPluginRuntime;
-    constructor(runtime : IPluginRuntime){
-        this.runtime = runtime;
-    }
-    abstract onScriptSetup?(runInfo: IScriptRunInfo): Promise<IScriptRunInfo>;
+export interface IAddonModule {
+    onScriptSetup?(runInfo: IScriptRunInfo): Promise<IScriptRunInfo>;
 }
 

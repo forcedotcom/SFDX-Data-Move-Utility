@@ -13,8 +13,8 @@ import * as fs from 'fs';
 import { CONSTANTS } from "./statics";
 import { CommandInitializationError } from "../../models";
 import { Common } from "./common";
-import { AddonModuleBase } from "../../models/addons_models/AddonModuleBase";
 import { IPluginRuntime } from "../../models/addons_models/IPluginRuntime";
+import { IAddonModule } from "../../models/addons_models/IAddonModule";
 
 
 
@@ -32,7 +32,7 @@ export default class AddonManager {
     logger: Logger;
 
     manifests: IAddonManifest[] = new Array<IAddonManifest>();
-    addons: Map<number, AddonModuleBase[]> = new Map<number, AddonModuleBase[]>();
+    addons: Map<number, IAddonModule[]> = new Map<number, IAddonModule[]>();
 
     /**
      * Map : Function name => List of functions ordered by the addon priority
@@ -40,7 +40,7 @@ export default class AddonManager {
      * @type {Map<string, Function[]>}
      * @memberof AddonManager
      */
-    addonHandlersMap: Map<string, [Function, any][]> = new Map<string, [Function, any][]>();    
+    addonHandlersMap: Map<string, [Function, any][]> = new Map<string, [Function, any][]>();
 
     constructor(runtime: IPluginRuntime, logger: Logger) {
 
@@ -52,21 +52,21 @@ export default class AddonManager {
         // Load manifests ***************************************
         this.manifests = [
             // Core manifest...
-            this._loadAddonManifest(CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME, true),
+            this._loadAddonManifest(CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME, true, this.runtime.basePath),
             // Custom manifest...
-            this._loadAddonManifest(path.join(runtime.basePath, CONSTANTS.USER_ADDON_MANIFEST_FILE_NAME))
+            this._loadAddonManifest(path.join(runtime.basePath, CONSTANTS.USER_ADDON_MANIFEST_FILE_NAME), false, this.runtime.basePath)
         ].filter(manifest => !!manifest);
 
         // Load modules from the manifests ***********************
         this.manifests.forEach(manifest => {
             manifest.addons.forEach(addon => {
                 if (addon.enabled) {
-                    let module = this._loadAddonModule(addon);
+                    let module = this._loadAddonModule(addon, this.runtime.basePath);
                     if (module) {
                         if (!this.addons.has(addon.priority)) {
                             this.addons.set(addon.priority, []);
                         }
-                        this.addons.get(addon.priority).push(this._loadAddonModule(addon));
+                        this.addons.get(addon.priority).push(this._loadAddonModule(addon, this.runtime.basePath));
                     }
                 }
             });
@@ -112,10 +112,10 @@ export default class AddonManager {
 
 
     // --------- Private members ------------ //
-    private _loadAddonManifest(manifestPath: string, isCore: boolean = false): IAddonManifest {
+    private _loadAddonManifest(manifestPath: string, isCore: boolean, basePath: string): IAddonManifest {
 
         if (!path.isAbsolute(manifestPath)) {
-            manifestPath = path.resolve(__dirname, manifestPath);
+            manifestPath = path.resolve(isCore ? __dirname : basePath, manifestPath);
         }
 
         if (!fs.existsSync(manifestPath)) {
@@ -139,7 +139,7 @@ export default class AddonManager {
         }
     }
 
-    private _loadAddonModule(manifestDefinition: IAddonManifestDefinition): AddonModuleBase {
+    private _loadAddonModule(manifestDefinition: IAddonManifestDefinition, basePath: string): IAddonModule {
 
         try {
 
@@ -149,13 +149,13 @@ export default class AddonManager {
                 moduleId = manifestDefinition.module;
             } else {
                 if (!path.isAbsolute(manifestDefinition.path)) {
-                    moduleId = path.resolve(__dirname, manifestDefinition.path);
+                    moduleId = path.resolve(manifestDefinition.isCore ? __dirname : basePath, manifestDefinition.path);
                 } else {
                     moduleId = manifestDefinition.path;
                 }
             }
 
-            return <AddonModuleBase>new (require(moduleId).default)(this.addonModuleRuntime);
+            return <IAddonModule>new (require(moduleId).default)(this.addonModuleRuntime);
 
         } catch (ex) { }
 
@@ -165,7 +165,7 @@ export default class AddonManager {
     private _createModuleMethodsMap() {
         let keys = [...this.addons.keys()].sort();
         keys.forEach(priority => {
-            this.addons.get(priority).forEach((module: AddonModuleBase) => {
+            this.addons.get(priority).forEach((module: IAddonModule) => {
                 let functions = Common.getObjectProperties(module);
                 functions.forEach($function => {
                     if (!this.addonHandlersMap.has($function)) {

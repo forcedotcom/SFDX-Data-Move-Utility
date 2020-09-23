@@ -19,6 +19,7 @@ export interface IAddonManifestDefinition {
     isCore: boolean
 }
 
+
 export const IPLUGIN_RUNTIME_SHARED_MEMBERS = {
     basePath: true
 }
@@ -27,3 +28,4 @@ export const IPLUGIN_RUNTIME_SHARED_MEMBERS = {
 export enum ADDON_MODULE_METHODS {
     onScriptSetup = "onScriptSetup"
 }
+
