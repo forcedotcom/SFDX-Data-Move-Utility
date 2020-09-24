@@ -6,7 +6,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ADDON_MODULE_METHODS, IAddonManifest, IAddonManifestDefinition, IPLUGIN_RUNTIME_SHARED_MEMBERS as pluginRuntimeSharedMembers } from "../../models/addons_models/addon_helpers";
+import { ADDON_MODULE_METHODS, IAddonManifest, IAddonManifestDefinition } from "../../models/addons_models/addon_helpers";
 import { Logger, RESOURCES } from "./logger";
 import * as path from 'path';
 import * as fs from 'fs';
@@ -27,7 +27,6 @@ import { IAddonModule } from "../../models/addons_models/IAddonModule";
  */
 export default class AddonManager {
 
-    addonModuleRuntime: IPluginRuntime;
     runtime: IPluginRuntime;
     logger: Logger;
 
@@ -46,7 +45,6 @@ export default class AddonManager {
 
         // Setup ************************************************   
         this.runtime = runtime;
-        this.addonModuleRuntime = Common.extractObjectMembers(runtime, pluginRuntimeSharedMembers);
         this.logger = logger;
 
         // Load manifests ***************************************
@@ -155,7 +153,7 @@ export default class AddonManager {
                 }
             }
 
-            return <IAddonModule>new (require(moduleId).default)(this.addonModuleRuntime);
+            return <IAddonModule>new (require(moduleId).default)(this.runtime);
 
         } catch (ex) { }
 

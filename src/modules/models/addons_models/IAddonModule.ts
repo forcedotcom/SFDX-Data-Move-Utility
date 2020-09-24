@@ -14,6 +14,13 @@ export interface IScriptRunInfo {
 
 
 export interface IAddonModule {
-    onScriptSetup?(runInfo: IScriptRunInfo): Promise<IScriptRunInfo>;
+    /*
+        runtime : IPluginRuntime;
+        constructor(runtime : IPluginRuntime){
+            this.runtime = runtime;
+        }
+    */
+    onScriptSetup?(runInfo: IScriptRunInfo): Promise<IScriptRunInfo>,
+    onOrgsConnected?(): Promise<any>
 }
 

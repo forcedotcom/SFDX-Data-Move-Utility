@@ -19,13 +19,8 @@ export interface IAddonManifestDefinition {
     isCore: boolean
 }
 
-
-export const IPLUGIN_RUNTIME_SHARED_MEMBERS = {
-    basePath: true
-}
-
-
 export enum ADDON_MODULE_METHODS {
-    onScriptSetup = "onScriptSetup"
+    onScriptSetup = "onScriptSetup",
+    onOrgsConnected = "onOrgsConnected"
 }
 

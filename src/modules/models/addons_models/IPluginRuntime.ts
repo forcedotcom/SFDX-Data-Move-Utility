@@ -13,5 +13,20 @@
  * @interface IPluginRuntime
  */
 export interface IPluginRuntime {
-    basePath: string
+
+    // Returns the path from where the export.json is running
+    basePath: string,
+
+    // Returns the jsforce.Connection object 
+    //  for the source/target org to perform api operations
+    getConnection(isSource: boolean): any,
+
+    // Returns the info about the 
+    // connected orgs
+    getOrgInfo(isSource: boolean): {
+        instanceUrl: string,
+        accessToken: string,
+        apiVersion: string,
+        isFile: boolean,
+    };
 }

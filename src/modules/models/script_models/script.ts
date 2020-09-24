@@ -128,7 +128,8 @@ export default class Script implements IPluginRuntime {
         // Create add on manager
         this.addonManager = new AddonManager(this, this.logger);
 
-        // --- Call Addons OnScriptSetup/ --- //
+        // -----------------------------------//
+        // --- Call Addons: OnScriptSetup --- //
         let scriptInfo: IScriptRunInfo = {
             apiVersion,
             sourceUsername,
@@ -138,7 +139,8 @@ export default class Script implements IPluginRuntime {
         sourceUsername = scriptInfo.sourceUsername;
         targetUsername = scriptInfo.targetUsername;
         apiVersion = scriptInfo.apiVersion;
-        // --- /Call OnScriptSetup --- //
+        // --- /Call Addons: OnScriptSetup --- //
+        // -----------------------------------//
 
         this.sourceOrg = this.orgs.filter(x => x.name == sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
@@ -192,9 +194,6 @@ export default class Script implements IPluginRuntime {
             media: targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
 
-        // Preprocessing...
-        await this.processAfterScriptLoaded();
-
         // Setup orgs
         await this.sourceOrg.setupAsync(true);
         await this.targetOrg.setupAsync(false);
@@ -204,8 +203,15 @@ export default class Script implements IPluginRuntime {
             object.setup(this);
         });
 
-        // Preprocessing...
-        await this.processAfterOrgConnected();
+        // Cleanup the source / target directories
+        await this.cleanupDirectories();
+
+        // -----------------------------------//
+         // --- Call Addons: OnOrgConnected --- //
+         await this.addonManager.callAddonModuleMethodAsync(ADDON_MODULE_METHODS.onOrgsConnected);
+         // --- /Call Addons: OnOrgConnected --- //
+         // -----------------------------------//
+
     }
 
     /**
@@ -214,7 +220,7 @@ export default class Script implements IPluginRuntime {
      *
      * @memberof Script
      */
-    async processAfterOrgConnected() {
+    async cleanupDirectories() : Promise<void> {
 
         // Perform clean-up the source directory if need --------------                        
         if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
@@ -233,19 +239,7 @@ export default class Script implements IPluginRuntime {
                 throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteTargetDirectory, this.targetDirectoryPath));
             }
         }
-
     }
-
-    /**
-     * The preprocessing functionality after script is loaded, 
-     * but before the connect
-     *
-     * @memberof Script
-     */
-    async processAfterScriptLoaded() {
-        // TODO:
-    }
-
 
 
     /**
@@ -474,6 +468,26 @@ export default class Script implements IPluginRuntime {
             });
         }
     }
+
+
+    /* --------------- IPluginRuntime members ----------------- */
+    getConnection(isSource: boolean) {
+        return isSource ? this.sourceOrg.getConnection() : this.targetOrg.getConnection();
+    }
+
+    getOrgInfo(isSource: boolean): {
+        instanceUrl: string;
+        accessToken: string;
+        apiVersion: string;
+        isFile: boolean;
+    } {
+        return isSource ? Object.assign(this.sourceOrg.connectionData, {
+            isFile: this.sourceOrg.media == DATA_MEDIA_TYPE.File
+        }) : Object.assign(this.targetOrg.connectionData, {
+            isFile: this.targetOrg.media == DATA_MEDIA_TYPE.File
+        });
+    }
+
 
 }
 

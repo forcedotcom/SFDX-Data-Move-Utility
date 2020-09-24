@@ -24,7 +24,7 @@ export default class SfdmuTestCoreAddon implements IAddonModule {
     }
     
     async onScriptSetup(runInfo: IScriptRunInfo): Promise<IScriptRunInfo>{
-        console.log("SfdmuTestCoreAddon : runInfo=" + runInfo);
+        console.log("SfdmuTestCoreAddon:OnScriptSetup. RunInfo = " + JSON.stringify(runInfo));
         return runInfo;
     }
 
