@@ -23,9 +23,11 @@ import {
 import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
-import { IPluginInfo } from "../common_models/helper_interfaces";
+import { ICommandRunInfo, IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
 import * as fs from 'fs';
+
+
 
 
 /**
@@ -70,6 +72,8 @@ export default class Script {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
+    runInfo: ICommandRunInfo;
+
 
     get isPersonAccountEnabled(): boolean {
         return this.sourceOrg.isPersonAccountEnabled || this.targetOrg.isPersonAccountEnabled;
@@ -114,21 +118,38 @@ export default class Script {
      * @returns {Promise<void>}
      * @memberof Script
      */
-    async setupAsync(pinfo: IPluginInfo, logger: Logger, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<void> {
+    async setupAsync(
+        pinfo: IPluginInfo,
+        logger: Logger,
+        sourceUsername: string,
+        targetUsername: string,
+        basePath: string,
+        apiVersion: string): Promise<void> {
 
         // Initialize script
         this.logger = logger;
         this.basePath = basePath;
-        this.sourceOrg = this.orgs.filter(x => x.name == sourceUsername)[0] || new ScriptOrg();
-        this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
-        this.apiVersion = apiVersion || this.apiVersion;
+
+        // Create add on manager
+        this.runInfo = {
+            apiVersion,
+            sourceUsername,
+            targetUsername,
+            basePath,
+            pinfo
+        };
+
+
+        this.sourceOrg = this.orgs.filter(x => x.name == this.runInfo.sourceUsername)[0] || new ScriptOrg();
+        this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();
+        this.apiVersion = this.runInfo.apiVersion || this.apiVersion;
         this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
 
         // Message about the running version      
         this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
         this.logger.infoMinimal(RESOURCES.newLine);
 
-        if (sourceUsername.toLowerCase() == targetUsername.toLowerCase()) {
+        if (this.runInfo.sourceUsername.toLowerCase() == this.runInfo.targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
         }
 
@@ -161,18 +182,15 @@ export default class Script {
         // Assign orgs
         Object.assign(this.sourceOrg, {
             script: this,
-            name: sourceUsername,
+            name: this.runInfo.sourceUsername,
             isSource: true,
-            media: sourceUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
+            media: this.runInfo.sourceUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
         Object.assign(this.targetOrg, {
             script: this,
-            name: targetUsername,
-            media: targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
+            name: this.runInfo.targetUsername,
+            media: this.runInfo.targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
-
-        // Preprocessing...
-        await this.processAfterScriptLoaded();
 
         // Setup orgs
         await this.sourceOrg.setupAsync(true);
@@ -183,8 +201,9 @@ export default class Script {
             object.setup(this);
         });
 
-        // Preprocessing...
-        await this.processAfterOrgConnected();
+        // Cleanup the source / target directories
+        await this.cleanupDirectories();
+
     }
 
     /**
@@ -193,7 +212,7 @@ export default class Script {
      *
      * @memberof Script
      */
-    async processAfterOrgConnected() {
+    async cleanupDirectories(): Promise<void> {
 
         // Perform clean-up the source directory if need --------------                        
         if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
@@ -212,19 +231,7 @@ export default class Script {
                 throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteTargetDirectory, this.targetDirectoryPath));
             }
         }
-
     }
-
-    /**
-     * The preprocessing functionality after script is loaded, 
-     * but before the connect
-     *
-     * @memberof Script
-     */
-    async processAfterScriptLoaded() {
-        // TODO:
-    }
-
 
 
     /**

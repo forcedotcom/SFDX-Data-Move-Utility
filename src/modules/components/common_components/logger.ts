@@ -335,7 +335,7 @@ export class Logger {
         resources: IResourceBundle,
         commandMessages: IResourceBundle,
         uxLogger: IUxLogger,
-        command: typeof SfdxCommand,
+        command: SfdxCommand,
         logLevelFlag: string,
         rootPath: string,
         verboseFlag: boolean,

@@ -59,7 +59,9 @@ export interface IPluginInfo {
     pluginName: string,
     commandName: string,
     version: string,
-    path: string
+    path: string,
+    commandString: string,
+    argv: string[]
 }
 
 export interface IFieldMapping {
@@ -81,5 +83,27 @@ export interface IIdentityInfo {
     username: string,
     display_name: string
 }
+
+export interface IAddonManifest {
+    addons: IAddonManifestDefinition[]
+}
+
+export interface IAddonManifestDefinition {
+    command: string,
+    path: string,
+    module: string,
+    priority: number,
+    enabled: boolean,
+    isCore: boolean
+}
+
+export interface ICommandRunInfo {
+    sourceUsername: string,
+    targetUsername: string,
+    apiVersion: string,
+    readonly basePath: string,
+    readonly pinfo: IPluginInfo
+}
+
 
 

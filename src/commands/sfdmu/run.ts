@@ -134,7 +134,7 @@ export default class Run extends SfdxCommand {
             resources,
             commandMessages,
             this.ux,
-            this.statics,
+            this,
             this.flags.loglevel,
             this.flags.path,
             this.flags.verbose,
@@ -147,7 +147,7 @@ export default class Run extends SfdxCommand {
 
         try {
 
-            let pinfo = Common.getPluginInfo(this.statics);
+            let pinfo = Common.getPluginInfo(this);
 
             // Process --version flag
             if (this.flags.version) {
