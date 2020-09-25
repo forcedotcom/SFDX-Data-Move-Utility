@@ -104,7 +104,7 @@ export default class AddonManager {
         return lastResult;
     }
 
-    callAddonModuleMethod(method: ADDON_MODULE_METHODS, ...params: any[]): any[] {
+    triggerAddonModuleMethodSync(method: ADDON_MODULE_METHODS, ...params: any[]): any[] {
         let fns = this.addonHandlersMap.get(method);
         let lastResult: any;
 
