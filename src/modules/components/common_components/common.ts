@@ -86,22 +86,21 @@ export class Common {
     * @static Returns the plugin info
     * 
     * @param {typeof SfdxCommand} command
-    * @returns {{
-    *         pluginName: string,
-    *         commandName: string,
-    *         version: string,
-    *         path: string
-    *     }}
+    * @returns {IPluginInfo}
     * @memberof CommonUtils
     */
-    public static getPluginInfo(command: typeof SfdxCommand): IPluginInfo {
-        var pjson = require(path.join(command.plugin.root, '/package.json'));
-        return <IPluginInfo>{
-            commandName: command.name.toLowerCase(),
-            pluginName: command.plugin.name,
+    public static getPluginInfo(command: SfdxCommand): IPluginInfo {
+        let statics : typeof SfdxCommand = command["statics"];
+        let pjson = require(path.join(statics.plugin.root, '/package.json'));
+        let info =  <IPluginInfo>{
+            commandName: statics.name.toLowerCase(),
+            pluginName: statics.plugin.name,
             version: pjson.version,
-            path: command.plugin.root
-        }
+            path: statics.plugin.root
+        };
+        info.commandString = `sfdx ${info.pluginName}:${info.commandName} ${command.argv.join(' ')}`;
+        info.argv = command.argv;
+        return info;
     }
 
     /**
@@ -1287,6 +1286,37 @@ export class Common {
     public static searchClosest(itemToSearchFor: string, arrayToSearchIn: Array<string>): string {
         if (!itemToSearchFor) return itemToSearchFor;
         return closest(itemToSearchFor, arrayToSearchIn);
+    }
+
+    /**
+     * Return all members of the specific object
+     *
+     * @static
+     * @param {*} instance The object instance
+     * @param {string} [type="function"] The type of members to extract
+     * @returns {string[]}
+     * @memberof Common
+     */
+    public static getObjectProperties(instance: any, type: "function" | "object" | "string" = "function"): string[] {
+        let members = [];
+        let keys = Reflect.ownKeys(instance.__proto__).filter(name => name != "constructor");
+        keys.forEach(member => {
+            if (typeof instance[member] == type) {
+                members.push(member);
+            }
+        });
+        return members;
+    }
+
+
+    public static extractObjectMembers<T>(object : T, propertiesToExtract: Record<keyof T, boolean>){
+        return (function<TActual extends T>(value: TActual){
+            let result = {} as T;
+            for (const property of Object.keys(propertiesToExtract) as Array<keyof T>) {
+                result[property] = value[property];
+            }
+            return result;
+        })(object);
     }
 
 
