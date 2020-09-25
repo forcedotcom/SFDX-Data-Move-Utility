@@ -119,7 +119,7 @@ export interface IAddonModule {
      * The Plugin will share with the Addon its public
      *   methods and runtime data using this property
      */
-    runtime: IPluginRuntime;
+    runtime?: IPluginRuntime;
 
     /*
         // TODO:  Add this constructor to the 

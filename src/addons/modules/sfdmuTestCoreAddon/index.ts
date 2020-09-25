@@ -24,7 +24,8 @@ export default class SfdmuTestCoreAddon implements IAddonModule {
     }
 
     async onScriptSetup(runInfo: ICommandRunInfo): Promise<ICommandRunInfo> {
-        this.runtime.writeLogConsoleMessage("SfdmuTestCoreAddon:OnScriptSetup. RunInfo Json = " + JSON.stringify(runInfo));
+        // TODO: Test Core Funtionality
+        this.runtime.writeLogConsoleMessage("The SFDMU Core Addon has been successfully loaded.");
         return runInfo;
     }
 
