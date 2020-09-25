@@ -244,3 +244,9 @@ export enum MESSAGE_IMPORTANCE {
     Warn,
     Error
 }
+
+export enum ADDON_MODULE_METHODS {
+    onScriptSetup = "onScriptSetup",
+    onOrgsConnected = "onOrgsConnected"
+}
+

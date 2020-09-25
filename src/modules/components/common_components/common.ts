@@ -86,22 +86,21 @@ export class Common {
     * @static Returns the plugin info
     * 
     * @param {typeof SfdxCommand} command
-    * @returns {{
-    *         pluginName: string,
-    *         commandName: string,
-    *         version: string,
-    *         path: string
-    *     }}
+    * @returns {IPluginInfo}
     * @memberof CommonUtils
     */
-    public static getPluginInfo(command: typeof SfdxCommand): IPluginInfo {
-        var pjson = require(path.join(command.plugin.root, '/package.json'));
-        return <IPluginInfo>{
-            commandName: command.name.toLowerCase(),
-            pluginName: command.plugin.name,
+    public static getPluginInfo(command: SfdxCommand): IPluginInfo {
+        let statics : typeof SfdxCommand = command["statics"];
+        let pjson = require(path.join(statics.plugin.root, '/package.json'));
+        let info =  <IPluginInfo>{
+            commandName: statics.name.toLowerCase(),
+            pluginName: statics.plugin.name,
             version: pjson.version,
-            path: command.plugin.root
-        }
+            path: statics.plugin.root
+        };
+        info.commandString = `sfdx ${info.pluginName}:${info.commandName} ${command.argv.join(' ')}`;
+        info.argv = command.argv;
+        return info;
     }
 
     /**

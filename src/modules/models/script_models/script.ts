@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import {
     parseQuery,
@@ -27,9 +27,8 @@ import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
 import * as fs from 'fs';
 import AddonManager from "../../components/common_components/addonManager";
-import { IPluginRuntime } from "../addons_models/IPluginRuntime";
-import { ADDON_MODULE_METHODS } from "../addons_models/addon_helpers";
-import { IScriptRunInfo } from "../addons_models/IAddonModule";
+import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
+
 
 
 /**
@@ -38,7 +37,7 @@ import { IScriptRunInfo } from "../addons_models/IAddonModule";
  * @export
  * @class Script
  */
-export default class Script implements IPluginRuntime {
+export default class Script {
 
     // ------------- JSON --------------
     @Type(() => ScriptOrg)
@@ -75,6 +74,8 @@ export default class Script implements IPluginRuntime {
     sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
     addonManager: AddonManager;
+    runInfo: ICommandRunInfo;
+
 
     get isPersonAccountEnabled(): boolean {
         return this.sourceOrg.isPersonAccountEnabled || this.targetOrg.isPersonAccountEnabled;
@@ -119,39 +120,41 @@ export default class Script implements IPluginRuntime {
      * @returns {Promise<void>}
      * @memberof Script
      */
-    async setupAsync(pinfo: IPluginInfo, logger: Logger, sourceUsername: string, targetUsername: string, basePath: string, apiVersion: string): Promise<void> {
+    async setupAsync(
+        pinfo: IPluginInfo,
+        logger: Logger,
+        sourceUsername: string,
+        targetUsername: string,
+        basePath: string,
+        apiVersion: string): Promise<void> {
 
         // Initialize script
         this.logger = logger;
         this.basePath = basePath;
 
         // Create add on manager
-        this.addonManager = new AddonManager(this, this.logger);
-
-        // -----------------------------------//
-        // --- Call Addons: OnScriptSetup --- //
-        let scriptInfo: IScriptRunInfo = {
+        this.runInfo = {
             apiVersion,
             sourceUsername,
-            targetUsername
+            targetUsername,
+            basePath,
+            pinfo
         };
-        scriptInfo = await this.addonManager.callAddonModuleMethodAsync(ADDON_MODULE_METHODS.onScriptSetup, scriptInfo);
-        sourceUsername = scriptInfo.sourceUsername;
-        targetUsername = scriptInfo.targetUsername;
-        apiVersion = scriptInfo.apiVersion;
-        // --- /Call Addons: OnScriptSetup --- //
-        // -----------------------------------//
+        this.addonManager = new AddonManager(this);
 
-        this.sourceOrg = this.orgs.filter(x => x.name == sourceUsername)[0] || new ScriptOrg();
-        this.targetOrg = this.orgs.filter(x => x.name == targetUsername)[0] || new ScriptOrg();
-        this.apiVersion = apiVersion || this.apiVersion;
+        // Triggering Addons
+        await this.__triggerAddOns.onScriptSetup();
+
+        this.sourceOrg = this.orgs.filter(x => x.name == this.runInfo.sourceUsername)[0] || new ScriptOrg();
+        this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();
+        this.apiVersion = this.runInfo.apiVersion || this.apiVersion;
         this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
 
         // Message about the running version      
         this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
         this.logger.infoMinimal(RESOURCES.newLine);
 
-        if (sourceUsername.toLowerCase() == targetUsername.toLowerCase()) {
+        if (this.runInfo.sourceUsername.toLowerCase() == this.runInfo.targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
         }
 
@@ -184,14 +187,14 @@ export default class Script implements IPluginRuntime {
         // Assign orgs
         Object.assign(this.sourceOrg, {
             script: this,
-            name: sourceUsername,
+            name: this.runInfo.sourceUsername,
             isSource: true,
-            media: sourceUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
+            media: this.runInfo.sourceUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
         Object.assign(this.targetOrg, {
             script: this,
-            name: targetUsername,
-            media: targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
+            name: this.runInfo.targetUsername,
+            media: this.runInfo.targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME ? DATA_MEDIA_TYPE.File : DATA_MEDIA_TYPE.Org
         });
 
         // Setup orgs
@@ -206,11 +209,8 @@ export default class Script implements IPluginRuntime {
         // Cleanup the source / target directories
         await this.cleanupDirectories();
 
-        // -----------------------------------//
-         // --- Call Addons: OnOrgConnected --- //
-         await this.addonManager.callAddonModuleMethodAsync(ADDON_MODULE_METHODS.onOrgsConnected);
-         // --- /Call Addons: OnOrgConnected --- //
-         // -----------------------------------//
+        // Triggering Addons
+        await this.__triggerAddOns.onOrgsConnected();
 
     }
 
@@ -220,7 +220,7 @@ export default class Script implements IPluginRuntime {
      *
      * @memberof Script
      */
-    async cleanupDirectories() : Promise<void> {
+    async cleanupDirectories(): Promise<void> {
 
         // Perform clean-up the source directory if need --------------                        
         if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
@@ -470,24 +470,15 @@ export default class Script implements IPluginRuntime {
     }
 
 
-    /* --------------- IPluginRuntime members ----------------- */
-    getConnection(isSource: boolean) {
-        return isSource ? this.sourceOrg.getConnection() : this.targetOrg.getConnection();
+    // ------------------ Private members --------------------- //
+    private __triggerAddOns = {
+        onScriptSetup: async (): Promise<void> => {
+            this.runInfo = await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onScriptSetup, this.runInfo);
+        },
+        onOrgsConnected: async (): Promise<void> => {
+            await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onOrgsConnected);
+        }
     }
-
-    getOrgInfo(isSource: boolean): {
-        instanceUrl: string;
-        accessToken: string;
-        apiVersion: string;
-        isFile: boolean;
-    } {
-        return isSource ? Object.assign(this.sourceOrg.connectionData, {
-            isFile: this.sourceOrg.media == DATA_MEDIA_TYPE.File
-        }) : Object.assign(this.targetOrg.connectionData, {
-            isFile: this.targetOrg.media == DATA_MEDIA_TYPE.File
-        });
-    }
-
 
 }
 

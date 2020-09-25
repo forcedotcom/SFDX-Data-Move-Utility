@@ -1,5 +1,4 @@
-import { IAddonModule, IScriptRunInfo } from "../../../modules/models/addons_models/IAddonModule";
-import { IPluginRuntime } from "../../../modules/models/addons_models/IPluginRuntime";
+import { IAddonModule, IPluginRuntime, ICommandRunInfo } from "../../../modules/models/addons_models/addonSharedPackage";
 
 
 export default class TestCustomAddon implements IAddonModule {
@@ -10,17 +9,17 @@ export default class TestCustomAddon implements IAddonModule {
         this.runtime = runtime;
     }
 
-    async onScriptSetup(runInfo: IScriptRunInfo): Promise<IScriptRunInfo> {        
-        console.log("TestCustomAddon:OnScriptSetup. basePath = " + this.runtime.basePath);        
-        console.log("TestCustomAddon:OnScriptSetup. RunInfo = " + JSON.stringify(runInfo));        
+    async onScriptSetup(runInfo: ICommandRunInfo): Promise<ICommandRunInfo> {
+        this.runtime.writeLogConsoleMessage("TestCustomAddon:onScriptSetup");
+        this.runtime.writeLogConsoleMessage(runInfo, "OBJECT");
+        this.runtime.writeLogConsoleMessage("Changing the apiVersion to 49.0...");
         runInfo.apiVersion = "49.0";
         return runInfo;
     }
 
     async onOrgsConnected(): Promise<any> {
-        console.log("TestCustomAddon:onOrgsConnected. Source Org = " + this.runtime.getOrgInfo(true).instanceUrl);
-        console.log("TestCustomAddon:onOrgsConnected. Target Org = " + this.runtime.getOrgInfo(false).instanceUrl);
+        this.runtime.writeLogConsoleMessage("TestCustomAddon:onOrgsConnected. Source Org = " + this.runtime.getOrgInfo(true).instanceUrl);
+        this.runtime.writeLogConsoleMessage("TestCustomAddon:onOrgsConnected. Target Org = " + this.runtime.getOrgInfo(false).instanceUrl);
     }
-
 
 }

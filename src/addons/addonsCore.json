@@ -1,10 +1,19 @@
 {
     "addons": [
         {
+            "__comment1": "****** // The sfdx command that this entry should be executed with it //*******",
             "command": "sfdmu:run",
+
+            "__comment2": "****** // The absolute or relative path to the Addon module. The path is relative to the current manfest location. Should be null if npm module is used. //*******",
             "path": "../../../addons/modules/sfdmuTestCoreAddon",
+
+            "__comment3": "****** // The npm global module name to load instead of path. //*******",
             "module": null,
+
+            "__comment4": "****** // The priority to execute the current Addon triggers across all loaded Addons. //*******",
             "priority": 1,
+
+            "__comment5": "****** // Allows to supress (disable) this Addon. //*******",
             "enabled": true
         }
     ]

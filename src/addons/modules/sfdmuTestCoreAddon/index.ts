@@ -5,8 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IAddonModule, IScriptRunInfo } from "../../../modules/models/addons_models/IAddonModule";
-import { IPluginRuntime } from "../../../modules/models/addons_models/IPluginRuntime";
+import { IAddonModule, IPluginRuntime, ICommandRunInfo } from "../../../modules/models/addons_models/addonSharedPackage";
+
 
 
 
@@ -18,13 +18,13 @@ import { IPluginRuntime } from "../../../modules/models/addons_models/IPluginRun
  */
 export default class SfdmuTestCoreAddon implements IAddonModule {
 
-    runtime : IPluginRuntime;
-    constructor(runtime : IPluginRuntime){
+    runtime: IPluginRuntime;
+    constructor(runtime: IPluginRuntime) {
         this.runtime = runtime;
     }
-    
-    async onScriptSetup(runInfo: IScriptRunInfo): Promise<IScriptRunInfo>{
-        console.log("SfdmuTestCoreAddon:OnScriptSetup. RunInfo = " + JSON.stringify(runInfo));
+
+    async onScriptSetup(runInfo: ICommandRunInfo): Promise<ICommandRunInfo> {
+        this.runtime.writeLogConsoleMessage("SfdmuTestCoreAddon:OnScriptSetup. RunInfo Json = " + JSON.stringify(runInfo));
         return runInfo;
     }
 

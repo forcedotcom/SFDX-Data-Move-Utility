@@ -6,16 +6,16 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ADDON_MODULE_METHODS, IAddonManifest, IAddonManifestDefinition } from "../../models/addons_models/addon_helpers";
+
 import { Logger, RESOURCES } from "./logger";
 import * as path from 'path';
 import * as fs from 'fs';
-import { CONSTANTS } from "./statics";
-import { CommandInitializationError } from "../../models";
+import { ADDON_MODULE_METHODS, CONSTANTS } from "./statics";
+import { CommandInitializationError, Script } from "../../models";
 import { Common } from "./common";
-import { IPluginRuntime } from "../../models/addons_models/IPluginRuntime";
-import { IAddonModule } from "../../models/addons_models/IAddonModule";
-
+import PluginRuntime from "../../models/addons_models/pluginRuntime";
+import { IAddonModule, IPluginRuntime } from "../../models/addons_models/addonSharedPackage";
+import { IAddonManifest, IAddonManifestDefinition } from "../../models/common_models/helper_interfaces";
 
 
 
@@ -28,7 +28,13 @@ import { IAddonModule } from "../../models/addons_models/IAddonModule";
 export default class AddonManager {
 
     runtime: IPluginRuntime;
-    logger: Logger;
+    script : Script;
+    get logger(): Logger{
+        return this.script.logger;
+    }
+    get fullCommandName(){
+        return this.runtime.runInfo.pinfo.pluginName + ":" + this.runtime.runInfo.pinfo.commandName;
+    }
 
     manifests: IAddonManifest[] = new Array<IAddonManifest>();
     addons: Map<number, IAddonModule[]> = new Map<number, IAddonModule[]>();
@@ -41,30 +47,31 @@ export default class AddonManager {
      */
     addonHandlersMap: Map<string, [Function, any][]> = new Map<string, [Function, any][]>();
 
-    constructor(runtime: IPluginRuntime, logger: Logger) {
+    constructor(script: Script) {
 
         // Setup ************************************************   
-        this.runtime = runtime;
-        this.logger = logger;
+        this.script = script;
+        this.runtime = new PluginRuntime(script);
+        
 
         // Load manifests ***************************************
         this.manifests = [
             // Core manifest...
-            this._loadAddonManifest(CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME, true, this.runtime.basePath),
+            this._loadAddonManifest(CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME, true, this.runtime.runInfo.basePath),
             // Custom manifest...
-            this._loadAddonManifest(path.join(runtime.basePath, CONSTANTS.USER_ADDON_MANIFEST_FILE_NAME), false, this.runtime.basePath)
+            this._loadAddonManifest(path.join(this.runtime.runInfo.basePath, CONSTANTS.USER_ADDON_MANIFEST_FILE_NAME), false, this.runtime.runInfo.basePath)
         ].filter(manifest => !!manifest);
 
         // Load modules from the manifests ***********************
         this.manifests.forEach(manifest => {
-            manifest.addons.forEach(addon => {
-                if (addon.enabled) {
-                    let module = this._loadAddonModule(addon, this.runtime.basePath);
+            manifest.addons.forEach(manifestDefinitions => {
+                if (manifestDefinitions.enabled && this.fullCommandName == manifestDefinitions.command) {
+                    let module = this._loadAddonModule(manifestDefinitions, this.runtime.runInfo.basePath);
                     if (module) {
-                        if (!this.addons.has(addon.priority)) {
-                            this.addons.set(addon.priority, []);
+                        if (!this.addons.has(manifestDefinitions.priority)) {
+                            this.addons.set(manifestDefinitions.priority, []);
                         }
-                        this.addons.get(addon.priority).push(this._loadAddonModule(addon, this.runtime.basePath));
+                        this.addons.get(manifestDefinitions.priority).push(this._loadAddonModule(manifestDefinitions, this.runtime.runInfo.basePath));
                     }
                 }
             });
@@ -75,7 +82,7 @@ export default class AddonManager {
 
     }
 
-    async callAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, ...params: any[]): Promise<any> {
+    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, ...params: any[]): Promise<any> {
 
         let fns = this.addonHandlersMap.get(method);
         let lastResult: any;
