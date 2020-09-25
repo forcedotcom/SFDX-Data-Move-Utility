@@ -47,6 +47,8 @@ export enum RESOURCES {
     update = "update",
     personContact = "personContact",
     coreManifest = "coreManifest",
+    loaded = "loaded",
+    cantLoad = "cantLoad",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptNopromptOption = "defaultPromptNopromptOption",

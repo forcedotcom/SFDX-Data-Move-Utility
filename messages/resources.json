@@ -20,6 +20,8 @@
     "update": "Update",
     "personContact": "Person Contact",
     "coreManifest": "[Core Manifest]",
+    "loaded": "Loaded %s.",
+    "cantLoad": "%s is not found or could not be loaded.",
 
     "defaultPromptOptions": "y/n",
     "defaultPromptNopromptOption": "y",

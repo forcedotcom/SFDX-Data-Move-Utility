@@ -28,11 +28,11 @@ import { IAddonManifest, IAddonManifestDefinition } from "../../models/common_mo
 export default class AddonManager {
 
     runtime: IPluginRuntime;
-    script : Script;
-    get logger(): Logger{
+    script: Script;
+    get logger(): Logger {
         return this.script.logger;
     }
-    get fullCommandName(){
+    get fullCommandName() {
         return this.runtime.runInfo.pinfo.pluginName + ":" + this.runtime.runInfo.pinfo.commandName;
     }
 
@@ -52,7 +52,7 @@ export default class AddonManager {
         // Setup ************************************************   
         this.script = script;
         this.runtime = new PluginRuntime(script);
-        
+
 
         // Load manifests ***************************************
         this.manifests = [
@@ -64,14 +64,19 @@ export default class AddonManager {
 
         // Load modules from the manifests ***********************
         this.manifests.forEach(manifest => {
-            manifest.addons.forEach(manifestDefinitions => {
-                if (manifestDefinitions.enabled && this.fullCommandName == manifestDefinitions.command) {
-                    let module = this._loadAddonModule(manifestDefinitions, this.runtime.runInfo.basePath);
-                    if (module) {
-                        if (!this.addons.has(manifestDefinitions.priority)) {
-                            this.addons.set(manifestDefinitions.priority, []);
+            manifest.addons.forEach(manifestDefinition => {
+                if (manifestDefinition.enabled && this.fullCommandName == manifestDefinition.command) {
+                    if (manifestDefinition["valid"]) {
+                        let module = this._loadAddonModule(manifestDefinition, this.runtime.runInfo.basePath);
+                        if (module) {
+                            if (!this.addons.has(manifestDefinition.priority)) {
+                                this.addons.set(manifestDefinition.priority, []);
+                            }
+                            this.addons.get(manifestDefinition.priority).push(this._loadAddonModule(manifestDefinition, this.runtime.runInfo.basePath));
+                            this.logger.infoVerbose(RESOURCES.loaded, manifestDefinition["moduleName"])
                         }
-                        this.addons.get(manifestDefinitions.priority).push(this._loadAddonModule(manifestDefinitions, this.runtime.runInfo.basePath));
+                    } else {
+                        this.logger.infoVerbose(RESOURCES.cantLoad, manifestDefinition["moduleName"])
                     }
                 }
             });
@@ -130,13 +135,18 @@ export default class AddonManager {
                 return null;
         }
 
-        this.logger.infoMinimal(RESOURCES.loadingAddonManifestFile, isCore ? this.logger.getResourceString(RESOURCES.coreManifest) : manifestPath);
+        this.logger.infoVerbose(RESOURCES.loadingAddonManifestFile, isCore ? this.logger.getResourceString(RESOURCES.coreManifest) : manifestPath);
 
         try {
             let manifest = <IAddonManifest>JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-            manifest.addons.forEach(addon => {
-                addon.isCore = isCore;
-                addon.priority = (addon.priority || 1) + (isCore ? 0 : CONSTANTS.USER_ADDON_PRIORITY_OFFSET);
+            manifest.addons.forEach(manifestDefinition => {
+                manifestDefinition.isCore = isCore;
+                manifestDefinition.priority = (manifestDefinition.priority || 1) + (isCore ? 0 : CONSTANTS.USER_ADDON_PRIORITY_OFFSET);
+                manifestDefinition["moduleName"] = manifestDefinition.module || manifestDefinition.path;
+                manifestDefinition["valid"] = !!manifestDefinition["moduleName"];
+                if (manifestDefinition["valid"]) {
+                    manifestDefinition["moduleName"] = path.basename(manifestDefinition["moduleName"]);
+                }
             });
             return manifest;
         } catch (ex) {

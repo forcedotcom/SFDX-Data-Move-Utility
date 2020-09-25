@@ -5,7 +5,7 @@
             "command": "sfdmu:run",
 
             "__comment2": "****** // The absolute or relative path to the Addon module. The path is relative to the current manfest location. Should be null if npm module is used. //*******",
-            "path": "../../../addons/modules/sfdmuTestCoreAddon",
+            "path": "../../../addons/modules/sfdmuCoreAddon",
 
             "__comment3": "****** // The npm global module name to load instead of path. //*******",
             "module": null,

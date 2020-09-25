@@ -16,7 +16,7 @@ import { IAddonModule, IPluginRuntime, ICommandRunInfo } from "../../../modules/
  * @export
  * @class SfdmuTestCoreAddon
  */
-export default class SfdmuTestCoreAddon implements IAddonModule {
+export default class SfdmuCoreAddon implements IAddonModule {
 
     runtime: IPluginRuntime;
     constructor(runtime: IPluginRuntime) {
@@ -24,7 +24,7 @@ export default class SfdmuTestCoreAddon implements IAddonModule {
     }
 
     async onScriptSetup(runInfo: ICommandRunInfo): Promise<ICommandRunInfo> {
-        // TODO: Test Core Funtionality
+        // TODO: Implement basic core functionality
         this.runtime.writeLogConsoleMessage("The SFDMU Core Addon has been successfully loaded.");
         return runInfo;
     }
