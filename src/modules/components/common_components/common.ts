@@ -90,9 +90,9 @@ export class Common {
     * @memberof CommonUtils
     */
     public static getPluginInfo(command: SfdxCommand): IPluginInfo {
-        let statics : typeof SfdxCommand = command["statics"];
+        let statics: typeof SfdxCommand = command["statics"];
         let pjson = require(path.join(statics.plugin.root, '/package.json'));
-        let info =  <IPluginInfo>{
+        let info = <IPluginInfo>{
             commandName: statics.name.toLowerCase(),
             pluginName: statics.plugin.name,
             version: pjson.version,
@@ -730,23 +730,28 @@ export class Common {
         array: Array<object>,
         createEmptyFileOnEmptyArray: boolean = false): Promise<void> {
 
-        if (!array || array.length == 0) {
-            if (createEmptyFileOnEmptyArray) {
-                fs.writeFileSync(filePath, "");
-            }
-            return;
-        }
-        const csvWriter = createCsvWriter({
-            header: Object.keys(array[0]).map(x => {
-                return {
-                    id: x,
-                    title: x
+        try {
+
+            if (!array || array.length == 0) {
+                if (createEmptyFileOnEmptyArray) {
+                    fs.writeFileSync(filePath, "");
                 }
-            }),
-            path: filePath,
-            encoding: "utf8"
-        });
-        return csvWriter.writeRecords(array);
+                return;
+            }
+            const csvWriter = createCsvWriter({
+                header: Object.keys(array[0]).map(x => {
+                    return {
+                        id: x,
+                        title: x
+                    }
+                }),
+                path: filePath,
+                encoding: "utf8"
+            });
+            return csvWriter.writeRecords(array);
+        } catch (ex) {
+            throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.writingCsvFileError, filePath, ex.message));
+        }
     }
 
     /**
@@ -1309,8 +1314,8 @@ export class Common {
     }
 
 
-    public static extractObjectMembers<T>(object : T, propertiesToExtract: Record<keyof T, boolean>){
-        return (function<TActual extends T>(value: TActual){
+    public static extractObjectMembers<T>(object: T, propertiesToExtract: Record<keyof T, boolean>) {
+        return (function <TActual extends T>(value: TActual) {
             let result = {} as T;
             for (const property of Object.keys(propertiesToExtract) as Array<keyof T>) {
                 result[property] = value[property];
