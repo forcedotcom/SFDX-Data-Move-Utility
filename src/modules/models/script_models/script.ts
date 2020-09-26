@@ -249,7 +249,7 @@ export default class Script {
         for (let objectIndex = 0; objectIndex < this.objects.length; objectIndex++) {
 
             const thisObject = this.objects[objectIndex];
-            
+
             this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
 
             await thisObject.describeAsync();
@@ -327,11 +327,23 @@ export default class Script {
                                     .filter(field => (<SOQLField>field).field != thisField.parentLookupObject.externalId);
                             thisField.parentLookupObject.query = composeQuery(thisField.parentLookupObject.parsedQuery);
                         }
+
                         // Replace old external id key
                         thisField.parentLookupObject.externalId = thisField.parentLookupObject.defaultExternalId;
                         thisField.parentLookupObject.script = null;
-                        // Setup the object again
                         thisField.parentLookupObject.setup(this);
+
+                        // The permanent solution of "Cannot read property 'child__rSFields' of undefined"
+                        let externalIdFieldName = Common.getComplexField(thisField.parentLookupObject.externalId);
+                        let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName);
+                        if (!parentExternalIdField) {                            
+                            // The new externalid field does not found in the query.
+                            // Set 'Id' as externalid field.
+                            thisField.parentLookupObject.externalId = "Id";
+                            thisField.parentLookupObject.script = null;
+                            thisField.parentLookupObject.setup(this);                                
+                        }
+
                     }
 
 

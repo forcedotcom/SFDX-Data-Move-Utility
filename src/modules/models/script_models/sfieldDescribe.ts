@@ -9,7 +9,7 @@
 import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
 import { CONSTANTS } from "../../components/common_components/statics";
-import {FieldType} from 'jsforce';
+import { FieldType } from 'jsforce';
 
 /**
  * Description of the sobject field
@@ -47,7 +47,7 @@ export default class SFieldDescribe {
     /*
         true if this field description was retrieved from the org,
         excluding temporary fields created upon executing.
-    */    
+    */
     isDescribed: boolean;
 
     /**
@@ -81,9 +81,9 @@ export default class SFieldDescribe {
 
     isPolymorphicField: boolean = false;
 
-    getPolymorphicQueryField(fieldName : string): string{
+    getPolymorphicQueryField(fieldName: string): string {
         let parts = fieldName.split('.');
-        if (this.isPolymorphicField && this.is__r && parts.length > 1){            
+        if (this.isPolymorphicField && this.is__r && parts.length > 1) {
             return `TYPEOF ${parts[0]} WHEN ${this.polymorphicReferenceObjectType} THEN ${parts[1]} END`;
         }
         return fieldName;
@@ -120,9 +120,8 @@ export default class SFieldDescribe {
         return this.type == "boolean";
     }
 
-    get isTextual(){
+    get isTextual() {
         return CONSTANTS.TEXTUAL_FIELD_TYPES.indexOf(this.type) >= 0;
-
     }
 
     get isComplex(): boolean {
@@ -249,6 +248,20 @@ export default class SFieldDescribe {
         }
         return [];
     }
+
+
+    // ----------- Public Methods ----------------- //
+    dynamic(key: string): SFieldDescribe {
+        Object.assign(this, {
+            creatable: false,
+            name: key,
+            label: key,
+            updateable: false,
+            type: "dynamic"
+        });
+        return this;
+    }
+
 
 }
 

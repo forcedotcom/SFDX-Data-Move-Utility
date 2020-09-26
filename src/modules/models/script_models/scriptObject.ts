@@ -127,13 +127,9 @@ export default class ScriptObject {
         if (!this.isDescribed) {
             return new Map<string, SFieldDescribe>();
         }
-        return Common.filterMapByArray(this.fieldsInQuery, this.sourceSObjectDescribe.fieldsMap, key => new SFieldDescribe({
-            creatable: false,
-            name: key,
-            label: key,
-            updateable: false,
-            type: "dynamic"
-        }), true);
+        return Common.filterMapByArray(this.fieldsInQuery, this.sourceSObjectDescribe.fieldsMap,
+            key => new SFieldDescribe().dynamic(key),
+            true);
     }
 
     get fieldsToUpdate(): string[] {

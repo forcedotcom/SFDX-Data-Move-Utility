@@ -121,6 +121,7 @@ export enum RESOURCES {
     buildingMigrationStaregy = "buildingMigrationStaregy",
 
     readingCsvFileError = "readingCsvFileError",
+    writingCsvFileError = "writingCsvFileError",
     readingValuesMappingFile = "readingValuesMappingFile",
     readingFieldsMappingFile = "readingFieldsMappingFile",
     mappingRawCsvValues = "mappingRawCsvValues",

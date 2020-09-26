@@ -55,10 +55,6 @@ export default class ScriptOrg {
         };
     }
 
-    getConnection(): any {
-        return Sfdx.createOrgConnection(this.connectionData);
-    }
-
     get isConnected(): boolean {
         return !!this.accessToken;
     }
@@ -94,6 +90,9 @@ export default class ScriptOrg {
         await this._describeOrg();
     }
 
+    getConnection(): any {
+        return Sfdx.createOrgConnection(this.connectionData);
+    }
 
 
     // ----------------------- Private members -------------------------------------------    
@@ -123,9 +122,9 @@ export default class ScriptOrg {
     private async _validateAccessTokenAsync(): Promise<void> {
         let apiSf = new Sfdx(this);
         if (!this.isFileMedia) {
-            
+
             try {
-                await apiSf.identityAsync();               
+                await apiSf.identityAsync();
             } catch (ex) {
                 throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessToOrgExpired, this.name));
             }
