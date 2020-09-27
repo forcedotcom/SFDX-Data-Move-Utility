@@ -13,7 +13,7 @@
             "__comment4": "****** // The priority to execute the current Addon triggers across all loaded Addons. //*******",
             "priority": 1,
 
-            "__comment5": "****** // Allows to supress (disable) this Addon. //*******",
+            "__comment5": "****** // Allows to suppress (disable) this Addon. //*******",
             "enabled": true
         }
     ]

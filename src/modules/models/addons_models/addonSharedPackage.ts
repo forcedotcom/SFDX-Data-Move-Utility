@@ -15,16 +15,21 @@
 
 /* ------------------ Common ------------------ */
 /**
- * The information about the runing sfdmu command
+ * The information about the running sfdmu command.
  *
  * @export
  * @interface ICommandRunInfo
  */
 export interface ICommandRunInfo {
+    // --sourceusername command flag 
     sourceUsername: string,
+    // --targetusername command flag
     targetUsername: string,
+    // --apiversion command flag
     apiVersion: string,
+    // the location of the export.json file
     readonly basePath: string,
+    // the information about the Plugin and the framework
     readonly pinfo: IPluginInfo
 }
 
@@ -33,16 +38,16 @@ export interface ICommandRunInfo {
  */
 export interface IPluginInfo {
 
-    // The Plugin name (sfdmu)
+    // The Plugin name (f.ex. sfdmu)
     pluginName: string,
 
-    // The executed command (run)
+    // The executed command (f.ex. run)
     commandName: string,
 
-    // Version of the Plugin (5.0.0)
+    // Version of the Plugin (f.ex. 5.0.0)
     version: string,
 
-    // Path to the directory where the Plugin is installed
+    // Path to the directory where the Sfdmu Plugin is installed
     path: string,
 
     // Full CLI string used to run the command (sfdx sfdmu:run --sourceusername a@mail.com --targetusername b@mail.com)
@@ -53,7 +58,7 @@ export interface IPluginInfo {
 }
 
 /**
- * Descrbes table to output it to the console
+ * Describes table to output it to the console.
  */
 export interface ITableMessage {
     tableBody: Array<object>,
@@ -100,7 +105,7 @@ export interface IPluginRuntime {
     };
 
     /**
-     * Writes message to the console or/and log file.
+     * Write a message to the console or/and log file.
      * All the messages are written with the VERBOSE verbosity level.
      */
     writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE"): void;
@@ -131,15 +136,21 @@ export interface IAddonModule {
 
     /**
      * Triggered by the plugin after the Plugin is initialized.
-     * The Addon can modify and return aupdated startup parameters (ICOmmandRunInfo)
+     * The Addon can modify and return updated startup parameters (ICOmmandRunInfo)
      * to change the behavior.
      */
     onScriptSetup?(runInfo: ICommandRunInfo): Promise<ICommandRunInfo>,
 
     /**
      * Triggered when the Orgs were successfully connected.
-     * The Addon can then call runtime.getOrgInfo() to get iformation about the coneected Orgs.
+     * The Addon can then call runtime.getOrgInfo() to get information about the connected Orgs.
      */
     onOrgsConnected?(): Promise<any>
 }
+
+
+
+
+
+
 
