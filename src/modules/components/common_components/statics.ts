@@ -29,6 +29,8 @@ export const CONSTANTS = {
     FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
 
     SCRIPT_FILE_NAME: 'export.json',
+    CORE_ADDON_MANIFEST_FILE_NAME: "../../../addons/addonsCore.json",
+    USER_ADDON_MANIFEST_FILE_NAME: "addons.json",
     CSV_SOURCE_SUB_DIRECTORY: "source",
     CSV_TARGET_SUB_DIRECTORY: "target",
     CSV_SOURCE_FILE_SUFFIX: "_source",
@@ -52,7 +54,8 @@ export const CONSTANTS = {
     POLL_TIMEOUT: 3000000,
     BULK_QUERY_API_POLL_TIMEOUT: 4 * 60 * 1000,
     SHORT_QUERY_STRING_MAXLENGTH: 250,
-    MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,
+    MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,  
+    USER_ADDON_PRIORITY_OFFSET: 1000000,  
 
     MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
     SPECIAL_MOCK_COMMANDS: [
@@ -241,3 +244,9 @@ export enum MESSAGE_IMPORTANCE {
     Warn,
     Error
 }
+
+export enum ADDON_MODULE_METHODS {
+    onScriptSetup = "onScriptSetup",
+    onOrgsConnected = "onOrgsConnected"
+}
+

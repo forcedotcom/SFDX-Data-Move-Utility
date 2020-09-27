@@ -19,6 +19,9 @@
     "insert": "Insert",
     "update": "Update",
     "personContact": "Person Contact",
+    "coreManifest": "[Core Manifest]",
+    "loaded": "Loaded %s.",
+    "cantLoad": "%s is not found or could not be loaded.",
 
     "defaultPromptOptions": "y/n",
     "defaultPromptNopromptOption": "y",
@@ -55,6 +58,9 @@
     "commandUnresolvableWarningResult": "Execution of the command was ABORTED due to an unresolvable warning: %s.",
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
+
+    "loadingAddonManifestFile" : "Loading addon manifest %s...",
+    "missingNecessaryComponent" : "The necessary component %s could not be found.",
 
     "commandInProgress": "Command in progress...",
     "packageScript": "Package script",

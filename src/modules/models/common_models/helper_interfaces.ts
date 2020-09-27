@@ -97,13 +97,5 @@ export interface IAddonManifestDefinition {
     isCore: boolean
 }
 
-export interface ICommandRunInfo {
-    sourceUsername: string,
-    targetUsername: string,
-    apiVersion: string,
-    readonly basePath: string,
-    readonly pinfo: IPluginInfo
-}
-
 
 

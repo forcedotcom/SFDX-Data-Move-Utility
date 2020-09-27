@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import {
     parseQuery,
@@ -23,10 +23,11 @@ import {
 import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
-import { ICommandRunInfo, IPluginInfo } from "../common_models/helper_interfaces";
+import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
 import * as fs from 'fs';
-
+import AddonManager from "../../components/common_components/addonManager";
+import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
 
 
 
@@ -72,6 +73,7 @@ export default class Script {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
+    addonManager: AddonManager;
     runInfo: ICommandRunInfo;
 
 
@@ -138,7 +140,10 @@ export default class Script {
             basePath,
             pinfo
         };
+        this.addonManager = new AddonManager(this);
 
+        // Triggering Addons
+        await this.__triggerAddOns.onScriptSetup();
 
         this.sourceOrg = this.orgs.filter(x => x.name == this.runInfo.sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();
@@ -203,6 +208,9 @@ export default class Script {
 
         // Cleanup the source / target directories
         await this.cleanupDirectories();
+
+        // Triggering Addons
+        await this.__triggerAddOns.onOrgsConnected();
 
     }
 
@@ -470,6 +478,17 @@ export default class Script {
                     }
                 }
             });
+        }
+    }
+
+
+    // ------------------ Private members --------------------- //
+    private __triggerAddOns = {
+        onScriptSetup: async (): Promise<void> => {
+            this.runInfo = await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onScriptSetup, this.runInfo);
+        },
+        onOrgsConnected: async (): Promise<void> => {
+            await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onOrgsConnected);
         }
     }
 
