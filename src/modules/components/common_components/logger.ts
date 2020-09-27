@@ -46,6 +46,9 @@ export enum RESOURCES {
     insert = "insert",
     update = "update",
     personContact = "personContact",
+    coreManifest = "coreManifest",
+    loaded = "loaded",
+    cantLoad = "cantLoad",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptNopromptOption = "defaultPromptNopromptOption",
@@ -116,6 +119,9 @@ export enum RESOURCES {
     fieldSourceDoesNtoExist = "fieldSourceDoesNtoExist",
     fieldTargetDoesNtoExist = "fieldTargetDoesNtoExist",
     missingFieldsToProcess = "missingFieldsToProcess",
+
+    loadingAddonManifestFile = "loadingAddonManifestFile",
+    missingNecessaryComponent = "missingNecessaryComponent",
 
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",

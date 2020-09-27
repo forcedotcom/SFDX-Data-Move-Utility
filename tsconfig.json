@@ -3,11 +3,13 @@
   "compilerOptions": {
     "outDir": "./lib",
     "rootDir": "./src",
-    "experimentalDecorators":true,
-    "emitDecoratorMetadata":true,
-    "removeComments":true
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "removeComments": true,
+    "resolveJsonModule": true
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "src/addons/addonsCore.json"
   ]
 }
