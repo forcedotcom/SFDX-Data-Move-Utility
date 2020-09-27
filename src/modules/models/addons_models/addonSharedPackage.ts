@@ -110,6 +110,13 @@ export interface IPluginRuntime {
      */
     writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE"): void;
 
+    /**
+        -----------------------------------------------------
+        TODO: Extend the Interface with more methods... 
+        -----------------------------------------------------
+     */
+
+
 }
 
 
@@ -146,6 +153,15 @@ export interface IAddonModule {
      * The Addon can then call runtime.getOrgInfo() to get information about the connected Orgs.
      */
     onOrgsConnected?(): Promise<any>
+
+
+    /**
+        -----------------------------------------------------
+        TODO: Extend the Interface with more methods... 
+        -----------------------------------------------------
+     */
+	
+
 }
 
 
