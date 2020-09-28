@@ -119,9 +119,12 @@ export enum RESOURCES {
     fieldSourceDoesNtoExist = "fieldSourceDoesNtoExist",
     fieldTargetDoesNtoExist = "fieldTargetDoesNtoExist",
     missingFieldsToProcess = "missingFieldsToProcess",
+    addedMissingParentLookupObject = "addedMissingParentLookupObject",
+    failedToResolveExternalId = "failedToResolveExternalId",
 
     loadingAddonManifestFile = "loadingAddonManifestFile",
     missingNecessaryComponent = "missingNecessaryComponent",
+    addonManifestFileDoesNotFound = "addonManifestFileDoesNotFound",
 
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",

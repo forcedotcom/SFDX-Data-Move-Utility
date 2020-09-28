@@ -19,7 +19,7 @@
     "insert": "Insert",
     "update": "Update",
     "personContact": "Person Contact",
-    "coreManifest": "[Core Manifest]",
+    "coreManifest": "[SFDMU Core Manifest]",
     "loaded": "Loaded %s.",
     "cantLoad": "%s is not found or could not be loaded.",
 
@@ -59,8 +59,9 @@
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
 
-    "loadingAddonManifestFile" : "Loading addon manifest %s...",
-    "missingNecessaryComponent" : "The necessary component %s could not be found.",
+    "loadingAddonManifestFile" : "Loading Addon manifest file '%s'...",
+    "missingNecessaryComponent" : "The necessary component '%s' could not be found.",
+    "addonManifestFileDoesNotFound": "The Addon manifest file '%s' does not exist.",
 
     "commandInProgress": "Command in progress...",
     "packageScript": "Package script",
@@ -94,6 +95,8 @@
     "fieldSourceDoesNtoExist": "Field %s.%s is missing in the Source.",
     "fieldTargetDoesNtoExist": "Field %s.%s is missing in the Target.",
     "missingFieldsToProcess": "There are no fields to process for %s.",
+    "addedMissingParentLookupObject" : "The parent sobject %s for the lookup field %s.%s has been included into the process. The externalId is set to '%s'.",
+    "failedToResolveExternalId" : "Failed to resolve external Id '%s' for the parent sobject %s. Child lookup field: %s.%s." ,
 
     "dataMigrationProcessStarted": "Preparing data migration job...",
     "buildingMigrationStaregy": "Building migration strategy...",

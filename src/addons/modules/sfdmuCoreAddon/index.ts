@@ -24,8 +24,7 @@ export default class SfdmuCoreAddon implements IAddonModule {
     }
 
     async onScriptSetup(runInfo: ICommandRunInfo): Promise<ICommandRunInfo> {
-        // TODO: Implement basic core functionality
-        this.runtime.writeLogConsoleMessage("The module sfdmuCoreAddon has been successfully loaded.");
+        this.runtime.writeLogConsoleMessage("The Plugin root folder: " + runInfo.pinfo.path);
         return runInfo;
     }
 
