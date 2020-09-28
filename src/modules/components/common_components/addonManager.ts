@@ -76,7 +76,7 @@ export default class AddonManager {
                             this.logger.infoVerbose(RESOURCES.loaded, manifestDefinition["moduleName"])
                         }
                     } else {
-                        this.logger.infoVerbose(RESOURCES.cantLoad, manifestDefinition["moduleName"])
+                        this.logger.warn(RESOURCES.cantLoad, manifestDefinition["moduleName"])
                     }
                 }
             });
@@ -130,14 +130,18 @@ export default class AddonManager {
             manifestPath = path.resolve(isCore ? __dirname : basePath, manifestPath);
         }
 
-        if (!fs.existsSync(manifestPath)) {
-            if (isCore)
-                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.missingNecessaryComponent, manifestPath));
-            else
+        if (isCore) {
+            this.logger.infoNormal(RESOURCES.loadingAddonManifestFile, this.logger.getResourceString(RESOURCES.coreManifest));
+            if (!fs.existsSync(manifestPath)) {
+                this.logger.warn(RESOURCES.addonManifestFileDoesNotFound, this.logger.getResourceString(RESOURCES.coreManifest));
                 return null;
+            }
+        } else {
+            if (!fs.existsSync(manifestPath)) {
+                return null;
+            }
+            this.logger.infoNormal(RESOURCES.loadingAddonManifestFile, manifestPath);
         }
-
-        this.logger.infoVerbose(RESOURCES.loadingAddonManifestFile, isCore ? this.logger.getResourceString(RESOURCES.coreManifest) : manifestPath);
 
         try {
             let manifest = <IAddonManifest>JSON.parse(fs.readFileSync(manifestPath, 'utf8'));

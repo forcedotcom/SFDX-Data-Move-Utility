@@ -31,6 +31,7 @@ import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
 
 
 
+
 /**
  * The script object which is parsed from the script file
  *
@@ -131,6 +132,11 @@ export default class Script {
         // Initialize script
         this.logger = logger;
         this.basePath = basePath;
+        this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
+
+        // Message about the running version      
+        this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
+        this.logger.infoMinimal(RESOURCES.newLine);
 
         // Create add on manager
         this.runInfo = {
@@ -148,11 +154,7 @@ export default class Script {
         this.sourceOrg = this.orgs.filter(x => x.name == this.runInfo.sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();
         this.apiVersion = this.runInfo.apiVersion || this.apiVersion;
-        this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
 
-        // Message about the running version      
-        this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
-        this.logger.infoMinimal(RESOURCES.newLine);
 
         if (this.runInfo.sourceUsername.toLowerCase() == this.runInfo.targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
@@ -288,7 +290,7 @@ export default class Script {
 
                     // Find by referenced sObject type
                     thisField.parentLookupObject = this.objects.filter(x => x.name == referencedObjectType)[0];
-
+                    let isParentLookupObjectAdded = false;
 
                     if (!thisField.parentLookupObject) {
 
@@ -318,6 +320,8 @@ export default class Script {
 
                         }
 
+                        isParentLookupObjectAdded = true;
+
                     }
 
                     // Setup and describe the parent ScriptObject
@@ -344,14 +348,22 @@ export default class Script {
                         // The permanent solution of "Cannot read property 'child__rSFields' of undefined"
                         let externalIdFieldName = Common.getComplexField(thisField.parentLookupObject.externalId);
                         let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName);
-                        if (!parentExternalIdField) {                            
+                        if (!parentExternalIdField) {
                             // The new externalid field does not found in the query.
                             // Set 'Id' as externalid field.
                             thisField.parentLookupObject.externalId = "Id";
                             thisField.parentLookupObject.script = null;
-                            thisField.parentLookupObject.setup(this);                                
+                            thisField.parentLookupObject.setup(this);
                         }
+                    }
 
+                    if (thisField.parentLookupObject.isExtraObject && isParentLookupObjectAdded) {
+                        // Output the nmessage about adding extra object missing in the script
+                        this.logger.infoNormal(RESOURCES.addedMissingParentLookupObject,
+                            thisField.parentLookupObject.name,
+                            thisField.objectName,
+                            thisField.nameId,
+                            thisField.parentLookupObject.externalId);
                     }
 
 
@@ -378,7 +390,15 @@ export default class Script {
                     thisField.__rSField = __rSField;
                     __rSField.idSField = thisField;
 
-                    parentExternalIdField.child__rSFields.push(__rSField);
+                    try {
+                        parentExternalIdField.child__rSFields.push(__rSField);
+                    } catch (ex) {
+                        this.logger.warn(RESOURCES.failedToResolveExternalId,
+                            thisField.parentLookupObject.externalId, 
+                            thisField.parentLookupObject.name, 
+                            thisField.objectName, 
+                            thisField.nameId);
+                    }
                 }
 
             }
@@ -485,7 +505,7 @@ export default class Script {
     // ------------------ Private members --------------------- //
     private __triggerAddOns = {
         onScriptSetup: async (): Promise<void> => {
-            this.runInfo = await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onScriptSetup, this.runInfo);
+            this.runInfo = await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onScriptSetup, this.runInfo) || this.runInfo;
         },
         onOrgsConnected: async (): Promise<void> => {
             await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onOrgsConnected);
