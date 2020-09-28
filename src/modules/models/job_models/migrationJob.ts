@@ -467,7 +467,7 @@ export default class MigrationJob {
 
         // Done message
         this.logger.infoVerbose(RESOURCES.newLine);
-        await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups);
+        await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups, false);
 
 
         // ---------------------- Internal functions -------------------------------------- //
@@ -478,7 +478,7 @@ export default class MigrationJob {
                 RESOURCES.continueTheJobPrompt,
                 "",
                 async () => {
-                    await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups);
+                    await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups, false);
                 },
                 sObjectName,
                 String(data.missingParentLookups.length),
@@ -513,10 +513,10 @@ export default class MigrationJob {
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
-    async saveCSVFileAsync(fileName: string, data: Array<any>): Promise<void> {
+    async saveCSVFileAsync(fileName: string, data: Array<any>, alwaysCreateFile: boolean = true): Promise<void> {
         let filePath = path.join(this.script.basePath, fileName);
         this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
-        await Common.writeCsvFileAsync(filePath, data, true);
+        await Common.writeCsvFileAsync(filePath, data, alwaysCreateFile);
     }
 
     /**
