@@ -1,7 +1,7 @@
 ---
-name: Bug report
-about: Create a report about the SFDMU Plugin to help us improve
-title: "[BUG]-The bug title"
+name: SFDMU GUI-only bug report - don't report here bugs of the Plugin itself !
+about: Create a report about SFDMU App to help us improve
+title: "[APP-BUG]-The bug title"
 labels: bug
 assignees: hknokh
 
@@ -15,9 +15,3 @@ Describe steps to reproduce the behavior.
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
-
-**export.json**
-Attach your **export.json** file
-
-**Log file**
-Attach your full **.log** file.
