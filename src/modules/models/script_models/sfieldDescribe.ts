@@ -108,6 +108,10 @@ export default class SFieldDescribe {
             || this.nameId.startsWith('Person') && !this.custom;
     }
 
+    get standard(){
+        return !this.custom;
+    }
+
     get isFormula() {
         return this.calculated;
     }
