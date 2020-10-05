@@ -172,7 +172,7 @@ export default class ScriptObject {
     }
 
     get strOperationInsertOrUpdate(): string {
-        if (this.operation == OPERATION.Insert) {
+        if (this.operation == OPERATION.Insert || this.operation == OPERATION.Upsert) {
             return ScriptObject.getStrOperation(OPERATION.Insert);
         } else {
             return ScriptObject.getStrOperation(OPERATION.Update);

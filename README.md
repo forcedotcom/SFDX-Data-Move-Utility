@@ -5,7 +5,7 @@
 
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v3.7.10          *** - ###
+### - *** Latest version: v3.7.11         *** - ###
 ### ------------------------------------------- ###
 ### - *** Always make sure, that you have *** - ###
 ### - *** the latest version installed    *** - ###
@@ -44,7 +44,7 @@ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox /
 
 - Full **Person Account** support. Can process record sets contain mixed Business & Person Accounts.
 
-- Supports migration of related **Note** & **Attachment** objects, including the binary data.
+- Supports migration of related **Notes** , **Attachments**  and **Files**  including the binary data.
 
 - Supports **record owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
 

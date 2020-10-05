@@ -72,7 +72,8 @@ export const CONSTANTS = {
         'DandBCompany'
     ],
     NOT_SUPPORTED_OBJECTS_IN_BULK_API: [
-        "Attachment"
+        "Attachment",
+        "ContentVersion"
     ],
     SPECIAL_OBJECTS: [
         "Group",
@@ -126,6 +127,11 @@ export const CONSTANTS = {
             objectName: "Attachment",
             fieldName: "Body",
             dataType: "base64"
+        },
+        {
+            objectName: "ContentVersion",
+            fieldName: "VersionData",
+            dataType: "base64"
         }
     ),
 
@@ -147,6 +153,14 @@ export const CONSTANTS = {
             "Body",
             "ParentId",
             "Title"
+        )],
+        ["ContentVersion", new Array<string>(
+            "VersionData",
+            "Title",
+            "Description",
+            "PathOnClient",
+            "ContentUrl",
+            "FirstPublishLocationId"            
         )]
     ]),
 
@@ -154,6 +168,10 @@ export const CONSTANTS = {
         ["Attachment", new Array<string>(
             "BodyLength",
             "Name"
+        )],
+        ["ContentVersion", new Array<string>(
+            "Title",
+            "Description"
         )]
     ]),
 
@@ -163,6 +181,10 @@ export const CONSTANTS = {
         ["Attachment", new Array<string>(
             "BodyLength",
             "Name"
+        )],
+        ["ContentVersion", new Array<string>(
+            "Title",
+            "Description"
         )]
     ]),
 
@@ -172,6 +194,9 @@ export const CONSTANTS = {
     FIELDS_EXCLUDED_FROM_TARGET_QUERY: new Map<string, Array<string>>([
         ["Attachment", new Array<string>(
             "Body"
+        )],
+        ["ContentVersion", new Array<string>(
+            "VersionData"
         )]
     ]),
 
