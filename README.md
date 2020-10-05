@@ -2,10 +2,21 @@
 
 - ##### For the detailed documentation, visit the [SFDMU Help Center](https://help.sfdmu.com)
 - ##### Download also the [SFDMU Desktop GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)
+```bash
+### ---------------------------------------------------------------	###
 
+### PLEASE FOLLOW THE GUIDELINES FOR OPENING ISSUES:    		--- ###
+
+### 1. Always use one of our issue tracker templates.			--- ###
+### 2. For plugin bugs always attach the latest .log/export.json -- ###
+
+### REQUESTS,THAT DO NOT MEET THE REQUIREMENTS,    				--- ###
+### WILL NOT BE HANDLED AND WILL BE CLOSED.			 			--- ###
+### ------------------------------------------------------------	###
+```
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v3.7.11         *** - ###
+### - *** Latest version: v3.7.12         *** - ###
 ### ------------------------------------------- ###
 ### - *** Always make sure, that you have *** - ###
 ### - *** the latest version installed    *** - ###
