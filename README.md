@@ -2,29 +2,16 @@
 
 - ##### For the detailed documentation, visit the [SFDMU Help Center](https://help.sfdmu.com)
 - ##### Download also the [SFDMU Desktop GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)
-```bash
-### ---------------------------------------------------------------	###
-
-### PLEASE FOLLOW THE GUIDELINES FOR OPENING ISSUES:
-
-### 1. Always use one of our issue tracker templates.
-### 2. For plugin bugs always attach the latest .log/export.json 
-
-### REQUESTS,THAT DO NOT MEET THE REQUIREMENTS,    				
-### WILL NOT BE HANDLED AND WILL BE CLOSED.			 			
-### ------------------------------------------------------------	###
-```
 
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v3.7.14         *** - ###
+### - *** Latest version: v3.7.15         *** - ###
 ### ------------------------------------------- ###
 ### - *** Always make sure, that you have *** - ###
 ### - *** the latest version installed    *** - ###
 ### ------------------------------------------- ###
 ```
 ----
-
 
 ## Introduction:
 
@@ -178,3 +165,13 @@ $ sfdx plugins:link
 #    to each CLI command that runs the SFDMU Plugin. 
 
 ```
+<br/>
+
+<br/>
+
+----
+
+**PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:**
+
+- **Always use one of our issue tracker templates.**
+- **For plugin bugs attach the latest .log/export.json** 
