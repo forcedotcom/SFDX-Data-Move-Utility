@@ -1285,11 +1285,16 @@ export class Common {
      * @static
      * @param {string} itemToSearchFor Item to search for in the source array
      * @param {Array<string>} arrayToSearchIn Array of items
+     * @param {boolean} exactlyCaseInsensitiveMatch Optionally allows fo find 
+     *                                              the exaclty match that is case insensitive
      * @returns {string}
      * @memberof Common
      */
-    public static searchClosest(itemToSearchFor: string, arrayToSearchIn: Array<string>): string {
+    public static searchClosest(itemToSearchFor: string, arrayToSearchIn: Array<string>, exactlyCaseInsensitiveMatch: boolean = false): string {
         if (!itemToSearchFor) return itemToSearchFor;
+        if (exactlyCaseInsensitiveMatch) {
+            return arrayToSearchIn.find(item => item && item.toLowerCase() == itemToSearchFor.toLowerCase());
+        }
         return closest(itemToSearchFor, arrayToSearchIn);
     }
 

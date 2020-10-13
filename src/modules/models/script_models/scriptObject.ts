@@ -613,9 +613,9 @@ export default class ScriptObject {
 
     private _fixObjectName() {
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org && this.script.sourceOrg.isDescribed) {
-            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.sourceOrg.objectNamesList);
+            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.sourceOrg.objectNamesList, true) || this.parsedQuery.sObject;
         } else if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org && this.script.targetOrg.isDescribed) {
-            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.targetOrg.objectNamesList);
+            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.targetOrg.objectNamesList, true) || this.parsedQuery.sObject;
         }
     }
 
@@ -625,7 +625,7 @@ export default class ScriptObject {
         this.parsedQuery.fields = new Array<SOQLField>();
         fieldsInOriginalQuery.forEach(fieldName => {
             if (!Common.isComplexOr__rField(fieldName)) {
-                fieldName = Common.searchClosest(fieldName, availableFields);
+                fieldName = Common.searchClosest(fieldName, availableFields, true) || fieldName;
             }
             this.parsedQuery.fields.push(getComposedField(fieldName));
         });
