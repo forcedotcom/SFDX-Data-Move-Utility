@@ -330,7 +330,8 @@ export default class Script {
 
                     // Validate and fix the default external id key for the parent object.
                     if ((thisField.parentLookupObject.isExtraObject || thisField.parentLookupObject.originalExternalIdIsEmpty)
-                        && thisField.parentLookupObject.externalId != thisField.parentLookupObject.defaultExternalId) {
+                        && thisField.parentLookupObject.externalId != thisField.parentLookupObject.defaultExternalId
+                        && thisField.scriptObject != thisField.parentLookupObject) {
                         // Extra object => automatically get possible unique "name" field to make it external id
                         if (thisField.parentLookupObject.externalId != "Id") {
                             // Remove old external id from the query
