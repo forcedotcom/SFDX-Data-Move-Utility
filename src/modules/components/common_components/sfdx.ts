@@ -54,7 +54,7 @@ export class Sfdx implements IFieldMapping {
 
         let self = this;
 
-        const makeQueryAsync = (soql: string) => new Promise((resolve, reject) => {
+        const makeQueryAsync = async (soql: string) => new Promise((resolve, reject) => {
 
             let conn = self.org.getConnection();
             conn.bulk.pollTimeout = CONSTANTS.BULK_QUERY_API_POLL_TIMEOUT;
