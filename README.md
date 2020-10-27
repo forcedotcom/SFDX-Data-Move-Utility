@@ -8,7 +8,7 @@
 
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v3.7.17         *** - ###
+### - *** Latest version: v3.7.18         *** - ###
 ### ------------------------------------------- ###
 ### - *** Always make sure, that you have *** - ###
 ### - *** the latest version installed    *** - ###
