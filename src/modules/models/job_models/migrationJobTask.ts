@@ -1683,7 +1683,11 @@ export default class MigrationJobTask {
                     // Use regular replace
                     newValue = newValue ? valuesMap.get(String(newValue)) || newValue : valuesMap.get(rawValue);
 
-                    if (newValue) {
+                    // Correct values
+                    newValue = newValue == 'TRUE' || newValue == 'true' ? true :
+                        newValue == 'FALSE' || newValue == 'false' ? false :
+                            newValue == 'null' || newValue == 'NULL' || newValue == 'undefined' || newValue == '#N/A' || newValue == undefined ? null : newValue;
+                    if (typeof newValue != 'undefined') {
                         record[field] = newValue;
                     }
 
