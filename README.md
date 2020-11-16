@@ -19,9 +19,9 @@ __________________________________________________
 ** Always use one of our issue tracker templates.
 ** For plugin bugs attach the latest .log/export.json
 ** We will really appreciate it, if you will read very carefuly 
-  the documentation and the FAQ section before opening the ticket.    
-  Most of the issue are coming due to incorrect plugin configuration,
-  so this will save your (and your customers) time waiting for our response.
+   the documentation and the FAQ section before opening the ticket.    
+   Most of the issue are coming due to incorrect plugin configuration,
+   so this will save your (and your customers) time waiting for our response.
 __________________________________________________
 THANK YOU VERY MUCH IN ADVANCE!
 ```
