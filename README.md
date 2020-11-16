@@ -17,7 +17,7 @@
 PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
 __________________________________________________
 ** Always use one of our issue tracker templates.
-** For plugin bugs attach the latest .log/export.json
+** For plugin bugs attach the latest .log / export.json files.
 ** We will really appreciate it, if you will read very carefuly 
    the documentation and also learn the target CSV files for error messages 
    before opening the ticket.    
