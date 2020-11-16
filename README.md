@@ -20,10 +20,9 @@ PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
 --- **For plugin bugs attach the latest .log/export.json** 
 
 --- **We will appreciate it, if you will read very carefuly 
-    **the documentation and the FAQ section before opening the ticket.
-    
-    **Most of the issue are coming due to incorrect plugin configuration
-    **and this will save your (and your customers) time wating for our response.** 
+    **the documentation and the FAQ section before opening the ticket.    
+    **Most of the issue are coming due to incorrect plugin configuration,
+    **so this will save your (and your customers) time wating for our response.** 
 THANKS IN ADVANCE!
 ```
 ----
