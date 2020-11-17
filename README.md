@@ -15,17 +15,16 @@
 ### ------------------------------------------- ###
 
 PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
-__________________________________________________
+--------------------------------------------------
 ** Always use one of our issue tracker templates.
 ** For plugin bugs attach the latest .log / export.json files.
-** We will really appreciate it, if you will read very carefuly 
-   the documentation and also learn the target CSV files for error messages 
-   before opening the ticket.    
-   Most of the issue are coming due to incorrect plugin configuration 
-   or stuff are related to the client environment,
-   so this will save your (and your customers) time waiting for our response.
-__________________________________________________
-THANK YOU VERY MUCH IN ADVANCE!
+
+Most of the issue are coming due to incorrect plugin configuration 
+or stuff are related to the client environment,
+so carefully reading the documentation 
+as well as an examination of the target CSV files 
+for possible errors (see the docs)
+will save your time waiting for our response.
 ```
 ----
 
