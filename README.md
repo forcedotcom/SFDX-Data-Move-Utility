@@ -16,7 +16,7 @@
 ```
 PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
 - Always use one of our issue tracker templates.
-- For plugin bugs attach the latest .log / export.json files.
+- For plugin bugs attach the latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log)/[export.json files](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration).
 
 Most of the issue are coming due to incorrect configuration 
 or stuff are related to the client environment,
