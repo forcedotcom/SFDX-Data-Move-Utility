@@ -14,9 +14,7 @@
 ### - *** the latest version installed    *** - ###
 ### ------------------------------------------- ###
 ```
-
 PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
---------------------------------------------------
 ** Always use one of our issue tracker templates. **
 ** For plugin bugs attach the latest .log / export.json files. **
 
