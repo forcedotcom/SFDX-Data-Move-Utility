@@ -20,7 +20,7 @@ PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
 
 Most of the issue are coming due to incorrect configuration 
 or stuff are related to the client environment,
-so carefully reading the documentation 
+so carefully reading the [documentation](https://help.sfdmu.com/quick-start) 
 as well as an examination of the [target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files)
 before opening a bug will save your time waiting for our response.
 
