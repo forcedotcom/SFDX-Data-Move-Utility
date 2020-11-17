@@ -15,8 +15,8 @@
 ### ------------------------------------------- ###
 ```
 PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
-** Always use one of our issue tracker templates. **
-** For plugin bugs attach the latest .log / export.json files. **
+- Always use one of our issue tracker templates. **
+- For plugin bugs attach the latest .log / export.json files. **
 
 Most of the issue are coming due to incorrect configuration 
 or stuff are related to the client environment,
@@ -25,7 +25,6 @@ as well as an examination of the [target CSV files](https://help.sfdmu.com/full-
 will save your time waiting for our response.
 
 ----
-
 ## Introduction:
 
 **The SFDMU Plugin (SFDX Data Move Utility) is the powerful salesforce data migration tool and it is the innovative and very handy alternative to the traditional Salesforce Data Loader application as well as to the set of the force:data:tree commands.** 
