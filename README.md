@@ -13,19 +13,19 @@
 ### - *** Make sure, that you have        *** - ###
 ### - *** the latest version installed    *** - ###
 ### ------------------------------------------- ###
+```
 
 PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
 --------------------------------------------------
-** Always use one of our issue tracker templates.
-** For plugin bugs attach the latest .log / export.json files.
+** Always use one of our issue tracker templates. **
+** For plugin bugs attach the latest .log / export.json files. **
 
-Most of the issue are coming due to incorrect plugin configuration 
+Most of the issue are coming due to incorrect configuration 
 or stuff are related to the client environment,
 so carefully reading the documentation 
-as well as an examination of the target CSV files 
-for possible errors (see the docs)
+as well as an examination of the [target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files)
 will save your time waiting for our response.
-```
+
 ----
 
 ## Introduction:
