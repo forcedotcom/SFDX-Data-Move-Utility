@@ -54,8 +54,8 @@ export const CONSTANTS = {
     POLL_TIMEOUT: 3000000,
     BULK_QUERY_API_POLL_TIMEOUT: 4 * 60 * 1000,
     SHORT_QUERY_STRING_MAXLENGTH: 250,
-    MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,  
-    USER_ADDON_PRIORITY_OFFSET: 1000000,  
+    MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,
+    USER_ADDON_PRIORITY_OFFSET: 1000000,
 
     MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
     SPECIAL_MOCK_COMMANDS: [
@@ -111,7 +111,7 @@ export const CONSTANTS = {
         "custom_true",
         "custom_false",
         "standard_true",
-        "standard_false",        
+        "standard_false",
         "updateable_true",
         "updateable_false",
         "createable_true",
@@ -160,7 +160,7 @@ export const CONSTANTS = {
             "Description",
             "PathOnClient",
             "ContentUrl",
-            "FirstPublishLocationId"            
+            "FirstPublishLocationId"
         )]
     ]),
 
@@ -273,7 +273,8 @@ export enum MESSAGE_IMPORTANCE {
 }
 
 export enum ADDON_MODULE_METHODS {
-    onScriptSetup = "onScriptSetup",
-    onOrgsConnected = "onOrgsConnected"
+    none = 'none',
+    onBefore = "onBefore",
+    onAfter = "onAfter"
 }
 

@@ -47,6 +47,7 @@ export enum RESOURCES {
     update = "update",
     personContact = "personContact",
     coreManifest = "coreManifest",
+    userManifest = "userManifest",
     loaded = "loaded",
     cantLoad = "cantLoad",
 

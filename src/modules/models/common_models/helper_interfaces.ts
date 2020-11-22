@@ -6,6 +6,8 @@
  */
 
 
+
+
 export interface IOrgConnectionData {
     instanceUrl: string;
     accessToken: string;
@@ -84,18 +86,9 @@ export interface IIdentityInfo {
     display_name: string
 }
 
-export interface IAddonManifest {
-    addons: IAddonManifestDefinition[]
-}
 
-export interface IAddonManifestDefinition {
-    command: string,
-    path: string,
-    module: string,
-    priority: number,
-    enabled: boolean,
-    isCore: boolean
-}
+
+
 
 
 

@@ -19,7 +19,8 @@
     "insert": "Insert",
     "update": "Update",
     "personContact": "Person Contact",
-    "coreManifest": "[SFDMU Core Manifest]",
+    "coreManifest": "[Core Manifest]",
+    "userManifest": "[User Manifest]",
     "loaded": "Loaded %s.",
     "cantLoad": "%s is not found or could not be loaded.",
 

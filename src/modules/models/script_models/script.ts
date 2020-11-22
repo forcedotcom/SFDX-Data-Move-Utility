@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import {
     parseQuery,
@@ -28,6 +28,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import AddonManager from "../../components/common_components/addonManager";
 import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
+import { AddonManifestDefinition } from "./addonMAnifestDefinition";
 
 
 
@@ -64,6 +65,13 @@ export default class Script {
     fileLog: boolean = true;
     keepObjectOrderWhileExecute: boolean = false;
     allowFieldTruncation: boolean = false;
+
+    @Type(() => AddonManifestDefinition)
+    beforeAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();   
+    
+    @Type(() => AddonManifestDefinition)
+    afterAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+
 
 
     // -----------------------------------
@@ -148,13 +156,9 @@ export default class Script {
         };
         this.addonManager = new AddonManager(this);
 
-        // Triggering Addons
-        await this.__triggerAddOns.onScriptSetup();
-
         this.sourceOrg = this.orgs.filter(x => x.name == this.runInfo.sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();
         this.apiVersion = this.runInfo.apiVersion || this.apiVersion;
-
 
         if (this.runInfo.sourceUsername.toLowerCase() == this.runInfo.targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
@@ -211,8 +215,6 @@ export default class Script {
         // Cleanup the source / target directories
         await this.cleanupDirectories();
 
-        // Triggering Addons
-        await this.__triggerAddOns.onOrgsConnected();
 
     }
 
@@ -503,15 +505,6 @@ export default class Script {
     }
 
 
-    // ------------------ Private members --------------------- //
-    private __triggerAddOns = {
-        onScriptSetup: async (): Promise<void> => {
-            this.runInfo = await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onScriptSetup, this.runInfo) || this.runInfo;
-        },
-        onOrgsConnected: async (): Promise<void> => {
-            await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onOrgsConnected);
-        }
-    }
 
 }
 

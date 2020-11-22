@@ -25,6 +25,7 @@ import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappi
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
+import { AddonManifestDefinition } from "./addonMAnifestDefinition";
 
 
 /**
@@ -60,20 +61,21 @@ export default class ScriptObject {
     targetRecordsFilter: string = "";
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
-
     useFieldMapping: boolean = false;
     useValuesMapping: boolean = false;
-
     /**
      * [Obsolete] Replaced with "master".
      * Preserved for backwards compability
      */
     allRecords: boolean;
     master: boolean = true;
-
     excludedFields: Array<string> = new Array<string>();
-
-
+    
+    @Type(() => AddonManifestDefinition)
+    beforeAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+    
+    @Type(() => AddonManifestDefinition)
+    afterAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
 
 
     // -----------------------------------

@@ -11,6 +11,10 @@ import { RESOURCES } from "../../components/common_components/logger";
 import { Common } from "../../components/common_components/common";
 import { IMissingParentLookupRecordCsvRow } from "./helper_interfaces";
 import { ICsvChunk } from "../api_models";
+import "reflect-metadata";
+import "es6-shim";
+import { Type } from "class-transformer";
+import { AddonManifestDefinition } from "../script_models/addonManifestDefinition";
 
 
 export class TaskData {
@@ -251,3 +255,20 @@ export class ObjectFieldMapping {
     }
 
 }
+
+export class AddonManifest {
+
+    constructor(init?: Partial<AddonManifest>) {
+        if (init) {
+            Object.assign(this, init);
+        }
+    }
+
+    @Type(() => AddonManifestDefinition)
+    addons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+}
+
+
+
+
+

@@ -11,11 +11,13 @@ import { Logger, RESOURCES } from "./logger";
 import * as path from 'path';
 import * as fs from 'fs';
 import { ADDON_MODULE_METHODS, CONSTANTS } from "./statics";
-import { CommandInitializationError, Script } from "../../models";
-import { Common } from "./common";
+import { AddonManifest, CommandInitializationError, Script } from "../../models";
 import PluginRuntime from "../../models/addons_models/pluginRuntime";
 import { IAddonModule, IPluginRuntime } from "../../models/addons_models/addonSharedPackage";
-import { IAddonManifest, IAddonManifestDefinition } from "../../models/common_models/helper_interfaces";
+import { AddonManifestDefinition } from "../../models/script_models/addonManifestDefinition";
+import "reflect-metadata";
+import "es6-shim";
+import { plainToClass } from "class-transformer";
 
 
 
@@ -29,23 +31,18 @@ export default class AddonManager {
 
     runtime: IPluginRuntime;
     script: Script;
+
     get logger(): Logger {
         return this.script.logger;
     }
+
     get fullCommandName() {
         return this.runtime.runInfo.pinfo.pluginName + ":" + this.runtime.runInfo.pinfo.commandName;
     }
 
-    manifests: IAddonManifest[] = new Array<IAddonManifest>();
+    manifests: AddonManifest[] = new Array<AddonManifest>();
+    addonsMap: Map<ADDON_MODULE_METHODS, [Function, AddonManifestDefinition][]> = new Map<ADDON_MODULE_METHODS, [Function, AddonManifestDefinition][]>();
     addons: Map<number, IAddonModule[]> = new Map<number, IAddonModule[]>();
-
-    /**
-     * Map : Function name => List of functions ordered by the addon priority
-     *
-     * @type {Map<string, Function[]>}
-     * @memberof AddonManager
-     */
-    addonHandlersMap: Map<string, [Function, any][]> = new Map<string, [Function, any][]>();
 
     constructor(script: Script) {
 
@@ -53,106 +50,50 @@ export default class AddonManager {
         this.script = script;
         this.runtime = new PluginRuntime(script);
 
-
-        // Load manifests ***************************************
+        // Load manifests
         this.manifests = [
-            // Core manifest...
-            this._loadAddonManifest(CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME, true, this.runtime.runInfo.basePath),
-            // Custom manifest...
-            this._loadAddonManifest(path.join(this.runtime.runInfo.basePath, CONSTANTS.USER_ADDON_MANIFEST_FILE_NAME), false, this.runtime.runInfo.basePath)
-        ].filter(manifest => !!manifest);
+            // Load the core manifest from the manifest file
+            this._loadCoreAddonManifest(),
+            // Load the user's manifest from the export.json
+            this._loadUserAddonManifest()
+        ].filter(manifest => !!manifest && manifest.addons.length > 0);
 
-        // Load modules from the manifests ***********************
-        this.manifests.forEach(manifest => {
-            manifest.addons.forEach(manifestDefinition => {
-                if (manifestDefinition.enabled && this.fullCommandName == manifestDefinition.command) {
-                    if (manifestDefinition["valid"]) {
-                        let module = this._loadAddonModule(manifestDefinition, this.runtime.runInfo.basePath);
-                        if (module) {
-                            if (!this.addons.has(manifestDefinition.priority)) {
-                                this.addons.set(manifestDefinition.priority, []);
-                            }
-                            this.addons.get(manifestDefinition.priority).push(this._loadAddonModule(manifestDefinition, this.runtime.runInfo.basePath));
-                            this.logger.infoVerbose(RESOURCES.loaded, manifestDefinition["moduleName"])
-                        }
-                    } else {
-                        this.logger.warn(RESOURCES.cantLoad, manifestDefinition["moduleName"])
-                    }
-                }
-            });
+        // Create functions map
+        this._createAddOnsMap();
+    }
+
+    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string): Promise<void> {
+        if (!this.addonsMap.has(method)) {
+            return;
+        }
+        let addons = this.addonsMap.get(method).filter(addon => {
+            return addon[1].objectName == objectName;
         });
 
-        // Create addon modules method map ***********************
-        this._createModuleMethodsMap();
-
+        for (let index = 0; index < addons.length; index++) {
+            const addon = addons[index];
+            await addon[0]();
+        }
     }
 
-    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, ...params: any[]): Promise<any> {
-
-        let fns = this.addonHandlersMap.get(method);
-        let lastResult: any;
-        if (!fns) return lastResult;
-
-        for (let index = 0; index < fns.length; index++) {
-            let actualParams = [].concat(params);
-            const fn = fns[index];
-            if (index > 0) {
-                actualParams = actualParams.slice(1);
-                actualParams.unshift(lastResult);
-            }
-            lastResult = await fn[0].apply(fn[1], actualParams);
-        }
-        return lastResult;
-    }
-
-    triggerAddonModuleMethodSync(method: ADDON_MODULE_METHODS, ...params: any[]): any[] {
-        let fns = this.addonHandlersMap.get(method);
-        let lastResult: any;
-        if (!fns) return lastResult;
-
-        for (let index = 0; index < fns.length; index++) {
-            let actualParams = [].concat(params);
-            const fn = fns[index];
-            if (index > 0) {
-                actualParams = actualParams.slice(1);
-                actualParams.unshift(lastResult);
-            }
-            lastResult = fn[0].apply(fn[1], actualParams);
-        }
-        return lastResult;
+    triggerAddonModuleMethodSync(method: ADDON_MODULE_METHODS, objectName: string): void {
+        (async () => await this.triggerAddonModuleMethodAsync(method, objectName))();
     }
 
 
     // --------- Private members ------------ //
-    private _loadAddonManifest(manifestPath: string, isCore: boolean, basePath: string): IAddonManifest {
-
-        if (!path.isAbsolute(manifestPath)) {
-            manifestPath = path.resolve(isCore ? __dirname : basePath, manifestPath);
+    private _loadCoreAddonManifest(): AddonManifest {
+        this.logger.infoNormal(RESOURCES.loadingAddonManifestFile, this.logger.getResourceString(RESOURCES.coreManifest));
+        let manifestPath = path.resolve(__dirname, CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME);
+        if (!fs.existsSync(manifestPath)) {
+            return null;
         }
-
-        if (isCore) {
-            this.logger.infoNormal(RESOURCES.loadingAddonManifestFile, this.logger.getResourceString(RESOURCES.coreManifest));
-            if (!fs.existsSync(manifestPath)) {
-                this.logger.warn(RESOURCES.addonManifestFileDoesNotFound, this.logger.getResourceString(RESOURCES.coreManifest));
-                return null;
-            }
-        } else {
-            if (!fs.existsSync(manifestPath)) {
-                return null;
-            }
-            this.logger.infoNormal(RESOURCES.loadingAddonManifestFile, manifestPath);
-        }
-
         try {
-            let manifest = <IAddonManifest>JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-            manifest.addons.forEach(manifestDefinition => {
-                manifestDefinition.isCore = isCore;
-                manifestDefinition.priority = (manifestDefinition.priority || 1) + (isCore ? 0 : CONSTANTS.USER_ADDON_PRIORITY_OFFSET);
-                manifestDefinition["moduleName"] = manifestDefinition.module || manifestDefinition.path;
-                manifestDefinition["valid"] = !!manifestDefinition["moduleName"];
-                if (manifestDefinition["valid"]) {
-                    manifestDefinition["moduleName"] = path.basename(manifestDefinition["moduleName"]);
-                }
+            let manifestPlain = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            let manifest = plainToClass(AddonManifest, manifestPlain);
+            manifest.addons.forEach(addon => {
+                addon.isCore = true;
+                addon.basePath = this.runtime.runInfo.basePath;
             });
             return manifest;
         } catch (ex) {
@@ -160,44 +101,59 @@ export default class AddonManager {
         }
     }
 
-    private _loadAddonModule(manifestDefinition: IAddonManifestDefinition, basePath: string): IAddonModule {
-
-        try {
-
-            let moduleId = "";
-
-            if (manifestDefinition.module) {
-                moduleId = manifestDefinition.module;
-            } else {
-                if (!path.isAbsolute(manifestDefinition.path)) {
-                    moduleId = path.resolve(manifestDefinition.isCore ? __dirname : basePath, manifestDefinition.path);
-                } else {
-                    moduleId = manifestDefinition.path;
-                }
+    private _loadUserAddonManifest(): AddonManifest {
+        this.logger.infoNormal(RESOURCES.loadingAddonManifestFile, this.logger.getResourceString(RESOURCES.userManifest));
+        let manifest: AddonManifest = new AddonManifest();
+        this.script.beforeAddons.forEach(addon => {
+            if (!addon.excluded && addon.command == this.fullCommandName) {
+                addon.method = ADDON_MODULE_METHODS.onBefore;
+                manifest.addons.push(addon);
             }
-
-            return <IAddonModule>new (require(moduleId).default)(this.runtime);
-
-        } catch (ex) { }
-
-        return null;
-    }
-
-    private _createModuleMethodsMap() {
-        let keys = [...this.addons.keys()].sort();
-        keys.forEach(priority => {
-            this.addons.get(priority).forEach((module: IAddonModule) => {
-                let functions = Common.getObjectProperties(module);
-                functions.forEach($function => {
-                    if (!this.addonHandlersMap.has($function)) {
-                        this.addonHandlersMap.set($function, []);
-                    }
-                    this.addonHandlersMap.get($function).push([module[$function], module]);
-                });
+        });
+        this.script.objects.forEach(object => {
+            object.beforeAddons.forEach(addon => {
+                if (!addon.excluded && addon.command == this.fullCommandName) {
+                    addon.method = ADDON_MODULE_METHODS.onBefore;
+                    addon.objectName = object.name;
+                    manifest.addons.push(addon);
+                }
+            });
+            object.afterAddons.forEach(addon => {
+                if (!addon.excluded && addon.command == this.fullCommandName) {
+                    addon.method = ADDON_MODULE_METHODS.onAfter;
+                    addon.objectName = object.name;
+                    manifest.addons.push(addon);
+                }
             });
         });
+        this.script.afterAddons.forEach(addon => {
+            if (!addon.excluded && addon.command == this.fullCommandName) {
+                addon.method = ADDON_MODULE_METHODS.onAfter;
+                manifest.addons.push(addon);
+            }
+        });
+        manifest.addons.forEach(addon => {
+            addon.isCore = false;
+            addon.basePath = this.runtime.runInfo.basePath;
+        });
+        return manifest;
     }
 
+    private _createAddOnsMap() {
+        this.manifests.forEach(manifest => {
+            manifest.addons.forEach(addon => {
+                try {
+                    if (addon.isValid) {
+                        let moduleInstance: IAddonModule = <IAddonModule>new (require(addon.moduleRequirePath).default)(this.runtime);
+                        if (!this.addonsMap.has(addon.method)) {
+                            this.addonsMap.set(addon.method, []);
+                        }
+                        this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, addon.args), addon]);
+                    }
+                } catch (ex) { }
+            })
+        });
+    }
 }
 
 
