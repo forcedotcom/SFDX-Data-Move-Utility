@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import {
     parseQuery,
@@ -20,7 +20,7 @@ import {
     getComposedField,
     Field as SOQLField
 } from 'soql-parser-js';
-import { ScriptOrg, ScriptObject, ObjectFieldMapping, AddonManifestDefinition } from "..";
+import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
 import { IPluginInfo } from "../common_models/helper_interfaces";
@@ -28,6 +28,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import AddonManager from "../../components/common_components/addonManager";
 import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
+import { AddonManifestDefinition } from "./addonMAnifestDefinition";
 
 
 

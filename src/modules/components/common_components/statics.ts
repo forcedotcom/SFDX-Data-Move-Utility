@@ -274,7 +274,7 @@ export enum MESSAGE_IMPORTANCE {
 
 export enum ADDON_MODULE_METHODS {
     none = 'none',
-    onBeforeDml = "onBeforeDml",
-    onAfterDml = "onAfterDml"
+    onBefore = "onBefore",
+    onAfter = "onAfter"
 }
 

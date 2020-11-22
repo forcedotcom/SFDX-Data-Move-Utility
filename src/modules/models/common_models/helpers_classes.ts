@@ -6,11 +6,15 @@
  */
 
 import { MigrationJobTask, SFieldDescribe, ScriptObject, ScriptOrg } from "..";
-import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
+import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Common } from "../../components/common_components/common";
-import { IAddonManifestDefinition, IMissingParentLookupRecordCsvRow } from "./helper_interfaces";
+import { IMissingParentLookupRecordCsvRow } from "./helper_interfaces";
 import { ICsvChunk } from "../api_models";
+import "reflect-metadata";
+import "es6-shim";
+import { Type } from "class-transformer";
+import { AddonManifestDefinition } from "../script_models/addonManifestDefinition";
 
 
 export class TaskData {
@@ -252,30 +256,19 @@ export class ObjectFieldMapping {
 
 }
 
-export class AddonManifestDefinition implements IAddonManifestDefinition {
+export class AddonManifest {
 
-    //IAddonManifestDefinition members
-    command: string;
-    path: string;
-    module: string;
-    excluded: boolean;
-    args: any[];
-
-    // Helper members
-    get moduleName(){
-        return this.module || this.path;
-    } 
-    get isValid(){
-        return !this.excluded && !!this.moduleName && this.method != ADDON_MODULE_METHODS.none;
-    }
-    method: ADDON_MODULE_METHODS = ADDON_MODULE_METHODS.none;        
-    objectName: string;    
-
-    constructor(init: Partial<AddonManifestDefinition>) {
+    constructor(init?: Partial<AddonManifest>) {
         if (init) {
             Object.assign(this, init);
         }
     }
 
-
+    @Type(() => AddonManifestDefinition)
+    addons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
 }
+
+
+
+
+
