@@ -37,22 +37,16 @@ export interface ICommandRunInfo {
  * The information about the running Plugin
  */
 export interface IPluginInfo {
-
     // The Plugin name (f.ex. sfdmu)
     pluginName: string,
-
     // The executed command (f.ex. run)
     commandName: string,
-
     // Version of the Plugin (f.ex. 5.0.0)
     version: string,
-
     // Path to the directory where the Sfdmu Plugin is installed
     path: string,
-
     // Full CLI string used to run the command (sfdx sfdmu:run --sourceusername a@mail.com --targetusername b@mail.com)
     commandString: string,
-
     // The array of CLI arguments ('--sourceusername', 'a@mail.com', '--targetusername', 'b@mail.com')
     argv: string[]
 }
@@ -80,12 +74,10 @@ export interface ITableMessage {
 *  when the Plugin command is running.
 */
 export interface IPluginRuntime {
-
     /**
      * Returns the information about the running command.
      */
     runInfo: ICommandRunInfo,
-
     /**
      *  Returns the jsforce.Connection object 
      *   that can be directly used by the Addon 
@@ -93,7 +85,6 @@ export interface IPluginRuntime {
      * @return {jsforce.Connection}
      */
     getConnection(isSource: boolean): any,
-
     /**
      * Returns the information about the connected Orgs.
      */
@@ -103,7 +94,6 @@ export interface IPluginRuntime {
         apiVersion: string,
         isFile: boolean,
     };
-
     /**
      * Write a message to the console or/and log file.
      * All the messages are written with the VERBOSE verbosity level.
@@ -115,8 +105,6 @@ export interface IPluginRuntime {
         TODO: Extend the Interface with more methods... 
         -----------------------------------------------------
      */
-
-
 }
 
 
@@ -126,43 +114,32 @@ export interface IPluginRuntime {
  * The interface to be implemented in each SFDMU Addon.
  */
 export interface IAddonModule {
-
     /**
      * The Plugin will share with the Addon its public
      *   methods and runtime data using this property
      */
-    runtime?: IPluginRuntime;
-
-    /*
-        // TODO:  Add this constructor to the 
-        //        Addon code for the initialization
-        constructor(runtime : IPluginRuntime){
-            this.runtime = runtime;
-        }
-    */
-
+    runtime: IPluginRuntime;   
     /**
-     * Triggered by the plugin after the Plugin is initialized.
-     * The Addon can modify and return updated startup parameters (ICOmmandRunInfo)
-     * to change the behavior.
+     * The main method which is executed by the Plugin
+     * when the Addon is running.
+     *
+     * @param {...any[]} args The user's arguments passed from the 
+     *                        manifest file.
+     * @returns {any} Updated runTime data to be passed to the next
+     *                Addon in the method chain.
      */
-    onScriptSetup?(runInfo: ICommandRunInfo): Promise<ICommandRunInfo>,
-
-    /**
-     * Triggered when the Orgs were successfully connected.
-     * The Addon can then call runtime.getOrgInfo() to get information about the connected Orgs.
-     */
-    onOrgsConnected?(): Promise<any>
-
+    onExecute(...args : any[]) : void;
 
     /**
         -----------------------------------------------------
         TODO: Extend the Interface with more methods... 
         -----------------------------------------------------
      */
-	
 
 }
+
+
+
 
 
 

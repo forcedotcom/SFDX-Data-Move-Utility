@@ -1,20 +1,24 @@
 {
     "addons": [
-        {
-            "__comment1": "****** // The sfdx command that this entry should be executed with it //*******",
-            "command": "sfdmu:run",
-
-            "__comment2": "****** // The absolute or relative path to the Addon module. The path is relative to the current manfest location. Should be null if npm module is used. //*******",
-            "path": "../../../addons/modules/sfdmuCoreAddon",
-
-            "__comment3": "****** // The npm global module name to load instead of path. //*******",
+        {          
+            "path": "../../../addons/modules/sfdmuCoreAddon_OnBeforeDml",
             "module": null,
+            "method": "onBeforeDml",
+            "excluded": false,
+            "args" : {
+                "test1": "test1",
+                "test2": "test2"
+            }
+        },
+        {          
+            "path": "../../../addons/modules/sfdmuCoreAddon_OnAfterDml",
+            "module": null,
+            "method": "onAfterDml",
+            "excluded": false,
+            "args": {
 
-            "__comment4": "****** // The priority to execute the current Addon triggers across all loaded Addons. //*******",
-            "priority": 1,
-
-            "__comment5": "****** // Allows to suppress (disable) this Addon. //*******",
-            "enabled": true
+            }
         }
+
     ]
 }

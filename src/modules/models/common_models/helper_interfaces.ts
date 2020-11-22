@@ -88,14 +88,15 @@ export interface IAddonManifest {
     addons: IAddonManifestDefinition[]
 }
 
-export interface IAddonManifestDefinition {
+export interface IAddonManifestDefinition {    
     command: string,
     path: string,
-    module: string,
-    priority: number,
-    enabled: boolean,
-    isCore: boolean
+    module: string,    
+    excluded: boolean,
+    args: any[]            
 }
+
+
 
 
 

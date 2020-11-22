@@ -6,10 +6,10 @@
  */
 
 import { MigrationJobTask, SFieldDescribe, ScriptObject, ScriptOrg } from "..";
-import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
+import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Common } from "../../components/common_components/common";
-import { IMissingParentLookupRecordCsvRow } from "./helper_interfaces";
+import { IAddonManifestDefinition, IMissingParentLookupRecordCsvRow } from "./helper_interfaces";
 import { ICsvChunk } from "../api_models";
 
 
@@ -249,5 +249,33 @@ export class ObjectFieldMapping {
     get hasChange(): boolean {
         return this.sourceSObjectName != this.targetSObjectName || this.fieldMapping.size > 0;
     }
+
+}
+
+export class AddonManifestDefinition implements IAddonManifestDefinition {
+
+    //IAddonManifestDefinition members
+    command: string;
+    path: string;
+    module: string;
+    excluded: boolean;
+    args: any[];
+
+    // Helper members
+    get moduleName(){
+        return this.module || this.path;
+    } 
+    get isValid(){
+        return !this.excluded && !!this.moduleName && this.method != ADDON_MODULE_METHODS.none;
+    }
+    method: ADDON_MODULE_METHODS = ADDON_MODULE_METHODS.none;        
+    objectName: string;    
+
+    constructor(init: Partial<AddonManifestDefinition>) {
+        if (init) {
+            Object.assign(this, init);
+        }
+    }
+
 
 }
