@@ -13,11 +13,12 @@ import * as fs from 'fs';
 import { ADDON_MODULE_METHODS, CONSTANTS } from "./statics";
 import { AddonManifest, CommandInitializationError, Script } from "../../models";
 import PluginRuntime from "../../models/addons_models/pluginRuntime";
-import { IAddonModule, IPluginRuntime } from "../../models/addons_models/addonSharedPackage";
+import { IAddonModule, IPluginExecutionContext, IPluginRuntime } from "../../models/addons_models/addonSharedPackage";
 import { AddonManifestDefinition } from "../../models/script_models/addonManifestDefinition";
 import "reflect-metadata";
 import "es6-shim";
 import { plainToClass } from "class-transformer";
+
 
 
 
@@ -62,17 +63,17 @@ export default class AddonManager {
         this._createAddOnsMap();
     }
 
-    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string): Promise<void> {
+    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string): Promise<void> {        
         if (!this.addonsMap.has(method)) {
             return;
         }
+
         let addons = this.addonsMap.get(method).filter(addon => {
             return addon[1].objectName == objectName;
         });
 
         for (let index = 0; index < addons.length; index++) {
-            const addon = addons[index];
-            await addon[0]();
+            await addons[index][0]();
         }
     }
 
@@ -91,10 +92,7 @@ export default class AddonManager {
         try {
             let manifestPlain = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
             let manifest = plainToClass(AddonManifest, manifestPlain);
-            manifest.addons.forEach(addon => {
-                addon.isCore = true;
-                addon.basePath = this.runtime.runInfo.basePath;
-            });
+            manifest.addons.forEach(addon => this._setupAddonDefinition(addon, true));
             return manifest;
         } catch (ex) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
@@ -132,11 +130,14 @@ export default class AddonManager {
                 manifest.addons.push(addon);
             }
         });
-        manifest.addons.forEach(addon => {
-            addon.isCore = false;
-            addon.basePath = this.runtime.runInfo.basePath;
-        });
+        manifest.addons.forEach(addon => this._setupAddonDefinition(addon, false));
         return manifest;
+    }
+
+    private _setupAddonDefinition(addon: AddonManifestDefinition, isCore: boolean) {
+        addon.isCore = isCore;
+        addon.basePath = this.runtime.runInfo.basePath;
+        addon.args = addon.args || {};
     }
 
     private _createAddOnsMap() {
@@ -148,7 +149,11 @@ export default class AddonManager {
                         if (!this.addonsMap.has(addon.method)) {
                             this.addonsMap.set(addon.method, []);
                         }
-                        this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, addon.args), addon]);
+                        let context = <IPluginExecutionContext>{
+                            eventName: addon.method.toString(),
+                            objectName: addon.objectName
+                        };
+                        this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, context, addon.args), addon]);
                     }
                 } catch (ex) { }
             })

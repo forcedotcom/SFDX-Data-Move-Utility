@@ -108,27 +108,50 @@ export interface IPluginRuntime {
 }
 
 
+/**
+ * Provides the context that the Addon was currently colled in it.
+ *
+ * @export
+ * @interface IPluginExecutionContext
+ */
+export interface IPluginExecutionContext {
+    /**
+     * The name of the event 
+     * which the Addon module was executed int it context.
+     */
+    eventName: string;
+
+    /**
+     * The name of the object which was requested
+     * to be processed (null for the global script events)
+     * 
+     */
+    objectName: string;
+}
+
 
 /* ------------------ IAddonModule ------------------ */
 /**
  * The interface to be implemented in each SFDMU Addon.
  */
 export interface IAddonModule {
+
     /**
      * The Plugin will share with the Addon its public
      *   methods and runtime data using this property
      */
-    runtime: IPluginRuntime;   
+    runtime: IPluginRuntime;
+
     /**
      * The main method which is executed by the Plugin
      * when the Addon is running.
      *
-     * @param {...any[]} args The user's arguments passed from the 
+     * @param {any} args The user's arguments passed from the 
      *                        manifest file.
      * @returns {any} Updated runTime data to be passed to the next
      *                Addon in the method chain.
      */
-    onExecute(...args : any[]) : void;
+    onExecute(context: IPluginExecutionContext, args: any): void;
 
     /**
         -----------------------------------------------------

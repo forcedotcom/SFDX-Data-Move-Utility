@@ -272,3 +272,5 @@ export class AddonManifest {
 
 
 
+
+

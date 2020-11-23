@@ -23,7 +23,7 @@ export class AddonManifestDefinition {
     path: string;
     module: string;
     excluded: boolean;
-    args: any[];
+    args: any;
 
     // -----------------------------------
     isCore: boolean;
