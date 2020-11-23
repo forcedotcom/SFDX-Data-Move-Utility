@@ -28,7 +28,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import AddonManager from "../../components/common_components/addonManager";
 import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
-import { AddonManifestDefinition } from "./addonMAnifestDefinition";
+import { AddonManifestDefinition } from "./addonManifestDefinition";
 
 
 
