@@ -12,6 +12,7 @@
 ### - *** the latest version installed    *** - ###
 ### ------------------------------------------- ###
 ```
+---
 PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
 - Always use one of our issue tracker templates.
 - For Plugin bugs always attach:
