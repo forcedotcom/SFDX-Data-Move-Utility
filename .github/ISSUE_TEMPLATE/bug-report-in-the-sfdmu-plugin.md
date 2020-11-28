@@ -22,3 +22,6 @@ Attach your **export.json** file
 
 **Log file**
 Attach your full **.log** file.
+
+**_target.csv** file.
+When you have an issue with failed rows, attach the dump of the **_target.csv** file containing the error messages (at least 1-2 relevant full rows).
