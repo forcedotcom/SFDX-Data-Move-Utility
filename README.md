@@ -15,9 +15,9 @@
 PLEASE, FOLLOW THE GUIDELINES WHEN OPENING ISSUES:
 - Always use one of our issue tracker templates.
 - For Plugin bugs always attach:
-- - The latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.
-- - The [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.
-- - When you have an issue with failed rows, provide also the dump of the \_target.csv file containing the error messages (at least 1-2 relevant rows).
+  - The latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.
+  - The [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.
+  - When you have an issue with failed rows, provide also the dump of the \_target.csv file containing the error messages (at least 1-2 relevant rows).
 
 Most of the issue are coming due to incorrect configuration 
 or stuff are related to the client environment,
