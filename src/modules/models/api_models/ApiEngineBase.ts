@@ -22,6 +22,7 @@ import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../commo
  */
 export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
+    concurrencyMode: string;
     pollingIntervalMs: number
     bulkApiV1BatchSize: number;
     allOrNone: boolean;
@@ -62,6 +63,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         this.sObjectName = init.sObjectName;
         this.operation = init.operation;
         this.pollingIntervalMs = init.pollingIntervalMs;
+        this.concurrencyMode = init.concurrencyMode;
         this.updateRecordId = init.updateRecordId;
         this.bulkApiV1BatchSize = init.bulkApiV1BatchSize;
         this.allOrNone = init.allOrNone;
@@ -92,7 +94,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
         // Create CRUD job
         await this.createCRUDApiJobAsync(allRecords);
-        
+
         // Execute CRUD job
         let resultRecords = await this.processCRUDApiJobAsync(progressCallback);
 

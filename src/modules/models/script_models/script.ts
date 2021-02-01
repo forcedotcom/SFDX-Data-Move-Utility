@@ -49,6 +49,7 @@ export default class Script {
     objects: ScriptObject[] = new Array<ScriptObject>();
 
     pollingIntervalMs: number = CONSTANTS.DEFAULT_POLLING_INTERVAL_MS;
+    concurrencyMode: "Serial" | "Parallel" = "Parallel";
     bulkThreshold: number = CONSTANTS.DEFAULT_BULK_API_THRESHOLD_RECORDS;
     bulkApiVersion: string = CONSTANTS.DEFAULT_BULK_API_VERSION;
     bulkApiV1BatchSize: number = CONSTANTS.DEFAULT_BULK_API_V1_BATCH_SIZE;
