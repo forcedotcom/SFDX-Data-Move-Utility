@@ -34,7 +34,13 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let connection = Sfdx.createOrgConnection(this.connectionData);
         connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
-        let job = connection.bulk.createJob(this.sObjectName, this.strOperation.toLowerCase());
+        let job = connection.bulk.createJob(
+            this.sObjectName,
+            this.strOperation.toLowerCase(),
+            {
+                concurrencyMode: this.concurrencyMode
+            }
+        );
         let recordChunks = Common.chunkArray(allRecords, this.bulkApiV1BatchSize);
         let chunks = new CsvChunks().fromArrayChunks(recordChunks);
         this.apiJobCreateResult = {
@@ -81,7 +87,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                         jobState: "Failed",
                         errorMessage: batchInfo.stateMessage,
                         jobId: job.id,
-                        batchId: batch.id                        
+                        batchId: batch.id
                     }));
                 }
                 // ERROR RESULT
@@ -112,7 +118,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                                     jobState: "Failed",
                                     errorMessage: error,
                                     jobId: job.id,
-                                    batchId: batch.id                                    
+                                    batchId: batch.id
                                 }));
                             }
                             // ERROR RESULT                                                        
@@ -166,7 +172,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                     }
                 });
                 if (progressCallback) {
-                    if (self.numberJobRecordsFailed > 0)  {
+                    if (self.numberJobRecordsFailed > 0) {
                         // Some records are failed
                         progressCallback(new ApiInfo({
                             jobState: "JobComplete",
@@ -175,7 +181,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                             jobId: job.id,
                             batchId: batch.id
                         }));
-                    }                    
+                    }
                     // Progress message: operation finished
                     progressCallback(new ApiInfo({
                         jobState: "OperationFinished",

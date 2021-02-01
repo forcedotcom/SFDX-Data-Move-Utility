@@ -87,6 +87,7 @@ export interface IApiEngineInitParameters {
     sObjectName: string,
     operation: OPERATION,
     pollingIntervalMs: number,
+    concurrencyMode: string,
     updateRecordId: boolean,
     targetCSVFullFilename: string,
     createTargetCSVFiles: boolean,
