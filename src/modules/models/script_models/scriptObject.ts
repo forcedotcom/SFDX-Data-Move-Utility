@@ -26,6 +26,7 @@ import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
 import { AddonManifestDefinition } from "./addonManifestDefinition";
+import { FieldType } from "jsforce";
 
 
 /**
@@ -398,7 +399,7 @@ export default class ScriptObject {
         }
 
         // Make each field appear only once in the query
-        this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
+        this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field").filter(field => !!(<SOQLField>field).field);
 
         // Update object
         this.query = composeQuery(this.parsedQuery);
