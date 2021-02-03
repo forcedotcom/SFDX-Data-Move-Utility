@@ -21,7 +21,7 @@ export const CONSTANTS = {
     __ID_FIELD_NAME: "___Id",
     __IS_PROCESSED_FIELD_NAME: "___IsProcessed",
     ERRORS_FIELD_NAME: "Errors",
-    DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName",
+    DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName;NamespacePrefix;SobjectType",
     COMPLEX_FIELDS_QUERY_SEPARATOR: '$',
     COMPLEX_FIELDS_QUERY_PREFIX: '$$',
     COMPLEX_FIELDS_SEPARATOR: ';',
