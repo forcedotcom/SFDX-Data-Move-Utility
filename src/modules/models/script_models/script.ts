@@ -14,9 +14,7 @@ import { Common } from "../../components/common_components/common";
 import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import {
-    parseQuery,
     composeQuery,
-    OrderByClause,
     getComposedField,
     Field as SOQLField
 } from 'soql-parser-js';

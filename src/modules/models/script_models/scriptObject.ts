@@ -26,7 +26,7 @@ import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
 import { AddonManifestDefinition } from "./addonManifestDefinition";
-import { FieldType } from "jsforce";
+
 
 
 /**
