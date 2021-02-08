@@ -28,7 +28,6 @@ import * as deepClone from 'deep.clone';
 import { AddonManifestDefinition } from "./addonManifestDefinition";
 
 
-
 /**
  * Parsed object 
  * from the script file 
@@ -399,7 +398,7 @@ export default class ScriptObject {
         }
 
         // Make each field appear only once in the query
-        this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field").filter(field => !!(<SOQLField>field).field);
+        this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
 
         // Update object
         this.query = composeQuery(this.parsedQuery);
