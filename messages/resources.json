@@ -179,7 +179,10 @@
     "skippedUpdatesWarning": "{%s} [INFO] There are %s skipped target updates, since no matching was found between the source and the target records by the given ExternalId key, or the data is the same.",
     "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details.",
     "updatingSummary": "Data processing summary",
-    "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records"
+    "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records",
+
+    "runAddonGlobalMethod": "Processing add-on methods: %s ...",
+    "runAddonMethod": "{%s} Processing add-on methods: %s ..."
 
 
 }

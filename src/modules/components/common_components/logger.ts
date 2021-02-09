@@ -206,7 +206,10 @@ export enum RESOURCES {
     skippedUpdatesWarning = "skippedUpdatesWarning",
     missingParentLookupsPrompt = "missingParentLookupsPrompt",
     updatingSummary = "updatingSummary",
-    updatingTotallyUpdated = "updatingTotallyUpdated"
+    updatingTotallyUpdated = "updatingTotallyUpdated",
+
+    runAddonMethod = "runAddonMethod",
+    runAddonGlobalMethod = "runAddonGlobalMethod"
 }
 
 

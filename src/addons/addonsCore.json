@@ -1,7 +1,7 @@
 {
     "addons": [
         {
-            "path": "../../../addons/modules/sfdmuCoreAddon_OnBeforeDml",
+            "path": "../../../addons/modules/sfdmuCoreAddon_OnBefore",
             "module": null,
             "method": "onBefore",
             "excluded": false,
@@ -11,7 +11,7 @@
             }
         },
         {
-            "path": "../../../addons/modules/sfdmuCoreAddon_OnAfterDml",
+            "path": "../../../addons/modules/sfdmuCoreAddon_OnAfter",
             "module": null,
             "method": "onAfter",
             "excluded": false,

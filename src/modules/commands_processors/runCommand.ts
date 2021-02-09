@@ -11,7 +11,7 @@ import "es6-shim";
 import { plainToClass } from "class-transformer";
 import { Logger, RESOURCES } from "../components/common_components/logger";
 import * as models from '../models';
-import { CONSTANTS } from '../components/common_components/statics';
+import { ADDON_MODULE_METHODS, CONSTANTS } from '../components/common_components/statics';
 import { MigrationJob as Job } from '../models';
 import { CommandInitializationError } from '../models/common_models/errors';
 import { IPluginInfo } from '../models/common_models/helper_interfaces';
@@ -27,7 +27,7 @@ import { IPluginInfo } from '../models/common_models/helper_interfaces';
 export class RunCommand {
 
     logger: Logger;
-    pinfo : IPluginInfo;
+    pinfo: IPluginInfo;
     basePath: string;
     targetUsername: string;
     sourceUsername: string;
@@ -156,12 +156,9 @@ export class RunCommand {
     * @memberof RunCommand
     */
     async prepareJobAsync(): Promise<void> {
-        
         this.logger.infoNormal(RESOURCES.preparingJob);
-
-        this.job.prepareJob();
-        await this.job.getTotalRecordsCountAsync();
-        await this.job.deleteOldRecordsAsync();
+        this.job.prepareJob();   
+        await this.job.getTotalRecordsCountAsync();    
     }
 
     /**
@@ -173,10 +170,24 @@ export class RunCommand {
     async executeJobAsync(): Promise<void> {
 
         this.logger.infoNormal(RESOURCES.executingJob);
-
+      
+        await this.job.deleteOldRecordsAsync();
         await this.job.retrieveRecordsAsync();
         await this.job.updateRecordsAsync();
+
         this.logger.infoMinimal(RESOURCES.newLine);
+    }
+
+    /**
+     * Executes global addon event
+     *
+     * @param {ADDON_MODULE_METHODS} method The method to execute
+     * @returns {Promise<void>}
+     * @memberof RunCommand
+     */
+    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<void> {
+        this.logger.infoNormal(RESOURCES.runAddonGlobalMethod, method.toString());
+        await this.script.addonManager.triggerAddonModuleMethodAsync(method);
     }
 
 }
