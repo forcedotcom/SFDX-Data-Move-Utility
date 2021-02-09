@@ -108,7 +108,7 @@ export default class SFieldDescribe {
             || this.nameId.startsWith('Person') && !this.custom;
     }
 
-    get standard(){
+    get standard() {
         return !this.custom;
     }
 
@@ -239,6 +239,13 @@ export default class SFieldDescribe {
         }
     }
 
+    /**
+     * Transforms 'RecordType.$$DeveloperName$NamespacePrefix$SobjectType' field name
+     * into array like: ['RecordType.DeveloperName', 'RecordType.NamespacePrefix', 'RecordType.SobjectType']
+     * @readonly
+     * @type {string[]}
+     * @memberof SFieldDescribe
+     */
     get __rNames(): string[] {
         if (this.is__r) {
             let parts = this.name.split('.');

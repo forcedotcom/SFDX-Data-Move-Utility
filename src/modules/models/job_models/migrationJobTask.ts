@@ -9,7 +9,7 @@
 
 import { Query, parseQuery, Condition, WhereClause } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE } from "../../components/common_components/statics";
+import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
 import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
@@ -201,6 +201,9 @@ export default class MigrationJobTask {
             }
         }
 
+        // RecordType.DeveloperName old-fashion backward support
+        ___fixOldRecordTypeColumns();
+
         return csvIssues;
 
 
@@ -264,6 +267,58 @@ export default class MigrationJobTask {
                 csvRow["Id"] = id;
             });
             cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
+        }
+
+        /**
+         * Replaces the RecordType.DeveloperName column label of the old-formatted csv file 
+         * with RecordType.$$DeveloperName$NamespacePrefix$SobjectType
+         * (current external id for the RecordType object)
+         * ----
+         * Also combines values of multiple columns of the old-formatted RecordType csv file
+         * (DeveloperName | NamespacePrefix | SobjectType)
+         *  into the single value under the column label $$DeveloperName$NamespacePrefix$SobjectType
+         *
+         */
+        function ___fixOldRecordTypeColumns() {
+            if (self.sObjectName != CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
+                let sField = [...self.data.fieldsInQueryMap.values()].find(field => {
+                    return field.lookup && field.parentLookupObject.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME;
+                });
+                if (sField) {
+                    let oldColumnName = CONSTANTS.OLD_DEFAULT_RECORD_TYPE_ID_FIELD_R_NAME;
+                    let newColumnName = sField.fullName__r;
+                    let isUpdated = false;
+                    [...currentFileMap.values()].forEach(row => {
+                        if (row.hasOwnProperty(oldColumnName)) {
+                            isUpdated = true;
+                            row[newColumnName] = row[oldColumnName];
+                            delete row[oldColumnName];
+                        }
+                    });
+                    if (isUpdated) {
+                        cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
+                    }
+                }
+            } else {
+                let oldColumnNames = self.scriptObject.externalId.split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR);
+                let newColumnName = self.scriptObject.complexExternalId;
+                let isUpdated = false;
+                [...currentFileMap.values()].forEach(row => {
+                    if (!row.hasOwnProperty(newColumnName)) {
+                        isUpdated = true;
+                        row[newColumnName] = oldColumnNames.map(name => {
+                            let value = row[name];
+                            if (value) {
+                                delete row[name];
+                                return value;
+                            }
+                        }).filter(value => !!value).join(CONSTANTS.COMPLEX_FIELDS_SEPARATOR);
+                    }
+                });
+                if (isUpdated) {
+                    cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
+                }
+            }
         }
 
         /**
@@ -1443,6 +1498,18 @@ export default class MigrationJobTask {
         }
         this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
         return this.apiEngine;
+    }
+
+    /**
+     * Executes addon method event related to the current executed object
+     *
+     * @param {ADDON_MODULE_METHODS} method The addon method to execute
+     * @returns {Promise<void>}
+     * @memberof MigrationJobTask
+     */
+    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<void> {
+        this.logger.infoNormal(RESOURCES.runAddonMethod, this.sObjectName, method.toString());
+        await this.script.addonManager.triggerAddonModuleMethodAsync(method, this.sObjectName);
     }
 
 

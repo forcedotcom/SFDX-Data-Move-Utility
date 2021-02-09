@@ -38,7 +38,7 @@ export class AddonManifestDefinition {
         return !!this.moduleName && this.method != ADDON_MODULE_METHODS.none;
     }
     method: ADDON_MODULE_METHODS = ADDON_MODULE_METHODS.none;
-    objectName: string;
+    objectName: string = '';
 
     get moduleRequirePath(): string {
 

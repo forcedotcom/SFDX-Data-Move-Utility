@@ -7,7 +7,7 @@
 
 
 import { Common } from "../../components/common_components/common";
-import { CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
+import { ADDON_MODULE_METHODS, CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping, SFieldDescribe } from "..";
 import * as path from 'path';
@@ -373,6 +373,14 @@ export default class MigrationJob {
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
 
 
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // RUN ON-BEFORE ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];        
+            await task.runAddonEvent(ADDON_MODULE_METHODS.onBefore);
+        }
+
+
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // TOTAL FETCHED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
         this.logger.infoNormal(RESOURCES.newLine);
@@ -385,6 +393,12 @@ export default class MigrationJob {
         }
     }
 
+    /**
+     * Makes the all job for updating the target org / csv file
+     *
+     * @returns {Promise<void>}
+     * @memberof MigrationJob
+     */
     async updateRecordsAsync(): Promise<void> {
 
         let self = this;
@@ -453,6 +467,14 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2), String(totalProcessedRecordsAmount));
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
+
+
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // RUN ON-AFTER ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];        
+            await task.runAddonEvent(ADDON_MODULE_METHODS.onAfter);
+        }
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // TOTAL PROCESSED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -677,6 +699,8 @@ export default class MigrationJob {
             return fieldName;
         }
     }
+
+    
 
 
     // --------------------------- Private members -------------------------------------

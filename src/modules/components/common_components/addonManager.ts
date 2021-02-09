@@ -63,7 +63,7 @@ export default class AddonManager {
         this._createAddOnsMap();
     }
 
-    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string): Promise<void> {        
+    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string = ''): Promise<void> {        
         if (!this.addonsMap.has(method)) {
             return;
         }
