@@ -1001,12 +1001,12 @@ export class Common {
         if (!record) return null;
         let value = record[sFieldName || propName];
         if (!value) return value;
-        //sObjectName = sObjectName || record["SobjectType"];
-        //if (thisSobjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && propName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
-        //     return String(value).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0] + CONSTANTS.COMPLEX_FIELDS_SEPARATOR + sObjectName;
-        //} else {
+        sObjectName = sObjectName || record["SobjectType"];
+        if (thisSobjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && propName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
+            return String(value).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0] + CONSTANTS.COMPLEX_FIELDS_SEPARATOR + sObjectName;
+        } else {
             return value;
-        //}
+        }
     }
 
     /**
@@ -1021,11 +1021,11 @@ export class Common {
      * @memberof Common
      */
     public static getFieldValue(sObjectName: string, rawFieldValue: any, fieldName: string): any {
-        //if (!rawFieldValue) return rawFieldValue;
-        //if (sObjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && fieldName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
-        //    //"AccountRT;Account" => "AccountRT"
-        //    return String(rawFieldValue).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0];
-        //}
+        if (!rawFieldValue) return rawFieldValue;
+        if (sObjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && fieldName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
+            //"AccountRT;Account" => "AccountRT"
+            return String(rawFieldValue).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0];
+        }
         return rawFieldValue;
     }
 
