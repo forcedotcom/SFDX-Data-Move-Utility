@@ -240,16 +240,16 @@ export class Sfdx implements IFieldMapping {
 
         function ___formatRecords(records: Array<any>, soqlFormat: [string, Map<string, Array<string>>, Array<string>, string]): Array<any> {
             // Trasnform RecordType.DeveloperName object fields into proper format
-            let recordTypeExtIdPropName = CONSTANTS.RECORD_TYPE_SOBJECT_NAME + "." + CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
-            records.forEach(record => {
-                if (record.hasOwnProperty(recordTypeExtIdPropName)) {
-                    record[recordTypeExtIdPropName] = Common.getRecordValue(CONSTANTS.RECORD_TYPE_SOBJECT_NAME,
-                        record,
-                        CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME,
-                        soqlFormat[3],
-                        recordTypeExtIdPropName);
-                }
-            });
+            //let recordTypeExtIdPropName = CONSTANTS.RECORD_TYPE_SOBJECT_NAME + "." + CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
+            //records.forEach(record => {
+            //    if (record.hasOwnProperty(recordTypeExtIdPropName)) {
+            //        record[recordTypeExtIdPropName] = Common.getRecordValue(CONSTANTS.RECORD_TYPE_SOBJECT_NAME,
+            //            record,
+            //            CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME,
+            //            soqlFormat[3],
+            //            recordTypeExtIdPropName);
+            //    }
+            //});
             // Process complex keys}
             if (soqlFormat[1].size == 0) {
                 return records;
