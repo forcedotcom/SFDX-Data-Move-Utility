@@ -303,7 +303,7 @@ export default class Script {
                         Object.assign(thisField.parentLookupObject, <ScriptObject>{
                             isExtraObject: true,
                             allRecords,
-                            query: `SELECT Id, ${Common.getComplexField(externalId)} FROM ${referencedObjectType}`,
+                            query: `SELECT Id, ${Common.getComplexField(externalId)} FROM ${referencedObjectType}`, 
                             operation: OPERATION.Readonly,
                             externalId
                         });
