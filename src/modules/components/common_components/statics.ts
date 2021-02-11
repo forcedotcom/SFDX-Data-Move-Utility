@@ -67,7 +67,6 @@ export const CONSTANTS = {
     RECORD_TYPE_SOBJECT_NAME: "RecordType",
     NOT_SUPPORTED_OBJECTS: [
         'Profile',
-        'RecordType',
         'User',
         'Group',
         'DandBCompany'
