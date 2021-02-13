@@ -136,6 +136,9 @@ export class Sfdx implements IFieldMapping {
             if (soql.indexOf("FROM Group") >= 0) {
                 soql = soql.replace("FROM Group", "FROM User");
                 records = records.concat(await ___queryAsync(soql));
+            } else if (soql.indexOf("FROM User") >= 0) {
+                soql = soql.replace("FROM User", "FROM Group");
+                records = records.concat(await ___queryAsync(soql));
             }
             // Map records /////
             records = this.targetRecordsToSource(records, parsedQuery.sObject).records;
