@@ -355,7 +355,7 @@ export default class MigrationJobTask {
                             return;
                         }
                         // Missing id column but __r column provided.
-                        let desiredExternalIdValue = parentTask.getRecordValue(csvRow, parentExternalId, self.sObjectName, columnName__r);
+                        let desiredExternalIdValue = parentTask.getRecordValue(csvRow, parentExternalId);
                         if (desiredExternalIdValue) {
                             isFileChanged = true;
                             let parentCsvRow = parentCSVRowsMap.get(desiredExternalIdValue);
@@ -447,7 +447,7 @@ export default class MigrationJobTask {
                                 }
                             });
                             [...childFileMap.values()].forEach(csvRow => {
-                                let extIdValue = self.getRecordValue(csvRow, parentOriginalExternalIdColumnName, childTask.sObjectName, columnChildOriginalName__r);
+                                let extIdValue = self.getRecordValue(csvRow, parentOriginalExternalIdColumnName);
                                 if (extIdValue && parentCSVExtIdMap.has(extIdValue)) {
                                     csvRow[columnChildNameId] = parentCSVExtIdMap.get(extIdValue)["Id"];
                                     csvRow[columnChildIdName__r] = csvRow[columnChildNameId];
@@ -480,17 +480,12 @@ export default class MigrationJobTask {
      *     for this sobject
      *
      * @param {*} record The record
-     * @param {string} propName The property name to extract value from the record object
-     * @param {string} [sObjectName] If the current task is RecordType and propName = DeveloperName - 
-     *                               pass here the SobjectType
-     * @param {string} [sFieldName]  If the current task is RecordType and propName = DeveloperName -
-     *                               pass here the property name to extract value from the record object
-     *                               instead of passing it with the "propName" parameter
-     * @returns {*}
+     * @param {string} propName The property name to extract value from the record object        
      * @memberof MigrationJobTask
      */
-    getRecordValue(record: any, propName: string, sObjectName?: string, sFieldName?: string): any {
-        return Common.getRecordValue(this.sObjectName, record, propName, sObjectName, sFieldName);
+    getRecordValue(record: any, propName: string): any {
+        if (!record) return null;
+        return record[propName];             
     }
 
     /**
@@ -1633,7 +1628,7 @@ export default class MigrationJobTask {
                     // For target => |TARGET Account|Name IN (|SOURCE Account|Name....)
                     if (field.isSimple && field.isExternalIdField) {
                         // Only for current object's external id (f.ex.: Name) - not complex and not Id - only simple
-                        fieldsToQueryMap.set(field, [...this.sourceData.extIdRecordsMap.keys()].map(value => Common.getFieldValue(this.sObjectName, value, field.name)));
+                        fieldsToQueryMap.set(field, [...this.sourceData.extIdRecordsMap.keys()]);
                     }
                 }
             });
