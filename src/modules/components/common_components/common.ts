@@ -999,36 +999,10 @@ export class Common {
     */
     public static getRecordValue(thisSobjectName: string, record: any, propName: string, sObjectName?: string, sFieldName?: string): any {
         if (!record) return null;
-        let value = record[sFieldName || propName];
-        if (!value) return value;
-        //sObjectName = sObjectName || record["SobjectType"];
-        //if (thisSobjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && propName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
-        //     return String(value).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0] + CONSTANTS.COMPLEX_FIELDS_SEPARATOR + sObjectName;
-        //} else {
-            return value;
-        //}
+        return record[sFieldName || propName];       
     }
 
-    /**
-     * Parsed value and retrieves clear value.
-     * For example for the field RecordType.DeveloperName: "AccountRT;Account" => "AccountRT"
-     *
-     * @static
-     * @param {string} sObjectName The sObject name
-     * @param {*} rawFieldValue The raw field value to transform
-     * @param {string} fieldName The field name
-     * @returns {string}
-     * @memberof Common
-     */
-    public static getFieldValue(sObjectName: string, rawFieldValue: any, fieldName: string): any {
-        //if (!rawFieldValue) return rawFieldValue;
-        //if (sObjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && fieldName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
-        //    //"AccountRT;Account" => "AccountRT"
-        //    return String(rawFieldValue).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0];
-        //}
-        return rawFieldValue;
-    }
-
+   
     /**
      * Returns true if this object is custom
      *

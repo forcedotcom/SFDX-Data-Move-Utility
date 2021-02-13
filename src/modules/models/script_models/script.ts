@@ -308,19 +308,6 @@ export default class Script {
                             externalId
                         });
 
-                        //if (referencedObjectType == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
-                        //    let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
-                        //    thisField.parentLookupObject.parsedQuery = parseQuery(thisField.parentLookupObject.query);
-                        //    thisField.parentLookupObject.parsedQuery.fields.push(getComposedField("SobjectType"));
-                        //    thisField.parentLookupObject.parsedQuery.where = Common.composeWhereClause(thisField.parentLookupObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
-                        //    thisField.parentLookupObject.parsedQuery.orderBy = <OrderByClause>({
-                        //        field: "SobjectType",
-                        //        order: "ASC"
-                        //    });
-                        //    thisField.parentLookupObject.query = composeQuery(thisField.parentLookupObject.parsedQuery);
-
-                        //}
-
                         isParentLookupObjectAdded = true;
 
                     }
