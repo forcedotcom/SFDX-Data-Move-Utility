@@ -20,6 +20,7 @@ export const CONSTANTS = {
 
     __ID_FIELD_NAME: "___Id",
     __IS_PROCESSED_FIELD_NAME: "___IsProcessed",
+
     ERRORS_FIELD_NAME: "Errors",
     DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName;NamespacePrefix;SobjectType",
     OLD_DEFAULT_RECORD_TYPE_ID_FIELD_R_NAME: "RecordType.DeveloperName",
@@ -30,8 +31,12 @@ export const CONSTANTS = {
     FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
 
     SCRIPT_FILE_NAME: 'export.json',
-    CORE_ADDON_MANIFEST_FILE_NAME: "../../../addons/addonsCore.json",
+    
+    CORE_ADDON_MANIFEST_FILE_NAME: "../../../addons/addonsCore.json",    
     USER_ADDON_MANIFEST_FILE_NAME: "addons.json",
+    CORE_ADDON_MODULES_BASE_PATH: "../../../addons/modules/",
+    CORE_ADDON_MODULES_FOLDER_SEPARATOR: ':',
+
     CSV_SOURCE_SUB_DIRECTORY: "source",
     CSV_TARGET_SUB_DIRECTORY: "target",
     CSV_SOURCE_FILE_SUFFIX: "_source",
