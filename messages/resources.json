@@ -185,7 +185,7 @@
     "runAddonGlobalMethod": "{Global} Processing add-on methods: %s ...",
     "runAddonMethod": "{%s} Processing add-on methods: %s ...",
     "nothingToProcess": "Nothing to process",
-    "executingAddon" : "{%s} Processing addon: %s..."
+    "executingAddon" : "{%s} Processing addon %s ..."
 
    
 
