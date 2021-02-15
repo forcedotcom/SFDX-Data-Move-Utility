@@ -18,6 +18,7 @@ import { AddonManifestDefinition } from "../../models/script_models/addonManifes
 import "reflect-metadata";
 import "es6-shim";
 import { plainToClass } from "class-transformer";
+import { IPluginRuntimeSystem } from "../../models/common_models/helper_interfaces";
 
 
 
@@ -31,6 +32,7 @@ import { plainToClass } from "class-transformer";
 export default class AddonManager {
 
     runtime: IPluginRuntime;
+    runtimeSystem: IPluginRuntimeSystem;
     script: Script;
 
     get logger(): Logger {
@@ -50,6 +52,7 @@ export default class AddonManager {
         // Setup ************************************************   
         this.script = script;
         this.runtime = new PluginRuntime(script);
+        this.runtimeSystem = <IPluginRuntimeSystem>(<any>this.runtime);
 
         // Load manifests
         this.manifests = [

@@ -63,6 +63,22 @@ export interface ITableMessage {
     }>
 }
 
+export interface IPluginJob {
+    tasks : IPluginTask[],
+}
+
+export interface IPluginTask {    
+    readonly sourceToTargetRecordMap: Map<any, any>,
+    readonly sourceTaskData: IPluginTaskData,
+    readonly targetTaskData: IPluginTaskData
+}
+
+export interface IPluginTaskData {    
+    readonly records: Array<any>,
+}
+
+
+
 
 
 /* ------------------ IPluginRuntime ------------------ */
@@ -78,6 +94,7 @@ export interface IPluginRuntime {
      * Returns the information about the running command.
      */
     runInfo: ICommandRunInfo,
+
     /**
      *  Returns the jsforce.Connection object 
      *   that can be directly used by the Addon 
@@ -85,6 +102,7 @@ export interface IPluginRuntime {
      * @return {jsforce.Connection}
      */
     getConnection(isSource: boolean): any,
+
     /**
      * Returns the information about the connected Orgs.
      */
@@ -94,6 +112,7 @@ export interface IPluginRuntime {
         apiVersion: string,
         isFile: boolean,
     };
+
     /**
      * Write a message to the console or/and log file.
      * All the messages are written with the VERBOSE verbosity level.
@@ -105,6 +124,15 @@ export interface IPluginRuntime {
         TODO: Extend the Interface with more methods... 
         -----------------------------------------------------
      */
+    
+     /**
+     * All data related to the current migration job,
+     * which has collected from all core processes.
+     *
+     * @type {IPluginJob}
+     * @memberof IPluginRuntime
+     */
+    pluginJob : IPluginJob;
 }
 
 

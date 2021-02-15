@@ -162,7 +162,8 @@ export default class MigrationJob {
             [this.logger.getResourceString(RESOURCES.executionOrder)]: this.tasks.map(x => x.sObjectName).join("; ")
         });
 
-
+         // Initialize the runtime job
+         this.script.addonManager.runtimeSystem.$$setPluginJob();
 
         // ------------------------------- Internal functions --------------------------------------- //
         function ___putMasterDetailsBefore(): boolean {

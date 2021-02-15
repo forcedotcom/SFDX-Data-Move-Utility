@@ -1292,7 +1292,16 @@ export class Common {
         return members;
     }
 
-
+    /**
+     * Extracts only certain properties from the object
+     *
+     * @static
+     * @template T The bject type
+     * @param {T} object The object instance
+     * @param {Record<keyof T, boolean>} propertiesToExtract Property=>yes/no pairs { 'a' : true, 'b' : false} to extract
+     * @returns
+     * @memberof Common
+     */
     public static extractObjectMembers<T>(object: T, propertiesToExtract: Record<keyof T, boolean>) {
         return (function <TActual extends T>(value: TActual) {
             let result = {} as T;

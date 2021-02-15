@@ -9,10 +9,12 @@
 import { Script } from "..";
 import { DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../components/common_components/logger";
-import { IPluginRuntime, ICommandRunInfo, ITableMessage } from "./addonSharedPackage";
+import { IPluginRuntime, ICommandRunInfo, ITableMessage, IPluginJob } from "./addonSharedPackage";
+import PluginJob from "./pluginJob";
+import { IPluginRuntimeSystem } from "../common_models/helper_interfaces";
 
 
-export default class PluginRuntime implements IPluginRuntime {
+export default class PluginRuntime implements IPluginRuntime, IPluginRuntimeSystem {
 
     // Hidden properties to not expose them to the Addon code.
     // The Addon can access only the members of IPluginRuntime.
@@ -20,13 +22,23 @@ export default class PluginRuntime implements IPluginRuntime {
     #logger: Logger;
 
     constructor(script: Script) {
+        
         this.#script = script;
         this.#logger = script.logger;
+
         this.runInfo = script.runInfo;
+         
     }
 
-    /* -------- IPlugin Runtime Implementation ----------- */
+    /* -------- System Functions (for direct access) ----------- */
+    $$setPluginJob(){
+        this.pluginJob = new PluginJob(this.#script.job);      
+    }
+    
+
+    /* -------- IPluginRuntime implementation ----------- */
     runInfo: ICommandRunInfo;
+    pluginJob: IPluginJob;
 
     writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE") {
         

@@ -86,6 +86,10 @@ export interface IIdentityInfo {
     display_name: string
 }
 
+export interface IPluginRuntimeSystem {
+    $$setPluginJob() : void
+}
+
 
 
 
