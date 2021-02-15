@@ -13,6 +13,7 @@ import { IPluginRuntime, ICommandRunInfo, ITableMessage, IPluginJob } from "./ad
 import PluginJob from "./pluginJob";
 import { IPluginRuntimeSystem } from "../common_models/helper_interfaces";
 import { Common } from "../../components/common_components/common";
+import { Sfdx } from "../../components/common_components/sfdx";
 
 
 export default class PluginRuntime implements IPluginRuntime, IPluginRuntimeSystem {
@@ -86,11 +87,18 @@ export default class PluginRuntime implements IPluginRuntime, IPluginRuntimeSyst
     }
 
     async queryAsync(isSource: boolean, soql: string, useBulkQueryApi: boolean): Promise<any[]> {
-
+        let apiSf = new Sfdx(isSource ? this.#script.sourceOrg : this.#script.targetOrg);
+        let ret = await apiSf.queryAsync(soql, useBulkQueryApi);
+        return ret.records;
     }
 
     async queryMultiAsync(isSource: boolean, soqls: string[], useBulkQueryApi: boolean): Promise<any[]> {
-
+        let records = [];
+        for (let index = 0; index < soqls.length; index++) {
+            const soql = soqls[index];
+            records = records.concat(await this.queryAsync(isSource, soql, useBulkQueryApi));
+        }
+        return records;
     }
 
     /**

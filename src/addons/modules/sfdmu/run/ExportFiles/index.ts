@@ -4,6 +4,9 @@
  */
 import { IAddonModule, IPluginExecutionContext, IPluginRuntime } from "../../../../../modules/models/addons_models/addonSharedPackage";
 
+interface IExecuteArguments {
+    removeOldFiles: boolean;
+}
 
 export default class ExportFiles implements IAddonModule {
 
@@ -13,15 +16,25 @@ export default class ExportFiles implements IAddonModule {
         this.runtime = runtime;
     }
 
-    async onExecute(context: IPluginExecutionContext, args: any): Promise<void> {
+    async onExecute(context: IPluginExecutionContext, args: IExecuteArguments): Promise<void> {
 
         // Get the relevant parent task
         let task = this.runtime.pluginJob.tasks.find(task => task.sObjectName == context.objectName);
+
         if (!task) {
             return;
         }
 
-        
+        // Delete old target Files
+        if (args.removeOldFiles) {
+
+        }
+
+        // Move new files 
+        // Query for the ContentDocumentLink records associated
+
+
+
 
 
 
