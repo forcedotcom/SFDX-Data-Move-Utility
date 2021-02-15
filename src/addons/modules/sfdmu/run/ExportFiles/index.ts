@@ -2,6 +2,7 @@
  * This module implements the Salesforce Files export.
  * It can be included with any object within the export.json file. 
  */
+import { RESOURCES } from "../../../../../modules/components/common_components/logger";
 import { IAddonModuleBase, IPluginExecutionContext, OPERATION } from "../../../../../modules/models/addons_models/addonSharedPackage";
 import { ISfdmuRunPluginRuntime } from "../../../../../modules/models/addons_models/sfdmuRunAddonSharedPackage";
 
@@ -19,6 +20,8 @@ export default class ExportFiles implements IAddonModuleBase {
     }
 
     async onExecute(context: IPluginExecutionContext, args: IExecuteArguments): Promise<void> {
+
+        this.runtime.writeLogConsoleMessage(RESOURCES.executingAddon.toString(), "INFO", context.objectName, "ExportFiles");
 
         // Get the relevant parent task
         let task = this.runtime.pluginJob.tasks.find(task => task.sObjectName == context.objectName);

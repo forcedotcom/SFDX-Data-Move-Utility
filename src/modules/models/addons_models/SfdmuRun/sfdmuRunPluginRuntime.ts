@@ -18,7 +18,7 @@ import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../sfdmuRunAddonShar
 
 
 export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
-    $$setPluginJob() : void
+    $$setPluginJob(): void
 }
 
 
@@ -47,15 +47,15 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
     runInfo: ICommandRunInfo;
     pluginJob: ISfdmuRunPluginJob;
 
-    writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE") {
+    writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE", ...tokens: string[]) {
 
         switch (messageType) {
             case "WARNING":
-                this.#logger.warn(<string>message);
+                this.#logger.warn(<string>message, ...tokens);
                 break;
 
             case "ERROR":
-                this.#logger.error(<string>message);
+                this.#logger.error(<string>message, ...tokens);
                 break;
 
             case "OBJECT":
@@ -63,11 +63,11 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
                 break;
 
             case "TABLE":
-                this.#logger.log(<ITableMessage>message, LOG_MESSAGE_TYPE.TABLE, LOG_MESSAGE_VERBOSITY.VERBOSE);
+                this.#logger.log(<ITableMessage>message, LOG_MESSAGE_TYPE.TABLE, LOG_MESSAGE_VERBOSITY.VERBOSE, ...tokens);
                 break;
 
             default:
-                this.#logger.infoVerbose(<string>message);
+                this.#logger.infoVerbose(<string>message, ...tokens);
                 break;
         }
     }

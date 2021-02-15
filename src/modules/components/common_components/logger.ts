@@ -211,7 +211,8 @@ export enum RESOURCES {
     processingAddon = "processingAddon",
     runAddonMethod = "runAddonMethod",
     runAddonGlobalMethod = "runAddonGlobalMethod",
-    nothingToProcess = "nothingToProcess"
+    nothingToProcess = "nothingToProcess",
+    executingAddon = "executingAddon"
 }
 
 

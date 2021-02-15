@@ -143,7 +143,7 @@ export interface IPluginRuntimeBase {
      * Write a message to the console or/and log file.
      * All the messages are written with the VERBOSE verbosity level.
      */
-    writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE"): void;
+    writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE", ...tokens: string[]): void;
 
 }
 
