@@ -1,8 +1,18 @@
-import { TaskOrgData } from "..";
-import { IPluginTaskData, PLUGIN_TASK_DATA_MEDIA_TYPE } from "./addonSharedPackage";
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
 
 
-export default class PluginTaskData implements IPluginTaskData {
+import { TaskOrgData } from "../..";;
+import { PLUGIN_TASK_DATA_MEDIA_TYPE } from "../addonSharedPackage";
+import { ISfdmuRunPluginTaskData } from "../sfdmuRunAddonSharedPackage";
+
+
+
+export default class SfdmuRunPluginTaskData implements ISfdmuRunPluginTaskData {
 
     #taskOrgData: TaskOrgData;
 

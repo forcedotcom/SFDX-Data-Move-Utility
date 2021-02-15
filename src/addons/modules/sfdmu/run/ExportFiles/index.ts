@@ -2,17 +2,18 @@
  * This module implements the Salesforce Files export.
  * It can be included with any object within the export.json file. 
  */
-import { IAddonModule, IPluginExecutionContext, IPluginRuntime } from "../../../../../modules/models/addons_models/addonSharedPackage";
+import { IAddonModuleBase, IPluginExecutionContext } from "../../../../../modules/models/addons_models/addonSharedPackage";
+import { ISfdmuRunPluginRuntime } from "../../../../../modules/models/addons_models/sfdmuRunAddonSharedPackage";
 
 interface IExecuteArguments {
     removeOldFiles: boolean;
 }
 
-export default class ExportFiles implements IAddonModule {
+export default class ExportFiles implements IAddonModuleBase {
 
-    runtime: IPluginRuntime;
+    runtime: ISfdmuRunPluginRuntime;
 
-    constructor(runtime: IPluginRuntime) {
+    constructor(runtime: ISfdmuRunPluginRuntime) {
         this.runtime = runtime;
     }
 

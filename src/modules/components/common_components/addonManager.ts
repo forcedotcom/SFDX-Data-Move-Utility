@@ -12,8 +12,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { ADDON_MODULE_METHODS, CONSTANTS } from "./statics";
 import { AddonManifest, CommandInitializationError, Script } from "../../models";
-import PluginRuntime from "../../models/addons_models/pluginRuntime";
-import { IAddonModule, IPluginExecutionContext, IPluginRuntime } from "../../models/addons_models/addonSharedPackage";
+import SfdmuRunPluginRuntime from "../../models/addons_models/SfdmuRun/sfdmuRunPluginRuntime";
+import { IAddonModuleBase, IPluginExecutionContext, IPluginRuntimeBase } from "../../models/addons_models/addonSharedPackage";
 import { AddonManifestDefinition } from "../../models/script_models/addonManifestDefinition";
 import "reflect-metadata";
 import "es6-shim";
@@ -31,7 +31,7 @@ import { IPluginRuntimeSystem } from "../../models/common_models/helper_interfac
  */
 export default class AddonManager {
 
-    runtime: IPluginRuntime;
+    runtime: IPluginRuntimeBase;
     runtimeSystem: IPluginRuntimeSystem;
     script: Script;
 
@@ -45,13 +45,13 @@ export default class AddonManager {
 
     manifests: AddonManifest[] = new Array<AddonManifest>();
     addonsMap: Map<ADDON_MODULE_METHODS, [Function, AddonManifestDefinition][]> = new Map<ADDON_MODULE_METHODS, [Function, AddonManifestDefinition][]>();
-    addons: Map<number, IAddonModule[]> = new Map<number, IAddonModule[]>();
+    addons: Map<number, IAddonModuleBase[]> = new Map<number, IAddonModuleBase[]>();
 
     constructor(script: Script) {
 
         // Setup ************************************************   
         this.script = script;
-        this.runtime = new PluginRuntime(script);
+        this.runtime = new SfdmuRunPluginRuntime(script);
         this.runtimeSystem = <IPluginRuntimeSystem>(<any>this.runtime);
 
         // Load manifests
@@ -148,7 +148,7 @@ export default class AddonManager {
             manifest.addons.forEach(addon => {
                 try {
                     if (addon.isValid) {
-                        let moduleInstance: IAddonModule = <IAddonModule>new (require(addon.moduleRequirePath).default)(this.runtime);
+                        let moduleInstance: IAddonModuleBase = <IAddonModuleBase>new (require(addon.moduleRequirePath).default)(this.runtime);
                         if (!this.addonsMap.has(addon.method)) {
                             this.addonsMap.set(addon.method, []);
                         }

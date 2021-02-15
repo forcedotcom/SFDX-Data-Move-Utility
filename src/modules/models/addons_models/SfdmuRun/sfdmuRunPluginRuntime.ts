@@ -6,17 +6,18 @@
  */
 
 
-import { Script } from "..";
-import { DATA_MEDIA_TYPE } from "../../components/common_components/statics";
-import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../components/common_components/logger";
-import { IPluginRuntime, ICommandRunInfo, ITableMessage, IPluginJob } from "./addonSharedPackage";
-import PluginJob from "./pluginJob";
-import { IPluginRuntimeSystem } from "../common_models/helper_interfaces";
-import { Common } from "../../components/common_components/common";
-import { Sfdx } from "../../components/common_components/sfdx";
+import { Script } from "../..";
+import { DATA_MEDIA_TYPE } from "../../../components/common_components/statics";
+import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../../components/common_components/logger";
+import { ICommandRunInfo, ITableMessage } from "../addonSharedPackage";
+import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
+import { IPluginRuntimeSystem } from "../../common_models/helper_interfaces";
+import { Common } from "../../../components/common_components/common";
+import { Sfdx } from "../../../components/common_components/sfdx";
+import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../sfdmuRunAddonSharedPackage";
 
 
-export default class PluginRuntime implements IPluginRuntime, IPluginRuntimeSystem {
+export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IPluginRuntimeSystem {
 
     // Hidden properties to not expose them to the Addon code.
     // The Addon can access only the members of IPluginRuntime.
@@ -36,13 +37,13 @@ export default class PluginRuntime implements IPluginRuntime, IPluginRuntimeSyst
 
     /* -------- System Functions (for direct access) ----------- */
     $$setPluginJob() {
-        this.pluginJob = new PluginJob(this.#script.job);
+        this.pluginJob = new SfdmuRunPluginJob(this.#script.job);
     }
 
 
     /* -------- IPluginRuntime implementation ----------- */
     runInfo: ICommandRunInfo;
-    pluginJob: IPluginJob;
+    pluginJob: ISfdmuRunPluginJob;
 
     writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE") {
 

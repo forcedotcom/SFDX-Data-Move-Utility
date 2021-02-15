@@ -1,14 +1,15 @@
 /**
  * This module executed AFTER all objects are executed  
  */
-import { IAddonModule, IPluginExecutionContext, IPluginRuntime } from "../../../../../modules/models/addons_models/addonSharedPackage";
+import { IAddonModuleBase, IPluginExecutionContext } from "../../../../../modules/models/addons_models/addonSharedPackage";
+import { ISfdmuRunPluginRuntime } from "../../../../../modules/models/addons_models/sfdmuRunAddonSharedPackage";
 
 
-export default class CoreOnAfter implements IAddonModule {
+export default class CoreOnAfter implements IAddonModuleBase {
 
-    runtime: IPluginRuntime;
+    runtime: ISfdmuRunPluginRuntime;
 
-    constructor(runtime: IPluginRuntime) {
+    constructor(runtime: ISfdmuRunPluginRuntime) {
         this.runtime = runtime;
     }
     
