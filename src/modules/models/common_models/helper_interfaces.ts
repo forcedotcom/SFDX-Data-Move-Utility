@@ -86,8 +86,9 @@ export interface IIdentityInfo {
     display_name: string
 }
 
-export interface IPluginRuntimeSystem {
-    $$setPluginJob() : void
+// tslint:disable-next-line: no-empty-interface
+export interface IPluginRuntimeSystemBase {
+   
 }
 
 

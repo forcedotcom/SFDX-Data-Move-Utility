@@ -18,7 +18,7 @@ import { AddonManifestDefinition } from "../../models/script_models/addonManifes
 import "reflect-metadata";
 import "es6-shim";
 import { plainToClass } from "class-transformer";
-import { IPluginRuntimeSystem } from "../../models/common_models/helper_interfaces";
+import { IPluginRuntimeSystemBase } from "../../models/common_models/helper_interfaces";
 
 
 
@@ -32,7 +32,7 @@ import { IPluginRuntimeSystem } from "../../models/common_models/helper_interfac
 export default class AddonManager {
 
     runtime: IPluginRuntimeBase;
-    runtimeSystem: IPluginRuntimeSystem;
+    runtimeSystem: IPluginRuntimeSystemBase;
     script: Script;
 
     get logger(): Logger {
@@ -52,7 +52,7 @@ export default class AddonManager {
         // Setup ************************************************   
         this.script = script;
         this.runtime = new SfdmuRunPluginRuntime(script);
-        this.runtimeSystem = <IPluginRuntimeSystem>(<any>this.runtime);
+        this.runtimeSystem = <IPluginRuntimeSystemBase>(<any>this.runtime);
 
         // Load manifests
         this.manifests = [

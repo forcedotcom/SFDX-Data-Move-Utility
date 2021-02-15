@@ -11,13 +11,18 @@ import { DATA_MEDIA_TYPE } from "../../../components/common_components/statics";
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../../components/common_components/logger";
 import { ICommandRunInfo, ITableMessage } from "../addonSharedPackage";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
-import { IPluginRuntimeSystem } from "../../common_models/helper_interfaces";
+import { IPluginRuntimeSystemBase } from "../../common_models/helper_interfaces";
 import { Common } from "../../../components/common_components/common";
 import { Sfdx } from "../../../components/common_components/sfdx";
 import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../sfdmuRunAddonSharedPackage";
 
 
-export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IPluginRuntimeSystem {
+interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
+    $$setPluginJob() : void
+}
+
+
+export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, ISfdmuRunPluginRuntimeSystem {
 
     // Hidden properties to not expose them to the Addon code.
     // The Addon can access only the members of IPluginRuntime.
@@ -121,6 +126,9 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IP
 
 
 }
+
+
+
 
 
 
