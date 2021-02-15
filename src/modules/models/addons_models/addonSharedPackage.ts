@@ -15,9 +15,19 @@
 
 
 /* ------------------ Common ------------------ */
-export enum PLUGIN_TASK_DATA_MEDIA_TYPE {
+export enum DATA_MEDIA_TYPE {
     Org,
     File
+}
+
+
+export enum OPERATION {
+    Insert,
+    Update,
+    Upsert,
+    Readonly,
+    Delete,
+    Unknown
 }
 
 

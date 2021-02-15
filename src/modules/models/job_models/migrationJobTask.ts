@@ -1502,9 +1502,8 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<void> {
-        this.logger.infoNormal(RESOURCES.runAddonMethod, this.sObjectName, method.toString());
-        await this.script.addonManager.triggerAddonModuleMethodAsync(method, this.sObjectName);
+    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<boolean> {      
+        return await this.script.addonManager.triggerAddonModuleMethodAsync(method, this.sObjectName);
     }
 
 

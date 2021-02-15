@@ -27,6 +27,8 @@ import * as fs from 'fs';
 import AddonManager from "../../components/common_components/addonManager";
 import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
 import { AddonManifestDefinition } from "./addonManifestDefinition";
+import { ISfdmuRunPluginRuntimeSystem } from "../addons_models/SfdmuRun/sfdmuRunPluginRuntime";
+
 
 
 
@@ -84,6 +86,9 @@ export default class Script {
     addonManager: AddonManager;
     runInfo: ICommandRunInfo;
 
+    get addonRuntime() : ISfdmuRunPluginRuntimeSystem {
+        return <any>this.addonManager.runtime;
+    }
 
     get isPersonAccountEnabled(): boolean {
         return this.sourceOrg.isPersonAccountEnabled || this.targetOrg.isPersonAccountEnabled;

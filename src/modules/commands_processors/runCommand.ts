@@ -185,9 +185,14 @@ export class RunCommand {
      * @returns {Promise<void>}
      * @memberof RunCommand
      */
-    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<void> {
-        this.logger.infoNormal(RESOURCES.runAddonGlobalMethod, method.toString());
-        await this.script.addonManager.triggerAddonModuleMethodAsync(method);
+    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<void> { 
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.processingAddon);     
+        let processed = await this.script.addonManager.triggerAddonModuleMethodAsync(method);
+        if (!processed){
+            this.logger.infoNormal(RESOURCES.nothingToProcess);
+        }
+        this.logger.infoNormal(RESOURCES.newLine);
     }
 
 }

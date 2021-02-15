@@ -162,8 +162,8 @@ export default class MigrationJob {
             [this.logger.getResourceString(RESOURCES.executionOrder)]: this.tasks.map(x => x.sObjectName).join("; ")
         });
 
-         // Initialize the runtime job
-         this.script.addonManager.runtimeSystem.$$setPluginJob();
+        // Initialize the runtime job
+        this.script.addonRuntime.$$setPluginJob();
 
         // ------------------------------- Internal functions --------------------------------------- //
         function ___putMasterDetailsBefore(): boolean {
@@ -376,10 +376,17 @@ export default class MigrationJob {
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // RUN ON-BEFORE ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
+        let processed = false;
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.processingAddon);
         for (let index = 0; index < this.queryTasks.length; index++) {
-            const task = this.queryTasks[index];        
-            await task.runAddonEvent(ADDON_MODULE_METHODS.onBefore);
+            const task = this.queryTasks[index];
+            processed = await task.runAddonEvent(ADDON_MODULE_METHODS.onBefore) || processed;
         }
+        if (!processed){
+            this.logger.infoNormal(RESOURCES.nothingToProcess);
+        }
+        this.logger.infoNormal(RESOURCES.newLine);
 
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -472,10 +479,17 @@ export default class MigrationJob {
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // RUN ON-AFTER ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
+        let processed = false;
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.processingAddon);
         for (let index = 0; index < this.queryTasks.length; index++) {
-            const task = this.queryTasks[index];        
-            await task.runAddonEvent(ADDON_MODULE_METHODS.onAfter);
+            const task = this.queryTasks[index];
+            processed = await task.runAddonEvent(ADDON_MODULE_METHODS.onAfter) || processed;
         }
+        if (!processed){
+            this.logger.infoNormal(RESOURCES.nothingToProcess);
+        }
+        this.logger.infoNormal(RESOURCES.newLine);
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // TOTAL PROCESSED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -701,7 +715,7 @@ export default class MigrationJob {
         }
     }
 
-    
+
 
 
     // --------------------------- Private members -------------------------------------

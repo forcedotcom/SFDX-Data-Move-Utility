@@ -66,18 +66,29 @@ export default class AddonManager {
         this._createAddOnsMap();
     }
 
-    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string = ''): Promise<void> {
+    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string = ''): Promise<boolean> {
+       
         if (!this.addonsMap.has(method)) {
-            return;
+            return false;
         }
-
+       
         let addons = this.addonsMap.get(method).filter(addon => {
             return addon[1].appliedToObject(objectName);
         });
 
-        for (let index = 0; index < addons.length; index++) {
-            await addons[index][0]();
+        if (addons.length > 0){
+            if (objectName) {
+                this.logger.infoNormal(RESOURCES.runAddonMethod, objectName, method.toString());
+            } else {
+                this.logger.infoNormal(RESOURCES.runAddonGlobalMethod, method.toString());
+            } 
+            for (let index = 0; index < addons.length; index++) {
+                await addons[index][0]();
+            } 
+            return true;  
         }
+
+        return false;
     }
 
     triggerAddonModuleMethodSync(method: ADDON_MODULE_METHODS, objectName: string): void {

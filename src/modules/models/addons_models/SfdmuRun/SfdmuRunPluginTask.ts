@@ -7,6 +7,7 @@
 
 
 import { MigrationJobTask } from "../..";
+import { OPERATION } from "../addonSharedPackage";
 import { ISfdmuRunPluginTask, ISfdmuRunPluginTaskData } from "../sfdmuRunAddonSharedPackage";
 import SfdmuRunPluginTaskData from "./sfdmuRunPluginTaskData";
 
@@ -20,6 +21,11 @@ export default  class SfdmuRunPluginTask implements ISfdmuRunPluginTask {
         this.#migrationJobTask = migrationJobTask;
         this.#sourceTaskData = new SfdmuRunPluginTaskData(migrationJobTask.sourceData);
         this.#targetTaskData = new SfdmuRunPluginTaskData(migrationJobTask.targetData);
+    }
+
+    get operation(): OPERATION {
+        let value : number = this.#migrationJobTask.operation;
+        return <OPERATION>value;
     }
 
     get sObjectName(): string {

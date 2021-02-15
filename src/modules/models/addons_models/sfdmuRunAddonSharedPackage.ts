@@ -14,7 +14,7 @@
 // -------------------------------------------------------
 
 
-import { IPluginRuntimeBase, PLUGIN_TASK_DATA_MEDIA_TYPE } from "./addonSharedPackage";
+import { IPluginRuntimeBase, DATA_MEDIA_TYPE, OPERATION } from "./addonSharedPackage";
 
 
 /**
@@ -31,7 +31,8 @@ export interface ISfdmuRunPluginTask {
     readonly sourceToTargetRecordMap: Map<any, any>,
     readonly sourceTaskData: ISfdmuRunPluginTaskData,
     readonly targetTaskData: ISfdmuRunPluginTaskData,
-    readonly sObjectName: string
+    readonly sObjectName: string,
+    readonly operation: OPERATION
 }
 
 /**
@@ -43,7 +44,7 @@ export interface ISfdmuRunPluginTaskData {
     readonly extIdRecordsMap: Map<string, string>,
     readonly idRecordsMap: Map<string, any>,
     readonly sObjectName: string,
-    readonly mediaType: PLUGIN_TASK_DATA_MEDIA_TYPE
+    readonly mediaType: DATA_MEDIA_TYPE
 }
 
 

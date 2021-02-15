@@ -17,7 +17,7 @@ import { Sfdx } from "../../../components/common_components/sfdx";
 import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../sfdmuRunAddonSharedPackage";
 
 
-interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
+export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
     $$setPluginJob() : void
 }
 
@@ -30,12 +30,9 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
     #logger: Logger;
 
     constructor(script: Script) {
-
         this.#script = script;
         this.#logger = script.logger;
-
         this.runInfo = script.runInfo;
-
     }
 
 

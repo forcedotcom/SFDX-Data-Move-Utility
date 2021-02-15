@@ -181,8 +181,12 @@
     "updatingSummary": "Data processing summary",
     "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records",
 
-    "runAddonGlobalMethod": "Processing add-on methods: %s ...",
-    "runAddonMethod": "{%s} Processing add-on methods: %s ..."
+    "processingAddon": "Processing Addons",
+    "runAddonGlobalMethod": "{Global} Processing add-on methods: %s ...",
+    "runAddonMethod": "{%s} Processing add-on methods: %s ...",
+    "nothingToProcess": "Nothing to process"
+
+   
 
 
 }

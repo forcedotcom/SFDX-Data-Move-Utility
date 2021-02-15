@@ -208,8 +208,10 @@ export enum RESOURCES {
     updatingSummary = "updatingSummary",
     updatingTotallyUpdated = "updatingTotallyUpdated",
 
+    processingAddon = "processingAddon",
     runAddonMethod = "runAddonMethod",
-    runAddonGlobalMethod = "runAddonGlobalMethod"
+    runAddonGlobalMethod = "runAddonGlobalMethod",
+    nothingToProcess = "nothingToProcess"
 }
 
 

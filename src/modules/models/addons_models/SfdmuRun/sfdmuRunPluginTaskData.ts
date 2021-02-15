@@ -7,7 +7,7 @@
 
 
 import { TaskOrgData } from "../..";;
-import { PLUGIN_TASK_DATA_MEDIA_TYPE } from "../addonSharedPackage";
+import { DATA_MEDIA_TYPE } from "../addonSharedPackage";
 import { ISfdmuRunPluginTaskData } from "../sfdmuRunAddonSharedPackage";
 
 
@@ -20,9 +20,9 @@ export default class SfdmuRunPluginTaskData implements ISfdmuRunPluginTaskData {
         this.#taskOrgData = taskOrgData;
     }
 
-    get mediaType(): PLUGIN_TASK_DATA_MEDIA_TYPE {
+    get mediaType(): DATA_MEDIA_TYPE {
         let numValue: number = this.#taskOrgData.org.media;
-        return <PLUGIN_TASK_DATA_MEDIA_TYPE>numValue;
+        return <DATA_MEDIA_TYPE>numValue;
     }
 
     get sObjectName(): string {
