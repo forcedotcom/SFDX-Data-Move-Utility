@@ -14,6 +14,10 @@ export default  class PluginTask implements IPluginTask {
         this.#targetTaskData = new PluginTaskData(migrationJobTask.targetData);
     }
 
+    get sObjectName(): string {
+        return this.#migrationJobTask.sObjectName;
+    }
+
     get sourceToTargetRecordMap(): Map<any, any> {
         return this.#migrationJobTask.data.sourceToTargetRecordMap;
     }

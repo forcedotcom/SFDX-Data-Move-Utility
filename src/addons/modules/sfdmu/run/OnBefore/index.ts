@@ -12,7 +12,7 @@ export default class CoreOnBefore implements IAddonModule {
     }
     
     async onExecute(context: IPluginExecutionContext, args : any) : Promise<void>  {
-        // TODO: Implement the core OnBefore functionality here
+        // TODO: Implement the core OnBefore functionality here     
     }
 
 }

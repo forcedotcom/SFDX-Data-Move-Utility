@@ -12,6 +12,7 @@ import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../component
 import { IPluginRuntime, ICommandRunInfo, ITableMessage, IPluginJob } from "./addonSharedPackage";
 import PluginJob from "./pluginJob";
 import { IPluginRuntimeSystem } from "../common_models/helper_interfaces";
+import { Common } from "../../components/common_components/common";
 
 
 export default class PluginRuntime implements IPluginRuntime, IPluginRuntimeSystem {
@@ -22,26 +23,28 @@ export default class PluginRuntime implements IPluginRuntime, IPluginRuntimeSyst
     #logger: Logger;
 
     constructor(script: Script) {
-        
+
         this.#script = script;
         this.#logger = script.logger;
 
         this.runInfo = script.runInfo;
-         
+
     }
 
+
+
     /* -------- System Functions (for direct access) ----------- */
-    $$setPluginJob(){
-        this.pluginJob = new PluginJob(this.#script.job);      
+    $$setPluginJob() {
+        this.pluginJob = new PluginJob(this.#script.job);
     }
-    
+
 
     /* -------- IPluginRuntime implementation ----------- */
     runInfo: ICommandRunInfo;
     pluginJob: IPluginJob;
 
     writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE") {
-        
+
         switch (messageType) {
             case "WARNING":
                 this.#logger.warn(<string>message);
@@ -81,6 +84,32 @@ export default class PluginRuntime implements IPluginRuntime, IPluginRuntimeSyst
             isFile: this.#script.targetOrg.media == DATA_MEDIA_TYPE.File
         });
     }
+
+    async queryAsync(isSource: boolean, soql: string, useBulkQueryApi: boolean): Promise<any[]> {
+
+    }
+
+    async queryMultiAsync(isSource: boolean, soqls: string[], useBulkQueryApi: boolean): Promise<any[]> {
+
+    }
+
+    /**
+     * Constructs array of SOQL-IN queries based on the provided values.
+     * Keeps aware of the query length limitation according to the documentation:
+     * (https://developer.salesforce.com/docs/atlas.en-us.salesforce_app_limits_cheatsheet.meta/salesforce_app_limits_cheatsheet/salesforce_app_limits_platform_soslsoql.htm)
+     *
+     *
+     * @param {string[]} selectFields The fields to include into the SELECT statement in each query
+     * @param {string} [fieldName="Id"] The field of the IN clause
+     * @param {string} sObjectName The object api name to select 
+     * @param {string[]} valuesIN The array of values to use in the IN clause
+     * @returns {string[]} The array of SOQLs depend on the given values to include all of them
+     */
+    createFieldInQueries(selectFields: string[], fieldName: string = "Id", sObjectName: string, valuesIN: string[]): string[] {
+        return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN);
+    }
+
+
 
 }
 

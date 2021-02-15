@@ -12,9 +12,20 @@ export default class ExportFiles implements IAddonModule {
     constructor(runtime: IPluginRuntime) {
         this.runtime = runtime;
     }
-    
-    async onExecute(context: IPluginExecutionContext, args : any) : Promise<void>  {
-       // TODO: Implement the core ExportFiles functionality here
+
+    async onExecute(context: IPluginExecutionContext, args: any): Promise<void> {
+
+        // Get the relevant parent task
+        let task = this.runtime.pluginJob.tasks.find(task => task.sObjectName == context.objectName);
+        if (!task) {
+            return;
+        }
+
+        
+
+
+
+
     }
 
 }

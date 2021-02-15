@@ -34,6 +34,7 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 
+
 /**
  * Common utilities
  */
@@ -1311,6 +1312,5 @@ export class Common {
             return result;
         })(object);
     }
-
 
 }
