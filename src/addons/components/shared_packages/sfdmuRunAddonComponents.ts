@@ -6,7 +6,7 @@
  */
 
 
-import { IPluginRuntimeBase, DATA_MEDIA_TYPE, OPERATION } from "./commonComponents";
+import { IPluginRuntimeBase, DATA_MEDIA_TYPE, OPERATION, API_ENGINE } from "./commonComponents";
 
 
 /* ------------------ ISfdmuRunPluginJob ------------------ */
@@ -28,7 +28,8 @@ export interface ISfdmuRunPluginTask {
     readonly targetTaskData: ISfdmuRunPluginTaskData,
     readonly sObjectName: string,
     readonly operation: OPERATION,
-    getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string   
+    getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string,
+    readonly sourceCsvFilename: string
 }
 
 
@@ -108,7 +109,18 @@ export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
      * Constructs array of SOQL-IN queries based on the provided values.
      */
     createFieldInQueries(selectFields: Array<string>, fieldName: string, sObjectName: string, valuesIN: Array<string>): Array<string>;
-    
+
+    /**
+     * Performs DML operation on the Target org pr writes into the target CSV file.
+     * 
+     * if the target object exists in the Script - the settings
+     * defined in the script for this object will be used, 
+     * otherwise it leverages the default settings for other objects. 
+     * 
+     * If the target is csvfile it will write into the CSV file according to the script settings.      
+     */
+    updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, engine: API_ENGINE, records: any[]): Promise<any[]>;
+
 
 }
 

@@ -6,15 +6,18 @@
  */
 
 
-import { Script } from "../../../../modules/models";
+import { Script, TaskData } from "../../../../modules/models";
 
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../../../modules/components/common_components/logger";
-import { DATA_MEDIA_TYPE, ICommandRunInfo, ITableMessage } from "../../../components/shared_packages/commonComponents";
+import { API_ENGINE, DATA_MEDIA_TYPE, ICommandRunInfo, ITableMessage, OPERATION } from "../../../components/shared_packages/commonComponents";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
 import { IPluginRuntimeSystemBase } from "../../../../modules/models/common_models/helper_interfaces";
 import { Common } from "../../../../modules/components/common_components/common";
 import { Sfdx } from "../../../../modules/components/common_components/sfdx";
 import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../../components/shared_packages/sfdmuRunAddonComponents";
+import { IApiEngine } from "../../../../modules/models/api_models";
+import { BulkApiV1_0Engine } from "../../../../modules/components/api_engines/bulkApiV1_0Engine";
+import { RestApiEngine } from "../../../../modules/components/api_engines/restApiEngine";
 
 
 export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
@@ -118,6 +121,81 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
      */
     createFieldInQueries(selectFields: string[], fieldName: string = "Id", sObjectName: string, valuesIN: string[]): string[] {
         return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN);
+    }
+
+    async updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, engine: API_ENGINE, records: any[]): Promise<any[]> {
+        if (!records || records.length == 0) {
+            return [];
+        }
+        records = operation == OPERATION.Delete ? records.map(x => {
+            return {
+                Id: x["Id"]
+            }
+        }) : records;
+        let task = this.#script.job.tasks.find(task => task.sObjectName == sObjectName);
+        let resultRecords: Array<any>;
+        if (task) {
+            // Existing task => existing sObject
+            task.createApiEngine(task.targetData.org, operation, records.length, false);
+            resultRecords = await task.apiEngine.executeCRUD(records, task.apiProgressCallback);
+        } else {
+            task = this.#script.job.tasks[0];
+            // Missing task => new sObject
+            let apiEngine: IApiEngine;
+            switch (engine) {
+                case API_ENGINE.BULK_API_V1:
+                    apiEngine = new BulkApiV1_0Engine({
+                        logger: this.#logger,
+                        connectionData: this.#script.targetOrg.connectionData,
+                        sObjectName,
+                        operation,
+                        pollingIntervalMs: this.#script.pollingIntervalMs,
+                        concurrencyMode: this.#script.concurrencyMode,
+                        updateRecordId: false,
+                        bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
+                        targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
+                        createTargetCSVFiles: this.#script.createTargetCSVFiles,
+                        targetFieldMapping: null
+                    });
+                    break;
+
+                case API_ENGINE.BULK_API_V2:
+                    apiEngine = new BulkApiV1_0Engine({
+                        logger: this.#logger,
+                        connectionData: this.#script.targetOrg.connectionData,
+                        sObjectName,
+                        operation,
+                        pollingIntervalMs: this.#script.pollingIntervalMs,
+                        concurrencyMode: this.#script.concurrencyMode,
+                        updateRecordId: false,
+                        bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
+                        targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
+                        createTargetCSVFiles: this.#script.createTargetCSVFiles,
+                        targetFieldMapping: null
+                    });
+                    break;
+
+                default:
+                    apiEngine = new RestApiEngine({
+                        logger: this.#logger,
+                        connectionData: this.#script.targetOrg.connectionData,
+                        sObjectName,
+                        operation,
+                        pollingIntervalMs: this.#script.pollingIntervalMs,
+                        concurrencyMode: this.#script.concurrencyMode,
+                        updateRecordId: false,
+                        bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
+                        targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
+                        createTargetCSVFiles: this.#script.createTargetCSVFiles,
+                        targetFieldMapping: null
+                    });
+                    break;
+            }
+
+            resultRecords = await task.apiEngine.executeCRUD(records, task.apiProgressCallback);
+
+        }
+        return resultRecords;
     }
 
 

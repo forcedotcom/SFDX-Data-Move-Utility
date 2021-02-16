@@ -26,6 +26,10 @@ export default  class SfdmuRunPluginTask implements ISfdmuRunPluginTask {
     getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
         return this.#migrationJobTask.data.getTargetCSVFilename(operation, fileNameSuffix);
     }
+
+    get sourceCsvFilename(): string {
+        return this.#migrationJobTask.data.sourceCsvFilename;
+    }
     
     get operation(): OPERATION {
         return this.#migrationJobTask.operation;

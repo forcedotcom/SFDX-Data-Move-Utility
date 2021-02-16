@@ -147,8 +147,9 @@ export class TaskData {
      * @memberof TaskData
      */
     getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
-        return this.task.getCSVFilename(this.task.script.targetDirectory,
-            `_${ScriptObject.getStrOperation(operation).toLowerCase()}${fileNameSuffix || ""}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
+        return TaskData.getTargetCSVFilename(this.task.script.targetDirectory, this.task.sObjectName, operation, fileNameSuffix);
+        // return this.task.getCSVFilename(this.task.script.targetDirectory,
+        //     `_${ScriptObject.getStrOperation(operation).toLowerCase()}${fileNameSuffix || ""}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
     }
 
     /**
@@ -253,6 +254,22 @@ export class TaskData {
      */
     get fieldsExcludedFromTargetQuery(): Array<string> {
         return CONSTANTS.FIELDS_EXCLUDED_FROM_TARGET_QUERY.get(this.task.sObjectName) || new Array<string>();
+    }
+
+    /**
+    * Returns path to the "target" CSV file
+    *
+    * @static
+    * @param {string} rootPath
+    * @param {string} sObjectName
+    * @param {OPERATION} operation
+    * @param {string} [fileNameSuffix]
+    * @returns {string}
+    * @memberof TaskData
+    */
+    public static getTargetCSVFilename(rootPath: string, sObjectName: string, operation: OPERATION, fileNameSuffix?: string): string {
+        return Common.getCSVFilename(rootPath, sObjectName,
+            `_${ScriptObject.getStrOperation(operation).toLowerCase()}${fileNameSuffix || ""}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
     }
 
 

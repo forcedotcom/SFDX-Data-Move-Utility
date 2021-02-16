@@ -21,6 +21,12 @@ export enum OPERATION {
     Unknown
 }
 
+export enum API_ENGINE {
+    REST_API,
+    BULK_API_V1,
+    BULK_API_V2
+}
+
 export enum RESULT_STATUSES {
     Undefined = "Undefined",
     ApiOperationStarted = "ApiOperationStarted",
