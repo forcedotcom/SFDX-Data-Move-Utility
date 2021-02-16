@@ -11,10 +11,10 @@ import "es6-shim";
 import { plainToClass } from "class-transformer";
 import { Logger, RESOURCES } from "../components/common_components/logger";
 import * as models from '../models';
-import { ADDON_MODULE_METHODS, CONSTANTS } from '../components/common_components/statics';
+import { CONSTANTS } from '../components/common_components/statics';
 import { MigrationJob as Job } from '../models';
 import { CommandInitializationError } from '../models/common_models/errors';
-import { IPluginInfo } from '../../addons/components/sharedPackage/commonComponents';
+import { ADDON_MODULE_METHODS, IPluginInfo } from '../../addons/components/sharedPackage/commonComponents';
 
 
 

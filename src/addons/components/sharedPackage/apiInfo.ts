@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ApiResultRecord } from '../../../modules/models/api_models';
-import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from '../../../modules/components/common_components/statics';
+
+
+import ApiResultRecord from './apiResultRecord';
+import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from './commonComponents';
 
 
 

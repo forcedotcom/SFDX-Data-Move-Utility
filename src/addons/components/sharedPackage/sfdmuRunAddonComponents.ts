@@ -6,17 +6,10 @@
  */
 
 
-// -------------------------------------------------------
-// This shared package is speciic for the sfdmu:run command.
-// 
-// This package is intended to be shared with the end-user
-// who is developing the custom SFDMU Addons.
-// -------------------------------------------------------
-
-
 import { IPluginRuntimeBase, DATA_MEDIA_TYPE, OPERATION } from "./commonComponents";
 
 
+/* ------------------ ISfdmuRunPluginJob ------------------ */
 /**
  * Holds the data for the migration job
  */
@@ -24,6 +17,8 @@ export interface ISfdmuRunPluginJob {
     tasks: ISfdmuRunPluginTask[],
 }
 
+
+/* ------------------ ISfdmuRunPluginTask ------------------ */
 /**
  * Holds the data per migration task
  */
@@ -35,6 +30,8 @@ export interface ISfdmuRunPluginTask {
     readonly operation: OPERATION
 }
 
+
+/* ------------------ ISfdmuRunPluginTaskData ------------------ */
 /**
  * Holds the data for each data layer (Source / Target) per migration task
  */
@@ -48,7 +45,7 @@ export interface ISfdmuRunPluginTaskData {
 }
 
 
-/* ------------------ IPluginRuntime ------------------ */
+/* ------------------ ISfdmuRunPluginRuntime ------------------ */
 /**
 * Provides access to the SFDMU runtime functionality.
 *

@@ -241,32 +241,4 @@ export const CONSTANTS = {
 }
 
 
-export enum RESULT_STATUSES {
-    Undefined = "Undefined",
-    ApiOperationStarted = "ApiOperationStarted",
-    ApiOperationFinished = "ApiOperationFinished",
-    Information = "Information",
-    JobCreated = "JobCreated",
-    BatchCreated = "BatchCreated",
-    DataUploaded = "DataUploaded",
-    InProgress = "InProgress",
-    Completed = "Completed",
-    FailedOrAborted = "FailedOrAborted",
-    ProcessError = "ProcessError"
-}
-
-export enum MESSAGE_IMPORTANCE {
-    Silent,
-    Low,
-    Normal,
-    High,
-    Warn,
-    Error
-}
-
-export enum ADDON_MODULE_METHODS {
-    none = 'none',
-    onBefore = "onBefore",
-    onAfter = "onAfter"
-}
 

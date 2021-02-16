@@ -5,21 +5,12 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-// -------------------------------------------------------
-// The base shared SFDMU Addon package.
-// 
-// This package is intended to be shared with the end-user
-// who is developing the custom SFDMU Addons.
-// -------------------------------------------------------
-
-
-/* ------------------ Common ------------------ */
+ 
+/* ------------------ Enumerations ------------------ */
 export enum DATA_MEDIA_TYPE {
     Org,
     File
 }
-
 
 export enum OPERATION {
     Insert,
@@ -30,6 +21,37 @@ export enum OPERATION {
     Unknown
 }
 
+export enum RESULT_STATUSES {
+    Undefined = "Undefined",
+    ApiOperationStarted = "ApiOperationStarted",
+    ApiOperationFinished = "ApiOperationFinished",
+    Information = "Information",
+    JobCreated = "JobCreated",
+    BatchCreated = "BatchCreated",
+    DataUploaded = "DataUploaded",
+    InProgress = "InProgress",
+    Completed = "Completed",
+    FailedOrAborted = "FailedOrAborted",
+    ProcessError = "ProcessError"
+}
+
+export enum MESSAGE_IMPORTANCE {
+    Silent,
+    Low,
+    Normal,
+    High,
+    Warn,
+    Error
+}
+
+export enum ADDON_MODULE_METHODS {
+    none = 'none',
+    onBefore = "onBefore",
+    onAfter = "onAfter"
+}
+
+
+/* ------------------ ITableMessage ------------------ */
 /**
  * Describes table to output it to the console.
  */
@@ -58,7 +80,6 @@ export interface ICommandRunInfo {
     // the information about the Plugin and the framework
     readonly pinfo: IPluginInfo
 }
-
 
 /* ------------------ IPluginInfo ------------------ */
 /**
@@ -98,7 +119,7 @@ export interface IPluginExecutionContext {
     objectName: string;
 }
 
-/* ------------------ IAddonModule ------------------ */
+/* ------------------ IAddonModuleBase ------------------ */
 /**
  * The interface to be implemented in each SFDMU Addon.
  */
@@ -123,7 +144,10 @@ export interface IAddonModuleBase {
 
 }
 
-
+/**
+ *
+ * The base class for the Plugin Runtime provided by the runtime engine
+ */
 export interface IPluginRuntimeBase {
 
     // ---------- Props ------------ //

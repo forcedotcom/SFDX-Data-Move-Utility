@@ -19,7 +19,8 @@ import {
 import { RunCommand } from "../../modules/commands_processors/runCommand";
 import { Common } from "../../modules/components/common_components/common";
 import { CommandInitializationError, SuccessExit, OrgMetadataError, CommandExecutionError, UnresolvableWarning, CommandAbortedByUserError } from "../../modules/models/common_models/errors";
-import { ADDON_MODULE_METHODS } from '../../modules/components/common_components/statics';
+import { ADDON_MODULE_METHODS } from '../../addons/components/sharedPackage/commonComponents';
+
 
 
 Messages.importMessagesDirectory(__dirname);

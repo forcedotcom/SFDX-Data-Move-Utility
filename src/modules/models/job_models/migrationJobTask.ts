@@ -9,7 +9,7 @@
 
 import { Query, parseQuery, Condition, WhereClause } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
-import { CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
+import { CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
@@ -31,7 +31,7 @@ const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
-import { DATA_MEDIA_TYPE, OPERATION } from '../../../addons/components/sharedPackage/commonComponents';
+import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES } from '../../../addons/components/sharedPackage/commonComponents';
 
 MockGenerator.createCustomGenerators(casual);
 

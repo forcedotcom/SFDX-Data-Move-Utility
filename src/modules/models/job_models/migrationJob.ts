@@ -7,14 +7,14 @@
 
 
 import { Common } from "../../components/common_components/common";
-import { ADDON_MODULE_METHODS, CONSTANTS } from "../../components/common_components/statics";
+import { CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping, SFieldDescribe } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
 import MigrationJobTask from "./migrationJobTask";
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_models/helper_interfaces";
-import { DATA_MEDIA_TYPE } from "../../../addons/components/sharedPackage/commonComponents";
+import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE } from "../../../addons/components/sharedPackage/commonComponents";
 
 
 
