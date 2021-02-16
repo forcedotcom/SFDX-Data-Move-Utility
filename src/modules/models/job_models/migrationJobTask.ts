@@ -19,7 +19,6 @@ import {
 } from 'soql-parser-js';
 import { ScriptObject, MigrationJob as Job, CommandExecutionError, ScriptOrg, Script, ScriptMockField, TaskData, TaskOrgData, CachedCSVContent, ProcessedData } from "..";
 import SFieldDescribe from "../script_models/sfieldDescribe";
-import * as path from 'path';
 import * as fs from 'fs';
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";
@@ -497,12 +496,7 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     getCSVFilename(rootPath: string, pattern?: string): string {
-        let suffix = `${pattern || ''}.csv`;
-        if (this.sObjectName == "User" || this.sObjectName == "Group") {
-            return path.join(rootPath, CONSTANTS.USER_AND_GROUP_FILENAME) + suffix;
-        } else {
-            return path.join(rootPath, this.sObjectName) + suffix;
-        }
+        return Common.getCSVFilename(rootPath, this.sObjectName, pattern); 
     }
 
     /**

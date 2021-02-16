@@ -8,7 +8,6 @@
  
  /**
  * Represents the record returned by the Api operation
- *
  */
 export default class ApiResultRecord {
 

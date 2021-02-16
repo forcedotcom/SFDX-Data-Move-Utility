@@ -21,8 +21,7 @@ export default class SfdmuRunPluginTaskData implements ISfdmuRunPluginTaskData {
     }
 
     get mediaType(): DATA_MEDIA_TYPE {
-        let numValue: number = this.#taskOrgData.org.media;
-        return <DATA_MEDIA_TYPE>numValue;
+        return this.#taskOrgData.org.media;
     }
 
     get sObjectName(): string {

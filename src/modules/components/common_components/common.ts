@@ -27,7 +27,7 @@ import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionError } from '../../models';
 import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
-import { IPluginInfo } from '../../models/common_models/helper_interfaces';
+import { IPluginInfo } from '../../../addons/components/shared_packages/commonComponents';
 const { closest } = require('fastest-levenshtein')
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
@@ -1000,10 +1000,10 @@ export class Common {
     */
     public static getRecordValue(thisSobjectName: string, record: any, propName: string, sObjectName?: string, sFieldName?: string): any {
         if (!record) return null;
-        return record[sFieldName || propName];       
+        return record[sFieldName || propName];
     }
 
-   
+
     /**
      * Returns true if this object is custom
      *
@@ -1311,6 +1311,25 @@ export class Common {
             }
             return result;
         })(object);
+    }
+
+    /**
+     * Composes the filename for the csv file
+     *
+     * @static
+     * @param {string} rootPath The root directory
+     * @param {string} sObjectName The object name
+     * @param {string} [pattern] The suffix to put to the end of the filename
+     * @returns {string}
+     * @memberof Common
+     */
+    public static getCSVFilename(rootPath: string, sObjectName: string, pattern?: string): string {
+        let suffix = `${pattern || ''}.csv`;
+        if (sObjectName == "User" || sObjectName == "Group") {
+            return path.join(rootPath, CONSTANTS.USER_AND_GROUP_FILENAME) + suffix;
+        } else {
+            return path.join(rootPath, sObjectName) + suffix;
+        }
     }
 
 }

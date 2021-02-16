@@ -23,9 +23,12 @@ export default  class SfdmuRunPluginTask implements ISfdmuRunPluginTask {
         this.#targetTaskData = new SfdmuRunPluginTaskData(migrationJobTask.targetData);
     }
 
+    getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
+        return this.#migrationJobTask.data.getTargetCSVFilename(operation, fileNameSuffix);
+    }
+    
     get operation(): OPERATION {
-        let value : number = this.#migrationJobTask.operation;
-        return <OPERATION>value;
+        return this.#migrationJobTask.operation;
     }
 
     get sObjectName(): string {
@@ -43,4 +46,6 @@ export default  class SfdmuRunPluginTask implements ISfdmuRunPluginTask {
     get targetTaskData(): ISfdmuRunPluginTaskData {
         return this.#targetTaskData;
     }
+
+    
 }

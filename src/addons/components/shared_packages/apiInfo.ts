@@ -13,9 +13,6 @@ import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from './commonComponents';
 
 /**
 * Represents set of records returned by the API operation
-*
-* @export
-* @class BulkAPIResult
 */
 export default class ApiInfo {
 

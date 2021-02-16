@@ -27,7 +27,8 @@ export interface ISfdmuRunPluginTask {
     readonly sourceTaskData: ISfdmuRunPluginTaskData,
     readonly targetTaskData: ISfdmuRunPluginTaskData,
     readonly sObjectName: string,
-    readonly operation: OPERATION
+    readonly operation: OPERATION,
+    getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string   
 }
 
 
@@ -107,6 +108,7 @@ export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
      * Constructs array of SOQL-IN queries based on the provided values.
      */
     createFieldInQueries(selectFields: Array<string>, fieldName: string, sObjectName: string, valuesIN: Array<string>): Array<string>;
+    
 
 }
 
