@@ -57,14 +57,7 @@ export interface IBlobField {
     dataType: 'base64' // | ....
 }
 
-export interface IPluginInfo {
-    pluginName: string,
-    commandName: string,
-    version: string,
-    path: string,
-    commandString: string,
-    argv: string[]
-}
+
 
 export interface IFieldMapping {
     sourceQueryToTarget: (query: string, sourceObjectName: string) => IFieldMappingResult;

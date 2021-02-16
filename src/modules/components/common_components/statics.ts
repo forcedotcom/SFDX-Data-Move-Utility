@@ -240,19 +240,6 @@ export const CONSTANTS = {
 
 }
 
-export enum DATA_MEDIA_TYPE {
-    Org,
-    File
-}
-
-export enum OPERATION {
-    Insert,
-    Update,
-    Upsert,
-    Readonly,
-    Delete,
-    Unknown
-}
 
 export enum RESULT_STATUSES {
     Undefined = "Undefined",

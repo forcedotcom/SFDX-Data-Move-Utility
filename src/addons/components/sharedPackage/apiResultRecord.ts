@@ -9,8 +9,6 @@
  /**
  * Represents the record returned by the Api operation
  *
- * @export
- * @class BulkApiResultRecord
  */
 export default class ApiResultRecord {
 

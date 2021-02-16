@@ -30,7 +30,6 @@ export enum OPERATION {
     Unknown
 }
 
-
 /**
  * Describes table to output it to the console.
  */
@@ -42,8 +41,6 @@ export interface ITableMessage {
         width?: number
     }>
 }
-
-
 
 /* ------------------ ICommandRunInfo ------------------ */
 /**
@@ -82,8 +79,6 @@ export interface IPluginInfo {
     argv: string[]
 }
 
-
-
 /* ------------------ IPluginExecutionContext ------------------ */
 /**
  * Provides the context that the Addon was currently colled in it.
@@ -102,8 +97,6 @@ export interface IPluginExecutionContext {
      */
     objectName: string;
 }
-
-
 
 /* ------------------ IAddonModule ------------------ */
 /**

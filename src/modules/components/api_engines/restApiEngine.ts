@@ -6,10 +6,11 @@
  */
 import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
-import { OPERATION, CONSTANTS } from '../common_components/statics';
+import { CONSTANTS } from '../common_components/statics';
 import { RESOURCES } from '../common_components/logger';
 import { Sfdx } from '../common_components/sfdx';
 import { CsvChunks } from '../../models';
+import { OPERATION } from '../../../addons/components/sharedPackage/commonComponents';
 
 
 

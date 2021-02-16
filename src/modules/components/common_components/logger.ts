@@ -14,6 +14,7 @@ import { Common } from './common';
 import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
+import { ITableMessage } from '../../../addons/components/sharedPackage/commonComponents';
 
 
 /**
@@ -1110,19 +1111,6 @@ interface IResourceBundle {
     getMessage(key: string, tokens?: any): string;
 }
 
-/**
- * Tabular message description
- *
- * @interface ITableMessage
- */
-interface ITableMessage {
-    tableBody: Array<object>,
-    tableColumns: Array<{
-        key: string,
-        label: string,
-        width?: number
-    }>
-}
 
 /**
  * Format of output message for successful command result

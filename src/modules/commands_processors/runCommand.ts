@@ -14,7 +14,8 @@ import * as models from '../models';
 import { ADDON_MODULE_METHODS, CONSTANTS } from '../components/common_components/statics';
 import { MigrationJob as Job } from '../models';
 import { CommandInitializationError } from '../models/common_models/errors';
-import { IPluginInfo } from '../models/common_models/helper_interfaces';
+import { IPluginInfo } from '../../addons/components/sharedPackage/commonComponents';
+
 
 
 

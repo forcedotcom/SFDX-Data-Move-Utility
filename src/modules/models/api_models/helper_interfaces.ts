@@ -6,9 +6,9 @@
  */
 import { ApiInfo } from '.';
 import { Logger } from '../../components/common_components/logger';
-import { OPERATION } from '../../components/common_components/statics';
 import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
+import { OPERATION } from '../../../addons/components/sharedPackage/commonComponents';
 
 
 

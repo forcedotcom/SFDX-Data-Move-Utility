@@ -6,10 +6,11 @@
  */
 import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
 import { Common } from '../common_components/common';
-import { CONSTANTS, OPERATION } from '../common_components/statics';
+import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { Sfdx } from '../common_components/sfdx';
 import { CsvChunks } from '../../models';
+import { OPERATION } from '../../../addons/components/sharedPackage/commonComponents';
 
 
 
@@ -19,6 +20,7 @@ import { CsvChunks } from '../../models';
  * @export
  * @class BulkApiV1_0sf
  */
+// tslint:disable-next-line: class-name
 export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
 
     constructor(init: IApiEngineInitParameters) {

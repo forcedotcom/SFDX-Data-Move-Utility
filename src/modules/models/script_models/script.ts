@@ -11,7 +11,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
+import { CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import {
     composeQuery,
@@ -21,13 +21,12 @@ import {
 import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
-import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
 import * as fs from 'fs';
-import AddonManager from "../../components/common_components/addonManager";
-import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
+import AddonManager from "../../../addons/components/addonManager";
+import { DATA_MEDIA_TYPE, ICommandRunInfo, IPluginInfo, OPERATION } from "../../../addons/components/sharedPackage/commonComponents";
 import { AddonManifestDefinition } from "./addonManifestDefinition";
-import { ISfdmuRunPluginRuntimeSystem } from "../addons_models/SfdmuRun/sfdmuRunPluginRuntime";
+import { ISfdmuRunPluginRuntimeSystem } from "../../../addons/modules/sfdmu/run/sfdmuRunPluginRuntime";
 
 
 

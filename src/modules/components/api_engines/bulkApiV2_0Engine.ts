@@ -11,10 +11,11 @@ import {
     IApiEngineInitParameters
 } from '../../models/api_models';
 import { Common } from '../common_components/common';
-import { CONSTANTS, OPERATION, RESULT_STATUSES } from '../common_components/statics';
+import { CONSTANTS, RESULT_STATUSES } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { RESOURCES } from '../common_components/logger';
 import parse = require('csv-parse/lib/sync');
+import { OPERATION } from '../../../addons/components/sharedPackage/commonComponents';
 
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
@@ -30,6 +31,7 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  * @export
  * @class BulkApiV2_0sf
  */
+// tslint:disable-next-line: class-name
 export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
 
     operationType: string | "insert" | "update" | "delete";

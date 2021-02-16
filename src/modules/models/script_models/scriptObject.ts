@@ -12,7 +12,7 @@ import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
+import {CONSTANTS } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
@@ -26,6 +26,7 @@ import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
 import { AddonManifestDefinition } from "./addonManifestDefinition";
+import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/components/sharedPackage/commonComponents";
 
 
 

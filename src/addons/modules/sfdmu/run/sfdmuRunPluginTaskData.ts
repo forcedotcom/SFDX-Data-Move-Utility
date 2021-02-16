@@ -6,9 +6,9 @@
  */
 
 
-import { TaskOrgData } from "../..";;
-import { DATA_MEDIA_TYPE } from "../addonSharedPackage";
-import { ISfdmuRunPluginTaskData } from "../sfdmuRunAddonSharedPackage";
+import { TaskOrgData } from "../../../../modules/models";;
+import { DATA_MEDIA_TYPE } from "../../../components/sharedPackage/commonComponents";
+import { ISfdmuRunPluginTaskData } from "../../../components/sharedPackage/sfdmuRunAddonComponents";
 
 
 

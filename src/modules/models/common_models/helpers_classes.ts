@@ -6,7 +6,7 @@
  */
 
 import { MigrationJobTask, SFieldDescribe, ScriptObject, ScriptOrg } from "..";
-import { OPERATION, CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
+import { CONSTANTS } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Common } from "../../components/common_components/common";
 import { IMissingParentLookupRecordCsvRow } from "./helper_interfaces";
@@ -15,6 +15,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { AddonManifestDefinition } from "../script_models/addonManifestDefinition";
+import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/components/sharedPackage/commonComponents";
 
 
 

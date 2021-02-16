@@ -6,12 +6,12 @@
  */
 
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import { Script, OrgInfo, SObjectDescribe } from "..";
 import { CommandInitializationError } from "../common_models/errors";
 import { IOrgConnectionData } from "../common_models/helper_interfaces";
+import { DATA_MEDIA_TYPE } from "../../../addons/components/sharedPackage/commonComponents";
 
 
 /**

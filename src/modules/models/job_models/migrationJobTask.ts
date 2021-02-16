@@ -9,7 +9,7 @@
 
 import { Query, parseQuery, Condition, WhereClause } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
+import { CONSTANTS, RESULT_STATUSES, MESSAGE_IMPORTANCE, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
 import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
@@ -24,13 +24,14 @@ import * as fs from 'fs';
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";
 import { IApiEngine } from "../api_models/helper_interfaces";
-import ApiInfo from "../api_models/apiInfo";
+import ApiInfo from "../../../addons/components/sharedPackage/apiInfo";
 import { BulkApiV1_0Engine } from "../../components/api_engines/bulkApiV1_0Engine";
 import { RestApiEngine } from "../../components/api_engines/restApiEngine";
 const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
+import { DATA_MEDIA_TYPE, OPERATION } from '../../../addons/components/sharedPackage/commonComponents';
 
 MockGenerator.createCustomGenerators(casual);
 

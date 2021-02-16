@@ -3,10 +3,10 @@
  * It can be included with any object within the export.json file. 
  */
 import { RESOURCES } from "../../../../../modules/components/common_components/logger";
-import { IAddonModuleBase, IPluginExecutionContext, OPERATION } from "../../../../../modules/models/addons_models/addonSharedPackage";
-import { ISfdmuRunPluginRuntime } from "../../../../../modules/models/addons_models/sfdmuRunAddonSharedPackage";
+import { IAddonModuleBase, IPluginExecutionContext, OPERATION } from "../../../../components/sharedPackage/commonComponents";
+import { ISfdmuRunPluginRuntime } from "../../../../components/sharedPackage/sfdmuRunAddonComponents";
 
-interface IExecuteArguments {
+interface IOnExecuteArguments {
     deleteOldData: boolean;
     operation: OPERATION;
 }
@@ -19,7 +19,7 @@ export default class ExportFiles implements IAddonModuleBase {
         this.runtime = runtime;
     }
 
-    async onExecute(context: IPluginExecutionContext, args: IExecuteArguments): Promise<void> {
+    async onExecute(context: IPluginExecutionContext, args: IOnExecuteArguments): Promise<void> {
 
         this.runtime.writeLogConsoleMessage(RESOURCES.executingAddon.toString(), "INFO", context.objectName, "ExportFiles");
 
@@ -31,12 +31,20 @@ export default class ExportFiles implements IAddonModuleBase {
             return;
         }
 
-        // Delete old target Files
-        if (args.deleteOldData) {
+        // Delete old target Files ---------------------
+        // ---------------------------------------------
+        if (args.deleteOldData || args.operation == OPERATION.Delete) {
+
 
         }
 
-        // Move new files 
+        if (args.operation == OPERATION.Delete){
+            return;
+        }
+
+
+        // Export new Files ----------------------------
+        // ---------------------------------------------
         // Query for the ContentDocumentLink records associated
 
 

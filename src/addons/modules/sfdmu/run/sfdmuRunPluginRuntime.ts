@@ -6,15 +6,15 @@
  */
 
 
-import { Script } from "../..";
-import { DATA_MEDIA_TYPE } from "../../../components/common_components/statics";
-import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../../components/common_components/logger";
-import { ICommandRunInfo, ITableMessage } from "../addonSharedPackage";
+import { Script } from "../../../../modules/models";
+
+import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../../../modules/components/common_components/logger";
+import { DATA_MEDIA_TYPE, ICommandRunInfo, ITableMessage } from "../../../components/sharedPackage/commonComponents";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
-import { IPluginRuntimeSystemBase } from "../../common_models/helper_interfaces";
-import { Common } from "../../../components/common_components/common";
-import { Sfdx } from "../../../components/common_components/sfdx";
-import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../sfdmuRunAddonSharedPackage";
+import { IPluginRuntimeSystemBase } from "../../../../modules/models/common_models/helper_interfaces";
+import { Common } from "../../../../modules/components/common_components/common";
+import { Sfdx } from "../../../../modules/components/common_components/sfdx";
+import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../../components/sharedPackage/sfdmuRunAddonComponents";
 
 
 export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {

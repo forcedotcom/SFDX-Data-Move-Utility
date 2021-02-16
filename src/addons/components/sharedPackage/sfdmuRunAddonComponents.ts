@@ -14,7 +14,7 @@
 // -------------------------------------------------------
 
 
-import { IPluginRuntimeBase, DATA_MEDIA_TYPE, OPERATION } from "./addonSharedPackage";
+import { IPluginRuntimeBase, DATA_MEDIA_TYPE, OPERATION } from "./commonComponents";
 
 
 /**

@@ -1,8 +1,8 @@
 /**
  * This module executed BEFORE all objects are executed  
  */
-import { IAddonModuleBase, IPluginExecutionContext } from "../../../../../modules/models/addons_models/addonSharedPackage";
-import { ISfdmuRunPluginRuntime } from "../../../../../modules/models/addons_models/sfdmuRunAddonSharedPackage";
+import { IAddonModuleBase, IPluginExecutionContext } from "../../../../components/sharedPackage/commonComponents";
+import { ISfdmuRunPluginRuntime } from "../../../../components/sharedPackage/sfdmuRunAddonComponents";
 
 export default class CoreOnBefore implements IAddonModuleBase {
 
