@@ -15,7 +15,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { AddonManifestDefinition } from "../script_models/addonManifestDefinition";
-import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/components/sharedPackage/commonComponents";
+import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/components/shared_packages/commonComponents";
 
 
 

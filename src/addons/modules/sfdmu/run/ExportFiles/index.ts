@@ -3,8 +3,8 @@
  * It can be included with any object within the export.json file. 
  */
 import { RESOURCES } from "../../../../../modules/components/common_components/logger";
-import { IAddonModuleBase, IPluginExecutionContext, OPERATION } from "../../../../components/sharedPackage/commonComponents";
-import { ISfdmuRunPluginRuntime } from "../../../../components/sharedPackage/sfdmuRunAddonComponents";
+import { IAddonModuleBase, IPluginExecutionContext, OPERATION } from "../../../../components/shared_packages/commonComponents";
+import { ISfdmuRunPluginRuntime } from "../../../../components/shared_packages/sfdmuRunAddonComponents";
 
 interface IOnExecuteArguments {
     deleteOldData: boolean;

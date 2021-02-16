@@ -10,7 +10,7 @@ import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { Sfdx } from '../common_components/sfdx';
 import { CsvChunks } from '../../models';
-import { OPERATION } from '../../../addons/components/sharedPackage/commonComponents';
+import { OPERATION } from '../../../addons/components/shared_packages/commonComponents';
 
 
 

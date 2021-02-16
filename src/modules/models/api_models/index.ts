@@ -7,6 +7,6 @@
 
  
 export * from "./helper_interfaces";
-export { default as ApiInfo } from "../../../addons/components/sharedPackage/apiInfo";
-export { default as ApiResultRecord } from "../../../addons/components/sharedPackage/apiResultRecord";
+export { default as ApiInfo } from "../../../addons/components/shared_packages/apiInfo";
+export { default as ApiResultRecord } from "../../../addons/components/shared_packages/apiResultRecord";
 export { default as ApiEngineBase } from "./ApiEngineBase";

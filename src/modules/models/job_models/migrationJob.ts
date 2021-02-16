@@ -14,7 +14,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import MigrationJobTask from "./migrationJobTask";
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_models/helper_interfaces";
-import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE } from "../../../addons/components/sharedPackage/commonComponents";
+import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE } from "../../../addons/components/shared_packages/commonComponents";
 
 
 

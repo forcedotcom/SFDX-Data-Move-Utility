@@ -13,7 +13,7 @@ import * as fs from 'fs';
 import { CONSTANTS } from "../../modules/components/common_components/statics";
 import { AddonManifest, CommandInitializationError, Script } from "../../modules/models";
 import SfdmuRunPluginRuntime from "../modules/sfdmu/run/sfdmuRunPluginRuntime";
-import { ADDON_MODULE_METHODS, IAddonModuleBase, IPluginExecutionContext, IPluginRuntimeBase } from "./sharedPackage/commonComponents";
+import { ADDON_MODULE_METHODS, IAddonModuleBase, IPluginExecutionContext, IPluginRuntimeBase } from "./shared_packages/commonComponents";
 import { AddonManifestDefinition } from "../../modules/models/script_models/addonManifestDefinition";
 import "reflect-metadata";
 import "es6-shim";

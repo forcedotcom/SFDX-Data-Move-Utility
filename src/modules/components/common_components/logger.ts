@@ -14,7 +14,7 @@ import { Common } from './common';
 import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
-import { ITableMessage } from '../../../addons/components/sharedPackage/commonComponents';
+import { ITableMessage } from '../../../addons/components/shared_packages/commonComponents';
 
 
 /**

@@ -15,7 +15,7 @@ import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { RESOURCES } from '../common_components/logger';
 import parse = require('csv-parse/lib/sync');
-import { OPERATION, RESULT_STATUSES } from '../../../addons/components/sharedPackage/commonComponents';
+import { OPERATION, RESULT_STATUSES } from '../../../addons/components/shared_packages/commonComponents';
 
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';

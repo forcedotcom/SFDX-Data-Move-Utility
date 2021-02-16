@@ -9,12 +9,12 @@
 import { Script } from "../../../../modules/models";
 
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../../../modules/components/common_components/logger";
-import { DATA_MEDIA_TYPE, ICommandRunInfo, ITableMessage } from "../../../components/sharedPackage/commonComponents";
+import { DATA_MEDIA_TYPE, ICommandRunInfo, ITableMessage } from "../../../components/shared_packages/commonComponents";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
 import { IPluginRuntimeSystemBase } from "../../../../modules/models/common_models/helper_interfaces";
 import { Common } from "../../../../modules/components/common_components/common";
 import { Sfdx } from "../../../../modules/components/common_components/sfdx";
-import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../../components/sharedPackage/sfdmuRunAddonComponents";
+import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../../components/shared_packages/sfdmuRunAddonComponents";
 
 
 export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {

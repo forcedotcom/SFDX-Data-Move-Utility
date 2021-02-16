@@ -24,7 +24,7 @@ import MigrationJob from "../job_models/migrationJob";
 import * as path from 'path';
 import * as fs from 'fs';
 import AddonManager from "../../../addons/components/addonManager";
-import { DATA_MEDIA_TYPE, ICommandRunInfo, IPluginInfo, OPERATION } from "../../../addons/components/sharedPackage/commonComponents";
+import { DATA_MEDIA_TYPE, ICommandRunInfo, IPluginInfo, OPERATION } from "../../../addons/components/shared_packages/commonComponents";
 import { AddonManifestDefinition } from "./addonManifestDefinition";
 import { ISfdmuRunPluginRuntimeSystem } from "../../../addons/modules/sfdmu/run/sfdmuRunPluginRuntime";
 

@@ -24,14 +24,14 @@ import * as fs from 'fs';
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";
 import { IApiEngine } from "../api_models/helper_interfaces";
-import ApiInfo from "../../../addons/components/sharedPackage/apiInfo";
+import ApiInfo from "../../../addons/components/shared_packages/apiInfo";
 import { BulkApiV1_0Engine } from "../../components/api_engines/bulkApiV1_0Engine";
 import { RestApiEngine } from "../../components/api_engines/restApiEngine";
 const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
-import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES } from '../../../addons/components/sharedPackage/commonComponents';
+import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES } from '../../../addons/components/shared_packages/commonComponents';
 
 MockGenerator.createCustomGenerators(casual);
 

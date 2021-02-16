@@ -11,7 +11,7 @@ import { ApiInfo, IApiEngine } from ".";
 import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
-import { OPERATION } from "../../../addons/components/sharedPackage/commonComponents";
+import { OPERATION } from "../../../addons/components/shared_packages/commonComponents";
 
 
 
