@@ -7,7 +7,6 @@
 
 
 import { Script, TaskData } from "../../../../modules/models";
-
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../../../modules/components/common_components/logger";
 import { API_ENGINE, DATA_MEDIA_TYPE, ICommandRunInfo, ITableMessage, OPERATION } from "../../../components/shared_packages/commonComponents";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
@@ -124,24 +123,34 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
     }
 
     async updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, engine: API_ENGINE, records: any[]): Promise<any[]> {
-        if (!records || records.length == 0) {
+
+        if (!records || records.length == 0 || this.#script.job.tasks.length == 0) {
             return [];
         }
+
         records = operation == OPERATION.Delete ? records.map(x => {
             return {
                 Id: x["Id"]
             }
         }) : records;
-        let task = this.#script.job.tasks.find(task => task.sObjectName == sObjectName);
+
         let resultRecords: Array<any>;
+
+        let task = this.#script.job.tasks.find(task => task.sObjectName == sObjectName);
+
         if (task) {
+
             // Existing task => existing sObject
             task.createApiEngine(task.targetData.org, operation, records.length, false);
             resultRecords = await task.apiEngine.executeCRUD(records, task.apiProgressCallback);
+
         } else {
-            task = this.#script.job.tasks[0];
+
             // Missing task => new sObject
+            task = this.#script.job.tasks[0];
+
             let apiEngine: IApiEngine;
+
             switch (engine) {
                 case API_ENGINE.BULK_API_V1:
                     apiEngine = new BulkApiV1_0Engine({
@@ -192,7 +201,7 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
                     break;
             }
 
-            resultRecords = await task.apiEngine.executeCRUD(records, task.apiProgressCallback);
+            resultRecords = await apiEngine.executeCRUD(records, task.apiProgressCallback);
 
         }
         return resultRecords;
