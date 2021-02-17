@@ -6,7 +6,7 @@
  */
 
 
-import { MigrationJobTask, Script, ScriptObject, TaskData } from "../../../../modules/models";
+import { Script, TaskData } from "../../../../modules/models";
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../../modules/components/common_components/logger";
 import { API_ENGINE, DATA_MEDIA_TYPE, IAddonModuleBase, ICommandRunInfo, ITableMessage, OPERATION } from "../../../components/shared_packages/commonComponents";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
