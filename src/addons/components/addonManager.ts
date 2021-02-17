@@ -77,11 +77,10 @@ export default class AddonManager {
         });
 
         if (addons.length > 0){
-            if (objectName) {
-                this.logger.infoNormal(RESOURCES.runAddonMethod, objectName, method.toString());
-            } else {
-                this.logger.infoNormal(RESOURCES.runAddonGlobalMethod, method.toString());
-            } 
+            
+            let globalText = this.logger.getResourceString(RESOURCES.global);           
+            this.logger.infoNormal(RESOURCES.runAddonMethod, objectName || globalText, method.toString());  
+
             for (let index = 0; index < addons.length; index++) {
                 await addons[index][0]();
             } 
@@ -164,11 +163,11 @@ export default class AddonManager {
                         if (!this.addonsMap.has(addon.method)) {
                             this.addonsMap.set(addon.method, []);
                         }
-                        let context = <IPluginExecutionContext>{
+                        moduleInstance.context = <IPluginExecutionContext>{
                             eventName: addon.method.toString(),
                             objectName: addon.objectName
-                        };
-                        this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, context, addon.args), addon]);
+                        };                       
+                        this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
                     }
                 } catch (ex) { }
             })

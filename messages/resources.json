@@ -23,6 +23,7 @@
     "userManifest": "[User Manifest]",
     "loaded": "Loaded %s.",
     "cantLoad": "%s is not found or could not be loaded.",
+    "global": "Global",
 
     "defaultPromptOptions": "y/n",
     "defaultPromptNopromptOption": "y",
@@ -179,13 +180,14 @@
     "skippedUpdatesWarning": "{%s} [INFO] There are %s skipped target updates, since no matching was found between the source and the target records by the given ExternalId key, or the data is the same.",
     "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details.",
     "updatingSummary": "Data processing summary",
-    "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records",
+    "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records.",
 
-    "processingAddon": "Processing Addons",
-    "runAddonGlobalMethod": "{Global} Processing add-on methods: %s ...",
-    "runAddonMethod": "{%s} Processing add-on methods: %s ...",
-    "nothingToProcess": "Nothing to process",
-    "executingAddon" : "{%s} Processing addon %s ..."
+    "processingAddon": "Processing Addons...", 
+    "runAddonMethod": "{%s} Processing %s ...",
+    "nothingToProcess": "Nothing to process.",
+    "startAddonExecute" : "{%s} Executing of the Addon '%s' has started.",
+    "finishAddonExecute" : "{%s} Executing of the Addon '%s' has finished."
+    
 
    
 

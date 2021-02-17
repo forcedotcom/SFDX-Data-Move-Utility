@@ -32,6 +32,7 @@ import { MockGenerator } from '../../components/common_components/mockGenerator'
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
 import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES } from '../../../addons/components/shared_packages/commonComponents';
 
+
 MockGenerator.createCustomGenerators(casual);
 
 export default class MigrationJobTask {
@@ -485,7 +486,7 @@ export default class MigrationJobTask {
      */
     getRecordValue(record: any, propName: string): any {
         if (!record) return null;
-        return record[propName];             
+        return record[propName];
     }
 
     /**
@@ -496,7 +497,7 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     getCSVFilename(rootPath: string, pattern?: string): string {
-        return Common.getCSVFilename(rootPath, this.sObjectName, pattern); 
+        return Common.getCSVFilename(rootPath, this.sObjectName, pattern);
     }
 
     /**
@@ -1435,13 +1436,13 @@ export default class MigrationJobTask {
      * @memberof MigrationJobTask
      */
     createApiEngine(org: ScriptOrg, operation: OPERATION, amountOfRecordsToProcess: number, updateRecordId: boolean, targetFilenameSuffix?: string): IApiEngine {
-
+        let engine: IApiEngine;
         if ((amountOfRecordsToProcess > this.script.bulkThreshold && !this.script.alwaysUseRestApiToUpdateRecords)
             && CONSTANTS.NOT_SUPPORTED_OBJECTS_IN_BULK_API.indexOf(this.sObjectName) < 0) {
             // Use bulk api
             switch (this.script.bulkApiVersionNumber) {
                 case 2: // Bulk Api V2.0
-                    this.apiEngine = new BulkApiV2_0Engine({
+                    engine = new BulkApiV2_0Engine({
                         logger: this.logger,
                         connectionData: org.connectionData,
                         sObjectName: this.sObjectName,
@@ -1455,7 +1456,7 @@ export default class MigrationJobTask {
                     });
                     break;
                 default: // Bulk Api V1.0
-                    this.apiEngine = new BulkApiV1_0Engine({
+                    engine = new BulkApiV1_0Engine({
                         logger: this.logger,
                         connectionData: org.connectionData,
                         sObjectName: this.sObjectName,
@@ -1472,7 +1473,7 @@ export default class MigrationJobTask {
             }
         } else {
             // Use rest api
-            this.apiEngine = new RestApiEngine({
+            engine = new RestApiEngine({
                 logger: this.logger,
                 connectionData: org.connectionData,
                 sObjectName: this.sObjectName,
@@ -1486,7 +1487,7 @@ export default class MigrationJobTask {
                 targetFieldMapping: this._targetFieldMapping
             });
         }
-        this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
+        this.setApiEngine(engine);
         return this.apiEngine;
     }
 
@@ -1497,8 +1498,19 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<boolean> {      
+    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<boolean> {
         return await this.script.addonManager.triggerAddonModuleMethodAsync(method, this.sObjectName);
+    }
+    
+    /**
+     * Set the API engine instance for the current task
+     *
+     * @param {IApiEngine} engine The engine instance
+     * @memberof MigrationJobTask
+     */
+    setApiEngine(engine: IApiEngine) {
+        this.apiEngine = engine;
+        this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
     }
 
 

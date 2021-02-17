@@ -93,7 +93,7 @@ export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
      * 
      * @return {Array<any>} The array of the retrieved records     
      */
-    queryAsync(isSource: boolean, soql: string, useBulkQueryApi: boolean): Promise<Array<any>>;
+    queryAsync(isSource: boolean, soql: string, useBulkQueryApi?: boolean): Promise<Array<any>>;
 
     /**
      * Retrieves the records from the connected salesforce environment
@@ -103,7 +103,7 @@ export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
      * 
      * @return {Array<any>} The array of all retrieved records     
      */
-    queryMultiAsync(isSource: boolean, soqls: string[], useBulkQueryApi: boolean): Promise<Array<any>>;
+    queryMultiAsync(isSource: boolean, soqls: string[], useBulkQueryApi?: boolean): Promise<Array<any>>;
 
     /**
      * Constructs array of SOQL-IN queries based on the provided values.
@@ -119,7 +119,7 @@ export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
      * 
      * If the target is csvfile it will write into the CSV file according to the script settings.      
      */
-    updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, engine: API_ENGINE, records: any[]): Promise<any[]>;
+    updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, records: any[], engine?: API_ENGINE): Promise<any[]>;
 
 
 }

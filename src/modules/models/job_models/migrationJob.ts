@@ -384,7 +384,7 @@ export default class MigrationJob {
             const task = this.queryTasks[index];
             processed = await task.runAddonEvent(ADDON_MODULE_METHODS.onBefore) || processed;
         }
-        if (!processed){
+        if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
         }
         this.logger.infoNormal(RESOURCES.newLine);
@@ -487,7 +487,7 @@ export default class MigrationJob {
             const task = this.queryTasks[index];
             processed = await task.runAddonEvent(ADDON_MODULE_METHODS.onAfter) || processed;
         }
-        if (!processed){
+        if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
         }
         this.logger.infoNormal(RESOURCES.newLine);
@@ -714,6 +714,22 @@ export default class MigrationJob {
             fieldName = Common.getComplexField(fieldNames.join(CONSTANTS.COMPLEX_FIELDS_SEPARATOR));
             return fieldName;
         }
+    }
+
+    /**
+     * Creates new dummy job task for the given object
+     *
+     * @param {string} sObjectName
+     * @returns
+     * @memberof MigrationJob
+     */
+    createDummyJobTask(sObjectName: string) {
+        let scriptObject: ScriptObject = new ScriptObject(sObjectName);
+        scriptObject.script = this.script;
+        return new MigrationJobTask({
+            job: this,
+            scriptObject
+        });
     }
 
 

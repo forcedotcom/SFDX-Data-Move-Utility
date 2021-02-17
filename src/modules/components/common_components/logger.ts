@@ -51,6 +51,7 @@ export enum RESOURCES {
     userManifest = "userManifest",
     loaded = "loaded",
     cantLoad = "cantLoad",
+    global = "global",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptNopromptOption = "defaultPromptNopromptOption",
@@ -210,10 +211,10 @@ export enum RESOURCES {
     updatingTotallyUpdated = "updatingTotallyUpdated",
 
     processingAddon = "processingAddon",
-    runAddonMethod = "runAddonMethod",
-    runAddonGlobalMethod = "runAddonGlobalMethod",
+    runAddonMethod = "runAddonMethod",  
     nothingToProcess = "nothingToProcess",
-    executingAddon = "executingAddon"
+    startAddonExecute = "startAddonExecute",
+    finishAddonExecute = "finishAddonExecute"
 }
 
 

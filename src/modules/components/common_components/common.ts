@@ -1332,8 +1332,27 @@ export class Common {
         }
     }
 
-    
-
+    /**
+     * The polyfill of bind function with accessible bound arguments
+     *
+     * @static
+     * @param {Function} fn The funciton to bind
+     * @param {*} thisArg The this arg
+     * @param {...any[]} boundArgs The list of bound arguments
+     * @returns new bound function
+     * @memberof Common
+     */
+    public static bind(fn : Function, thisArg : any, ...boundArgs : any[]) {
+        const func = function(...args : any[]) {
+          return fn.call(thisArg, ...boundArgs, ...args)
+        }       
+        Object.defineProperties(func, {
+          __boundArgs: { value: boundArgs },
+          __thisArg: { value: thisArg },
+          __boundFunction: { value: fn }
+        })
+        return func;
+      }
     
 
 }

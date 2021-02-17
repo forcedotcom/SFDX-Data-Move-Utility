@@ -6,9 +6,9 @@
  */
 
 
-import { Script, TaskData } from "../../../../modules/models";
-import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY } from "../../../../modules/components/common_components/logger";
-import { API_ENGINE, DATA_MEDIA_TYPE, ICommandRunInfo, ITableMessage, OPERATION } from "../../../components/shared_packages/commonComponents";
+import { MigrationJobTask, Script, ScriptObject, TaskData } from "../../../../modules/models";
+import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../../modules/components/common_components/logger";
+import { API_ENGINE, DATA_MEDIA_TYPE, IAddonModuleBase, ICommandRunInfo, ITableMessage, OPERATION } from "../../../components/shared_packages/commonComponents";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
 import { IPluginRuntimeSystemBase } from "../../../../modules/models/common_models/helper_interfaces";
 import { Common } from "../../../../modules/components/common_components/common";
@@ -49,7 +49,7 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
     runInfo: ICommandRunInfo;
     pluginJob: ISfdmuRunPluginJob;
 
-    writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE", ...tokens: string[]) {
+    writeMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE", ...tokens: string[]) {
 
         switch (messageType) {
             case "WARNING":
@@ -74,6 +74,16 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
         }
     }
 
+    writeStartMessage(module: IAddonModuleBase) {
+        let objectName = module.context.objectName || this.#logger.getResourceString(RESOURCES.global);
+        module.runtime.writeMessage(RESOURCES.startAddonExecute.toString(), "INFO", objectName, module.displayName);
+    }
+
+    writeFinishMessage(module: IAddonModuleBase) {
+        let objectName = module.context.objectName || this.#logger.getResourceString(RESOURCES.global);
+        module.runtime.writeMessage(RESOURCES.finishAddonExecute.toString(), "INFO", objectName, module.displayName);
+    }
+
     getConnection(isSource: boolean) {
         return isSource ? this.#script.sourceOrg.getConnection() : this.#script.targetOrg.getConnection();
     }
@@ -91,13 +101,13 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
         });
     }
 
-    async queryAsync(isSource: boolean, soql: string, useBulkQueryApi: boolean): Promise<any[]> {
+    async queryAsync(isSource: boolean, soql: string, useBulkQueryApi: boolean = false): Promise<any[]> {
         let apiSf = new Sfdx(isSource ? this.#script.sourceOrg : this.#script.targetOrg);
         let ret = await apiSf.queryAsync(soql, useBulkQueryApi);
         return ret.records;
     }
 
-    async queryMultiAsync(isSource: boolean, soqls: string[], useBulkQueryApi: boolean): Promise<any[]> {
+    async queryMultiAsync(isSource: boolean, soqls: string[], useBulkQueryApi: boolean = false): Promise<any[]> {
         let records = [];
         for (let index = 0; index < soqls.length; index++) {
             const soql = soqls[index];
@@ -122,7 +132,7 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
         return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN);
     }
 
-    async updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, engine: API_ENGINE, records: any[]): Promise<any[]> {
+    async updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, records: any[], engine: API_ENGINE = API_ENGINE.DEFAULT_ENGINE): Promise<any[]> {
 
         if (!records || records.length == 0 || this.#script.job.tasks.length == 0) {
             return [];
@@ -147,8 +157,6 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
         } else {
 
             // Missing task => new sObject
-            task = this.#script.job.tasks[0];
-
             let apiEngine: IApiEngine;
 
             switch (engine) {
@@ -200,6 +208,9 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
                     });
                     break;
             }
+            
+            task = this.#script.job.createDummyJobTask(sObjectName);
+            task.setApiEngine(apiEngine);
 
             resultRecords = await apiEngine.executeCRUD(records, task.apiProgressCallback);
 

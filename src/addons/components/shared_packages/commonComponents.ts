@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
- 
+
 /* ------------------ Enumerations ------------------ */
 export enum DATA_MEDIA_TYPE {
     Org,
@@ -22,6 +22,7 @@ export enum OPERATION {
 }
 
 export enum API_ENGINE {
+    DEFAULT_ENGINE,
     REST_API,
     BULK_API_V1,
     BULK_API_V2
@@ -131,6 +132,8 @@ export interface IPluginExecutionContext {
  */
 export interface IAddonModuleBase {
 
+    context: IPluginExecutionContext;
+
     /**
      * The Plugin will share with the Addon its public
      *   methods and runtime data using this property
@@ -147,6 +150,11 @@ export interface IAddonModuleBase {
      *                Addon in the method chain.
      */
     onExecute(context: IPluginExecutionContext, args: any): void;
+
+    /**
+     * The display name of the current Plugin 
+     */
+    readonly displayName: string;
 
 }
 
@@ -166,8 +174,29 @@ export interface IPluginRuntimeBase {
      * Write a message to the console or/and log file.
      * All the messages are written with the VERBOSE verbosity level.
      */
-    writeLogConsoleMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE", ...tokens: string[]): void;
+    writeMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE", ...tokens: string[]): void;
 
+    /**
+     * Write the standard message about plugin starts to execute
+     *
+     * @memberof IPluginRuntimeBase
+     */
+    writeStartMessage(module : IAddonModuleBase): void;
+
+    /**
+     * Write the standard message about plugin finishes to execute
+     *
+     * @memberof IPluginRuntimeBase
+     */
+    writeFinishMessage(module : IAddonModuleBase): void;
+
+}
+
+export abstract class AddonModuleBase implements IAddonModuleBase {
+    context: IPluginExecutionContext;
+    abstract runtime: IPluginRuntimeBase;
+    abstract onExecute(context: IPluginExecutionContext, args: any): void;
+    abstract displayName: string;
 }
 
 
