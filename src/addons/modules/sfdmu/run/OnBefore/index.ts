@@ -11,12 +11,7 @@ export default class CoreOnBefore extends AddonModuleBase {
     }
 
     runtime: ISfdmuRunPluginRuntime;
-
-    constructor(runtime: ISfdmuRunPluginRuntime) {
-        super();
-        this.runtime = runtime;
-    }
-    
+  
     async onExecute(context: IPluginExecutionContext, args : any) : Promise<void>  {
         // TODO: Implement the core OnBefore functionality here   
 
@@ -29,6 +24,8 @@ export default class CoreOnBefore extends AddonModuleBase {
 
         let output2 = await this.runtime.updateTargetRecordsAsync("Case", OPERATION.Insert, records2);
         console.log(output2);
+
+        this.runtime.writeFinishMessage(this);
     }
 
 }

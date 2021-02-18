@@ -105,21 +105,41 @@ export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
      */
     queryMultiAsync(isSource: boolean, soqls: string[], useBulkQueryApi?: boolean): Promise<Array<any>>;
 
-    /**
+     /**
      * Constructs array of SOQL-IN queries based on the provided values.
+     * Keeps aware of the query length limitation according to the documentation:
+     * (https://developer.salesforce.com/docs/atlas.en-us.salesforce_app_limits_cheatsheet.meta/salesforce_app_limits_cheatsheet/salesforce_app_limits_platform_soslsoql.htm)
+     *
+     *
+     * @param {string[]} selectFields The fields to include into the SELECT statement in each query
+     * @param {string} [fieldName="Id"] The field of the IN clause
+     * @param {string} sObjectName The object api name to select 
+     * @param {string[]} valuesIN The array of values to use in the IN clause
+     * @returns {string[]} The array of SOQLs depend on the given values to include all of them
      */
     createFieldInQueries(selectFields: Array<string>, fieldName: string, sObjectName: string, valuesIN: Array<string>): Array<string>;
 
-    /**
+   /**
      * Performs DML operation on the Target org pr writes into the target CSV file.
      * 
      * if the target object exists in the Script - the settings
      * defined in the script for this object will be used, 
      * otherwise it leverages the default settings for other objects. 
      * 
-     * If the target is csvfile it will write into the CSV file according to the script settings.      
-     */
-    updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, records: any[], engine?: API_ENGINE): Promise<any[]>;
+     * If the target is csvfile it will write into the CSV file according to the script settings.    
+    *
+    * @param {string} sObjectName The sObject name to update.
+    * @param {OPERATION} operation The operation
+    * @param {any[]} records The records to process
+    * @param {API_ENGINE} [engine] You can choose the API engine to use
+    * @param {boolean} [updateRecordId] When true it will override the Ids of the source records passed to the method by the Ids returned 
+    *                                    from the SF API, otherwise it will remain the source records as is and will return them from the method.
+    *
+    * @returns {Promise<any[]>} The result records. Typeically it is THE SAME records as passed to the method, but you can override the IDs
+    *                           with the target Ids by putting updateRecordId = true
+    * @memberof ISfdmuRunPluginRuntime
+    */
+   updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, records: any[], engine?: API_ENGINE, updateRecordId?: boolean): Promise<any[]>;
 
 
 }

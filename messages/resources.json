@@ -182,11 +182,11 @@
     "updatingSummary": "Data processing summary",
     "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records.",
 
-    "processingAddon": "Processing Addons...", 
-    "runAddonMethod": "{%s} Processing %s ...",
-    "nothingToProcess": "Nothing to process.",
-    "startAddonExecute" : "{%s} Executing of the Addon '%s' has started.",
-    "finishAddonExecute" : "{%s} Executing of the Addon '%s' has finished."
+    "processingAddon": "Executing Addons...", 
+    "runAddonMethod": "{%s} ***** ***** Executing %s handlers...",
+    "nothingToProcess": "No handlers to execute.",
+    "startAddonExecute" : "{%s} ***** The Addon handler '%s' has started.",
+    "finishAddonExecute" : "{%s} ***** The Addon handler '%s' has completed."
     
 
    

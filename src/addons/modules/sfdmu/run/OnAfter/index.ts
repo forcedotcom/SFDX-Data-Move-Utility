@@ -13,13 +13,10 @@ export default class CoreOnAfter extends AddonModuleBase {
 
     runtime: ISfdmuRunPluginRuntime;
 
-    constructor(runtime: ISfdmuRunPluginRuntime) {
-        super();
-        this.runtime = runtime;
-    }
-    
     async onExecute(context: IPluginExecutionContext, args : any) : Promise<void>  {
+        this.runtime.writeStartMessage(this);
        // TODO: Implement the core OnAfter functionality here
+       this.runtime.writeFinishMessage(this);
     }
 
 }

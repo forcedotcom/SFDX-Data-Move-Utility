@@ -132,7 +132,27 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
         return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN);
     }
 
-    async updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, records: any[], engine: API_ENGINE = API_ENGINE.DEFAULT_ENGINE): Promise<any[]> {
+   
+    /**
+     * Performs DML operation on the Target org pr writes into the target CSV file.
+     * 
+     * if the target object exists in the Script - the settings
+     * defined in the script for this object will be used, 
+     * otherwise it leverages the default settings for other objects. 
+     * 
+     * If the target is csvfile it will write into the CSV file according to the script settings.    
+    *
+    * @param {string} sObjectName The sObject name to update.
+    * @param {OPERATION} operation The operation
+    * @param {any[]} records The records to process
+    * @param {API_ENGINE} [engine] You can choose the API engine to use
+    * @param {boolean} [updateRecordId] When true it will override the Ids of the source records passed to the method by the Ids returned 
+    *                                    from the SF API, otherwise it will remain the source records as is and will return them from the method.
+    *
+    * @returns {Promise<any[]>} The result records. Typeically it is THE SAME records as passed to the method, but you can override the IDs
+    *                           with the target Ids by putting updateRecordId = true   
+    */
+    async updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, records: any[], engine: API_ENGINE = API_ENGINE.DEFAULT_ENGINE, updateRecordId: boolean = true): Promise<any[]> {
 
         if (!records || records.length == 0 || this.#script.job.tasks.length == 0) {
             return [];
@@ -168,7 +188,7 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
                         operation,
                         pollingIntervalMs: this.#script.pollingIntervalMs,
                         concurrencyMode: this.#script.concurrencyMode,
-                        updateRecordId: false,
+                        updateRecordId,
                         bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
                         targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
                         createTargetCSVFiles: this.#script.createTargetCSVFiles,
@@ -184,7 +204,7 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
                         operation,
                         pollingIntervalMs: this.#script.pollingIntervalMs,
                         concurrencyMode: this.#script.concurrencyMode,
-                        updateRecordId: false,
+                        updateRecordId,
                         bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
                         targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
                         createTargetCSVFiles: this.#script.createTargetCSVFiles,
@@ -200,7 +220,7 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
                         operation,
                         pollingIntervalMs: this.#script.pollingIntervalMs,
                         concurrencyMode: this.#script.concurrencyMode,
-                        updateRecordId: false,
+                        updateRecordId,
                         bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
                         targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
                         createTargetCSVFiles: this.#script.createTargetCSVFiles,
@@ -208,7 +228,7 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
                     });
                     break;
             }
-            
+
             task = this.#script.job.createDummyJobTask(sObjectName);
             task.setApiEngine(apiEngine);
 

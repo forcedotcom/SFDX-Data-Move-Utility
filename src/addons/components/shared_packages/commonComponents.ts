@@ -193,8 +193,11 @@ export interface IPluginRuntimeBase {
 }
 
 export abstract class AddonModuleBase implements IAddonModuleBase {
+    constructor(runtime : IPluginRuntimeBase){
+        this.runtime = runtime;
+    }
     context: IPluginExecutionContext;
-    abstract runtime: IPluginRuntimeBase;
+    runtime: IPluginRuntimeBase;
     abstract onExecute(context: IPluginExecutionContext, args: any): void;
     abstract displayName: string;
 }
