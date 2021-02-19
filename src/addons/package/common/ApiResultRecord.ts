@@ -5,10 +5,6 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
- 
- /**
- * Represents the record returned by the Api operation
- */
 export default class ApiResultRecord {
 
     constructor(init: Partial<ApiResultRecord>) {

@@ -8,7 +8,7 @@
 
 import { CONSTANTS } from "../../components/common_components/statics";
 import * as path from 'path';
-import { ADDON_MODULE_METHODS } from "../../../addons/components/shared_packages/commonComponents";
+import { ADDON_MODULE_METHODS } from "../../../addons/package/base/enumerations";
 
 /**
  * Represent an item of the addons section of the ScriptObject / Script  classes

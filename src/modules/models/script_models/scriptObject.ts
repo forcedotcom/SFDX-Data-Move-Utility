@@ -26,7 +26,7 @@ import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
 import { AddonManifestDefinition } from "./addonManifestDefinition";
-import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/components/shared_packages/commonComponents";
+import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/package/base/enumerations";
 
 
 

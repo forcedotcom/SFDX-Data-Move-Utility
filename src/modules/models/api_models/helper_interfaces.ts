@@ -4,11 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ApiInfo } from '.';
 import { Logger } from '../../components/common_components/logger';
 import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
-import { OPERATION } from '../../../addons/components/shared_packages/commonComponents';
+import { OPERATION } from '../../../addons/package/base/enumerations';
+import { ApiInfo } from '../../../addons/package/common/ApiInfo';
+
+
 
 
 

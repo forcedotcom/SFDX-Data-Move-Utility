@@ -44,18 +44,7 @@ export interface IMissingParentLookupRecordCsvRow {
     "Missing value": string;
 }
 
-export interface IBlobField {
-    objectName: string,
-    fieldName: string,
 
-
-
-    /**
-     * Currently there is only base64 data type,
-     * but optionally another type can be added.
-     */
-    dataType: 'base64' // | ....
-}
 
 
 

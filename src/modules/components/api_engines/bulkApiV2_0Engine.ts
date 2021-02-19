@@ -5,9 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-    ApiEngineBase,
-    ApiInfo,
-    ApiResultRecord,
+    ApiEngineBase, 
     IApiEngineInitParameters
 } from '../../models/api_models';
 import { Common } from '../common_components/common';
@@ -15,7 +13,11 @@ import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { RESOURCES } from '../common_components/logger';
 import parse = require('csv-parse/lib/sync');
-import { OPERATION, RESULT_STATUSES } from '../../../addons/components/shared_packages/commonComponents';
+import { OPERATION, RESULT_STATUSES } from '../../../addons/package/base/enumerations';
+
+import ApiResultRecord from '../../../addons/package/common/ApiResultRecord';
+import { ApiInfo } from '../../../addons/package/common/ApiInfo';
+
 
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';

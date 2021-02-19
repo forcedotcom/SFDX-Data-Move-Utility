@@ -7,8 +7,8 @@
 
 
 
-import { MigrationJob } from "../../../../modules/models";
-import { ISfdmuRunPluginJob, ISfdmuRunPluginTask } from "../../../components/shared_packages/sfdmuRunAddonComponents";
+import { MigrationJob } from "../../../modules/models";
+import { ISfdmuRunPluginJob, ISfdmuRunPluginTask } from "../../package/modules/sfdmuRun";
 import SfdmuRunPluginTask from "./SfdmuRunPluginTask";
 
 export default class SfdmuRunPluginJob implements ISfdmuRunPluginJob {

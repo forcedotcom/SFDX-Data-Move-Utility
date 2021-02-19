@@ -3,8 +3,10 @@
  * It can be included with any object within the export.json file. 
  */
 
-import { AddonModuleBase, IPluginExecutionContext, OPERATION } from "../../../../components/shared_packages/commonComponents";
-import { ISfdmuRunPluginRuntime } from "../../../../components/shared_packages/sfdmuRunAddonComponents";
+import AddonModuleBase from "../../../../package/base/AddonModuleBase";
+import {OPERATION } from "../../../../package/base/enumerations";
+import IPluginExecutionContext from "../../../../package/base/IPluginExecutionContext";
+import { ISfdmuRunPluginRuntime } from "../../../../package/modules/sfdmuRun";
 
 interface IOnExecuteArguments {
     deleteOldData: boolean;
@@ -19,11 +21,6 @@ export default class ExportFiles extends AddonModuleBase {
 
     runtime: ISfdmuRunPluginRuntime;
 
-    constructor(runtime: ISfdmuRunPluginRuntime) {
-        super();
-        this.runtime = runtime;
-    }
-   
     async onExecute(context: IPluginExecutionContext, args: IOnExecuteArguments): Promise<void> {
 
         this.runtime.writeStartMessage(this);

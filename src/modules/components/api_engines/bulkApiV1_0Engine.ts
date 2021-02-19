@@ -4,13 +4,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
+import { ApiEngineBase, IApiEngineInitParameters } from '../../models/api_models';
 import { Common } from '../common_components/common';
 import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { Sfdx } from '../common_components/sfdx';
 import { CsvChunks } from '../../models';
-import { OPERATION } from '../../../addons/components/shared_packages/commonComponents';
+import { OPERATION } from '../../../addons/package/base/enumerations';
+import { ApiInfo } from '../../../addons/package/common/ApiInfo';
+
+
 
 
 

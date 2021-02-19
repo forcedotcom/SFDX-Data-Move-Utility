@@ -16,8 +16,9 @@ import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
 import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError, ObjectFieldMapping } from '../../models';
 import { Common } from './common';
-import { IOrgConnectionData, IBlobField, IFieldMapping, IFieldMappingResult, IIdentityInfo } from '../../models/common_models/helper_interfaces';
+import { IOrgConnectionData, IFieldMapping, IFieldMappingResult, IIdentityInfo } from '../../models/common_models/helper_interfaces';
 import { Logger, RESOURCES } from './logger';
+import IBlobField from '../../../addons/package/common/IBlobField';
 
 var jsforce = require("jsforce");
 

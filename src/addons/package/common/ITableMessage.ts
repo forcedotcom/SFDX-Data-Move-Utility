@@ -5,6 +5,11 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
- 
-export * from "./helper_interfaces";
-export { default as ApiEngineBase } from "./ApiEngineBase";
+export default interface ITableMessage {
+    tableBody: Array<object>,
+    tableColumns: Array<{
+        key: string,
+        label: string,
+        width?: number
+    }>
+}

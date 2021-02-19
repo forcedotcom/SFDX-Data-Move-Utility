@@ -23,10 +23,12 @@ import { CommandInitializationError, CommandExecutionError } from "../common_mod
 import MigrationJob from "../job_models/migrationJob";
 import * as path from 'path';
 import * as fs from 'fs';
-import AddonManager from "../../../addons/components/addonManager";
-import { DATA_MEDIA_TYPE, ICommandRunInfo, IPluginInfo, OPERATION } from "../../../addons/components/shared_packages/commonComponents";
+import AddonManager from "../../../addons/engine/addonManager";
+import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/package/base/enumerations";
 import { AddonManifestDefinition } from "./addonManifestDefinition";
-import { ISfdmuRunPluginRuntimeSystem } from "../../../addons/modules/sfdmu/run/sfdmuRunPluginRuntime";
+import { ISfdmuRunPluginRuntimeSystem } from "../../../addons/engine/sfdmu-run/sfdmuRunPluginRuntime";
+import ICommandRunInfo from "../../../addons/package/base/ICommandInfo";
+import IPluginInfo from "../../../addons/package/base/IPluginInfo";
 
 
 

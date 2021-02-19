@@ -5,7 +5,10 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IBlobField } from "../../models/common_models/helper_interfaces";
+import IBlobField from "../../../addons/package/common/IBlobField";
+
+
+
 
 
 export const CONSTANTS = {

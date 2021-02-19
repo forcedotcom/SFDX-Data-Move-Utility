@@ -5,16 +5,10 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import ApiResultRecord from "./ApiResultRecord";
+import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from "../base/enumerations";
 
-import ApiResultRecord from './apiResultRecord';
-import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from './commonComponents';
-
-
-
-/**
-* Represents set of records returned by the API operation
-*/
-export default class ApiInfo {
+export class ApiInfo {
 
     constructor(init?: Partial<ApiInfo>) {
         Object.assign(this, init);
@@ -23,7 +17,7 @@ export default class ApiInfo {
 
     sObjectName: string;
     strOperation: string;
-
+                                                                                                 
     contentUrl: string;
 
     job: any;

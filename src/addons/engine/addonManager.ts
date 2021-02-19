@@ -12,13 +12,16 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { CONSTANTS } from "../../modules/components/common_components/statics";
 import { AddonManifest, CommandInitializationError, Script } from "../../modules/models";
-import SfdmuRunPluginRuntime from "../modules/sfdmu/run/sfdmuRunPluginRuntime";
-import { ADDON_MODULE_METHODS, IAddonModuleBase, IPluginExecutionContext, IPluginRuntimeBase } from "./shared_packages/commonComponents";
+import SfdmuRunPluginRuntime from "./sfdmu-run/sfdmuRunPluginRuntime";
 import { AddonManifestDefinition } from "../../modules/models/script_models/addonManifestDefinition";
 import "reflect-metadata";
 import "es6-shim";
 import { plainToClass } from "class-transformer";
 import { IPluginRuntimeSystemBase } from "../../modules/models/common_models/helper_interfaces";
+import IPluginRuntimeBase from "../package/base/IPluginRuntimeBase";
+import { ADDON_MODULE_METHODS } from "../package/base/enumerations";
+import IAddonModuleBase from "../package/base/IAddonModuleBase";
+import IPluginExecutionContext from "../package/base/IPluginExecutionContext";
 
 
 

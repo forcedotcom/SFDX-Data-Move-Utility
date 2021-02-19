@@ -27,7 +27,7 @@ import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionError } from '../../models';
 import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
-import { IPluginInfo } from '../../../addons/components/shared_packages/commonComponents';
+import IPluginInfo from '../../../addons/package/base/IPluginInfo';
 const { closest } = require('fastest-levenshtein')
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
@@ -982,28 +982,6 @@ export class Common {
         return result;
     }
 
-
-    /**
-    * Get record value by given property name
-    *     for this sobject
-    *
-    * @param {*} record The record
-    * @param {string} thisSobjectName The current sObject name that we want to retrieve value for the record object
-    * @param {string} propName The property name to extract value from the record object
-    * @param {string} [sObjectName] If the current task is RecordType and propName = DeveloperName - 
-    *                               pass here the SobjectType o include in the returned value
-    * @param {string} [sFieldName]  If the current task is RecordType and propName = DeveloperName -
-    *                               pass here the property name to extract value from the record object
-    *                               instead of passing it with the "propName" parameter
-    * @returns {*}
-    * @memberof MigrationJobTask
-    */
-    public static getRecordValue(thisSobjectName: string, record: any, propName: string, sObjectName?: string, sFieldName?: string): any {
-        if (!record) return null;
-        return record[sFieldName || propName];
-    }
-
-
     /**
      * Returns true if this object is custom
      *
@@ -1342,17 +1320,17 @@ export class Common {
      * @returns new bound function
      * @memberof Common
      */
-    public static bind(fn : Function, thisArg : any, ...boundArgs : any[]) {
-        const func = function(...args : any[]) {
-          return fn.call(thisArg, ...boundArgs, ...args)
-        }       
+    public static bind(fn: Function, thisArg: any, ...boundArgs: any[]) {
+        const func = function (...args: any[]) {
+            return fn.call(thisArg, ...boundArgs, ...args)
+        }
         Object.defineProperties(func, {
-          __boundArgs: { value: boundArgs },
-          __thisArg: { value: thisArg },
-          __boundFunction: { value: fn }
+            __boundArgs: { value: boundArgs },
+            __thisArg: { value: thisArg },
+            __boundFunction: { value: fn }
         })
         return func;
-      }
-    
+    }
+
 
 }
