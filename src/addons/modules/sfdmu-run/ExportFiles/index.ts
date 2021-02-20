@@ -4,6 +4,7 @@
  */
 
 
+import { Common } from "../../../../modules/components/common_components/common";
 import AddonModuleBase from "../../../package/base/AddonModuleBase";
 import { OPERATION } from "../../../package/base/enumerations";
 import IPluginExecutionContext from "../../../package/base/IPluginExecutionContext";
@@ -53,12 +54,17 @@ export default class ExportFiles extends AddonModuleBase {
             return;
         }
 
+        let sourceKeys = [...task.sourceTaskData.idRecordsMap.keys()];
+        let sourceContentDocumentIds = [];
+        let sourceContentDocumentLinks = [];
+        let sourceContentDocuments = [];
 
+        let targetKeys = [...task.targetTaskData.idRecordsMap.keys()];
         let targetContentDocuments = [];
         let targetContentDocumentLinks = [];
-        let targetKeys = [...task.targetTaskData.idRecordsMap.keys()];
         let targetContentDocumentIds = [];
 
+        // ------------------ Target ------------------------------
         // Read  target ContentDocumentLinks
         if (args.operation == OPERATION.Update || args.operation == OPERATION.Upsert) {
             let queries = this.runtime.createFieldInQueries(
@@ -73,7 +79,7 @@ export default class ExportFiles extends AddonModuleBase {
         // Delete old target files
         if (args.deleteOldData || args.operation == OPERATION.Delete) {
             if (targetContentDocumentLinks.length > 0) {
-                targetContentDocumentIds = [...new Set<string>(targetContentDocumentLinks.map(record => String(record['ContentDocumentId'])))];
+                targetContentDocumentIds = Common.distinctStringArray(targetContentDocumentLinks.map(record => String(record['ContentDocumentId'])));
                 await this.runtime.updateTargetRecordsAsync('ContentDocument',
                     OPERATION.Delete,
                     targetContentDocumentIds);
@@ -85,9 +91,43 @@ export default class ExportFiles extends AddonModuleBase {
         }
 
         // Read target ContentDocuments
-        if (args.operation != OPERATION.Insert) {
-            
+        if (args.operation != OPERATION.Insert && targetContentDocumentIds.length > 0) {
+            let queries = this.runtime.createFieldInQueries(
+                ['Id', args.contentDocumentExternalId],
+                'Id',
+                'ContentDocument',
+                targetContentDocumentIds);
+
+            targetContentDocuments = await this.runtime.queryMultiAsync(false, queries);
         }
+
+        // ------ Source ----------------------------------------
+        // Read source ContentDocumentLinks
+        {
+            let queries = this.runtime.createFieldInQueries(
+                ['Id', 'LinkedEntityId', 'ContentDocumentId'],
+                'LinkedEntityId',
+                'ContentDocumentLink',
+                sourceKeys);
+
+            sourceContentDocumentLinks = await this.runtime.queryMultiAsync(true, queries);
+        }
+
+        // Read source ContentDocuments
+        if (sourceContentDocumentLinks.length > 0) {
+            sourceContentDocumentIds = Common.distinctStringArray(sourceContentDocumentLinks.map(record => String(record['ContentDocumentId'])));
+            let queries = this.runtime.createFieldInQueries(
+                ['Id', args.contentDocumentExternalId],
+                'Id',
+                'ContentDocument',
+                sourceContentDocumentIds);
+
+            sourceContentDocuments = await this.runtime.queryMultiAsync(true, queries);
+        }
+
+
+
+
 
 
 
