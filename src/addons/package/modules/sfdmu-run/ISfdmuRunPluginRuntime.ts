@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
@@ -5,59 +6,20 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-import { DATA_MEDIA_TYPE, OPERATION, API_ENGINE } from "../base/enumerations";
-import IBlobField from "../common/IBlobField";
-import IPluginRuntimeBase from "../base/IPluginRuntimeBase";
-
-
-/* ------------------ ISfdmuRunPluginJob ------------------ */
-/**
- * Holds the data for the migration job
- */
-export interface ISfdmuRunPluginJob {
-    tasks: ISfdmuRunPluginTask[],
-}
+import { ISfdmuRunPluginJob } from ".";
+import { IBlobField } from "../../base";
+import { API_ENGINE, OPERATION } from "../../base/enumerations";
+import IPluginRuntimeBase from "../../base/IPluginRuntimeBase";
 
 
-/* ------------------ ISfdmuRunPluginTask ------------------ */
-/**
- * Holds the data per migration task
- */
-export interface ISfdmuRunPluginTask {
-    readonly sourceToTargetRecordMap: Map<any, any>,
-    readonly sourceTaskData: ISfdmuRunPluginTaskData,
-    readonly targetTaskData: ISfdmuRunPluginTaskData,
-    readonly sObjectName: string,
-    readonly operation: OPERATION,
-    getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string,
-    readonly sourceCsvFilename: string
-}
 
-
-/* ------------------ ISfdmuRunPluginTaskData ------------------ */
-/**
- * Holds the data for each data layer (Source / Target) per migration task
- */
-export interface ISfdmuRunPluginTaskData {
-    readonly records: Array<any>,
-    readonly isSource: boolean,
-    readonly extIdRecordsMap: Map<string, string>,
-    readonly idRecordsMap: Map<string, any>,
-    readonly sObjectName: string,
-    readonly mediaType: DATA_MEDIA_TYPE
-}
-
-
-/* ------------------ ISfdmuRunPluginRuntime ------------------ */
-/**
-* Provides access to the SFDMU runtime functionality.
+/* Provides access to the SFDMU runtime functionality.
 *
 * The SFDMU Addon can use its methods to perform
 *  a variety of actions on the live data, connected orgs, etc.
 *  when the Plugin command is running.
 */
-export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
+export default interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
 
     // ---------- Props ------------ //
     /**
@@ -153,30 +115,6 @@ export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
     downloadBlobDataAsync(isSource: boolean, recordIds: Array<string>, blobField: IBlobField): Promise<Map<string, string>>;
 
     /**
-     * Reads data from CSV file
-     *
-     * @param {string} filePath The file path to read
-     * @param {number} [linesToRead] Amount of lines to read from the CSV file. 0  to read entire file.
-     * @param {Map<string, string>} [columnDataTypeMap] The map between [CSV Column Name] => [data type of this column, for example 'boolean', 'text', etc]
-     *                                                   This parameter is uses the SF metadata describe field types.   
-     * @returns {Promise<Array<any>>} Array of the records from the CSV file
-     * @memberof ISfdmuRunPluginRuntime
-     */
-    readCsvFileAsync(filePath: string, linesToRead?: number, columnDataTypeMap?: Map<string, string>): Promise<Array<any>>;
-
-    /**
-     * Write data into CSV file
-     *
-     * @param {string} filePath The file path to write
-     * @param {Array<any>} records The records to write into the CSV file.
-     * @param {boolean} [createEmptyFileOnEmptyArray] true to override/create en empty csv file if there are no records passed.
-     *                                                  Otherwise the file will not be override with empty data only if the records array is not empty.
-     * @returns {Promise<void>}
-     * @memberof ISfdmuRunPluginRuntime
-     */
-    writeCsvFileAsync(filePath: string, records: Array<any>, createEmptyFileOnEmptyArray?: boolean): Promise<void>;
-
-    /**
      * The base path to the currently executing job (export.json file)
      *
      * @type {string}
@@ -201,10 +139,3 @@ export interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
     readonly targetPath: string;
 
 }
-
-
-
-
-
-
-

@@ -1118,7 +1118,7 @@ export class Common {
      * Remove folder with all files
      *
      * @static
-     * @param {string} path
+     * @param {string} path Path to the folder to remove
      * @memberof Common
      */
     public static deleteFolderRecursive(path: string, throwIOErrors?: boolean) {
@@ -1149,19 +1149,7 @@ export class Common {
         }
     }
 
-    /**
-     * @static Runs async functions in parallel with maximum simultaneous runnings
-     * 
-     * @param {Array<Throttle.Task<any>>} tasks The async functions to run
-     * @param {number} [maxInProgress=5] The maximum parallelism
-     * @returns {Promise<any>} The summarized array of all results returned by all promises
-     * @memberof Common
-     */
-    public static async parallelTasksAsync(tasks: Array<Throttle.Task<any>>, maxInProgress: number = 5): Promise<Array<any>> {
-        return await Throttle.all(tasks, {
-            maxInProgress
-        });
-    }
+
 
     /**
          * @static Transforms field name into __r field
@@ -1330,6 +1318,57 @@ export class Common {
             __boundFunction: { value: fn }
         })
         return func;
+    }
+
+    /**
+     * @static Runs async functions in parallel with maximum simultaneous runnings
+     * 
+     * @param {Array<Throttle.Task<any>>} tasks The async functions to run
+     * @param {number} [maxParallelTasks=5] The maximum parallelism
+     * @returns {Promise<any>} The summarized array of all results returned by all promises
+     * @memberof Common
+     */
+    public static async parallelTasksAsync(tasks: Array<Throttle.Task<any>>, maxParallelTasks: number = 5): Promise<Array<any>> {
+        return await Throttle.all(tasks, {
+            maxInProgress: maxParallelTasks
+        });
+    }
+
+    /**
+     * Execute several async functions in parallel
+     *
+     * @static
+     * @param {Array<(...args: any[]) => Promise<any>>} fns The functions to execute
+     * @param {*} [thisArg] This arg to apply to all functions
+     * @param {number} [maxParallelTasks=5] The maximum parallelizm
+     * @returns {Promise<any[]>} Array of results of all functions
+     * @memberof Common
+     */
+    public static async parallelExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any, maxParallelTasks: number = 5): Promise<any[]> {
+        thisArg = thisArg || this;
+        const queue = fns.map(fn => () => fn.bind(thisArg, ...fn.arguments));
+        const result: any[] = await Common.parallelTasksAsync(queue, maxParallelTasks || CONSTANTS.MAX_PARALLEL_DOWNLOAD_THREADS);
+        return result;
+    }
+
+    /**
+     * Execute secveral async functions in serial mode 
+     *
+     * @static
+     * @param {Array<(...args: any[]) => Promise<any>>} fns The functions to execute
+     * @param {*} [thisArg] This arg to apply to all functions
+     * @returns {Promise<any[]>} Array of results of all functions 
+     * @memberof Common
+     */
+    public static async serialExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any): Promise<any[]> {
+        thisArg = thisArg || this;
+        let result = [];
+        const queue = fns.map(fn => async () => fn.bind(thisArg, ...fn.arguments));
+        for (let index = 0; index < queue.length; index++) {
+            const fn = queue[index];
+            result = result.concat(await fn());
+        }
+        return result;
     }
 
 

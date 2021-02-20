@@ -6,9 +6,10 @@
  */
 
 import ApiResultRecord from "./ApiResultRecord";
-import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from "../base/enumerations";
+import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from "../../../addons/package/base/enumerations";
+import IApiInfo from "../../../addons/package/base/IApiInfo";
 
-export class ApiInfo {
+export default class ApiInfo implements IApiInfo {
 
     constructor(init?: Partial<ApiInfo>) {
         Object.assign(this, init);

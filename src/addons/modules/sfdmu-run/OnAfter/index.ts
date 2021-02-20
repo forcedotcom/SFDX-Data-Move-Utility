@@ -2,9 +2,10 @@
  * This module executed AFTER all objects are executed  
  */
 
-import AddonModuleBase from "../../../../package/base/AddonModuleBase";
-import IPluginExecutionContext from "../../../../package/base/IPluginExecutionContext";
-import { ISfdmuRunPluginRuntime } from "../../../../package/modules/sfdmuRun";
+import AddonModuleBase from "../../../package/base/AddonModuleBase";
+import IPluginExecutionContext from "../../../package/base/IPluginExecutionContext";
+import { ISfdmuRunPluginRuntime } from "../../../package/modules/sfdmu-run";
+
 
 
 export default class CoreOnAfter extends AddonModuleBase {

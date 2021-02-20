@@ -3,10 +3,11 @@
  * It can be included with any object within the export.json file. 
  */
 
-import AddonModuleBase from "../../../../package/base/AddonModuleBase";
-import {OPERATION } from "../../../../package/base/enumerations";
-import IPluginExecutionContext from "../../../../package/base/IPluginExecutionContext";
-import { ISfdmuRunPluginRuntime } from "../../../../package/modules/sfdmuRun";
+import AddonModuleBase from "../../../package/base/AddonModuleBase";
+import {OPERATION } from "../../../package/base/enumerations";
+import IPluginExecutionContext from "../../../package/base/IPluginExecutionContext";
+import { ISfdmuRunPluginRuntime } from "../../../package/modules/sfdmu-run";
+
 
 interface IOnExecuteArguments {
     deleteOldData: boolean;

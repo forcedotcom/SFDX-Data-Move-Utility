@@ -5,7 +5,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-export default class ApiResultRecord {
+import IApiResultRecord from "../../../addons/package/base/IApiResultRecord";
+
+export default class ApiResultRecord implements IApiResultRecord {
 
     constructor(init: Partial<ApiResultRecord>) {
         Object.assign(this, init);
@@ -19,7 +21,7 @@ export default class ApiResultRecord {
     isUnprocessed: boolean;
     isMissingSourceTargetMapping: boolean;
 
-    get isSuccess() {
+    get isSuccess(): boolean {
         return !this.isFailed
             && !this.isUnprocessed
             && !this.isMissingSourceTargetMapping;

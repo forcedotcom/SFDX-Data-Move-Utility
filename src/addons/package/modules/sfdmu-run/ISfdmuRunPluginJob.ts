@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
@@ -5,8 +6,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
- 
-export * from "./helper_interfaces";
-export { default as ApiEngineBase } from "./ApiEngineBase";
-export { default as ApiInfo } from "./ApiInfo";
-export { default as ApiResultRecord } from "./ApiResultRecord";
+import { ISfdmuRunPluginTask } from ".";
+
+
+export default interface ISfdmuRunPluginJob {
+    tasks: ISfdmuRunPluginTask[],
+}

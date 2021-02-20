@@ -8,7 +8,8 @@
 
 import { TaskOrgData } from "../../../modules/models";;
 import { DATA_MEDIA_TYPE } from "../../package/base/enumerations";
-import { ISfdmuRunPluginTaskData } from "../../package/modules/sfdmuRun";
+import { ISfdmuRunPluginTaskData } from "../../package/modules/sfdmu-run";
+
 
 
 

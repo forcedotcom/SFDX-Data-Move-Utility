@@ -6,6 +6,7 @@
  */
 import {
     ApiEngineBase, 
+    ApiInfo, 
     IApiEngineInitParameters
 } from '../../models/api_models';
 import { Common } from '../common_components/common';
@@ -15,8 +16,8 @@ import { RESOURCES } from '../common_components/logger';
 import parse = require('csv-parse/lib/sync');
 import { OPERATION, RESULT_STATUSES } from '../../../addons/package/base/enumerations';
 
-import ApiResultRecord from '../../../addons/package/common/ApiResultRecord';
-import { ApiInfo } from '../../../addons/package/common/ApiInfo';
+import ApiResultRecord from '../../models/api_models/ApiResultRecord';
+
 
 
 const request = require('request');

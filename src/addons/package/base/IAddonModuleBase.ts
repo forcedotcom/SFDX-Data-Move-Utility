@@ -6,8 +6,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import IPluginExecutionContext from "./IPluginExecutionContext";
-import IPluginRuntimeBase from "./IPluginRuntimeBase";
+import { IPluginExecutionContext, IPluginRuntimeBase } from ".";
+
 
 export default interface IAddonModuleBase {
 
@@ -22,11 +22,6 @@ export default interface IAddonModuleBase {
     /**
      * The main method which is executed by the Plugin
      * when the Addon is running.
-     *
-     * @param {any} args The user's arguments passed from the 
-     *                        manifest file.
-     * @returns {any} Updated runTime data to be passed to the next
-     *                Addon in the method chain.
      */
     onExecute(context: IPluginExecutionContext, args: any): void;
 

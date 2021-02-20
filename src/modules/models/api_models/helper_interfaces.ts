@@ -8,7 +8,8 @@ import { Logger } from '../../components/common_components/logger';
 import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
 import { OPERATION } from '../../../addons/package/base/enumerations';
-import { ApiInfo } from '../../../addons/package/common/ApiInfo';
+import { ApiInfo } from '.';
+
 
 
 

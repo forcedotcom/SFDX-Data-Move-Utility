@@ -7,12 +7,12 @@
 
 import { Logger } from "../../components/common_components/logger";
 import { IApiJobCreateResult, IApiEngineInitParameters, ICsvChunk } from "./helper_interfaces";
-import { IApiEngine } from ".";
+import { ApiInfo, IApiEngine } from ".";
 import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
 import { OPERATION } from "../../../addons/package/base/enumerations";
-import { ApiInfo } from "../../../addons/package/common/ApiInfo";
+
 
 
 

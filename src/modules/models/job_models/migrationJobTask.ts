@@ -30,7 +30,7 @@ import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
 import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES } from '../../../addons/package/base/enumerations';
-import { ApiInfo } from '../../../addons/package/common/ApiInfo';
+import { ApiInfo } from '../api_models';
 
 
 

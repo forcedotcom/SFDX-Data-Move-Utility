@@ -64,9 +64,9 @@ export class AddonManifestDefinition {
             if (this.module.indexOf(CONSTANTS.CORE_ADDON_MODULES_FOLDER_SEPARATOR) >= 0) {
                 // Core module like ":OnBefore"
                 let modulePath = CONSTANTS.CORE_ADDON_MODULES_BASE_PATH
-                    + this.command.replace(CONSTANTS.CORE_ADDON_MODULES_FOLDER_SEPARATOR, '/') + '/' // sfdmu/run/
+                    + this.command.replace(CONSTANTS.CORE_ADDON_MODULES_FOLDER_SEPARATOR, CONSTANTS.CORE_ADDON_MODULES_FOLDER_NAME_SEPARATOR) + '/' // sfdmu-run/
                     + this.module.replace(CONSTANTS.CORE_ADDON_MODULES_FOLDER_SEPARATOR, '/'); // /OnBefore
-                requiredPath = path.normalize(path.resolve(__dirname, modulePath)); 
+                requiredPath = path.normalize(path.resolve(__dirname, modulePath));
             } else {
                 // NPM module
                 requiredPath = this.module;

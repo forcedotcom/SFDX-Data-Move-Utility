@@ -6,9 +6,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import IAddonModuleBase from "./IAddonModuleBase";
-import ICommandRunInfo from "./ICommandInfo";
-import ITableMessage from "../common/ITableMessage";
+import { IAddonModuleBase, ICommandRunInfo, ITableMessage } from ".";
+
+
 
 export default interface IPluginRuntimeBase {
 
@@ -27,15 +27,41 @@ export default interface IPluginRuntimeBase {
     /**
      * Write the standard message about plugin starts to execute
      *
-     * @memberof IPluginRuntimeBase
      */
-    writeStartMessage(module : IAddonModuleBase): void;
+    writeStartMessage(module: IAddonModuleBase): void;
 
     /**
      * Write the standard message about plugin finishes to execute
      *
-     * @memberof IPluginRuntimeBase
      */
-    writeFinishMessage(module : IAddonModuleBase): void;
+    writeFinishMessage(module: IAddonModuleBase): void;
+
+    /**
+     * Reads CSV file
+     *
+     */
+    readCsvFileAsync(filePath: string, linesToRead?: number, columnDataTypeMap?: Map<string, string>): Promise<any[]>;
+
+    /**
+     * Writes into CSV file
+     *
+     */
+    writeCsvFileAsync(filePath: string, records: any[], createEmptyFileOnEmptyArray?: boolean): Promise<void>;
+
+    /** 
+     * Execute secveral async functions in parallel mode 
+     */
+    parallelExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any, maxParallelTasks?: number): Promise<any[]>;
+
+    /**
+     * Execute secveral async functions in serial mode 
+     */
+    serialExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any): Promise<any[]>;
+
+    /**
+     * Removes folder with all subfolders and files
+     *
+     */
+    deleteFolderRecursive(path: string, throwIOErrors?: boolean): void;
 
 }

@@ -5,10 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import IAddonModuleBase from "./IAddonModuleBase";
-import IPluginExecutionContext from "./IPluginExecutionContext";
-import IPluginRuntimeBase from "./IPluginRuntimeBase";
-
+import { IAddonModuleBase, IPluginExecutionContext, IPluginRuntimeBase } from ".";
 
 
 /**

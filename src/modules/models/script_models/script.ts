@@ -27,7 +27,7 @@ import AddonManager from "../../../addons/engine/addonManager";
 import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/package/base/enumerations";
 import { AddonManifestDefinition } from "./addonManifestDefinition";
 import { ISfdmuRunPluginRuntimeSystem } from "../../../addons/engine/sfdmu-run/sfdmuRunPluginRuntime";
-import ICommandRunInfo from "../../../addons/package/base/ICommandInfo";
+import ICommandRunInfo from "../../../addons/package/base/ICommandRunInfo";
 import IPluginInfo from "../../../addons/package/base/IPluginInfo";
 
 

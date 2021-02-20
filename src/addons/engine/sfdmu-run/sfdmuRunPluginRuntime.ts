@@ -7,20 +7,21 @@
 
 
 import { Script, TaskData } from "../../../modules/models";
-import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../modules/components/common_components/logger";
-import { API_ENGINE, DATA_MEDIA_TYPE,  OPERATION } from "../../package/base/enumerations";
+import { Logger } from "../../../modules/components/common_components/logger";
+import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from "../../package/base/enumerations";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
 import { IPluginRuntimeSystemBase } from "../../../modules/models/common_models/helper_interfaces";
 import { Common } from "../../../modules/components/common_components/common";
 import { Sfdx } from "../../../modules/components/common_components/sfdx";
-import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../package/modules/sfdmuRun";
+
 import { IApiEngine } from "../../../modules/models/api_models";
 import { BulkApiV1_0Engine } from "../../../modules/components/api_engines/bulkApiV1_0Engine";
 import { RestApiEngine } from "../../../modules/components/api_engines/restApiEngine";
-import ICommandRunInfo from "../../package/base/ICommandInfo";
-import ITableMessage from "../../package/common/ITableMessage";
-import IAddonModuleBase from "../../package/base/IAddonModuleBase";
-import IBlobField from "../../package/common/IBlobField";
+import ICommandRunInfo from "../../package/base/ICommandRunInfo";
+import IBlobField from "../../package/base/IBlobField";
+import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../package/modules/sfdmu-run";
+import PluginRuntimeBase from "../PluginRuntimeBase";
+
 
 
 export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
@@ -28,7 +29,7 @@ export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
 }
 
 
-export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, ISfdmuRunPluginRuntimeSystem {
+export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements ISfdmuRunPluginRuntime, ISfdmuRunPluginRuntimeSystem {
 
     // Hidden properties to not expose them to the Addon code.
     // The Addon can access only the members of IPluginRuntime.
@@ -36,13 +37,10 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
     #logger: Logger;
 
     constructor(script: Script) {
+        super(script);
         this.#script = script;
-        this.#logger = script.logger;
-        this.runInfo = script.runInfo;
+        this.#logger = script.logger;        
     }
-
-    
-
 
 
     /* -------- System Functions (for direct access) ----------- */
@@ -61,20 +59,20 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
      * @type {string}
     
      */
-    get basePath(): string{
+    get basePath(): string {
         return this.#script.basePath;
     }
-    
+
     /**
      * The base path to the source CSV files
      *
      * @type {string}
    
      */
-    get sourcePath(): string{
+    get sourcePath(): string {
         return this.#script.sourceDirectory;
     }
-    
+
     /**
      * The base path to the target CSV files
      *
@@ -85,40 +83,6 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
         return this.#script.targetDirectory;
     }
 
-    writeMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE", ...tokens: string[]) {
-
-        switch (messageType) {
-            case "WARNING":
-                this.#logger.warn(<string>message, ...tokens);
-                break;
-
-            case "ERROR":
-                this.#logger.error(<string>message, ...tokens);
-                break;
-
-            case "OBJECT":
-                this.#logger.objectNormal(<object>message);
-                break;
-
-            case "TABLE":
-                this.#logger.log(<ITableMessage>message, LOG_MESSAGE_TYPE.TABLE, LOG_MESSAGE_VERBOSITY.VERBOSE, ...tokens);
-                break;
-
-            default:
-                this.#logger.infoVerbose(<string>message, ...tokens);
-                break;
-        }
-    }
-
-    writeStartMessage(module: IAddonModuleBase) {
-        let objectName = module.context.objectName || this.#logger.getResourceString(RESOURCES.global);
-        module.runtime.writeMessage(RESOURCES.startAddonExecute.toString(), "INFO", objectName, module.displayName);
-    }
-
-    writeFinishMessage(module: IAddonModuleBase) {
-        let objectName = module.context.objectName || this.#logger.getResourceString(RESOURCES.global);
-        module.runtime.writeMessage(RESOURCES.finishAddonExecute.toString(), "INFO", objectName, module.displayName);
-    }
 
     getConnection(isSource: boolean) {
         return isSource ? this.#script.sourceOrg.getConnection() : this.#script.targetOrg.getConnection();
@@ -288,36 +252,6 @@ export default class SfdmuRunPluginRuntime implements ISfdmuRunPluginRuntime, IS
         let apiSf = new Sfdx(isSource ? this.#script.sourceOrg : this.#script.targetOrg);
         return await apiSf.downloadBlobFieldDataAsync(recordIds, blobField);
     }
-    
-    /**
-     * Reads data from CSV file
-     *
-     * @param {string} filePath The file path to read
-     * @param {number} [linesToRead] Amount of lines to read from the CSV file. 0  to read entire file.
-     * @param {Map<string, string>} [columnDataTypeMap] The map between [CSV Column Name] => [data type of this column, for example 'boolean', 'text', etc]
-     *                                                   This parameter is uses the SF metadata describe field types.   
-     * @returns {Promise<Array<any>>} Array of the records from the CSV file
-    
-     */
-    async readCsvFileAsync(filePath: string, linesToRead?: number, columnDataTypeMap?: Map<string, string>): Promise<any[]> {
-        return await Common.readCsvFileAsync(filePath, linesToRead, columnDataTypeMap);
-    }
-    
-    /**
-     * Write data into CSV file
-     *
-     * @param {string} filePath The file path to write
-     * @param {Array<any>} records The records to write into the CSV file.
-     * @param {boolean} [createEmptyFileOnEmptyArray] true to override/create en empty csv file if there are no records passed.
-     *                                                  Otherwise the file will not be override with empty data only if the records array is not empty.
-     * @returns {Promise<void>}
-    
-     */
-    async writeCsvFileAsync(filePath: string, records: any[], createEmptyFileOnEmptyArray?: boolean): Promise<void> {
-       return await Common.writeCsvFileAsync(filePath, records, createEmptyFileOnEmptyArray);
-    }
-
-
 
 }
 

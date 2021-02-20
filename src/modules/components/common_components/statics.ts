@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import IBlobField from "../../../addons/package/common/IBlobField";
+import IBlobField from "../../../addons/package/base/IBlobField";
 
 
 
@@ -39,6 +39,7 @@ export const CONSTANTS = {
     USER_ADDON_MANIFEST_FILE_NAME: "addons.json",
     CORE_ADDON_MODULES_BASE_PATH: "../../../addons/modules/",
     CORE_ADDON_MODULES_FOLDER_SEPARATOR: ':',
+    CORE_ADDON_MODULES_FOLDER_NAME_SEPARATOR: '-',
 
     CSV_SOURCE_SUB_DIRECTORY: "source",
     CSV_TARGET_SUB_DIRECTORY: "target",
