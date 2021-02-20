@@ -128,8 +128,8 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
      * @param {string[]} valuesIN The array of values to use in the IN clause
      * @returns {string[]} The array of SOQLs depend on the given values to include all of them
      */
-    createFieldInQueries(selectFields: string[], fieldName: string = "Id", sObjectName: string, valuesIN: string[]): string[] {
-        return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN);
+    createFieldInQueries(selectFields: string[], fieldName: string = "Id", sObjectName: string, valuesIN: string[], whereClause?: string): string[] {
+        return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN, whereClause);
     }
 
 

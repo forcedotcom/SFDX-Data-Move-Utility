@@ -20,13 +20,19 @@ export default class CoreOnBefore extends AddonModuleBase {
 
         this.runtime.writeStartMessage(this);
         
-        let records2 = [{
-            Id: null,           
-            Origin: "Phone"
-        }];
+        // let records2 = [{
+        //     Id: null,           
+        //     Origin: "Phone"
+        // }];
 
-        let output2 = await this.runtime.updateTargetRecordsAsync("Case", OPERATION.Insert, records2);
-        console.log(output2);
+        // let output2 = await this.runtime.updateTargetRecordsAsync("Case", OPERATION.Insert, records2);
+        // console.log(output2);
+
+        let w = "ContentDocumentId = 'XXX'";
+            let queries = this.runtime.createFieldInQueries(
+                                        ['Id', 'LinkedEntityId', 'ContentDocumentId'],
+                                        'LinkedEntityId', 'ContentDocumentLink',
+                                        ['1','2'], w);
 
         this.runtime.writeFinishMessage(this);
     }

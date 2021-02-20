@@ -77,9 +77,10 @@ export default interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
     * @param {string} [fieldName="Id"] The field of the IN clause
     * @param {string} sObjectName The object api name to select 
     * @param {string[]} valuesIN The array of values to use in the IN clause
+    * @param {string} whereClause The additional where clause to add besides the IN, like (Id Name ('Name1', 'Name2)) AND (Field__c = 'value')
     * @returns {string[]} The array of SOQLs depend on the given values to include all of them
     */
-    createFieldInQueries(selectFields: Array<string>, fieldName: string, sObjectName: string, valuesIN: Array<string>): Array<string>;
+    createFieldInQueries(selectFields: Array<string>, fieldName: string, sObjectName: string, valuesIN: Array<string>, whereClause?: string): Array<string>;
 
     /**
       * Performs DML operation on the Target org pr writes into the target CSV file.

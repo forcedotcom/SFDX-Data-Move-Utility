@@ -17,7 +17,8 @@ import {
     Operator,
     Query,
     getComposedField,
-    composeQuery
+    composeQuery,
+    parseQuery
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 
@@ -1019,6 +1020,7 @@ export class Common {
        * @param {Array<string>} selectFields Field names to select
        * @param {string} [fieldName="Id"] The field name to use in the  WHERE Field IN (Values) clause 
        * @param {Array<string>} valuesIN Values to use in in the WHERE Field IN (Values) clause 
+       * @param {string} whereClause The additional where clause to add besides the IN, like (Id Name ('Name1', 'Name2)) AND (Field__c = 'value')
        * @returns {Array<string>} Returns an array of SOQLs
        * @memberof SfdxUtils
        */
@@ -1026,7 +1028,8 @@ export class Common {
         selectFields: Array<string>,
         fieldName: string = "Id",
         sObjectName: string,
-        valuesIN: Array<string>): Array<string> {
+        valuesIN: Array<string>,
+        whereClause?: string): Array<string> {
 
         if (valuesIN.length == 0) {
             return new Array<string>();
@@ -1039,6 +1042,14 @@ export class Common {
         };
         let whereValuesCounter: number = 0;
         let whereValues = new Array<string>();
+        let parsedWhere : Query;
+        if (whereClause) {
+            parsedWhere = whereClause && parseQuery('SELECT Id FROM Account WHERE ' + whereClause);
+            parsedWhere.where.left.openParen = 1;
+            parsedWhere.where.left.closeParen = 1;
+            
+        }
+
 
         function* queryGen() {
             while (true) {
@@ -1057,8 +1068,18 @@ export class Common {
                     value: whereValues,
                     literalType: "STRING"
                 };
-                tempQuery.where.left = c;
+
+                tempQuery.where.left = c;                
+                if (parsedWhere) {                                       
+                    tempQuery.where.left.openParen = 1;                  
+                    tempQuery.where.left.closeParen = 1;
+                    tempQuery.where.right = <WhereClause>{
+                        left: parsedWhere.where.left
+                    }; 
+                    tempQuery.where.operator = "AND";                                     
+                }
                 yield composeQuery(tempQuery);
+                
                 whereValues = new Array<string>();
 
                 if (whereValuesCounter == valuesIN.length)
