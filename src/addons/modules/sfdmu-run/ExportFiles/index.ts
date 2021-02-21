@@ -234,6 +234,13 @@ export default class ExportFiles extends AddonModuleBase {
         // ---------- Compare versions to detect changes -------------------
         // ----------- which files need to download and upload--------------
         // -----------------------------------------------------------------
+        
+        // Get temporary download directory
+        let tempPath = this.runtime.getOrCreateTempPath(this);
+        
+        // Clear directory
+        this.runtime.destroyTempPath(this);
+
         source.recIdToDocLinks.forEach((sourceDocLinks, recordId) => {
             sourceDocLinks.forEach(sourceDocLink => {
                 let sourceContentVersion = source.docIdToDocVersion.get(sourceDocLink["ContentDocumentId"]);
@@ -254,7 +261,7 @@ export default class ExportFiles extends AddonModuleBase {
                         let targetDocLinks = target.recIdToDocLinks.get(targetRecord["Id"]);
                         let found = false;
                         // File exists => check for the modifycation ******
-                        targetDocLinks.forEach(targetDocLink => {
+                        (targetDocLinks || []).forEach(targetDocLink => {
                             let targetContentVersion = target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]);
                             if (sourceContentVersion[args.contentDocumentExternalId] == targetContentVersion[args.contentDocumentExternalId]) {
                                 // This the same file source <=> target
@@ -275,7 +282,7 @@ export default class ExportFiles extends AddonModuleBase {
                             // File was not found in the Target => Create new file and attach it to the target
                             dataToExport.targetRecordIds.push(targetRecord["Id"]);
                             dataToExport.mustUpdateContentVersion = true;
-                            dataToExport.targetDocId = null;
+                            //dataToExport.targetDocId = null;
                         }
                     }
                 }

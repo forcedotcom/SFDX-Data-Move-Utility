@@ -21,6 +21,10 @@ import ICommandRunInfo from "../../package/base/ICommandRunInfo";
 import IBlobField from "../../package/base/IBlobField";
 import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../package/modules/sfdmu-run";
 import PluginRuntimeBase from "../PluginRuntimeBase";
+import { CONSTANTS } from "../../../modules/components/common_components/statics";
+import { IAddonModuleBase } from "../../package/base";
+import * as path from 'path';
+import * as fs from 'fs';
 
 
 
@@ -36,11 +40,13 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
     #script: Script;
     #logger: Logger;
 
+
     constructor(script: Script) {
         super(script);
         this.#script = script;
-        this.#logger = script.logger;        
+        this.#logger = script.logger;
     }
+
 
 
     /* -------- System Functions (for direct access) ----------- */
@@ -251,6 +257,36 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
     async downloadBlobDataAsync(isSource: boolean, recordIds: string[], blobField: IBlobField): Promise<Map<string, string>> {
         let apiSf = new Sfdx(isSource ? this.#script.sourceOrg : this.#script.targetOrg);
         return await apiSf.downloadBlobFieldDataAsync(recordIds, blobField);
+    }
+
+    /**
+     * Creates if not exist or returns the path to the temporary folder
+     * dedicated to this Addon
+     *
+     * @returns {string}
+     * @memberof ISfdmuRunPluginRuntime
+     */
+    getOrCreateTempPath(module: IAddonModuleBase): string {
+        let tmp = path.normalize(this.basePath
+            + '/'
+            + Common.formatStringLog(CONSTANTS.ADDON_TEMP_RELATIVE_FOLDER,
+                module.displayName.replace(/[^\w\d]/g, '-')) + '/');
+        if (!fs.existsSync(tmp)) {
+            fs.mkdirSync(tmp);
+        }
+        return tmp;
+    }
+
+    /**
+     * Destroys the previously created temporary path
+     *
+     * @memberof ISfdmuRunPluginRuntime
+     */
+    destroyTempPath(module: IAddonModuleBase, removeParentFolder?: boolean): void {
+        if (typeof removeParentFolder == 'undefined')
+            removeParentFolder = false;
+        let tmp = this.getOrCreateTempPath(module);
+        Common.deleteFolderRecursive(tmp, false, removeParentFolder);
     }
 
 }

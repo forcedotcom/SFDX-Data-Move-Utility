@@ -1142,7 +1142,7 @@ export class Common {
      * @param {string} path Path to the folder to remove
      * @memberof Common
      */
-    public static deleteFolderRecursive(path: string, throwIOErrors?: boolean) {
+    public static deleteFolderRecursive(path: string, throwIOErrors?: boolean, removeSelfDirectory: boolean = true) {
         if (fs.existsSync(path)) {
             fs.readdirSync(path).forEach(file => {
                 var curPath = path + "/" + file;
@@ -1161,7 +1161,9 @@ export class Common {
                 }
             });
             try {
-                fs.rmdirSync(path);
+                if (removeSelfDirectory) {
+                    fs.rmdirSync(path);
+                }
             } catch (ex) {
                 if (throwIOErrors) {
                     throw new Error(ex.message);
@@ -1470,6 +1472,43 @@ export class Common {
             let key = keyProps.map(keyProp => String(item[keyProp] || defaultValue)).join(keyDelimiter);
             return key;
         });
+    }
+    /**
+     * Formats string in object-like style like:
+     * 
+     * formatString('My Name is {name} and my age is {age}.', {name: 'Mike', age : '26'})
+     *
+     * @static
+     * @param {string} inputString The input string
+     * @param {*} placeholderObject The replacement object
+     * @returns {string}
+     * @memberof Common
+     */
+    public static formatStringObject(inputString: string, placeholderObject: any): string {
+        return inputString.replace(/{(\w+)}/g, (placeholderWithDelimiters: any, placeholderWithoutDelimiters: any) =>
+            placeholderObject.hasOwnProperty(placeholderWithoutDelimiters) ?
+                placeholderObject[placeholderWithoutDelimiters] : placeholderWithDelimiters
+        );
+    }
+
+    /**
+     * Formats strings in 'console.log' style like: 
+     * 
+     * formatStringS('This is replacement: %s', 'replacement')
+     *
+     * @static
+     * @returns {string} The input string
+     * @memberof Common
+     */
+    public static formatStringLog(...args: string[]): string {
+        var argum = Array.prototype.slice.call(args);
+        var rep = argum.slice(1, argum.length);
+        var i = 0;
+        var output = argum[0].replace(/%s/g, () => {
+            var subst = rep.slice(i, ++i);
+            return subst;
+        });
+        return output;
     }
 
 

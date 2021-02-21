@@ -7,7 +7,7 @@
  */
 
 import { ISfdmuRunPluginJob } from ".";
-import { IBlobField } from "../../base";
+import { IAddonModuleBase, IBlobField } from "../../base";
 import { API_ENGINE, OPERATION } from "../../base/enumerations";
 import IPluginRuntimeBase from "../../base/IPluginRuntimeBase";
 
@@ -116,6 +116,22 @@ export default interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
     downloadBlobDataAsync(isSource: boolean, recordIds: Array<string>, blobField: IBlobField): Promise<Map<string, string>>;
 
     /**
+     * Creates if not exist or returns the path to the temporary folder
+     * dedicated to this Addon
+     *
+     * @returns {string}
+     * @memberof ISfdmuRunPluginRuntime
+     */
+    getOrCreateTempPath(module: IAddonModuleBase): string;
+
+    /**
+     * Destroys the previously created temporary path
+     *
+     * @memberof ISfdmuRunPluginRuntime
+     */
+    destroyTempPath(module: IAddonModuleBase, removeParentFolder?: boolean): void;
+
+    /**
      * The base path to the currently executing job (export.json file)
      *
      * @type {string}
@@ -130,7 +146,7 @@ export default interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
      * @memberof ISfdmuRunPluginRuntime
      */
     readonly sourcePath: string;
-    
+
     /**
      * The path to the target files
      *
