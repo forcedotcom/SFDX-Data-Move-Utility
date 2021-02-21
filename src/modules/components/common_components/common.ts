@@ -1042,12 +1042,12 @@ export class Common {
         };
         let whereValuesCounter: number = 0;
         let whereValues = new Array<string>();
-        let parsedWhere : Query;
+        let parsedWhere: Query;
         if (whereClause) {
             parsedWhere = whereClause && parseQuery('SELECT Id FROM Account WHERE ' + whereClause);
             parsedWhere.where.left.openParen = 1;
             parsedWhere.where.left.closeParen = 1;
-            
+
         }
 
 
@@ -1069,17 +1069,17 @@ export class Common {
                     literalType: "STRING"
                 };
 
-                tempQuery.where.left = c;                
-                if (parsedWhere) {                                       
-                    tempQuery.where.left.openParen = 1;                  
+                tempQuery.where.left = c;
+                if (parsedWhere) {
+                    tempQuery.where.left.openParen = 1;
                     tempQuery.where.left.closeParen = 1;
                     tempQuery.where.right = <WhereClause>{
                         left: parsedWhere.where.left
-                    }; 
-                    tempQuery.where.operator = "AND";                                     
+                    };
+                    tempQuery.where.operator = "AND";
                 }
                 yield composeQuery(tempQuery);
-                
+
                 whereValues = new Array<string>();
 
                 if (whereValuesCounter == valuesIN.length)
@@ -1390,6 +1390,86 @@ export class Common {
             result = result.concat(await fn());
         }
         return result;
+    }
+
+    /**
+     * Converts array to map by given key composed from the item properties (multiple value version)
+     *
+     * @static
+     * @param {Array<any>} array The array to convert
+     * @param {Array<string>} keyProps The props to compose the map key
+     * @param {('|')} keyDelimiter The delimiter to separate the key values 
+     * @param {string} defaultValue The default value to put into the key if the value missing in the object item 
+     * @param {Array<string>} valueProps The array of props to compose the value, if null - the whole item object used as a value
+     * @returns {Map<string, Array<any>>} The resulting map as: key => [array of items with the given key]
+     * @memberof Common
+     */
+    public static arrayToMapMulti(array: Array<any>,
+        keyProps: Array<string>,
+        keyDelimiter: string = '|',
+        defaultValue: string = '',
+        valueProps?: Array<string>): Map<string, Array<any>> {
+        let out = new Map<string, Array<any>>();
+        array.forEach(item => {
+            let key = keyProps.map(keyProp => String(item[keyProp] || defaultValue)).join(keyDelimiter);
+            if (!out.has(key)) {
+                out.set(key, []);
+            }
+            if (!valueProps)
+                out.get(key).push(item);
+            else
+                out.get(key).push(valueProps.map(valueProp => String(item[valueProp] || '')));
+        });
+        return out;
+    }
+
+    /**
+        * Converts array to map by given key composed from the item properties (multiple value version)
+        *
+        * @static
+        * @param {Array<any>} array The array to convert
+        * @param {Array<string>} keyProps The props to compose the map key
+        * @param {('|')} keyDelimiter The delimiter to separate the key values 
+        * @param {string} defaultValue The default value to put into the key if the value missing in the object item
+        * @param {Array<string>} valueProps The array of props to compose the value, if null - the whole item object used as a value 
+        * @returns {Map<string, Array<any>>} The resulting map as: key => [item of the key]
+        * @memberof Common
+        */
+    public static arrayToMap(array: Array<any>,
+        keyProps: Array<string>,
+        keyDelimiter: string = '|',
+        defaultValue: string = '',
+        valueProps?: Array<string>): Map<string, any> {
+        let out = new Map<string, any>();
+        array.forEach(item => {
+            let key = keyProps.map(keyProp => String(item[keyProp] || defaultValue)).join(keyDelimiter);
+            if (!valueProps)
+                out.set(key, item);
+            else
+                out.set(key, valueProps.map(valueProp => String(item[valueProp] || '')));
+        });
+        return out;
+    }
+
+    /**
+     * Converts array of object to array of strings
+     *
+     * @static
+     * @param {Array<any>} array The array to convert
+     * @param {Array<string>} keyProps The props to compose the map key
+     * @param {string} [keyDelimiter='|'] The delimiter to separate the key values
+     * @param {string} [defaultValue=''] he default value to put into the key if the value missing in the object item
+     * @returns {Array<string>} The resulting array of strings, composed from the given keys
+     * @memberof Common
+     */
+    public static arrayToPropsArray(array: Array<any>,
+        keyProps: Array<string>,
+        keyDelimiter: string = '|',
+        defaultValue: string = ''): Array<string> {
+        return array.map(item => {
+            let key = keyProps.map(keyProp => String(item[keyProp] || defaultValue)).join(keyDelimiter);
+            return key;
+        });
     }
 
 
