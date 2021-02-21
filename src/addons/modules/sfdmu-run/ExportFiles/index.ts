@@ -18,45 +18,48 @@ interface IOnExecuteArguments {
     contentDocumentExternalId: string;
 }
 
-interface IImportData {
+interface IDataToImport {
     recIdToDocLinks: Map<string, Array<any>>;
     docIds: Array<string>;
     recordIds: Array<string>;
     docIdToDocVersion: Map<string, any>;
 }
 
-interface IExportData {
+interface IDataToExport {
     /**
      * The source content version 
      * to update the target content document version
-     * (not including VersionData && Blob)
+     * (including VersionData as Blob)
      *
      * @type {*}
      * @memberof IExportData
      */
     sourceContentVersion: any; // only once => to update
-    
-    /**
-     * The source VersionData field
-     *
-     * @type {*}
-     * @memberof IExportData
-     */
 
-    sourceVersionData: any;
-    
     /**
-     * The source Blob data
+    * true if the blob data is already downloaded for this version
+    * (the VersionData field contains base64 file data instead of the link to the content version
+    * retireved by the initial query)
+    *
+    * @type {boolean}
+    * @memberof IExportData
+    */
+    blobIsDownloaded: boolean;
+
+    /**
+     * true if this version is already uploaded to the target
      *
-     * @type {string}
+     * @type {boolean}
      * @memberof IExportData
      */
-    sourceBase64BlobData: string;
+    versionIsUploaded: boolean;
 
     /**
      * All ONLY NEW target records need to attach this record to, 
      * need to create new content link records.
      * No records if only need to update the content version data.
+     * Once the ContentDocumentLink is created the entry is removed from this array
+     * until it will be empty.
      *
      * @type {string[]}
      * @memberof IExportData
@@ -68,6 +71,14 @@ interface IExportData {
      * to update the version from the source content version
      */
     targetDocId: string;
+
+    /**
+     * true when need to insert/update the target content version 
+     *
+     * @type {boolean}
+     * @memberof IDataToExport
+     */
+    mustUpdateContentVersion: boolean;
 }
 
 export default class ExportFiles extends AddonModuleBase {
@@ -107,7 +118,7 @@ export default class ExportFiles extends AddonModuleBase {
             return;
         }
 
-        let source: IImportData = {
+        let source: IDataToImport = {
             recIdToDocLinks: new Map<string, Array<any>>(),
             docIds: [],
             recordIds: [...task.sourceTaskData.idRecordsMap.keys()],
@@ -115,15 +126,15 @@ export default class ExportFiles extends AddonModuleBase {
         };
 
 
-        let target: IImportData = {
+        let target: IDataToImport = {
             recIdToDocLinks: new Map<string, Array<any>>(),
             docIds: [],
             recordIds: [...task.targetTaskData.idRecordsMap.keys()],
             docIdToDocVersion: new Map<string, any>()
         };
 
-        // Map: Source ContentVersion
-        let dataToExport = new Array<IExportData>();
+        // Map: [Source ContentVersion] => IDataToExport
+        let dataToExportMap = new Map<any, IDataToExport>();
 
         // ------------------ Read Target ------------------------------
         // -------------------------------------------------------------
@@ -224,36 +235,74 @@ export default class ExportFiles extends AddonModuleBase {
         // ----------- which files need to download and upload--------------
         // -----------------------------------------------------------------
         source.recIdToDocLinks.forEach((sourceDocLinks, recordId) => {
-            let sourceContentVersion = source.docIdToDocVersion.get(sourceDocLinks["ContentDocumentId"]);
-            let targetRecord = task.sourceToTargetRecordMap.get(task.sourceTaskData.idRecordsMap.get(recordId));
-            if (targetRecord) {
-                let targetDocLinks = target.recIdToDocLinks.get(targetRecord["Id"]);
-                if (!targetDocLinks || targetDocLinks.length) {
-                    // No targets => new file *************************
-                    // Add to the create array....
-
-                } else {
-                    // File exists => check for the modifycation ******
-                    targetDocLinks.forEach(targetDocLink => {
-                        let targetContentVersion = target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]);
-                        if (sourceContentVersion[args.contentDocumentExternalId] == targetContentVersion[args.contentDocumentExternalId]) {
-                            // This the same file source <=> target
-                            let sourceDate = new Date(String(sourceContentVersion['ContentModifiedDate']));
-                            let targetDate = new Date(String(targetContentVersion['ContentModifiedDate']));
-                            if (sourceDate > targetDate) {
-                                // The file was modified
-                                // Add to the update array....
-
+            sourceDocLinks.forEach(sourceDocLink => {
+                let sourceContentVersion = source.docIdToDocVersion.get(sourceDocLink["ContentDocumentId"]);
+                if (sourceContentVersion) {
+                    let targetRecord = task.sourceToTargetRecordMap.get(task.sourceTaskData.idRecordsMap.get(recordId));
+                    if (!dataToExportMap.has(sourceContentVersion)) {
+                        dataToExportMap.set(sourceContentVersion, <IDataToExport>{
+                            blobIsDownloaded: false,
+                            versionIsUploaded: false,
+                            sourceContentVersion,
+                            targetDocId: null,
+                            targetRecordIds: [],
+                            mustUpdateContentVersion: false
+                        });
+                    }
+                    let dataToExport = dataToExportMap.get(sourceContentVersion);
+                    if (targetRecord) {
+                        let targetDocLinks = target.recIdToDocLinks.get(targetRecord["Id"]);
+                        let found = false;
+                        // File exists => check for the modifycation ******
+                        targetDocLinks.forEach(targetDocLink => {
+                            let targetContentVersion = target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]);
+                            if (sourceContentVersion[args.contentDocumentExternalId] == targetContentVersion[args.contentDocumentExternalId]) {
+                                // This the same file source <=> target
+                                found = true;
+                                if (!dataToExport.targetDocId) {
+                                    dataToExport.targetDocId = String(targetContentVersion['ContentDocumentId']);
+                                }
+                                let sourceDate = new Date(String(sourceContentVersion['ContentModifiedDate']));
+                                let targetDate = new Date(String(targetContentVersion['ContentModifiedDate']));
+                                if (sourceDate > targetDate) {
+                                    // The file was modified ****************
+                                    // Add this item to the export array ///////////
+                                    dataToExport.mustUpdateContentVersion = true;
+                                }
                             }
+                        });
+                        if (!found) {
+                            // File was not found in the Target => Create new file and attach it to the target
+                            dataToExport.targetRecordIds.push(targetRecord["Id"]);
+                            dataToExport.mustUpdateContentVersion = true;
+                            dataToExport.targetDocId = null;
                         }
-                    });
+                    }
                 }
-            }
+            });
+
         });
         // -----------------------------------------------------------------
         // -----------------------------------------------------------------
 
 
+
+        // ---------- Process data -----------------------------------------
+        // -----------Download ---------------------------------------------
+
+        // -----------------------------------------------------------------
+
+
+
+        // -----------Upload -----------------------------------------------
+
+        // -----------------------------------------------------------------
+
+
+
+        // -----------Create ContentDocumentLinks ---------------------------
+
+        // ------------------------------------------------------------------
 
         this.runtime.writeFinishMessage(this);
 
