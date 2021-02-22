@@ -19,12 +19,13 @@ import { BulkApiV1_0Engine } from "../../../modules/components/api_engines/bulkA
 import { RestApiEngine } from "../../../modules/components/api_engines/restApiEngine";
 import ICommandRunInfo from "../../package/base/ICommandRunInfo";
 import IBlobField from "../../package/base/IBlobField";
-import { ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../package/modules/sfdmu-run";
+import { ISfdmuContentVersion, ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../package/modules/sfdmu-run";
 import PluginRuntimeBase from "../PluginRuntimeBase";
 import { CONSTANTS } from "../../../modules/components/common_components/statics";
-import { IAddonModuleBase } from "../../package/base";
+import { ADDON_CONSTANTS, IAddonModuleBase } from "../../package/base";
 import * as path from 'path';
 import * as fs from 'fs';
+import SfdmuContentVersion from "./sfdmuContentVersion";
 
 
 
@@ -46,6 +47,8 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
         this.#script = script;
         this.#logger = script.logger;
     }
+
+
 
 
 
@@ -257,6 +260,131 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
     async downloadBlobDataAsync(isSource: boolean, recordIds: string[], blobField: IBlobField): Promise<Map<string, string>> {
         let apiSf = new Sfdx(isSource ? this.#script.sourceOrg : this.#script.targetOrg);
         return await apiSf.downloadBlobFieldDataAsync(recordIds, blobField);
+    }
+
+    /**
+     * Downloads the given ContentVersions data from the source org and uploads it to the target org.
+     * Supports both binary and url contents.
+     * Creates or updates ContentDocument object if necessary.
+     * 
+     * It will process all the records which are passed to thsi function by creating new ContentVersion records.
+     * 
+     * Pass empty ContentDocumentId if need to create a new ContentDocument record.
+     * In this case it will fill out the ContentDocumentId field with new ContentDocumentId.
+     * 
+     * Fills out the Id field with the new ContentVersion id after create the new content version.
+     *
+     * @param {ISfdmuContentVersion} sourceVersions
+     * @param {number} [maxParallelTasks]
+     * @param {number} [maxMemorySize]
+     * @returns {Promise<ISfdmuContentVersion[]>} The updated imput records
+     * @memberof ISfdmuRunPluginRuntime
+     */
+    async transferContentVersions(sourceVersions: ISfdmuContentVersion[],
+        maxParallelTasks: number = ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_PARALLELIZM,
+        maxMemorySize: number = ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE): Promise<ISfdmuContentVersion[]> {
+
+        let urlJobs = new Array<ISfdmuContentVersion>();
+
+        let fileJobs = [...(function* () {
+            let versions = new Array<SfdmuContentVersion>();
+            let size = 0;
+            for (let index = 0; index < sourceVersions.length; index++) {
+                const version = sourceVersions[index];
+                if (version.isUrlContent) {
+                    urlJobs.push(version);
+                    continue;
+                }
+                if (version.ContentSize + size > maxMemorySize) {
+                    yield versions;
+                    size = 0;
+                    versions = new Array<SfdmuContentVersion>();
+                }
+                versions.push(version);
+                size += version.ContentSize;
+            };
+        })()];
+
+        // Files -----------------------
+        for (let index = 0; index < fileJobs.length; index++) {
+
+            // Create data to download
+            const downloadJob = fileJobs[index];
+            let idToContentVersionMap: Map<string, ISfdmuContentVersion> = Common.arrayToMap(downloadJob, ['Id']);
+
+            // Download
+            let idToContentVersionBlobMap = await this.downloadBlobDataAsync(true, [...idToContentVersionMap.keys()], <IBlobField>{
+                fieldName: 'VersionData',
+                objectName: 'ContentVersion'
+            });
+
+            // Create array to upload
+            let newVersionToOldVersionMap = new Map<any, ISfdmuContentVersion>();
+
+            let versionsToUpload = [...idToContentVersionBlobMap.keys()].map(versionId => {
+                let blobData = idToContentVersionBlobMap.get(versionId);
+                let sourceContentVersion = idToContentVersionMap.get(versionId);
+                let newContentVersion = Common.cloneObjectIncludeProps(sourceContentVersion,
+                    'ContentDocumentId',
+                    'Title', 'Description', 'PathOnClient');
+                newContentVersion['VersionData'] = blobData;
+                newContentVersion['ReasonForChange'] = sourceContentVersion.reasonForChange;
+                newVersionToOldVersionMap.set(newContentVersion, sourceContentVersion);
+                return newContentVersion;
+            });
+
+            // Upload
+            await ___upload(versionsToUpload, newVersionToOldVersionMap);
+        }
+
+        // Links ----------------------------------
+        {
+            // Create array to upload
+            let newVersionToOldVersionMap = new Map<any, ISfdmuContentVersion>();
+
+            let versionsToUpload = urlJobs.map(sourceContentVersion => {
+                let newContentVersion = Common.cloneObjectIncludeProps(sourceContentVersion,
+                    'ContentDocumentId',
+                    'Title', 'Description',
+                    'ContentUrl');
+                newContentVersion['ReasonForChange'] = sourceContentVersion.reasonForChange;
+                newVersionToOldVersionMap.set(newContentVersion, sourceContentVersion);
+                return newContentVersion;
+            });
+
+            // Upload
+            await ___upload(versionsToUpload, newVersionToOldVersionMap);
+        }
+
+
+        // ---------------- Private Helpers --------------------
+        async function ___upload(versionsToUpload: any[], newVersionToOldVersionMap: Map<any, ISfdmuContentVersion>) {
+            let uploaded = await this.updateTargetRecordsAsync('ContentVersion', OPERATION.Insert, versionsToUpload, API_ENGINE.REST_API, true);
+
+            let newRecordIds = new Map<string, ISfdmuContentVersion>();
+            uploaded.forEach((record: any) => {
+                let source = newVersionToOldVersionMap.get(record);
+                if (source) {
+                    source.targetId = record["Id"];
+                    if (!source.ContentDocumentId) {
+                        newRecordIds.set(source.targetId, source);
+                    }
+                }
+            })
+
+            let queries = this.createFieldInQueries(['Id', 'ContentDocumentId'], 'Id', 'ContentVersion', [...newRecordIds.keys()]);
+            let newVersions = await this.queryMultiAsync(false, queries);
+            newVersions.forEach((version: any) => {
+                let source = newVersionToOldVersionMap.get(version["Id"]);
+                source.ContentDocumentId = version['ContentDocumentId'];
+            });
+        };
+        // -------------------------------------------------------
+
+
+        return sourceVersions;
+
+
     }
 
     /**

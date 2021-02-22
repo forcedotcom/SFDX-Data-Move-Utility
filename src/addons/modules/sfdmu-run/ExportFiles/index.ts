@@ -6,7 +6,8 @@
 
 
 import { Common } from "../../../../modules/components/common_components/common";
-import AddonModuleBase from "../../../package/base/AddonModuleBase";
+import SfdmuContentVersion from "../../../engine/sfdmu-run/sfdmuContentVersion";
+import AddonModuleBase from "../../../package/base/addonModuleBase";
 import { OPERATION } from "../../../package/base/enumerations";
 import IPluginExecutionContext from "../../../package/base/IPluginExecutionContext";
 import { ISfdmuRunPluginRuntime } from "../../../package/modules/sfdmu-run";
@@ -25,6 +26,8 @@ interface IDataToImport {
     docIdToDocVersion: Map<string, any>;
 }
 
+
+
 interface IDataToExport {
     /**
      * The source content version 
@@ -34,7 +37,7 @@ interface IDataToExport {
      * @type {*}
      * @memberof IExportData
      */
-    sourceContentVersion: any; // only once => to update
+    sourceContentVersion: SfdmuContentVersion; // only once => to update
 
     /**
     * true if the blob data is already downloaded for this version
@@ -216,7 +219,9 @@ export default class ExportFiles extends AddonModuleBase {
 
             let fields = Common.distinctStringArray([
                 'Id', args.contentDocumentExternalId, 'ContentDocumentId',
-                'Title', 'Description', 'PathOnClient', 'VersionData', 'ContentModifiedDate'
+                'Title', 'Description', 'PathOnClient', 'VersionData',
+                'ContentModifiedDate', 'ContentSize', 'Checksum',
+                'ContentUrl', 'ContentBodyId'
             ]);
 
             let queries = this.runtime.createFieldInQueries(
@@ -234,13 +239,6 @@ export default class ExportFiles extends AddonModuleBase {
         // ---------- Compare versions to detect changes -------------------
         // ----------- which files need to download and upload--------------
         // -----------------------------------------------------------------
-        
-        // Get temporary download directory
-        let tempPath = this.runtime.getOrCreateTempPath(this);
-        
-        // Clear directory
-        this.runtime.destroyTempPath(this);
-
         source.recIdToDocLinks.forEach((sourceDocLinks, recordId) => {
             sourceDocLinks.forEach(sourceDocLink => {
                 let sourceContentVersion = source.docIdToDocVersion.get(sourceDocLink["ContentDocumentId"]);
@@ -250,7 +248,7 @@ export default class ExportFiles extends AddonModuleBase {
                         dataToExportMap.set(sourceContentVersion, <IDataToExport>{
                             blobIsDownloaded: false,
                             versionIsUploaded: false,
-                            sourceContentVersion,
+                            sourceContentVersion: new SfdmuContentVersion(sourceContentVersion),
                             targetDocId: null,
                             targetRecordIds: [],
                             mustUpdateContentVersion: false
@@ -262,27 +260,24 @@ export default class ExportFiles extends AddonModuleBase {
                         let found = false;
                         // File exists => check for the modifycation ******
                         (targetDocLinks || []).forEach(targetDocLink => {
-                            let targetContentVersion = target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]);
-                            if (sourceContentVersion[args.contentDocumentExternalId] == targetContentVersion[args.contentDocumentExternalId]) {
+                            let targetContentVersion = new SfdmuContentVersion(target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]));
+                            if (dataToExport.sourceContentVersion[args.contentDocumentExternalId] == targetContentVersion[args.contentDocumentExternalId]) {
                                 // This the same file source <=> target
                                 found = true;
                                 if (!dataToExport.targetDocId) {
                                     dataToExport.targetDocId = String(targetContentVersion['ContentDocumentId']);
                                 }
-                                let sourceDate = new Date(String(sourceContentVersion['ContentModifiedDate']));
-                                let targetDate = new Date(String(targetContentVersion['ContentModifiedDate']));
-                                if (sourceDate > targetDate) {
+                                if (dataToExport.sourceContentVersion.isNewer(targetContentVersion)) {
                                     // The file was modified ****************
                                     // Add this item to the export array ///////////
                                     dataToExport.mustUpdateContentVersion = true;
-                                }
+                                }                                
                             }
                         });
                         if (!found) {
                             // File was not found in the Target => Create new file and attach it to the target
                             dataToExport.targetRecordIds.push(targetRecord["Id"]);
                             dataToExport.mustUpdateContentVersion = true;
-                            //dataToExport.targetDocId = null;
                         }
                     }
                 }
@@ -292,6 +287,7 @@ export default class ExportFiles extends AddonModuleBase {
         // -----------------------------------------------------------------
         // -----------------------------------------------------------------
 
+        //let d = await this.runtime.transferContentVersions()
 
 
         // ---------- Process data -----------------------------------------

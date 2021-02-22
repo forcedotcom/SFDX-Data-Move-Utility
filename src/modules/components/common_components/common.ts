@@ -1136,6 +1136,38 @@ export class Common {
     }
 
     /**
+     * Clone object including only the given properties
+     *
+     * @static
+     * @param {object} objectToClone
+     * @param {...string[]} propsToInclude
+     * @returns
+     * @memberof Common
+     */
+    public static cloneObjectIncludeProps(objectToClone: object, ...propsToInclude: string[]) {
+        if (!objectToClone || Array.isArray(objectToClone) || typeof objectToClone != 'object') return objectToClone;
+        return Object.keys(objectToClone)
+            .filter(key => propsToInclude.indexOf(key) >= 0)
+            .reduce((outObject, key) => (outObject[key] = objectToClone[key], outObject), {});
+    }
+
+    /**
+     * Clone object with all its properties, but the given ones
+     *
+     * @static
+     * @param {object} objectToClone
+     * @param {...string[]} propsToInclude
+     * @returns
+     * @memberof Common
+     */
+    public static cloneObjectExcludeProps(objectToClone: object, ...propsToExclude: string[]) {
+        if (!objectToClone || Array.isArray(objectToClone) || typeof objectToClone != 'object') return objectToClone;
+        return Object.keys(objectToClone)
+            .filter(key => propsToExclude.indexOf(key) < 0)
+            .reduce((outObject, key) => (outObject[key] = objectToClone[key], outObject), {});
+    }
+
+    /**
      * Remove folder with all files
      *
      * @static

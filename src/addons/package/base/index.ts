@@ -1,12 +1,4 @@
-
-/*
- * Copyright (c) 2020, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- */
-
-import AddonModuleBase from "./AddonModuleBase";
+import addonModuleBase from "./addonModuleBase";
 import IAddonModuleBase from "./IAddonModuleBase";
 import IApiInfo from "./IApiInfo";
 import IApiResultRecord from "./IApiResultRecord";
@@ -18,7 +10,7 @@ import IPluginRuntimeBase from "./IPluginRuntimeBase";
 import ITableMessage from "./ITableMessage";
 
 export {
-  AddonModuleBase,
+  addonModuleBase,
   IAddonModuleBase,
   IApiInfo,
   IApiResultRecord,
@@ -29,4 +21,5 @@ export {
   IPluginRuntimeBase,
   ITableMessage
 };
+export * from "./constants";
 export * from "./enumerations";
