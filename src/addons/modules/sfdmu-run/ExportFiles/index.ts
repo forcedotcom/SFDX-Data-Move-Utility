@@ -128,6 +128,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                 let data = await this.runtime.queryMultiAsync(false, queries);
                 target.recIdToDocLinks = Common.arrayToMapMulti(data, ['LinkedEntityId']);
                 target.docIds = Common.distinctStringArray(Common.arrayToPropsArray(data, ['ContentDocumentId']));
+                this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
             }
         }
 
@@ -135,9 +136,11 @@ export default class ExportFiles extends SfdmuRunAddonBase {
         if (args.deleteOldData || args.operation == OPERATION.Delete) {
             if (target.docIds.length > 0) {
                 this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_DeleteTargetContentDocuments);
-                await this.runtime.updateTargetRecordsAsync('ContentDocument',
+                let data = await this.runtime.updateTargetRecordsAsync('ContentDocument',
                     OPERATION.Delete,
                     target.docIds);
+                // TODO: ?????
+                this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords, String(data.length), '0');
             }
             if (args.operation == OPERATION.Delete) {
                 // Only delete -> exit
@@ -174,6 +177,8 @@ export default class ExportFiles extends SfdmuRunAddonBase {
             let data = await this.runtime.queryMultiAsync(false, queries);
             target.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
 
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
+
         }
         // -----------------------------------------------------------
         // -----------------------------------------------------------
@@ -193,6 +198,8 @@ export default class ExportFiles extends SfdmuRunAddonBase {
             let data = await this.runtime.queryMultiAsync(true, queries);
             source.recIdToDocLinks = Common.arrayToMapMulti(data, ['LinkedEntityId']);
             source.docIds = Common.distinctStringArray(Common.arrayToPropsArray(data, ['ContentDocumentId']));
+
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
         }
 
 
@@ -217,6 +224,8 @@ export default class ExportFiles extends SfdmuRunAddonBase {
             }
             let data = await this.runtime.queryMultiAsync(true, queries);
             source.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
+
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
 
         }
 
@@ -276,24 +285,20 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
         // ---------- Upload -----------------------------------------------
         // -----------------------------------------------------------------
-        let versionsToUpload = [...dataToExportMap.values()].filter(item => item.isVersionChanged).map(item => item.version);
-
-        // TEST:
-        versionsToUpload.push(new SfdmuContentVersion({
-            Title: 'e',
-            ContentUrl: 'http://google.com',
-            Description: 'ddd',
-        }));
-
+        let versionsToUpload = [...dataToExportMap.values()].filter(dataItem => dataItem.isVersionChanged).map(dataItem => dataItem.version);
         if (versionsToUpload.length > 0) {
             this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ExportingContentVersions);
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RecordsToBeProcessed, String(versionsToUpload.length));
             await this.runtime.transferContentVersions(versionsToUpload);
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords,
+                String(versionsToUpload.length),
+                String(versionsToUpload.filter(item => item.isError).length));
         }
         // -----------------------------------------------------------------
         // -----------------------------------------------------------------
 
 
-        // -----------Create ContentDocumentLinks ---------------------------
+        // -----------Create missing ContentDocumentLinks ---------------------------
         // -----------------------------------------------------------------
 
         // ------------------------------------------------------------------

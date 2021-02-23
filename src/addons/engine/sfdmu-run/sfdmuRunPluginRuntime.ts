@@ -32,7 +32,7 @@ import { CORE_MESSAGES } from "../messages/core";
 
 export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
     $$setPluginJob(): void,
-    $$getCoreMessage(module: IAddonModuleBase, message: CORE_MESSAGES): string,
+    $$getCoreMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): string,
     $$writeCoreInfoMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
     $$writeCoreWarningMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
     $$writeCoreErrorMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
@@ -53,29 +53,30 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
         this.#logger = script.logger;
     }
 
-    
+
     /* -------- System Functions (for direct access) ----------- */
     $$setPluginJob() {
         this.pluginJob = new SfdmuRunPluginJob(this.#script.job);
     }
 
-    $$getCoreMessage(module: IAddonModuleBase, message: CORE_MESSAGES): string {
+    $$getCoreMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): string {
+        let mess = Common.formatStringLog((message || '').toString(), ...tokens);
         return this.#logger.getResourceString(RESOURCES.coreAddonMessageTemplate,
             module.displayName,
             module.context.objectDisplayName,
-            (message || '').toString());
+            mess);
     }
 
     $$writeCoreInfoMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getCoreMessage(module, message), "INFO", ...tokens);
+        this.writeMessage(this.$$getCoreMessage(module, message, ...tokens), "INFO");
     }
 
     $$writeCoreWarningMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getCoreMessage(module, message), "WARNING", ...tokens);
+        this.writeMessage(this.$$getCoreMessage(module, message, ...tokens), "WARNING");
     }
 
     $$writeCoreErrorMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getCoreMessage(module, message), "ERROR", ...tokens);
+        this.writeMessage(this.$$getCoreMessage(module, message, ...tokens), "ERROR");
     }
 
 
