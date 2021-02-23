@@ -8,12 +8,14 @@
 
 
 export enum CORE_MESSAGES {
+    // Common -------------------------------------
     Preparing = 'Preparing ...',
     Analysing = 'Analysing ...',
     RetrievedRecords = 'Retrieved %s records.',
     RecordsToBeProcessed = 'There are %s records to process.',
     ProcessedRecords = 'Total %s records have been processed, %s records failed.',
 
+    // ExportFiles plugin -------------------------
     ExportFiles_TargetIsFileWarning = 'Cannot process Files on CSV targets. Set a salesforce org as a Target.',
     ExportFiles_CouldNotFindObjectToProcessWarning = 'Could not find object data to process.',
     ExportFiles_ReadonlyOperationWarning = 'Cannot process Files on Readonly objects. Define another operation.',
