@@ -161,7 +161,10 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
     * @returns {Promise<any[]>} The result records. Typeically it is THE SAME records as passed to the method, but you can override the IDs
     *                           with the target Ids by putting updateRecordId = true   
     */
-    async updateTargetRecordsAsync(sObjectName: string, operation: OPERATION, records: any[], engine: API_ENGINE = API_ENGINE.DEFAULT_ENGINE, updateRecordId: boolean = true): Promise<any[]> {
+    async updateTargetRecordsAsync(sObjectName: string,
+        operation: OPERATION, records: any[],
+        engine: API_ENGINE = API_ENGINE.DEFAULT_ENGINE,
+        updateRecordId: boolean = true): Promise<any[]> {
 
         if (!records || records.length == 0 || this.#script.job.tasks.length == 0) {
             return [];
@@ -187,6 +190,7 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
 
             // Missing task => new sObject
             let apiEngine: IApiEngine;
+            engine = this.#script.getApiEngine(records.length, engine);
 
             switch (engine) {
                 case API_ENGINE.BULK_API_V1:
@@ -263,39 +267,33 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
     }
 
     /**
-     * Downloads the given ContentVersions data from the source org and uploads it to the target org.
+     * Downloads the given ContentVersions from the source org and uploads it to the target org.
      * Supports both binary and url contents.
-     * Creates or updates ContentDocument object if necessary.
      * 
-     * It will process all the records which are passed to thsi function by creating new ContentVersion records.
-     * 
-     * Pass empty ContentDocumentId if need to create a new ContentDocument record.
-     * In this case it will fill out the ContentDocumentId field with new ContentDocumentId.
-     * 
-     * Fills out the Id field with the new ContentVersion id after create the new content version.
+     * Creates or updates ContentDocument object if necessary. 
+     * If ContentDocument does exist it will add a new ContentVersion to it.
      *
-     * @param {ISfdmuContentVersion} sourceVersions
-     * @param {number} [maxParallelTasks]
-     * @param {number} [maxMemorySize]
-     * @returns {Promise<ISfdmuContentVersion[]>} The updated imput records
+     * @param {ISfdmuContentVersion} sourceVersions The ContentVersion records to process
+     * @returns {Promise<ISfdmuContentVersion[]>} The updated input ContentVersion records
      * @memberof ISfdmuRunPluginRuntime
      */
-    async transferContentVersions(sourceVersions: ISfdmuContentVersion[],
-        maxParallelTasks: number = ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_PARALLELIZM,
-        maxMemorySize: number = ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE): Promise<ISfdmuContentVersion[]> {
+    async transferContentVersions(sourceVersions: ISfdmuContentVersion[]): Promise<ISfdmuContentVersion[]> {
+        let _self = this;
 
-        let urlJobs = new Array<ISfdmuContentVersion>();
+        // All Files of url types to upload ///
+        let urlUploadJobs = new Array<ISfdmuContentVersion>();
 
-        let fileJobs = [...(function* () {
+        // All Files of binary type to upload ///
+        let fileUploadJobs = [...(function* () {
             let versions = new Array<SfdmuContentVersion>();
             let size = 0;
             for (let index = 0; index < sourceVersions.length; index++) {
                 const version = sourceVersions[index];
                 if (version.isUrlContent) {
-                    urlJobs.push(version);
+                    urlUploadJobs.push(version);
                     continue;
                 }
-                if (version.ContentSize + size > maxMemorySize) {
+                if (version.ContentSize + size > ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE) {
                     yield versions;
                     size = 0;
                     versions = new Array<SfdmuContentVersion>();
@@ -303,80 +301,101 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
                 versions.push(version);
                 size += version.ContentSize;
             };
+            if (versions.length > 0) {
+                yield versions;
+            }
         })()];
 
-        // Files -----------------------
-        for (let index = 0; index < fileJobs.length; index++) {
+        // Uploading Binary-type Files -----------------------
+        for (let index = 0; index < fileUploadJobs.length; index++) {
 
             // Create data to download
-            const downloadJob = fileJobs[index];
-            let idToContentVersionMap: Map<string, ISfdmuContentVersion> = Common.arrayToMap(downloadJob, ['Id']);
+            const fileJob = fileUploadJobs[index];
+            let idToContentVersionMap: Map<string, ISfdmuContentVersion> = Common.arrayToMap(fileJob, ['Id']);
 
             // Download
             let idToContentVersionBlobMap = await this.downloadBlobDataAsync(true, [...idToContentVersionMap.keys()], <IBlobField>{
                 fieldName: 'VersionData',
-                objectName: 'ContentVersion'
+                objectName: 'ContentVersion',
+                dataType: "base64"
             });
 
             // Create array to upload
-            let newVersionToOldVersionMap = new Map<any, ISfdmuContentVersion>();
+            let newToSourceVersionMap = new Map<any, ISfdmuContentVersion>();
 
             let versionsToUpload = [...idToContentVersionBlobMap.keys()].map(versionId => {
                 let blobData = idToContentVersionBlobMap.get(versionId);
                 let sourceContentVersion = idToContentVersionMap.get(versionId);
                 let newContentVersion = Common.cloneObjectIncludeProps(sourceContentVersion,
-                    'ContentDocumentId',
                     'Title', 'Description', 'PathOnClient');
                 newContentVersion['VersionData'] = blobData;
                 newContentVersion['ReasonForChange'] = sourceContentVersion.reasonForChange;
-                newVersionToOldVersionMap.set(newContentVersion, sourceContentVersion);
+                newContentVersion['ContentDocumentId'] = sourceContentVersion.targetContentDocumentId;
+                newToSourceVersionMap.set(newContentVersion, sourceContentVersion);
                 return newContentVersion;
             });
 
             // Upload
-            await ___upload(versionsToUpload, newVersionToOldVersionMap);
+            await ___upload(versionsToUpload, newToSourceVersionMap);
         }
 
-        // Links ----------------------------------
+        // Uploading Url-type Files ----------------------------------
         {
             // Create array to upload
-            let newVersionToOldVersionMap = new Map<any, ISfdmuContentVersion>();
+            let newToSourceVersionMap = new Map<any, ISfdmuContentVersion>();
 
-            let versionsToUpload = urlJobs.map(sourceContentVersion => {
+            let versionsToUpload = urlUploadJobs.map(sourceContentVersion => {
                 let newContentVersion = Common.cloneObjectIncludeProps(sourceContentVersion,
-                    'ContentDocumentId',
-                    'Title', 'Description',
-                    'ContentUrl');
+                    'Title', 'Description', 'ContentUrl');
                 newContentVersion['ReasonForChange'] = sourceContentVersion.reasonForChange;
-                newVersionToOldVersionMap.set(newContentVersion, sourceContentVersion);
+                newContentVersion['ContentDocumentId'] = sourceContentVersion.targetContentDocumentId;
+                newToSourceVersionMap.set(newContentVersion, sourceContentVersion);
                 return newContentVersion;
             });
 
             // Upload
-            await ___upload(versionsToUpload, newVersionToOldVersionMap);
+            await ___upload(versionsToUpload, newToSourceVersionMap);
         }
 
 
         // ---------------- Private Helpers --------------------
-        async function ___upload(versionsToUpload: any[], newVersionToOldVersionMap: Map<any, ISfdmuContentVersion>) {
-            let uploaded = await this.updateTargetRecordsAsync('ContentVersion', OPERATION.Insert, versionsToUpload, API_ENGINE.REST_API, true);
+        async function ___upload(versionsToUpload: any[], newToSourceVersionMap: Map<any, ISfdmuContentVersion>) {
 
-            let newRecordIds = new Map<string, ISfdmuContentVersion>();
-            uploaded.forEach((record: any) => {
-                let source = newVersionToOldVersionMap.get(record);
-                if (source) {
-                    source.targetId = record["Id"];
-                    if (!source.ContentDocumentId) {
-                        newRecordIds.set(source.targetId, source);
+            // Create new content versions
+            let records = await _self.updateTargetRecordsAsync('ContentVersion',
+                OPERATION.Insert,
+                versionsToUpload,
+                API_ENGINE.DEFAULT_ENGINE,
+                true);
+
+            // Update Ids of the source version records
+            let newRecordIdToSourceVersionMap = new Map<string, ISfdmuContentVersion>();
+            records.forEach((newRecord: any) => {
+                let sourceVersion = newToSourceVersionMap.get(newRecord);
+                if (sourceVersion) {
+                    sourceVersion.targetId = newRecord["Id"];
+                    if (newRecord[CONSTANTS.ERRORS_FIELD_NAME]) {
+                        sourceVersion.isError = true;
+                    }
+                    if (!sourceVersion.targetContentDocumentId) {
+                        newRecordIdToSourceVersionMap.set(sourceVersion.targetId, sourceVersion);
                     }
                 }
-            })
+            });
 
-            let queries = this.createFieldInQueries(['Id', 'ContentDocumentId'], 'Id', 'ContentVersion', [...newRecordIds.keys()]);
-            let newVersions = await this.queryMultiAsync(false, queries);
-            newVersions.forEach((version: any) => {
-                let source = newVersionToOldVersionMap.get(version["Id"]);
-                source.ContentDocumentId = version['ContentDocumentId'];
+            // Retrieve new content documents which were created now
+            let queries = _self.createFieldInQueries(['Id', 'ContentDocumentId'], 'Id', 'ContentVersion', [...newRecordIdToSourceVersionMap.keys()]);
+            records = await _self.queryMultiAsync(false, queries);
+
+            // Update ContentDocumentIds of the source version records
+            records.forEach((newRecord: any) => {
+                let sourceVersion = newRecordIdToSourceVersionMap.get(newRecord["Id"]);
+                if (sourceVersion) {
+                    sourceVersion.targetContentDocumentId = newRecord['ContentDocumentId'];
+                    if (newRecord[CONSTANTS.ERRORS_FIELD_NAME]) {
+                        sourceVersion.isError = true;
+                    }
+                }
             });
         };
         // -------------------------------------------------------

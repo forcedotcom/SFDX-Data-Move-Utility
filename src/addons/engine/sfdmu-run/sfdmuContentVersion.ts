@@ -28,6 +28,8 @@ export default class SfdmuContentVersion implements ISfdmuContentVersion {
     ContentUrl: string;
     ContentBodyId: string;
     targetId: string;
+    targetContentDocumentId: string;
+    isError: boolean;
     get isUrlContent() {
         return !!this.ContentUrl;
     }

@@ -26,62 +26,15 @@ interface IDataToImport {
     docIdToDocVersion: Map<string, any>;
 }
 
-
+interface ILinkedRecord {
+    Id: string;
+    isError: boolean;
+}
 
 interface IDataToExport {
-    /**
-     * The source content version 
-     * to update the target content document version
-     * (including VersionData as Blob)
-     *
-     * @type {*}
-     * @memberof IExportData
-     */
-    sourceContentVersion: SfdmuContentVersion; // only once => to update
-
-    /**
-    * true if the blob data is already downloaded for this version
-    * (the VersionData field contains base64 file data instead of the link to the content version
-    * retireved by the initial query)
-    *
-    * @type {boolean}
-    * @memberof IExportData
-    */
-    blobIsDownloaded: boolean;
-
-    /**
-     * true if this version is already uploaded to the target
-     *
-     * @type {boolean}
-     * @memberof IExportData
-     */
-    versionIsUploaded: boolean;
-
-    /**
-     * All ONLY NEW target records need to attach this record to, 
-     * need to create new content link records.
-     * No records if only need to update the content version data.
-     * Once the ContentDocumentLink is created the entry is removed from this array
-     * until it will be empty.
-     *
-     * @type {string[]}
-     * @memberof IExportData
-     */
-    targetRecordIds: string[];
-
-    /**
-     * The target content document 
-     * to update the version from the source content version
-     */
-    targetDocId: string;
-
-    /**
-     * true when need to insert/update the target content version 
-     *
-     * @type {boolean}
-     * @memberof IDataToExport
-     */
-    mustUpdateContentVersion: boolean;
+    version: SfdmuContentVersion; // only once => to update
+    recordsToBeLinked: ILinkedRecord[];
+    isVersionChanged: boolean;
 }
 
 export default class ExportFiles extends AddonModuleBase {
@@ -245,13 +198,10 @@ export default class ExportFiles extends AddonModuleBase {
                 if (sourceContentVersion) {
                     let targetRecord = task.sourceToTargetRecordMap.get(task.sourceTaskData.idRecordsMap.get(recordId));
                     if (!dataToExportMap.has(sourceContentVersion)) {
-                        dataToExportMap.set(sourceContentVersion, <IDataToExport>{
-                            blobIsDownloaded: false,
-                            versionIsUploaded: false,
-                            sourceContentVersion: new SfdmuContentVersion(sourceContentVersion),
-                            targetDocId: null,
-                            targetRecordIds: [],
-                            mustUpdateContentVersion: false
+                        dataToExportMap.set(sourceContentVersion, {
+                            version: new SfdmuContentVersion(sourceContentVersion),
+                            recordsToBeLinked: new Array<ILinkedRecord>(),
+                            isVersionChanged: false
                         });
                     }
                     let dataToExport = dataToExportMap.get(sourceContentVersion);
@@ -261,23 +211,26 @@ export default class ExportFiles extends AddonModuleBase {
                         // File exists => check for the modifycation ******
                         (targetDocLinks || []).forEach(targetDocLink => {
                             let targetContentVersion = new SfdmuContentVersion(target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]));
-                            if (dataToExport.sourceContentVersion[args.contentDocumentExternalId] == targetContentVersion[args.contentDocumentExternalId]) {
+                            if (dataToExport.version[args.contentDocumentExternalId] == targetContentVersion[args.contentDocumentExternalId]) {
                                 // This the same file source <=> target
                                 found = true;
-                                if (!dataToExport.targetDocId) {
-                                    dataToExport.targetDocId = String(targetContentVersion['ContentDocumentId']);
+                                if (!dataToExport.version.targetContentDocumentId) {
+                                    dataToExport.version.targetContentDocumentId = String(targetContentVersion['ContentDocumentId']);
                                 }
-                                if (dataToExport.sourceContentVersion.isNewer(targetContentVersion)) {
+                                if (dataToExport.version.isNewer(targetContentVersion)) {
                                     // The file was modified ****************
                                     // Add this item to the export array ///////////
-                                    dataToExport.mustUpdateContentVersion = true;
-                                }                                
+                                    dataToExport.isVersionChanged = true;
+                                }
                             }
                         });
                         if (!found) {
                             // File was not found in the Target => Create new file and attach it to the target
-                            dataToExport.targetRecordIds.push(targetRecord["Id"]);
-                            dataToExport.mustUpdateContentVersion = true;
+                            dataToExport.recordsToBeLinked.push({
+                                Id: targetRecord["Id"],
+                                isError: false
+                            });
+                            dataToExport.isVersionChanged = true;
                         }
                     }
                 }
@@ -286,8 +239,10 @@ export default class ExportFiles extends AddonModuleBase {
         });
         // -----------------------------------------------------------------
         // -----------------------------------------------------------------
+        let versionsToUpdate = [...dataToExportMap.values()].filter(item => item.isVersionChanged).map(item => item.version);
 
-        //let d = await this.runtime.transferContentVersions()
+
+        let d = await this.runtime.transferContentVersions(versionsToUpdate);
 
 
         // ---------- Process data -----------------------------------------

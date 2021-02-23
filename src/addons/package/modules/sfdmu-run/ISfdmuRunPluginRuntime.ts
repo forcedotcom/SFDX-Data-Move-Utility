@@ -116,24 +116,17 @@ export default interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
     downloadBlobDataAsync(isSource: boolean, recordIds: Array<string>, blobField: IBlobField): Promise<Map<string, string>>;
 
     /**
-     * Downloads the given ContentVersions data from the source org and uploads it to the target org.
+     * Downloads the given ContentVersions from the source org and uploads it to the target org.
      * Supports both binary and url contents.
-     * Creates or updates ContentDocument object if necessary.
      * 
-     * It will process all the records which are passed to thsi function by creating new ContentVersion records.
-     * 
-     * Pass empty ContentDocumentId if need to create a new ContentDocument record.
-     * In this case it will fill out the ContentDocumentId field with new ContentDocumentId.
-     * 
-     * Fills out the Id field with the new ContentVersion id after create the new content version.
+     * Creates or updates ContentDocument object if necessary. 
+     * If ContentDocument does exist it will add a new ContentVersion to it.
      *
-     * @param {ISfdmuContentVersion} sourceVersions
-     * @param {number} [maxParallelDownloads]
-     * @param {number} [maxMemorySize]
-     * @returns {Promise<ISfdmuContentVersion[]>} The updated imput records
+     * @param {ISfdmuContentVersion} sourceVersions The ContentVersion records to process
+     * @returns {Promise<ISfdmuContentVersion[]>} The updated input ContentVersion records
      * @memberof ISfdmuRunPluginRuntime
      */
-    transferContentVersions(sourceVersions: ISfdmuContentVersion[], maxParallelTasks?: number, maxMemorySize?: number): Promise<ISfdmuContentVersion[]>;
+    transferContentVersions(sourceVersions: ISfdmuContentVersion[]): Promise<ISfdmuContentVersion[]>;
 
     /**
      * Creates if not exist or returns the path to the temporary folder
