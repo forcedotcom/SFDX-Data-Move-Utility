@@ -5,6 +5,7 @@
 
 
 
+import { version } from "@oclif/command/lib/flags";
 import { Common } from "../../../../modules/components/common_components/common";
 import SfdmuContentVersion from "../../../engine/sfdmu-run/sfdmuContentVersion";
 import AddonModuleBase from "../../../package/base/addonModuleBase";
@@ -158,8 +159,10 @@ export default class ExportFiles extends AddonModuleBase {
                 'ContentDocumentId',
                 'ContentVersion',
                 target.docIds,
-                `IsLatest = true${args.targetWhere ? ' AND (' + args.targetWhere + ')' : ''}`);
-
+                'IsLatest = true');
+            if (args.targetWhere) {
+                queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.targetWhere + ') AND (') + ')')
+            }
             let data = await this.runtime.queryMultiAsync(false, queries);
             target.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
 
@@ -199,8 +202,10 @@ export default class ExportFiles extends AddonModuleBase {
                 'ContentDocumentId',
                 'ContentVersion',
                 source.docIds,
-                `IsLatest = true${args.sourceWhere ? ' AND (' + args.sourceWhere + ')' : ''}`);
-
+                'IsLatest = true');
+            if (args.sourceWhere) {
+                queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.sourceWhere + ') AND (') + ')')
+            }
             let data = await this.runtime.queryMultiAsync(true, queries);
             source.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
 
@@ -241,8 +246,9 @@ export default class ExportFiles extends AddonModuleBase {
                                 }
                             }
                         });
-                        if (!found) {
+                        if (!found && args.operation != OPERATION.Update) {
                             // File was not found in the Target => Create new file and attach it to the target
+                            // Only for upsert / insert, excluded update
                             dataToExport.recordsToBeLinked.push({
                                 Id: targetRecord["Id"],
                                 isError: false
@@ -256,28 +262,28 @@ export default class ExportFiles extends AddonModuleBase {
         });
         // -----------------------------------------------------------------
         // -----------------------------------------------------------------
-        let versionsToUpdate = [...dataToExportMap.values()].filter(item => item.isVersionChanged).map(item => item.version);
 
-
-        let d = await this.runtime.transferContentVersions(versionsToUpdate);
-
-
-        // ---------- Process data -----------------------------------------
-        // -----------Download ---------------------------------------------
-
+        // ---------- Upload -----------------------------------------------
         // -----------------------------------------------------------------
+        let versionsToUpload = [...dataToExportMap.values()].filter(item => item.isVersionChanged).map(item => item.version);
 
+        // TEST:
+        versionsToUpload.push(new SfdmuContentVersion({
+            Title: 'e',
+            ContentUrl: 'http://google.com',
+            Description: 'ddd',            
+        }));
 
-
-        // -----------Upload -----------------------------------------------
-
+        let uploadedVersions = await this.runtime.transferContentVersions(versionsToUpload);
         // -----------------------------------------------------------------
-
+        // -----------------------------------------------------------------
 
 
         // -----------Create ContentDocumentLinks ---------------------------
+        // -----------------------------------------------------------------
 
         // ------------------------------------------------------------------
+        // -----------------------------------------------------------------
 
         this.runtime.writeFinishMessage(this);
 

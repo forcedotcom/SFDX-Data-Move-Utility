@@ -26,11 +26,13 @@ import { ADDON_CONSTANTS, IAddonModuleBase } from "../../package/base";
 import * as path from 'path';
 import * as fs from 'fs';
 import SfdmuContentVersion from "./sfdmuContentVersion";
+import { CORE_MESSAGES } from "../resources/core-addon-messages";
 
 
 
 export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
-    $$setPluginJob(): void
+    $$setPluginJob(): void,
+    $$getCoreMessage(message: CORE_MESSAGES): string
 }
 
 
@@ -52,6 +54,10 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
     /* -------- System Functions (for direct access) ----------- */
     $$setPluginJob() {
         this.pluginJob = new SfdmuRunPluginJob(this.#script.job);
+    }
+
+    $$getCoreMessage(message: CORE_MESSAGES): string {
+        return (message || '').toString();
     }
 
 
@@ -356,8 +362,8 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
                 return newContentVersion;
             });
 
-            // Upload
-            await ___upload(versionsToUpload, newToSourceVersionMap);
+            // Upload Contents
+            await ___upload(versionsToUpload, newToSourceVersionMap, false);
         }
 
         // Uploading Url-type Files ----------------------------------
@@ -374,57 +380,60 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
                 return newContentVersion;
             });
 
-            // Upload
-            await ___upload(versionsToUpload, newToSourceVersionMap);
+            // Upload Urls
+            await ___upload(versionsToUpload, newToSourceVersionMap, true);
         }
 
 
         // ---------------- Private Helpers --------------------
-        async function ___upload(versionsToUpload: any[], newToSourceVersionMap: Map<any, ISfdmuContentVersion>) {
+        async function ___upload(versionsToUpload: any[], newToSourceVersionMap: Map<any, ISfdmuContentVersion>, isUrl: boolean) {
 
             // Create new content versions
             let records = await _self.updateTargetRecordsAsync('ContentVersion',
                 OPERATION.Insert,
                 versionsToUpload,
-                API_ENGINE.DEFAULT_ENGINE,
+                // For the Content have to use only the REST, because it's failed when using Bulk API...
+                isUrl ? API_ENGINE.DEFAULT_ENGINE : API_ENGINE.REST_API,
                 true);
 
-            // Update Ids of the source version records
-            let newRecordIdToSourceVersionMap = new Map<string, ISfdmuContentVersion>();
-            records.forEach((newRecord: any) => {
-                let sourceVersion = newToSourceVersionMap.get(newRecord);
-                if (sourceVersion) {
-                    sourceVersion.targetId = newRecord["Id"];
-                    if (newRecord[CONSTANTS.ERRORS_FIELD_NAME]) {
-                        sourceVersion.isError = true;
-                    }
-                    if (!sourceVersion.targetContentDocumentId) {
-                        newRecordIdToSourceVersionMap.set(sourceVersion.targetId, sourceVersion);
-                    }
-                }
-            });
+            if (records) {
 
-            // Retrieve new content documents which were created now
-            let queries = _self.createFieldInQueries(['Id', 'ContentDocumentId'], 'Id', 'ContentVersion', [...newRecordIdToSourceVersionMap.keys()]);
-            records = await _self.queryMultiAsync(false, queries);
+                let newRecordIdToSourceVersionMap = new Map<string, ISfdmuContentVersion>();
 
-            // Update ContentDocumentIds of the source version records
-            records.forEach((newRecord: any) => {
-                let sourceVersion = newRecordIdToSourceVersionMap.get(newRecord["Id"]);
-                if (sourceVersion) {
-                    sourceVersion.targetContentDocumentId = newRecord['ContentDocumentId'];
-                    if (newRecord[CONSTANTS.ERRORS_FIELD_NAME]) {
-                        sourceVersion.isError = true;
+                // Update Ids of the source version records
+                records.forEach((newRecord: any) => {
+                    let sourceVersion = newToSourceVersionMap.get(newRecord);
+                    if (sourceVersion) {
+                        sourceVersion.targetId = newRecord["Id"];
+                        if (newRecord[CONSTANTS.ERRORS_FIELD_NAME]) {
+                            sourceVersion.isError = true;
+                        }
+                        if (!sourceVersion.targetContentDocumentId) {
+                            newRecordIdToSourceVersionMap.set(sourceVersion.targetId, sourceVersion);
+                        }
                     }
-                }
-            });
+                });
+
+                // Retrieve new content documents which were created now
+                let queries = _self.createFieldInQueries(['Id', 'ContentDocumentId'], 'Id', 'ContentVersion', [...newRecordIdToSourceVersionMap.keys()]);
+                records = await _self.queryMultiAsync(false, queries);
+
+                // Update ContentDocumentIds of the source version records
+                records.forEach((newRecord: any) => {
+                    let sourceVersion = newRecordIdToSourceVersionMap.get(newRecord["Id"]);
+                    if (sourceVersion) {
+                        sourceVersion.targetContentDocumentId = newRecord['ContentDocumentId'];
+                        if (newRecord[CONSTANTS.ERRORS_FIELD_NAME]) {
+                            sourceVersion.isError = true;
+                        }
+                    }
+                });
+            } else {
+                sourceVersions.forEach(sourceVersion => sourceVersion.isError = true);
+            }
         };
         // -------------------------------------------------------
-
-
         return sourceVersions;
-
-
     }
 
     /**

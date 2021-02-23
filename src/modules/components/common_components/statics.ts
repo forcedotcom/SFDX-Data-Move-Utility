@@ -34,11 +34,12 @@ export const CONSTANTS = {
     FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
 
     SCRIPT_FILE_NAME: 'export.json',
-    
-    CORE_ADDON_MANIFEST_FILE_NAME: "../../addons/addonsCore.json",    
+
+    CORE_ADDON_MANIFEST_FILE_NAME: "../../addons/addonsCore.json",
     USER_ADDON_MANIFEST_FILE_NAME: "addons.json",
     CORE_ADDON_MODULES_BASE_PATH: "../../../addons/modules/",
     CORE_ADDON_MODULES_FOLDER_SEPARATOR: ':',
+    CORE_ADDON_MODULES_NAME_PREFIX: 'core:',
     CORE_ADDON_MODULES_FOLDER_NAME_SEPARATOR: '-',
     ADDON_TEMP_RELATIVE_FOLDER: 'temp_%s/',
 

@@ -61,11 +61,11 @@ export class AddonManifestDefinition {
         let requiredPath = "";
 
         if (this.module) {
-            if (this.module.indexOf(CONSTANTS.CORE_ADDON_MODULES_FOLDER_SEPARATOR) >= 0) {
+            if (this.module.indexOf(CONSTANTS.CORE_ADDON_MODULES_NAME_PREFIX) >= 0) {
                 // Core module like ":OnBefore"
                 let modulePath = CONSTANTS.CORE_ADDON_MODULES_BASE_PATH
                     + this.command.replace(CONSTANTS.CORE_ADDON_MODULES_FOLDER_SEPARATOR, CONSTANTS.CORE_ADDON_MODULES_FOLDER_NAME_SEPARATOR) + '/' // sfdmu-run/
-                    + this.module.replace(CONSTANTS.CORE_ADDON_MODULES_FOLDER_SEPARATOR, '/'); // /OnBefore
+                    + this.module.replace(CONSTANTS.CORE_ADDON_MODULES_NAME_PREFIX, '/'); // /OnBefore
                 requiredPath = path.normalize(path.resolve(__dirname, modulePath));
             } else {
                 // NPM module
