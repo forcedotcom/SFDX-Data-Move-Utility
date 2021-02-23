@@ -24,7 +24,7 @@ import MigrationJob from "../job_models/migrationJob";
 import * as path from 'path';
 import * as fs from 'fs';
 import AddonManager from "../../../addons/engine/addonManager";
-import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from "../../../addons/package/base/enumerations";
+import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/package/base/enumerations";
 import { AddonManifestDefinition } from "./addonManifestDefinition";
 import { ISfdmuRunPluginRuntimeSystem } from "../../../addons/engine/sfdmu-run/sfdmuRunPluginRuntime";
 import ICommandRunInfo from "../../../addons/package/base/ICommandRunInfo";
@@ -496,29 +496,6 @@ export default class Script {
         }
     }
 
-    /**
-     * Returns the best api engine to for CRUD operation.
-     *
-     * @param {number} recordsAmount The amout of records to transfer
-     * @param {API_ENGINE} preferredEngine The engine to prefer by default
-     * @returns {API_ENGINE}
-     * @memberof Script
-     */
-    getApiEngine(recordsAmount: number, preferredEngine: API_ENGINE): API_ENGINE {
-        preferredEngine = preferredEngine || API_ENGINE.DEFAULT_ENGINE;
-        if (preferredEngine != API_ENGINE.DEFAULT_ENGINE) {
-            return preferredEngine;
-        }
-        if (recordsAmount > this.bulkThreshold) {
-            switch (this.bulkApiVersionNumber) {
-                case 2:
-                    return API_ENGINE.BULK_API_V2;
-                default:
-                    return API_ENGINE.BULK_API_V1;
-            }
-        }
-        return API_ENGINE.REST_API;
-    }
 
 
 }

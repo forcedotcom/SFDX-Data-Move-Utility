@@ -50,6 +50,16 @@ export default interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
     };
 
     /**
+     * Returns the api engine to for CRUD operation.
+     *
+     * @param {number} recordsAmount The amout of records to transfer
+     * @param {API_ENGINE} preferredEngine The engine to prefer by default
+     * @returns {API_ENGINE}
+     * @memberof Script
+     */
+    getApiEngine(recordsAmount: number, preferredEngine: API_ENGINE): API_ENGINE;
+
+    /**
      * Retrieves the records from the connected salesforce environment
      * or from the CSV file (depend on the runtime)
      * 

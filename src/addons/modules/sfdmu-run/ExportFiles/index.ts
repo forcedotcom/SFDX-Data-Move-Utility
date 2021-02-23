@@ -16,7 +16,24 @@ import { ISfdmuRunPluginRuntime } from "../../../package/modules/sfdmu-run";
 interface IOnExecuteArguments {
     deleteOldData: boolean;
     operation: OPERATION;
-    contentDocumentExternalId: string;
+    /**
+     * ContentVersion external id (Title by default)
+     */
+    externalId: string;
+
+    /**
+     * Additional WHERE on the ContentVersion for the source records to define detaily, which files 
+     * we want to export
+     * WHERE IsLatest = true AND [selectWhere].
+     */
+    sourceWhere: string;
+
+    /**
+     * Additional WHERE on the ContentVersion for the target records to compare against 
+     * the source records to find updates.
+     * WHERE IsLatest = true AND [selectWhere].
+     */
+    targetWhere: string;
 }
 
 interface IDataToImport {
@@ -60,7 +77,7 @@ export default class ExportFiles extends AddonModuleBase {
 
         // Set default parameters
         args.operation = !args.operation ? task.operation : OPERATION[args.operation.toString()];
-        args.contentDocumentExternalId = args.contentDocumentExternalId || 'Title';
+        args.externalId = args.externalId || 'Title';
 
         if (!task) {
             // No task -> error
@@ -132,7 +149,7 @@ export default class ExportFiles extends AddonModuleBase {
         // Read target ContentVersions       
         if (args.operation != OPERATION.Insert && target.docIds.length > 0) {
             let fields = Common.distinctStringArray([
-                'Id', args.contentDocumentExternalId, 'ContentDocumentId',
+                'Id', args.externalId, 'ContentDocumentId',
                 'ContentModifiedDate'
             ]);
 
@@ -141,7 +158,7 @@ export default class ExportFiles extends AddonModuleBase {
                 'ContentDocumentId',
                 'ContentVersion',
                 target.docIds,
-                'IsLatest = true');
+                `IsLatest = true${args.targetWhere ? ' AND (' + args.targetWhere + ')' : ''}`);
 
             let data = await this.runtime.queryMultiAsync(false, queries);
             target.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
@@ -171,7 +188,7 @@ export default class ExportFiles extends AddonModuleBase {
         if (source.docIds.length > 0) {
 
             let fields = Common.distinctStringArray([
-                'Id', args.contentDocumentExternalId, 'ContentDocumentId',
+                'Id', args.externalId, 'ContentDocumentId',
                 'Title', 'Description', 'PathOnClient', 'VersionData',
                 'ContentModifiedDate', 'ContentSize', 'Checksum',
                 'ContentUrl', 'ContentBodyId'
@@ -182,7 +199,7 @@ export default class ExportFiles extends AddonModuleBase {
                 'ContentDocumentId',
                 'ContentVersion',
                 source.docIds,
-                'IsLatest = true');
+                `IsLatest = true${args.sourceWhere ? ' AND (' + args.sourceWhere + ')' : ''}`);
 
             let data = await this.runtime.queryMultiAsync(true, queries);
             source.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
@@ -211,7 +228,7 @@ export default class ExportFiles extends AddonModuleBase {
                         // File exists => check for the modifycation ******
                         (targetDocLinks || []).forEach(targetDocLink => {
                             let targetContentVersion = new SfdmuContentVersion(target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]));
-                            if (dataToExport.version[args.contentDocumentExternalId] == targetContentVersion[args.contentDocumentExternalId]) {
+                            if (dataToExport.version[args.externalId] == targetContentVersion[args.externalId]) {
                                 // This the same file source <=> target
                                 found = true;
                                 if (!dataToExport.version.targetContentDocumentId) {

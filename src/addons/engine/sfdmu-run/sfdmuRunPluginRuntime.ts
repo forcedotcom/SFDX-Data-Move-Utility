@@ -49,9 +49,6 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
     }
 
 
-
-
-
     /* -------- System Functions (for direct access) ----------- */
     $$setPluginJob() {
         this.pluginJob = new SfdmuRunPluginJob(this.#script.job);
@@ -141,6 +138,30 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
         return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN, whereClause);
     }
 
+    /**
+     * Returns the api engine to for CRUD operation.
+     *
+     * @param {number} recordsAmount The amout of records to transfer
+     * @param {API_ENGINE} preferredEngine The engine to prefer by default
+     * @returns {API_ENGINE}
+     * @memberof Script
+     */
+    getApiEngine(recordsAmount: number, preferredEngine: API_ENGINE): API_ENGINE {
+        preferredEngine = preferredEngine || API_ENGINE.DEFAULT_ENGINE;
+        if (preferredEngine != API_ENGINE.DEFAULT_ENGINE) {
+            return preferredEngine;
+        }
+        if (recordsAmount > this.#script.bulkThreshold) {
+            switch (this.#script.bulkApiVersionNumber) {
+                case 2:
+                    return API_ENGINE.BULK_API_V2;
+                default:
+                    return API_ENGINE.BULK_API_V1;
+            }
+        }
+        return API_ENGINE.REST_API;
+    }
+
 
     /**
      * Performs DML operation on the Target org pr writes into the target CSV file.
@@ -190,7 +211,7 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
 
             // Missing task => new sObject
             let apiEngine: IApiEngine;
-            engine = this.#script.getApiEngine(records.length, engine);
+            engine = this.getApiEngine(records.length, engine);
 
             switch (engine) {
                 case API_ENGINE.BULK_API_V1:
