@@ -70,24 +70,26 @@ export default class AddonManager {
     }
 
     async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string = ''): Promise<boolean> {
-       
+
         if (!this.addonsMap.has(method)) {
             return false;
         }
-       
+
         let addons = this.addonsMap.get(method).filter(addon => {
             return addon[1].appliedToObject(objectName);
         });
 
-        if (addons.length > 0){
-            
-            let globalText = this.logger.getResourceString(RESOURCES.global);           
-            this.logger.infoNormal(RESOURCES.runAddonMethod, objectName || globalText, method.toString());  
+        if (addons.length > 0) {
+
+            let globalText = this.logger.getResourceString(RESOURCES.global);
+            this.logger.infoNormal(RESOURCES.runAddonMethod, objectName || globalText, method.toString());
 
             for (let index = 0; index < addons.length; index++) {
                 await addons[index][0]();
-            } 
-            return true;  
+            }
+
+            this.logger.infoNormal(RESOURCES.runAddonMethodCompleted, objectName || globalText, method.toString());
+            return true;
         }
 
         return false;
@@ -110,6 +112,7 @@ export default class AddonManager {
             let manifestPlain = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
             let manifest = plainToClass(AddonManifest, manifestPlain);
             manifest.addons.forEach(addon => this._setupAddonDefinition(addon, true));
+            manifest.addons = manifest.addons.filter(addon => !addon.excluded);
             return manifest;
         } catch (ex) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
@@ -158,6 +161,7 @@ export default class AddonManager {
     }
 
     private _createAddOnsMap() {
+        let globalText = this.logger.getResourceString(RESOURCES.global);
         this.manifests.forEach(manifest => {
             manifest.addons.forEach(addon => {
                 try {
@@ -168,8 +172,9 @@ export default class AddonManager {
                         }
                         moduleInstance.context = <IPluginExecutionContext>{
                             eventName: addon.method.toString(),
-                            objectName: addon.objectName
-                        };                       
+                            objectName: addon.objectName,
+                            objectDisplayName: addon.objectName || globalText
+                        };
                         this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
                     }
                 } catch (ex) { }

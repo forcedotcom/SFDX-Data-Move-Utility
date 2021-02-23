@@ -7,7 +7,7 @@
 
 
 import { Script, TaskData } from "../../../modules/models";
-import { Logger } from "../../../modules/components/common_components/logger";
+import { Logger, RESOURCES } from "../../../modules/components/common_components/logger";
 import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from "../../package/base/enumerations";
 import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
 import { IPluginRuntimeSystemBase } from "../../../modules/models/common_models/helper_interfaces";
@@ -26,13 +26,16 @@ import { ADDON_CONSTANTS, IAddonModuleBase } from "../../package/base";
 import * as path from 'path';
 import * as fs from 'fs';
 import SfdmuContentVersion from "./sfdmuContentVersion";
-import { CORE_MESSAGES } from "../resources/core-addon-messages";
+import { CORE_MESSAGES } from "../messages/core";
 
 
 
 export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
     $$setPluginJob(): void,
-    $$getCoreMessage(message: CORE_MESSAGES): string
+    $$getCoreMessage(module: IAddonModuleBase, message: CORE_MESSAGES): string,
+    $$writeCoreInfoMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
+    $$writeCoreWarningMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
+    $$writeCoreErrorMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
 }
 
 
@@ -50,14 +53,29 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
         this.#logger = script.logger;
     }
 
-
+    
     /* -------- System Functions (for direct access) ----------- */
     $$setPluginJob() {
         this.pluginJob = new SfdmuRunPluginJob(this.#script.job);
     }
 
-    $$getCoreMessage(message: CORE_MESSAGES): string {
-        return (message || '').toString();
+    $$getCoreMessage(module: IAddonModuleBase, message: CORE_MESSAGES): string {
+        return this.#logger.getResourceString(RESOURCES.coreAddonMessageTemplate,
+            module.displayName,
+            module.context.objectDisplayName,
+            (message || '').toString());
+    }
+
+    $$writeCoreInfoMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.$$getCoreMessage(module, message), "INFO", ...tokens);
+    }
+
+    $$writeCoreWarningMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.$$getCoreMessage(module, message), "WARNING", ...tokens);
+    }
+
+    $$writeCoreErrorMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.$$getCoreMessage(module, message), "ERROR", ...tokens);
     }
 
 

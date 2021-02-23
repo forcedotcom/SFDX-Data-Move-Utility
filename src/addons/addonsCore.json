@@ -13,7 +13,7 @@
             "path": null,
             "module": "core:OnAfter",
             "method": "onAfter",
-            "excluded": false,
+            "excluded": true,
             "args": null
         }
     ]

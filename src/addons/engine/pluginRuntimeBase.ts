@@ -53,8 +53,7 @@ export default class PluginRuntimeBase implements IPluginRuntimeBase {
      * @memberof PluginRuntimeBase
      */
     writeStartMessage(module: IAddonModuleBase): void {
-        let objectName = module.context.objectName || this.#logger.getResourceString(RESOURCES.global);
-        module.runtime.writeMessage(RESOURCES.startAddonExecute.toString(), "INFO", objectName, module.displayName);
+        module.runtime.writeMessage(RESOURCES.startAddonExecute.toString(), "INFO", module.displayName, module.context.objectDisplayName);
     }
 
     /**
@@ -64,8 +63,7 @@ export default class PluginRuntimeBase implements IPluginRuntimeBase {
      * @memberof PluginRuntimeBase
      */
     writeFinishMessage(module: IAddonModuleBase) {
-        let objectName = module.context.objectName || this.#logger.getResourceString(RESOURCES.global);
-        module.runtime.writeMessage(RESOURCES.finishAddonExecute.toString(), "INFO", objectName, module.displayName);
+        module.runtime.writeMessage(RESOURCES.finishAddonExecute.toString(), "INFO", module.displayName, module.context.objectDisplayName);
     }
 
     /**

@@ -215,7 +215,9 @@ export enum RESOURCES {
     runAddonMethod = "runAddonMethod",  
     nothingToProcess = "nothingToProcess",
     startAddonExecute = "startAddonExecute",
-    finishAddonExecute = "finishAddonExecute"
+    finishAddonExecute = "finishAddonExecute",
+    coreAddonMessageTemplate = "coreAddonMessageTemplate",
+    runAddonMethodCompleted = "runAddonMethodCompleted"
 }
 
 

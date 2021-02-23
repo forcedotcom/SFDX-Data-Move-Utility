@@ -6,6 +6,7 @@
  */
 
 export default interface IPluginExecutionContext {
+    
     /**
      * The name of the event 
      * which the Addon module was executed int it context.
@@ -13,9 +14,15 @@ export default interface IPluginExecutionContext {
     eventName: string;
 
     /**
-     * The name of the object which was requested
-     * to be processed (null for the global script events)
+     * The original api name of the processed object
+     * (null for the global script events)
      * 
      */
     objectName: string;
+
+    /**
+     * The display name of the processed object 
+     * to use it in the console messages.
+     */
+    objectDisplayName: string;
 }

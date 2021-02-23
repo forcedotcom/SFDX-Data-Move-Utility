@@ -8,5 +8,5 @@
 
 
 export enum CORE_MESSAGES {
-    d = 'dsss'
+    Preparing = 'Preparing...'
 }

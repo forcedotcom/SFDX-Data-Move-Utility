@@ -5,13 +5,14 @@
 
 
 
-import { version } from "@oclif/command/lib/flags";
+
 import { Common } from "../../../../modules/components/common_components/common";
+import { CORE_MESSAGES } from "../../../engine/messages/core";
 import SfdmuContentVersion from "../../../engine/sfdmu-run/sfdmuContentVersion";
-import AddonModuleBase from "../../../package/base/addonModuleBase";
+import SfdmuRunAddonBase from "../../../engine/sfdmu-run/sfdmuRunAddonBase";
 import { OPERATION } from "../../../package/base/enumerations";
 import IPluginExecutionContext from "../../../package/base/IPluginExecutionContext";
-import { ISfdmuRunPluginRuntime } from "../../../package/modules/sfdmu-run";
+
 
 
 interface IOnExecuteArguments {
@@ -55,23 +56,21 @@ interface IDataToExport {
     isVersionChanged: boolean;
 }
 
-export default class ExportFiles extends AddonModuleBase {
-
-    get displayName(): string {
-        return "core:ExportFiles";
-    }
-
-    runtime: ISfdmuRunPluginRuntime;
+export default class ExportFiles extends SfdmuRunAddonBase {
 
     async onExecute(context: IPluginExecutionContext, args: IOnExecuteArguments): Promise<void> {
 
         this.runtime.writeStartMessage(this);
+
+        this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.Preparing);
+
 
         if (this.runtime.getOrgInfo(false).isFile) {
             // File target -> error
             this.runtime.writeFinishMessage(this);
             return;
         }
+
 
         // Get the relevant parent task
         let task = this.runtime.pluginJob.tasks.find(task => task.sObjectName == context.objectName);
@@ -271,7 +270,7 @@ export default class ExportFiles extends AddonModuleBase {
         versionsToUpload.push(new SfdmuContentVersion({
             Title: 'e',
             ContentUrl: 'http://google.com',
-            Description: 'ddd',            
+            Description: 'ddd',
         }));
 
         let uploadedVersions = await this.runtime.transferContentVersions(versionsToUpload);
