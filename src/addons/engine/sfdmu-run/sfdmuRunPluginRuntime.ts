@@ -330,18 +330,25 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
         let urlUploadJobs = new Array<ISfdmuContentVersion>();
 
         // All Files of binary type to upload ///
+        let totalSize = 0;
+        let totalCount = 0;
+        let totalUrls = 0;
+
         let fileUploadJobs = [...(function* () {
             let versions = new Array<SfdmuContentVersion>();
             let size = 0;
             for (let index = 0; index < sourceVersions.length; index++) {
                 const version = sourceVersions[index];
                 if (version.isUrlContent) {
+                    totalUrls++;
                     urlUploadJobs.push(version);
                     continue;
                 }
 
                 versions.push(version);
+                totalCount++;
                 size += version.ContentSize;
+                totalSize += version.ContentSize;
 
                 if (version.ContentSize + size > ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE) {
                     yield versions;
@@ -355,10 +362,11 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
         })()];
 
         // Uploading Binary-type Files -----------------------
-        if (fileUploadJobs.length > 1) {
+        if (fileUploadJobs.length > 0) {
+            this.$$writeCoreInfoMessage(module, CORE_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
             this.$$writeCoreInfoMessage(module, CORE_MESSAGES.DataWillBeProcessedInChunksOfSize,
                 String(fileUploadJobs.length),
-                String(ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000));
+                String((ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000).toFixed(2)));
         }
 
         for (let index = 0; index < fileUploadJobs.length; index++) {

@@ -139,9 +139,14 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                 this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_DeleteTargetContentDocuments);
                 let data = await this.runtime.updateTargetRecordsAsync('ContentDocument',
                     OPERATION.Delete,
-                    target.docIds);
-                // TODO: ?????
-                this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords, String(data.length), '0');
+                    target.docIds.map(item => {
+                        return {
+                            Id: item
+                        };
+                    }));
+                this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords,
+                    String(data.length),
+                    String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
             }
             if (args.operation == OPERATION.Delete) {
                 // Only delete -> exit
