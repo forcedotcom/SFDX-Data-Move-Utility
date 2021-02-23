@@ -323,7 +323,7 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
      * @returns {Promise<ISfdmuContentVersion[]>} The updated input ContentVersion records
      * @memberof ISfdmuRunPluginRuntime
      */
-    async transferContentVersions(sourceVersions: ISfdmuContentVersion[]): Promise<ISfdmuContentVersion[]> {
+    async transferContentVersions(module: IAddonModuleBase, sourceVersions: ISfdmuContentVersion[]): Promise<ISfdmuContentVersion[]> {
         let _self = this;
 
         // All Files of url types to upload ///
@@ -339,13 +339,15 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
                     urlUploadJobs.push(version);
                     continue;
                 }
+
+                versions.push(version);
+                size += version.ContentSize;
+
                 if (version.ContentSize + size > ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE) {
                     yield versions;
                     size = 0;
                     versions = new Array<SfdmuContentVersion>();
                 }
-                versions.push(version);
-                size += version.ContentSize;
             };
             if (versions.length > 0) {
                 yield versions;
@@ -353,11 +355,19 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
         })()];
 
         // Uploading Binary-type Files -----------------------
+        if (fileUploadJobs.length > 1) {
+            this.$$writeCoreInfoMessage(module, CORE_MESSAGES.DataWillBeProcessedInChunksOfSize,
+                String(fileUploadJobs.length),
+                String(ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000));
+        }
+
         for (let index = 0; index < fileUploadJobs.length; index++) {
 
             // Create data to download
             const fileJob = fileUploadJobs[index];
             let idToContentVersionMap: Map<string, ISfdmuContentVersion> = Common.arrayToMap(fileJob, ['Id']);
+
+            this.$$writeCoreInfoMessage(module, CORE_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
 
             // Download
             let idToContentVersionBlobMap = await this.downloadBlobDataAsync(true, [...idToContentVersionMap.keys()], <IBlobField>{

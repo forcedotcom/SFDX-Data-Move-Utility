@@ -136,7 +136,7 @@ export default interface ISfdmuRunPluginRuntime extends IPluginRuntimeBase {
      * @returns {Promise<ISfdmuContentVersion[]>} The updated input ContentVersion records
      * @memberof ISfdmuRunPluginRuntime
      */
-    transferContentVersions(sourceVersions: ISfdmuContentVersion[]): Promise<ISfdmuContentVersion[]>;
+    transferContentVersions(module: IAddonModuleBase, sourceVersions: ISfdmuContentVersion[]): Promise<ISfdmuContentVersion[]>;
 
     /**
      * Creates if not exist or returns the path to the temporary folder

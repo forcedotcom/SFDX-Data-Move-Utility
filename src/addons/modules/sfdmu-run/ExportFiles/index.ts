@@ -7,10 +7,11 @@
 
 
 import { Common } from "../../../../modules/components/common_components/common";
+import { CONSTANTS } from "../../../../modules/components/common_components/statics";
 import { CORE_MESSAGES } from "../../../engine/messages/core";
 import SfdmuContentVersion from "../../../engine/sfdmu-run/sfdmuContentVersion";
 import SfdmuRunAddonBase from "../../../engine/sfdmu-run/sfdmuRunAddonBase";
-import { OPERATION } from "../../../package/base/enumerations";
+import { API_ENGINE, OPERATION } from "../../../package/base/enumerations";
 import IPluginExecutionContext from "../../../package/base/IPluginExecutionContext";
 
 
@@ -47,7 +48,7 @@ interface IDataToImport {
 
 interface ILinkedRecord {
     Id: string;
-    isError: boolean;
+    sourceDocLink: any;
 }
 
 interface IDataToExport {
@@ -271,7 +272,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                             // Only for upsert / insert, excluded update
                             dataToExport.recordsToBeLinked.push({
                                 Id: targetRecord["Id"],
-                                isError: false
+                                sourceDocLink
                             });
                             dataToExport.isVersionChanged = true;
                         }
@@ -285,14 +286,17 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
         // ---------- Upload -----------------------------------------------
         // -----------------------------------------------------------------
-        let versionsToUpload = [...dataToExportMap.values()].filter(dataItem => dataItem.isVersionChanged).map(dataItem => dataItem.version);
-        if (versionsToUpload.length > 0) {
+        let versionsToProcess = [...dataToExportMap.values()].filter(exportItem => exportItem.isVersionChanged).map(exportItem => exportItem.version);
+
+        if (versionsToProcess.length > 0) {
             this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ExportingContentVersions);
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RecordsToBeProcessed, String(versionsToUpload.length));
-            await this.runtime.transferContentVersions(versionsToUpload);
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RecordsToBeProcessed, String(versionsToProcess.length));
+
+            await this.runtime.transferContentVersions(this, versionsToProcess);
+
             this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords,
-                String(versionsToUpload.length),
-                String(versionsToUpload.filter(item => item.isError).length));
+                String(versionsToProcess.length),
+                String(versionsToProcess.filter(item => item.isError).length));
         }
         // -----------------------------------------------------------------
         // -----------------------------------------------------------------
@@ -300,6 +304,31 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
         // -----------Create missing ContentDocumentLinks ---------------------------
         // -----------------------------------------------------------------
+        let dataToProcess = [...dataToExportMap.values()].filter(exportItem => exportItem.recordsToBeLinked.length > 0);
+
+        if (dataToProcess.length > 0) {
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ExportingContentDocumentLinks);
+
+            let docLinks = Common.flattenArrays(dataToProcess.map(data => data.recordsToBeLinked.map(record => {
+                return {
+                    LinkedEntityID: record.Id,
+                    ContentDocumentID: data.version.targetContentDocumentId,
+                    ShareType: record.sourceDocLink.ShareType,
+                    Visibility: record.sourceDocLink.Visibility
+                };
+            })));
+
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RecordsToBeProcessed, String(docLinks.length));
+
+            let data = await this.runtime.updateTargetRecordsAsync('ContentDocumentLink',
+                OPERATION.Insert,
+                docLinks,
+                API_ENGINE.DEFAULT_ENGINE, true);
+
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords,
+                String(data.length),
+                String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
+        }
 
         // ------------------------------------------------------------------
         // -----------------------------------------------------------------

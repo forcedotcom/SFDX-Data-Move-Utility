@@ -14,6 +14,8 @@ export enum CORE_MESSAGES {
     RetrievedRecords = 'Retrieved %s records.',
     RecordsToBeProcessed = 'There are %s records to process.',
     ProcessedRecords = 'Total %s records have been processed, %s records failed.',
+    DataWillBeProcessedInChunksOfSize = 'The data will be processed in %s chunks with max size of %s Mb each one.',
+    ProcessingChunk = "Processing chunk %s of %s items.",
 
     // ExportFiles plugin -------------------------
     ExportFiles_TargetIsFileWarning = 'Cannot process Files on CSV targets. Set a salesforce org as a Target.',
@@ -27,6 +29,8 @@ export enum CORE_MESSAGES {
     ExportFiles_ReadSourceContentDocumentLinks = 'Retrieving source ContentDocumentLink records ...',
     ExportFiles_ReadSourceContentVersions = 'Retrieving source ContentVersion records ...',
     ExportFiles_ExportingContentVersions = 'Transferring ContentVersion binary data ...',
+    ExportFiles_ExportingContentDocumentLinks = 'Creating target ContentDocumentLink records ...',
+
 
 
 
