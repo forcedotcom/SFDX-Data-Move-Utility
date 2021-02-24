@@ -53,6 +53,7 @@ interface ILinkedRecord {
 
 interface IDataToExport {
     version: SfdmuContentVersion; // only once => to update
+    targetVersion: SfdmuContentVersion; // The target version if found
     recordsToBeLinked: ILinkedRecord[];
     isVersionChanged: boolean;
 }
@@ -250,19 +251,21 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                         dataToExportMap.set(sourceContentVersion, {
                             version: new SfdmuContentVersion(sourceContentVersion),
                             recordsToBeLinked: new Array<ILinkedRecord>(),
-                            isVersionChanged: false
+                            isVersionChanged: false,
+                            targetVersion: null
                         });
                     }
                     let dataToExport = dataToExportMap.get(sourceContentVersion);
                     if (targetRecord) {
                         let targetDocLinks = target.recIdToDocLinks.get(targetRecord["Id"]);
                         let found = false;
-                        // File exists => check for the modifycation ******
+                        // File exists => check for the modification ******
                         (targetDocLinks || []).forEach(targetDocLink => {
-                            let targetContentVersion = new SfdmuContentVersion(target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]));
+                            let targetContentVersion = dataToExport.targetVersion || new SfdmuContentVersion(target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]));
                             if (dataToExport.version[args.externalId] == targetContentVersion[args.externalId]) {
-                                // This the same file source <=> target
+                                // The same version found in the Target
                                 found = true;
+                                dataToExport.targetVersion = targetContentVersion;
                                 if (!dataToExport.version.targetContentDocumentId) {
                                     dataToExport.version.targetContentDocumentId = String(targetContentVersion['ContentDocumentId']);
                                 }
@@ -280,13 +283,19 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                                 Id: targetRecord["Id"],
                                 sourceDocLink
                             });
-                            dataToExport.isVersionChanged = true;
+                            //dataToExport.isVersionChanged = true;
                         }
                     }
                 }
             });
 
         });
+        dataToExportMap.forEach((dataToExport) => {
+            if (!dataToExport.targetVersion) {
+                dataToExport.isVersionChanged = true;
+            }
+        });
+
         // -----------------------------------------------------------------
         // -----------------------------------------------------------------
 
@@ -336,13 +345,14 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                 String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
         }
 
+        if (dataToProcess.length == 0 && versionsToProcess.length == 0){
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_NothingToProcess);
+        }
+
         // ------------------------------------------------------------------
         // -----------------------------------------------------------------
 
         this.runtime.writeFinishMessage(this);
-
-
-
     }
 
 }

@@ -31,6 +31,7 @@ export enum CORE_MESSAGES {
     ExportFiles_ReadSourceContentVersions = 'Retrieving source ContentVersion records ...',
     ExportFiles_ExportingContentVersions = 'Transferring ContentVersion binary data ...',
     ExportFiles_ExportingContentDocumentLinks = 'Creating target ContentDocumentLink records ...',
+    ExportFiles_NothingToProcess = "There is no data to export."
 
 
 
