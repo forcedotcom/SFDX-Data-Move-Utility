@@ -34,7 +34,8 @@ export default class SfdmuContentVersion implements ISfdmuContentVersion {
         return !!this.ContentUrl;
     }
     isNewer(old: SfdmuContentVersion) {
-        return this.isUrlContent && (this.ContentModifiedDate > old.ContentModifiedDate || this.ContentUrl != old.ContentUrl)
+        return this.isUrlContent != old.isUrlContent
+            || this.isUrlContent && (this.ContentModifiedDate > old.ContentModifiedDate || this.ContentUrl != old.ContentUrl)
             || !this.isUrlContent && this.Checksum != old.Checksum;
     }
     get reasonForChange(): string {

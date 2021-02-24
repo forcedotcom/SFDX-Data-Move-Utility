@@ -168,7 +168,8 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
             let fields = Common.distinctStringArray([
                 'Id', args.externalId, 'ContentDocumentId',
-                'ContentModifiedDate'
+                'ContentModifiedDate', 'Title',
+                'Checksum', 'ContentUrl'
             ]);
 
             let queries = this.runtime.createFieldInQueries(
