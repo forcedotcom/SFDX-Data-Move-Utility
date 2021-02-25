@@ -10,7 +10,7 @@
 import { MigrationJob } from "../../../modules/models";
 import { ISfdmuRunPluginJob, ISfdmuRunPluginTask } from "../../package/modules/sfdmu-run";
 
-import SfdmuRunPluginTask from "./sSfdmuRunPluginTask";
+import SfdmuRunPluginTask from "./sfdmuRunPluginTask";
 
 export default class SfdmuRunPluginJob implements ISfdmuRunPluginJob {
     
