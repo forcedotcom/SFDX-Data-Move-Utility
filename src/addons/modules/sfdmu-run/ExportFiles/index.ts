@@ -6,6 +6,7 @@
 
 
 
+import { __decorate } from "tslib";
 import { Common } from "../../../../modules/components/common_components/common";
 import { CONSTANTS } from "../../../../modules/components/common_components/statics";
 import { CORE_MESSAGES } from "../../../engine/messages/core";
@@ -62,12 +63,14 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
     async onExecute(context: IPluginExecutionContext, args: IOnExecuteArguments): Promise<void> {
 
+        let _self = this;
+
         this.runtime.writeStartMessage(this);
 
         this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.Preparing);
 
 
-        if (this.runtime.getOrgInfo(false).isFile) {
+        if (this.runtime.getOrgInfo(false).isFile || this.runtime.getOrgInfo(true).isFile) {
             // File target -> error
             this.systemRuntime.$$writeCoreWarningMessage(this, CORE_MESSAGES.ExportFiles_TargetIsFileWarning);
             this.runtime.writeFinishMessage(this);
@@ -118,48 +121,27 @@ export default class ExportFiles extends SfdmuRunAddonBase {
         // -------------------------------------------------------------
 
         // Read  target ContentDocumentLinks
-        if (args.operation == OPERATION.Update || args.operation == OPERATION.Upsert) {
-            if (target.recordIds.length > 0) {
-                this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ReadTargetContentDocumentLinks);
-                let queries = this.runtime.createFieldInQueries(
-                    ['Id', 'LinkedEntityId', 'ContentDocumentId', 'ShareType', 'Visibility'],
-                    'LinkedEntityId',
-                    'ContentDocumentLink',
-                    target.recordIds);
+        if (args.operation != OPERATION.Insert && target.recordIds.length > 0) {
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ReadTargetContentDocumentLinks);
+            let queries = this.runtime.createFieldInQueries(
+                ['Id', 'LinkedEntityId', 'ContentDocumentId', 'ShareType', 'Visibility'],
+                'LinkedEntityId',
+                'ContentDocumentLink',
+                target.recordIds);
 
-                let data = await this.runtime.queryMultiAsync(false, queries);
-                target.recIdToDocLinks = Common.arrayToMapMulti(data, ['LinkedEntityId']);
-                target.docIds = Common.distinctStringArray(Common.arrayToPropsArray(data, ['ContentDocumentId']));
-                this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
-            }
+            let data = await this.runtime.queryMultiAsync(false, queries);
+            target.recIdToDocLinks = Common.arrayToMapMulti(data, ['LinkedEntityId']);
+            target.docIds = Common.distinctStringArray(Common.arrayToPropsArray(data, ['ContentDocumentId']));
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
         }
 
-        // Delete old target files          
-        if (args.deleteOldData || args.operation == OPERATION.Delete) {
-            if (target.docIds.length > 0) {
-                this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_DeleteTargetContentDocuments);
-                let data = await this.runtime.updateTargetRecordsAsync('ContentDocument',
-                    OPERATION.Delete,
-                    target.docIds.map(item => {
-                        return {
-                            Id: item
-                        };
-                    }));
-                this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords,
-                    String(data.length),
-                    String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
-            }
-            if (args.operation == OPERATION.Delete) {
-                // Only delete -> exit
+        // Delete all old target files (if no targetWhere was defined)  
+        let isDeleted = false;
+
+        if (!args.targetWhere) {
+            if (await ___deleteTargetFiles(target.docIds)) {
                 return;
             }
-            args.operation = OPERATION.Insert;
-        }
-
-        if (source.recordIds.length == 0) {
-            // No source records -> exit
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_NoSourceRecords);
-            return;
         }
 
         // Read target ContentVersions 
@@ -188,6 +170,32 @@ export default class ExportFiles extends SfdmuRunAddonBase {
             this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
 
         }
+
+        // Delete selective old target files (if targetWhere was defined)    
+        if (args.targetWhere) {
+            if (await ___deleteTargetFiles([...target.docIdToDocVersion.keys()])) {
+                return;
+            }
+        }
+
+        if (source.recordIds.length == 0) {
+            // No source records -> exit
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_NoSourceRecords);
+            return;
+        }
+
+        if (args.operation == OPERATION.Update && isDeleted) {
+            // Update + Delete => exit
+            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_NothingToUpdate);
+            return;
+        }
+
+        if (args.operation == OPERATION.Upsert && isDeleted) {
+            args.operation = OPERATION.Insert;
+        }
+
+
+
         // -----------------------------------------------------------
         // -----------------------------------------------------------
 
@@ -283,7 +291,6 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                                 Id: targetRecord["Id"],
                                 sourceDocLink
                             });
-                            //dataToExport.isVersionChanged = true;
                         }
                     }
                 }
@@ -345,7 +352,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                 String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
         }
 
-        if (dataToProcess.length == 0 && versionsToProcess.length == 0){
+        if (dataToProcess.length == 0 && versionsToProcess.length == 0) {
             this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_NothingToProcess);
         }
 
@@ -353,6 +360,36 @@ export default class ExportFiles extends SfdmuRunAddonBase {
         // -----------------------------------------------------------------
 
         this.runtime.writeFinishMessage(this);
+
+
+
+        // ---------------- Helper Functions --------------------------- //
+        async function ___deleteTargetFiles(docIdsToDelete: Array<string>): Promise<boolean> {
+            if (args.deleteOldData || args.operation == OPERATION.Delete) {
+                isDeleted = true;
+                // -------- //
+                if (docIdsToDelete.length > 0) {
+                    _self.systemRuntime.$$writeCoreInfoMessage(_self, CORE_MESSAGES.ExportFiles_DeleteTargetContentDocuments);
+                    let data = await _self.runtime.updateTargetRecordsAsync('ContentDocument',
+                        OPERATION.Delete,
+                        docIdsToDelete.map(item => {
+                            return {
+                                Id: item
+                            };
+                        }));
+                    _self.systemRuntime.$$writeCoreInfoMessage(_self, CORE_MESSAGES.ProcessedRecords,
+                        String(data.length),
+                        String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
+
+                }
+                // ------- //
+                if (args.operation == OPERATION.Delete) {
+                    // Only delete -> exit
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
 }

@@ -19,7 +19,7 @@ export enum CORE_MESSAGES {
     ProcessingChunk = "Processing chunk #%s of %s items.",
 
     // ExportFiles plugin -------------------------
-    ExportFiles_TargetIsFileWarning = 'Cannot process Files on CSV targets. Set a salesforce org as a Target.',
+    ExportFiles_TargetIsFileWarning = 'Cannot process Files on CSV sources or targets. Set a salesforce org as the Source and the Target.',
     ExportFiles_CouldNotFindObjectToProcessWarning = 'Could not find object data to process.',
     ExportFiles_ReadonlyOperationWarning = 'Cannot process Files on Readonly objects. Define another operation.',
 
@@ -31,7 +31,8 @@ export enum CORE_MESSAGES {
     ExportFiles_ReadSourceContentVersions = 'Retrieving source ContentVersion records ...',
     ExportFiles_ExportingContentVersions = 'Transferring ContentVersion binary data ...',
     ExportFiles_ExportingContentDocumentLinks = 'Creating target ContentDocumentLink records ...',
-    ExportFiles_NothingToProcess = "There is no data to export."
+    ExportFiles_NothingToProcess = "There is no data to export.",
+    ExportFiles_NothingToUpdate = "The target Files were deleted. There is no data to Update. Define another operation."
 
 
 
