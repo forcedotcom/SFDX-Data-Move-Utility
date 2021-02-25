@@ -5,9 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-/**
- * This module executed BEFORE all objects are executed  
- */
+
 import SfdmuRunAddonBase from "../../../engine/sfdmu-run/sfdmuRunAddonBase";
 import IPluginExecutionContext from "../../../package/base/IPluginExecutionContext";
 
