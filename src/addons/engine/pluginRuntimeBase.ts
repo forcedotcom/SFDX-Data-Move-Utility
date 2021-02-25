@@ -37,11 +37,11 @@ export default class PluginRuntimeBase implements IPluginRuntimeBase {
                 break;
 
             case "TABLE":
-                this.#logger.log(<ITableMessage>message, LOG_MESSAGE_TYPE.TABLE, LOG_MESSAGE_VERBOSITY.VERBOSE, ...tokens);
+                this.#logger.log(<ITableMessage>message, LOG_MESSAGE_TYPE.TABLE, LOG_MESSAGE_VERBOSITY.NORMAL, ...tokens);
                 break;
 
             default:
-                this.#logger.infoVerbose(<string>message, ...tokens);
+                this.#logger.infoNormal(<string>message, ...tokens);
                 break;
         }
     }

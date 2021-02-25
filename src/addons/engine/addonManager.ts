@@ -177,7 +177,9 @@ export default class AddonManager {
                         };
                         this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
                     }
-                } catch (ex) { }
+                } catch (ex) {
+                    this.logger.infoNormal(RESOURCES.canNotLoadModule, addon.moduleRequirePath);
+                }
             })
         });
     }

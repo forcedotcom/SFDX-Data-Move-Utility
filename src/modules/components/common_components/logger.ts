@@ -53,6 +53,7 @@ export enum RESOURCES {
     loaded = "loaded",
     cantLoad = "cantLoad",
     global = "global",
+    canNotLoadModule = "canNotLoadModule",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptNopromptOption = "defaultPromptNopromptOption",

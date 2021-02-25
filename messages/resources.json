@@ -24,6 +24,7 @@
     "loaded": "Loaded %s.",
     "cantLoad": "%s is not found or could not be loaded.",
     "global": "Global",
+    "canNotLoadModule": "Can not load module %s",
 
     "defaultPromptOptions": "y/n",
     "defaultPromptNopromptOption": "y",
