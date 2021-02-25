@@ -6,7 +6,6 @@
  */
 
 
-import { __decorate } from "tslib";
 import { Common } from "../../../../modules/components/common_components/common";
 import { CONSTANTS } from "../../../../modules/components/common_components/statics";
 import { CORE_MESSAGES } from "../../../engine/messages/core";
