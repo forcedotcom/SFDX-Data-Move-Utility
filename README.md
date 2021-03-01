@@ -169,14 +169,26 @@ $ npm install
 $ sfdx plugins:link
 ```
 
-See also:
-
-[Quick Start with the SFDMU](https://help.sfdmu.com/quick-start)
 
 
 
-### Debugging.
 
-For the debugging guidance, please, visit the following help article:
 
-[Debugging the SFDMU source code](https://help.sfdmu.com/plugin-basics/basic-usage/debugging)
+----
+
+See also the following help articles:
+
+
+- [Quick Start with the SFDMU](https://help.sfdmu.com/quick-start)
+
+- [Installation](https://help.sfdmu.com/plugin-basics/basic-usage/installation)
+
+- [Minimal Configuration](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration)
+
+- [Full Configuration](https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format)
+
+- [Running](https://help.sfdmu.com/plugin-basics/basic-usage/running)
+
+- [Debugging](https://help.sfdmu.com/plugin-basics/basic-usage/debugging)
+
+
