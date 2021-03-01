@@ -169,20 +169,14 @@ $ npm install
 $ sfdx plugins:link
 ```
 
+See also:
+
+[Quick Start with the SFDMU](https://help.sfdmu.com/quick-start)
+
 
 
 ### Debugging.
 
-```bash
-# Follow the instructions how to debug the Plugin using VSCode:
+For the debugging guidance, please, visit the following help article:
 
-# 1. Clone the source code from the git repo (see above).
-
-# 2. In the VSCode find "File" => "Preferences" => "Settings" => "Node Debug" and put 	      "Auto Attach" property to "On"
-
-# 3. Set necessary break points in the .ts files of the project. 
-
-# 4. To start debugging the source code just add --dev-suspend flag 
-#    to each CLI command that runs the SFDMU Plugin. 
-
-```
+[Debugging the SFDMU source code](https://help.sfdmu.com/plugin-basics/basic-usage/debugging)
