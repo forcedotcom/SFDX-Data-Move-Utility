@@ -190,5 +190,3 @@ See also the following help articles:
 - [Running](https://help.sfdmu.com/plugin-basics/basic-usage/running)
 
 - [Debugging](https://help.sfdmu.com/plugin-basics/basic-usage/debugging)
-
-
