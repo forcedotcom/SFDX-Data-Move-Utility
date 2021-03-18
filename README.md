@@ -1,5 +1,7 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
+- **This Plugin is digitally signed by Salesforce**
+
 - **For the detailed documentation, visit the [SFDMU Help Center](https://help.sfdmu.com)**
 
 - **The version changelog (including only important updates) can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
