@@ -7,7 +7,7 @@
  */
 
 import { IPluginExecutionContext } from "../../package/base";
-import AddonModuleBase from "../../package/base/addonModuleBase";
+import AddonModuleBase from "../../package/base/AddonModuleBase";
 import { ISfdmuRunPluginRuntime } from "../../package/modules/sfdmu-run";
 import { ISfdmuRunPluginRuntimeSystem } from "./sfdmuRunPluginRuntime";
 
