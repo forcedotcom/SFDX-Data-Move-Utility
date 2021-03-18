@@ -10,4 +10,4 @@ workflows:
           github-release: true
           filters:
             branches:
-              only: master  
+              only: master
