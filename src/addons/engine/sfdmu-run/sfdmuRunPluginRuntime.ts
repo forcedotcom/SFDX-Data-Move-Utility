@@ -20,7 +20,7 @@ import { RestApiEngine } from "../../../modules/components/api_engines/restApiEn
 import ICommandRunInfo from "../../package/base/ICommandRunInfo";
 import IBlobField from "../../package/base/IBlobField";
 import { ISfdmuContentVersion, ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../package/modules/sfdmu-run";
-import PluginRuntimeBase from "../PluginRuntimeBase";
+import PluginRuntimeBase from "../pluginRuntimeBase";
 import { CONSTANTS } from "../../../modules/components/common_components/statics";
 import { ADDON_CONSTANTS, IAddonModuleBase } from "../../package/base";
 import * as path from 'path';

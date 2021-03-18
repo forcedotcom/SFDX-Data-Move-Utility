@@ -1,4 +1,4 @@
-import addonModuleBase from "./addonModuleBase";
+import addonModuleBase from "./AddonModuleBase";
 import IAddonModuleBase from "./IAddonModuleBase";
 import IApiInfo from "./IApiInfo";
 import IApiResultRecord from "./IApiResultRecord";
