@@ -78,9 +78,9 @@
     },
     "repository": "forcedotcom/SFDX-Data-Move-Utility",
     "scripts": {
-        "postpack": "del -f oclif.manifest.json",
+        "postpack": "rm -f oclif.manifest.json",
         "posttest": "tslint -p test -t stylish",
-        "prepack": "del -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+        "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
         "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
         "version": "oclif-dev readme && git add README.md",
         "build": "tsc -b"
