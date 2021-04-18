@@ -1502,7 +1502,7 @@ export default class MigrationJobTask {
     async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<boolean> {
         return await this.script.addonManager.triggerAddonModuleMethodAsync(method, this.sObjectName);
     }
-    
+
     /**
      * Set the API engine instance for the current task
      *
@@ -1873,7 +1873,7 @@ export default class MigrationJobTask {
 
     private _mapSourceRecordsToTarget(records: Array<any>, sourceSObjectName: string): IFieldMappingResult {
         let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
-        if (mapping && mapping.hasChange) {
+        if (mapping && mapping.hasChange && records) {
             let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
                 this.logger.infoNormal(RESOURCES.mappingSourceRecords, this.sObjectName, mapping.targetSObjectName);
@@ -1882,7 +1882,9 @@ export default class MigrationJobTask {
                     fieldMapping.forEach((newProp, oldProp) => {
                         if (newProp != oldProp && record.hasOwnProperty(oldProp)) {
                             record[newProp] = record[oldProp];
-                            delete record[oldProp];
+                            if (oldProp != "Id") { // Id => ExternalId__c (Id -> ExternalId__c)
+                                delete record[oldProp];
+                            }
                         }
                     });
                 });
@@ -1900,7 +1902,7 @@ export default class MigrationJobTask {
 
     private _mapTargetRecordsToSource(records: Array<any>, sourceSObjectName: string): IFieldMappingResult {
         let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
-        if (mapping && mapping.hasChange) {
+        if (mapping && mapping.hasChange && records) {
             let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
                 this.logger.infoNormal(RESOURCES.mappingTargetRecords, this.sObjectName, mapping.targetSObjectName);
@@ -1908,7 +1910,9 @@ export default class MigrationJobTask {
                 records.forEach(record => {
                     fieldMapping.forEach((newProp, oldProp) => {
                         if (newProp != oldProp && record.hasOwnProperty(newProp)) {
-                            record[oldProp] = record[newProp];
+                            if (oldProp != "Id") {
+                                record[oldProp] = record[newProp]; // Id => Externalid__c (ExternalId -> Id)
+                            }
                             delete record[newProp];
                         }
                     });
