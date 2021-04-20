@@ -943,6 +943,9 @@ export default class MigrationJobTask {
             let notIsertableFields = fieldsToCompareRecords.filter(field => !processedData.fields.some(f => f.nameId == field));
             notUpdateableFields = notUpdateableFields.concat(notIsertableFields); // Must include both non-updateable & non-insertable
 
+            // Additional field filters ////////////
+            let doNotDeleteIdFieldOnInsert = self.scriptObject.idFieldIsMapped;
+
             // Prepare records //////////////
             // (Only if any field to update exist)
             let fieldNamesToClone = processedData.fieldNames.concat(notIsertableFields);
@@ -1020,6 +1023,7 @@ export default class MigrationJobTask {
                     delete cloned[CONSTANTS.__ID_FIELD_NAME];
                     let target = self.data.sourceToTargetRecordMap.get(source);
                     if (target && updateMode == "backwards") {
+                        // ???
                         if (target["Id"] && ___compareRecords(target, cloned, fieldsToCompareRecords)) {
                             cloned["Id"] = target["Id"];
                             ___removeRecordFields(cloned, notUpdateableFields);
@@ -1027,11 +1031,15 @@ export default class MigrationJobTask {
                             source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
                         }
                     } else if (!target && self.operation == OPERATION.Upsert || self.operation == OPERATION.Insert) {
-                        delete cloned["Id"];
+                        // Inserting new record to the target
+                        if (!doNotDeleteIdFieldOnInsert) {
+                            delete cloned["Id"];
+                        }
                         ___removeRecordFields(cloned, notIsertableFields);
                         processedData.recordsToInsert.push(cloned);
                         source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
                     } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
+                        // Updating existing record on the target
                         if (target["Id"] && ___compareRecords(target, cloned, fieldsToCompareRecords)) {
                             cloned["Id"] = target["Id"];
                             ___removeRecordFields(cloned, notUpdateableFields);
@@ -1839,6 +1847,9 @@ export default class MigrationJobTask {
                     if (describe) {
                         let targetField = describe.targetName + (field["alias"] ? " " + field["alias"] : "");
                         fields.push(getComposedField(targetField));
+                        if (rawValue == "Id") {
+                            fields.unshift(getComposedField(rawValue));
+                        }
                     } else {
                         let targetField = rawValue + (field["alias"] ? " " + field["alias"] : "");
                         fields.push(getComposedField(targetField));

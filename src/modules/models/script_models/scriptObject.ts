@@ -332,6 +332,10 @@ export default class ScriptObject {
             || { name: "Id" })["name"];
     }
 
+    get idFieldIsMapped() : boolean{
+        return this.isMapped && this.sourceTargetFieldNameMap.get("Id") != "Id"; 
+    }
+
 
 
 
