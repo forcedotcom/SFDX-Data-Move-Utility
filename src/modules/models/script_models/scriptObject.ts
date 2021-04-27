@@ -118,7 +118,8 @@ export default class ScriptObject {
 
     get externalIdSFieldDescribe(): SFieldDescribe {
         return this.isDescribed
-            && this.sourceSObjectDescribe.fieldsMap.get(this.externalId);
+            && this.sourceSObjectDescribe.fieldsMap.get(this.externalId)
+            || new SFieldDescribe();
     }
 
     get fieldsInQuery(): string[] {
@@ -609,6 +610,22 @@ export default class ScriptObject {
             if (this.fieldsInQuery.indexOf(fieldName) < 0) {
                 this.parsedQuery.fields.push(getComposedField(fieldName));
             }
+        });
+
+        // Verify external id value when the original one was not supplied with the script
+        if (this.originalExternalIdIsEmpty
+            && !describe.fieldsMap.get(this.externalId)) {
+            this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
+                field.field != this.externalId
+            );
+            this.externalId = this.defaultExternalId;
+            this.parsedQuery.fields.push(getComposedField(this.externalId));
+        }
+
+        // Filter fields which is not described
+        this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) => {
+            let isComplexField = Common.isComplexField(field.field);
+            return isComplexField || !isComplexField && describe.fieldsMap.has(field.field);
         });
 
         // Make each field appear only once
