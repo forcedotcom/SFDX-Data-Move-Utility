@@ -264,7 +264,7 @@ export default class MigrationJob {
     async deleteOldRecordsAsync(): Promise<void> {
 
         this.logger.infoMinimal(RESOURCES.newLine);
-        this.logger.headerMinimal(RESOURCES.deletingOldData);
+        this.logger.headerMinimal(RESOURCES.deletingTargetData);
 
         let deleted = false;
         for (let index = this.tasks.length - 1; index >= 0; index--) {
@@ -273,9 +273,9 @@ export default class MigrationJob {
         }
 
         if (deleted) {
-            this.logger.infoVerbose(RESOURCES.deletingOldDataCompleted);
+            this.logger.infoVerbose(RESOURCES.deletingDataCompleted);
         } else {
-            this.logger.infoVerbose(RESOURCES.deletingOldDataSkipped);
+            this.logger.infoVerbose(RESOURCES.deletingDataSkipped);
         }
     }
 

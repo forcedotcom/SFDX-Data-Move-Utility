@@ -178,13 +178,18 @@ export enum RESOURCES {
     gettingRecordsCount = "gettingRecordsCount",
     totalRecordsAmount = "totalRecordsAmount",
 
-    deletingOldData = "deletingOldData",
-    deletingTargetSObject = "deletingTargetSObject",
-    deletingFromTheTargetNRecordsWillBeDeleted = "deletingFromTheTargetNRecordsWillBeDeleted",
-    deletingFromTheTargetCompleted = "deletingFromTheTargetCompleted",
-    deletingOldDataCompleted = "deletingOldDataCompleted",
-    deletingOldDataSkipped = "deletingOldDataSkipped",
+    deletingTargetData = "deletingTargetData",
+    deletingSourceData = "deletingSourceData",
+
+    deletingTargetSObjectRecords = "deletingTargetSObjectRecords",
+    deletingSourceSObjectRecords = "deletingSourceSObjectRecords",
+
+    deletingNRecordsWillBeDeleted = "deletingNRecordsWillBeDeleted",
+    deletingRecordsCompleted = "deletingRecordsCompleted",   
     nothingToDelete = "nothingToDelete",
+
+    deletingDataCompleted = "deletingDataCompleted",
+    deletingDataSkipped = "deletingDataSkipped",
     
     mappingQuery = "mappingQuery",
     mappingSourceRecords = "mappingSourceRecords",

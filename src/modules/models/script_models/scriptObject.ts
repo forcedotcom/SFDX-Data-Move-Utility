@@ -12,7 +12,7 @@ import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
-import {CONSTANTS } from "../../components/common_components/statics";
+import { CONSTANTS } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
@@ -58,6 +58,7 @@ export default class ScriptObject {
     operation: OPERATION = OPERATION.Readonly;
     externalId: string;
     deleteOldData: boolean = false;
+    deleteFromSource: boolean = false;
     updateWithMockData: boolean = false;
     mockCSVData: boolean = false;
     targetRecordsFilter: string = "";
@@ -72,10 +73,10 @@ export default class ScriptObject {
     allRecords: boolean;
     master: boolean = true;
     excludedFields: Array<string> = new Array<string>();
-    
+
     @Type(() => AddonManifestDefinition)
     beforeAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
-    
+
     @Type(() => AddonManifestDefinition)
     afterAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
 
@@ -332,8 +333,14 @@ export default class ScriptObject {
             || { name: "Id" })["name"];
     }
 
-    get idFieldIsMapped() : boolean{
-        return this.isMapped && this.sourceTargetFieldNameMap.get("Id") != "Id"; 
+    get idFieldIsMapped(): boolean {
+        return this.isMapped && this.sourceTargetFieldNameMap.get("Id") != "Id";
+    }
+
+    get isDeletedFromSourceMode(): boolean {
+        return this.operation == OPERATION.Delete
+            && this.deleteFromSource
+            && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org;
     }
 
 
@@ -371,7 +378,7 @@ export default class ScriptObject {
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
-        if (this.operation == OPERATION.Delete) {
+        if (this.operation == OPERATION.Delete && !this.isDeletedFromSourceMode) {
             this.deleteOldData = true;
             this.parsedQuery.fields = [getComposedField("Id")];
         }
