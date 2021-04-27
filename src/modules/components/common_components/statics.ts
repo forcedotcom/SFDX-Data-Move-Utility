@@ -18,7 +18,7 @@ export const CONSTANTS = {
     DEFAULT_BULK_API_THRESHOLD_RECORDS: 200,
     DEFAULT_BULK_API_VERSION: '2.0',
     DEFAULT_BULK_API_V1_BATCH_SIZE: 9500,
-    DEFAULT_API_VERSION: '47.0',
+    DEFAULT_API_VERSION: '49.0',
     DEFAULT_EXTERNAL_ID_FIELD_NAME: "Name",
 
     __ID_FIELD_NAME: "___Id",
@@ -57,6 +57,8 @@ export const CONSTANTS = {
     FIELD_MAPPING_FILENAME: "FieldMapping.csv",
     CSV_FILES_SOURCENAME: "csvfile",
 
+    DEFAULT_ORG_MEDIA_TYPE: "csvfile",
+   
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
     MAX_PARALLEL_DOWNLOAD_THREADS: 5,
     MAX_FETCH_SIZE: 100000,
@@ -93,7 +95,10 @@ export const CONSTANTS = {
         "RecordType"
     ],
     OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE: [
-        "RecordType"
+        'RecordType',
+        'User',
+        'Group',
+        'DandBCompany'
     ],
     OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT: [
         'RecordType',

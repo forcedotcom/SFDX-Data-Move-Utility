@@ -148,13 +148,18 @@
     "gettingRecordsCount": "Getting the total amount of records limited by the object's SOQL query ...",
     "totalRecordsAmount": "{%s} Total amount of the %s records: %s",
 
-    "deletingOldData": "Deleting old data from the Target ...",
-    "deletingTargetSObject": "{%s} Deleting old sObject data from the Target.",
-    "deletingFromTheTargetNRecordsWillBeDeleted": "{%s} Number of records to Delete: %s.",
-    "deletingFromTheTargetCompleted": "{%s} Deleting old sObject data from the Target has been completed.",
-    "deletingOldDataCompleted": "Deleting old data from the Target has been completed.",
-    "deletingOldDataSkipped": "Deleting old data from the Target was skipped.",
-    "nothingToDelete": "{%s} Nothing to delete.",
+    "deletingTargetData": "Deleting old data from the Target ...",
+    "deletingSourceData": "Deleting data from the Source ...",
+
+    "deletingTargetSObjectRecords": "{%s} Deleting old records from the Target ...",
+    "deletingSourceSObjectRecords": "{%s} Deleting records from the Source ...",
+
+    "deletingNRecordsWillBeDeleted": "{%s} Number of records to Delete: %s.",
+    "deletingRecordsCompleted": "{%s} Deleting records has been completed.",    
+    "nothingToDelete": "{%s} No records to delete.",
+
+    "deletingDataCompleted": "Deleting data has been completed.",
+    "deletingDataSkipped": "Deleting data was skipped.",
 
     "mappingQuery": "{%s} Mapping query string ... The target object: %s. The target query string: %s.",
     "mappingSourceRecords": "{%s} Mapping records to be sent to the API ... The target object: %s.",

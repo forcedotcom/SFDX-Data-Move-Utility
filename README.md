@@ -1,39 +1,43 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
-- **Starting from the v4.0.0, this Plugin is digitally signed by Salesforce** 
-
 - **For the detailed documentation, visit the [SFDMU Help Center](https://help.sfdmu.com)**
+- **The changelog (including only important updates) can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
+- **Download also the [SFDMU Desktop GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) that can help you to configure the Plugin**
 
-- **The version changelog (including only important updates) can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
-
-- **Download also the [SFDMU Desktop GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) that can help you to configure the plugin**
- 
 
 ```bash
 ### ------------------------------------------- ###
-### - *** Latest version: v4.0.3          *** - ###
+### - *** Latest version: v4.1.0          *** - ###
 ### ------------------------------------------- ###
 ### - *** Make sure, that you have        *** - ###
 ### - *** the latest version installed    *** - ###
+
+### ------------------------------------------- ###
+### - *** Starting from the v4, each      *** - ###
+### - *** release of the Plugin is        *** - ###
+### - *** digitally signed by Salesforce  *** - ###
 ### ------------------------------------------- ###
 ```
----
-**PLEASE NOTE THAT THIS TOOL HAS LIMITED SUPPORT AND SLA IS NOT ENFORCED AS SUPPORT TO ISSUES RAISED.
-<br/>HOWEVER, WE GIVE OUR BEST EFFORT TO RETURN AND ADDRESS EACH ISSUE AS POSSIBLE.**
 
-#### FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:
 
-- Always use one of our issue tracker templates.
-- For Plugin bugs always attach:
-  - The latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.
-  - The [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.
-  - When you have an issue with failed rows, provide also the dump of the [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant full rows).
-- Case which has no response during 3 days will be closed. You can reopen it if the issue persists on your side.
+> **PLEASE NOTE, THAT THIS TOOL HAS LIMITED SUPPORT AND SLA IS NOT ENFORCED AS SUPPORT TO ISSUES RAISED. **
+> **HOWEVER, WE GIVE OUR BEST EFFORT TO RETURN AND ADDRESS EACH ISSUE AS POSSIBLE.**
 
-Most of the issue are coming due to incorrect configuration or stuff are related to the client environment,
-so carefully reading the [documentation](https://help.sfdmu.com/quick-start) as well as an examination of the [target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) before opening a bug will save your time waiting for our response.
+**FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
+
+- **Always use one of our issue tracker templates.**
+- **For Plugin bugs always attach:**
+  - **The latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
+  - **The [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
+  - **When you have an issue with failed rows, provide also the dump of the [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant full rows).**
+
+***
+> Most of the issue are coming due to incorrect configuration or stuff are related to the client environment,
+> so **carefully reading** the **[documentation](https://help.sfdmu.com/quick-start)** as well as an examination of the **[target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files)** before opening a bug will save your time waiting for our response :)
 
 ----
+***
+
 ## Introduction:
 
 **The SFDMU Plugin (SFDX Data Move Utility) is the powerful salesforce data migration tool and it is the innovative and very handy alternative to the traditional Salesforce Data Loader application as well as to the set of the force:data:tree commands.** 
@@ -42,7 +46,7 @@ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox /
 
 
 
-### The Highlights of the Tool:
+### The Advantages of the Tool:
 
 - Supports **direct data migration** from Salesforce org to another Salesforce org without intermediate CSV files.
 

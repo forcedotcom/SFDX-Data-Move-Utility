@@ -34,6 +34,7 @@ import { ApiInfo } from '../api_models';
 
 
 
+
 MockGenerator.createCustomGenerators(casual);
 
 export default class MigrationJobTask {
@@ -623,7 +624,7 @@ export default class MigrationJobTask {
             return false;
         }
         // Querying
-        this.logger.infoNormal(RESOURCES.deletingTargetSObject, this.sObjectName);
+        this.logger.infoNormal(RESOURCES.deletingTargetSObjectRecords, this.sObjectName);
         let soql = this.createDeleteQuery();
         let apiSf = new Sfdx(this.targetData.org);
         let queryResult = await apiSf.queryAsync(soql, this.targetData.useBulkQueryApi);
@@ -632,7 +633,7 @@ export default class MigrationJobTask {
             return false;
         }
         // Deleting
-        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetNRecordsWillBeDeleted, this.sObjectName, String(queryResult.totalSize));
+        this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(queryResult.totalSize));
         let recordsToDelete = queryResult.records.map(x => {
             return {
                 Id: x["Id"]
@@ -646,9 +647,11 @@ export default class MigrationJobTask {
         }
 
         // Done
-        this.logger.infoVerbose(RESOURCES.deletingFromTheTargetCompleted, this.sObjectName);
+        this.logger.infoVerbose(RESOURCES.deletingRecordsCompleted, this.sObjectName);
         return true;
     }
+
+
 
     /**
      * Retrieve records for this task
@@ -667,14 +670,18 @@ export default class MigrationJobTask {
      */
     async retrieveRecords(queryMode: "forwards" | "backwards" | "target", reversed: boolean): Promise<boolean> {
 
-        // Checking status *********
-        if (this.operation == OPERATION.Delete) return;
-
+        let hasRecords = false;
         let records: Array<any> = new Array<any>();
 
+        // Checking job status *********
+        if (this.operation == OPERATION.Delete
+            && !this.scriptObject.isDeletedFromSourceMode) {
+            return hasRecords;
+        };
+        
+
         // Read SOURCE DATA *********************************************************************************************
-        // **************************************************************************************************************
-        let hasRecords = false;
+        // **************************************************************************************************************       
         if (queryMode != "target") {
             // Read main data *************************************
             // ****************************************************
@@ -768,6 +775,10 @@ export default class MigrationJobTask {
             }
         }
 
+        // If it's "deleteFromSource" mode -> Always skip retrieving from the target
+        if (this.scriptObject.isDeletedFromSourceMode) {
+            return hasRecords;
+        }
 
         // Read TARGET DATA ***********************************************************************************
         // ****************************************************************************************************
@@ -823,6 +834,14 @@ export default class MigrationJobTask {
     async updateRecords(updateMode: "forwards" | "backwards", warnUserCallbackAsync: (data: ProcessedData) => Promise<void>): Promise<number> {
 
         let self = this;
+
+        if (this.scriptObject.isDeletedFromSourceMode) {
+            if (updateMode != "forwards") {
+                return 0;
+            }
+            // DELETE SOURCE RECORDS ::::::::::
+            return (await ___deleteSourceRecords());
+        }
 
         if (this.targetData.media == DATA_MEDIA_TYPE.File) {
             //  WRITE CSV ::::::::::
@@ -1058,6 +1077,39 @@ export default class MigrationJobTask {
             }
 
             return processedData;
+        }
+
+        /**
+        * @returns {Promise<number>} Number of records actually processed
+        */
+        async function ___deleteSourceRecords(): Promise<number> {
+
+            self.logger.infoNormal(RESOURCES.deletingSourceSObjectRecords, self.sObjectName);
+
+            if (self.sourceData.records.length == 0) {
+                self.logger.infoNormal(RESOURCES.nothingToDelete, self.sObjectName);
+                return 0;
+            }
+
+            // Deleting ////////
+            self.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, self.sObjectName, String(self.sourceData.records.length));
+            let recordsToDelete = self.sourceData.records.map(x => {
+                return {
+                    Id: x["Id"]
+                }
+            });
+
+            // Create engine
+            self.createApiEngine(self.sourceData.org, OPERATION.Delete, recordsToDelete.length, true);
+            let resultRecords = await self.apiEngine.executeCRUD(recordsToDelete, self.apiProgressCallback);
+            if (resultRecords == null) {
+                self._apiOperationError(OPERATION.Delete);
+            }
+
+            // Done
+            self.logger.infoVerbose(RESOURCES.deletingRecordsCompleted, self.sObjectName);
+
+            return resultRecords.length;
         }
 
         /**
@@ -1620,7 +1672,23 @@ export default class MigrationJobTask {
                         && field.parentLookupObject.isInitialized
                         && CONSTANTS.OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(field.referencedObjectType) < 0) {
                         // Only for simple reference lookup fields (f.ex.: Account__c)
-                        if (!field.parentLookupObject.task.sourceData.allRecords || field.parentLookupObject.isLimitedQuery) {
+
+                        // *** The previous logic:
+                        // -----------------------
+                        if (!field.parentLookupObject.task.sourceData.allRecords
+                            || field.parentLookupObject.isLimitedQuery
+
+                            // *** The new (fixed) logic:
+                            //-------------------
+                            // Fixed the issue of incorrect fetching releated records when
+                            // the parent object is master and the child object is slave:
+                            // - field.parentLookupObject.task.sourceData.allRecords = true -> Fetch all records mode for the parent sObject
+                            // - this.scriptObject.allRecords = false -> The current sObject is NOT master
+                            //   === > also need to create the filtered queries.
+                            // (TODO: need to check if it's working properly)
+                            || field.parentLookupObject.task.sourceData.allRecords && !this.scriptObject.allRecords
+                            ) {
+
                             if (queryMode != "forwards") {
                                 // FORWARDS
                                 // For forwards => build the query using all the PREVIOUS related tasks by the tasks order

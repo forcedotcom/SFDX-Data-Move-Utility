@@ -20,6 +20,7 @@ import { RunCommand } from "../../modules/commands_processors/runCommand";
 import { Common } from "../../modules/components/common_components/common";
 import { CommandInitializationError, SuccessExit, OrgMetadataError, CommandExecutionError, UnresolvableWarning, CommandAbortedByUserError } from "../../modules/models/common_models/errors";
 import { ADDON_MODULE_METHODS } from '../../addons/package/base/enumerations';
+import { CONSTANTS } from '../../modules/components/common_components/statics';
 
 
 
@@ -165,12 +166,18 @@ export default class Run extends SfdxCommand {
                 // --
             }
 
+            // At least one of the flags is required. 
+            // The second is always the default one.
+            if (!this.flags.sourceusername && !this.flags.targetusername) {
+                throw new CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
+            }
+            
             if (!this.flags.sourceusername) {
-                throw new CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername']));
+                this.flags.sourceusername = CONSTANTS.DEFAULT_ORG_MEDIA_TYPE;
             }
 
             if (!this.flags.targetusername) {
-                throw new CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
+                this.flags.targetusername = CONSTANTS.DEFAULT_ORG_MEDIA_TYPE;
             }
 
             let commandResult: any;
