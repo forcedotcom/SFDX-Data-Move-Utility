@@ -376,7 +376,7 @@ export default class ScriptObject {
         this.operation = ScriptObject.getOperation(this.operation);
 
         // Always set explicit externalId to 'Id' on Insert operation
-        if (this.operation == OPERATION.Insert) {
+        if (this.operation == OPERATION.Insert || this.isDeletedFromSourceOperation) {
             this.externalId = "Id";
         }
 
