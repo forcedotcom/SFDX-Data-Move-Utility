@@ -675,10 +675,10 @@ export default class MigrationJobTask {
 
         // Checking job status *********
         if (this.operation == OPERATION.Delete
-            && !this.scriptObject.isDeletedFromSourceMode) {
+            && !this.scriptObject.isDeletedFromSourceOperation) {
             return hasRecords;
         };
-        
+
 
         // Read SOURCE DATA *********************************************************************************************
         // **************************************************************************************************************       
@@ -776,7 +776,7 @@ export default class MigrationJobTask {
         }
 
         // If it's "deleteFromSource" mode -> Always skip retrieving from the target
-        if (this.scriptObject.isDeletedFromSourceMode) {
+        if (this.scriptObject.isDeletedFromSourceOperation) {
             return hasRecords;
         }
 
@@ -835,7 +835,7 @@ export default class MigrationJobTask {
 
         let self = this;
 
-        if (this.scriptObject.isDeletedFromSourceMode) {
+        if (this.scriptObject.isDeletedFromSourceOperation) {
             if (updateMode != "forwards") {
                 return 0;
             }
@@ -1687,7 +1687,7 @@ export default class MigrationJobTask {
                             //   === > also need to create the filtered queries.
                             // (TODO: need to check if it's working properly)
                             || field.parentLookupObject.task.sourceData.allRecords && !this.scriptObject.allRecords
-                            ) {
+                        ) {
 
                             if (queryMode != "forwards") {
                                 // FORWARDS

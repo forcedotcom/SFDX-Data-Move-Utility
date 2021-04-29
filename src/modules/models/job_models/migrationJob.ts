@@ -23,6 +23,7 @@ export default class MigrationJob {
     script: Script;
     tasks: Task[] = new Array<Task>();
     queryTasks: Task[] = new Array<Task>();
+    deleteTasks: Task[] = new Array<Task>();
     valueMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
     csvIssues: Array<ICSVIssueCsvRow> = new Array<ICSVIssueCsvRow>();
     cachedCSVContent: CachedCSVContent = new CachedCSVContent();
@@ -40,7 +41,6 @@ export default class MigrationJob {
     get objects(): ScriptObject[] {
         return this.script.objects;
     }
-
 
 
 
@@ -132,6 +132,7 @@ export default class MigrationJob {
             // *** Use the explicit query order as the objects appear in the Script **** //            
             // ************** //
             this.queryTasks = this.tasks.map(task => task);
+            this.deleteTasks = this.queryTasks;
         } else {
             // *** Use smart automatic query order *** // 
             // ************** //
@@ -153,11 +154,22 @@ export default class MigrationJob {
                     this.queryTasks.push(task);
                 }
             });
+            // -- correct the order
+            swapped = true;
+            for (let iteration = 0; iteration < 10 && swapped; iteration++) {
+                swapped = ___updateQueryTaskOrder();
+            }
+
+            // Create delete task order
+            this.deleteTasks = this.tasks.slice().reverse();
         }
 
         // Output execution orders
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.queryingOrder)]: this.queryTasks.map(x => x.sObjectName).join("; ")
+        });
+        this.logger.objectMinimal({
+            [this.logger.getResourceString(RESOURCES.deletingOrder)]: this.deleteTasks.map(x => x.sObjectName).join("; ")
         });
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.executionOrder)]: this.tasks.map(x => x.sObjectName).join("; ")
@@ -167,6 +179,35 @@ export default class MigrationJob {
         this.script.addonRuntime.$$setPluginJob();
 
         // ------------------------------- Internal functions --------------------------------------- //
+        function ___updateQueryTaskOrder() {
+            let swapped = false;
+            let tempTasks: Array<MigrationJobTask> = [].concat(self.queryTasks);
+            for (let leftIndex = 0; leftIndex < tempTasks.length - 1; leftIndex++) {
+                const leftTask = tempTasks[leftIndex];
+                for (let rightIndex = leftIndex + 1; rightIndex < tempTasks.length; rightIndex++) {
+                    const rightTask = tempTasks[rightIndex];
+                    // The right object should be first + it is master or both objects are master=false.
+                    // It's better to keep the left object as master, 
+                    // because if we put the master object to the right 
+                    //      => sometimes we can get issues with finding the related records,
+                    // since the left object is filtered by the right and the right object records are not retrieved yet.
+                    let rightShouldBeBeforeTheLeft = CONSTANTS.SPECIAL_OBJECT_QUERY_ORDER.get(rightTask.scriptObject.name)
+                        && CONSTANTS.SPECIAL_OBJECT_QUERY_ORDER.get(rightTask.scriptObject.name).indexOf(leftTask.scriptObject.name) >= 0
+                        && (rightTask.scriptObject.master || !leftTask.scriptObject.master && !rightTask.scriptObject.master);
+                    let leftTaskIndex = self.queryTasks.indexOf(leftTask);
+                    let rightTaskIndex = self.queryTasks.indexOf(rightTask);
+                    if (rightShouldBeBeforeTheLeft && rightTaskIndex > leftTaskIndex) {
+                        // Swape places and put right before left
+                        self.queryTasks.splice(rightTaskIndex, 1);
+                        self.queryTasks.splice(leftTaskIndex, 0, rightTask);
+                        swapped = true;
+                        console.log(self.queryTasks.map(x => x.sObjectName).join());
+                    }
+                }
+            }
+            return swapped;
+        }
+
         function ___putMasterDetailsBefore(): boolean {
             let swapped = false;
             let tempTasks: Array<MigrationJobTask> = [].concat(self.tasks);
@@ -177,7 +218,7 @@ export default class MigrationJob {
                     let rightIsParentMasterDetailOfLeft = leftTask.scriptObject.parentMasterDetailObjects.some(object => object.name == rightTask.sObjectName);
                     let leftTaskIndex = self.tasks.indexOf(leftTask);
                     let rightTaskIndex = self.tasks.indexOf(rightTask);
-                    if (rightIsParentMasterDetailOfLeft) {
+                    if (rightIsParentMasterDetailOfLeft && rightTaskIndex > leftTaskIndex) {
                         // Swape places and put right before left
                         self.tasks.splice(rightTaskIndex, 1);
                         self.tasks.splice(leftTaskIndex, 0, rightTask);
@@ -267,8 +308,8 @@ export default class MigrationJob {
         this.logger.headerMinimal(RESOURCES.deletingTargetData);
 
         let deleted = false;
-        for (let index = this.tasks.length - 1; index >= 0; index--) {
-            const task = this.tasks[index];
+        for (let index = 0; index < this.deleteTasks.length; index++) {
+            const task = this.deleteTasks[index];
             deleted = await task.deleteOldTargetRecords() || deleted;
         }
 
@@ -422,9 +463,10 @@ export default class MigrationJob {
         let totalProcessedRecordsByObjectsMap = new Map<string, number>();
 
         let allMissingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
+        let tasksToProcess = this.script.hasDeleteFromSourceObjectOperation ? this.deleteTasks : this.tasks;
 
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
+        for (let index = 0; index < tasksToProcess.length; index++) {
+            const task = tasksToProcess[index];
             let processedRecordsAmount = (await task.updateRecords("forwards", async (data: ProcessedData) => {
                 allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
                 if (noAbortPrompt) {

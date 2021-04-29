@@ -129,6 +129,7 @@
     "executingJob": "Ready to process the data.",
     "executionOrder": "Order of objects to update data",
     "queryingOrder": "Order of objects to retrieve data",
+    "deletingOrder": "Order of objects to delete data",
 
     "unprocessedRecord": "Unprocessed record.",
     "invalidRecordHashcode": "Invalid record hashcode. Unable to find matching record from the response returned by the bulk job.",

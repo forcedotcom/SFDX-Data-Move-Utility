@@ -159,6 +159,7 @@ export enum RESOURCES {
     executingJob = "executingJob",
     executionOrder = "executionOrder",
     queryingOrder = "queryingOrder",
+    deletingOrder = "deletingOrder",
 
     unprocessedRecord = "unprocessedRecord",
     invalidRecordHashcode = "invalidRecordHashcode",

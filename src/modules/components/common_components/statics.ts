@@ -58,7 +58,7 @@ export const CONSTANTS = {
     CSV_FILES_SOURCENAME: "csvfile",
 
     DEFAULT_ORG_MEDIA_TYPE: "csvfile",
-   
+
     MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
     MAX_PARALLEL_DOWNLOAD_THREADS: 5,
     MAX_FETCH_SIZE: 100000,
@@ -78,6 +78,7 @@ export const CONSTANTS = {
     ],
 
     RECORD_TYPE_SOBJECT_NAME: "RecordType",
+
     NOT_SUPPORTED_OBJECTS: [
         'Profile',
         'User',
@@ -85,21 +86,25 @@ export const CONSTANTS = {
         'DandBCompany',
         'ContentVersion'// Content version has deprecated using the SFDMU core in favor to the ExportFiles Add-On Module 
     ],
+
     NOT_SUPPORTED_OBJECTS_IN_BULK_API: [
         "Attachment",
         "ContentVersion"
     ],
+
     SPECIAL_OBJECTS: [
         "Group",
         "User",
         "RecordType"
     ],
+
     OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE: [
         'RecordType',
         'User',
         'Group',
         'DandBCompany'
     ],
+
     OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT: [
         'RecordType',
         'User',
@@ -138,6 +143,15 @@ export const CONSTANTS = {
         "person_true",
         "person_false"
     ],
+
+    SPECIAL_OBJECT_LOOKUP_MASTER_DETAIL_ORDER: new Map<string, Array<string>>([
+        ['Contact', ['Case']],
+        ['Account', ['Case']]
+    ]),
+
+    SPECIAL_OBJECT_QUERY_ORDER: new Map<string, Array<string>>([
+        ['AccountContactRelation', ['Account', 'Contact', 'Case']]
+    ]),
 
     BLOB_FIELDS: new Array<IBlobField>(
         {
