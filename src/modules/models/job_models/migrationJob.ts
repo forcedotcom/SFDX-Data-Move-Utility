@@ -193,7 +193,7 @@ export default class MigrationJob {
                     // since the left object is filtered by the right and the right object records are not retrieved yet.
                     let rightShouldBeBeforeTheLeft = CONSTANTS.SPECIAL_OBJECT_QUERY_ORDER.get(rightTask.scriptObject.name)
                         && CONSTANTS.SPECIAL_OBJECT_QUERY_ORDER.get(rightTask.scriptObject.name).indexOf(leftTask.scriptObject.name) >= 0
-                        && (rightTask.scriptObject.master || !leftTask.scriptObject.master && !rightTask.scriptObject.master);
+                        && (rightTask.scriptObject.allRecords || !leftTask.scriptObject.allRecords && !rightTask.scriptObject.allRecords);
                     let leftTaskIndex = self.queryTasks.indexOf(leftTask);
                     let rightTaskIndex = self.queryTasks.indexOf(rightTask);
                     if (rightShouldBeBeforeTheLeft && rightTaskIndex > leftTaskIndex) {
@@ -218,7 +218,7 @@ export default class MigrationJob {
                     let rightIsParentMasterDetailOfLeft = leftTask.scriptObject.parentMasterDetailObjects.some(object => object.name == rightTask.sObjectName);
                     let leftTaskIndex = self.tasks.indexOf(leftTask);
                     let rightTaskIndex = self.tasks.indexOf(rightTask);
-                    if (rightIsParentMasterDetailOfLeft && rightTaskIndex > leftTaskIndex) {
+                    if (rightIsParentMasterDetailOfLeft) {
                         // Swape places and put right before left
                         self.tasks.splice(rightTaskIndex, 1);
                         self.tasks.splice(leftTaskIndex, 0, rightTask);
