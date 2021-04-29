@@ -121,6 +121,10 @@ export default class Script {
         return this.sourceDirectoryPath;
     }
 
+    get hasDeleteFromSourceObjectOperation(): boolean {
+        return this.objects.some(object => object.isDeletedFromSourceOperation);
+    }
+
 
     // ----------------------- Public methods -------------------------------------------    
     /**

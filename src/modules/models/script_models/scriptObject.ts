@@ -229,7 +229,14 @@ export default class ScriptObject {
 
     get parentMasterDetailObjects(): ScriptObject[] {
         return Common.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
+            // Master-detail
             if (x.isMasterDetail) {
+                return x.parentLookupObject;
+            }
+            // Special order
+            if (x.lookup
+                && CONSTANTS.SPECIAL_OBJECT_LOOKUP_MASTER_DETAIL_ORDER.get(x.parentLookupObject.name)
+                && CONSTANTS.SPECIAL_OBJECT_LOOKUP_MASTER_DETAIL_ORDER.get(x.parentLookupObject.name).indexOf(this.name) >= 0) {
                 return x.parentLookupObject;
             }
         }).filter(x => !!x), 'name');
@@ -338,7 +345,7 @@ export default class ScriptObject {
         return this.isMapped && this.sourceTargetFieldNameMap.get("Id") != "Id";
     }
 
-    get isDeletedFromSourceMode(): boolean {
+    get isDeletedFromSourceOperation(): boolean {
         return this.operation == OPERATION.Delete
             && this.deleteFromSource
             && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org;
@@ -379,7 +386,7 @@ export default class ScriptObject {
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
-        if (this.operation == OPERATION.Delete && !this.isDeletedFromSourceMode) {
+        if (this.operation == OPERATION.Delete && !this.isDeletedFromSourceOperation) {
             this.deleteOldData = true;
             this.parsedQuery.fields = [getComposedField("Id")];
         }
