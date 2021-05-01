@@ -824,7 +824,35 @@ export default class MigrationJobTask {
     }
 
     /**
-     * Perform record update
+     * Performs target records deletion.
+     *
+     * @returns {Promise<number>} Total amount of deleted records
+     * @memberof MigrationJobTask
+     */
+    async deleteRecords(): Promise<number> {
+
+        //  DELETE ORG :::::::::
+        let recordsToDelete = this.targetData.records.map(x => {
+            return {
+                Id: x["Id"]
+            }
+        });
+
+        this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(recordsToDelete.length));
+        
+        this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
+        let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
+        if (resultRecords == null) {
+            this._apiOperationError(OPERATION.Delete);
+        }
+
+        this.logger.infoVerbose(RESOURCES.deletingRecordsCompleted, this.sObjectName);
+
+        return resultRecords.length;
+    }
+
+    /**
+     * Performs target records update.
      *
      * @param {("forwards" | "backwards")} updateMode
      * @param {(data : ProcessedData) => boolean} warnUserCallbackAsync true to abort the job

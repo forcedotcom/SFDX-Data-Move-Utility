@@ -47,6 +47,7 @@ export enum RESOURCES {
     noRecords = "noRecords",
     insert = "insert",
     update = "update",
+    delete = "delete",
     personContact = "personContact",
     coreManifest = "coreManifest",
     userManifest = "userManifest",
@@ -208,6 +209,7 @@ export enum RESOURCES {
     fetchingSummary = "fetchingSummary",
 
     updatingTarget = "updatingTarget",
+    deletingTarget = "deletingTarget",
     updatingTargetNRecordsWillBeUpdated = "updatingTargetNRecordsWillBeUpdated",
     updatingTargetObjectCompleted = "updatingTargetObjectCompleted",
     updatingTargetCompleted = "updatingTargetCompleted",
