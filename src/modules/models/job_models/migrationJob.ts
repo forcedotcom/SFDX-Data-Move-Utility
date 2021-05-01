@@ -94,7 +94,7 @@ export default class MigrationJob {
                 // ************** //
 
                 this.tasks.push(newTask);
-            } else if (objectToAdd.isReadonlyObject) {
+            } else if (objectToAdd.isReadonlyObject && !objectToAdd.isHierarchicalDeleteOperation) {
                 // *** Using the smart automatic execution order *** //
                 // ************** //
 
@@ -453,17 +453,17 @@ export default class MigrationJob {
 
         let self = this;
 
-        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        // STEP 1 FORWARDS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        this.logger.infoMinimal(RESOURCES.newLine);
-        this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
-
         let noAbortPrompt = false;
         let totalProcessedRecordsAmount = 0;
         let totalProcessedRecordsByObjectsMap = new Map<string, number>();
 
         let allMissingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
         let tasksToProcess = this.script.hasDeleteFromSourceObjectOperation ? this.deleteTasks : this.tasks;
+
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // STEP 1 FORWARDS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
 
         for (let index = 0; index < tasksToProcess.length; index++) {
             const task = tasksToProcess[index];
@@ -533,6 +533,33 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
         }
         this.logger.infoNormal(RESOURCES.newLine);
+
+
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // DELETE BY HIERARCHY ::::::::::::::::::::::::::::::::::::::::::::::::::::
+        if (this.script.hasDeleteByHierarchyOperation) {
+            this.logger.infoMinimal(RESOURCES.newLine);
+            this.logger.headerMinimal(RESOURCES.deletingTarget, this.logger.getResourceString(RESOURCES.Step1));
+
+            for (let index = 0; index < this.deleteTasks.length; index++) {
+                const task = this.deleteTasks[index];
+                if (task.scriptObject.isHierarchicalDeleteOperation) {
+                    let processedRecordsAmount = await task.deleteRecords();
+                    if (processedRecordsAmount > 0) {
+                        this.logger.infoNormal(RESOURCES.deletingRecordsCompleted, task.sObjectName, String(processedRecordsAmount));
+                    }
+                    totalProcessedRecordsAmount += processedRecordsAmount;
+                    totalProcessedRecordsByObjectsMap.set(task.sObjectName, processedRecordsAmount);
+                }
+            }
+            if (totalProcessedRecordsAmount > 0)
+                this.logger.infoNormal(RESOURCES.deletingDataCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
+            else
+                this.logger.infoNormal(RESOURCES.nothingToDelete);
+            this.logger.infoNormal(RESOURCES.newLine);
+        }
+
+
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // TOTAL PROCESSED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::

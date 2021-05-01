@@ -125,6 +125,10 @@ export default class Script {
         return this.objects.some(object => object.isDeletedFromSourceOperation);
     }
 
+    get hasDeleteByHierarchyOperation(): boolean {
+        return this.objects.some(object => object.isHierarchicalDeleteOperation);
+    }
+
 
     // ----------------------- Public methods -------------------------------------------    
     /**
@@ -410,7 +414,8 @@ export default class Script {
             object.query = composeQuery(object.parsedQuery);
 
             // Warn user if there are no any fields to update
-            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0) {
+            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0
+                && !(object.fieldsInQuery.length == 1 && object.fieldsInQuery[0] == "Id")) {
                 this.logger.warn(RESOURCES.noUpdateableFieldsInTheSObject, object.name);
             }
         });

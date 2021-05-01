@@ -59,6 +59,7 @@ export default class ScriptObject {
     externalId: string;
     deleteOldData: boolean = false;
     deleteFromSource: boolean = false;
+    deleteByHierarchy: boolean = false;
     updateWithMockData: boolean = false;
     mockCSVData: boolean = false;
     targetRecordsFilter: string = "";
@@ -351,6 +352,11 @@ export default class ScriptObject {
             && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org;
     }
 
+    get isHierarchicalDeleteOperation(): boolean {
+        return this.deleteByHierarchy
+            && this.script.targetOrg.media == DATA_MEDIA_TYPE.Org;
+    }
+
 
 
 
@@ -386,10 +392,19 @@ export default class ScriptObject {
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
-        if (this.operation == OPERATION.Delete && !this.isDeletedFromSourceOperation) {
+
+        if (this.operation == OPERATION.Delete && !this.isDeletedFromSourceOperation && !this.deleteByHierarchy) {
             this.deleteOldData = true;
             this.parsedQuery.fields = [getComposedField("Id")];
+        } else if (this.deleteByHierarchy) {
+            if (this.operation == OPERATION.Delete) {
+                this.operation = OPERATION.Readonly;
+                this.deleteOldData = false;
+            } else {
+                this.deleteByHierarchy = false;
+            }
         }
+
         // Add record Id field to the query
         if (!this.fieldsInQuery.some(x => x == "Id")) {
             this.parsedQuery.fields.push(getComposedField("Id"));

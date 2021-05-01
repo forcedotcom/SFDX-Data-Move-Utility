@@ -18,6 +18,7 @@
     "noRecords": "No records",
     "insert": "Insert",
     "update": "Update",
+    "delete": "Delete",
     "personContact": "Person Contact",
     "coreManifest": "[Core Manifest]",
     "userManifest": "[User Manifest]",
@@ -151,6 +152,7 @@
 
     "deletingTargetData": "Deleting old data from the Target ...",
     "deletingSourceData": "Deleting data from the Source ...",
+    
 
     "deletingTargetSObjectRecords": "{%s} Deleting old records from the Target ...",
     "deletingSourceSObjectRecords": "{%s} Deleting records from the Source ...",
@@ -179,6 +181,7 @@
 
 
     "updatingTarget": "Updating the Target %s ...",
+    "deletingTarget": "Deleting the Target %s ...",
     "updatingTargetNRecordsWillBeUpdated": "{%s} Number of records to %s: %s.",
     "updatingTargetObjectCompleted": "{%s} Updating the Target has been completed. Processed %s records.",
     "updatingTargetCompleted": "Updating the Target (%s) has been completed. Total processed %s records.",
