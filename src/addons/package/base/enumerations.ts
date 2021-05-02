@@ -16,6 +16,8 @@ export enum OPERATION {
     Upsert,
     Readonly,
     Delete,
+    DeleteSource,
+    DeleteHierarchy,
     Unknown
 }
 
