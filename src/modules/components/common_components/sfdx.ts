@@ -134,10 +134,10 @@ export class Sfdx implements IFieldMapping {
             soql = this.sourceQueryToTarget(soql, parsedQuery.sObject).query;
             // Query records /////
             let records = [].concat(await ___queryAsync(soql));
-            if (soql.indexOf("FROM Group") >= 0) {
+            if (/FROM Group([\s]+|$)/i.test(soql)) {
                 soql = soql.replace("FROM Group", "FROM User");
                 records = records.concat(await ___queryAsync(soql));
-            } else if (soql.indexOf("FROM User") >= 0) {
+            } else if (/FROM User([\s]+|$)/i.test(soql)) {
                 soql = soql.replace("FROM User", "FROM Group");
                 records = records.concat(await ___queryAsync(soql));
             }
@@ -242,7 +242,7 @@ export class Sfdx implements IFieldMapping {
             return parsedRecords;
         }
 
-        function ___formatRecords(records: Array<any>, soqlFormat: [string, Map<string, Array<string>>, Array<string>, string]): Array<any> {          
+        function ___formatRecords(records: Array<any>, soqlFormat: [string, Map<string, Array<string>>, Array<string>, string]): Array<any> {
             // Process complex keys}
             if (soqlFormat[1].size == 0) {
                 return records;
