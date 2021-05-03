@@ -160,6 +160,7 @@
     "deletingNRecordsWillBeDeleted": "{%s} Number of records to Delete: %s.",
     "deletingRecordsCompleted": "{%s} Deleting records has been completed.",    
     "nothingToDelete": "{%s} No records to delete.",
+    "nothingToDelete2": "No data to delete.",
 
     "deletingDataCompleted": "Deleting data has been completed.",
     "deletingDataSkipped": "Deleting data was skipped.",

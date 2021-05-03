@@ -520,21 +520,6 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
 
-        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        // RUN ON-AFTER ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
-        let processed = false;
-        this.logger.infoNormal(RESOURCES.newLine);
-        this.logger.headerNormal(RESOURCES.processingAddon);
-        for (let index = 0; index < this.queryTasks.length; index++) {
-            const task = this.queryTasks[index];
-            processed = await task.runAddonEvent(ADDON_MODULE_METHODS.onAfter) || processed;
-        }
-        if (!processed) {
-            this.logger.infoNormal(RESOURCES.nothingToProcess);
-        }
-        this.logger.infoNormal(RESOURCES.newLine);
-
-
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // DELETE BY HIERARCHY ::::::::::::::::::::::::::::::::::::::::::::::::::::
         if (this.script.hasDeleteByHierarchyOperation) {
@@ -552,13 +537,29 @@ export default class MigrationJob {
                     totalProcessedRecordsByObjectsMap.set(task.sObjectName, processedRecordsAmount);
                 }
             }
+
             if (totalProcessedRecordsAmount > 0)
                 this.logger.infoNormal(RESOURCES.deletingDataCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
             else
-                this.logger.infoNormal(RESOURCES.nothingToDelete);
+                this.logger.infoNormal(RESOURCES.nothingToDelete2);
+                
             this.logger.infoNormal(RESOURCES.newLine);
         }
 
+
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // RUN ON-AFTER ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
+        let processed = false;
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.processingAddon);
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            processed = await task.runAddonEvent(ADDON_MODULE_METHODS.onAfter) || processed;
+        }
+        if (!processed) {
+            this.logger.infoNormal(RESOURCES.nothingToProcess);
+        }
+        this.logger.infoNormal(RESOURCES.newLine);
 
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
