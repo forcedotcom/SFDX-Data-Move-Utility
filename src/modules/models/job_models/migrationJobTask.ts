@@ -652,6 +652,42 @@ export default class MigrationJobTask {
     }
 
 
+    /**
+     * Performs target records hierarchical deletion.
+     *
+     * @returns {Promise<number>} Total amount of deleted records
+     * @memberof MigrationJobTask
+     */
+    async deleteRecords(): Promise<number> {
+
+        //  DELETE ORG :::::::::
+        //  Create delete data => only the target records which are existing in the Source        
+        let recordsToDelete = this.sourceData.records.map(sourceRecord => {
+            let targetRecord = this.data.sourceToTargetRecordMap.get(sourceRecord);
+            if (targetRecord) {
+                return {
+                    Id: targetRecord["Id"]
+                }
+            }
+        }).filter(record => !!record);
+
+        this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(recordsToDelete.length));
+
+        // Delete records
+        if (recordsToDelete.length == 0){
+            return 0;
+        }
+        this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
+        let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
+        if (resultRecords == null) {
+            this._apiOperationError(OPERATION.Delete);
+        }
+
+        this.logger.infoVerbose(RESOURCES.deletingRecordsCompleted, this.sObjectName);
+
+        return resultRecords.length;
+    }
+
 
     /**
      * Retrieve records for this task
@@ -823,33 +859,6 @@ export default class MigrationJobTask {
 
     }
 
-    /**
-     * Performs target records deletion.
-     *
-     * @returns {Promise<number>} Total amount of deleted records
-     * @memberof MigrationJobTask
-     */
-    async deleteRecords(): Promise<number> {
-
-        //  DELETE ORG :::::::::
-        let recordsToDelete = this.targetData.records.map(x => {
-            return {
-                Id: x["Id"]
-            }
-        });
-
-        this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(recordsToDelete.length));
-        
-        this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
-        let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
-        if (resultRecords == null) {
-            this._apiOperationError(OPERATION.Delete);
-        }
-
-        this.logger.infoVerbose(RESOURCES.deletingRecordsCompleted, this.sObjectName);
-
-        return resultRecords.length;
-    }
 
     /**
      * Performs target records update.
@@ -945,7 +954,6 @@ export default class MigrationJobTask {
             }).concat(new SFieldDescribe({
                 name: CONSTANTS.__ID_FIELD_NAME
             }));
-
 
             // Add record Id field ////////
             if (self.operation != OPERATION.Insert) {

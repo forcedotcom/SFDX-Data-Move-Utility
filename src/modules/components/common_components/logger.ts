@@ -189,6 +189,7 @@ export enum RESOURCES {
     deletingNRecordsWillBeDeleted = "deletingNRecordsWillBeDeleted",
     deletingRecordsCompleted = "deletingRecordsCompleted",   
     nothingToDelete = "nothingToDelete",
+    nothingToDelete2 = "nothingToDelete2",
 
     deletingDataCompleted = "deletingDataCompleted",
     deletingDataSkipped = "deletingDataSkipped",

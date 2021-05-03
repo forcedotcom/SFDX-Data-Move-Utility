@@ -379,6 +379,7 @@ export default class ScriptObject {
         this.allRecords = typeof this.allRecords == "undefined" ? this.master : this.allRecords;
 
         // Fix / Setup operation value
+        this.operation = ScriptObject.getOperation(this.operation);
         if (this.operation == OPERATION.DeleteSource){
             this.deleteFromSource = true;
             this.operation = OPERATION.Delete;
@@ -387,8 +388,6 @@ export default class ScriptObject {
             this.deleteByHierarchy = true;
             this.operation = OPERATION.Delete;
         }
-        this.operation = ScriptObject.getOperation(this.operation);
-
 
         // Always set explicit externalId to 'Id' on Insert operation
         if (this.operation == OPERATION.Insert || this.isDeletedFromSourceOperation) {
