@@ -67,6 +67,7 @@ export default class Script {
     fileLog: boolean = true;
     keepObjectOrderWhileExecute: boolean = false;
     allowFieldTruncation: boolean = false;
+    simulationMode: boolean = false;
 
     @Type(() => AddonManifestDefinition)
     beforeAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
@@ -176,6 +177,16 @@ export default class Script {
         if (this.runInfo.sourceUsername.toLowerCase() == this.runInfo.targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
         }
+
+        if (this.simulationMode) {
+            this.logger.infoMinimal(RESOURCES.scriptRunInSimulationMode);
+        }
+
+        // Fix object values
+        this.objects.forEach(object => {
+            // Fix operations
+            object.operation = ScriptObject.getOperation(object.operation);
+        });
 
         // Remove excluded objects and unsupported objects
         this.objects = this.objects.filter(object => {

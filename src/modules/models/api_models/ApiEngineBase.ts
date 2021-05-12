@@ -9,7 +9,7 @@ import { Logger } from "../../components/common_components/logger";
 import { IApiJobCreateResult, IApiEngineInitParameters, ICsvChunk } from "./helper_interfaces";
 import { ApiInfo, IApiEngine } from ".";
 import { Common } from "../../components/common_components/common";
-import { ScriptObject } from "..";
+import { CsvChunks, ScriptObject } from "..";
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
 import { OPERATION } from "../../../addons/package/base/enumerations";
 
@@ -37,6 +37,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     targetCSVFullFilename: string;
     createTargetCSVFiles: boolean;
     logger: Logger;
+    simulationMode: boolean;
 
     connectionData: IOrgConnectionData;
 
@@ -73,6 +74,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         this.allOrNone = init.allOrNone;
         this.createTargetCSVFiles = init.createTargetCSVFiles;
         this.targetCSVFullFilename = init.targetCSVFullFilename;
+        this.simulationMode = init.simulationMode;
         if (init.targetFieldMapping) {
             Object.assign(this, init.targetFieldMapping);
         }
@@ -97,7 +99,11 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         allRecords = mappedRecords.records;
 
         // Create CRUD job
-        await this.createCRUDApiJobAsync(allRecords);
+        if (!this.simulationMode) {
+            await this.createCRUDApiJobAsync(allRecords);
+        } else {
+            await this.createCRUDSimulationJobAsync(allRecords);
+        }
 
         // Execute CRUD job
         let resultRecords = await this.processCRUDApiJobAsync(progressCallback);
@@ -114,11 +120,32 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         return null;
     }
 
+    async createCRUDSimulationJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
+        let chunks = new CsvChunks().fromArray(this.getSourceRecordsArray(allRecords));
+        this.apiJobCreateResult = {
+            chunks,
+            apiInfo: new ApiInfo({
+                jobState: "Undefined",
+                strOperation: this.strOperation,
+                sObjectName: this.sObjectName,
+                jobId: "SIMULATION",
+                batchId: "SIMULATION"
+            }),
+            allRecords
+        };
+        return this.apiJobCreateResult;
+    }
+
     async processCRUDApiJobAsync(progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
         let allResultRecords = new Array<any>();
         for (let index = 0; index < this.apiJobCreateResult.chunks.chunks.length; index++) {
             const csvCunk = this.apiJobCreateResult.chunks.chunks[index];
-            let resultRecords = await this.processCRUDApiBatchAsync(csvCunk, progressCallback);
+            let resultRecords = new Array<any>();
+            if (!this.simulationMode) {
+                resultRecords = await this.processCRUDApiBatchAsync(csvCunk, progressCallback);
+            } else {
+                resultRecords = await this.processCRUDSimulationBatchAsync(csvCunk, progressCallback);
+            }
             if (!resultRecords) {
                 // ERROR RESULT
                 await this.writeToTargetCSVFileAsync(new Array<any>());
@@ -135,13 +162,42 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         return null;
     }
 
+    async processCRUDSimulationBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
+
+        // Progress message: operation started ---------
+        if (progressCallback) {
+            progressCallback(new ApiInfo({
+                jobState: "OperationStarted"
+            }));
+        }
+
+        // Simulation -----------------------------------
+        if (this.operation == OPERATION.Insert && this.updateRecordId) {
+            csvChunk.records.forEach(record => {
+                record["Id"] = Common.makeId(18);
+            });
+        }
+
+
+        // Progress message: operation finished ---------
+        if (progressCallback) {
+            progressCallback(new ApiInfo({
+                jobState: "OperationFinished"
+            }));
+        }
+
+        // Create result records
+        return this.getResultRecordsArray(csvChunk.records);
+
+    }
+
     getStrOperation(): string {
         return this.strOperation;
     }
     // ----------------------- ---------------- -------------------------------------------    
 
 
-
+    // ----------------------- Protected members ------------------------------------------- 
     /**
      * Writes target records to csv file during CRUD api operation
      *
@@ -149,9 +205,29 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
      * @returns {Promise<void>}
      * @memberof ApiEngineBase
      */
-    async writeToTargetCSVFileAsync(records: Array<any>): Promise<void> {
+    protected async writeToTargetCSVFileAsync(records: Array<any>): Promise<void> {
         if (this.createTargetCSVFiles) {
             await Common.writeCsvFileAsync(this.targetCSVFullFilename, records, true);
+        }
+    }
+
+    protected getSourceRecordsArray(records: Array<any>): Array<any> {
+        if (this.operation == OPERATION.Delete) {
+            return records.map(x => x["Id"]);
+        } else {
+            return records;
+        }
+    }
+
+    protected getResultRecordsArray(records: Array<any>): Array<any> {
+        if (this.operation == OPERATION.Delete) {
+            return records.map(Id => {
+                return {
+                    Id
+                };
+            });
+        } else {
+            return records;
         }
     }
 

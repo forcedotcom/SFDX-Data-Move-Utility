@@ -43,6 +43,15 @@ export interface IApiEngine {
      */
     createCRUDApiJobAsync: (allrecords: Array<any>) => Promise<IApiJobCreateResult>;
 
+     /**
+     * Creates api job in simulation mode
+     * @param {Array<any>} allRecords The all source records to process
+     * @returns {Promise<IApiJobCreateResult>} 
+     * @memberof IApiProcess
+     */
+      createCRUDSimulationJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult>;
+
+
     /**
      * Executes previously created api job.
      * Returns the same records as the input. 
@@ -65,6 +74,18 @@ export interface IApiEngine {
      * @memberof IApiProcess
      */
     processCRUDApiBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>>;
+
+    /**
+     * Executes batch in a simulation mode
+     * Returns the same records as the input. 
+     * On Insert operation will create a new 
+     * random Record Id value to each returned record.
+     *
+     * @param {Function} progressCallback The progress callback function
+     * @returns {Promise<Array<any>>} Returns null when unresolvable error occured
+     * @memberof IApiProcess
+     */
+    processCRUDSimulationBatchAsync(csvChunk: ICsvChunk, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>>;
 
     /**
      * The name of the current api engine
@@ -96,7 +117,8 @@ export interface IApiEngineInitParameters {
     createTargetCSVFiles: boolean,
     bulkApiV1BatchSize?: number,
     allOrNone?: boolean,
-    targetFieldMapping? : IFieldMapping
+    targetFieldMapping?: IFieldMapping,
+    simulationMode?: boolean
 }
 
 export interface ICsvChunk {
