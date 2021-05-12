@@ -106,6 +106,7 @@ export enum RESOURCES {
     noUpdateableFieldsInTheSObject = "noUpdateableFieldsInTheSObject",
     scriptJSONFormatError = "scriptJSONFormatError",
     scriptJSONReadError = "scriptJSONReadError",
+    scriptRunInSimulationMode = "scriptRunInSimulationMode",
 
     tryingToConnectCLI = "tryingToConnectCLI",
     successfullyConnected = "successfullyConnected",
@@ -176,6 +177,7 @@ export enum RESOURCES {
     apiOperationFinished = "apiOperationFinished",
     invalidApiOperation = "invalidApiOperation",
     unexpectedApiError = "unexpectedApiError",
+    simulationMode = "simulationMode",
 
     gettingRecordsCount = "gettingRecordsCount",
     totalRecordsAmount = "totalRecordsAmount",

@@ -80,6 +80,7 @@
     "noUpdateableFieldsInTheSObject": "The SOQL query for sObject %s does not include any field can be updated or inserted.",
     "scriptJSONFormatError": "The package JSON file is not well formatted. Error message: %s.",
     "scriptJSONReadError": "The package JSON file could not be read. Error message: %s.",
+    "scriptRunInSimulationMode": "\n\n**** The package is running in the SIMULATION MODE ****\n",
 
     "tryingToConnectCLI": "Connecting to %s using SFDX CLI ...",
     "successfullyConnected": "Successfully connected to %s.",
@@ -142,10 +143,11 @@
     "apiOperationInProgress": "[Batch# %s:%s] {%s} Processing ... %s records processed, %s records failed.",
     "apiOperationCompleted": "[Batch# %s:%s] {%s} Completed. %s records succeeded, %s records failed.",
     "apiOperationWarnCompleted": "[Batch# %s:%s] {%s} Incompleted. %s records succeeded, %s records failed.",
-    "apiOperationStarted": "{%s} The %s API operation has been started using %s.",
+    "apiOperationStarted": "{%s} The %s API operation has been started using %s%s.",
     "apiOperationFinished": "{%s} The %s API operation has been finished.",
     "invalidApiOperation": "Invalid Api operation",
     "unexpectedApiError": "Unexpected Api error",
+    "simulationMode": " (SIMULATION MODE)",
 
     "gettingRecordsCount": "Getting the total amount of records limited by the object's SOQL query ...",
     "totalRecordsAmount": "{%s} Total amount of the %s records: %s",

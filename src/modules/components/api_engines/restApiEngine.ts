@@ -39,7 +39,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let connection = Sfdx.createOrgConnection(this.connectionData);
-        let chunks = new CsvChunks().fromArray(this._getSourceRecordsArray(allRecords));
+        let chunks = new CsvChunks().fromArray(this.getSourceRecordsArray(allRecords));
         this.apiJobCreateResult = {
             chunks,
             apiInfo: new ApiInfo({
@@ -111,7 +111,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                     // ERROR RESULT
                     resolve(null);
                 }
-                records = self._getResultRecordsArray(records);
+                records = self.getResultRecordsArray(records);
                 records.forEach((record, index) => {
                     if (resultRecords[index].success) {
                         record[CONSTANTS.ERRORS_FIELD_NAME] = null;
@@ -151,25 +151,6 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
 
 
 
-    // ----------------------- Private members -------------------------------------------        
-    private _getSourceRecordsArray(records: Array<any>): Array<any> {
-        if (this.operation == OPERATION.Delete) {
-            return records.map(x => x["Id"]);
-        } else {
-            return records;
-        }
-    }
-
-    private _getResultRecordsArray(records: Array<any>): Array<any> {
-        if (this.operation == OPERATION.Delete) {
-            return records.map(Id => {
-                return {
-                    Id
-                };
-            });
-        } else {
-            return records;
-        }
-    }
+   
 
 }

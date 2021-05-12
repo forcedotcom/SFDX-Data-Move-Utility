@@ -674,7 +674,7 @@ export default class MigrationJobTask {
         this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(recordsToDelete.length));
 
         // Delete records
-        if (recordsToDelete.length == 0){
+        if (recordsToDelete.length == 0) {
             return 0;
         }
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
@@ -1549,7 +1549,8 @@ export default class MigrationJobTask {
                         updateRecordId,
                         targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                         createTargetCSVFiles: this.script.createTargetCSVFiles,
-                        targetFieldMapping: this._targetFieldMapping
+                        targetFieldMapping: this._targetFieldMapping,
+                        simulationMode: this.script.simulationMode
                     });
                     break;
                 default: // Bulk Api V1.0
@@ -1564,7 +1565,8 @@ export default class MigrationJobTask {
                         bulkApiV1BatchSize: this.script.bulkApiV1BatchSize,
                         targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                         createTargetCSVFiles: this.script.createTargetCSVFiles,
-                        targetFieldMapping: this._targetFieldMapping
+                        targetFieldMapping: this._targetFieldMapping,
+                        simulationMode: this.script.simulationMode
                     });
                     break;
             }
@@ -1581,7 +1583,8 @@ export default class MigrationJobTask {
                 allOrNone: this.script.allOrNone,
                 targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                 createTargetCSVFiles: this.script.createTargetCSVFiles,
-                targetFieldMapping: this._targetFieldMapping
+                targetFieldMapping: this._targetFieldMapping,
+                simulationMode: this.script.simulationMode
             });
         }
         this.setApiEngine(engine);
@@ -1641,7 +1644,8 @@ export default class MigrationJobTask {
                 }
                 break;
             case RESULT_STATUSES.ApiOperationStarted:
-                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation(), this.apiEngine.getEngineName());
+                let simulationModeResourceString = this.script.simulationMode ? this.logger.getResourceString(RESOURCES.simulationMode) : "";
+                this.logger.log(RESOURCES.apiOperationStarted, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation(), this.apiEngine.getEngineName(), simulationModeResourceString);
                 break;
             case RESULT_STATUSES.ApiOperationFinished:
                 this.logger.log(RESOURCES.apiOperationFinished, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation());
