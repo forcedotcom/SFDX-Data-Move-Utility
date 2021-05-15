@@ -12,6 +12,7 @@ import { Common } from "../../components/common_components/common";
 import { CsvChunks, ScriptObject } from "..";
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
 import { OPERATION } from "../../../addons/package/base/enumerations";
+import { CONSTANTS } from "../../components/common_components/statics";
 
 
 
@@ -212,7 +213,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     }
 
     protected getSourceRecordsArray(records: Array<any>): Array<any> {
-        if (this.operation == OPERATION.Delete) {
+        if (this.operation == OPERATION.Delete && !this.simulationMode) {
             return records.map(x => x["Id"]);
         } else {
             return records;
@@ -221,10 +222,15 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
     protected getResultRecordsArray(records: Array<any>): Array<any> {
         if (this.operation == OPERATION.Delete) {
-            return records.map(Id => {
-                return {
-                    Id
-                };
+            return records.map(record => {
+                if (!this.simulationMode) {
+                    return {
+                        Id: record
+                    };
+                } else {
+                    delete record[CONSTANTS.__ID_FIELD_NAME];
+                    return record;
+                }
             });
         } else {
             return records;

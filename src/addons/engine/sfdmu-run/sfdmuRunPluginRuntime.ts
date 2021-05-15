@@ -216,11 +216,11 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
             return [];
         }
 
-        records = operation == OPERATION.Delete ? records.map(x => {
-            return {
-                Id: x["Id"]
-            }
-        }) : records;
+        // records = operation == OPERATION.Delete ? records.map(x => {
+        //     return {
+        //         Id: x["Id"]
+        //     }
+        // }) : records;
 
         let resultRecords: Array<any>;
 
