@@ -69,6 +69,7 @@ export default class Script {
     allowFieldTruncation: boolean = false;
     simulationMode: boolean = false;
 
+
     @Type(() => AddonManifestDefinition)
     beforeAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
 
@@ -87,6 +88,7 @@ export default class Script {
     job: MigrationJob;
     addonManager: AddonManager;
     runInfo: ICommandRunInfo;
+    canModify: string;
 
     get addonRuntime(): ISfdmuRunPluginRuntimeSystem {
         return <any>this.addonManager.runtime;
@@ -149,12 +151,14 @@ export default class Script {
         sourceUsername: string,
         targetUsername: string,
         basePath: string,
-        apiVersion: string): Promise<void> {
+        apiVersion: string,
+        canModify: string): Promise<void> {
 
         // Initialize script
         this.logger = logger;
         this.basePath = basePath;
         this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
+        this.canModify = canModify || "";
 
         // Message about the running version      
         this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
@@ -235,6 +239,10 @@ export default class Script {
         this.objects.forEach(object => {
             object.setup(this);
         });
+
+        // Validate production update
+        await this.sourceOrg.promptUserForProductionModificationAsync();
+        await this.targetOrg.promptUserForProductionModificationAsync();
 
         // Cleanup the source / target directories
         await this.cleanupDirectories();

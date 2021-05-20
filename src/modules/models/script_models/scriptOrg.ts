@@ -46,6 +46,8 @@ export default class ScriptOrg {
     isSource: boolean = false;
     isPersonAccountEnabled: boolean = false;
     orgDescribe: Map<string, SObjectDescribe> = new Map<string, SObjectDescribe>();
+    organizationType: "Developer Edition";
+    isSandbox: boolean = false;
 
     get connectionData(): IOrgConnectionData {
         return {
@@ -71,6 +73,17 @@ export default class ScriptOrg {
         return [...this.orgDescribe.keys()];
     }
 
+    get isProduction(): boolean {
+        return !this.isSandbox && this.organizationType != "Developer Edition";
+    }
+
+    get isDeveloper(): boolean {
+        return this.organizationType == "Developer Edition";
+    }
+
+    get instanceDomain(): string {
+        return Common.extractDomainFromUrlString(this.instanceUrl) || "";
+    }
 
     // ----------------------- Public methods -------------------------------------------    
     /**
@@ -88,6 +101,30 @@ export default class ScriptOrg {
 
         // Get org describtion
         await this._describeOrg();
+    }
+
+    /**
+     * If it is production environment prompts user for the 
+     * "I know what I do"
+     *
+     * @return {*}  {Promise<void>}
+     * @memberof ScriptOrg
+     */
+    async promptUserForProductionModificationAsync(): Promise<void> {
+        // Prompt user if it is production target
+        if (
+            !this.isFileMedia                                                               // It's Org, not File +
+            && this.isProduction                                                            // It's Production +
+            && this.script.canModify.toLowerCase() != this.instanceDomain.toLowerCase()     // There is no --canmodify flag passed with the CLI command +
+            && (
+                !this.isSource                                                              // It's the Target org ...
+                || this.isSource && this.script.hasDeleteFromSourceObjectOperation          // ... or its the Source org but delete from source is now in progress
+            )
+        ) {
+            // Prompt the user to allow production modifications
+
+
+        }
     }
 
     getConnection(): any {
@@ -119,7 +156,8 @@ export default class ScriptOrg {
         return output;
     };
 
-    private async _validateAccessTokenAsync(): Promise<void> {
+    private async _validateOrgAsync(): Promise<void> {
+
         let apiSf = new Sfdx(this);
         if (!this.isFileMedia) {
 
@@ -129,8 +167,13 @@ export default class ScriptOrg {
                 throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessToOrgExpired, this.name));
             }
 
+            // Get org info
+            let ret = await apiSf.queryAsync("SELECT OrganizationType, IsSandbox FROM Organization LIMIT 1", false);
+            this.isSandbox = ret.records[0]["IsSandbox"];
+            this.organizationType = ret.records[0]["OrganizationType"];
+
+            // Check person account availability
             try {
-                // Check person account availability
                 await apiSf.queryAsync("SELECT IsPersonAccount FROM Account LIMIT 1", false);
                 this.isPersonAccountEnabled = true;
             } catch (ex) {
@@ -162,7 +205,8 @@ export default class ScriptOrg {
             }
 
             // Validate connection and check person account availability
-            await this._validateAccessTokenAsync();
+            await this._validateOrgAsync();
+
             this.script.logger.infoNormal(RESOURCES.successfullyConnected, this.name);
         }
     }

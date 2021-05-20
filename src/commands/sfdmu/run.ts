@@ -121,6 +121,17 @@ export default class Run extends SfdxCommand {
             description: commandMessages.getMessage("nowarningsFlagDescription"),
             longDescription: commandMessages.getMessage("nowarningsLongFlagDescription")
         }),
+        canmodify: flags.string({
+            char: "c",
+            description: commandMessages.getMessage('canModifyFlagDescription'),
+            longDescription: commandMessages.getMessage('canModifyFlagLongDescription'),
+            default: '',
+            // TODO: Add deprecation to the flag if needed
+            // deprecated: {
+            //     version: 43,
+            //     to: 'force:package:create'
+            // },
+        })
 
     };
 
@@ -171,7 +182,7 @@ export default class Run extends SfdxCommand {
             if (!this.flags.sourceusername && !this.flags.targetusername) {
                 throw new CommandInitializationError(commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
             }
-            
+
             if (!this.flags.sourceusername) {
                 this.flags.sourceusername = CONSTANTS.DEFAULT_ORG_MEDIA_TYPE;
             }
@@ -181,7 +192,13 @@ export default class Run extends SfdxCommand {
             }
 
             let commandResult: any;
-            this.command = new RunCommand(pinfo, Common.logger, this.flags.path, this.flags.sourceusername, this.flags.targetusername, this.flags.apiversion);
+            this.command = new RunCommand(pinfo,
+                Common.logger,
+                this.flags.path,
+                this.flags.sourceusername,
+                this.flags.targetusername,
+                this.flags.apiversion,
+                this.flags.canmodify);
 
             await this.command.setupAsync();
             await this.command.createJobAsync();

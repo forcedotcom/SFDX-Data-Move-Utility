@@ -34,7 +34,7 @@ export const CONSTANTS = {
     FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
 
     SCRIPT_FILE_NAME: 'export.json',
-
+   
     CORE_ADDON_MANIFEST_FILE_NAME: "../../addons/addonsCore.json",
     USER_ADDON_MANIFEST_FILE_NAME: "addons.json",
     CORE_ADDON_MODULES_BASE_PATH: "../../../addons/modules/",

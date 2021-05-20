@@ -34,6 +34,7 @@ export class RunCommand {
     targetUsername: string;
     sourceUsername: string;
     apiVersion: string;
+    canModify: string;
     script: models.Script;
     job: Job;
 
@@ -52,7 +53,8 @@ export class RunCommand {
         basePath: string,
         sourceUsername: string,
         targetUsername: string,
-        apiVersion: string) {
+        apiVersion: string,
+        canModify: string) {
 
         this.pinfo = pinfo;
         this.logger = logger;
@@ -60,6 +62,7 @@ export class RunCommand {
         this.targetUsername = targetUsername;
         this.sourceUsername = sourceUsername;
         this.apiVersion = apiVersion;
+        this.canModify = canModify;
     }
 
 
@@ -101,7 +104,13 @@ export class RunCommand {
         }
 
         // Setup script object
-        await this.script.setupAsync(this.pinfo, this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);
+        await this.script.setupAsync(this.pinfo,
+            this.logger,
+            this.sourceUsername,
+            this.targetUsername,
+            this.basePath,
+            this.apiVersion,
+            this.canModify);
 
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.source)]: this.logger.getResourceString(RESOURCES.sourceOrg, this.script.sourceOrg.name),
@@ -159,8 +168,8 @@ export class RunCommand {
     */
     async prepareJobAsync(): Promise<void> {
         this.logger.infoNormal(RESOURCES.preparingJob);
-        this.job.prepareJob();   
-        await this.job.getTotalRecordsCountAsync();    
+        this.job.prepareJob();
+        await this.job.getTotalRecordsCountAsync();
     }
 
     /**
@@ -172,7 +181,7 @@ export class RunCommand {
     async executeJobAsync(): Promise<void> {
 
         this.logger.infoNormal(RESOURCES.executingJob);
-      
+
         await this.job.deleteOldRecordsAsync();
         await this.job.retrieveRecordsAsync();
         await this.job.updateRecordsAsync();
@@ -187,11 +196,11 @@ export class RunCommand {
      * @returns {Promise<void>}
      * @memberof RunCommand
      */
-    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<void> { 
+    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<void> {
         this.logger.infoNormal(RESOURCES.newLine);
-        this.logger.headerNormal(RESOURCES.processingAddon);     
+        this.logger.headerNormal(RESOURCES.processingAddon);
         let processed = await this.script.addonManager.triggerAddonModuleMethodAsync(method);
-        if (!processed){
+        if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
         }
         this.logger.infoNormal(RESOURCES.newLine);
