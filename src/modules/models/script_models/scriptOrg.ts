@@ -9,9 +9,10 @@ import { Common } from "../../components/common_components/common";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import { Script, OrgInfo, SObjectDescribe } from "..";
-import { CommandInitializationError } from "../common_models/errors";
+import { CommandAbortedByUserError, CommandInitializationError } from "../common_models/errors";
 import { IOrgConnectionData } from "../common_models/helper_interfaces";
 import { DATA_MEDIA_TYPE } from "../../../addons/package/base/enumerations";
+import { CONSTANTS } from "../../components/common_components/statics";
 
 
 /**
@@ -112,18 +113,23 @@ export default class ScriptOrg {
      */
     async promptUserForProductionModificationAsync(): Promise<void> {
         // Prompt user if it is production target
+        let domain = this.instanceDomain.toLowerCase();
         if (
             !this.isFileMedia                                                               // It's Org, not File +
             && this.isProduction                                                            // It's Production +
-            && this.script.canModify.toLowerCase() != this.instanceDomain.toLowerCase()     // There is no --canmodify flag passed with the CLI command +
+            && this.script.canModify.toLowerCase() != domain                                // There is no --canmodify flag passed with the CLI command +
             && (
                 !this.isSource                                                              // It's the Target org ...
-                || this.isSource && this.script.hasDeleteFromSourceObjectOperation          // ... or its the Source org but delete from source is now in progress
+                || this.isSource && this.script.hasDeleteFromSourceObjectOperation          // ... or its the Source org but delete from source is now in progress                
             )
         ) {
             // Prompt the user to allow production modifications
-
-
+            let promptMessage = this.script.logger.getResourceString(RESOURCES.productionModificationApprovalPrompt, domain);
+            let response = (await this.script.logger.textPromptAsync(promptMessage, null, '')).toLowerCase();
+            if (response != domain) {
+                // Abort the job
+                throw new CommandAbortedByUserError(this.script.logger.getResourceString(RESOURCES.actionIsNotPermitted));
+            }
         }
     }
 

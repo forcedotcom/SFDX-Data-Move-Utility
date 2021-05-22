@@ -26,6 +26,7 @@
     "cantLoad": "%s is not found or could not be loaded.",
     "global": "Global",
     "canNotLoadModule": "Can not load module %s",
+    "actionIsNotPermitted": "The action is not permitted.",
 
     "defaultPromptOptions": "y/n",
     "defaultPromptNopromptOption": "y",
@@ -126,6 +127,7 @@
     "validationAndFixingsourceCSVFilesCompleted": "Validating and repairing of the source CSV files have finished.",
     "unableToDeleteTargetDirectory" : "Unable to clean-up the target directory: '%s'. Check whether any files is busy by another application.",
     "unableToDeleteSourceDirectory": "Unable to clean-up the souce directory: '%s'. Check whether any files is busy by another application.",
+    "productionModificationApprovalPrompt": "WARNING! The Tool has detected that you are about to modify the production environment.\nTo confirm the action and to continue, please, enter the domain name",
 
     "preparingJob": "Preparing has been finished.",
     "executingJob": "Ready to process the data.",

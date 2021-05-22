@@ -55,10 +55,11 @@ export enum RESOURCES {
     cantLoad = "cantLoad",
     global = "global",
     canNotLoadModule = "canNotLoadModule",
+    actionIsNotPermitted = "actionIsNotPermitted",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptNopromptOption = "defaultPromptNopromptOption",
-    defaultPromptSelectedOption = "defaultPromptSelectedOption",    
+    defaultPromptSelectedOption = "defaultPromptSelectedOption",
     promptMessageFormat = "promptMessageFormat",
     promptDefaultOptionFormat = "promptDefaultOptionFormat",
 
@@ -156,6 +157,7 @@ export enum RESOURCES {
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
     unableToDeleteTargetDirectory = "unableToDeleteTargetDirectory",
     unableToDeleteSourceDirectory = "unableToDeleteSourceDirectory",
+    productionModificationApprovalPrompt = "productionModificationApprovalPrompt",
 
     preparingJob = "preparingJob",
     executingJob = "executingJob",
@@ -189,13 +191,13 @@ export enum RESOURCES {
     deletingSourceSObjectRecords = "deletingSourceSObjectRecords",
 
     deletingNRecordsWillBeDeleted = "deletingNRecordsWillBeDeleted",
-    deletingRecordsCompleted = "deletingRecordsCompleted",   
+    deletingRecordsCompleted = "deletingRecordsCompleted",
     nothingToDelete = "nothingToDelete",
     nothingToDelete2 = "nothingToDelete2",
 
     deletingDataCompleted = "deletingDataCompleted",
     deletingDataSkipped = "deletingDataSkipped",
-    
+
     mappingQuery = "mappingQuery",
     mappingSourceRecords = "mappingSourceRecords",
     mappingTargetRecords = "mappingTargetRecords",
@@ -224,7 +226,7 @@ export enum RESOURCES {
     updatingTotallyUpdated = "updatingTotallyUpdated",
 
     processingAddon = "processingAddon",
-    runAddonMethod = "runAddonMethod",  
+    runAddonMethod = "runAddonMethod",
     nothingToProcess = "nothingToProcess",
     startAddonExecute = "startAddonExecute",
     finishAddonExecute = "finishAddonExecute",
@@ -445,11 +447,26 @@ export class Logger {
     }, ...tokens: string[]
     ): Promise<string> {
 
-        params.options = params.options || this.getResourceString(RESOURCES.defaultPromptOptions);
-        params.default = params.default || this.getResourceString(RESOURCES.defaultPromptSelectedOption);
-        params.nopromptDefault = params.nopromptDefault || this.getResourceString(RESOURCES.defaultPromptNopromptOption);
+        params.options = params.options != "" ? this.getResourceString(RESOURCES.defaultPromptOptions) : params.options;
+
+        params.default = params.default != "" ? this.getResourceString(RESOURCES.defaultPromptSelectedOption) : params.default;
+        params.default = params.default ? String(params.default).trim() : params.default;
+
+        let defaultOption = params.default ? this.getResourceString(RESOURCES.promptDefaultOptionFormat, params.default) : undefined;
+        defaultOption = defaultOption ? String(defaultOption).trim() : defaultOption;
+
+        params.nopromptDefault = params.nopromptDefault != "" ? this.getResourceString(RESOURCES.defaultPromptNopromptOption) : params.nopromptDefault;
+        params.nopromptDefault = params.nopromptDefault ? String(params.nopromptDefault).trim() : params.nopromptDefault;
+
         params.timeout = params.timeout || CONSTANTS.DEFAULT_USER_PROMPT_TIMEOUT_MS;
+
         params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
+        params.message = this.getResourceString(RESOURCES.promptMessageFormat, params.message, params.options);
+        if (!params.options) {
+            // Remove parethenesses
+            params.message = params.message.replace(/[\(\)\?]/g, '');
+        }
+        params.message = params.message.trim();
 
         if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.NONE || this.noPromptFlag) {
             // Suppress propmts on --quite or --noprompt, immediately send the default value
@@ -457,12 +474,12 @@ export class Logger {
         }
 
         try {
-            params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
-
-            return await this.uxLogger.prompt(this.getResourceString(RESOURCES.promptMessageFormat, String(params.message), params.options), {
-                default: this.getResourceString(RESOURCES.promptDefaultOptionFormat, params.default),
-                timeout: params.timeout
-            });
+            return await this.uxLogger.prompt(
+                params.message,
+                {
+                    default: defaultOption,
+                    timeout: params.timeout
+                });
         } catch (ex) {
             return params.default;
         }
@@ -476,12 +493,33 @@ export class Logger {
     *
     * @param {string} message  Message to prompt the user
     * @returns {Promise<boolen>} Returns true if user has choosen "yes" (continue job)
+    * @param {...string[]} tokens Tokens for the command resource 
     * @memberof MessageUtils
     */
     async yesNoPromptAsync(message: string, ...tokens: string[]): Promise<boolean> {
         return (await this.promptAsync.apply(this, [{
             message
         }, ...tokens])) != this.getResourceString(RESOURCES.defaultPromptSelectedOption);
+    }
+
+    /**
+     * Outputs prompt to ask user to enter any text.
+     *
+     * @param {string} message Prompt message to display to the user.
+     * @param {string} [defaultResponse=""] The default response string if the user does not respond within the timeout value.
+     * @param {number} [timeout=6000] Timeout in ms if user does not respond 
+     * @param {...string[]} tokens Tokens for the command resource 
+     * @return {*}  {Promise<string>}
+     * @memberof Logger
+     */
+    async textPromptAsync(message: string, timeout?: number, defaultResponse: string = "", ...tokens: string[]): Promise<string> {
+        return (await this.promptAsync.apply(this, [{
+            message,
+            options: "",
+            default: defaultResponse,
+            nopromptDefault: defaultResponse,
+            timeout: timeout || CONSTANTS.DEFAULT_USER_PROMT_TEXT_ENTER_TIMEOUT_MS
+        }, ...tokens]));
     }
 
     /**
