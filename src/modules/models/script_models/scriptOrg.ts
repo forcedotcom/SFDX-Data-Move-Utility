@@ -12,7 +12,7 @@ import { Script, OrgInfo, SObjectDescribe } from "..";
 import { CommandAbortedByUserError, CommandInitializationError } from "../common_models/errors";
 import { IOrgConnectionData } from "../common_models/helper_interfaces";
 import { DATA_MEDIA_TYPE } from "../../../addons/package/base/enumerations";
-import { CONSTANTS } from "../../components/common_components/statics";
+
 
 
 /**
