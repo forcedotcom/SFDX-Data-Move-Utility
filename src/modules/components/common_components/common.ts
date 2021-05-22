@@ -1543,5 +1543,20 @@ export class Common {
         return output;
     }
 
+    /**
+     * Extracts only domain name from full url string.
+     * For example "https://stackoverflow.com/questions/8498592/extract-hostname-name-from-string/"
+     * => stackoverflow.com
+     *
+     * @static
+     * @param {string} url The url string to process
+     * @return {*} 
+     * @memberof Common
+     */
+    public static extractDomainFromUrlString(url: string): string {
+        if (!url) return url;
+        const matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
+        return matches && matches[1];
+    }
 
 }
