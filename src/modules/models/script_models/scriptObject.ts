@@ -655,9 +655,10 @@ export default class ScriptObject {
         }
 
         // Filter fields which is not described
+        let describedFields = [...describe.fieldsMap.keys()].map(field => field.toLowerCase());
         this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) => {
             let isComplexField = Common.isComplexField(field.field);
-            return isComplexField || !isComplexField && describe.fieldsMap.has(field.field);
+            return isComplexField || !isComplexField && describedFields.indexOf(field.field.toLowerCase()) >= 0;
         });
 
         // Make each field appear only once
