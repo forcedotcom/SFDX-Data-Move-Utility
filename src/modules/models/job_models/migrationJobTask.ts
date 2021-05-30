@@ -560,9 +560,9 @@ export default class MigrationJobTask {
      */
     createDeleteQuery() {
         if (!this.scriptObject.parsedDeleteQuery) {
-            return this.createQuery(["Id"], true);
+            return this.createQuery(["Id"], true, null, this.scriptObject.useFieldMapping);
         } else {
-            return this.createQuery(["Id"], true, this.scriptObject.parsedDeleteQuery);
+            return this.createQuery(["Id"], true, this.scriptObject.parsedDeleteQuery, this.scriptObject.useFieldMapping);
         }
     }
 
@@ -1964,6 +1964,7 @@ export default class MigrationJobTask {
                         fields.push(getComposedField(targetField));
                     }
                 });
+                fields = Common.distinctArray(fields, 'field');
                 targetParsedQuery.fields = fields;
                 if (targetParsedQuery.where) {
                     let left: Condition = targetParsedQuery.where.left;
