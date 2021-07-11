@@ -1129,12 +1129,12 @@ export default class MigrationJobTask {
 
             // Deleting ////////
             self.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, self.sObjectName, String(self.sourceData.records.length));
-            // let recordsToDelete = self.sourceData.records.map(x => {
-            //     return {
-            //         Id: x["Id"]
-            //     }
-            // });
-            let recordsToDelete = [].concat(self.sourceData.records);
+            
+            let recordsToDelete = self.sourceData.records.map(record => {
+                return {
+                    Id : record["Id"]
+                }
+            });
 
             // Create engine
             self.createApiEngine(self.sourceData.org, OPERATION.Delete, recordsToDelete.length, true);
