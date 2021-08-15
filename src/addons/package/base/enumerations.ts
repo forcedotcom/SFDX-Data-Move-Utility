@@ -57,3 +57,7 @@ export enum ADDON_MODULE_METHODS {
     onAfter = "onAfter"
 }
 
+export enum SPECIAL_MOCK_PATTERN_TYPES {
+    haveAnyValue,
+    missingValue
+}

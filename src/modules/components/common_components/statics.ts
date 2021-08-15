@@ -5,6 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+
+import { SPECIAL_MOCK_PATTERN_TYPES } from "../../../addons/package/base";
 import IBlobField from "../../../addons/package/base/IBlobField";
 
 
@@ -77,6 +79,13 @@ export const CONSTANTS = {
         "c_seq_number",
         "c_seq_date"
     ],
+
+    SPECIAL_MOCK_PATTERNS: new Map<SPECIAL_MOCK_PATTERN_TYPES, string>(
+        [
+            [SPECIAL_MOCK_PATTERN_TYPES.haveAnyValue, "*"],
+            [SPECIAL_MOCK_PATTERN_TYPES.missingValue, "^*"]
+        ]
+    ),
 
     RECORD_TYPE_SOBJECT_NAME: "RecordType",
 
