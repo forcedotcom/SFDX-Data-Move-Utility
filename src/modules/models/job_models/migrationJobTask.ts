@@ -29,7 +29,7 @@ const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
-import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES } from '../../../addons/package/base/enumerations';
+import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../../addons/package/base/enumerations';
 import { ApiInfo } from '../api_models';
 
 
@@ -1460,8 +1460,8 @@ export default class MigrationJobTask {
                         if (!doNotMock) {
                             let mockField = fieldNameToMockFieldMap.get(fieldName);
                             let value = String(updatedRecord[fieldName]);
-                            let excluded = mockField.regExcl && (new RegExp(mockField.regExcl, 'ig').test(value));
-                            let included = mockField.regIncl && (new RegExp(mockField.regIncl, 'ig').test(value));
+                            let excluded = mockField.regExcl && ___testRegex(mockField.regExcl, value);
+                            let included = mockField.regIncl && ___testRegex(mockField.regIncl, value);
                             if (included && mockField.allowMockAllRecord) {
                                 mockAllRecord = true;
                             }
@@ -1493,6 +1493,22 @@ export default class MigrationJobTask {
                 return records;
             }
             return updatedRecords;
+        }
+
+        function ___testRegex(expr: string, value: string) : boolean{
+            switch (expr) {
+                case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.haveAnyValue):
+                    // * 
+                    return !!value;
+
+                case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.missingValue):
+                        // ^* 
+                        return !value;
+            
+                default:
+                    // regex
+                   return new RegExp(expr, 'ig').test(value);
+            }
         }
 
         function ___getMockPatternByFieldName(fieldName: string): ScriptMockField {
