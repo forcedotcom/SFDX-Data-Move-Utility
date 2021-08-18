@@ -384,6 +384,8 @@ export class Sfdx implements IFieldMapping {
             }));
 
         let targetObjectName = objectFieldMapping ? objectFieldMapping.targetSObjectName : objectName;
+        let isTheSameMappedObject = objectFieldMapping && targetObjectName == objectName;
+
         // Using the target object name...
         let describeResult: DescribeSObjectResult = <DescribeSObjectResult>(await describeAsync(targetObjectName));
         let sObjectDescribe: SObjectDescribe = new SObjectDescribe({
@@ -400,7 +402,7 @@ export class Sfdx implements IFieldMapping {
             // ------
             f.objectName = objectName;
             let fn = mapItems.filter(sourceToTargetItem => sourceToTargetItem[1] == field.name)[0];
-            if (fn) {
+            if (fn && !isTheSameMappedObject) {
                 f.name = fn[0];
             } else {
                 f.name = field.name;
