@@ -2,37 +2,27 @@
 
 - **For the detailed documentation, visit the [SFDMU Help Center](https://help.sfdmu.com)**
 - **The changelog (including only important updates) can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
-- **Download also the [SFDMU Desktop GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) that can help you to configure the Plugin**
-
+- **You can also use the [SFDMU Desktop GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) that can help you to configure and to run the Plugin**
 
 ```bash
-### ------------------------------------------- ###
-### - *** Latest version: v4.4.5          *** - ###
-### ------------------------------------------- ###
-### - *** Make sure, that you have        *** - ###
-### - *** the latest version installed    *** - ###
-
-### ------------------------------------------- ###
-### - *** Starting from the v4, each      *** - ###
-### - *** release of the Plugin is        *** - ###
-### - *** digitally signed by Salesforce  *** - ###
-### ------------------------------------------- ###
+> ** PLEASE NOTE, THAT THIS TOOL HAS LIMITED SUPPORT AND SLA IS NOT ENFORCED AS SUPPORT TO ISSUES RAISED. **
+> ** WE CANNOT GUARANTEE THAT YOUR ISSUES WILL BE PROCESSED WITHIN ANY TIME FRAME AND SOMETIMES IT CAN TAKE A LONG TIME. **
+> ** HOWEVER, WE GIVE OUR BEST EFFORT TO RETURN AND ADDRESS EACH ISSUE AS POSSIBLE. **
 ```
 
 
-> **PLEASE NOTE, THAT THIS TOOL HAS LIMITED SUPPORT AND SLA IS NOT ENFORCED AS SUPPORT TO ISSUES RAISED.**
-> **HOWEVER, WE GIVE OUR BEST EFFORT TO RETURN AND ADDRESS EACH ISSUE AS POSSIBLE.**
 
-> **FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
-
+> **Please, always follow the below guidelines when opening isues:**
 > - **Always use one of our issue tracker templates.**
 > - **For Plugin bugs always attach:**
 >  - **The latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
 >  - **The [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
 >  - **When you have an issue with failed rows, provide also the dump of the [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant full rows).**
 
-> Most of the issue are coming due to incorrect configuration or stuff are related to the client environment,
-> so **carefully reading** the **[documentation](https://help.sfdmu.com/quick-start)** as well as an examination of the **[target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files)** before opening a bug will save your time waiting for our response :)
+
+
+> *\* Most of the issues are coming due to incorrect configuration or stuff are related to the client environment,*
+> *so **carefully reading** the **[documentation](https://help.sfdmu.com/quick-start)** as well as an examination of the **[target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files)** before opening a bug will save your time waiting for our response :)*
 
 
 ## Introduction:
