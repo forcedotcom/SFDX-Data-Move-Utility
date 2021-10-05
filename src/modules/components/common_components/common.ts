@@ -444,12 +444,18 @@ export class Common {
      * @template T
      * @param {Array<T>} array 
      * @param {string} distinctByProp 
+     * @param {boolean} stringIgnoreCase  
      * @returns {Array<T>}
      * @memberof CommonUtils
      */
-    public static distinctArray<T>(array: Array<T>, distinctByProp: string): Array<T> {
+    public static distinctArray<T>(array: Array<T>, distinctByProp: string, stringIgnoreCase?: boolean): Array<T> {
         return array.filter((obj, pos, arr) => {
-            return arr.map<T>(mapObj => mapObj[distinctByProp]).indexOf(obj[distinctByProp]) === pos;
+            if (!stringIgnoreCase) {
+                return arr.map<T>(mapObj => mapObj[distinctByProp])
+                    .indexOf(obj[distinctByProp]) === pos;
+            } 
+            return arr.map<T>(mapObj =>((mapObj[distinctByProp] as any) || '').toLowerCase())
+                    .indexOf(((obj[distinctByProp] as any) || '').toLowerCase()) === pos;
         });
     }
 
@@ -459,10 +465,15 @@ export class Common {
      * @static
      * @param {string[]} array 
      * @returns {Array<string>}
+     * @param {boolean} stringIgnoreCase  
      * @memberof CommonUtils
      */
-    public static distinctStringArray(array: string[]): Array<string> {
-        return [...new Set<string>(array)];
+    public static distinctStringArray(array: string[], stringIgnoreCase?: boolean): Array<string> {
+        if (!stringIgnoreCase){
+            return [...new Set<string>(array)];
+        }
+        let m = new Map(array.map(s => [s.toLowerCase(), s]));
+        return [...m.values()];
     }
 
     /**
