@@ -181,7 +181,7 @@ export class Sfdx implements IFieldMapping {
                     if (!newParsedQuery.fields.some(newFieldTmp => {
                         let newSOQLFieldTmp = <SOQLField>newFieldTmp;
                         let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
-                        return newRawValueTmp == rawValueOrig;
+                        return newRawValueTmp.toLowerCase() == rawValueOrig.toLowerCase();
                     })) {
                         newParsedQuery.fields.push(originalField);
                     }
@@ -195,7 +195,7 @@ export class Sfdx implements IFieldMapping {
                         if (!newParsedQuery.fields.some(newFieldTmp => {
                             let newSOQLFieldTmp = <SOQLField>newFieldTmp;
                             let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
-                            return newRawValueTmp == newFieldName;
+                            return newRawValueTmp.toLowerCase() == newFieldName.toLowerCase();
                         })) {
                             newParsedQuery.fields.push(getComposedField(newFieldName));
                         }
