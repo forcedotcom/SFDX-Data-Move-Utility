@@ -15,16 +15,17 @@ import "reflect-metadata";
 import "es6-shim";
 import { plainToClass } from "class-transformer";
 
-import { IPluginRuntimeSystemBase } from '../../../../modules/models/common_models/helper_interfaces';
 import { AddonManifest, CommandInitializationError, Script } from '../../../../modules/models';
 import { Logger, RESOURCES } from '../../../../modules/components/common_components/logger';
 import AddonManifestDefinition from '../../../../modules/models/script_models/addonManifestDefinition';
-import SfdmuPluginRuntime from './sfdmu/sfdmuPluginRuntime';
 import { CONSTANTS } from '../../../../modules/components/common_components/statics';
 import { ADDON_MODULE_METHODS } from '../../../../modules/components/common_components/enumerations';
-import PluginRuntimeBase from './pluginRuntimeBase';
-import AddonModuleBase from './AddonModuleBase';
-import IPluginExecutionContext from '../interfaces/IPluginExecutionContext';
+import PluginRuntimeBase from '../base/pluginRuntimeBase';
+import AddonModuleBase from '../base/AddonModuleBase';
+import IPluginExecutionContext from '../base/IPluginExecutionContext';
+import SfdmuPluginRuntime from '../base/sfdmuRunPluginRuntime';
+import { IAddonRuntimeSystem } from '../base/IAddonRuntimeSystem';
+import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
 
 
 
@@ -35,7 +36,7 @@ import IPluginExecutionContext from '../interfaces/IPluginExecutionContext';
 export default class AddonManager {
 
     runtime: PluginRuntimeBase;
-    runtimeSystem: IPluginRuntimeSystemBase;
+    runtimeSystem: IAddonRuntimeSystem;
     script: Script;
 
     get logger(): Logger {
@@ -55,7 +56,7 @@ export default class AddonManager {
         // Setup ************************************************   
         this.script = script;
         this.runtime = new SfdmuPluginRuntime(script);
-        this.runtimeSystem = <IPluginRuntimeSystemBase>(<any>this.runtime);
+        this.runtimeSystem = <ISfdmuAddonRuntimeSystem>(<any>this.runtime);
 
         // Load manifests
         this.manifests = [

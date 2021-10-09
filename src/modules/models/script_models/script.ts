@@ -29,13 +29,8 @@ import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/e
 import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
 import AddonManifestDefinition from "./addonManifestDefinition";
-import AddonManager from "../../../addons/components/addon_components/classes/addonManager";
-import { IPluginRuntimeSystemBase } from "../common_models/helper_interfaces";
-
-
-
-
-
+import AddonManager from "../../../addons/components/addon_components/sfdmu/addonManager";
+import { ISfdmuAddonRuntimeSystem } from "../../../addons/components/addon_components/sfdmu/ISfdmuAddonRuntimeSystem";
 
 
 
@@ -95,7 +90,7 @@ export default class Script {
     runInfo: ICommandRunInfo;
     canModify: string;
 
-    get addonRuntime(): IPluginRuntimeSystemBase {
+    get addonRuntime(): ISfdmuAddonRuntimeSystem {
         return <any>this.addonManager.runtime;
     }
 

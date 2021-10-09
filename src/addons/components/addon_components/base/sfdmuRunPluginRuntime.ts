@@ -10,32 +10,30 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 
-import { BulkApiV1_0Engine } from "../../../../../modules/components/api_engines/bulkApiV1_0Engine";
-import { RestApiEngine } from "../../../../../modules/components/api_engines/restApiEngine";
-import { Common } from "../../../../../modules/components/common_components/common";
-import { Logger } from "../../../../../modules/components/common_components/logger";
-import { Sfdx } from "../../../../../modules/components/common_components/sfdx";
-import { CONSTANTS } from "../../../../../modules/components/common_components/statics";
-import { Script, TaskData } from "../../../../../modules/models";
-import { IApiEngine, IBlobField } from "../../../../../modules/models/api_models";
-import { STANDARD_MESSAGES } from "../../../../messages/standard";
+import { BulkApiV1_0Engine } from "../../../../modules/components/api_engines/bulkApiV1_0Engine";
+import { RestApiEngine } from "../../../../modules/components/api_engines/restApiEngine";
+import { Common } from "../../../../modules/components/common_components/common";
+import { Logger } from "../../../../modules/components/common_components/logger";
+import { Sfdx } from "../../../../modules/components/common_components/sfdx";
+import { CONSTANTS } from "../../../../modules/components/common_components/statics";
+import { Script, TaskData } from "../../../../modules/models";
+import { IApiEngine, IBlobField } from "../../../../modules/models/api_models";
+import { STANDARD_MESSAGES } from "../../../messages/standard";
 
 
-import PluginRuntimeBase from "../pluginRuntimeBase";
-import SfdmuContentVersion from "./sfdmuContentVersion";
-import SfdmuPluginJob from "./sfdmuPluginJob";
+import PluginRuntimeBase from "./pluginRuntimeBase";
+import SfdmuContentVersion from "../sfdmu/sfdmuContentVersion";
+import SfdmuPluginJob from "../sfdmu/sfdmuPluginJob";
 
-
-import ICommandRunInfo from '../../../../../modules/models/common_models/ICommandRunInfo';
-import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../../../modules/components/common_components/enumerations';
-import IAddonModuleBase from '../../interfaces/IAddonModuleBase';
-import { IPluginRuntimeSystemBase } from '../../../../../modules/models/common_models/helper_interfaces';
-import SfdmuRunPluginTask from './sfdmuRunPluginTask';
-
+import ICommandRunInfo from '../../../../modules/models/common_models/ICommandRunInfo';
+import IAddonModuleBase from './IAddonModuleBase';
+import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../../modules/components/common_components/enumerations';
+import SfdmuRunPluginTask from '../sfdmu/sfdmuRunPluginTask';
+import { ISfdmuAddonRuntimeSystem } from '../sfdmu/ISfdmuAddonRuntimeSystem';
 
 
 
-export default class SfdmuPluginRuntime extends PluginRuntimeBase implements IPluginRuntimeSystemBase {
+export default class SfdmuPluginRuntime extends PluginRuntimeBase implements ISfdmuAddonRuntimeSystem  {
 
     // Hidden properties to not expose them to the Addon code.
     // The Addon can access only the members of IPluginRuntime.
@@ -44,21 +42,19 @@ export default class SfdmuPluginRuntime extends PluginRuntimeBase implements IPl
 
 
     constructor(script: Script) {
-        super(script);
+        super(script.logger, script.runInfo);
         this.#script = script;
         this.#logger = script.logger;
     }
 
-
-
-    /* -------- System Functions (primaraly intended for the internal use) ----------- */
-    $$setSfdmuPluginJob() {
+    /* -------- ISfdmuRuntimeSystem ----------- */
+    ____$createSfdmuPluginJob() {
         this.pluginJob = new SfdmuPluginJob(this.#script.job);
     }
 
 
 
-    /* -------- IPluginRuntime implementation ----------- */
+    /* -------- Own members ----------- */
     runInfo: ICommandRunInfo;
     pluginJob: SfdmuPluginJob;
 
@@ -347,8 +343,8 @@ export default class SfdmuPluginRuntime extends PluginRuntimeBase implements IPl
 
         // Uploading Binary-type Files -----------------------
         if (fileUploadJobs.length > 0) {
-            this.$$writeStandardInfoMessage(module, STANDARD_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
-            this.$$writeStandardInfoMessage(module, STANDARD_MESSAGES.DataWillBeProcessedInChunksOfSize,
+            this.____$writeStandardInfoMessage(module, STANDARD_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
+            this.____$writeStandardInfoMessage(module, STANDARD_MESSAGES.DataWillBeProcessedInChunksOfSize,
                 String(fileUploadJobs.length),
                 String((CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000).toFixed(2)));
         }
@@ -359,7 +355,7 @@ export default class SfdmuPluginRuntime extends PluginRuntimeBase implements IPl
             const fileJob = fileUploadJobs[index];
             let idToContentVersionMap: Map<string, SfdmuContentVersion> = Common.arrayToMap(fileJob, ['Id']);
 
-            this.$$writeStandardInfoMessage(module, STANDARD_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
+            this.____$writeStandardInfoMessage(module, STANDARD_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
 
             // Download
             let idToContentVersionBlobMap = await this.downloadBlobDataAsync(true, [...idToContentVersionMap.keys()], <IBlobField>{

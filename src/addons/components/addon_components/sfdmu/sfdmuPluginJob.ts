@@ -7,7 +7,7 @@
 
 
 
-import { MigrationJob } from "../../../../../modules/models";
+import { MigrationJob } from "../../../../modules/models";
 import SfdmuRunPluginTask from "./sfdmuRunPluginTask";
 
 

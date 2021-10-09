@@ -7,8 +7,8 @@
 
 
 
-import SfdmuRunAddonModuleBase from "../../../components/addon_components/classes/sfdmu/sfdmuRunAddonModuleBase";
-import IPluginExecutionContext from "../../../components/addon_components/interfaces/IPluginExecutionContext";
+import SfdmuRunAddonModuleBase from "../../../components/addon_components/sfdmu/sfdmuRunAddonModuleBase";
+import IPluginExecutionContext from "../../../components/addon_components/base/IPluginExecutionContext";
 
 export default class CoreOnBefore extends SfdmuRunAddonModuleBase {
 

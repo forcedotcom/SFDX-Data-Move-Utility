@@ -1,7 +1,7 @@
 import { STANDARD_MESSAGES } from "../../../../messages/standard";
 
-import IPluginExecutionContext from "../../../../components/addon_components/interfaces/IPluginExecutionContext";
-import SfdmuRunAddonModuleBase from "../../../../components/addon_components/classes/sfdmu/sfdmuRunAddonModuleBase";
+import IPluginExecutionContext from "../../../../components/addon_components/base/IPluginExecutionContext";
+import SfdmuRunAddonModuleBase from "../../../../components/addon_components/sfdmu/sfdmuRunAddonModuleBase";
 
 /**
  * This test example of AddOn manipulates with the source Json string right before the target update. 

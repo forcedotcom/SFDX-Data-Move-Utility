@@ -33,7 +33,7 @@ export default interface ICommandRunInfo {
     apiVersion: string,
 
     /**
-     * the location of the export.json file
+     * the directory location where the Plugin was started
      */
     readonly basePath: string,
     

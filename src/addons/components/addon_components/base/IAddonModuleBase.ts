@@ -6,7 +6,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import PluginRuntimeBase from "../classes/pluginRuntimeBase";
+import PluginRuntimeBase from "./pluginRuntimeBase";
 import IPluginExecutionContext from "./IPluginExecutionContext";
 
 

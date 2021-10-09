@@ -8,10 +8,11 @@
 
 
 
-import { IPluginRuntimeSystemBase } from "../../../../../modules/models/common_models/helper_interfaces";
-import IPluginExecutionContext from "../../interfaces/IPluginExecutionContext";
-import AddonModuleBase from "../AddonModuleBase";
-import SfdmuRunPluginRuntime from "../sfdmuRunPluginRuntime";
+
+import IPluginExecutionContext from "../base/IPluginExecutionContext";
+import AddonModuleBase from "../base/AddonModuleBase";
+import { ISfdmuAddonRuntimeSystem } from "./ISfdmuAddonRuntimeSystem";
+import SfdmuRunPluginRuntime from "../base/sfdmuRunPluginRuntime";
 
 
 export default abstract class SfdmuRunAddonModuleBase extends AddonModuleBase {
@@ -22,8 +23,8 @@ export default abstract class SfdmuRunAddonModuleBase extends AddonModuleBase {
     */
     runtime: SfdmuRunPluginRuntime;
 
-    get systemRuntime(): IPluginRuntimeSystemBase {
-        return <IPluginRuntimeSystemBase>(<any>this.runtime);
+    get systemRuntime(): ISfdmuAddonRuntimeSystem {
+        return <ISfdmuAddonRuntimeSystem>(<any>this.runtime);
     }
 
     abstract onExecute(context: IPluginExecutionContext, args: any): void;

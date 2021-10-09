@@ -5,13 +5,6 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import IAddonModuleBase from "../../../addons/components/addon_components/interfaces/IAddonModuleBase";
-import { STANDARD_MESSAGES } from "../../../addons/messages/standard";
-
-
-
-
-
 export interface IOrgConnectionData {
     instanceUrl: string;
     accessToken: string;
@@ -67,15 +60,6 @@ export interface IIdentityInfo {
     organization_id: string,
     username: string,
     display_name: string
-}
-
-// tslint:disable-next-line: no-empty-interface
-export interface IPluginRuntimeSystemBase {
-    $$getStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): string,
-    $$writeStandardInfoMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
-    $$writeStandardWarningMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
-    $$writeStandardErrorMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
-    $$setSfdmuPluginJob(): void
 }
 
 

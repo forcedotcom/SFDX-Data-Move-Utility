@@ -6,10 +6,9 @@
  */
 
 
-import IAddonModuleBase from "../base/IAddonModuleBase";
-import IPluginExecutionContext from "../base/IPluginExecutionContext";
-import PluginRuntimeBase from "../base/pluginRuntimeBase";
-
+import IAddonModuleBase from "./IAddonModuleBase";
+import IPluginExecutionContext from "./IPluginExecutionContext";
+import PluginRuntimeBase from "./pluginRuntimeBase";
 
 
 

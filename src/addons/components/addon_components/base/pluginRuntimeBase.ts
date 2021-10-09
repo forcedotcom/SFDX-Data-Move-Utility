@@ -1,26 +1,26 @@
 import { Common } from "../../../../modules/components/common_components/common";
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../../modules/components/common_components/logger";
-import { Script } from "../../../../modules/models";
 import { STANDARD_MESSAGES } from "../../../messages/standard";
 import ICommandRunInfo from "../../../../modules/models/common_models/ICommandRunInfo";
-import IAddonModuleBase from "../interfaces/IAddonModuleBase";
-import { ITableMessage } from "../../../../modules/models/common_models/helper_interfaces";
+import IAddonModuleBase from "./IAddonModuleBase";
+import {  ITableMessage } from "../../../../modules/models/common_models/helper_interfaces";
+import { IAddonRuntimeSystem } from "./IAddonRuntimeSystem";
 
 
 
 
-export default class PluginRuntimeBase  {
+export default class PluginRuntimeBase implements IAddonRuntimeSystem {
 
     runInfo: ICommandRunInfo;
     #logger: Logger;
 
-    constructor(script: Script) {
-        this.#logger = script.logger;
-        this.runInfo = script.runInfo;
+    constructor(logger: Logger, runInfo: ICommandRunInfo) {
+        this.#logger = logger;
+        this.runInfo = runInfo;
     }
 
-    // --------------------------- Internal functions ------------------------------------- //
-    $$getStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): string {
+    // --------------------------- IPluginRuntimeSystem ------------------------------------- //
+    ____$getStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): string {
         switch (message) {
             case STANDARD_MESSAGES.NewLine:
                 return ''; 
@@ -32,32 +32,33 @@ export default class PluginRuntimeBase  {
             mess);
     }
 
-    $$writeStandardInfoMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getStandardMessage(module, message, ...tokens), "INFO");
+    ____$writeStandardInfoMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.____$getStandardMessage(module, message, ...tokens), "INFO");
     }
 
-    $$writeStandardWarningMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getStandardMessage(module, message, ...tokens), "WARNING");
+    ____$writeStandardWarningMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.____$getStandardMessage(module, message, ...tokens), "WARNING");
     }
 
-    $$writeStandardErrorMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getStandardMessage(module, message, ...tokens), "ERROR");
+    ____$writeStandardErrorMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.____$getStandardMessage(module, message, ...tokens), "ERROR");
     }
 
 
-    // --------------------------- IPluginRuntimeBase ------------------------------------- //
+
+    // --------------------------- Own members ------------------------------------- //
     writeStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
         switch (messageType) {
             case 'ERROR':
-                this.$$writeStandardErrorMessage(module, message, ...tokens);
+                this.____$writeStandardErrorMessage(module, message, ...tokens);
                 break;
 
             case 'WARNING':
-                this.$$writeStandardWarningMessage(module, message, ...tokens);
+                this.____$writeStandardWarningMessage(module, message, ...tokens);
                 break;
 
             default:
-                this.$$writeStandardInfoMessage(module, message, ...tokens);
+                this.____$writeStandardInfoMessage(module, message, ...tokens);
                 break;
         }
     }
