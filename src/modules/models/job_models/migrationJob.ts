@@ -14,7 +14,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import MigrationJobTask from "./migrationJobTask";
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_models/helper_interfaces";
-import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE } from "../../../addons/package/base/enumerations";
+import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE } from "../../components/common_components/enumerations";
 
 
 
@@ -176,7 +176,7 @@ export default class MigrationJob {
         });
 
         // Initialize the runtime job
-        this.script.addonRuntime.$$setPluginJob();
+        this.script.addonRuntime.$$setSfdmuPluginJob();
 
         // ------------------------------- Internal functions --------------------------------------- //
         function ___updateQueryTaskOrder() {

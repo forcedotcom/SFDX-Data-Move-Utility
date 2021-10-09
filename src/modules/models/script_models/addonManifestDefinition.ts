@@ -8,7 +8,7 @@
 
 import { CONSTANTS } from "../../components/common_components/statics";
 import * as path from 'path';
-import { ADDON_MODULE_METHODS } from "../../../addons/package/base/enumerations";
+import { ADDON_MODULE_METHODS } from "../../components/common_components/enumerations";
 
 /**
  * Represent an item of the addons section of the ScriptObject / Script  classes
@@ -17,13 +17,15 @@ import { ADDON_MODULE_METHODS } from "../../../addons/package/base/enumerations"
  * @class AddonManifestDefinition
  * @implements {IAddonManifestDefinition}
  */
-export class AddonManifestDefinition {
+export default class AddonManifestDefinition {
 
     // ------------- JSON --------------
     // Common definitions
     command: string = "sfdmu:run";
     path: string;
     module: string;
+    startupMessage: string;
+    description: string;
     excluded: boolean;
     args: any;
 

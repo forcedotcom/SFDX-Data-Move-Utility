@@ -14,7 +14,8 @@ import { Common } from './common';
 import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
-import ITableMessage from '../../../addons/package/base/ITableMessage';
+import { ITableMessage } from '../../models/common_models/helper_interfaces';
+
 
 
 
@@ -131,6 +132,7 @@ export enum RESOURCES {
     failedToResolveExternalId = "failedToResolveExternalId",
 
     loadingAddonManifestFile = "loadingAddonManifestFile",
+    loadingAddon = "loadingAddon",
     missingNecessaryComponent = "missingNecessaryComponent",
     addonManifestFileDoesNotFound = "addonManifestFileDoesNotFound",
 

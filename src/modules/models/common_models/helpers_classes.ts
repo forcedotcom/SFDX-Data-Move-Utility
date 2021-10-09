@@ -14,8 +14,12 @@ import { ICsvChunk } from "../api_models";
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
-import { AddonManifestDefinition } from "../script_models/addonManifestDefinition";
-import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/package/base/enumerations";
+
+import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+
+import AddonManifestDefinition from "../script_models/addonManifestDefinition";
+
+
 
 
 

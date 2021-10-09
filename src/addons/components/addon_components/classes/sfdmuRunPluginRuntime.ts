@@ -6,40 +6,36 @@
  */
 
 
-import { Script, TaskData } from "../../../modules/models";
-import { Logger, RESOURCES } from "../../../modules/components/common_components/logger";
-import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from "../../package/base/enumerations";
-import SfdmuRunPluginJob from "./sfdmuRunPluginJob";
-import { IPluginRuntimeSystemBase } from "../../../modules/models/common_models/helper_interfaces";
-import { Common } from "../../../modules/components/common_components/common";
-import { Sfdx } from "../../../modules/components/common_components/sfdx";
-
-import { IApiEngine } from "../../../modules/models/api_models";
-import { BulkApiV1_0Engine } from "../../../modules/components/api_engines/bulkApiV1_0Engine";
-import { RestApiEngine } from "../../../modules/components/api_engines/restApiEngine";
-import ICommandRunInfo from "../../package/base/ICommandRunInfo";
-import IBlobField from "../../package/base/IBlobField";
-import { ISfdmuContentVersion, ISfdmuRunPluginJob, ISfdmuRunPluginRuntime } from "../../package/modules/sfdmu-run";
-import PluginRuntimeBase from "../pluginRuntimeBase";
-import { CONSTANTS } from "../../../modules/components/common_components/statics";
-import { ADDON_CONSTANTS, IAddonModuleBase } from "../../package/base";
 import * as path from 'path';
 import * as fs from 'fs';
-import SfdmuContentVersion from "./sfdmuContentVersion";
-import { CORE_MESSAGES } from "../messages/core";
+
+
+import { BulkApiV1_0Engine } from "../../../../modules/components/api_engines/bulkApiV1_0Engine";
+import { RestApiEngine } from "../../../../modules/components/api_engines/restApiEngine";
+import { Common } from "../../../../modules/components/common_components/common";
+import { Logger } from "../../../../modules/components/common_components/logger";
+import { Sfdx } from "../../../../modules/components/common_components/sfdx";
+import { CONSTANTS } from "../../../../modules/components/common_components/statics";
+import { Script, TaskData } from "../../../../modules/models";
+import { IApiEngine, IBlobField } from "../../../../modules/models/api_models";
+import { STANDARD_MESSAGES } from "../../../messages/standard";
+
+
+import PluginRuntimeBase from "./pluginRuntimeBase";
+import SfdmuContentVersion from "./sfdmu/sfdmuContentVersion";
+import SfdmuPluginJob from "./sfdmu/sfdmuPluginJob";
+
+import ICommandRunInfo from '../../../../modules/models/common_models/ICommandRunInfo';
+import IAddonModuleBase from '../interfaces/IAddonModuleBase';
+import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../../modules/components/common_components/enumerations';
+import { IPluginRuntimeSystemBase } from '../../../../modules/models/common_models/helper_interfaces';
+import SfdmuRunPluginTask from './sfdmu/sfdmuRunPluginTask';
 
 
 
-export interface ISfdmuRunPluginRuntimeSystem extends IPluginRuntimeSystemBase {
-    $$setPluginJob(): void,
-    $$getCoreMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): string,
-    $$writeCoreInfoMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
-    $$writeCoreWarningMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
-    $$writeCoreErrorMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void,
-}
 
 
-export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements ISfdmuRunPluginRuntime, ISfdmuRunPluginRuntimeSystem {
+export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements IPluginRuntimeSystemBase {
 
     // Hidden properties to not expose them to the Addon code.
     // The Addon can access only the members of IPluginRuntime.
@@ -54,35 +50,23 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
     }
 
 
-    /* -------- System Functions (for direct access) ----------- */
-    $$setPluginJob() {
-        this.pluginJob = new SfdmuRunPluginJob(this.#script.job);
+
+    /* -------- System Functions (primaraly intended for the internal use) ----------- */
+    $$setSfdmuPluginJob() {
+        this.pluginJob = new SfdmuPluginJob(this.#script.job);
     }
 
-    $$getCoreMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): string {
-        let mess = Common.formatStringLog((message || '').toString(), ...tokens);
-        return this.#logger.getResourceString(RESOURCES.coreAddonMessageTemplate,
-            module.displayName,
-            module.context.objectDisplayName,
-            mess);
-    }
-
-    $$writeCoreInfoMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getCoreMessage(module, message, ...tokens), "INFO");
-    }
-
-    $$writeCoreWarningMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getCoreMessage(module, message, ...tokens), "WARNING");
-    }
-
-    $$writeCoreErrorMessage(module: IAddonModuleBase, message: CORE_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.$$getCoreMessage(module, message, ...tokens), "ERROR");
-    }
 
 
     /* -------- IPluginRuntime implementation ----------- */
     runInfo: ICommandRunInfo;
-    pluginJob: ISfdmuRunPluginJob;
+    pluginJob: SfdmuPluginJob;
+
+
+    getPluginTask(module: IAddonModuleBase): SfdmuRunPluginTask {
+        return this.pluginJob.tasks.find(task => task.sObjectName == module.context.objectName);
+    }
+
 
     /**
      * The base path to the currently executing job (export.json file)
@@ -323,11 +307,11 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
      * @returns {Promise<ISfdmuContentVersion[]>} The updated input ContentVersion records
      * @memberof ISfdmuRunPluginRuntime
      */
-    async transferContentVersions(module: IAddonModuleBase, sourceVersions: ISfdmuContentVersion[]): Promise<ISfdmuContentVersion[]> {
+    async transferContentVersions(module: IAddonModuleBase, sourceVersions: SfdmuContentVersion[]): Promise<SfdmuContentVersion[]> {
         let _self = this;
 
         // All Files of url types to upload ///
-        let urlUploadJobs = new Array<ISfdmuContentVersion>();
+        let urlUploadJobs = new Array<SfdmuContentVersion>();
 
         // All Files of binary type to upload ///
         let totalSize = 0;
@@ -350,7 +334,7 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
                 size += version.ContentSize;
                 totalSize += version.ContentSize;
 
-                if (version.ContentSize + size > ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE) {
+                if (version.ContentSize + size > CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE) {
                     yield versions;
                     size = 0;
                     versions = new Array<SfdmuContentVersion>();
@@ -363,19 +347,19 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
 
         // Uploading Binary-type Files -----------------------
         if (fileUploadJobs.length > 0) {
-            this.$$writeCoreInfoMessage(module, CORE_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
-            this.$$writeCoreInfoMessage(module, CORE_MESSAGES.DataWillBeProcessedInChunksOfSize,
+            this.$$writeStandardInfoMessage(module, STANDARD_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
+            this.$$writeStandardInfoMessage(module, STANDARD_MESSAGES.DataWillBeProcessedInChunksOfSize,
                 String(fileUploadJobs.length),
-                String((ADDON_CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000).toFixed(2)));
+                String((CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000).toFixed(2)));
         }
 
         for (let index = 0; index < fileUploadJobs.length; index++) {
 
             // Create data to download
             const fileJob = fileUploadJobs[index];
-            let idToContentVersionMap: Map<string, ISfdmuContentVersion> = Common.arrayToMap(fileJob, ['Id']);
+            let idToContentVersionMap: Map<string, SfdmuContentVersion> = Common.arrayToMap(fileJob, ['Id']);
 
-            this.$$writeCoreInfoMessage(module, CORE_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
+            this.$$writeStandardInfoMessage(module, STANDARD_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
 
             // Download
             let idToContentVersionBlobMap = await this.downloadBlobDataAsync(true, [...idToContentVersionMap.keys()], <IBlobField>{
@@ -385,7 +369,7 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
             });
 
             // Create array to upload
-            let newToSourceVersionMap = new Map<any, ISfdmuContentVersion>();
+            let newToSourceVersionMap = new Map<any, SfdmuContentVersion>();
 
             let versionsToUpload = [...idToContentVersionBlobMap.keys()].map(versionId => {
                 let blobData = idToContentVersionBlobMap.get(versionId);
@@ -406,7 +390,7 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
         // Uploading Url-type Files ----------------------------------
         {
             // Create array to upload
-            let newToSourceVersionMap = new Map<any, ISfdmuContentVersion>();
+            let newToSourceVersionMap = new Map<any, SfdmuContentVersion>();
 
             let versionsToUpload = urlUploadJobs.map(sourceContentVersion => {
                 let newContentVersion = Common.cloneObjectIncludeProps(sourceContentVersion,
@@ -423,7 +407,7 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
 
 
         // ---------------- Private Helpers --------------------
-        async function ___upload(versionsToUpload: any[], newToSourceVersionMap: Map<any, ISfdmuContentVersion>, isUrl: boolean) {
+        async function ___upload(versionsToUpload: any[], newToSourceVersionMap: Map<any, SfdmuContentVersion>, isUrl: boolean) {
 
             // Create new content versions
             let records = await _self.updateTargetRecordsAsync('ContentVersion',
@@ -435,7 +419,7 @@ export default class SfdmuRunPluginRuntime extends PluginRuntimeBase implements 
 
             if (records) {
 
-                let newRecordIdToSourceVersionMap = new Map<string, ISfdmuContentVersion>();
+                let newRecordIdToSourceVersionMap = new Map<string, SfdmuContentVersion>();
 
                 // Update Ids of the source version records
                 records.forEach((newRecord: any) => {

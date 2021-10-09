@@ -6,14 +6,14 @@
  */
 
 
-import { TaskOrgData } from "../../../modules/models";;
-import { DATA_MEDIA_TYPE } from "../../package/base/enumerations";
-import { ISfdmuRunPluginTaskData } from "../../package/modules/sfdmu-run";
+import { TaskOrgData } from "../../../../../modules/models";
+import { DATA_MEDIA_TYPE } from "../../../../../modules/components/common_components/enumerations";
 
 
-
-
-export default class SfdmuRunPluginTaskData implements ISfdmuRunPluginTaskData {
+/**
+ * Holds the source & the target data of the currently running migration task
+ */
+export default class SfdmuRunPluginTaskData {
 
     #taskOrgData: TaskOrgData;
 

@@ -11,7 +11,7 @@ import { ApiInfo, IApiEngine } from ".";
 import { Common } from "../../components/common_components/common";
 import { CsvChunks, ScriptObject } from "..";
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
-import { OPERATION } from "../../../addons/package/base/enumerations";
+import { OPERATION } from "../../components/common_components/enumerations";
 import { CONSTANTS } from "../../components/common_components/statics";
 
 

@@ -11,7 +11,7 @@ import { Sfdx } from "../../components/common_components/sfdx";
 import { Script, OrgInfo, SObjectDescribe } from "..";
 import { CommandAbortedByUserError, CommandInitializationError } from "../common_models/errors";
 import { IOrgConnectionData } from "../common_models/helper_interfaces";
-import { DATA_MEDIA_TYPE } from "../../../addons/package/base/enumerations";
+import { DATA_MEDIA_TYPE } from "../../components/common_components/enumerations";
 
 
 

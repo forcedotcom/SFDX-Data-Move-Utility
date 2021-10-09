@@ -6,13 +6,19 @@
  */
 
 
+
 import { Common } from "../../../../modules/components/common_components/common";
 import { CONSTANTS } from "../../../../modules/components/common_components/statics";
-import { CORE_MESSAGES } from "../../../engine/messages/core";
-import SfdmuContentVersion from "../../../engine/sfdmu-run/sfdmuContentVersion";
-import SfdmuRunAddonBase from "../../../engine/sfdmu-run/sfdmuRunAddonBase";
-import { API_ENGINE, OPERATION } from "../../../package/base/enumerations";
-import IPluginExecutionContext from "../../../package/base/IPluginExecutionContext";
+import { STANDARD_MESSAGES } from "../../../messages/standard";
+
+
+
+
+import { API_ENGINE, OPERATION } from "../../../../modules/components/common_components/enumerations";
+import IPluginExecutionContext from "../../../components/addon_components/interfaces/IPluginExecutionContext";
+import SfdmuContentVersion from "../../../components/addon_components/classes/sfdmu/sfdmuContentVersion";
+import SfdmuRunAddonModuleBase from "../../../components/addon_components/classes/sfdmu/sfdmuRunAddonModuleBase";
+
 
 
 
@@ -58,7 +64,7 @@ interface IDataToExport {
     isVersionChanged: boolean;
 }
 
-export default class ExportFiles extends SfdmuRunAddonBase {
+export default class ExportFiles extends SfdmuRunAddonModuleBase {
 
     async onExecute(context: IPluginExecutionContext, args: IOnExecuteArguments): Promise<void> {
 
@@ -66,12 +72,12 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
         this.runtime.writeStartMessage(this);
 
-        this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.Preparing);
+        this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.Preparing);
 
 
         if (this.runtime.getOrgInfo(false).isFile || this.runtime.getOrgInfo(true).isFile) {
             // File target -> error
-            this.systemRuntime.$$writeCoreWarningMessage(this, CORE_MESSAGES.ExportFiles_TargetIsFileWarning);
+            this.systemRuntime.$$writeStandardWarningMessage(this, STANDARD_MESSAGES.ExportFiles_TargetIsFileWarning);
             this.runtime.writeFinishMessage(this);
             return;
         }
@@ -86,14 +92,14 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
         if (!task) {
             // No task -> error
-            this.systemRuntime.$$writeCoreWarningMessage(this, CORE_MESSAGES.ExportFiles_CouldNotFindObjectToProcessWarning);
+            this.systemRuntime.$$writeStandardWarningMessage(this, STANDARD_MESSAGES.ExportFiles_CouldNotFindObjectToProcessWarning);
             this.runtime.writeFinishMessage(this);
             return;
         }
 
         if (args.operation == OPERATION.Readonly) {
             // Readonly -> error
-            this.systemRuntime.$$writeCoreWarningMessage(this, CORE_MESSAGES.ExportFiles_ReadonlyOperationWarning);
+            this.systemRuntime.$$writeStandardWarningMessage(this, STANDARD_MESSAGES.ExportFiles_ReadonlyOperationWarning);
             this.runtime.writeFinishMessage(this);
             return;
         }
@@ -121,7 +127,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
         // Read  target ContentDocumentLinks
         if (args.operation != OPERATION.Insert && target.recordIds.length > 0) {
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ReadTargetContentDocumentLinks);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_ReadTargetContentDocumentLinks);
             let queries = this.runtime.createFieldInQueries(
                 ['Id', 'LinkedEntityId', 'ContentDocumentId', 'ShareType', 'Visibility'],
                 'LinkedEntityId',
@@ -131,7 +137,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
             let data = await this.runtime.queryMultiAsync(false, queries);
             target.recIdToDocLinks = Common.arrayToMapMulti(data, ['LinkedEntityId']);
             target.docIds = Common.distinctStringArray(Common.arrayToPropsArray(data, ['ContentDocumentId']));
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.RetrievedRecords, String(data.length));
         }
 
         // Delete all old target files (if no targetWhere was defined)  
@@ -146,7 +152,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
         // Read target ContentVersions 
         if (args.operation != OPERATION.Insert && target.docIds.length > 0) {
 
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ReadTargetContentVersions);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_ReadTargetContentVersions);
 
             let fields = Common.distinctStringArray([
                 'Id', args.externalId, 'ContentDocumentId',
@@ -166,7 +172,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
             let data = await this.runtime.queryMultiAsync(false, queries);
             target.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
 
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.RetrievedRecords, String(data.length));
 
         }
 
@@ -179,13 +185,13 @@ export default class ExportFiles extends SfdmuRunAddonBase {
 
         if (source.recordIds.length == 0) {
             // No source records -> exit
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_NoSourceRecords);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_NoSourceRecords);
             return;
         }
 
         if (args.operation == OPERATION.Update && isDeleted) {
             // Update + Delete => exit
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_NothingToUpdate);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_NothingToUpdate);
             return;
         }
 
@@ -203,7 +209,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
         // -----------------------------------------------------------
         // Read source ContentDocumentLinks
         {
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ReadSourceContentDocumentLinks);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_ReadSourceContentDocumentLinks);
             let queries = this.runtime.createFieldInQueries(
                 ['Id', 'LinkedEntityId', 'ContentDocumentId', 'ShareType', 'Visibility'],
                 'LinkedEntityId',
@@ -214,13 +220,13 @@ export default class ExportFiles extends SfdmuRunAddonBase {
             source.recIdToDocLinks = Common.arrayToMapMulti(data, ['LinkedEntityId']);
             source.docIds = Common.distinctStringArray(Common.arrayToPropsArray(data, ['ContentDocumentId']));
 
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.RetrievedRecords, String(data.length));
         }
 
 
         // Read source ContentVersions 
         if (source.docIds.length > 0) {
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ReadSourceContentVersions);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_ReadSourceContentVersions);
             let fields = Common.distinctStringArray([
                 'Id', args.externalId, 'ContentDocumentId',
                 'Title', 'Description', 'PathOnClient', 'VersionData',
@@ -240,14 +246,14 @@ export default class ExportFiles extends SfdmuRunAddonBase {
             let data = await this.runtime.queryMultiAsync(true, queries);
             source.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
 
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RetrievedRecords, String(data.length));
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.RetrievedRecords, String(data.length));
 
         }
 
         // ---------- Compare versions to detect changes -------------------
         // ----------- which files need to download and upload--------------
         // -----------------------------------------------------------------
-        this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.Analysing);
+        this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.Analysing);
 
         source.recIdToDocLinks.forEach((sourceDocLinks, recordId) => {
             sourceDocLinks.forEach(sourceDocLink => {
@@ -310,12 +316,12 @@ export default class ExportFiles extends SfdmuRunAddonBase {
         let versionsToProcess = [...dataToExportMap.values()].filter(exportItem => exportItem.isVersionChanged).map(exportItem => exportItem.version);
 
         if (versionsToProcess.length > 0) {
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ExportingContentVersions);
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RecordsToBeProcessed, String(versionsToProcess.length));
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_ExportingContentVersions);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.RecordsToBeProcessed, String(versionsToProcess.length));
 
             await this.runtime.transferContentVersions(this, versionsToProcess);
 
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords,
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ProcessedRecords,
                 String(versionsToProcess.length),
                 String(versionsToProcess.filter(item => item.isError).length));
         }
@@ -328,7 +334,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
         let dataToProcess = [...dataToExportMap.values()].filter(exportItem => exportItem.recordsToBeLinked.length > 0);
 
         if (dataToProcess.length > 0) {
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_ExportingContentDocumentLinks);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_ExportingContentDocumentLinks);
 
             let docLinks = Common.flattenArrays(dataToProcess.map(data => data.recordsToBeLinked.map(record => {
                 return {
@@ -339,20 +345,20 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                 };
             })));
 
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.RecordsToBeProcessed, String(docLinks.length));
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.RecordsToBeProcessed, String(docLinks.length));
 
             let data = await this.runtime.updateTargetRecordsAsync('ContentDocumentLink',
                 OPERATION.Insert,
                 docLinks,
                 API_ENGINE.DEFAULT_ENGINE, true);
 
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ProcessedRecords,
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ProcessedRecords,
                 String(data.length),
                 String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
         }
 
         if (dataToProcess.length == 0 && versionsToProcess.length == 0) {
-            this.systemRuntime.$$writeCoreInfoMessage(this, CORE_MESSAGES.ExportFiles_NothingToProcess);
+            this.systemRuntime.$$writeStandardInfoMessage(this, STANDARD_MESSAGES.ExportFiles_NothingToProcess);
         }
 
         // ------------------------------------------------------------------
@@ -368,7 +374,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                 isDeleted = true;
                 // -------- //
                 if (docIdsToDelete.length > 0) {
-                    _self.systemRuntime.$$writeCoreInfoMessage(_self, CORE_MESSAGES.ExportFiles_DeleteTargetContentDocuments);
+                    _self.systemRuntime.$$writeStandardInfoMessage(_self, STANDARD_MESSAGES.ExportFiles_DeleteTargetContentDocuments);
                     let data = await _self.runtime.updateTargetRecordsAsync('ContentDocument',
                         OPERATION.Delete,
                         docIdsToDelete.map(item => {
@@ -376,7 +382,7 @@ export default class ExportFiles extends SfdmuRunAddonBase {
                                 Id: item
                             };
                         }));
-                    _self.systemRuntime.$$writeCoreInfoMessage(_self, CORE_MESSAGES.ProcessedRecords,
+                    _self.systemRuntime.$$writeStandardInfoMessage(_self, STANDARD_MESSAGES.ProcessedRecords,
                         String(data.length),
                         String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
 

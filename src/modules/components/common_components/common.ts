@@ -28,7 +28,7 @@ import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionError } from '../../models';
 import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
-import IPluginInfo from '../../../addons/package/base/IPluginInfo';
+import IPluginInfo from '../../models/common_models/IPluginInfo';
 const { closest } = require('fastest-levenshtein')
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;

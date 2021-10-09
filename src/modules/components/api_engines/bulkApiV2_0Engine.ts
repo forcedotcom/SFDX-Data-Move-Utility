@@ -14,7 +14,7 @@ import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { RESOURCES } from '../common_components/logger';
 import parse = require('csv-parse/lib/sync');
-import { OPERATION, RESULT_STATUSES } from '../../../addons/package/base/enumerations';
+import { OPERATION, RESULT_STATUSES } from '../common_components/enumerations';
 
 import ApiResultRecord from '../../models/api_models/ApiResultRecord';
 

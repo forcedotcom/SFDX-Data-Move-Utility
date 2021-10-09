@@ -5,23 +5,26 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-import { MigrationJobTask } from "../../../modules/models";
-import { OPERATION } from "../../package/base/enumerations";
-import { ISfdmuRunPluginTask, ISfdmuRunPluginTaskData } from "../../package/modules/sfdmu-run";
 import SfdmuRunPluginTaskData from "./sfdmuRunPluginTaskData";
 
-export default  class SfdmuRunPluginTask implements ISfdmuRunPluginTask {
-    
-    #migrationJobTask : MigrationJobTask;
-    #sourceTaskData : ISfdmuRunPluginTaskData;
-    #targetTaskData : ISfdmuRunPluginTaskData;
+import { MigrationJobTask, ProcessedData } from "../../../../../modules/models";
+import { OPERATION } from "../../../../../modules/components/common_components/enumerations";
 
-    constructor(migrationJobTask : MigrationJobTask){
+
+
+export default class SfdmuRunPluginTask  {
+
+    #migrationJobTask: MigrationJobTask;
+    #sourceTaskData: SfdmuRunPluginTaskData;
+    #targetTaskData: SfdmuRunPluginTaskData;
+
+
+    constructor(migrationJobTask: MigrationJobTask) {
         this.#migrationJobTask = migrationJobTask;
         this.#sourceTaskData = new SfdmuRunPluginTaskData(migrationJobTask.sourceData);
         this.#targetTaskData = new SfdmuRunPluginTaskData(migrationJobTask.targetData);
     }
+
 
     getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
         return this.#migrationJobTask.data.getTargetCSVFilename(operation, fileNameSuffix);
@@ -30,7 +33,7 @@ export default  class SfdmuRunPluginTask implements ISfdmuRunPluginTask {
     get sourceCsvFilename(): string {
         return this.#migrationJobTask.data.sourceCsvFilename;
     }
-    
+
     get operation(): OPERATION {
         return this.#migrationJobTask.operation;
     }
@@ -39,17 +42,33 @@ export default  class SfdmuRunPluginTask implements ISfdmuRunPluginTask {
         return this.#migrationJobTask.sObjectName;
     }
 
+    get targetSObjectName(): string {
+        return this.#migrationJobTask.scriptObject.targetObjectName;
+    }
+
     get sourceToTargetRecordMap(): Map<any, any> {
         return this.#migrationJobTask.data.sourceToTargetRecordMap;
     }
 
-    get sourceTaskData(): ISfdmuRunPluginTaskData {
+    get sourceToTargetFieldNameMap(): Map<any, any> {
+        return this.#migrationJobTask.scriptObject.sourceToTargetFieldNameMap;
+    }
+
+    get sourceTaskData(): SfdmuRunPluginTaskData {
         return this.#sourceTaskData;
     }
-    
-    get targetTaskData(): ISfdmuRunPluginTaskData {
+
+    get targetTaskData(): SfdmuRunPluginTaskData {
         return this.#targetTaskData;
     }
 
-    
+    get processedData(): ProcessedData {
+        return this.#migrationJobTask.processedData;
+    }
+
+    get updateMode(): "FIRST_UPDATE" | "SECOND_UPDATE" {
+        return this.#migrationJobTask.updateMode == 'forwards' ? 'FIRST_UPDATE' : 'SECOND_UPDATE';
+    }
+
+
 }

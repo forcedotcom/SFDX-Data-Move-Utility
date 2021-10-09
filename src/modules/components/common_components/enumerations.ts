@@ -54,7 +54,8 @@ export enum MESSAGE_IMPORTANCE {
 export enum ADDON_MODULE_METHODS {
     none = 'none',
     onBefore = "onBefore",
-    onAfter = "onAfter"
+    onAfter = "onAfter",
+    onBeforeUpdate = "onBeforeUpdate"
 }
 
 export enum SPECIAL_MOCK_PATTERN_TYPES {

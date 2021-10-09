@@ -7,15 +7,14 @@
 
 
 
-import { MigrationJob } from "../../../modules/models";
-import { ISfdmuRunPluginJob, ISfdmuRunPluginTask } from "../../package/modules/sfdmu-run";
-
+import { MigrationJob } from "../../../../../modules/models";
 import SfdmuRunPluginTask from "./sfdmuRunPluginTask";
 
-export default class SfdmuRunPluginJob implements ISfdmuRunPluginJob {
+
+export default class SfdmuPluginJob  {
     
     #migrationJob : MigrationJob;
-    #pluginTasks: ISfdmuRunPluginTask[];
+    #pluginTasks: SfdmuRunPluginTask[];
 
     constructor(migrationJob : MigrationJob){
         
@@ -27,7 +26,7 @@ export default class SfdmuRunPluginJob implements ISfdmuRunPluginJob {
 
     }
     
-    get tasks() : ISfdmuRunPluginTask[] {
+    get tasks() : SfdmuRunPluginTask[] {
        return this.#pluginTasks;
     }
 }

@@ -5,9 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ISfdmuContentVersion } from "../../package/modules/sfdmu-run";
 
-export default class SfdmuContentVersion implements ISfdmuContentVersion {
+export default class SfdmuContentVersion {
     constructor(init: Partial<SfdmuContentVersion>) {
         if (init) {
             Object.assign(this, init);

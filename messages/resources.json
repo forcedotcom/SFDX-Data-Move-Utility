@@ -20,8 +20,8 @@
     "update": "Update",
     "delete": "Delete",
     "personContact": "Person Contact",
-    "coreManifest": "[Core Manifest]",
-    "userManifest": "[User Manifest]",
+    "coreManifest": "Core Addon",
+    "userManifest": "User Addon",
     "loaded": "Loaded %s.",
     "cantLoad": "%s is not found or could not be loaded.",
     "global": "Global",
@@ -64,9 +64,10 @@
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
 
-    "loadingAddonManifestFile" : "[%s] Loading addon manifest ...",
+    "loadingAddonManifestFile" : "[%s] Loading addon declaration ...",
+    "loadingAddon" : "[%s] Loading addon %s ...",
     "missingNecessaryComponent" : "The necessary component '%s' could not be found.",
-    "addonManifestFileDoesNotFound": "The Addon manifest file '%s' does not exist.",
+    "addonManifestFileDoesNotFound": "The Addon declaration file '%s' does not exist.",
 
     "commandInProgress": "Command in progress ...",
     "packageScript": "Package script",
@@ -81,9 +82,9 @@
     "noUpdateableFieldsInTheSObject": "The SOQL query for sObject %s does not include any field can be updated or inserted.",
     "scriptJSONFormatError": "The package JSON file is not well formatted. Error message: %s.",
     "scriptJSONReadError": "The package JSON file could not be read. Error message: %s.",
-    "scriptRunInSimulationMode": "\n\n**** The package is running in the SIMULATION MODE ****\n",
+    "scriptRunInSimulationMode": "\n\nNOTE! The package is running in the SIMULATION MODE\n",
 
-    "tryingToConnectCLI": "Connecting to %s using SFDX CLI ...",
+    "tryingToConnectCLI": "Connecting to %s using SFDX force:org:display ...",
     "successfullyConnected": "Successfully connected to %s.",
     "tryingToConnectCLIFailed": "Attempt to connect to %s failed. Please, try to refresh your local SFDX CLI connection.",
     "sourceTargetCouldNotBeTheSame": "The source and the target could not be the same.",
@@ -197,12 +198,12 @@
     "updatingSummary": "Data processing summary",
     "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records.",
 
-    "processingAddon": "Processing addon handlers ...", 
-    "runAddonMethod": "{%s} **** Processing of the %s handlers has started ****",
-    "nothingToProcess": "No handlers to process.",
-    "startAddonExecute" : "[%s] {%s} == The handler has started to execute ==",
-    "finishAddonExecute" : "[%s] {%s} == The handler has finished to execute ==",
+    "processingAddon": "Processing AddOn event handlers ...", 
+    "runAddonMethod": "{%s} Executing of the event:%s AddOn handlers has started",
+    "nothingToProcess": "No AddOn modules found to process.",
+    "startAddonExecute" : "[%s] {%s} Executing of the AddOn module has started",
+    "finishAddonExecute" : "[%s] {%s} Executing of the AddOn module has finished",
     "coreAddonMessageTemplate" : "[%s] {%s} %s",
-    "runAddonMethodCompleted": "{%s} **** Processing of the %s handlers has completed ****"
+    "runAddonMethodCompleted": "{%s} Executing of the event:%s AddOn handlers has finished"
     
 }

@@ -29,7 +29,7 @@ const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
-import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../../addons/package/base/enumerations';
+import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../components/common_components/enumerations';
 import { ApiInfo } from '../api_models';
 
 
@@ -37,13 +37,17 @@ import { ApiInfo } from '../api_models';
 
 MockGenerator.createCustomGenerators(casual);
 
-export default class MigrationJobTask {
+export  default class MigrationJobTask {
 
     scriptObject: ScriptObject;
     job: Job;
     sourceTotalRecorsCount: number = 0;
     targetTotalRecorsCount: number = 0;
     apiEngine: IApiEngine;
+
+    processedData: ProcessedData;
+    updateMode: 'forwards' | 'backwards';
+
     apiProgressCallback: (apiResult: ApiInfo) => void;
 
 
@@ -872,6 +876,9 @@ export default class MigrationJobTask {
 
         let self = this;
 
+        // Set the run context
+        this.updateMode = updateMode;
+
         if (this.scriptObject.isDeletedFromSourceOperation) {
             if (updateMode != "forwards") {
                 return 0;
@@ -1156,6 +1163,13 @@ export default class MigrationJobTask {
 
             let totalProcessedAmount = 0;
             let targetFilenameSuffix = data.processPersonAccounts ? CONSTANTS.CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX : "";
+
+            // Temporary store the current processed data
+            // to allow access it from the AddOn engine
+            self.processedData = data;
+
+            // Call addon onBeforeUpdate event
+            await self.runAddonEvent(ADDON_MODULE_METHODS.onBeforeUpdate)
 
             // Inserting ////////
             if (data.recordsToInsert.length > 0) {
@@ -2014,7 +2028,7 @@ export default class MigrationJobTask {
             let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
                 this.logger.infoNormal(RESOURCES.mappingSourceRecords, this.sObjectName, mapping.targetSObjectName);
-                let fieldMapping = scriptObject.sourceTargetFieldNameMap;
+                let fieldMapping = scriptObject.sourceToTargetFieldNameMap;
                 records.forEach(record => {
                     fieldMapping.forEach((newProp, oldProp) => {
                         if (newProp != oldProp && record.hasOwnProperty(oldProp)) {
@@ -2043,7 +2057,7 @@ export default class MigrationJobTask {
             let scriptObject = this.script.objectsMap.get(sourceSObjectName);
             if (scriptObject) {
                 this.logger.infoNormal(RESOURCES.mappingTargetRecords, this.sObjectName, mapping.targetSObjectName);
-                let fieldMapping = scriptObject.sourceTargetFieldNameMap;
+                let fieldMapping = scriptObject.sourceToTargetFieldNameMap;
                 records.forEach(record => {
                     fieldMapping.forEach((newProp, oldProp) => {
                         if (newProp != oldProp && record.hasOwnProperty(newProp)) {

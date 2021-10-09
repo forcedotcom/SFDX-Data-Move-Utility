@@ -18,7 +18,7 @@ import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError, Obje
 import { Common } from './common';
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult, IIdentityInfo } from '../../models/common_models/helper_interfaces';
 import { Logger, RESOURCES } from './logger';
-import IBlobField from '../../../addons/package/base/IBlobField';
+import { IBlobField } from '../../models/api_models';
 
 var jsforce = require("jsforce");
 

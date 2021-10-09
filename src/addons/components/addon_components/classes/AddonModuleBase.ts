@@ -5,23 +5,22 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IAddonModuleBase, IPluginExecutionContext, IPluginRuntimeBase } from ".";
+
+import IAddonModuleBase from "../interfaces/IAddonModuleBase";
+import IPluginExecutionContext from "../interfaces/IPluginExecutionContext";
+import PluginRuntimeBase from "./pluginRuntimeBase";
+
 
 
 /**
- * The base class for all addon modules
- *
- * @export
- * @abstract
- * @class AddonModuleBase
- * @implements {IAddonModuleBase}
+  * The base class for the custom Addon modules
  */
 export default abstract class AddonModuleBase implements IAddonModuleBase {
-    constructor(runtime : IPluginRuntimeBase){
+    constructor(runtime : PluginRuntimeBase){
         this.runtime = runtime;
     }
     context: IPluginExecutionContext;
-    runtime: IPluginRuntimeBase;
+    runtime: PluginRuntimeBase;
     abstract onExecute(context: IPluginExecutionContext, args: any): void;
     abstract displayName: string;
 }

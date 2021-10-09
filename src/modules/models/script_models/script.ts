@@ -23,12 +23,17 @@ import { CommandInitializationError, CommandExecutionError } from "../common_mod
 import MigrationJob from "../job_models/migrationJob";
 import * as path from 'path';
 import * as fs from 'fs';
-import AddonManager from "../../../addons/engine/addonManager";
-import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/package/base/enumerations";
-import { AddonManifestDefinition } from "./addonManifestDefinition";
-import { ISfdmuRunPluginRuntimeSystem } from "../../../addons/engine/sfdmu-run/sfdmuRunPluginRuntime";
-import ICommandRunInfo from "../../../addons/package/base/ICommandRunInfo";
-import IPluginInfo from "../../../addons/package/base/IPluginInfo";
+
+import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+
+import ICommandRunInfo from "../common_models/ICommandRunInfo";
+import IPluginInfo from "../common_models/IPluginInfo";
+import AddonManifestDefinition from "./addonManifestDefinition";
+import AddonManager from "../../../addons/components/addon_components/classes/addonManager";
+import { IPluginRuntimeSystemBase } from "../common_models/helper_interfaces";
+
+
+
 
 
 
@@ -90,7 +95,7 @@ export default class Script {
     runInfo: ICommandRunInfo;
     canModify: string;
 
-    get addonRuntime(): ISfdmuRunPluginRuntimeSystem {
+    get addonRuntime(): IPluginRuntimeSystemBase {
         return <any>this.addonManager.runtime;
     }
 

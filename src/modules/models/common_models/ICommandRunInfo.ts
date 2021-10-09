@@ -5,19 +5,40 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IPluginInfo } from ".";
+import IPluginInfo from "./IPluginInfo";
 
 
 
+
+
+
+/**
+ * The information about currently running SFDMU command
+ */
 export default interface ICommandRunInfo {
-    // --sourceusername command flag 
+
+    /**
+     * --sourceusername command flag 
+     */
     sourceUsername: string,
-    // --targetusername command flag
+
+    /**
+     * --targetusername command flag
+     */
     targetUsername: string,
-    // --apiversion command flag
+
+    /**
+     * --apiversion command flag
+     */
     apiVersion: string,
-    // the location of the export.json file
+
+    /**
+     * the location of the export.json file
+     */
     readonly basePath: string,
-    // the information about the Plugin and the framework
+    
+    /**
+     * the information about the Plugin and the framework
+     */
     readonly pinfo: IPluginInfo
 }

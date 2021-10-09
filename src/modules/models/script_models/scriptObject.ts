@@ -25,8 +25,9 @@ import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappi
 import SFieldDescribe from "./sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
-import { AddonManifestDefinition } from "./addonManifestDefinition";
-import { DATA_MEDIA_TYPE, OPERATION } from "../../../addons/package/base/enumerations";
+
+import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+import AddonManifestDefinition from "./addonManifestDefinition";
 
 
 
@@ -80,6 +81,9 @@ export default class ScriptObject {
 
     @Type(() => AddonManifestDefinition)
     afterAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+
+    @Type(() => AddonManifestDefinition)
+    beforeUpdateAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
 
 
     // -----------------------------------
@@ -320,7 +324,7 @@ export default class ScriptObject {
         return this.script.sourceTargetFieldMapping.size > 0;
     }
 
-    get sourceTargetFieldNameMap(): Map<string, string> {
+    get sourceToTargetFieldNameMap(): Map<string, string> {
         let m = new Map<string, string>();
         this.fieldsInQueryMap.forEach(field => {
             m.set(field.name, field.targetName);
@@ -343,7 +347,7 @@ export default class ScriptObject {
     }
 
     get idFieldIsMapped(): boolean {
-        return this.isMapped && this.sourceTargetFieldNameMap.get("Id") != "Id";
+        return this.isMapped && this.sourceToTargetFieldNameMap.get("Id") != "Id";
     }
 
     get isDeletedFromSourceOperation(): boolean {

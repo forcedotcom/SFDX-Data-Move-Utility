@@ -1,12 +1,17 @@
-import { Common } from "../../modules/components/common_components/common";
-import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../modules/components/common_components/logger";
-import { Script } from "../../modules/models";
-import { IAddonModuleBase, ICommandRunInfo, IPluginRuntimeBase, ITableMessage } from "../package/base";
+import { Common } from "../../../../modules/components/common_components/common";
+import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../../modules/components/common_components/logger";
+import { Script } from "../../../../modules/models";
+import { STANDARD_MESSAGES } from "../../../messages/standard";
+import ICommandRunInfo from "../../../../modules/models/common_models/ICommandRunInfo";
+import IAddonModuleBase from "../interfaces/IAddonModuleBase";
+import { ITableMessage } from "../../../../modules/models/common_models/helper_interfaces";
 
-export default class PluginRuntimeBase implements IPluginRuntimeBase {
+
+
+
+export default class PluginRuntimeBase  {
 
     runInfo: ICommandRunInfo;
-
     #logger: Logger;
 
     constructor(script: Script) {
@@ -14,15 +19,58 @@ export default class PluginRuntimeBase implements IPluginRuntimeBase {
         this.runInfo = script.runInfo;
     }
 
+    // --------------------------- Internal functions ------------------------------------- //
+    $$getStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): string {
+        switch (message) {
+            case STANDARD_MESSAGES.NewLine:
+                return ''; 
+        }
+        let mess = Common.formatStringLog((message || '').toString(), ...tokens);
+        return this.#logger.getResourceString(RESOURCES.coreAddonMessageTemplate,
+            module.displayName,
+            module.context.objectDisplayName,
+            mess);
+    }
+
+    $$writeStandardInfoMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.$$getStandardMessage(module, message, ...tokens), "INFO");
+    }
+
+    $$writeStandardWarningMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.$$getStandardMessage(module, message, ...tokens), "WARNING");
+    }
+
+    $$writeStandardErrorMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.$$getStandardMessage(module, message, ...tokens), "ERROR");
+    }
+
+
+    // --------------------------- IPluginRuntimeBase ------------------------------------- //
+    writeStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
+        switch (messageType) {
+            case 'ERROR':
+                this.$$writeStandardErrorMessage(module, message, ...tokens);
+                break;
+
+            case 'WARNING':
+                this.$$writeStandardWarningMessage(module, message, ...tokens);
+                break;
+
+            default:
+                this.$$writeStandardInfoMessage(module, message, ...tokens);
+                break;
+        }
+    }
+
     /**
      * Writes message into the output
      *
      * @param {(string | object | ITableMessage)} message The message to write
-     * @param {("INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE")} [messageType] The type of the message
+     * @param {("INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE" | "JSON")} [messageType] The type of the message
      * @param {...string[]} tokens The optional parameters to replace %s placeholders in the given message
      * @memberof PluginRuntimeBase
      */
-    writeMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE", ...tokens: string[]): void {
+    writeMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE" | "JSON", ...tokens: string[]): void {
         switch (messageType) {
             case "WARNING":
                 this.#logger.warn(<string>message, ...tokens);

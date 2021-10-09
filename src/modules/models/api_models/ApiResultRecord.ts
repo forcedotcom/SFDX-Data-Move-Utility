@@ -5,9 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import IApiResultRecord from "../../../addons/package/base/IApiResultRecord";
 
-export default class ApiResultRecord implements IApiResultRecord {
+export default class ApiResultRecord  {
 
     constructor(init: Partial<ApiResultRecord>) {
         Object.assign(this, init);

@@ -6,10 +6,12 @@
  */
 
 import ApiResultRecord from "./ApiResultRecord";
-import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from "../../../addons/package/base/enumerations";
-import IApiInfo from "../../../addons/package/base/IApiInfo";
+import { MESSAGE_IMPORTANCE, RESULT_STATUSES } from "../../components/common_components/enumerations";
 
-export default class ApiInfo implements IApiInfo {
+/**
+ * Holds information about the progress of the executed SFDC API callouts
+ */
+export default class ApiInfo  {
 
     constructor(init?: Partial<ApiInfo>) {
         Object.assign(this, init);

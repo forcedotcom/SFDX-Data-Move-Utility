@@ -7,8 +7,10 @@
 
 
 
-export enum CORE_MESSAGES {
+export enum STANDARD_MESSAGES {
+
     // Common -------------------------------------
+    NewLine = '',
     Preparing = 'Preparing ...',
     Analysing = 'Analysing ...',
     RetrievedRecords = 'Retrieved %s records.',
@@ -18,7 +20,7 @@ export enum CORE_MESSAGES {
     DataWillBeProcessedInChunksOfSize = 'The processed data was splitted into %s chunks with max size of %sMb each chunk.',
     ProcessingChunk = "Processing chunk #%s of %s items.",
 
-    // ExportFiles plugin -------------------------
+    // ExportFiles Addon -------------------------
     ExportFiles_TargetIsFileWarning = 'Cannot process Files on CSV sources or targets. Set a salesforce org as the Source and the Target.',
     ExportFiles_CouldNotFindObjectToProcessWarning = 'Could not find object data to process.',
     ExportFiles_ReadonlyOperationWarning = 'Cannot process Files on Readonly objects. Define another operation.',

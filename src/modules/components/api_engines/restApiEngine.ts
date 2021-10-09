@@ -10,7 +10,7 @@ import { CONSTANTS } from '../common_components/statics';
 import { RESOURCES } from '../common_components/logger';
 import { Sfdx } from '../common_components/sfdx';
 import { CsvChunks } from '../../models';
-import { OPERATION } from '../../../addons/package/base/enumerations';
+import { OPERATION } from '../common_components/enumerations';
 
 
 

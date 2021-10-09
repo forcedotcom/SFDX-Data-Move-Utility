@@ -5,6 +5,10 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import IAddonModuleBase from "../../../addons/components/addon_components/interfaces/IAddonModuleBase";
+import { STANDARD_MESSAGES } from "../../../addons/messages/standard";
+
+
 
 
 
@@ -45,9 +49,6 @@ export interface IMissingParentLookupRecordCsvRow {
 }
 
 
-
-
-
 export interface IFieldMapping {
     sourceQueryToTarget: (query: string, sourceObjectName: string) => IFieldMappingResult;
     sourceRecordsToTarget: (records: Array<any>, sourceObjectName: string) => IFieldMappingResult;
@@ -70,9 +71,25 @@ export interface IIdentityInfo {
 
 // tslint:disable-next-line: no-empty-interface
 export interface IPluginRuntimeSystemBase {
-   
+    $$getStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): string,
+    $$writeStandardInfoMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
+    $$writeStandardWarningMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
+    $$writeStandardErrorMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
+    $$setSfdmuPluginJob(): void
 }
 
+
+/**
+ * Metadata to write table into log
+ */
+ export interface ITableMessage {
+    tableBody: Array<object>,
+    tableColumns: Array<{
+        key: string,
+        label: string,
+        width?: number
+    }>
+}
 
 
 

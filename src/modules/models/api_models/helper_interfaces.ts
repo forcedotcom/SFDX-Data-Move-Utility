@@ -7,7 +7,7 @@
 import { Logger } from '../../components/common_components/logger';
 import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
-import { OPERATION } from '../../../addons/package/base/enumerations';
+import { OPERATION } from '../../components/common_components/enumerations';
 import { ApiInfo } from '.';
 
 
@@ -131,4 +131,19 @@ export interface IApiJobCreateResult {
     apiInfo: ApiInfo,
     connection?: any,
     allRecords?: Array<any>
+}
+
+/**
+ * Holds the meta information about the blob record
+ */
+ export interface IBlobField {
+
+    objectName: string,
+    fieldName: string,
+
+    /**
+     * Currently there is only base64 data type,
+     * but optionally another type can be added.
+     */
+    dataType: 'base64' // | ....
 }

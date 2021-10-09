@@ -6,11 +6,10 @@
  */
 
 
-import { SPECIAL_MOCK_PATTERN_TYPES } from "../../../addons/package/base";
-import IBlobField from "../../../addons/package/base/IBlobField";
 
 
-
+import { IBlobField } from "../../models/api_models";
+import { SPECIAL_MOCK_PATTERN_TYPES } from "./enumerations";
 
 
 export const CONSTANTS = {
@@ -273,6 +272,10 @@ export const CONSTANTS = {
             "MailingStreet"
         )]
     ]),
+
+
+    // ------ AddOns -------------------- //
+    MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE: 50000000
 
 }
 
