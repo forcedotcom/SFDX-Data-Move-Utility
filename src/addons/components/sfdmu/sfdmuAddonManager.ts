@@ -15,11 +15,11 @@ import "reflect-metadata";
 import "es6-shim";
 import { plainToClass } from "class-transformer";
 
-import { AddonManifest, CommandInitializationError, Script } from '../../../../modules/models';
-import { Logger, RESOURCES } from '../../../../modules/components/common_components/logger';
-import AddonManifestDefinition from '../../../../modules/models/script_models/addonManifestDefinition';
-import { CONSTANTS } from '../../../../modules/components/common_components/statics';
-import { ADDON_MODULE_METHODS } from '../../../../modules/components/common_components/enumerations';
+import { AddonManifest, CommandInitializationError, Script } from '../../../modules/models';
+import { Logger, RESOURCES } from '../../../modules/components/common_components/logger';
+import AddonManifestDefinition from '../../../modules/models/script_models/addonManifestDefinition';
+import { CONSTANTS } from '../../../modules/components/common_components/statics';
+import { ADDON_MODULE_METHODS } from '../../../modules/components/common_components/enumerations';
 import PluginRuntimeBase from '../common/pluginRuntimeBase';
 import AddonModuleBase from '../common/AddonModuleBase';
 import IPluginExecutionContext from '../common/IPluginExecutionContext';

@@ -6,8 +6,8 @@
  */
 
 
-import { TaskOrgData } from "../../../../modules/models";
-import { DATA_MEDIA_TYPE } from "../../../../modules/components/common_components/enumerations";
+import { TaskOrgData } from "../../../modules/models";
+import { DATA_MEDIA_TYPE } from "../../../modules/components/common_components/enumerations";
 
 
 /**

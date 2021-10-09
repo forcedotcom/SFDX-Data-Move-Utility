@@ -7,11 +7,11 @@
  */
 
 
-import { API_ENGINE, OPERATION } from "../../../../modules/components/common_components/enumerations";
-import { IBlobField } from "../../../../modules/models/api_models";
-import { ITableMessage } from "../../../../modules/models/common_models/helper_interfaces";
-import ICommandRunInfo from "../../../../modules/models/common_models/ICommandRunInfo";
-import { STANDARD_MESSAGES } from "../../../messages/standard";
+import { API_ENGINE, OPERATION } from "../../../modules/components/common_components/enumerations";
+import { IBlobField } from "../../../modules/models/api_models";
+import { ITableMessage } from "../../../modules/models/common_models/helper_interfaces";
+import ICommandRunInfo from "../../../modules/models/common_models/ICommandRunInfo";
+import { STANDARD_MESSAGES } from "../../messages/standard";
 import SfdmuContentVersion from "./sfdmuContentVersion";
 import SfdmuPluginJob from "./sfdmuPluginJob";
 import SfdmuRunPluginTask from "./sfdmuRunPluginTask";

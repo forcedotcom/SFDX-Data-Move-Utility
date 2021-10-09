@@ -10,24 +10,24 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 
-import { BulkApiV1_0Engine } from "../../../../modules/components/api_engines/bulkApiV1_0Engine";
-import { RestApiEngine } from "../../../../modules/components/api_engines/restApiEngine";
-import { Common } from "../../../../modules/components/common_components/common";
-import { Logger } from "../../../../modules/components/common_components/logger";
-import { Sfdx } from "../../../../modules/components/common_components/sfdx";
-import { CONSTANTS } from "../../../../modules/components/common_components/statics";
-import { Script, TaskData } from "../../../../modules/models";
-import { IApiEngine, IBlobField } from "../../../../modules/models/api_models";
-import { STANDARD_MESSAGES } from "../../../messages/standard";
+import { BulkApiV1_0Engine } from "../../../modules/components/api_engines/bulkApiV1_0Engine";
+import { RestApiEngine } from "../../../modules/components/api_engines/restApiEngine";
+import { Common } from "../../../modules/components/common_components/common";
+import { Logger } from "../../../modules/components/common_components/logger";
+import { Sfdx } from "../../../modules/components/common_components/sfdx";
+import { CONSTANTS } from "../../../modules/components/common_components/statics";
+import { Script, TaskData } from "../../../modules/models";
+import { IApiEngine, IBlobField } from "../../../modules/models/api_models";
+import { STANDARD_MESSAGES } from "../../messages/standard";
 
 
 import PluginRuntimeBase from "../common/pluginRuntimeBase";
 import SfdmuContentVersion from "./sfdmuContentVersion";
 import SfdmuPluginJob from "./sfdmuPluginJob";
 
-import ICommandRunInfo from '../../../../modules/models/common_models/ICommandRunInfo';
+import ICommandRunInfo from '../../../modules/models/common_models/ICommandRunInfo';
 import IAddonModuleBase from '../common/IAddonModuleBase';
-import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../../modules/components/common_components/enumerations';
+import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../modules/components/common_components/enumerations';
 import SfdmuRunPluginTask from './sfdmuRunPluginTask';
 import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
 

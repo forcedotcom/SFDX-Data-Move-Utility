@@ -7,8 +7,8 @@
 
 import SfdmuRunPluginTaskData from "./sfdmuRunPluginTaskData";
 
-import { MigrationJobTask, ProcessedData } from "../../../../modules/models";
-import { OPERATION } from "../../../../modules/components/common_components/enumerations";
+import { MigrationJobTask, ProcessedData } from "../../../modules/models";
+import { OPERATION } from "../../../modules/components/common_components/enumerations";
 
 
 

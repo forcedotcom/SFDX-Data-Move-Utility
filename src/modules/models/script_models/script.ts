@@ -29,8 +29,8 @@ import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/e
 import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
 import AddonManifestDefinition from "./addonManifestDefinition";
-import SfdmuAddonManager from "../../../addons/components/addon_components/sfdmu/sfdmuAddonManager";
-import { ISfdmuAddonRuntimeSystem } from "../../../addons/components/addon_components/sfdmu/ISfdmuAddonRuntimeSystem";
+import SfdmuAddonManager from "../../../addons/components/sfdmu/sfdmuAddonManager";
+import { ISfdmuAddonRuntimeSystem } from "../../../addons/components/sfdmu/ISfdmuAddonRuntimeSystem";
 
 
 

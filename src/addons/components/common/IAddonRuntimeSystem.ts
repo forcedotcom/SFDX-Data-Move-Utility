@@ -1,4 +1,4 @@
-import { STANDARD_MESSAGES } from "../../../messages/standard";
+import { STANDARD_MESSAGES } from "../../messages/standard";
 import IAddonModuleBase from "./IAddonModuleBase";
 
 

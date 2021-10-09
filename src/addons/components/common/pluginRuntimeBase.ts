@@ -1,9 +1,9 @@
-import { Common } from "../../../../modules/components/common_components/common";
-import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../../modules/components/common_components/logger";
-import { STANDARD_MESSAGES } from "../../../messages/standard";
-import ICommandRunInfo from "../../../../modules/models/common_models/ICommandRunInfo";
+import { Common } from "../../../modules/components/common_components/common";
+import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../modules/components/common_components/logger";
+import { STANDARD_MESSAGES } from "../../messages/standard";
+import ICommandRunInfo from "../../../modules/models/common_models/ICommandRunInfo";
 import IAddonModuleBase from "./IAddonModuleBase";
-import {  ITableMessage } from "../../../../modules/models/common_models/helper_interfaces";
+import {  ITableMessage } from "../../../modules/models/common_models/helper_interfaces";
 import { IAddonRuntimeSystem } from "./IAddonRuntimeSystem";
 
 
