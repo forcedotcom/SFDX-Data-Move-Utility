@@ -6,8 +6,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import PluginRuntimeBase from "./pluginRuntimeBase";
-import IPluginExecutionContext from "./IPluginExecutionContext";
+import AddonRuntimeBase from "./addonRuntimeBase";
+import IAddonContext from "./IAddonContext";
+
 
 
 
@@ -24,21 +25,21 @@ export default interface IAddonModuleBase {
      * Holds information about the runtime context 
      * where the Addon event is currently executed
      */
-    context: IPluginExecutionContext;
+    context: IAddonContext;
 
     /**
      * Used by the Plugin to share the runtime data and methods with the Addon module
      */
-    runtime: PluginRuntimeBase;
+    runtime: AddonRuntimeBase;
 
     /**
      * The main method which is executed when the Addon event is running.
      */
-    onExecute(context: IPluginExecutionContext, args: any): void;
+    onExecute(context: IAddonContext, args: any): void;
 
     /**
      * The custom display name of the current Addon module
      */
-    readonly displayName: string;
+    readonly moduleDisplayName: string;
 
 }

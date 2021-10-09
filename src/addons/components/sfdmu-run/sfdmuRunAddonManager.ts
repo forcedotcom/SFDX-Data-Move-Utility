@@ -20,12 +20,12 @@ import { Logger, RESOURCES } from '../../../modules/components/common_components
 import AddonManifestDefinition from '../../../modules/models/script_models/addonManifestDefinition';
 import { CONSTANTS } from '../../../modules/components/common_components/statics';
 import { ADDON_MODULE_METHODS } from '../../../modules/components/common_components/enumerations';
-import PluginRuntimeBase from '../common/pluginRuntimeBase';
-import AddonModuleBase from '../common/AddonModuleBase';
-import IPluginExecutionContext from '../common/IPluginExecutionContext';
-import SfdmuPluginRuntime from './sfdmuRunPluginRuntime';
+import AddonRuntimeBase from '../common/addonRuntimeBase';
+import AddonModuleBase from '../common/addonModuleBase';
+import SfdmuRunPluginRuntime from './sfdmuRunPluginRuntime';
 import { IAddonRuntimeSystem } from '../common/IAddonRuntimeSystem';
-import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
+import { ISfdmuRunAddonRuntimeSystem } from './ISfdmuRunAddonRuntimeSystem';
+import IAddonContext from '../common/IAddonContext';
 
 
 
@@ -33,9 +33,9 @@ import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
 /**
  * The sfdmu Addon extensions manager
  */
-export default class SfdmuAddonManager {
+export default class SfdmuRunAddonManager {
 
-    runtime: PluginRuntimeBase;
+    runtime: AddonRuntimeBase;
     runtimeSystem: IAddonRuntimeSystem;
     script: Script;
 
@@ -55,8 +55,8 @@ export default class SfdmuAddonManager {
 
         // Setup ************************************************   
         this.script = script;
-        this.runtime = new SfdmuPluginRuntime(script);
-        this.runtimeSystem = <ISfdmuAddonRuntimeSystem>(<any>this.runtime);
+        this.runtime = new SfdmuRunPluginRuntime(script);
+        this.runtimeSystem = <ISfdmuRunAddonRuntimeSystem>(<any>this.runtime);
 
         // Load manifests
         this.manifests = [
@@ -108,8 +108,7 @@ export default class SfdmuAddonManager {
 
     // --------- Private members ------------ //
     private _loadCoreAddonManifest(): AddonManifest {
-        this.logger.infoNormal(RESOURCES.loadingAddonManifestFile, 
-                this.logger.getResourceString(RESOURCES.coreManifest));
+        this.logger.infoNormal(RESOURCES.loadingCoreAddonManifestFile);
         let manifestPath = path.resolve(__dirname, CONSTANTS.CORE_ADDON_MANIFEST_FILE_NAME);
         if (!fs.existsSync(manifestPath)) {
             return null;
@@ -117,7 +116,7 @@ export default class SfdmuAddonManager {
         try {
             let manifestPlain = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
             let manifest = plainToClass(AddonManifest, manifestPlain);
-            manifest.addons.forEach(addon => this._setupAddonDefinition(addon, true));
+            manifest.addons.forEach(addon => this._setupAddonDefinition(addon));
             manifest.addons = manifest.addons.filter(addon => !addon.excluded);
             return manifest;
         } catch (ex) {
@@ -166,15 +165,13 @@ export default class SfdmuAddonManager {
         });
         manifest.addons.forEach(addon => { 
             this.logger.infoNormal(RESOURCES.loadingAddon, 
-                this.logger.getResourceString(RESOURCES.userManifest),
-                addon.moduleName);
-            this._setupAddonDefinition(addon, false); 
+                addon.moduleDisplayName);
+            this._setupAddonDefinition(addon); 
         });
         return manifest;
     }
 
-    private _setupAddonDefinition(addon: AddonManifestDefinition, isCore: boolean) {
-        addon.isCore = isCore;
+    private _setupAddonDefinition(addon: AddonManifestDefinition) {
         addon.basePath = this.runtime.runInfo.basePath;
         addon.args = addon.args || {};
     }
@@ -189,12 +186,13 @@ export default class SfdmuAddonManager {
                         if (!this.addonsMap.has(addon.method)) {
                             this.addonsMap.set(addon.method, []);
                         }
-                        moduleInstance.context = <IPluginExecutionContext>{
+                        moduleInstance.context = <IAddonContext>{
                             eventName: addon.method.toString(),
                             objectName: addon.objectName,
                             startupMessage: addon.startupMessage,
                             description: addon.description,
-                            objectDisplayName: addon.objectName || globalText
+                            objectDisplayName: addon.objectName || globalText,
+                            isCore: addon.isCore
                         };
                         this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
                     }

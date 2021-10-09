@@ -11,7 +11,7 @@ import { API_ENGINE, OPERATION } from "../../../modules/components/common_compon
 import { IBlobField } from "../../../modules/models/api_models";
 import { ITableMessage } from "../../../modules/models/common_models/helper_interfaces";
 import ICommandRunInfo from "../../../modules/models/common_models/ICommandRunInfo";
-import { STANDARD_MESSAGES } from "../../messages/standard";
+import { SYSTEM_MESSAGES } from "../../messages/system";
 import SfdmuContentVersion from "./sfdmuContentVersion";
 import SfdmuPluginJob from "./sfdmuPluginJob";
 import SfdmuRunPluginTask from "./sfdmuRunPluginTask";
@@ -30,7 +30,7 @@ import IAddonModuleBase from "../common/IAddonModuleBase";
 
 /**
  * Provides the base Api methods and properties
- * to use in the AddOn module
+ * to use in the Add-On module
  */
 export default interface ISfdmuRunPluginRuntime {
 
@@ -49,7 +49,7 @@ export default interface ISfdmuRunPluginRuntime {
     /**
      * Writes a message from a predefined Addon Core (standard) messages 
      */
-    writeStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void;
+    writeStandardMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void;
 
     /**
      * Writes the standard message about plugin starts to execute
@@ -123,7 +123,7 @@ export default interface ISfdmuRunPluginRuntime {
 
     /**
      * All data related to the current running task
-     * in the context where the AddOn is currently called
+     * in the context where the Add-On is currently called
      */
     getPluginTask(module: IAddonModuleBase): SfdmuRunPluginTask,
 

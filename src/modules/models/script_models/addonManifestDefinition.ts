@@ -39,14 +39,22 @@ export default class AddonManifestDefinition {
     }
 
     // -----------------------------------
-    isCore: boolean;
     basePath: string;
+
+    get isCore(): boolean {
+        return this.moduleName && this.moduleName.startsWith(CONSTANTS.CORE_ADDON_MODULES_NAME_PREFIX);
+    }
 
     get moduleName(): string {
         let name = this.module || this.path;
         if (name) {
             return path.basename(name);
         }
+    }
+    get moduleDisplayName(): string {
+        if (this.moduleName.indexOf(':') >= 0) return this.moduleName;
+        return this.isCore ? CONSTANTS.CORE_ADDON_MODULES_NAME_PREFIX + this.moduleName
+            : CONSTANTS.CUSTOM_ADDON_MODULES_NAME_PREFIX + this.moduleName;
     }
     get isValid(): boolean {
         return !!this.moduleName && this.method != ADDON_MODULE_METHODS.none;

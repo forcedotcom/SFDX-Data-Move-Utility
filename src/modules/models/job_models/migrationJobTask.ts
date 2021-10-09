@@ -1165,7 +1165,7 @@ export  default class MigrationJobTask {
             let targetFilenameSuffix = data.processPersonAccounts ? CONSTANTS.CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX : "";
 
             // Temporary store the current processed data
-            // to allow access it from the AddOn engine
+            // to allow access it from the Add-On engine
             self.processedData = data;
 
             // Call addon onBeforeUpdate event

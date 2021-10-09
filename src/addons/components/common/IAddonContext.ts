@@ -8,7 +8,7 @@
 /**
  * Holds information about the runtime context where the event is currently executed
  */
-export default interface IPluginExecutionContext {
+export default interface IAddonContext {
     
     /**
      * The name of the executed event
@@ -40,6 +40,11 @@ export default interface IPluginExecutionContext {
      * (defined in the Script file)
      */
     startupMessage: string;
+
+    /**
+     * Returns true if this is custom-defined plugin
+     */
+    isCore: boolean;
 
 
 }

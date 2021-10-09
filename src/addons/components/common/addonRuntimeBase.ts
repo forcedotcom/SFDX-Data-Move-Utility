@@ -1,6 +1,6 @@
 import { Common } from "../../../modules/components/common_components/common";
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../modules/components/common_components/logger";
-import { STANDARD_MESSAGES } from "../../messages/standard";
+import { SYSTEM_MESSAGES } from "../../messages/system";
 import ICommandRunInfo from "../../../modules/models/common_models/ICommandRunInfo";
 import IAddonModuleBase from "./IAddonModuleBase";
 import {  ITableMessage } from "../../../modules/models/common_models/helper_interfaces";
@@ -9,7 +9,7 @@ import { IAddonRuntimeSystem } from "./IAddonRuntimeSystem";
 
 
 
-export default class PluginRuntimeBase implements IAddonRuntimeSystem {
+export default class AddonRuntimeBase implements IAddonRuntimeSystem {
 
     runInfo: ICommandRunInfo;
     #logger: Logger;
@@ -20,45 +20,45 @@ export default class PluginRuntimeBase implements IAddonRuntimeSystem {
     }
 
     // --------------------------- IPluginRuntimeSystem ------------------------------------- //
-    ____$getStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): string {
+    getSystemMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): string {
         switch (message) {
-            case STANDARD_MESSAGES.NewLine:
+            case SYSTEM_MESSAGES.NewLine:
                 return ''; 
         }
         let mess = Common.formatStringLog((message || '').toString(), ...tokens);
         return this.#logger.getResourceString(RESOURCES.coreAddonMessageTemplate,
-            module.displayName,
+            module.moduleDisplayName,
             module.context.objectDisplayName,
             mess);
     }
 
-    ____$writeStandardInfoMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.____$getStandardMessage(module, message, ...tokens), "INFO");
+    writeSystemInfoMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.getSystemMessage(module, message, ...tokens), "INFO");
     }
 
-    ____$writeStandardWarningMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.____$getStandardMessage(module, message, ...tokens), "WARNING");
+    writeSystemWarningMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.getSystemMessage(module, message, ...tokens), "WARNING");
     }
 
-    ____$writeStandardErrorMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.____$getStandardMessage(module, message, ...tokens), "ERROR");
+    writeSystemErrorMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void {
+        this.writeMessage(this.getSystemMessage(module, message, ...tokens), "ERROR");
     }
 
 
 
     // --------------------------- Own members ------------------------------------- //
-    writeStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
+    writeSystemMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
         switch (messageType) {
             case 'ERROR':
-                this.____$writeStandardErrorMessage(module, message, ...tokens);
+                this.writeSystemErrorMessage(module, message, ...tokens);
                 break;
 
             case 'WARNING':
-                this.____$writeStandardWarningMessage(module, message, ...tokens);
+                this.writeSystemWarningMessage(module, message, ...tokens);
                 break;
 
             default:
-                this.____$writeStandardInfoMessage(module, message, ...tokens);
+                this.writeSystemInfoMessage(module, message, ...tokens);
                 break;
         }
     }
@@ -102,7 +102,7 @@ export default class PluginRuntimeBase implements IAddonRuntimeSystem {
      * @memberof PluginRuntimeBase
      */
     writeStartMessage(module: IAddonModuleBase): void {
-        module.runtime.writeMessage(RESOURCES.startAddonExecute.toString(), "INFO", module.displayName, module.context.objectDisplayName);
+        module.runtime.writeMessage(RESOURCES.startAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
     }
 
     /**
@@ -112,7 +112,7 @@ export default class PluginRuntimeBase implements IAddonRuntimeSystem {
      * @memberof PluginRuntimeBase
      */
     writeFinishMessage(module: IAddonModuleBase) {
-        module.runtime.writeMessage(RESOURCES.finishAddonExecute.toString(), "INFO", module.displayName, module.context.objectDisplayName);
+        module.runtime.writeMessage(RESOURCES.finishAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
     }
 
     /**

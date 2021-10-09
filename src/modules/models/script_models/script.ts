@@ -29,8 +29,8 @@ import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/e
 import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
 import AddonManifestDefinition from "./addonManifestDefinition";
-import SfdmuAddonManager from "../../../addons/components/sfdmu/sfdmuAddonManager";
-import { ISfdmuAddonRuntimeSystem } from "../../../addons/components/sfdmu/ISfdmuAddonRuntimeSystem";
+import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
+import { ISfdmuRunAddonRuntimeSystem } from "../../../addons/components/sfdmu-run/ISfdmuRunAddonRuntimeSystem";
 
 
 
@@ -86,11 +86,11 @@ export default class Script {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
-    addonManager: SfdmuAddonManager;
+    addonManager: SfdmuRunAddonManager;
     runInfo: ICommandRunInfo;
     canModify: string;
 
-    get addonRuntime(): ISfdmuAddonRuntimeSystem {
+    get addonRuntime(): ISfdmuRunAddonRuntimeSystem {
         return <any>this.addonManager.runtime;
     }
 
@@ -172,7 +172,7 @@ export default class Script {
             basePath,
             pinfo
         };
-        this.addonManager = new SfdmuAddonManager(this);
+        this.addonManager = new SfdmuRunAddonManager(this);
 
         this.sourceOrg = this.orgs.filter(x => x.name == this.runInfo.sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();

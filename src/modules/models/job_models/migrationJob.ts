@@ -176,7 +176,7 @@ export default class MigrationJob {
         });
 
         // Initialize the runtime job
-        this.script.addonRuntime.____$createSfdmuPluginJob();
+        this.script.addonRuntime.createSfdmuPluginJob();
 
         // ------------------------------- Internal functions --------------------------------------- //
         function ___updateQueryTaskOrder() {

@@ -7,8 +7,10 @@
 
 
 import IAddonModuleBase from "./IAddonModuleBase";
-import IPluginExecutionContext from "./IPluginExecutionContext";
-import PluginRuntimeBase from "./pluginRuntimeBase";
+import AddonRuntimeBase from "./addonRuntimeBase";
+import IAddonContext from "./IAddonContext";
+import { CONSTANTS } from "../../../modules/components/common_components/statics";
+
 
 
 
@@ -17,11 +19,15 @@ import PluginRuntimeBase from "./pluginRuntimeBase";
   * The base class for the custom Addon modules
  */
 export default abstract class AddonModuleBase implements IAddonModuleBase {
-    constructor(runtime : PluginRuntimeBase){
+    constructor(runtime: AddonRuntimeBase) {
         this.runtime = runtime;
     }
-    context: IPluginExecutionContext;
-    runtime: PluginRuntimeBase;
-    abstract onExecute(context: IPluginExecutionContext, args: any): void;
-    abstract displayName: string;
+    context: IAddonContext;
+    runtime: AddonRuntimeBase;
+    abstract onExecute(context: IAddonContext, args: any): void;
+    get moduleDisplayName(): string {
+        return `${this.context.isCore
+            ? CONSTANTS.CORE_ADDON_MODULES_NAME_PREFIX
+            : CONSTANTS.CUSTOM_ADDON_MODULES_NAME_PREFIX}${this.constructor.name}`;
+    }
 }

@@ -131,10 +131,9 @@ export enum RESOURCES {
     addedMissingParentLookupObject = "addedMissingParentLookupObject",
     failedToResolveExternalId = "failedToResolveExternalId",
 
-    loadingAddonManifestFile = "loadingAddonManifestFile",
+    loadingCoreAddonManifestFile = "loadingCoreAddonManifestFile",
     loadingAddon = "loadingAddon",
     missingNecessaryComponent = "missingNecessaryComponent",
-    addonManifestFileDoesNotFound = "addonManifestFileDoesNotFound",
 
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",

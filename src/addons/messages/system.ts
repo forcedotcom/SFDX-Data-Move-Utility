@@ -7,7 +7,7 @@
 
 
 
-export enum STANDARD_MESSAGES {
+export enum SYSTEM_MESSAGES {
 
     // Common -------------------------------------
     NewLine = '',

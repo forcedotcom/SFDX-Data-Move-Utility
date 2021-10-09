@@ -20,8 +20,8 @@
     "update": "Update",
     "delete": "Delete",
     "personContact": "Person Contact",
-    "coreManifest": "Core Addon",
-    "userManifest": "User Addon",
+    "coreManifest": "Core Add-On",
+    "userManifest": "Custom Add-On",
     "loaded": "Loaded %s.",
     "cantLoad": "%s is not found or could not be loaded.",
     "global": "Global",
@@ -64,10 +64,10 @@
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
 
-    "loadingAddonManifestFile" : "[%s] Loading addon declaration ...",
-    "loadingAddon" : "[%s] Loading addon %s ...",
+    "loadingCoreAddonManifestFile" : "Loading core Add-On declarations ...",
+    "loadingAddon" : "Loading Add-On module %s ...",
     "missingNecessaryComponent" : "The necessary component '%s' could not be found.",
-    "addonManifestFileDoesNotFound": "The Addon declaration file '%s' does not exist.",
+
 
     "commandInProgress": "Command in progress ...",
     "packageScript": "Package script",
@@ -198,12 +198,12 @@
     "updatingSummary": "Data processing summary",
     "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records.",
 
-    "processingAddon": "Processing AddOn event handlers ...", 
-    "runAddonMethod": "{%s} Executing of the event:%s AddOn handlers has started",
-    "nothingToProcess": "No AddOn modules found to process.",
-    "startAddonExecute" : "[%s] {%s} Executing of the AddOn module has started",
-    "finishAddonExecute" : "[%s] {%s} Executing of the AddOn module has finished",
+    "processingAddon": "Processing Add-On event handlers ...", 
+    "runAddonMethod": "{%s} Executing of the event:%s Add-On handlers has started",
+    "nothingToProcess": "No Add-On modules found to process.",
+    "startAddonExecute" : "[%s] {%s} Executing of the Add-On module has started",
+    "finishAddonExecute" : "[%s] {%s} Executing of the Add-On module has finished",
     "coreAddonMessageTemplate" : "[%s] {%s} %s",
-    "runAddonMethodCompleted": "{%s} Executing of the event:%s AddOn handlers has finished"
+    "runAddonMethodCompleted": "{%s} Executing of the event:%s Add-On handlers has finished"
     
 }

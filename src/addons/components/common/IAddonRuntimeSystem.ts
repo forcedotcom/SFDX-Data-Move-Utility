@@ -1,10 +1,10 @@
-import { STANDARD_MESSAGES } from "../../messages/standard";
+import { SYSTEM_MESSAGES } from "../../messages/system";
 import IAddonModuleBase from "./IAddonModuleBase";
 
 
 export interface IAddonRuntimeSystem {
-    ____$getStandardMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): string,
-    ____$writeStandardInfoMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
-    ____$writeStandardWarningMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
-    ____$writeStandardErrorMessage(module: IAddonModuleBase, message: STANDARD_MESSAGES, ...tokens: string[]): void,
+    getSystemMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): string,
+    writeSystemInfoMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void,
+    writeSystemWarningMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void,
+    writeSystemErrorMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void,
 }

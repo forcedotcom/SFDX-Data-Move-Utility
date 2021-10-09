@@ -18,10 +18,10 @@ import { Sfdx } from "../../../modules/components/common_components/sfdx";
 import { CONSTANTS } from "../../../modules/components/common_components/statics";
 import { Script, TaskData } from "../../../modules/models";
 import { IApiEngine, IBlobField } from "../../../modules/models/api_models";
-import { STANDARD_MESSAGES } from "../../messages/standard";
+import { SYSTEM_MESSAGES } from "../../messages/system";
 
 
-import PluginRuntimeBase from "../common/pluginRuntimeBase";
+import AddonRuntimeBase from "../common/addonRuntimeBase";
 import SfdmuContentVersion from "./sfdmuContentVersion";
 import SfdmuPluginJob from "./sfdmuPluginJob";
 
@@ -29,11 +29,11 @@ import ICommandRunInfo from '../../../modules/models/common_models/ICommandRunIn
 import IAddonModuleBase from '../common/IAddonModuleBase';
 import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../modules/components/common_components/enumerations';
 import SfdmuRunPluginTask from './sfdmuRunPluginTask';
-import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
+import { ISfdmuRunAddonRuntimeSystem } from './ISfdmuRunAddonRuntimeSystem';
 
 
 
-export default class SfdmuPluginRuntime extends PluginRuntimeBase implements ISfdmuAddonRuntimeSystem  {
+export default class SfdmuRunPluginRuntime extends AddonRuntimeBase implements ISfdmuRunAddonRuntimeSystem  {
 
     // Hidden properties to not expose them to the Addon code.
     // The Addon can access only the members of IPluginRuntime.
@@ -48,7 +48,7 @@ export default class SfdmuPluginRuntime extends PluginRuntimeBase implements ISf
     }
 
     /* -------- ISfdmuRuntimeSystem ----------- */
-    ____$createSfdmuPluginJob() {
+    createSfdmuPluginJob() {
         this.pluginJob = new SfdmuPluginJob(this.#script.job);
     }
 
@@ -343,8 +343,8 @@ export default class SfdmuPluginRuntime extends PluginRuntimeBase implements ISf
 
         // Uploading Binary-type Files -----------------------
         if (fileUploadJobs.length > 0) {
-            this.____$writeStandardInfoMessage(module, STANDARD_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
-            this.____$writeStandardInfoMessage(module, STANDARD_MESSAGES.DataWillBeProcessedInChunksOfSize,
+            this.writeSystemInfoMessage(module, SYSTEM_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
+            this.writeSystemInfoMessage(module, SYSTEM_MESSAGES.DataWillBeProcessedInChunksOfSize,
                 String(fileUploadJobs.length),
                 String((CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000).toFixed(2)));
         }
@@ -355,7 +355,7 @@ export default class SfdmuPluginRuntime extends PluginRuntimeBase implements ISf
             const fileJob = fileUploadJobs[index];
             let idToContentVersionMap: Map<string, SfdmuContentVersion> = Common.arrayToMap(fileJob, ['Id']);
 
-            this.____$writeStandardInfoMessage(module, STANDARD_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
+            this.writeSystemInfoMessage(module, SYSTEM_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
 
             // Download
             let idToContentVersionBlobMap = await this.downloadBlobDataAsync(true, [...idToContentVersionMap.keys()], <IBlobField>{
@@ -464,7 +464,7 @@ export default class SfdmuPluginRuntime extends PluginRuntimeBase implements ISf
         let tmp = path.normalize(this.basePath
             + '/'
             + Common.formatStringLog(CONSTANTS.ADDON_TEMP_RELATIVE_FOLDER,
-                module.displayName.replace(/[^\w\d]/g, '-')) + '/');
+                module.moduleDisplayName.replace(/[^\w\d]/g, '-')) + '/');
         if (!fs.existsSync(tmp)) {
             fs.mkdirSync(tmp);
         }
