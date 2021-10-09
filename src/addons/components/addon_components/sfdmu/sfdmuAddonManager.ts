@@ -23,7 +23,7 @@ import { ADDON_MODULE_METHODS } from '../../../../modules/components/common_comp
 import PluginRuntimeBase from '../common/pluginRuntimeBase';
 import AddonModuleBase from '../common/AddonModuleBase';
 import IPluginExecutionContext from '../common/IPluginExecutionContext';
-import SfdmuPluginRuntime from '../common/sfdmuRunPluginRuntime';
+import SfdmuPluginRuntime from './sfdmuRunPluginRuntime';
 import { IAddonRuntimeSystem } from '../common/IAddonRuntimeSystem';
 import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
 

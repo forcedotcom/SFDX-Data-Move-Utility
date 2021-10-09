@@ -12,7 +12,7 @@
 import IPluginExecutionContext from "../common/IPluginExecutionContext";
 import AddonModuleBase from "../common/AddonModuleBase";
 import { ISfdmuAddonRuntimeSystem } from "./ISfdmuAddonRuntimeSystem";
-import SfdmuRunPluginRuntime from "../common/sfdmuRunPluginRuntime";
+import SfdmuRunPluginRuntime from "./sfdmuRunPluginRuntime";
 
 
 export default abstract class SfdmuRunAddonModuleBase extends AddonModuleBase {
