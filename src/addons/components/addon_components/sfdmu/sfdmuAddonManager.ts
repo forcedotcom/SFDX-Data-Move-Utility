@@ -33,7 +33,7 @@ import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
 /**
  * The sfdmu Addon extensions manager
  */
-export default class AddonManager {
+export default class SfdmuAddonManager {
 
     runtime: PluginRuntimeBase;
     runtimeSystem: IAddonRuntimeSystem;

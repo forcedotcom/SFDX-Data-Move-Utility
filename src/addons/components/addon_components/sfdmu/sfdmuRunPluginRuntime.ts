@@ -22,14 +22,14 @@ import { STANDARD_MESSAGES } from "../../../messages/standard";
 
 
 
-import SfdmuContentVersion from "../sfdmu/sfdmuContentVersion";
-import SfdmuPluginJob from "../sfdmu/sfdmuPluginJob";
+import SfdmuContentVersion from "./sfdmuContentVersion";
+import SfdmuPluginJob from "./sfdmuPluginJob";
 
 import ICommandRunInfo from '../../../../modules/models/common_models/ICommandRunInfo';
 import IAddonModuleBase from '../base/IAddonModuleBase';
 import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../../modules/components/common_components/enumerations';
-import SfdmuRunPluginTask from '../sfdmu/sfdmuRunPluginTask';
-import { ISfdmuAddonRuntimeSystem } from '../sfdmu/ISfdmuAddonRuntimeSystem';
+import SfdmuRunPluginTask from './sfdmuRunPluginTask';
+import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
 import PluginRuntimeBase from '../base/pluginRuntimeBase';
 
 

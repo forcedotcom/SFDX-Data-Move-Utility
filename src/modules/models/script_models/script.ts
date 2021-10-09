@@ -29,7 +29,7 @@ import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/e
 import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
 import AddonManifestDefinition from "./addonManifestDefinition";
-import AddonManager from "../../../addons/components/addon_components/sfdmu/addonManager";
+import SfdmuAddonManager from "../../../addons/components/addon_components/sfdmu/sfdmuAddonManager";
 import { ISfdmuAddonRuntimeSystem } from "../../../addons/components/addon_components/sfdmu/ISfdmuAddonRuntimeSystem";
 
 
@@ -86,7 +86,7 @@ export default class Script {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
-    addonManager: AddonManager;
+    addonManager: SfdmuAddonManager;
     runInfo: ICommandRunInfo;
     canModify: string;
 
@@ -172,7 +172,7 @@ export default class Script {
             basePath,
             pinfo
         };
-        this.addonManager = new AddonManager(this);
+        this.addonManager = new SfdmuAddonManager(this);
 
         this.sourceOrg = this.orgs.filter(x => x.name == this.runInfo.sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();
