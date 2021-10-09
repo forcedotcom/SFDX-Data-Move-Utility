@@ -21,24 +21,26 @@ import { IApiEngine, IBlobField } from "../../../modules/models/api_models";
 import { SYSTEM_MESSAGES } from "../../messages/system";
 
 
-import AddonRuntimeBase from "../common/addonRuntimeBase";
+import AddonRuntime from "../common/addonRuntime";
 import SfdmuContentVersion from "./sfdmuContentVersion";
-import SfdmuPluginJob from "./sfdmuPluginJob";
+import SfdmuRunAddonJob from "./sfdmuRunAddonJob";
 
 import ICommandRunInfo from '../../../modules/models/common_models/ICommandRunInfo';
-import IAddonModuleBase from '../common/IAddonModuleBase';
 import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../modules/components/common_components/enumerations';
-import SfdmuRunPluginTask from './sfdmuRunPluginTask';
-import { ISfdmuRunAddonRuntimeSystem } from './ISfdmuRunAddonRuntimeSystem';
+import SfdmuRunAddonTask from './sfdmuRunAddonTask';
+import AddonModule from '../common/addonModule';
 
 
 
-export default class SfdmuRunPluginRuntime extends AddonRuntimeBase implements ISfdmuRunAddonRuntimeSystem  {
+export default class SfdmuRunAddonRuntime extends AddonRuntime  {
 
     // Hidden properties to not expose them to the Addon code.
     // The Addon can access only the members of IPluginRuntime.
     #script: Script;
     #logger: Logger;
+
+    runInfo: ICommandRunInfo;
+    pluginJob: SfdmuRunAddonJob;
 
 
     constructor(script: Script) {
@@ -47,19 +49,11 @@ export default class SfdmuRunPluginRuntime extends AddonRuntimeBase implements I
         this.#logger = script.logger;
     }
 
-    /* -------- ISfdmuRuntimeSystem ----------- */
     createSfdmuPluginJob() {
-        this.pluginJob = new SfdmuPluginJob(this.#script.job);
+        this.pluginJob = new SfdmuRunAddonJob(this.#script.job);
     }
 
-
-
-    /* -------- Own members ----------- */
-    runInfo: ICommandRunInfo;
-    pluginJob: SfdmuPluginJob;
-
-
-    getPluginTask(module: IAddonModuleBase): SfdmuRunPluginTask {
+    getPluginTask(module: AddonModule): SfdmuRunAddonTask {
         return this.pluginJob.tasks.find(task => task.sObjectName == module.context.objectName);
     }
 
@@ -303,7 +297,7 @@ export default class SfdmuRunPluginRuntime extends AddonRuntimeBase implements I
      * @returns {Promise<ISfdmuContentVersion[]>} The updated input ContentVersion records
      * @memberof ISfdmuRunPluginRuntime
      */
-    async transferContentVersions(module: IAddonModuleBase, sourceVersions: SfdmuContentVersion[]): Promise<SfdmuContentVersion[]> {
+    async transferContentVersions(module: AddonModule, sourceVersions: SfdmuContentVersion[]): Promise<SfdmuContentVersion[]> {
         let _self = this;
 
         // All Files of url types to upload ///
@@ -343,8 +337,8 @@ export default class SfdmuRunPluginRuntime extends AddonRuntimeBase implements I
 
         // Uploading Binary-type Files -----------------------
         if (fileUploadJobs.length > 0) {
-            this.writeSystemInfoMessage(module, SYSTEM_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
-            this.writeSystemInfoMessage(module, SYSTEM_MESSAGES.DataWillBeProcessedInChunksOfSize,
+            this.logFormattedInfo(module, SYSTEM_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
+            this.logFormattedInfo(module, SYSTEM_MESSAGES.DataWillBeProcessedInChunksOfSize,
                 String(fileUploadJobs.length),
                 String((CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000).toFixed(2)));
         }
@@ -355,7 +349,7 @@ export default class SfdmuRunPluginRuntime extends AddonRuntimeBase implements I
             const fileJob = fileUploadJobs[index];
             let idToContentVersionMap: Map<string, SfdmuContentVersion> = Common.arrayToMap(fileJob, ['Id']);
 
-            this.writeSystemInfoMessage(module, SYSTEM_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
+            this.logFormattedInfo(module, SYSTEM_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
 
             // Download
             let idToContentVersionBlobMap = await this.downloadBlobDataAsync(true, [...idToContentVersionMap.keys()], <IBlobField>{
@@ -460,7 +454,7 @@ export default class SfdmuRunPluginRuntime extends AddonRuntimeBase implements I
      * @returns {string}
      * @memberof ISfdmuRunPluginRuntime
      */
-    getOrCreateTempPath(module: IAddonModuleBase): string {
+    getOrCreateTempPath(module: AddonModule): string {
         let tmp = path.normalize(this.basePath
             + '/'
             + Common.formatStringLog(CONSTANTS.ADDON_TEMP_RELATIVE_FOLDER,
@@ -476,7 +470,7 @@ export default class SfdmuRunPluginRuntime extends AddonRuntimeBase implements I
      *
      * @memberof ISfdmuRunPluginRuntime
      */
-    destroyTempPath(module: IAddonModuleBase, removeParentFolder?: boolean): void {
+    destroyTempPath(module: AddonModule, removeParentFolder?: boolean): void {
         if (typeof removeParentFolder == 'undefined')
             removeParentFolder = false;
         let tmp = this.getOrCreateTempPath(module);

@@ -30,7 +30,8 @@ import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
 import AddonManifestDefinition from "./addonManifestDefinition";
 import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
-import { ISfdmuRunAddonRuntimeSystem } from "../../../addons/components/sfdmu-run/ISfdmuRunAddonRuntimeSystem";
+import SfdmuRunAddonRuntime from "../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime";
+
 
 
 
@@ -90,7 +91,7 @@ export default class Script {
     runInfo: ICommandRunInfo;
     canModify: string;
 
-    get addonRuntime(): ISfdmuRunAddonRuntimeSystem {
+    get addonRuntime(): SfdmuRunAddonRuntime {
         return <any>this.addonManager.runtime;
     }
 

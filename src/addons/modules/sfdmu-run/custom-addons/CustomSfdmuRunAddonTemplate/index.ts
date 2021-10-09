@@ -13,13 +13,13 @@ export default class CustomSfdmuRunAddonTemlate extends SfdmuRunAddonModuleBase 
     async onExecute(context: IAddonContext, args: any): Promise<void> {
 
         // Print start message
-        this.runtime.writeStartMessage(this);
+        this.runtime.logStartAddonExecution(this);
 
         // Print some test messages
-        this.runtime.writeSystemMessage(this, SYSTEM_MESSAGES.NewLine); // Print new line
-        this.runtime.writeMessage('Arguments passed are: ');                // Print string
-        this.runtime.writeMessage(args, 'OBJECT');                          // Print object
-        this.runtime.writeSystemMessage(this, SYSTEM_MESSAGES.NewLine); // Print new line
+        this.runtime.logFormatted(this, SYSTEM_MESSAGES.NewLine); // Print new line
+        this.runtime.log('Arguments passed are: ');                // Print string
+        this.runtime.log(args, 'OBJECT');                          // Print object
+        this.runtime.logFormatted(this, SYSTEM_MESSAGES.NewLine); // Print new line
 
 
         // Get the currently running task
@@ -40,7 +40,7 @@ export default class CustomSfdmuRunAddonTemlate extends SfdmuRunAddonModuleBase 
         });
 
         // Print finish message
-        this.runtime.writeFinishMessage(this);
+        this.runtime.logFinishAddonExecution(this);
 
     }
 

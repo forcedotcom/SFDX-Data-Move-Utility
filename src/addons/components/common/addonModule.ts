@@ -6,28 +6,35 @@
  */
 
 
-import IAddonModuleBase from "./IAddonModuleBase";
-import AddonRuntimeBase from "./addonRuntimeBase";
+
+import AddonRuntime from "./addonRuntime";
 import IAddonContext from "./IAddonContext";
 import { CONSTANTS } from "../../../modules/components/common_components/statics";
-
-
-
 
 
 /**
   * The base class for the custom Addon modules
  */
-export default abstract class AddonModuleBase implements IAddonModuleBase {
-    constructor(runtime: AddonRuntimeBase) {
+export default abstract class AddonModule {
+
+    constructor(runtime: AddonRuntime) {
         this.runtime = runtime;
     }
+
     context: IAddonContext;
-    runtime: AddonRuntimeBase;
-    abstract onExecute(context: IAddonContext, args: any): void;
+    runtime: AddonRuntime;
+
+    async execute(context: IAddonContext, args: any): Promise<void> {
+        this.runtime.logFormatted(this, "");
+        await this.onExecute(context, args);
+    }
+
     get moduleDisplayName(): string {
         return `${this.context.isCore
             ? CONSTANTS.CORE_ADDON_MODULES_NAME_PREFIX
             : CONSTANTS.CUSTOM_ADDON_MODULES_NAME_PREFIX}${this.constructor.name}`;
     }
+
+    abstract onExecute(context: IAddonContext, args: any): void;
+
 }

@@ -8,13 +8,13 @@
 
 
 import { MigrationJob } from "../../../modules/models";
-import SfdmuRunPluginTask from "./sfdmuRunPluginTask";
+import SfdmuRunAddonTask from "./sfdmuRunAddonTask";
 
 
-export default class SfdmuPluginJob  {
+export default class SfdmuRunAddonJob  {
     
     #migrationJob : MigrationJob;
-    #pluginTasks: SfdmuRunPluginTask[];
+    #pluginTasks: SfdmuRunAddonTask[];
 
     constructor(migrationJob : MigrationJob){
         
@@ -22,11 +22,11 @@ export default class SfdmuPluginJob  {
         this.#migrationJob = migrationJob;
         
         // Setup tasks
-        this.#pluginTasks = this.#migrationJob.tasks.map(jobTask => new SfdmuRunPluginTask(jobTask));
+        this.#pluginTasks = this.#migrationJob.tasks.map(jobTask => new SfdmuRunAddonTask(jobTask));
 
     }
     
-    get tasks() : SfdmuRunPluginTask[] {
+    get tasks() : SfdmuRunAddonTask[] {
        return this.#pluginTasks;
     }
 }

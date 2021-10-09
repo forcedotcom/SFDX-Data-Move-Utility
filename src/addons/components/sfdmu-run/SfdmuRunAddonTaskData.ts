@@ -13,7 +13,7 @@ import { DATA_MEDIA_TYPE } from "../../../modules/components/common_components/e
 /**
  * Holds the source & the target data of the currently running migration task
  */
-export default class SfdmuRunPluginTaskData {
+export default class SfdmuRunAddonTaskData {
 
     #taskOrgData: TaskOrgData;
 

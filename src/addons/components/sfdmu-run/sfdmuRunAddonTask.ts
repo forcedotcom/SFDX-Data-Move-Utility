@@ -5,24 +5,24 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import SfdmuRunPluginTaskData from "./sfdmuRunPluginTaskData";
+import SfdmuRunAddonTaskData from "./SfdmuRunAddonTaskData";
 
 import { MigrationJobTask, ProcessedData } from "../../../modules/models";
 import { OPERATION } from "../../../modules/components/common_components/enumerations";
 
 
 
-export default class SfdmuRunPluginTask  {
+export default class SfdmuRunAddonTask  {
 
     #migrationJobTask: MigrationJobTask;
-    #sourceTaskData: SfdmuRunPluginTaskData;
-    #targetTaskData: SfdmuRunPluginTaskData;
+    #sourceTaskData: SfdmuRunAddonTaskData;
+    #targetTaskData: SfdmuRunAddonTaskData;
 
 
     constructor(migrationJobTask: MigrationJobTask) {
         this.#migrationJobTask = migrationJobTask;
-        this.#sourceTaskData = new SfdmuRunPluginTaskData(migrationJobTask.sourceData);
-        this.#targetTaskData = new SfdmuRunPluginTaskData(migrationJobTask.targetData);
+        this.#sourceTaskData = new SfdmuRunAddonTaskData(migrationJobTask.sourceData);
+        this.#targetTaskData = new SfdmuRunAddonTaskData(migrationJobTask.targetData);
     }
 
 
@@ -54,11 +54,11 @@ export default class SfdmuRunPluginTask  {
         return this.#migrationJobTask.scriptObject.sourceToTargetFieldNameMap;
     }
 
-    get sourceTaskData(): SfdmuRunPluginTaskData {
+    get sourceTaskData(): SfdmuRunAddonTaskData {
         return this.#sourceTaskData;
     }
 
-    get targetTaskData(): SfdmuRunPluginTaskData {
+    get targetTaskData(): SfdmuRunAddonTaskData {
         return this.#targetTaskData;
     }
 

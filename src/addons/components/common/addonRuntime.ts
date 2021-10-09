@@ -1,15 +1,20 @@
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
+
 import { Common } from "../../../modules/components/common_components/common";
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../modules/components/common_components/logger";
 import { SYSTEM_MESSAGES } from "../../messages/system";
 import ICommandRunInfo from "../../../modules/models/common_models/ICommandRunInfo";
-import IAddonModuleBase from "./IAddonModuleBase";
-import {  ITableMessage } from "../../../modules/models/common_models/helper_interfaces";
-import { IAddonRuntimeSystem } from "./IAddonRuntimeSystem";
+import { ITableMessage } from "../../../modules/models/common_models/helper_interfaces";
+import AddonModule from "./addonModule";
 
 
-
-
-export default class AddonRuntimeBase implements IAddonRuntimeSystem {
+export default class AddonRuntime  {
 
     runInfo: ICommandRunInfo;
     #logger: Logger;
@@ -19,11 +24,10 @@ export default class AddonRuntimeBase implements IAddonRuntimeSystem {
         this.runInfo = runInfo;
     }
 
-    // --------------------------- IPluginRuntimeSystem ------------------------------------- //
-    getSystemMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): string {
+    createFormattedMessage(module: AddonModule, message: SYSTEM_MESSAGES | string, ...tokens: string[]): string {
         switch (message) {
             case SYSTEM_MESSAGES.NewLine:
-                return ''; 
+                return '';
         }
         let mess = Common.formatStringLog((message || '').toString(), ...tokens);
         return this.#logger.getResourceString(RESOURCES.coreAddonMessageTemplate,
@@ -32,33 +36,30 @@ export default class AddonRuntimeBase implements IAddonRuntimeSystem {
             mess);
     }
 
-    writeSystemInfoMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.getSystemMessage(module, message, ...tokens), "INFO");
+    logFormattedInfo(module: AddonModule, message: SYSTEM_MESSAGES | string, ...tokens: string[]): void {
+        this.log(this.createFormattedMessage(module, message, ...tokens), "INFO");
     }
 
-    writeSystemWarningMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.getSystemMessage(module, message, ...tokens), "WARNING");
+    logFormattedWarning(module: AddonModule, message: SYSTEM_MESSAGES | string, ...tokens: string[]): void {
+        this.log(this.createFormattedMessage(module, message, ...tokens), "WARNING");
     }
 
-    writeSystemErrorMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, ...tokens: string[]): void {
-        this.writeMessage(this.getSystemMessage(module, message, ...tokens), "ERROR");
+    logFormattedError(module: AddonModule, message: SYSTEM_MESSAGES | string, ...tokens: string[]): void {
+        this.log(this.createFormattedMessage(module, message, ...tokens), "ERROR");
     }
 
-
-
-    // --------------------------- Own members ------------------------------------- //
-    writeSystemMessage(module: IAddonModuleBase, message: SYSTEM_MESSAGES, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
+    logFormatted(module: AddonModule, message: SYSTEM_MESSAGES | string, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
         switch (messageType) {
             case 'ERROR':
-                this.writeSystemErrorMessage(module, message, ...tokens);
+                this.logFormattedError(module, message, ...tokens);
                 break;
 
             case 'WARNING':
-                this.writeSystemWarningMessage(module, message, ...tokens);
+                this.logFormattedWarning(module, message, ...tokens);
                 break;
 
             default:
-                this.writeSystemInfoMessage(module, message, ...tokens);
+                this.logFormattedInfo(module, message, ...tokens);
                 break;
         }
     }
@@ -71,7 +72,7 @@ export default class AddonRuntimeBase implements IAddonRuntimeSystem {
      * @param {...string[]} tokens The optional parameters to replace %s placeholders in the given message
      * @memberof PluginRuntimeBase
      */
-    writeMessage(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE" | "JSON", ...tokens: string[]): void {
+    log(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE" | "JSON", ...tokens: string[]): void {
         switch (messageType) {
             case "WARNING":
                 this.#logger.warn(<string>message, ...tokens);
@@ -101,8 +102,8 @@ export default class AddonRuntimeBase implements IAddonRuntimeSystem {
      * @param {IAddonModuleBase} module The current module instance
      * @memberof PluginRuntimeBase
      */
-    writeStartMessage(module: IAddonModuleBase): void {
-        module.runtime.writeMessage(RESOURCES.startAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
+    logStartAddonExecution(module: AddonModule): void {
+        module.runtime.log(RESOURCES.startAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
     }
 
     /**
@@ -111,8 +112,8 @@ export default class AddonRuntimeBase implements IAddonRuntimeSystem {
      * @param {IAddonModuleBase} module The current module instance
      * @memberof PluginRuntimeBase
      */
-    writeFinishMessage(module: IAddonModuleBase) {
-        module.runtime.writeMessage(RESOURCES.finishAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
+    logFinishAddonExecution(module: AddonModule) {
+        module.runtime.log(RESOURCES.finishAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
     }
 
     /**

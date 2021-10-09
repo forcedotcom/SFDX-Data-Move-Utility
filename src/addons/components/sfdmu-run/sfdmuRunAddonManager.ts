@@ -20,11 +20,8 @@ import { Logger, RESOURCES } from '../../../modules/components/common_components
 import AddonManifestDefinition from '../../../modules/models/script_models/addonManifestDefinition';
 import { CONSTANTS } from '../../../modules/components/common_components/statics';
 import { ADDON_MODULE_METHODS } from '../../../modules/components/common_components/enumerations';
-import AddonRuntimeBase from '../common/addonRuntimeBase';
-import AddonModuleBase from '../common/addonModuleBase';
-import SfdmuRunPluginRuntime from './sfdmuRunPluginRuntime';
-import { IAddonRuntimeSystem } from '../common/IAddonRuntimeSystem';
-import { ISfdmuRunAddonRuntimeSystem } from './ISfdmuRunAddonRuntimeSystem';
+import AddonModule from '../common/addonModule';
+import SfdmuRunAddonRuntime from './sfdmuRunAddonRuntime';
 import IAddonContext from '../common/IAddonContext';
 
 
@@ -35,8 +32,8 @@ import IAddonContext from '../common/IAddonContext';
  */
 export default class SfdmuRunAddonManager {
 
-    runtime: AddonRuntimeBase;
-    runtimeSystem: IAddonRuntimeSystem;
+    runtime: SfdmuRunAddonRuntime;
+
     script: Script;
 
     get logger(): Logger {
@@ -49,14 +46,14 @@ export default class SfdmuRunAddonManager {
 
     manifests: AddonManifest[] = new Array<AddonManifest>();
     addonsMap: Map<ADDON_MODULE_METHODS, [Function, AddonManifestDefinition][]> = new Map<ADDON_MODULE_METHODS, [Function, AddonManifestDefinition][]>();
-    addons: Map<number, AddonModuleBase[]> = new Map<number, AddonModuleBase[]>();
+    addons: Map<number, AddonModule[]> = new Map<number, AddonModule[]>();
 
     constructor(script: Script) {
 
         // Setup ************************************************   
         this.script = script;
-        this.runtime = new SfdmuRunPluginRuntime(script);
-        this.runtimeSystem = <ISfdmuRunAddonRuntimeSystem>(<any>this.runtime);
+        this.runtime = new SfdmuRunAddonRuntime(script);
+
 
         // Load manifests
         this.manifests = [
@@ -86,10 +83,7 @@ export default class SfdmuRunAddonManager {
             this.logger.infoNormal(RESOURCES.runAddonMethod, objectName || globalText, method.toString());
 
             for (let index = 0; index < addons.length; index++) {
-                let addon = addons[index];
-                if (addon[1].startupMessage) {
-                    this.logger.infoNormal(addon[1].startupMessage);
-                }
+                let addon = addons[index]; 
                 await addon[0]();
             }
 
@@ -182,7 +176,7 @@ export default class SfdmuRunAddonManager {
             manifest.addons.forEach(addon => {
                 try {
                     if (addon.isValid) {
-                        let moduleInstance: AddonModuleBase = <AddonModuleBase>new (require(addon.moduleRequirePath).default)(this.runtime);
+                        let moduleInstance: AddonModule = <AddonModule>new (require(addon.moduleRequirePath).default)(this.runtime);
                         if (!this.addonsMap.has(addon.method)) {
                             this.addonsMap.set(addon.method, []);
                         }
@@ -194,7 +188,7 @@ export default class SfdmuRunAddonManager {
                             objectDisplayName: addon.objectName || globalText,
                             isCore: addon.isCore
                         };
-                        this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
+                        this.addonsMap.get(addon.method).push([moduleInstance.execute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
                     }
                 } catch (ex) {
                     this.logger.warn(RESOURCES.canNotLoadModule, addon.moduleRequirePath);
