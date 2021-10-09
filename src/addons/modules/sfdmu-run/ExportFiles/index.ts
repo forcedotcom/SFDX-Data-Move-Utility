@@ -15,7 +15,7 @@ import { STANDARD_MESSAGES } from "../../../messages/standard";
 
 
 import { API_ENGINE, OPERATION } from "../../../../modules/components/common_components/enumerations";
-import IPluginExecutionContext from "../../../components/addon_components/base/IPluginExecutionContext";
+import IPluginExecutionContext from "../../../components/addon_components/common/IPluginExecutionContext";
 import SfdmuContentVersion from "../../../components/addon_components/sfdmu/sfdmuContentVersion";
 import SfdmuRunAddonModuleBase from "../../../components/addon_components/sfdmu/sfdmuRunAddonModuleBase";
 

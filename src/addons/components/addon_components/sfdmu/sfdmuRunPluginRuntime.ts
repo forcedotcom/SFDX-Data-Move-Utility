@@ -26,11 +26,11 @@ import SfdmuContentVersion from "./sfdmuContentVersion";
 import SfdmuPluginJob from "./sfdmuPluginJob";
 
 import ICommandRunInfo from '../../../../modules/models/common_models/ICommandRunInfo';
-import IAddonModuleBase from '../base/IAddonModuleBase';
+import IAddonModuleBase from '../common/IAddonModuleBase';
 import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../../modules/components/common_components/enumerations';
 import SfdmuRunPluginTask from './sfdmuRunPluginTask';
 import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
-import PluginRuntimeBase from '../base/pluginRuntimeBase';
+import PluginRuntimeBase from '../common/pluginRuntimeBase';
 
 
 

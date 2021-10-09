@@ -1,6 +1,6 @@
 import { STANDARD_MESSAGES } from "../../../../messages/standard";
 
-import IPluginExecutionContext from "../../../../components/addon_components/base/IPluginExecutionContext";
+import IPluginExecutionContext from "../../../../components/addon_components/common/IPluginExecutionContext";
 import SfdmuRunAddonModuleBase from "../../../../components/addon_components/sfdmu/sfdmuRunAddonModuleBase";
 
 /**

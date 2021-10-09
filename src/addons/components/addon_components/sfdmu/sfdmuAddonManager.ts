@@ -20,11 +20,11 @@ import { Logger, RESOURCES } from '../../../../modules/components/common_compone
 import AddonManifestDefinition from '../../../../modules/models/script_models/addonManifestDefinition';
 import { CONSTANTS } from '../../../../modules/components/common_components/statics';
 import { ADDON_MODULE_METHODS } from '../../../../modules/components/common_components/enumerations';
-import PluginRuntimeBase from '../base/pluginRuntimeBase';
-import AddonModuleBase from '../base/AddonModuleBase';
-import IPluginExecutionContext from '../base/IPluginExecutionContext';
-import SfdmuPluginRuntime from '../base/sfdmuRunPluginRuntime';
-import { IAddonRuntimeSystem } from '../base/IAddonRuntimeSystem';
+import PluginRuntimeBase from '../common/pluginRuntimeBase';
+import AddonModuleBase from '../common/AddonModuleBase';
+import IPluginExecutionContext from '../common/IPluginExecutionContext';
+import SfdmuPluginRuntime from '../common/sfdmuRunPluginRuntime';
+import { IAddonRuntimeSystem } from '../common/IAddonRuntimeSystem';
 import { ISfdmuAddonRuntimeSystem } from './ISfdmuAddonRuntimeSystem';
 
 

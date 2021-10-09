@@ -15,7 +15,7 @@ import { STANDARD_MESSAGES } from "../../../messages/standard";
 import SfdmuContentVersion from "./sfdmuContentVersion";
 import SfdmuPluginJob from "./sfdmuPluginJob";
 import SfdmuRunPluginTask from "./sfdmuRunPluginTask";
-import IAddonModuleBase from "../base/IAddonModuleBase";
+import IAddonModuleBase from "../common/IAddonModuleBase";
 
 
 
