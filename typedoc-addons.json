@@ -1,0 +1,6 @@
+{
+    "entryPoints": ["./src/addons/components/common/addonModule.ts"],
+    "out": "./addon-docs",
+    "plugin": ["typedoc-plugin-rename-defaults"]
+    
+}

@@ -11,7 +11,13 @@ import AddonRuntime from "./addonRuntime";
 import IAddonContext from "./IAddonContext";
 import { CONSTANTS } from "../../../modules/components/common_components/statics";
 
-
+/**
+ * Test comment
+ *
+ * @export
+ * @abstract
+ * @class AddonModule
+ */
 export default abstract class AddonModule {
 
     constructor(runtime: AddonRuntime) {

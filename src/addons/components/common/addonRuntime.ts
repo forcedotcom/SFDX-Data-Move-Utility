@@ -19,8 +19,15 @@ export default class AddonRuntime  {
 
     runInfo: ICommandRunInfo;
     #logger: Logger;
-
-    constructor(logger: Logger, runInfo: ICommandRunInfo) {
+/**
+ * Creates an instance of AddonRuntime.
+ * @param logger - The logger
+ * @param runInfo - The run info
+ * ```typescript
+ * alert('s')
+ * ```
+ */
+constructor(logger: Logger, runInfo: ICommandRunInfo) {
         this.#logger = logger;
         this.runInfo = runInfo;
     }
@@ -91,12 +98,12 @@ export default class AddonRuntime  {
 
    
     logAddonExecutionStarted(module: AddonModule): void {
-        module.runtime.log(RESOURCES.startAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
+        this.log(RESOURCES.startAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
     }
 
  
     logAddonExecutionFinished(module: AddonModule) {
-        module.runtime.log(RESOURCES.finishAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
+        this.log(RESOURCES.finishAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
     }
 
    
