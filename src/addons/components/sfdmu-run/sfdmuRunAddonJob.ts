@@ -16,14 +16,9 @@ export default class SfdmuRunAddonJob  {
     #migrationJob : MigrationJob;
     #pluginTasks: SfdmuRunAddonTask[];
 
-    constructor(migrationJob : MigrationJob){
-        
-        // Setup props
-        this.#migrationJob = migrationJob;
-        
-        // Setup tasks
+    constructor(migrationJob : MigrationJob){ 
+        this.#migrationJob = migrationJob; 
         this.#pluginTasks = this.#migrationJob.tasks.map(jobTask => new SfdmuRunAddonTask(jobTask));
-
     }
     
     get tasks() : SfdmuRunAddonTask[] {

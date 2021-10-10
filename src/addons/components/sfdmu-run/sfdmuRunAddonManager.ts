@@ -25,11 +25,6 @@ import SfdmuRunAddonRuntime from './sfdmuRunAddonRuntime';
 import IAddonContext from '../common/IAddonContext';
 
 
-
-
-/**
- * The sfdmu Addon extensions manager
- */
 export default class SfdmuRunAddonManager {
 
     runtime: SfdmuRunAddonRuntime;

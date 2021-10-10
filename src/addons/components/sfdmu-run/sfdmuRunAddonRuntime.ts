@@ -33,9 +33,7 @@ import AddonModule from '../common/addonModule';
 
 
 export default class SfdmuRunAddonRuntime extends AddonRuntime  {
-
-    // Hidden properties to not expose them to the Addon code.
-    // The Addon can access only the members of IPluginRuntime.
+ 
     #script: Script;
     #logger: Logger;
 
@@ -58,36 +56,19 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
     }
 
 
-    /**
-     * The base path to the currently executing job (export.json file)
-     *
-     * @type {string}
-    
-     */
     get basePath(): string {
         return this.#script.basePath;
     }
 
-    /**
-     * The base path to the source CSV files
-     *
-     * @type {string}
-   
-     */
+    
     get sourcePath(): string {
         return this.#script.sourceDirectory;
     }
 
-    /**
-     * The base path to the target CSV files
-     *
-     * @type {string}
    
-     */
     get targetPath(): string {
         return this.#script.targetDirectory;
     }
-
 
     getConnection(isSource: boolean) {
         return isSource ? this.#script.sourceOrg.getConnection() : this.#script.targetOrg.getConnection();
@@ -137,14 +118,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
         return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN, whereClause);
     }
 
-    /**
-     * Returns the api engine to for CRUD operation.
-     *
-     * @param {number} recordsAmount The amout of records to transfer
-     * @param {API_ENGINE} preferredEngine The engine to prefer by default
-     * @returns {API_ENGINE}
-     * @memberof Script
-     */
+    
     getApiEngine(recordsAmount: number, preferredEngine: API_ENGINE): API_ENGINE {
         preferredEngine = preferredEngine || API_ENGINE.DEFAULT_ENGINE;
         if (preferredEngine != API_ENGINE.DEFAULT_ENGINE) {
@@ -189,13 +163,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
         if (!records || records.length == 0 || this.#script.job.tasks.length == 0) {
             return [];
         }
-
-        // records = operation == OPERATION.Delete ? records.map(x => {
-        //     return {
-        //         Id: x["Id"]
-        //     }
-        // }) : records;
-
+ 
         let resultRecords: Array<any>;
 
         let task = this.#script.job.tasks.find(task => task.sObjectName == sObjectName);
@@ -449,10 +417,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
 
     /**
      * Creates if not exist or returns the path to the temporary folder
-     * dedicated to this Addon
-     *
-     * @returns {string}
-     * @memberof ISfdmuRunPluginRuntime
+     * dedicated to this Addon 
      */
     getOrCreateTempPath(module: AddonModule): string {
         let tmp = path.normalize(this.basePath
@@ -467,8 +432,6 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
 
     /**
      * Destroys the previously created temporary path
-     *
-     * @memberof ISfdmuRunPluginRuntime
      */
     destroyTempPath(module: AddonModule, removeParentFolder?: boolean): void {
         if (typeof removeParentFolder == 'undefined')

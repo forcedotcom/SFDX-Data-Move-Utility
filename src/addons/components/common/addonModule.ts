@@ -12,9 +12,6 @@ import IAddonContext from "./IAddonContext";
 import { CONSTANTS } from "../../../modules/components/common_components/statics";
 
 
-/**
-  * The base class for the custom Addon modules
- */
 export default abstract class AddonModule {
 
     constructor(runtime: AddonRuntime) {
