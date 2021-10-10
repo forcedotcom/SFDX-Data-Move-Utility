@@ -29,10 +29,11 @@ import ICommandRunInfo from '../../../modules/models/common_models/ICommandRunIn
 import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../modules/components/common_components/enumerations';
 import SfdmuRunAddonTask from './sfdmuRunAddonTask';
 import AddonModule from '../common/addonModule';
+import ISfdmuRunCustomAddonRuntime from '../../modules/sfdmu-run/custom-addons/package/ISfdmuRunCustomAddonRuntime';
 
 
 
-export default class SfdmuRunAddonRuntime extends AddonRuntime  {
+export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmuRunCustomAddonRuntime {
  
     #script: Script;
     #logger: Logger;

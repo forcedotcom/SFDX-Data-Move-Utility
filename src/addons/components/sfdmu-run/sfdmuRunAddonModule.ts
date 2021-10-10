@@ -7,12 +7,16 @@
  */
 
 
+import ISfdmuRunCustomAddonModule from "../../modules/sfdmu-run/custom-addons/package/ISfdmuRunCustomAddonModule";
 import AddonModule from "../common/addonModule";
 import IAddonContext from "../common/IAddonContext";
 import SfdmuRunAddonRuntime from "./sfdmuRunAddonRuntime";
 
 
-export default abstract class SfdmuRunAddonModule extends AddonModule {  
+export default abstract class SfdmuRunAddonModule extends AddonModule implements ISfdmuRunCustomAddonModule { 
+
     runtime: SfdmuRunAddonRuntime;
     abstract onExecute(context: IAddonContext, args: any): void;
+
+    
 }
