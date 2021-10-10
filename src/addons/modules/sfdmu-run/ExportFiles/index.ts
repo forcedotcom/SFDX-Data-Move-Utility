@@ -70,14 +70,14 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
         let _self = this;
 
-        this.runtime.logStartAddonExecution(this);
+        this.runtime.logAddonExecutionStarted(this);
 
         this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Preparing);
 
         if (this.runtime.getOrgInfo(false).isFile || this.runtime.getOrgInfo(true).isFile) {
             // File target -> error
             this.runtime.logFormattedWarning(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_TargetIsFileWarning);
-            this.runtime.logFinishAddonExecution(this);
+            this.runtime.logAddonExecutionFinished(this);
             return;
         }
 
@@ -92,14 +92,14 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         if (!task) {
             // No task -> error
             this.runtime.logFormattedWarning(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_CouldNotFindObjectToProcessWarning);
-            this.runtime.logFinishAddonExecution(this);
+            this.runtime.logAddonExecutionFinished(this);
             return;
         }
 
         if (args.operation == OPERATION.Readonly) {
             // Readonly -> error
             this.runtime.logFormattedWarning(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadonlyOperationWarning);
-            this.runtime.logFinishAddonExecution(this);
+            this.runtime.logAddonExecutionFinished(this);
             return;
         }
 
@@ -363,7 +363,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         // ------------------------------------------------------------------
         // -----------------------------------------------------------------
 
-        this.runtime.logFinishAddonExecution(this);
+        this.runtime.logAddonExecutionFinished(this);
 
 
 

@@ -103,7 +103,7 @@ export default class AddonRuntime  {
      * @param {IAddonModuleBase} module The current module instance
      * @memberof PluginRuntimeBase
      */
-    logStartAddonExecution(module: AddonModule): void {
+    logAddonExecutionStarted(module: AddonModule): void {
         module.runtime.log(RESOURCES.startAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
     }
 
@@ -113,7 +113,7 @@ export default class AddonRuntime  {
      * @param {IAddonModuleBase} module The current module instance
      * @memberof PluginRuntimeBase
      */
-    logFinishAddonExecution(module: AddonModule) {
+    logAddonExecutionFinished(module: AddonModule) {
         module.runtime.log(RESOURCES.finishAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
     }
 
