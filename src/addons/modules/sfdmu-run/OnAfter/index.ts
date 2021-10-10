@@ -7,9 +7,9 @@
 
 
 import IAddonContext from "../../../components/common/IAddonContext";
-import SfdmuRunAddonModuleBase from "../../../components/sfdmu-run/sfdmuRunAddonModuleBase";
+import SfdmuRunAddonModule from "../../../components/sfdmu-run/sfdmuRunAddonModule";
 
-export default class CoreOnAfter extends SfdmuRunAddonModuleBase {
+export default class CoreOnAfter extends SfdmuRunAddonModule {
 
     async onExecute(context: IAddonContext, args : any) : Promise<void>  {
        // TODO: Implement the core OnAfter functionality here

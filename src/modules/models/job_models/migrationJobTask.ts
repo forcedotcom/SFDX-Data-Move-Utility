@@ -18,7 +18,7 @@ import {
     Field as SOQLField
 } from 'soql-parser-js';
 import { ScriptObject, MigrationJob as Job, CommandExecutionError, ScriptOrg, Script, ScriptMockField, TaskData, TaskOrgData, CachedCSVContent, ProcessedData } from "..";
-import SFieldDescribe from "../script_models/sfieldDescribe";
+import SFieldDescribe from "../sf_models/sfieldDescribe";
 import * as fs from 'fs';
 import * as deepClone from 'deep.clone';
 import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";

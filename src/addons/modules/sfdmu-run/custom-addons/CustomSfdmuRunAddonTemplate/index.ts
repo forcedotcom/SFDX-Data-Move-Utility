@@ -1,6 +1,6 @@
-import { SYSTEM_MESSAGES } from "../../../../messages/system";
-import SfdmuRunAddonModuleBase from "../../../../components/sfdmu-run/sfdmuRunAddonModuleBase";
+import SfdmuRunAddonModule from "../../../../components/sfdmu-run/sfdmuRunAddonModule";
 import IAddonContext from "../../../../components/common/IAddonContext";
+import { BUILTIN_MESSAGES } from "../../../../../modules/components/common_components/bulitinMessages";
 
 /**
  * This test example of Add-On manipulates with the source Json string right before the target update. 
@@ -8,7 +8,7 @@ import IAddonContext from "../../../../components/common/IAddonContext";
  * 
  * 
  */
-export default class CustomSfdmuRunAddonTemlate extends SfdmuRunAddonModuleBase {
+export default class CustomSfdmuRunAddonTemlate extends SfdmuRunAddonModule {
 
     async onExecute(context: IAddonContext, args: any): Promise<void> {
 
@@ -16,10 +16,10 @@ export default class CustomSfdmuRunAddonTemlate extends SfdmuRunAddonModuleBase 
         this.runtime.logStartAddonExecution(this);
 
         // Print some test messages
-        this.runtime.logFormatted(this, SYSTEM_MESSAGES.NewLine); // Print new line
+        this.runtime.logFormatted(this, BUILTIN_MESSAGES.Break); // Print new line
         this.runtime.log('Arguments passed are: ');                // Print string
         this.runtime.log(args, 'OBJECT');                          // Print object
-        this.runtime.logFormatted(this, SYSTEM_MESSAGES.NewLine); // Print new line
+        this.runtime.logFormatted(this, BUILTIN_MESSAGES.Break); // Print new line
 
 
         // Get the currently running task

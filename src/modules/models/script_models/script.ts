@@ -28,7 +28,7 @@ import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/e
 
 import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
-import AddonManifestDefinition from "./addonManifestDefinition";
+import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
 import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
 import SfdmuRunAddonRuntime from "../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime";
 
@@ -71,11 +71,11 @@ export default class Script {
     simulationMode: boolean = false;
 
 
-    @Type(() => AddonManifestDefinition)
-    beforeAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+    @Type(() => ScriptAddonManifestDefinition)
+    beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
-    @Type(() => AddonManifestDefinition)
-    afterAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+    @Type(() => ScriptAddonManifestDefinition)
+    afterAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
 
 

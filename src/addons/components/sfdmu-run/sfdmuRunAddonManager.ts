@@ -17,7 +17,7 @@ import { plainToClass } from "class-transformer";
 
 import { AddonManifest, CommandInitializationError, Script } from '../../../modules/models';
 import { Logger, RESOURCES } from '../../../modules/components/common_components/logger';
-import AddonManifestDefinition from '../../../modules/models/script_models/addonManifestDefinition';
+import ScriptAddonManifestDefinition from '../../../modules/models/script_models/scriptAddonManifestDefinition';
 import { CONSTANTS } from '../../../modules/components/common_components/statics';
 import { ADDON_MODULE_METHODS } from '../../../modules/components/common_components/enumerations';
 import AddonModule from '../common/addonModule';
@@ -45,7 +45,7 @@ export default class SfdmuRunAddonManager {
     }
 
     manifests: AddonManifest[] = new Array<AddonManifest>();
-    addonsMap: Map<ADDON_MODULE_METHODS, [Function, AddonManifestDefinition][]> = new Map<ADDON_MODULE_METHODS, [Function, AddonManifestDefinition][]>();
+    addonsMap: Map<ADDON_MODULE_METHODS, [Function, ScriptAddonManifestDefinition][]> = new Map<ADDON_MODULE_METHODS, [Function, ScriptAddonManifestDefinition][]>();
     addons: Map<number, AddonModule[]> = new Map<number, AddonModule[]>();
 
     constructor(script: Script) {
@@ -165,7 +165,7 @@ export default class SfdmuRunAddonManager {
         return manifest;
     }
 
-    private _setupAddonDefinition(addon: AddonManifestDefinition) {
+    private _setupAddonDefinition(addon: ScriptAddonManifestDefinition) {
         addon.basePath = this.runtime.runInfo.basePath;
         addon.args = addon.args || {};
     }

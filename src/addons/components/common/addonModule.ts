@@ -25,7 +25,9 @@ export default abstract class AddonModule {
     runtime: AddonRuntime;
 
     async execute(context: IAddonContext, args: any): Promise<void> {
-        this.runtime.logFormatted(this, "");
+        if (context.startupMessage) {
+            this.runtime.logFormatted(this, context.startupMessage);
+        }
         await this.onExecute(context, args);
     }
 

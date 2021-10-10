@@ -6,8 +6,8 @@
  */
 
 
-export default class SfdmuContentVersion {
-    constructor(init: Partial<SfdmuContentVersion>) {
+export default class ContentVersion {
+    constructor(init: Partial<ContentVersion>) {
         if (init) {
             Object.assign(this, init);
             if (typeof this.ContentModifiedDate == 'string') {
@@ -32,7 +32,7 @@ export default class SfdmuContentVersion {
     get isUrlContent() {
         return !!this.ContentUrl;
     }
-    isNewer(old: SfdmuContentVersion) {
+    isNewer(old: ContentVersion) {
         return this.isUrlContent != old.isUrlContent
             || this.isUrlContent && (this.ContentModifiedDate > old.ContentModifiedDate || this.ContentUrl != old.ContentUrl)
             || !this.isUrlContent && this.Checksum != old.Checksum;

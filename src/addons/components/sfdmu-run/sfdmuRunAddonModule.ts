@@ -12,7 +12,7 @@ import IAddonContext from "../common/IAddonContext";
 import SfdmuRunAddonRuntime from "./sfdmuRunAddonRuntime";
 
 
-export default abstract class SfdmuRunAddonModuleBase extends AddonModule {
+export default abstract class SfdmuRunAddonModule extends AddonModule {
 
     /**
     * Provides the base Api methods and properties

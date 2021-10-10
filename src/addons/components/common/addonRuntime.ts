@@ -8,10 +8,11 @@
 
 import { Common } from "../../../modules/components/common_components/common";
 import { Logger, LOG_MESSAGE_TYPE, LOG_MESSAGE_VERBOSITY, RESOURCES } from "../../../modules/components/common_components/logger";
-import { SYSTEM_MESSAGES } from "../../messages/system";
+import { SFDMU_RUN_ADDON_MESSAGES } from "../../messages/sfdmuRunAddonMessages";
 import ICommandRunInfo from "../../../modules/models/common_models/ICommandRunInfo";
 import { ITableMessage } from "../../../modules/models/common_models/helper_interfaces";
 import AddonModule from "./addonModule";
+import { BUILTIN_MESSAGES } from "../../../modules/components/common_components/bulitinMessages";
 
 
 export default class AddonRuntime  {
@@ -24,9 +25,9 @@ export default class AddonRuntime  {
         this.runInfo = runInfo;
     }
 
-    createFormattedMessage(module: AddonModule, message: SYSTEM_MESSAGES | string, ...tokens: string[]): string {
+    createFormattedMessage(module: AddonModule, message: SFDMU_RUN_ADDON_MESSAGES | BUILTIN_MESSAGES | string, ...tokens: string[]): string {
         switch (message) {
-            case SYSTEM_MESSAGES.NewLine:
+            case BUILTIN_MESSAGES.Break:
                 return '';
         }
         let mess = Common.formatStringLog((message || '').toString(), ...tokens);
@@ -36,19 +37,19 @@ export default class AddonRuntime  {
             mess);
     }
 
-    logFormattedInfo(module: AddonModule, message: SYSTEM_MESSAGES | string, ...tokens: string[]): void {
+    logFormattedInfo(module: AddonModule, message: SFDMU_RUN_ADDON_MESSAGES | string, ...tokens: string[]): void {
         this.log(this.createFormattedMessage(module, message, ...tokens), "INFO");
     }
 
-    logFormattedWarning(module: AddonModule, message: SYSTEM_MESSAGES | string, ...tokens: string[]): void {
+    logFormattedWarning(module: AddonModule, message: SFDMU_RUN_ADDON_MESSAGES | string, ...tokens: string[]): void {
         this.log(this.createFormattedMessage(module, message, ...tokens), "WARNING");
     }
 
-    logFormattedError(module: AddonModule, message: SYSTEM_MESSAGES | string, ...tokens: string[]): void {
+    logFormattedError(module: AddonModule, message: SFDMU_RUN_ADDON_MESSAGES | string, ...tokens: string[]): void {
         this.log(this.createFormattedMessage(module, message, ...tokens), "ERROR");
     }
 
-    logFormatted(module: AddonModule, message: SYSTEM_MESSAGES | string, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
+    logFormatted(module: AddonModule, message: BUILTIN_MESSAGES | string, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
         switch (messageType) {
             case 'ERROR':
                 this.logFormattedError(module, message, ...tokens);

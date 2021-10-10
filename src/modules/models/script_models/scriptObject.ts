@@ -22,12 +22,12 @@ import {
     getComposedField
 } from 'soql-parser-js';
 import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappingItem, ObjectFieldMapping } from "..";
-import SFieldDescribe from "./sfieldDescribe";
+import SFieldDescribe from "../sf_models/sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
 
 import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
-import AddonManifestDefinition from "./addonManifestDefinition";
+import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
 
 
 
@@ -76,14 +76,14 @@ export default class ScriptObject {
     master: boolean = true;
     excludedFields: Array<string> = new Array<string>();
 
-    @Type(() => AddonManifestDefinition)
-    beforeAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+    @Type(() => ScriptAddonManifestDefinition)
+    beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
-    @Type(() => AddonManifestDefinition)
-    afterAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+    @Type(() => ScriptAddonManifestDefinition)
+    afterAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
-    @Type(() => AddonManifestDefinition)
-    beforeUpdateAddons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+    @Type(() => ScriptAddonManifestDefinition)
+    beforeUpdateAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
 
     // -----------------------------------

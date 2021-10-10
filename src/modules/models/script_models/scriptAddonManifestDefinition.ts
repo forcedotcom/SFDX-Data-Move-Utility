@@ -17,7 +17,7 @@ import { ADDON_MODULE_METHODS } from "../../components/common_components/enumera
  * @class AddonManifestDefinition
  * @implements {IAddonManifestDefinition}
  */
-export default class AddonManifestDefinition {
+export default class ScriptAddonManifestDefinition {
 
     // ------------- JSON --------------
     // Common definitions
@@ -32,7 +32,7 @@ export default class AddonManifestDefinition {
     // Core definitions
     objects: string[];
 
-    constructor(init: Partial<AddonManifestDefinition>) {
+    constructor(init: Partial<ScriptAddonManifestDefinition>) {
         if (init) {
             Object.assign(this, init);
         }

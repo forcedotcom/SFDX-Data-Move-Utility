@@ -17,7 +17,7 @@ import { Type } from "class-transformer";
 
 import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 
-import AddonManifestDefinition from "../script_models/addonManifestDefinition";
+import ScriptAddonManifestDefinition from "../script_models/scriptAddonManifestDefinition";
 
 
 
@@ -511,8 +511,8 @@ export class AddonManifest {
         }
     }
 
-    @Type(() => AddonManifestDefinition)
-    addons: AddonManifestDefinition[] = new Array<AddonManifestDefinition>();
+    @Type(() => ScriptAddonManifestDefinition)
+    addons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 }
 
 

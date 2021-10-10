@@ -18,11 +18,11 @@ import { Sfdx } from "../../../modules/components/common_components/sfdx";
 import { CONSTANTS } from "../../../modules/components/common_components/statics";
 import { Script, TaskData } from "../../../modules/models";
 import { IApiEngine, IBlobField } from "../../../modules/models/api_models";
-import { SYSTEM_MESSAGES } from "../../messages/system";
+import { SFDMU_RUN_ADDON_MESSAGES } from "../../messages/sfdmuRunAddonMessages";
 
 
 import AddonRuntime from "../common/addonRuntime";
-import SfdmuContentVersion from "./sfdmuContentVersion";
+import ContentVersion from "../../../modules/models/sf_models/contentVersion";
 import SfdmuRunAddonJob from "./sfdmuRunAddonJob";
 
 import ICommandRunInfo from '../../../modules/models/common_models/ICommandRunInfo';
@@ -297,11 +297,11 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
      * @returns {Promise<ISfdmuContentVersion[]>} The updated input ContentVersion records
      * @memberof ISfdmuRunPluginRuntime
      */
-    async transferContentVersions(module: AddonModule, sourceVersions: SfdmuContentVersion[]): Promise<SfdmuContentVersion[]> {
+    async transferContentVersions(module: AddonModule, sourceVersions: ContentVersion[]): Promise<ContentVersion[]> {
         let _self = this;
 
         // All Files of url types to upload ///
-        let urlUploadJobs = new Array<SfdmuContentVersion>();
+        let urlUploadJobs = new Array<ContentVersion>();
 
         // All Files of binary type to upload ///
         let totalSize = 0;
@@ -309,7 +309,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
         let totalUrls = 0;
 
         let fileUploadJobs = [...(function* () {
-            let versions = new Array<SfdmuContentVersion>();
+            let versions = new Array<ContentVersion>();
             let size = 0;
             for (let index = 0; index < sourceVersions.length; index++) {
                 const version = sourceVersions[index];
@@ -327,7 +327,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
                 if (version.ContentSize + size > CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE) {
                     yield versions;
                     size = 0;
-                    versions = new Array<SfdmuContentVersion>();
+                    versions = new Array<ContentVersion>();
                 }
             };
             if (versions.length > 0) {
@@ -337,8 +337,8 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
 
         // Uploading Binary-type Files -----------------------
         if (fileUploadJobs.length > 0) {
-            this.logFormattedInfo(module, SYSTEM_MESSAGES.TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
-            this.logFormattedInfo(module, SYSTEM_MESSAGES.DataWillBeProcessedInChunksOfSize,
+            this.logFormattedInfo(module, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_TotalDataVolume, String(totalCount + totalUrls), String((totalSize / 1000000).toFixed(2)));
+            this.logFormattedInfo(module, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_DataWillBeProcessedInChunksOfSize,
                 String(fileUploadJobs.length),
                 String((CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE / 1000000).toFixed(2)));
         }
@@ -347,9 +347,9 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
 
             // Create data to download
             const fileJob = fileUploadJobs[index];
-            let idToContentVersionMap: Map<string, SfdmuContentVersion> = Common.arrayToMap(fileJob, ['Id']);
+            let idToContentVersionMap: Map<string, ContentVersion> = Common.arrayToMap(fileJob, ['Id']);
 
-            this.logFormattedInfo(module, SYSTEM_MESSAGES.ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
+            this.logFormattedInfo(module, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ProcessingChunk, String(index + 1), String(idToContentVersionMap.size));
 
             // Download
             let idToContentVersionBlobMap = await this.downloadBlobDataAsync(true, [...idToContentVersionMap.keys()], <IBlobField>{
@@ -359,7 +359,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
             });
 
             // Create array to upload
-            let newToSourceVersionMap = new Map<any, SfdmuContentVersion>();
+            let newToSourceVersionMap = new Map<any, ContentVersion>();
 
             let versionsToUpload = [...idToContentVersionBlobMap.keys()].map(versionId => {
                 let blobData = idToContentVersionBlobMap.get(versionId);
@@ -380,7 +380,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
         // Uploading Url-type Files ----------------------------------
         {
             // Create array to upload
-            let newToSourceVersionMap = new Map<any, SfdmuContentVersion>();
+            let newToSourceVersionMap = new Map<any, ContentVersion>();
 
             let versionsToUpload = urlUploadJobs.map(sourceContentVersion => {
                 let newContentVersion = Common.cloneObjectIncludeProps(sourceContentVersion,
@@ -397,7 +397,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
 
 
         // ---------------- Private Helpers --------------------
-        async function ___upload(versionsToUpload: any[], newToSourceVersionMap: Map<any, SfdmuContentVersion>, isUrl: boolean) {
+        async function ___upload(versionsToUpload: any[], newToSourceVersionMap: Map<any, ContentVersion>, isUrl: boolean) {
 
             // Create new content versions
             let records = await _self.updateTargetRecordsAsync('ContentVersion',
@@ -409,7 +409,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime  {
 
             if (records) {
 
-                let newRecordIdToSourceVersionMap = new Map<string, SfdmuContentVersion>();
+                let newRecordIdToSourceVersionMap = new Map<string, ContentVersion>();
 
                 // Update Ids of the source version records
                 records.forEach((newRecord: any) => {
