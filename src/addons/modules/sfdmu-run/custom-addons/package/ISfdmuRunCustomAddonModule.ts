@@ -9,8 +9,9 @@ import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonRuntime } from ".";
 
 
 /**
- * The base interface to be implementted in every custom sfdmu Add-On module
- * @example Below is the example of the Script file to execute custom Add-On module using triggered ```beforeUpdate``` event :
+ * The interface to be implemented in every custom Sfdmu Add-On module.
+ * @example
+ * Below is the example of the export.json file to run custom Add-On module by triggering ```beforeUpdate``` event :
  * <br/>
  * <br/>
      * ```json
@@ -24,7 +25,6 @@ import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonRuntime } from ".";
                     "beforeUpdateAddons" : [
                         {
                                 "description": "This test AddOn manipulates with the source Json string right before the target update. It extracts the Json value from the LongText__c, then stores the extracted string into the TEST1__c.",
-                                "startupMessage": "Welcome to the custom SFDMU AddOn module !",
                                 "path" : "MY-CUSTOM-ADDONS-ABSOLUTE-LOCAL-DIRECTORY-PATH\\CustomSfdmuRunAddonTemplate",				
                                 "args" : {
                                     "TEST__c": "Another manipulation with the data: putting this text to the field TEST__c of each record being processed"
@@ -42,7 +42,10 @@ export default interface ISfdmuRunCustomAddonModule {
 
 
     /**
-     * Provides the Add-On runtime functionality
+     * The instance of the Add-On runtime.
+     * <br/>
+     * Uses the public property {@link ISfdmuRunCustomAddonRuntime.service} 
+     * to share the Add-On Api with the module instance. 
      *
      * @type {ISfdmuRunCustomAddonRuntime}
      * @memberof ISfdmuRunCustomAddonModule
@@ -53,10 +56,9 @@ export default interface ISfdmuRunCustomAddonModule {
 
 
     /**
-     * The Add-On entry point which executed when the Sfdmu Plugin
-     * is triggering a runtime Add-On event (for example 'beforeUpdate').  
+     * The entry point to run the Add-On module when Add-On event is executed (for example, the 'beforeUpdate' event).  
      *
-     * @param {ISfdmuRunCustomAddonContext} context The current Add-On runtime context. Also can be accessed via ```this.context```.
+     * @param {ISfdmuRunCustomAddonContext} context The current Add-On runtime context.
      * @param {*} args The JS object passed into the function from the ```arg``` property defined in the ```object/[addons]``` section.  
      * <br/>
      * <br/>
@@ -70,6 +72,6 @@ export default interface ISfdmuRunCustomAddonModule {
      * ```
      * @memberof ISfdmuRunCustomAddonModule
      */
-    onExecute(context: ISfdmuRunCustomAddonContext, args: any): void;
+    onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<void>;
 
 }

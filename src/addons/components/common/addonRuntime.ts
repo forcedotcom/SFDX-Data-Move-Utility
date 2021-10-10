@@ -15,19 +15,17 @@ import AddonModule from "./addonModule";
 import { BUILTIN_MESSAGES } from "../../../modules/components/common_components/bulitinMessages";
 
 
-export default class AddonRuntime  {
+export default class AddonRuntime {
 
     runInfo: ICommandRunInfo;
     #logger: Logger;
-/**
- * Creates an instance of AddonRuntime.
- * @param logger - The logger
- * @param runInfo - The run info
- * ```typescript
- * alert('s')
- * ```
- */
-constructor(logger: Logger, runInfo: ICommandRunInfo) {
+
+    /**
+     * Creates an instance of AddonRuntime.
+     * @param logger - The logger
+     * @param runInfo - The run info
+     */
+    constructor(logger: Logger, runInfo: ICommandRunInfo) {
         this.#logger = logger;
         this.runInfo = runInfo;
     }
@@ -39,7 +37,7 @@ constructor(logger: Logger, runInfo: ICommandRunInfo) {
         }
         let mess = Common.formatStringLog((message || '').toString(), ...tokens);
         return this.#logger.getResourceString(RESOURCES.coreAddonMessageTemplate,
-            module.moduleDisplayName,
+            module.context.moduleDisplayName,
             module.context.objectDisplayName,
             mess);
     }
@@ -56,6 +54,7 @@ constructor(logger: Logger, runInfo: ICommandRunInfo) {
         this.log(this.createFormattedMessage(module, message, ...tokens), "ERROR");
     }
 
+    
     logFormatted(module: AddonModule, message: BUILTIN_MESSAGES | string, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
         switch (messageType) {
             case 'ERROR':
@@ -71,6 +70,7 @@ constructor(logger: Logger, runInfo: ICommandRunInfo) {
                 break;
         }
     }
+
 
     log(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE" | "JSON", ...tokens: string[]): void {
         switch (messageType) {
@@ -96,27 +96,27 @@ constructor(logger: Logger, runInfo: ICommandRunInfo) {
         }
     }
 
-   
+
     logAddonExecutionStarted(module: AddonModule): void {
-        this.log(RESOURCES.startAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
+        this.log(RESOURCES.startAddonExecute.toString(), "INFO", module.context.moduleDisplayName, module.context.objectDisplayName);
     }
 
- 
+
     logAddonExecutionFinished(module: AddonModule) {
-        this.log(RESOURCES.finishAddonExecute.toString(), "INFO", module.moduleDisplayName, module.context.objectDisplayName);
+        this.log(RESOURCES.finishAddonExecute.toString(), "INFO", module.context.moduleDisplayName, module.context.objectDisplayName);
     }
 
-   
+
     async parallelExecAsync(fns: ((...args: any[]) => Promise<any>)[], thisArg?: any, maxParallelTasks?: number): Promise<any[]> {
         return await Common.parallelExecAsync(fns, thisArg, maxParallelTasks);
     }
 
-   
+
     async serialExecAsync(fns: ((...args: any[]) => Promise<any>)[], thisArg?: any): Promise<any[]> {
         return await Common.serialExecAsync(fns, thisArg);
     }
 
-   
+
     deleteFolderRecursive(path: string, throwIOErrors?: boolean): void {
         Common.deleteFolderRecursive(path, throwIOErrors);
     }
@@ -125,7 +125,7 @@ constructor(logger: Logger, runInfo: ICommandRunInfo) {
         return await Common.readCsvFileAsync(filePath, linesToRead, columnDataTypeMap);
     }
 
-    
+
     async writeCsvFileAsync(filePath: string, records: any[], createEmptyFileOnEmptyArray?: boolean): Promise<void> {
         return await Common.writeCsvFileAsync(filePath, records, createEmptyFileOnEmptyArray);
     }

@@ -29,7 +29,9 @@ import ICommandRunInfo from '../../../modules/models/common_models/ICommandRunIn
 import { API_ENGINE, DATA_MEDIA_TYPE, OPERATION } from '../../../modules/components/common_components/enumerations';
 import SfdmuRunAddonTask from './sfdmuRunAddonTask';
 import AddonModule from '../common/addonModule';
-import ISfdmuRunCustomAddonRuntime from '../../modules/sfdmu-run/custom-addons/package/ISfdmuRunCustomAddonRuntime';
+import { ISfdmuRunCustomAddonRuntime } from '../../modules/sfdmu-run/custom-addons/package';
+import { SfdmuRunCustomAddonService } from './custom';
+
 
 
 
@@ -41,11 +43,14 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
     runInfo: ICommandRunInfo;
     pluginJob: SfdmuRunAddonJob;
 
+    service: SfdmuRunCustomAddonService;
+
 
     constructor(script: Script) {
         super(script.logger, script.runInfo);
         this.#script = script;
         this.#logger = script.logger;
+        this.service = new SfdmuRunCustomAddonService(this);
     }
 
     createSfdmuPluginJob() {
@@ -424,7 +429,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
         let tmp = path.normalize(this.basePath
             + '/'
             + Common.formatStringLog(CONSTANTS.ADDON_TEMP_RELATIVE_FOLDER,
-                module.moduleDisplayName.replace(/[^\w\d]/g, '-')) + '/');
+                module.context.moduleDisplayName.replace(/[^\w\d]/g, '-')) + '/');
         if (!fs.existsSync(tmp)) {
             fs.mkdirSync(tmp);
         }

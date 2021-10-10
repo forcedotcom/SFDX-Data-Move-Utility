@@ -4,9 +4,7 @@ import { BUILTIN_MESSAGES } from "../../../../../modules/components/common_compo
 
 /**
  * This test example of Add-On manipulates with the source Json string right before the target update. 
- * It extracts the Json value from the LongText__c, then stores the extracted string into the TEST1__c.
- * 
- * 
+ * It extracts the Json value from the LongText__c, then stores the extracted string into the TEST1__c.  
  */
 export default class CustomSfdmuRunAddonTemlate extends SfdmuRunAddonModule {
 

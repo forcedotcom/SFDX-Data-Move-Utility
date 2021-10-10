@@ -24,7 +24,6 @@ export default class ScriptAddonManifestDefinition {
     command: string = "sfdmu:run";
     path: string;
     module: string;
-    startupMessage: string;
     description: string;
     excluded: boolean;
     args: any;

@@ -13,10 +13,9 @@ import IAddonContext from "../common/IAddonContext";
 import SfdmuRunAddonRuntime from "./sfdmuRunAddonRuntime";
 
 
-export default abstract class SfdmuRunAddonModule extends AddonModule implements ISfdmuRunCustomAddonModule { 
+export default abstract class SfdmuRunAddonModule extends AddonModule implements ISfdmuRunCustomAddonModule {
 
     runtime: SfdmuRunAddonRuntime;
-    abstract onExecute(context: IAddonContext, args: any): void;
-
+    abstract onExecute(context: IAddonContext, args: any): Promise<void>;    
     
 }

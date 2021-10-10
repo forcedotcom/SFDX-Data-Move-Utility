@@ -5,9 +5,4 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import ISfdmuRunCustomAddonContext from "../../modules/sfdmu-run/custom-addons/package/ISfdmuRunCustomAddonContext";
-
-
-export default interface IAddonContext extends ISfdmuRunCustomAddonContext { 
-    isCore: boolean;
-}
+export { default as SfdmuRunCustomAddonService } from "./SfdmuRunCustomAddonService";

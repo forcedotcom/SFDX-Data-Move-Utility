@@ -178,12 +178,12 @@ export default class SfdmuRunAddonManager {
                         moduleInstance.context = <IAddonContext>{
                             eventName: addon.method.toString(),
                             objectName: addon.objectName,
-                            startupMessage: addon.startupMessage,
                             description: addon.description,
                             objectDisplayName: addon.objectName || globalText,
+                            moduleDisplayName: addon.moduleDisplayName,
                             isCore: addon.isCore
                         };
-                        this.addonsMap.get(addon.method).push([moduleInstance.execute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
+                        this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
                     }
                 } catch (ex) {
                     this.logger.warn(RESOURCES.canNotLoadModule, addon.moduleRequirePath);
