@@ -6,12 +6,11 @@
  */
 
 /**
- * The base interface to be implementted in every custom sfdmu Add-On module runtime
+ * The base interface to be implementted in every custom sfdmu Add-On module runtime context
  *
  * @export
- * @interface ISfdmuRunCustomAddonRuntime
+ * @interface ISfdmuRunCustomAddonContext
  */
- export default interface ISfdmuRunCustomAddonRuntime {
-     
+ export default interface ISfdmuRunCustomAddonContext {
     
 }
