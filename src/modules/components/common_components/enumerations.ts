@@ -51,7 +51,7 @@ export enum MESSAGE_IMPORTANCE {
     Error
 }
 
-export enum ADDON_MODULE_METHODS {
+export enum ADDON_EVENTS {
     none = 'none',
     onBefore = "onBefore",
     onAfter = "onAfter",

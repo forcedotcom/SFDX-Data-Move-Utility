@@ -1,6 +1,0 @@
-{
-    "entryPoints": ["./src/addons/modules/sfdmu-run/custom-addons/package/index.ts"],
-    "out": "./addon-docs",
-    "plugin": ["typedoc-plugin-rename-defaults"]
-    
-}

@@ -29,7 +29,7 @@ const alasql = require("alasql");
 import casual = require("casual");
 import { MockGenerator } from '../../components/common_components/mockGenerator';
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
-import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../components/common_components/enumerations';
+import { ADDON_EVENTS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../components/common_components/enumerations';
 import { ApiInfo } from '../api_models';
 
 
@@ -1169,7 +1169,7 @@ export  default class MigrationJobTask {
             self.processedData = data;
 
             // Call addon onBeforeUpdate event
-            await self.runAddonEvent(ADDON_MODULE_METHODS.onBeforeUpdate)
+            await self.runAddonEvent(ADDON_EVENTS.onBeforeUpdate)
 
             // Inserting ////////
             if (data.recordsToInsert.length > 0) {
@@ -1623,14 +1623,14 @@ export  default class MigrationJobTask {
     }
 
     /**
-     * Executes addon method event related to the current executed object
+     * Executes addon event related to the current executed object
      *
-     * @param {ADDON_MODULE_METHODS} method The addon method to execute
+     * @param {ADDON_EVENTS} event The addon event to execute
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async runAddonEvent(method: ADDON_MODULE_METHODS): Promise<boolean> {
-        return await this.script.addonManager.triggerAddonModuleMethodAsync(method, this.sObjectName);
+    async runAddonEvent(event: ADDON_EVENTS): Promise<boolean> {
+        return await this.script.addonManager.triggerAddonModuleMethodAsync(event, this.sObjectName);
     }
 
     /**

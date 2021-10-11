@@ -4,7 +4,7 @@
             "command": "sfdmu:run",
             "path": null,
             "module": "core:OnBefore",
-            "method": "onBefore",
+            "event": "onBefore",
             "excluded": true,
             "args": null
         },
@@ -12,7 +12,7 @@
             "command": "sfdmu:run",
             "path": null,
             "module": "core:OnAfter",
-            "method": "onAfter",
+            "event": "onAfter",
             "excluded": true,
             "args": null
         }

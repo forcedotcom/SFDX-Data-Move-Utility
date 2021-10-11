@@ -1,0 +1,8 @@
+{
+    "entryPoints": ["./src/addons/modules/sfdmu-run/custom-addons/package/index.ts"],
+    "out": "./addon-docs/sfdmu-run/",
+    "plugin": ["typedoc-plugin-rename-defaults"],
+    "readme": "./documentation/sfdmu-run-addons/sfdmu-run-addon-home.md",
+    "name": "The SFDMU Custom Add-On API"
+    
+}

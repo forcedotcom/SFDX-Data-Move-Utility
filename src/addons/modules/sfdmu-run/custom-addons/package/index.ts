@@ -1,11 +1,10 @@
-/*
- * Copyright (c) 2020, salesforce.com, inc.
- * All rights reserved.
- * SPDX-License-Identifier: BSD-3-Clause
- * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
- */
-
+export { default as ISfdmuRunCustomAddonApiService } from "./ISfdmuRunCustomAddonApiService";
+export { default as ISfdmuRunCustomAddonCommandRunInfo } from "./ISfdmuRunCustomAddonCommandRunInfo";
 export { default as ISfdmuRunCustomAddonContext } from "./ISfdmuRunCustomAddonContext";
 export { default as ISfdmuRunCustomAddonModule } from "./ISfdmuRunCustomAddonModule";
+export { default as ISfdmuRunCustomAddonPluginInfo } from "./ISfdmuRunCustomAddonPluginInfo";
+export { default as ISfdmuRunCustomAddonProcessedData } from "./ISfdmuRunCustomAddonProcessedData";
 export { default as ISfdmuRunCustomAddonRuntime } from "./ISfdmuRunCustomAddonRuntime";
-export { default as ISfdmuRunCustomAddonService } from "./ISfdmuRunCustomAddonService";
+export { default as ISfdmuRunCustomAddonSFieldDescribe } from "./ISfdmuRunCustomAddonSFieldDescribe";
+export { default as ISfdmuRunCustomAddonTaskData } from "./ISfdmuRunCustomAddonTaskData";
+export * from "./common";

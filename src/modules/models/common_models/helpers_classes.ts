@@ -18,10 +18,10 @@ import { Type } from "class-transformer";
 import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 
 import ScriptAddonManifestDefinition from "../script_models/scriptAddonManifestDefinition";
+import { ISfdmuRunCustomAddonProcessedData } from "../../../addons/modules/sfdmu-run/custom-addons/package";
 
 
-
-
+type IProcessedData = ISfdmuRunCustomAddonProcessedData;
 
 export class TaskData {
 
@@ -397,7 +397,7 @@ export class TaskOrgData {
     }
 }
 
-export class ProcessedData {
+export class ProcessedData implements IProcessedData {
 
     processPersonAccounts: boolean = false;
 

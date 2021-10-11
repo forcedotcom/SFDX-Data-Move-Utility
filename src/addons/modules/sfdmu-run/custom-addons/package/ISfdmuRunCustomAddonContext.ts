@@ -8,9 +8,6 @@
 
 /**
  * The Custom Add-On module runtime context.
- * Exposes the information about the current runtime context, 
- * including information about the running Sfdmu plugin and the triggered Add-On event.
- *
  * @export
  * @interface ISfdmuRunCustomAddonContext
  */
@@ -18,24 +15,32 @@ export default interface ISfdmuRunCustomAddonContext {
 
     /**
      * The name of the triggered Add-On event.
-     * @example ```CustomSfdmuRunAddonTemplate```
+     * <br/>
+     * @example
+     * ```ts
+     * async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<void> { 
+     *      console.log(context.eventName); // For the BeforeUpdate event, outputs 'onBeforeUpdate'
+     * }
+     * ``` 
      *
      * @type {string}
      * @memberof ISfdmuRunCustomAddonContext
      */
     eventName: string;
 
+
     /**
-     * The full name of the current Add-On module.
-     * @example ```custom:CustomSfdmuRunAddonTemplate```
+     * The name of the current Add-On module, including it's type (core or custom)
+     * @example ```custom:CustomSfdmuRunAddonTemplate```, ```core:ExportFile```
      * 
      * @type {string}
      * @memberof ISfdmuRunCustomAddonContext
      */
     moduleDisplayName: string;
 
+
     /**
-     * The Api name of the SF object being currently processed.
+     * The Api name of the SF object which is being currently processed by the Plugin.
      * @example ```AccountTeamMember```
      *
      * @type {string}
@@ -45,8 +50,7 @@ export default interface ISfdmuRunCustomAddonContext {
 
 
     /**
-     * The user-friendly name of the SF object being currently processed
-     * (typically it's the object label).
+     * The display name of the processed SF object (typically it's the object label).
      * @example ```Account Team Member```
      *
      * @type {string}
@@ -57,14 +61,15 @@ export default interface ISfdmuRunCustomAddonContext {
 
     /**
      * The description of the current Add-On module.  
-     *  Defined in the Script file within Add-On event declaration, as in the example below:
+     *  Defined in the ```object/[addons]``` section of the Script, as in the example below:
      *  <br/>
+     * @example
      * ```json
      *  {      
             "description": "This test AddOn manipulates with the source Json string right before the target update. It extracts the Json value from the LongText__c, then stores the extracted string into the TEST1__c." 
         }
      * ```
-     * @see {@link ISfdmuRunCustomAddonModule | The the full export.json here}
+     * @see {@link ISfdmuRunCustomAddonModule | See the full example of export.json here}
      * @type {string}
      * @memberof ISfdmuRunCustomAddonContext
      */

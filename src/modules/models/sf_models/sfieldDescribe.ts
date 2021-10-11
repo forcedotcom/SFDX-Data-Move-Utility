@@ -10,6 +10,13 @@ import { Common } from "../../components/common_components/common";
 import { ScriptObject } from "..";
 import { CONSTANTS } from "../../components/common_components/statics";
 import { FieldType } from 'jsforce';
+import { ISfdmuRunCustomAddonSFieldDescribe } from "../../../addons/modules/sfdmu-run/custom-addons/package";
+
+
+// Construct the end interface in case we need 
+//  multiple interface implementation for the single class
+type ISFieldDescribe = ISfdmuRunCustomAddonSFieldDescribe;
+
 
 /**
  * Description of the sobject field
@@ -17,7 +24,7 @@ import { FieldType } from 'jsforce';
  * @export
  * @class SFieldDescribe
  */
-export default class SFieldDescribe {
+export default class SFieldDescribe implements ISFieldDescribe {
 
     constructor(init?: Partial<SFieldDescribe>) {
         if (init) {

@@ -19,7 +19,7 @@ import { AddonManifest, CommandInitializationError, Script } from '../../../modu
 import { Logger, RESOURCES } from '../../../modules/components/common_components/logger';
 import ScriptAddonManifestDefinition from '../../../modules/models/script_models/scriptAddonManifestDefinition';
 import { CONSTANTS } from '../../../modules/components/common_components/statics';
-import { ADDON_MODULE_METHODS } from '../../../modules/components/common_components/enumerations';
+import { ADDON_EVENTS } from '../../../modules/components/common_components/enumerations';
 import AddonModule from '../common/addonModule';
 import SfdmuRunAddonRuntime from './sfdmuRunAddonRuntime';
 import IAddonContext from '../common/IAddonContext';
@@ -40,7 +40,7 @@ export default class SfdmuRunAddonManager {
     }
 
     manifests: AddonManifest[] = new Array<AddonManifest>();
-    addonsMap: Map<ADDON_MODULE_METHODS, [Function, ScriptAddonManifestDefinition][]> = new Map<ADDON_MODULE_METHODS, [Function, ScriptAddonManifestDefinition][]>();
+    addonsMap: Map<ADDON_EVENTS, [Function, ScriptAddonManifestDefinition][]> = new Map<ADDON_EVENTS, [Function, ScriptAddonManifestDefinition][]>();
     addons: Map<number, AddonModule[]> = new Map<number, AddonModule[]>();
 
     constructor(script: Script) {
@@ -62,36 +62,36 @@ export default class SfdmuRunAddonManager {
         this._createAddOnsMap();
     }
 
-    async triggerAddonModuleMethodAsync(method: ADDON_MODULE_METHODS, objectName: string = ''): Promise<boolean> {
+    async triggerAddonModuleMethodAsync(event: ADDON_EVENTS, objectName: string = ''): Promise<boolean> {
 
-        if (!this.addonsMap.has(method)) {
+        if (!this.addonsMap.has(event)) {
             return false;
         }
 
-        let addons = this.addonsMap.get(method).filter(addon => {
+        let addons = this.addonsMap.get(event).filter(addon => {
             return addon[1].appliedToObject(objectName);
         });
 
         if (addons.length > 0) {
 
             let globalText = this.logger.getResourceString(RESOURCES.global);
-            this.logger.infoNormal(RESOURCES.runAddonMethod, objectName || globalText, method.toString());
+            this.logger.infoNormal(RESOURCES.runAddonMethod, objectName || globalText, event.toString());
 
             for (let index = 0; index < addons.length; index++) {
                 let addon = addons[index]; 
                 await addon[0]();
             }
 
-            this.logger.infoNormal(RESOURCES.runAddonMethodCompleted, objectName || globalText, method.toString());
+            this.logger.infoNormal(RESOURCES.runAddonMethodCompleted, objectName || globalText, event.toString());
             return true;
         }
 
         return false;
     }
 
-    triggerAddonModuleMethodSync(method: ADDON_MODULE_METHODS, objectName: string): void {
+    triggerAddonModuleMethodSync(event: ADDON_EVENTS, objectName: string): void {
         // tslint:disable-next-line: no-floating-promises
-        (async () => await this.triggerAddonModuleMethodAsync(method, objectName))();
+        (async () => await this.triggerAddonModuleMethodAsync(event, objectName))();
     }
 
 
@@ -118,7 +118,7 @@ export default class SfdmuRunAddonManager {
         let manifest: AddonManifest = new AddonManifest();
         this.script.beforeAddons.forEach(addon => {
             if (!addon.excluded && addon.command == this.fullCommandName) {
-                addon.method = ADDON_MODULE_METHODS.onBefore;
+                addon.event = ADDON_EVENTS.onBefore;
                 manifest.addons.push(addon);
             }
         });
@@ -126,21 +126,21 @@ export default class SfdmuRunAddonManager {
         this.script.objects.forEach(object => {
             object.beforeAddons.forEach(addon => {
                 if (!addon.excluded && addon.command == this.fullCommandName) {
-                    addon.method = ADDON_MODULE_METHODS.onBefore;
+                    addon.event = ADDON_EVENTS.onBefore;
                     addon.objectName = object.name;
                     manifest.addons.push(addon);
                 }
             });
             object.afterAddons.forEach(addon => {
                 if (!addon.excluded && addon.command == this.fullCommandName) {
-                    addon.method = ADDON_MODULE_METHODS.onAfter;
+                    addon.event = ADDON_EVENTS.onAfter;
                     addon.objectName = object.name;
                     manifest.addons.push(addon);
                 }
             });
             object.beforeUpdateAddons.forEach(addon => {
                 if (!addon.excluded && addon.command == this.fullCommandName) {
-                    addon.method = ADDON_MODULE_METHODS.onBeforeUpdate;
+                    addon.event = ADDON_EVENTS.onBeforeUpdate;
                     addon.objectName = object.name;
                     manifest.addons.push(addon);
                 }
@@ -148,7 +148,7 @@ export default class SfdmuRunAddonManager {
         });
         this.script.afterAddons.forEach(addon => {
             if (!addon.excluded && addon.command == this.fullCommandName) {
-                addon.method = ADDON_MODULE_METHODS.onAfter;
+                addon.event = ADDON_EVENTS.onAfter;
                 manifest.addons.push(addon);
             }
         });
@@ -172,18 +172,18 @@ export default class SfdmuRunAddonManager {
                 try {
                     if (addon.isValid) {
                         let moduleInstance: AddonModule = <AddonModule>new (require(addon.moduleRequirePath).default)(this.runtime);
-                        if (!this.addonsMap.has(addon.method)) {
-                            this.addonsMap.set(addon.method, []);
+                        if (!this.addonsMap.has(addon.event)) {
+                            this.addonsMap.set(addon.event, []);
                         }
                         moduleInstance.context = <IAddonContext>{
-                            eventName: addon.method.toString(),
+                            eventName: addon.event.toString(),
                             objectName: addon.objectName,
                             description: addon.description,
                             objectDisplayName: addon.objectName || globalText,
                             moduleDisplayName: addon.moduleDisplayName,
                             isCore: addon.isCore
                         };
-                        this.addonsMap.get(addon.method).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
+                        this.addonsMap.get(addon.event).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
                     }
                 } catch (ex) {
                     this.logger.warn(RESOURCES.canNotLoadModule, addon.moduleRequirePath);

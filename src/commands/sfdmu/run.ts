@@ -19,7 +19,7 @@ import {
 import { RunCommand } from "../../modules/commands_processors/runCommand";
 import { Common } from "../../modules/components/common_components/common";
 import { CommandInitializationError, SuccessExit, OrgMetadataError, CommandExecutionError, UnresolvableWarning, CommandAbortedByUserError } from "../../modules/models/common_models/errors";
-import { ADDON_MODULE_METHODS } from '../../modules/components/common_components/enumerations';
+import { ADDON_EVENTS } from '../../modules/components/common_components/enumerations';
 import { CONSTANTS } from '../../modules/components/common_components/statics';
 
 
@@ -204,9 +204,9 @@ export default class Run extends SfdxCommand {
             await this.command.createJobAsync();
             await this.command.processCSVFilesAsync();
             await this.command.prepareJobAsync();
-            await this.command.runAddonEvent(ADDON_MODULE_METHODS.onBefore);
+            await this.command.runAddonEvent(ADDON_EVENTS.onBefore);
             await this.command.executeJobAsync();
-            await this.command.runAddonEvent(ADDON_MODULE_METHODS.onAfter);
+            await this.command.runAddonEvent(ADDON_EVENTS.onAfter);
 
             // Exit - success
             Common.logger.commandExitMessage(

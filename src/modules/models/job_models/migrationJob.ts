@@ -14,7 +14,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import MigrationJobTask from "./migrationJobTask";
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_models/helper_interfaces";
-import { ADDON_MODULE_METHODS, DATA_MEDIA_TYPE } from "../../components/common_components/enumerations";
+import { ADDON_EVENTS, DATA_MEDIA_TYPE } from "../../components/common_components/enumerations";
 
 
 
@@ -423,7 +423,7 @@ export default class MigrationJob {
         this.logger.headerNormal(RESOURCES.processingAddon);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            processed = await task.runAddonEvent(ADDON_MODULE_METHODS.onBefore) || processed;
+            processed = await task.runAddonEvent(ADDON_EVENTS.onBefore) || processed;
         }
         if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
@@ -554,7 +554,7 @@ export default class MigrationJob {
         this.logger.headerNormal(RESOURCES.processingAddon);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            processed = await task.runAddonEvent(ADDON_MODULE_METHODS.onAfter) || processed;
+            processed = await task.runAddonEvent(ADDON_EVENTS.onAfter) || processed;
         }
         if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);

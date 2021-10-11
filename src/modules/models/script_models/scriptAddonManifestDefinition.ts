@@ -8,7 +8,7 @@
 
 import { CONSTANTS } from "../../components/common_components/statics";
 import * as path from 'path';
-import { ADDON_MODULE_METHODS } from "../../components/common_components/enumerations";
+import { ADDON_EVENTS } from "../../components/common_components/enumerations";
 
 /**
  * Represent an item of the addons section of the ScriptObject / Script  classes
@@ -58,10 +58,10 @@ export default class ScriptAddonManifestDefinition {
     }
 
     get isValid(): boolean {
-        return !!this.moduleName && this.method != ADDON_MODULE_METHODS.none;
+        return !!this.moduleName && this.event != ADDON_EVENTS.none;
     }
 
-    method: ADDON_MODULE_METHODS = ADDON_MODULE_METHODS.none;
+    event: ADDON_EVENTS = ADDON_EVENTS.none;
 
     objectName: string = '';
 
