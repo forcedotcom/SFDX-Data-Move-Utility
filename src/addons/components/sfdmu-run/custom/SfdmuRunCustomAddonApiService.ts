@@ -1,4 +1,12 @@
-import { ISfdmuRunCustomAddonCommandRunInfo, ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonModule, ISfdmuRunCustomAddonProcessedData } from "../../../modules/sfdmu-run/custom-addons/package";
+/*
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
+
+import { ISfdmuRunCustomAddonCommandRunInfo, ISfdmuRunCustomAddonContext, ISFdmuRunCustomAddonJob, ISfdmuRunCustomAddonModule, ISfdmuRunCustomAddonProcessedData, ISFdmuRunCustomAddonTask } from "../../../modules/sfdmu-run/custom-addons/package";
 import ISfdmuRunCustomAddonApiService from "../../../modules/sfdmu-run/custom-addons/package/ISfdmuRunCustomAddonApiService";
 import SfdmuRunAddonJob from "../sfdmuRunAddonJob";
 import SfdmuRunAddonRuntime from "../sfdmuRunAddonRuntime";
@@ -13,6 +21,7 @@ export default class SfdmuRunCustomAddonApiService implements ISfdmuRunCustomAdd
         this.runtime = runtime;
     }
 
+
     getPluginRunInfo(): ISfdmuRunCustomAddonCommandRunInfo {
         return this.runtime.runInfo;
     }
@@ -21,12 +30,19 @@ export default class SfdmuRunCustomAddonApiService implements ISfdmuRunCustomAdd
         return this.#getPluginTask(context).processedData;
     }
 
-    log(module: ISfdmuRunCustomAddonModule, message: string | object, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
+    log(module: ISfdmuRunCustomAddonModule, message: string | object, messageType?: "INFO" | "WARNING" | "ERROR" | "JSON", ...tokens: string[]): void {
         if (typeof message === 'string') {
             (this.runtime as any).logFormatted(module, message, messageType, ...tokens);
         } else {
-            (this.runtime as any).log(message, messageType, ...tokens);
+            (this.runtime as any).log(message, messageType == 'JSON' ? messageType : 'OBJECT', ...tokens);
         }
+    }
+
+    getPluginJob(): ISFdmuRunCustomAddonJob {
+        return this.#pluginJob;
+    }
+    getPluginTask(context: ISfdmuRunCustomAddonContext): ISFdmuRunCustomAddonTask {
+        return this.#getPluginTask(context);
     }
 
 

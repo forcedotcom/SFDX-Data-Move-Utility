@@ -1,4 +1,4 @@
-import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonModule, ISfdmuRunCustomAddonRuntime } from "../package";
+import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonModule, ISfdmuRunCustomAddonResult, ISfdmuRunCustomAddonRuntime } from "../package";
 
 
 /**
@@ -12,6 +12,7 @@ export default class CustomSfdmuRunAddonTemlate implements ISfdmuRunCustomAddonM
 
     /**
      * This constructor is called by the Add-On Framework when the custom module is being initialized.
+     * Please, don't remove it from your module code.
      * 
      * @param runtime The current instance of the Add-On module runtime, passed to the module by the Plugin.
      */
@@ -29,16 +30,16 @@ export default class CustomSfdmuRunAddonTemlate implements ISfdmuRunCustomAddonM
     /**
      * The module entry point.
      */
-    async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<void> {
+    async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult> {
 
         // Print start message
         this.runtime.service.log(this, `The Add-On module ${context.moduleDisplayName} has been successfully started. The event ${context.eventName} has been fired.`);
 
         // Print some test logs
-        this.runtime.service.log(this, '');                                         // Prints new line
-        this.runtime.service.log(this, 'Arguments passed are: ');                   // Prints string
-        this.runtime.service.log(this, args);                                       // Prints object
-        this.runtime.service.log(this, '');                                         // Prints new line
+        this.runtime.service.log(this, '');                        // Prints new line
+        this.runtime.service.log(this, 'The arguments are:');  // Prints string
+        this.runtime.service.log(this, args, "JSON");              // Prints object as fromatted JSON
+        this.runtime.service.log(this, '');                        // Prints new line
 
         // Get the currently running task
         const data = this.runtime.service.getProcessedData(context);
@@ -59,7 +60,9 @@ export default class CustomSfdmuRunAddonTemlate implements ISfdmuRunCustomAddonM
         });
 
         // Print finish message
-        this.runtime.service.log(this, `The Add-On module ${context.moduleDisplayName} has been successfully finished.`);
+        this.runtime.service.log(this, `The Add-On module ${context.moduleDisplayName} has been successfully completed.`);
+
+        return null;
     }
 
 

@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonRuntime } from ".";
+import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonResult, ISfdmuRunCustomAddonRuntime } from ".";
 
 
 /**
@@ -76,8 +76,9 @@ export default interface ISfdmuRunCustomAddonModule {
                 TEST__c : "Another test, assigning this text to the field TEST__c of each record being processed" 
             }
         ```
+     * @return {Promise<ISfdmuRunCustomAddonResult>}
      * @memberof ISfdmuRunCustomAddonModule
      */
-    onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<void>;
+    onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult>;
 
 }

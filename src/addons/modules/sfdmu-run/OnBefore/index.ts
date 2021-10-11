@@ -7,14 +7,17 @@
 
 
 
+import AddonResult from "../../../components/common/addonResult";
 import IAddonContext from "../../../components/common/IAddonContext";
 import SfdmuRunAddonModule from "../../../components/sfdmu-run/sfdmuRunAddonModule";
 
 
 export default class CoreOnBefore extends SfdmuRunAddonModule {
 
-    async onExecute(context: IAddonContext, args : any) : Promise<void>  {
+    async onExecute(context: IAddonContext, args : any) : Promise<AddonResult>  {
         // TODO: Implement the core OnBefore functionality here   
+
+        return null;
     }
 
 }

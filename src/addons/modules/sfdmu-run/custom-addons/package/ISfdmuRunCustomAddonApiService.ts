@@ -5,7 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ISfdmuRunCustomAddonCommandRunInfo, ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonModule, ISfdmuRunCustomAddonProcessedData } from ".";
+import { ISfdmuRunCustomAddonCommandRunInfo, ISfdmuRunCustomAddonContext, ISFdmuRunCustomAddonJob, ISfdmuRunCustomAddonModule, ISfdmuRunCustomAddonProcessedData, ISFdmuRunCustomAddonTask } from ".";
 
 
 
@@ -22,7 +22,7 @@ export default interface ISfdmuRunCustomAddonApiService {
      *
      * @param {ISfdmuRunCustomAddonModule} module The currently running Add-On module instance.
      * @param {string} message The message text or the message template to print.
-     * @param {("INFO" | "WARNING" | "ERROR")} [messageType] The type of the message.
+     * @param {("INFO" | "WARNING" | "ERROR" | "JSON")} [messageType] The type of the message.
      * @param {...string[]} tokens The optional string tokens to replace in the message template. 
      * <br/>
      * For example:
@@ -33,7 +33,7 @@ export default interface ISfdmuRunCustomAddonApiService {
      * ```
      * @memberof ISfdmuRunCustomAddonApiService
      */
-    log(module: ISfdmuRunCustomAddonModule, message: string | object, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void;
+    log(module: ISfdmuRunCustomAddonModule, message: string | object, messageType?: "INFO" | "WARNING" | "ERROR" | "JSON", ...tokens: string[]): void;
 
 
     /**
@@ -69,9 +69,30 @@ export default interface ISfdmuRunCustomAddonApiService {
      *  }
      * ```
      * 
-     * @return {*}  {ISfdmuRunCustomAddonCommandRunInfo}
+     * @return {ISfdmuRunCustomAddonCommandRunInfo}
      * @memberof ISfdmuRunCustomAddonApiService
      */
     getPluginRunInfo(): ISfdmuRunCustomAddonCommandRunInfo;
+
+ 
+    /**
+     * Returns the running SFDMU job.
+     *
+     * @return {ISFdmuRunCustomAddonJob}
+     * @memberof ISfdmuRunCustomAddonApiService
+     */
+    getPluginJob(): ISFdmuRunCustomAddonJob;
+
+
+    /**
+     * Returns the running job task.
+     *
+     * @param {ISfdmuRunCustomAddonContext} context The current instance of the Add-On context.
+     * @return {ISFdmuRunCustomAddonTask}
+     * @memberof ISfdmuRunCustomAddonApiService
+     */
+    getPluginTask(context: ISfdmuRunCustomAddonContext): ISFdmuRunCustomAddonTask;
+
+
 
 }

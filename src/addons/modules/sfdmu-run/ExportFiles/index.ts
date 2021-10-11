@@ -18,6 +18,7 @@ import { API_ENGINE, OPERATION } from "../../../../modules/components/common_com
 import ContentVersion from "../../../../modules/models/sf_models/contentVersion";
 import SfdmuRunAddonModule from "../../../components/sfdmu-run/sfdmuRunAddonModule";
 import IAddonContext from "../../../components/common/IAddonContext";
+import AddonResult from "../../../components/common/addonResult";
 
 
 
@@ -66,7 +67,7 @@ interface IDataToExport {
 
 export default class ExportFiles extends SfdmuRunAddonModule {
 
-    async onExecute(context: IAddonContext, args: IOnExecuteArguments): Promise<void> {
+    async onExecute(context: IAddonContext, args: IOnExecuteArguments): Promise<AddonResult> {
 
         let _self = this;
 
@@ -394,6 +395,8 @@ export default class ExportFiles extends SfdmuRunAddonModule {
             }
             return false;
         }
+
+        return null;
     }
 
 }

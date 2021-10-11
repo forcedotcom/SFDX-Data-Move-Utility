@@ -8,10 +8,11 @@
 
 
 import { MigrationJob } from "../../../modules/models";
+import { ISFdmuRunCustomAddonJob } from "../../modules/sfdmu-run/custom-addons/package";
 import SfdmuRunAddonTask from "./sfdmuRunAddonTask";
 
 
-export default class SfdmuRunAddonJob  {
+export default class SfdmuRunAddonJob implements ISFdmuRunCustomAddonJob  {
     
     #migrationJob : MigrationJob;
     #pluginTasks: SfdmuRunAddonTask[];

@@ -1,10 +1,13 @@
 export { default as ISfdmuRunCustomAddonApiService } from "./ISfdmuRunCustomAddonApiService";
 export { default as ISfdmuRunCustomAddonCommandRunInfo } from "./ISfdmuRunCustomAddonCommandRunInfo";
 export { default as ISfdmuRunCustomAddonContext } from "./ISfdmuRunCustomAddonContext";
+export { default as ISFdmuRunCustomAddonJob } from "./ISFdmuRunCustomAddonJob";
 export { default as ISfdmuRunCustomAddonModule } from "./ISfdmuRunCustomAddonModule";
 export { default as ISfdmuRunCustomAddonPluginInfo } from "./ISfdmuRunCustomAddonPluginInfo";
 export { default as ISfdmuRunCustomAddonProcessedData } from "./ISfdmuRunCustomAddonProcessedData";
+export { default as ISfdmuRunCustomAddonResult } from "./ISfdmuRunCustomAddonResult";
 export { default as ISfdmuRunCustomAddonRuntime } from "./ISfdmuRunCustomAddonRuntime";
 export { default as ISfdmuRunCustomAddonSFieldDescribe } from "./ISfdmuRunCustomAddonSFieldDescribe";
+export { default as ISFdmuRunCustomAddonTask } from "./ISFdmuRunCustomAddonTask";
 export { default as ISfdmuRunCustomAddonTaskData } from "./ISfdmuRunCustomAddonTaskData";
 export * from "./common";

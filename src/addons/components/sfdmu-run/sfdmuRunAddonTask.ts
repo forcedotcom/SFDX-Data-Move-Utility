@@ -9,10 +9,11 @@ import SfdmuRunAddonTaskData from "./SfdmuRunAddonTaskData";
 
 import { MigrationJobTask, ProcessedData } from "../../../modules/models";
 import { OPERATION } from "../../../modules/components/common_components/enumerations";
+import { ISFdmuRunCustomAddonTask } from "../../modules/sfdmu-run/custom-addons/package";
 
 
 
-export default class SfdmuRunAddonTask  {
+export default class SfdmuRunAddonTask implements ISFdmuRunCustomAddonTask  {
 
     #migrationJobTask: MigrationJobTask;
     #sourceTaskData: SfdmuRunAddonTaskData;

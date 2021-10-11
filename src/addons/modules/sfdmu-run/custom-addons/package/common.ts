@@ -36,3 +36,15 @@ export type FieldType =
     | 'encryptedstring'
     | 'address'
     | 'complexvalue'
+
+
+    export enum OPERATION {
+        Insert,
+        Update,
+        Upsert,
+        Readonly,
+        Delete,
+        DeleteSource,
+        DeleteHierarchy,
+        Unknown
+    }

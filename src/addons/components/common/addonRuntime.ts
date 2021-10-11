@@ -54,15 +54,16 @@ export default class AddonRuntime {
         this.log(this.createFormattedMessage(module, message, ...tokens), "ERROR");
     }
 
-    
+
     logFormatted(module: AddonModule, message: BUILTIN_MESSAGES | string, messageType?: "INFO" | "WARNING" | "ERROR", ...tokens: string[]): void {
+
         switch (messageType) {
             case 'ERROR':
-                this.logFormattedError(module, message, ...tokens);
+                this.logFormattedError(module, String(message), ...tokens);
                 break;
 
             case 'WARNING':
-                this.logFormattedWarning(module, message, ...tokens);
+                this.logFormattedWarning(module, String(message), ...tokens);
                 break;
 
             default:
@@ -73,6 +74,7 @@ export default class AddonRuntime {
 
 
     log(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE" | "JSON", ...tokens: string[]): void {
+        
         switch (messageType) {
             case "WARNING":
                 this.#logger.warn(<string>message, ...tokens);
@@ -88,6 +90,10 @@ export default class AddonRuntime {
 
             case "TABLE":
                 this.#logger.log(<ITableMessage>message, LOG_MESSAGE_TYPE.TABLE, LOG_MESSAGE_VERBOSITY.NORMAL, ...tokens);
+                break;
+
+            case "JSON":
+                this.#logger.log(<string>message, LOG_MESSAGE_TYPE.JSON, LOG_MESSAGE_VERBOSITY.NORMAL, ...tokens);
                 break;
 
             default:

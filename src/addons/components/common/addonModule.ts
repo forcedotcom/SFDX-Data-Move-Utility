@@ -7,17 +7,11 @@
 
 
 
+import AddonResult from "./addonResult";
 import AddonRuntime from "./addonRuntime";
 import IAddonContext from "./IAddonContext";
 
 
-/**
- * Test comment
- *
- * @export
- * @abstract
- * @class AddonModule
- */
 export default abstract class AddonModule {
 
     constructor(runtime: AddonRuntime) {
@@ -27,6 +21,6 @@ export default abstract class AddonModule {
     context: IAddonContext;
     runtime: AddonRuntime;
 
-    abstract onExecute(context: IAddonContext, args: any): void;
+    abstract onExecute(context: IAddonContext, args: any): Promise<AddonResult>;
 
 }
