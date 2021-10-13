@@ -1,8 +1,15 @@
 {
     "entryPoints": ["./src/addons/modules/sfdmu-run/custom-addons/package/index.ts"],
-    "out": "./addon-docs/sfdmu-run/",
-    "plugin": ["typedoc-plugin-rename-defaults"],
-    "readme": "./documentation/sfdmu-run-addons/sfdmu-run-addon-home.md",
-    "name": "The SFDMU Custom Add-On API"
+    "out": "./documentation/add-on-docs/custom-add-on-api/sfdmu-run",
+    "plugin": ["typedoc-plugin-rename-defaults", "../sfdmu-help-typedoc-modify-content"],
+    "readme": "./documentation/add-on-docs/custom-add-on-api/sfdmu-run-home-page/sfdmu-run-addon-home.md",
+    "name": "The SFDMU Custom Add-On API",
+    "favicon": "./documentation/add-on-docs/custom-add-on-api/sfdmu-run-home-page/favicon.png",   
+    "footerDate": true,
+    "headerHomeLink" : "/|<i class='fa fa-home'></i>&nbsp;SFDMU Help Center|SFDMU Help Center",
+    "headerGitLink": "https://github.com/forcedotcom/SFDX-Data-Move-Utility|<i class='fab fa-github'></i>&nbsp;View on Github|View on Github",
+    "css": ["./documentation/add-on-docs/custom-add-on-api/sfdmu-run-home-page/css/custom-style.css"],
+    "cssSubfolder": "css",
+    "copySourceDirs": ["./documentation/add-on-docs/custom-add-on-api/sfdmu-run-home-page/fonts-awesome|fonts-awesome"]
     
 }

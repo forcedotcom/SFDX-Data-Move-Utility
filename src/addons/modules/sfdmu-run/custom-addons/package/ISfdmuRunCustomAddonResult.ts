@@ -19,6 +19,13 @@ export default interface ISfdmuRunCustomAddonResult {
     /**
      * Set this property to true will abort the current Plugin job.
      * Use this property if you want to interrupt the migration process after finishing the Add-On execution.
+     * @example 
+     * ```ts
+     * async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult> { 
+     *      // Return cancel = true if you want to abort the current miration job.
+     *      return { cancel: true }; 
+     * }
+     * ```
      *
      * @type {boolean}
      * @memberof ISfdmuRunCustomAddonResult

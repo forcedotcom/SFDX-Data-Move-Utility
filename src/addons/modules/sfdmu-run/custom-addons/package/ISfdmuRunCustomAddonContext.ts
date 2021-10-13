@@ -18,7 +18,7 @@ export default interface ISfdmuRunCustomAddonContext {
      * <br/>
      * @example
      * ```ts
-     * async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<void> { 
+     * async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult> { 
      *      console.log(context.eventName); // For the BeforeUpdate event, outputs 'onBeforeUpdate'
      * }
      * ``` 

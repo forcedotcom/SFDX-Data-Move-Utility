@@ -27,7 +27,7 @@ export default interface ISfdmuRunCustomAddonApiService {
      * <br/>
      * For example:
      * ```ts
-     *  async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<void> { 
+     *  async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult> { 
      *      this.runtime.service.log(this, 'My %s template', 'INFO', 'cool'); // Outputs 'My cool template'
      *  }
      * ```
@@ -42,7 +42,7 @@ export default interface ISfdmuRunCustomAddonApiService {
      * <br>
      * @example
      * ```ts
-     *  async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<void> { 
+     *  async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult> { 
      * 
      *      // Get the data from the Plugin runtime context
      *      const data = this.runtime.service.getProcessedData(context);
@@ -64,7 +64,7 @@ export default interface ISfdmuRunCustomAddonApiService {
      *<br>
      * @example
      * ```ts
-     *  async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<void> {  
+     *  async onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult> {  
      *       console.log(this.runtime.service.getPluginRunInfo().pinfo.pluginName); // Outputs 'sfdmu'
      *  }
      * ```
