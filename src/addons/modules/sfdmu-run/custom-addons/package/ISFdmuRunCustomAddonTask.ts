@@ -5,6 +5,7 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { ISfdmuRunCustomAddonTaskData } from ".";
 import { OPERATION } from "./common";
 
 
@@ -26,6 +27,7 @@ export default interface ISFdmuRunCustomAddonTask {
      */
     readonly operation: OPERATION;
 
+
     /**
      * The Api name of the processed SF object.
      *
@@ -33,6 +35,7 @@ export default interface ISFdmuRunCustomAddonTask {
      * @memberof ISFdmuRunCustomAddonTask
      */
     readonly sObjectName: string;
+
 
     /**
      * The target Api name of the SF object in case the Field Mapping feature is active. 
@@ -61,6 +64,7 @@ export default interface ISFdmuRunCustomAddonTask {
      */
     readonly sourceToTargetFieldNameMap: Map<any, any>;
 
+
     /**
      * The current update mode.
      * Each SF object can be updated twice, for the first time when the records are inserted
@@ -71,4 +75,22 @@ export default interface ISFdmuRunCustomAddonTask {
      * @memberof ISFdmuRunCustomAddonTask
      */
     readonly updateMode: "FIRST_UPDATE" | "SECOND_UPDATE";
+
+
+    /**
+     * Returns the task data associated with the data Source of this migration task.
+     *
+     * @type {ISfdmuRunCustomAddonTaskData}
+     * @memberof ISFdmuRunCustomAddonTask
+     */
+    readonly sourceTaskData: ISfdmuRunCustomAddonTaskData;
+
+
+    /**
+      * Returns the task data associated with the data Target of this migration task.
+     *
+     * @type {ISfdmuRunCustomAddonTaskData}
+     * @memberof ISFdmuRunCustomAddonTask
+     */
+    readonly targetTaskData: ISfdmuRunCustomAddonTaskData;
 }

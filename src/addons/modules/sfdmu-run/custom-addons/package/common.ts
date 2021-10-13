@@ -48,3 +48,8 @@ export type FieldType =
         DeleteHierarchy,
         Unknown
     }
+
+    export enum DATA_MEDIA_TYPE {
+        Org,
+        File
+    }
