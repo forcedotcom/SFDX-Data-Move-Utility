@@ -62,9 +62,8 @@ export default class CustomSfdmuRunAddonTemlate implements ISfdmuRunCustomAddonM
         // Print finish message
         this.runtime.service.log(this, `The Add-On module ${context.moduleDisplayName} has been successfully completed.`);
 
-        return { cancel: true };
-
-        //return null;
+        // Return nothing to continue the migration job
+        return null;
     }
 
 

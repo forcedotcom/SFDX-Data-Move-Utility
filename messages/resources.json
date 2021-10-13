@@ -62,6 +62,7 @@
     "commandExecutionErrorResult": "Error during execution of the command: %s.",
     "commandUnresolvableWarningResult": "Execution of the command was ABORTED due to an unresolvable warning: %s.",
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
+    "commandAbortedByAddOnErrorResult": "Execution of the command was ANORTED by the Add-On module",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
 
     "loadingCoreAddonManifestFile" : "Loading core Add-On declarations ...",
@@ -204,6 +205,7 @@
     "startAddonExecute" : "[%s] {%s} Executing of the Add-On module has started",
     "finishAddonExecute" : "[%s] {%s} Executing of the Add-On module has finished",
     "coreAddonMessageTemplate" : "[%s] {%s} %s",
-    "runAddonMethodCompleted": "{%s} Executing of the event:%s Add-On handlers has finished"
+    "runAddonMethodCompleted": "{%s} Executing of the event:%s Add-On handlers has finished",
+    "jobAbortedByAddon": "The job has been aborted by the Add-On module."
     
 }

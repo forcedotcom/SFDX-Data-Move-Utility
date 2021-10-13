@@ -92,6 +92,7 @@ export enum RESOURCES {
     commandExecutionErrorResult = "commandExecutionErrorResult",
     commandUnresolvableWarningResult = "commandUnresolvableWarningResult",
     commandAbortedByUserErrorResult = "commandAbortedByUserErrorResult",
+    commandAbortedByAddOnErrorResult = "commandAbortedByAddOnErrorResult",
     commandUnexpectedErrorResult = "commandUnexpectedErrorResult",
 
 
@@ -232,7 +233,8 @@ export enum RESOURCES {
     startAddonExecute = "startAddonExecute",
     finishAddonExecute = "finishAddonExecute",
     coreAddonMessageTemplate = "coreAddonMessageTemplate",
-    runAddonMethodCompleted = "runAddonMethodCompleted"
+    runAddonMethodCompleted = "runAddonMethodCompleted",
+    jobAbortedByAddon = "jobAbortedByAddon"
 }
 
 
@@ -1217,7 +1219,8 @@ export enum COMMAND_EXIT_STATUSES {
     ORG_METADATA_ERROR = 3,
     COMMAND_EXECUTION_ERROR = 4,
     COMMAND_ABORTED_BY_USER = 5,
-    UNRESOLWABLE_WARNING = 6
+    UNRESOLWABLE_WARNING = 6,
+    COMMAND_ABORTED_BY_ADDON = 7,
 }
 
 

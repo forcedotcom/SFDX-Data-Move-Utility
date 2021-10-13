@@ -15,7 +15,7 @@ import "reflect-metadata";
 import "es6-shim";
 import { plainToClass } from "class-transformer";
 
-import { AddonManifest, CommandInitializationError, Script } from '../../../modules/models';
+import { AddonManifest, CommandAbortedByAddOnError, CommandInitializationError, Script } from '../../../modules/models';
 import { Logger, RESOURCES } from '../../../modules/components/common_components/logger';
 import ScriptAddonManifestDefinition from '../../../modules/models/script_models/scriptAddonManifestDefinition';
 import { CONSTANTS } from '../../../modules/components/common_components/statics';
@@ -23,6 +23,7 @@ import { ADDON_EVENTS } from '../../../modules/components/common_components/enum
 import AddonModule from '../common/addonModule';
 import SfdmuRunAddonRuntime from './sfdmuRunAddonRuntime';
 import IAddonContext from '../common/IAddonContext';
+import ISfdmuRunAddonResult from './ISfdmuRunAddonResult';
 
 
 export default class SfdmuRunAddonManager {
@@ -78,8 +79,14 @@ export default class SfdmuRunAddonManager {
             this.logger.infoNormal(RESOURCES.runAddonMethod, objectName || globalText, event.toString());
 
             for (let index = 0; index < addons.length; index++) {
-                let addon = addons[index]; 
-                await addon[0]();
+                let addon = addons[index];
+                let result: ISfdmuRunAddonResult = await addon[0]();
+                if (result) {
+                    if (result.cancel) {
+                        // Stop execution
+                        throw new CommandAbortedByAddOnError(addon[1].moduleDisplayName);
+                    }
+                }
             }
 
             this.logger.infoNormal(RESOURCES.runAddonMethodCompleted, objectName || globalText, event.toString());
@@ -114,7 +121,7 @@ export default class SfdmuRunAddonManager {
     }
 
     private _loadUserAddonManifest(): AddonManifest {
-       
+
         let manifest: AddonManifest = new AddonManifest();
         this.script.beforeAddons.forEach(addon => {
             if (!addon.excluded && addon.command == this.fullCommandName) {
@@ -122,7 +129,7 @@ export default class SfdmuRunAddonManager {
                 manifest.addons.push(addon);
             }
         });
-        
+
         this.script.objects.forEach(object => {
             object.beforeAddons.forEach(addon => {
                 if (!addon.excluded && addon.command == this.fullCommandName) {
@@ -152,10 +159,10 @@ export default class SfdmuRunAddonManager {
                 manifest.addons.push(addon);
             }
         });
-        manifest.addons.forEach(addon => { 
-            this.logger.infoNormal(RESOURCES.loadingAddon, 
+        manifest.addons.forEach(addon => {
+            this.logger.infoNormal(RESOURCES.loadingAddon,
                 addon.moduleDisplayName);
-            this._setupAddonDefinition(addon); 
+            this._setupAddonDefinition(addon);
         });
         return manifest;
     }

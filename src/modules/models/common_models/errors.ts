@@ -73,6 +73,19 @@ export class CommandAbortedByUserError extends Error {
 }
 
 /**
+ * Add-On module has stopped execution of the command
+ *
+ * @export
+ * @class CommandAbortedByAddOnError
+ * @extends {Error}
+ */
+ export class CommandAbortedByAddOnError extends Error {
+    constructor(m: string) {
+        super(m);
+    }
+}
+
+/**
  * When thrown the command need to be aborted with success result
  *
  * @export

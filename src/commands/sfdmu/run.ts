@@ -18,7 +18,7 @@ import {
 } from "../../modules/components/common_components/logger";
 import { RunCommand } from "../../modules/commands_processors/runCommand";
 import { Common } from "../../modules/components/common_components/common";
-import { CommandInitializationError, SuccessExit, OrgMetadataError, CommandExecutionError, UnresolvableWarning, CommandAbortedByUserError } from "../../modules/models/common_models/errors";
+import { CommandInitializationError, SuccessExit, OrgMetadataError, CommandExecutionError, UnresolvableWarning, CommandAbortedByUserError, CommandAbortedByAddOnError } from "../../modules/models/common_models/errors";
 import { ADDON_EVENTS } from '../../modules/components/common_components/enumerations';
 import { CONSTANTS } from '../../modules/components/common_components/statics';
 
@@ -265,6 +265,13 @@ export default class Run extends SfdxCommand {
                         COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER,
                         e.stack, e.message);
                     process.exit(COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER);
+
+                case CommandAbortedByAddOnError:
+                    Common.logger.commandExitMessage(
+                        RESOURCES.commandAbortedByAddOnErrorResult,
+                        COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_ADDON,
+                        e.stack, e.message);
+                    process.exit(COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_ADDON);
 
 
                 default:
