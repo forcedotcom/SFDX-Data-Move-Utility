@@ -26,7 +26,7 @@
 
 <br />
 
->Try out our new  [**Custom Add-On Api**](https:/help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which gives you a large amount of extended possibilities for the data migration.
+>Try out our new  [**Custom Add-On Api**](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which gives you a large amount of extended possibilities for the data migration.
 
 <br />
 <br />
@@ -59,7 +59,7 @@ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox /
 - **Secured and safe**. All operations are performed on the client's machine, there is no cloud interaction, so all is completely safe.
 - **User-friendly configuration.**  Fully configurable using simple JSON file.
 - **Fast performance.** Processes only a selected subset of records and fields that need to be inserted or updated and does not touch others.
--  You also can build and run your own [**Custom Add-On modules**](https:/help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which will give you unlimited possibilities to extend the SFDMU with new fully customized features.
+-  You also can build and run your own [**Custom Add-On modules**](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which will give you unlimited possibilities to extend the SFDMU with new fully customized features.
 
 
 ### Use case.
