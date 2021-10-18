@@ -24,6 +24,12 @@
 > *\* Most of the issues are coming due to incorrect configuration or stuff are related to the client environment,*
 > *so **carefully reading** the **[documentation](https://help.sfdmu.com/quick-start)** as well as an examination of the **[target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files)** before opening a bug will save your time waiting for our response :)*
 
+<br />
+
+>Try out our new  [**Custom Add-On Api**](https:/help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which gives you a large amount of extended possibilities for the data migration.
+
+<br />
+<br />
 
 ## Introduction:
 
@@ -36,40 +42,24 @@ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox /
 ### The Advantages of the Tool:
 
 - Supports **direct data migration** from Salesforce org to another Salesforce org without intermediate CSV files.
-
 - Allow to migrate **multiple objects at once**.
-
 - Supports data **Export/Import  to/from  CSV files.**
-
 - **Does not require a special External Id** **field for Update/Upsert** operations to bind related SObjects. **Any type of field with unique values, such as a Name, even formula or auto-number can be used as External Id.** The Plugin internally compares the records from the Source and Target based on the specified field and performs the necessary CRUD operations on the Target.
-
 - Handles **circular references between SObjects**, for example when Object1 has a child relationship to Object2, then the Object2 has a child relationship to Object3 and the Object3 has a parent relationship back to the Object1.
-
 - Supports customized **Fields and Object Mapping**, when the name of the objects and fields in the Source and the Target are different.
-
 - Supports data migration **preserving Record Type** for each record.
-
 - Handles **self-referenced fields**, for instance  Account.ParentId. 
-
 - Supports **composite external Id keys**. 
-
 - Full **Person Account** support. Can process record sets contain mixed Business & Person Accounts.
-
 - Supports migration of related **Notes** , **Attachments**  and **Files**  including the binary data.
-
 - Supports **record owner assignment**. If the source and the target orgs have the same list of users it can assign each record to the owner with the same Name Owner.Name (User.Name) External Id key.
-
 - Has built-in  **data anonymization feature**  to replace real source data (for example from  the Production environment)  with random values during updating the Target.
-
 - Automatic **CSV source file transformation** option. 
-
 - Customized binding of **polymorphic lookup fields**, for instance FeedItem.ParentId.
-
 - **Secured and safe**. All operations are performed on the client's machine, there is no cloud interaction, so all is completely safe.
-
 - **User-friendly configuration.**  Fully configurable using simple JSON file.
-
 - **Fast performance.** Processes only a selected subset of records and fields that need to be inserted or updated and does not touch others.
+-  You also can build and run your own [**Custom Add-On modules**](https:/help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which will give you unlimited possibilities to extend the SFDMU with new fully customized features.
 
 
 ### Use case.
