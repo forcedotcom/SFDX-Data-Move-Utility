@@ -9,32 +9,7 @@ import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonResult, ISfdmuRunCusto
 
 
 /**
- * The interface to be implemented in every custom Sfdmu Add-On module.
- * @example
- * Below is the example of the export.json file to run custom Add-On module by triggering ```beforeUpdate``` event :
- * <br/>
- * <br/>
-     * ```json
-     * {
-            "objects": [
-                {
-                    "operation": "Upsert",
-                    "externalId": "Name",
-                    "deleteOldData" : true,
-                    "query": "SELECT Id, Name, LongText__c, TEST__c, TEST1__c  FROM Account WHERE Name = 'ACC_10000'",			
-                    "beforeUpdateAddons" : [
-                        {
-                                "description": "This test AddOn manipulates with the source Json string right before the target update. It extracts the Json value from the LongText__c, then stores the extracted string into the TEST1__c.",
-                                "path" : "BASE-PATH-TO-CUSTOM-ADDON-MODULES\\CustomSfdmuRunAddonTemplate",				
-                                "args" : {
-                                    "TEST__c": "Another manipulation with the data: putting this text to the field TEST__c of each record being processed"
-                                }
-                        }
-                    ] 
-                }
-            ]
-        }
-     * ```
+ * The base interface to be implemented in every custom Sfdmu Add-On module.
  * @export
  * @interface ISfdmuRunCustomAddonModule
  */

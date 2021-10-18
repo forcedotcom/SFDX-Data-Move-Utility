@@ -1,3 +1,16 @@
+
+/*
+ * --------------------------------------------------------------------------
+ * This Add-On module provided AS IS without any guarantee.
+ * You can use this example to see how to build your own Add-On modules.
+ * --------------------------------------------------------------------------
+ * 
+ * Copyright (c) 2020, salesforce.com, inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause
+ * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+ */
+
 import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonModule, ISfdmuRunCustomAddonResult, ISfdmuRunCustomAddonRuntime } from "../package";
 
 
@@ -8,7 +21,7 @@ import { ISfdmuRunCustomAddonContext, ISfdmuRunCustomAddonModule, ISfdmuRunCusto
  * 
  * You can use this template to create your own custom Add-On module.
  */
-export default class CustomSfdmuRunAddonTemlate implements ISfdmuRunCustomAddonModule {
+export default class SfdmuCustomAddOnModule implements ISfdmuRunCustomAddonModule {
 
     /**
      * This constructor is called by the Add-On Framework when the custom module is being initialized.
@@ -43,6 +56,7 @@ export default class CustomSfdmuRunAddonTemlate implements ISfdmuRunCustomAddonM
 
         // Get the currently running task
         const data = this.runtime.service.getProcessedData(context);
+
 
         // Make required manipuation with the source records.
         // The Plugin then will use the already modified records to update the Target.
