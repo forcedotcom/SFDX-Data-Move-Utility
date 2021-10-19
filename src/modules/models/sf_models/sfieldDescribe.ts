@@ -124,7 +124,7 @@ export default class SFieldDescribe implements ISFieldDescribe {
     }
 
     get isMasterDetail() {
-        return this.lookup && (!this.updateable || this.cascadeDelete);
+        return this.lookup && (!this.updateable || this.cascadeDelete) && this.isSimpleReference;
     }
 
     get isBoolean() {
