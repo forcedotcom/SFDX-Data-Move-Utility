@@ -69,7 +69,6 @@ export default interface ISfdmuRunCustomAddonContext {
             "description": "This test AddOn manipulates with the source Json string right before the target update. It extracts the Json value from the LongText__c, then stores the extracted string into the TEST1__c." 
         }
      * ```
-     * @see {@link ISfdmuRunCustomAddonModule | See the full example of export.json here}
      * @type {string}
      * @memberof ISfdmuRunCustomAddonContext
      */
