@@ -3,8 +3,8 @@
     "separator": "=============",
     "source": "SOURCE",
     "target": "TARGET",
-    "Step1": "STEP 1",
-    "Step2": "STEP 2",
+    "Step1": "STAGE 1",
+    "Step2": "STAGE 2",
     "Pass1": "PASS 1",
     "Pass2": "PASS 2",
     "Pass3": "PASS 3",
@@ -182,7 +182,7 @@
     "retrievingBinaryData": "{%s} Retrieving binary data. It may take a while ...",
     "queryingSelfReferenceRecords": "{%s} Retrieving self-referenced lookup records from %s ...",
     "queryingFinished": "{%s} Retrieving the %s data has been completed. Fetched %s new records.",
-    "queryingTotallyFetched": "{%s} Total retrieved within all steps (source/target): %s records.",
+    "queryingTotallyFetched": "{%s} Total retrieved within all stages (source/target): %s records.",
     "queryString": "{%s} Query string: %s.",
     "fetchingSummary": "Data retrieving summary",
 
@@ -197,7 +197,7 @@
     "skippedUpdatesWarning": "{%s} [INFO] There are %s skipped target updates, since no matching was found between the source and the target records by the given ExternalId key, or the data is the same.",
     "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details.",
     "updatingSummary": "Data processing summary",
-    "updatingTotallyUpdated": "{%s} Total processed within all steps (Insert + Update): %s records.",
+    "updatingTotallyUpdated": "{%s} Total processed within all stages (Insert + Update): %s records.",
 
     "processingAddon": "Processing Add-On event handlers ...", 
     "runAddonMethod": "{%s} Executing of the event:%s Add-On handlers has started",

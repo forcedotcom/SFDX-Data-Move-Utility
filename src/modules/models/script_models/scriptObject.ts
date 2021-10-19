@@ -613,7 +613,14 @@ export default class ScriptObject {
             [...describe.fieldsMap.values()].forEach(fieldDescribe => {
                 if ((___compare(pattern.all != "undefined", pattern.all == true)
                     || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))) {
-                    if (!(fieldDescribe.lookup && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0)) {
+                    if (    !(
+                                fieldDescribe.lookup && 
+                                (
+                                    CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
+                                    || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.name) >= 0
+                                )
+                             )
+                        ) {
                         this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
                         this.excludedFieldsFromUpdate = this.excludedFieldsFromUpdate.filter(fieldName => fieldName != fieldDescribe.name);
                     }
