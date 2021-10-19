@@ -339,6 +339,9 @@ export default class ScriptObject {
         if (!this.isDescribed) {
             return "Id";
         }
+        if (CONSTANTS.DEFAULT_EXTERNAL_IDS[this.name]){
+            return CONSTANTS.DEFAULT_EXTERNAL_IDS[this.name]; 
+        }
         return ([].concat(
             [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.nameField),
             [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.autoNumber),

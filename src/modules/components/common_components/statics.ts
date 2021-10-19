@@ -89,6 +89,10 @@ export const CONSTANTS = {
 
     RECORD_TYPE_SOBJECT_NAME: "RecordType",
 
+    DEFAULT_EXTERNAL_IDS: {
+        'EmailMessage' : 'Subject'
+    },
+
     NOT_SUPPORTED_OBJECTS: [
         'Profile',
         'User',

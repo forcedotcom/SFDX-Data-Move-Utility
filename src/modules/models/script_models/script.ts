@@ -29,8 +29,9 @@ import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/e
 import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
 import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
-import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
+
 import SfdmuRunAddonRuntime from "../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime";
+import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
 
 
 
@@ -401,17 +402,12 @@ export default class Script {
                     let externalIdFieldName = Common.getComplexField(thisField.parentLookupObject.externalId);
                     let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName);
 
-                    let __rSField = thisObject.fieldsInQueryMap.get(__rFieldName);
-                    __rSField.objectName = thisObject.name;
-                    __rSField.scriptObject = thisObject;
-                    __rSField.custom = thisField.custom;
-                    __rSField.parentLookupObject = thisField.parentLookupObject;
-                    __rSField.isPolymorphicField = thisField.isPolymorphicField;
-                    __rSField.polymorphicReferenceObjectType = thisField.polymorphicReferenceObjectType;
-                    __rSField.lookup = true;
-
+                    let __rSField = ___setRSField(__rFieldName);
                     thisField.__rSField = __rSField;
-                    __rSField.idSField = thisField;
+
+                    if (__rFieldName != __rOriginalFieldName) {
+                        ___setRSField(__rOriginalFieldName);
+                    }
 
                     try {
                         parentExternalIdField.child__rSFields.push(__rSField);
@@ -421,6 +417,22 @@ export default class Script {
                             thisField.parentLookupObject.name,
                             thisField.objectName,
                             thisField.nameId);
+                    }
+
+                    // ---------------------- Internal functions --------------------------- //   
+                    function ___setRSField(fieldName: string) {
+                        let __rSField = thisObject.fieldsInQueryMap.get(fieldName);
+                        if (__rSField) {
+                            __rSField.objectName = thisObject.name;
+                            __rSField.scriptObject = thisObject;
+                            __rSField.custom = thisField.custom;
+                            __rSField.parentLookupObject = thisField.parentLookupObject;
+                            __rSField.isPolymorphicField = thisField.isPolymorphicField;
+                            __rSField.polymorphicReferenceObjectType = thisField.polymorphicReferenceObjectType;
+                            __rSField.lookup = true;
+                            __rSField.idSField = thisField;
+                        }
+                        return __rSField;
                     }
                 }
 
