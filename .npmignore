@@ -16,3 +16,4 @@ node_modules
 /development
 /test-addons
 /documentation
+/src/addons/modules/sfdmu-run/custom-addons/TestModule*

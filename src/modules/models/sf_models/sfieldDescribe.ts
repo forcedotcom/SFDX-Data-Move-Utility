@@ -51,6 +51,8 @@ export default class SFieldDescribe implements ISFieldDescribe {
 
     length: number;
 
+    originalReferencedObjectType: string = "";
+
     /*
         true if this field description was retrieved from the org,
         excluding temporary fields created upon executing.
@@ -86,6 +88,14 @@ export default class SFieldDescribe implements ISFieldDescribe {
      */
     idSField: SFieldDescribe;
 
+    /**
+     * The polymorphic field was detected from the object metadata
+     */
+    isPolymorphicFieldDefinition: boolean = false;
+
+    /**
+     * Explicitely defined by the query(f.ex. ParentId$Account)
+     */
     isPolymorphicField: boolean = false;
 
     getPolymorphicQueryField(fieldName: string): string {

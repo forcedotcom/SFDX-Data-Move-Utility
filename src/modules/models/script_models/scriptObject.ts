@@ -28,6 +28,8 @@ import * as deepClone from 'deep.clone';
 
 import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
+import { fileURLToPath } from "url";
+
 
 
 
@@ -339,8 +341,8 @@ export default class ScriptObject {
         if (!this.isDescribed) {
             return "Id";
         }
-        if (CONSTANTS.DEFAULT_EXTERNAL_IDS[this.name]){
-            return CONSTANTS.DEFAULT_EXTERNAL_IDS[this.name]; 
+        if (CONSTANTS.DEFAULT_EXTERNAL_IDS[this.name]) {
+            return CONSTANTS.DEFAULT_EXTERNAL_IDS[this.name];
         }
         return ([].concat(
             [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.nameField),
@@ -388,11 +390,11 @@ export default class ScriptObject {
         // Fix / Setup operation value ???
         //this.operation = ScriptObject.getOperation(this.operation);
 
-        if (this.operation == OPERATION.DeleteSource){
+        if (this.operation == OPERATION.DeleteSource) {
             this.deleteFromSource = true;
             this.operation = OPERATION.Delete;
         }
-        if (this.operation == OPERATION.DeleteHierarchy){
+        if (this.operation == OPERATION.DeleteHierarchy) {
             this.deleteByHierarchy = true;
             this.operation = OPERATION.Delete;
         }
@@ -556,6 +558,9 @@ export default class ScriptObject {
                     throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectTargetDoesNotExist, this.name));
                 }
             }
+
+            // Fix the incorrect polymorphic field definitions
+            await this._fixPolymorphicFields();
         }
     }
 
@@ -616,14 +621,14 @@ export default class ScriptObject {
             [...describe.fieldsMap.values()].forEach(fieldDescribe => {
                 if ((___compare(pattern.all != "undefined", pattern.all == true)
                     || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))) {
-                    if (    !(
-                                fieldDescribe.lookup && 
-                                (
-                                    CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
-                                    || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.name) >= 0
-                                )
-                             )
-                        ) {
+                    if (!(
+                        fieldDescribe.lookup &&
+                        (
+                            CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
+                            || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.name) >= 0
+                        )
+                    )
+                    ) {
                         this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
                         this.excludedFieldsFromUpdate = this.excludedFieldsFromUpdate.filter(fieldName => fieldName != fieldDescribe.name);
                     }
@@ -713,17 +718,95 @@ export default class ScriptObject {
     }
 
     private _updateSObjectDescribe(describe: SObjectDescribe) {
-        [...describe.fieldsMap.values()].forEach(x => {
+
+        [...describe.fieldsMap.values()].forEach(field => {
             // General setups ////////
-            x.scriptObject = this;
+            field.scriptObject = this;
 
             // Setup the polymorphic field /////           
-            if (x.lookup && this.referenceFieldToObjectMap.has(x.name)) {
-                x.referencedObjectType = this.referenceFieldToObjectMap.get(x.name);
-                x.isPolymorphicField = true;
-                x.polymorphicReferenceObjectType = x.referencedObjectType;
+            if (field.lookup && this.referenceFieldToObjectMap.has(field.name)) {
+                field.referencedObjectType = this.referenceFieldToObjectMap.get(field.name);
+                field.isPolymorphicField = true;
+                field.polymorphicReferenceObjectType = field.referencedObjectType;
             }
         });
+    }
+
+    private async _fixPolymorphicFields(): Promise<void> {
+
+        let self = this;
+
+        // Get all polymorphic fields for the current object
+        let apiSf = new Sfdx(this.script.sFOrg);
+        let polymorphicFields = await apiSf.getPolymorphicObjectFields(this.name);
+
+        // Verify field descriptions
+        let incorrectDeclarations = new Array<string>();
+
+        let incorrect = ___getIncorrectPolymorphicFields(this.targetSObjectDescribe, incorrectDeclarations);
+        incorrect = ___getIncorrectPolymorphicFields(this.sourceSObjectDescribe, incorrectDeclarations);
+
+        incorrectDeclarations.forEach(fieldName => {
+            this.script.logger.warn(RESOURCES.fieldIsNotOfPolymorphicType, this.name, fieldName);
+        });
+
+        if (incorrect.length > 0) {
+            //***** Found incorrect fields => 
+            ///      remove them from the query string
+            let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
+            this.parsedQuery.fields = new Array<SOQLField>();
+            fieldsInOriginalQuery.forEach(fieldName => {
+                fieldName = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR)[0];
+                if (incorrect.indexOf(fieldName) < 0) {
+                    this.parsedQuery.fields.push(getComposedField(fieldName));
+                } else {
+                    this.script.logger.warn(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
+                }
+            });
+            // Create new query string
+            this.query = composeQuery(this.parsedQuery);
+        }
+
+
+        // -----------------  Private functions ----------------- //
+        function ___getIncorrectPolymorphicFields(describe: SObjectDescribe, incorrectDeclarations: Array<string>): Array<string> {
+
+            let incorrectFields = new Array<string>();
+
+            [...describe.fieldsMap.values()].forEach(field => {
+
+                if (CONSTANTS.FIELDS_NOT_CHECK_FOR_POLYMORPHIC_ISSUES.indexOf(field.name) < 0) {
+
+                    field.isPolymorphicFieldDefinition = polymorphicFields.indexOf(field.name) >= 0;
+
+                    if (field.isPolymorphicField && !field.isPolymorphicFieldDefinition) {
+
+                        //***** Incorect polymorphic definition, regular lookup marked as polymorphic =>
+                        // this field should be changed to regular field type, 
+                        //   we should restore original lookup settings
+                        field.isPolymorphicField = false;
+                        field.polymorphicReferenceObjectType = '';
+                        field.referencedObjectType = field.originalReferencedObjectType;
+
+                        // Remove from polymorphic mappings
+                        self.referenceFieldToObjectMap.delete(field.name);
+
+                        if (incorrectDeclarations.indexOf(field.name) < 0) {
+                            incorrectDeclarations.push(field.name);
+                        }
+
+                    } else if (!field.isPolymorphicField && field.isPolymorphicFieldDefinition) {
+
+                        //***** Incorect polymorphic definition, polymorphic NOT marked =>
+                        // Add it to incorrect list since we do'nt know to which object it should be linked
+                        incorrectFields.push(field.name);
+                    }
+                }
+            });
+
+            return Common.distinctStringArray(incorrectFields);
+        }
+
     }
 
     private _validateFields(describe: SObjectDescribe, isSource: boolean) {

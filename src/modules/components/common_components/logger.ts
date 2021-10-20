@@ -131,6 +131,8 @@ export enum RESOURCES {
     missingFieldsToProcess = "missingFieldsToProcess",
     addedMissingParentLookupObject = "addedMissingParentLookupObject",
     failedToResolveExternalId = "failedToResolveExternalId",
+    fieldIsNotOfPolymorphicType = "fieldIsNotOfPolymorphicType",
+    fieldMissingPolymorphicDeclaration = "fieldMissingPolymorphicDeclaration",
 
     loadingCoreAddonManifestFile = "loadingCoreAddonManifestFile",
     loadingAddon = "loadingAddon",
