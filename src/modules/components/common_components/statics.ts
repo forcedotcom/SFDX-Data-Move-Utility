@@ -145,6 +145,10 @@ export const CONSTANTS = {
         "Name"
     ],
 
+    FIELDS_NOT_CHECK_FOR_POLYMORPHIC_ISSUES : [
+        'OwnerId'
+    ],
+
     MULTISELECT_SOQL_KEYWORDS: [
         "readonly_true",
         "readonly_false",

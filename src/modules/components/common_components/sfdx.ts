@@ -345,6 +345,25 @@ export class Sfdx implements IFieldMapping {
     }
 
     /**
+     * Returns mapping between the field name and the referenced sObject
+     * for all polymorphic fields for the current sObject
+     *
+     * @param {string} sObjectName The name of sObject to detect
+     * @return {*}  {Promise<Map<string, string>>}
+     * @memberof Sfdx
+     */
+    public async getPolymorphicObjectFields(sObjectName: string): Promise<string[]> {
+
+        let query = `SELECT QualifiedApiName	 
+                     FROM FieldDefinition 
+                     WHERE EntityDefinitionId = '${sObjectName}' 
+                        AND IsPolymorphicForeignKey = true`;
+        let records = await this.queryAsync(query, false);
+        return records.records.map(record => record["QualifiedApiName"]);
+    }
+
+
+    /**
      * Performs Connection#identity query
      *
      * @returns {Promise<IIdentityInfo>}
@@ -420,6 +439,7 @@ export class Sfdx implements IFieldMapping {
             f.cascadeDelete = field.cascadeDelete;
             f.lookup = field.referenceTo != null && field.referenceTo.length > 0;
             f.referencedObjectType = field.referenceTo[0];
+            f.originalReferencedObjectType = f.referencedObjectType;
             f.length = field.length || 0;
 
             // ------

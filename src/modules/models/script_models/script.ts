@@ -92,6 +92,10 @@ export default class Script {
     runInfo: ICommandRunInfo;
     canModify: string;
 
+    get sFOrg() : ScriptOrg{
+        return !this.sourceOrg.isFileMedia ? this.sourceOrg : this.targetOrg;
+    }
+
     get addonRuntime(): SfdmuRunAddonRuntime {
         return <any>this.addonManager.runtime;
     }
