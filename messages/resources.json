@@ -105,8 +105,8 @@
     "missingFieldsToProcess": "There are no fields to process for %s.",
     "addedMissingParentLookupObject" : "The parent sobject %s for the lookup field %s.%s has been included into the process. The externalId is set to '%s'.",
     "failedToResolveExternalId" : "Failed to resolve external Id '%s' for the parent sobject %s. Child lookup field: %s.%s.",
-    "fieldIsNotOfPolymorphicType" : "Object %s: the field %s is incorectly defined as a polymorphic field. The normal lookup field type has been applied.",
-    "fieldMissingPolymorphicDeclaration" : "Object %s: the field %s is missing declaration of the referenced sObject type (e.g. %s$Account). The field will be excluded from the process.",
+    "fieldIsNotOfPolymorphicType" : "[INFO] Object %s: the field %s is incorectly defined as a polymorphic field. The normal lookup field type has been applied.",
+    "fieldMissingPolymorphicDeclaration" : "[INFO] Object %s: the field %s is missing declaration of the referenced sObject type (e.g. %s$Account). The field will be excluded from the process.",
 
     "dataMigrationProcessStarted": "Preparing data migration job ...",
     "buildingMigrationStaregy": "Building migration strategy ...",

@@ -28,9 +28,6 @@ import * as deepClone from 'deep.clone';
 
 import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
-import { fileURLToPath } from "url";
-
-
 
 
 /**
@@ -747,7 +744,7 @@ export default class ScriptObject {
         incorrect = ___getIncorrectPolymorphicFields(this.sourceSObjectDescribe, incorrectDeclarations);
 
         incorrectDeclarations.forEach(fieldName => {
-            this.script.logger.warn(RESOURCES.fieldIsNotOfPolymorphicType, this.name, fieldName);
+            this.script.logger.infoVerbose(RESOURCES.fieldIsNotOfPolymorphicType, this.name, fieldName);
         });
 
         if (incorrect.length > 0) {
@@ -760,7 +757,7 @@ export default class ScriptObject {
                 if (incorrect.indexOf(fieldName) < 0) {
                     this.parsedQuery.fields.push(getComposedField(fieldName));
                 } else {
-                    this.script.logger.warn(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
+                    this.script.logger.infoVerbose(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
                 }
             });
             // Create new query string
