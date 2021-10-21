@@ -84,6 +84,8 @@ export default class ScriptObject {
     @Type(() => ScriptAddonManifestDefinition)
     beforeUpdateAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
+    @Type(() => ScriptAddonManifestDefinition)
+    afterUpdateAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
     // -----------------------------------
     script: Script;
@@ -737,29 +739,33 @@ export default class ScriptObject {
         let apiSf = new Sfdx(this.script.sFOrg);
         let polymorphicFields = await apiSf.getPolymorphicObjectFields(this.name);
 
-        // Verify field descriptions
-        let incorrectDeclarations = new Array<string>();
+        // => NON-polymorphic fields explicitely declared with object reference (ParentId$Account)
+        let nonPolymorphicFieldsButDeclared = new Array<string>();
 
-        let incorrect = ___getIncorrectPolymorphicFields(this.targetSObjectDescribe, incorrectDeclarations);
-        incorrect = ___getIncorrectPolymorphicFields(this.sourceSObjectDescribe, incorrectDeclarations);
+        // Polymorphic fields which are MISSING object reference declarations
+        // => Can be caused by the human error (incorrect query string) or then using multiselect keywords (e.g. "all")
+        let missingDeclarations = ___getIncorrectPolymorphicFields(this.targetSObjectDescribe, nonPolymorphicFieldsButDeclared);
+        missingDeclarations = ___getIncorrectPolymorphicFields(this.sourceSObjectDescribe, nonPolymorphicFieldsButDeclared);
 
-        incorrectDeclarations.forEach(fieldName => {
-            this.script.logger.infoVerbose(RESOURCES.fieldIsNotOfPolymorphicType, this.name, fieldName);
+        nonPolymorphicFieldsButDeclared.forEach(fieldName => {
+            this.script.logger.infoNormal(RESOURCES.fieldIsNotOfPolymorphicType, this.name, fieldName);
         });
 
-        if (incorrect.length > 0) {
+        if (missingDeclarations.length > 0) {
+
             //***** Found incorrect fields => 
             ///      remove them from the query string
             let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
             this.parsedQuery.fields = new Array<SOQLField>();
             fieldsInOriginalQuery.forEach(fieldName => {
                 fieldName = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR)[0];
-                if (incorrect.indexOf(fieldName) < 0) {
+                if (missingDeclarations.indexOf(fieldName) < 0) {
                     this.parsedQuery.fields.push(getComposedField(fieldName));
                 } else {
-                    this.script.logger.infoVerbose(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
+                    this.script.logger.infoNormal(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
                 }
             });
+
             // Create new query string
             this.query = composeQuery(this.parsedQuery);
         }

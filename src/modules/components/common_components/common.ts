@@ -29,6 +29,9 @@ import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionE
 import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
 import IPluginInfo from '../../models/common_models/IPluginInfo';
+import { ISfdmuAddonInfo } from '../../../addons/modules/sfdmu-run/custom-addons/package/common';
+
+
 const { closest } = require('fastest-levenshtein')
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
@@ -94,11 +97,13 @@ export class Common {
     public static getPluginInfo(command: SfdxCommand): IPluginInfo {
         let statics: typeof SfdxCommand = command["statics"];
         let pjson = require(path.join(statics.plugin.root, '/package.json'));
+        let runAddOnApiInfo = (pjson.addons.run as ISfdmuAddonInfo);
         let info = <IPluginInfo>{
             commandName: statics.name.toLowerCase(),
             pluginName: statics.plugin.name,
             version: pjson.version,
-            path: statics.plugin.root
+            path: statics.plugin.root,
+            runAddOnApiInfo
         };
         info.commandString = `sfdx ${info.pluginName}:${info.commandName} ${command.argv.join(' ')}`;
         info.argv = command.argv;
@@ -453,9 +458,9 @@ export class Common {
             if (!stringIgnoreCase) {
                 return arr.map<T>(mapObj => mapObj[distinctByProp])
                     .indexOf(obj[distinctByProp]) === pos;
-            } 
-            return arr.map<T>(mapObj =>((mapObj[distinctByProp] as any) || '').toLowerCase())
-                    .indexOf(((obj[distinctByProp] as any) || '').toLowerCase()) === pos;
+            }
+            return arr.map<T>(mapObj => ((mapObj[distinctByProp] as any) || '').toLowerCase())
+                .indexOf(((obj[distinctByProp] as any) || '').toLowerCase()) === pos;
         });
     }
 
@@ -469,7 +474,7 @@ export class Common {
      * @memberof CommonUtils
      */
     public static distinctStringArray(array: string[], stringIgnoreCase?: boolean): Array<string> {
-        if (!stringIgnoreCase){
+        if (!stringIgnoreCase) {
             return [...new Set<string>(array)];
         }
         let m = new Map(array.map(s => [s.toLowerCase(), s]));

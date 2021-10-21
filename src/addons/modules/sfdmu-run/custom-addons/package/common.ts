@@ -38,18 +38,50 @@ export type FieldType =
     | 'complexvalue'
 
 
-    export enum OPERATION {
-        Insert,
-        Update,
-        Upsert,
-        Readonly,
-        Delete,
-        DeleteSource,
-        DeleteHierarchy,
-        Unknown
-    }
+/**
+ * The available operations
+ *
+ * @export
+ * @enum {number}
+ */
+export enum OPERATION {
+    Insert,
+    Update,
+    Upsert,
+    Readonly,
+    Delete,
+    DeleteSource,
+    DeleteHierarchy,
+    Unknown
+}
 
-    export enum DATA_MEDIA_TYPE {
-        Org,
-        File
-    }
+
+/**
+ * The available media sources
+ *
+ * @export
+ * @enum {number}
+ */
+export enum DATA_MEDIA_TYPE {
+    Org,
+    File
+}
+
+
+/**
+ *  The detailed information about the current version of the Add-On Api.
+ *
+ * @export 
+ * @interface ISfdmuAddonInfo
+ */
+export interface ISfdmuAddonInfo {
+
+    /**
+     * The number of the Api version (f.ex. ```1.0.0```).
+     *
+     * @type {string}
+     * @memberof ISfdmuAddonInfo
+     */
+    version: string;
+}
+

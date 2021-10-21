@@ -92,7 +92,7 @@ export default class Script {
     runInfo: ICommandRunInfo;
     canModify: string;
 
-    get sFOrg() : ScriptOrg{
+    get sFOrg(): ScriptOrg {
         return !this.sourceOrg.isFileMedia ? this.sourceOrg : this.targetOrg;
     }
 
@@ -168,6 +168,7 @@ export default class Script {
 
         // Message about the running version      
         this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
+        this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningSfdmuRunAddOnVersion)]: pinfo.runAddOnApiInfo.version });
         this.logger.infoMinimal(RESOURCES.newLine);
 
         // Create add on manager
@@ -373,20 +374,30 @@ export default class Script {
                         thisField.parentLookupObject.script = null;
                         thisField.parentLookupObject.setup(this);
 
-                        // The permanent solution of "Cannot read property 'child__rSFields' of undefined"
-                        let externalIdFieldName = Common.getComplexField(thisField.parentLookupObject.externalId);
-                        let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName);
-                        if (!parentExternalIdField) {
-                            // The new externalid field does not found in the query.
-                            // Set 'Id' as externalid field.
-                            thisField.parentLookupObject.externalId = "Id";
-                            thisField.parentLookupObject.script = null;
-                            thisField.parentLookupObject.setup(this);
-                        }
+                    }
+
+                    // The permanent solution of "Cannot read property 'child__rSFields' of undefined"
+                    let externalIdFieldName1 = Common.getComplexField(thisField.parentLookupObject.externalId);
+                    let parentExternalIdField1 = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName1);
+                    if (!parentExternalIdField1) {
+                        // The new externalid field does not found in the query.
+                        // Set 'Id' as externalid field.
+                        thisField.parentLookupObject.externalId = "Id";
+                        thisField.parentLookupObject.script = null;
+                        thisField.parentLookupObject.setup(this);
+
+                        // Output the message about not found external id for the parent object
+                        this.logger.infoNormal(RESOURCES.theExternalIdNotFoundInTheQuery,
+                            thisField.objectName,
+                            thisField.nameId,
+                            externalIdFieldName1,
+                            thisField.parentLookupObject.name,
+                            thisField.parentLookupObject.name,
+                            thisField.parentLookupObject.externalId);
                     }
 
                     if (thisField.parentLookupObject.isExtraObject && isParentLookupObjectAdded) {
-                        // Output the nmessage about adding extra object missing in the script
+                        // Output the message about adding extra object missing in the script
                         this.logger.infoNormal(RESOURCES.addedMissingParentLookupObject,
                             thisField.parentLookupObject.name,
                             thisField.objectName,
