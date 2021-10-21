@@ -55,7 +55,8 @@ export enum ADDON_EVENTS {
     none = 'none',
     onBefore = "onBefore",
     onAfter = "onAfter",
-    onBeforeUpdate = "onBeforeUpdate"
+    onBeforeUpdate = "onBeforeUpdate",
+    onAfterUpdate = "onAfterUpdate"
 }
 
 export enum SPECIAL_MOCK_PATTERN_TYPES {

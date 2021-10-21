@@ -152,6 +152,13 @@ export default class SfdmuRunAddonManager {
                     manifest.addons.push(addon);
                 }
             });
+            object.afterUpdateAddons.forEach(addon => {
+                if (!addon.excluded && addon.command == this.fullCommandName) {
+                    addon.event = ADDON_EVENTS.onAfterUpdate;
+                    addon.objectName = object.name;
+                    manifest.addons.push(addon);
+                }
+            });
         });
         this.script.afterAddons.forEach(addon => {
             if (!addon.excluded && addon.command == this.fullCommandName) {

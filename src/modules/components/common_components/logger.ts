@@ -100,6 +100,7 @@ export enum RESOURCES {
     packageScript = "packageScript",
     pluginVersion = "pluginVersion",
     runningVersion = "runningVersion",
+    runningSfdmuRunAddOnVersion = "runningSfdmuRunAddOnVersion",
     workingPathDoesNotExist = "workingPathDoesNotExist",
     packageFileDoesNotExist = "packageFileDoesNotExist",
     loadingPackageFile = "loadingPackageFile",
@@ -133,6 +134,7 @@ export enum RESOURCES {
     failedToResolveExternalId = "failedToResolveExternalId",
     fieldIsNotOfPolymorphicType = "fieldIsNotOfPolymorphicType",
     fieldMissingPolymorphicDeclaration = "fieldMissingPolymorphicDeclaration",
+    theExternalIdNotFoundInTheQuery = "theExternalIdNotFoundInTheQuery",
 
     loadingCoreAddonManifestFile = "loadingCoreAddonManifestFile",
     loadingAddon = "loadingAddon",

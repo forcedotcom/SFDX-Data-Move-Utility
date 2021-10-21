@@ -20,7 +20,7 @@ See also:
 
 [Introduction to the SFDMU Add-On Api Engine](/full-documentation/add-on-api/introduction-to-the-sfdmu-add-on-api-engine)
 
-[The Export Files Core Add-On Module](full-documentation/add-on-api/export-file-core-add-on-module)
+[The Export Files Core Add-On Module](/full-documentation/add-on-api/export-file-core-add-on-module)
 
 [The Custom SFDMU Add-On Module Api](/full-documentation/add-on-api/custom-sfdmu-add-on-api)
 
