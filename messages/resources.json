@@ -189,6 +189,7 @@
     "queryingTotallyFetched": "{%s} Total retrieved within all stages (source/target): %s records.",
     "queryString": "{%s} Query string: %s.",
     "fetchingSummary": "Data retrieving summary",
+    "apiCallProgress": "In progress... Completed %s records.",
 
 
     "updatingTarget": "Updating the Target %s ...",

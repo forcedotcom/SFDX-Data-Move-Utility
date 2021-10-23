@@ -218,6 +218,7 @@ export enum RESOURCES {
     queryingTotallyFetched = "queryingTotallyFetched",
     queryString = "queryString",
     fetchingSummary = "fetchingSummary",
+    apiCallProgress = "apiCallProgress",
 
     updatingTarget = "updatingTarget",
     deletingTarget = "deletingTarget",

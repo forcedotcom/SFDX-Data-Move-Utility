@@ -56,6 +56,7 @@ export default class Script {
     bulkThreshold: number = CONSTANTS.DEFAULT_BULK_API_THRESHOLD_RECORDS;
     bulkApiVersion: string = CONSTANTS.DEFAULT_BULK_API_VERSION;
     bulkApiV1BatchSize: number = CONSTANTS.DEFAULT_BULK_API_V1_BATCH_SIZE;
+    restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
     allOrNone: boolean = false;
     promptOnUpdateError: boolean = true;
     promptOnMissingParentObjects: boolean = true;

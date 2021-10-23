@@ -20,8 +20,13 @@ export const CONSTANTS = {
     DEFAULT_BULK_API_THRESHOLD_RECORDS: 200,
     DEFAULT_BULK_API_VERSION: '2.0',
     DEFAULT_BULK_API_V1_BATCH_SIZE: 9500,
+    DEFAULT_REST_API_BATCH_SIZE: undefined,
     DEFAULT_API_VERSION: '49.0',
     DEFAULT_EXTERNAL_ID_FIELD_NAME: "Name",
+
+    QUERY_PROGRESS_RECORDS_INTERVAL: 300,
+    DOWNLOAD_BLOB_PROGRESS_RECORDS_INTERVAL: 10,
+
 
     __ID_FIELD_NAME: "___Id",
     __IS_PROCESSED_FIELD_NAME: "___IsProcessed",
@@ -228,6 +233,12 @@ export const CONSTANTS = {
         )]
     ]),
 
+    EXCLUDED_QUERY_FIELDS: new Map<string, Array<string>>([
+        ["Attachment", new Array<string>(
+            "Body"
+        )]
+    ]),
+
     // Some fields like Attachment.Body can't be compared to detect similar records.
     // Fields below are the comparable fields for the specific objects.
     FIELDS_TO_COMPARE_SOURCE_WITH_TARGET_RECORDS: new Map<string, Array<string>>([
@@ -245,6 +256,16 @@ export const CONSTANTS = {
     // since they are not of comparable type and are overloading the API.
     // We need to exclude such fields from querying the Target.
     FIELDS_EXCLUDED_FROM_TARGET_QUERY: new Map<string, Array<string>>([
+        ["Attachment", new Array<string>(
+            "Body"
+        )],
+        ["ContentVersion", new Array<string>(
+            "VersionData"
+        )]
+    ]),
+
+
+    FELDS_NOT_TO_OUTPUT_TO_TARGET_CSV: new Map<string, Array<string>>([
         ["Attachment", new Array<string>(
             "Body"
         )],
@@ -285,6 +306,7 @@ export const CONSTANTS = {
             "MailingStreet"
         )]
     ]),
+    
 
 
     // ------ AddOns -------------------- //

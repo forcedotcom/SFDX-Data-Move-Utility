@@ -30,6 +30,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     concurrencyMode: string;
     pollingIntervalMs: number
     bulkApiV1BatchSize: number;
+    restApiBatchSize: number;
     allOrNone: boolean;
     operation: OPERATION;
     updateRecordId: boolean;
@@ -44,8 +45,11 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
     apiJobCreateResult: IApiJobCreateResult;
 
-    numberJobRecordsSucceeded: number = 0;
+    numberJobRecordProcessed: number = 0;
     numberJobRecordsFailed: number = 0;
+    numberJobTotalRecordsToProcess: number = 0;
+
+    fieldsNotToWriteInTargetCSVFile: Array<string> = new Array<string>();
 
     get instanceUrl() {
         return this.connectionData.instanceUrl;
@@ -64,6 +68,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     }
 
     constructor(init: IApiEngineInitParameters) {
+
         this.logger = init.logger;
         this.connectionData = init.connectionData;
         this.sObjectName = init.sObjectName;
@@ -72,10 +77,15 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         this.concurrencyMode = init.concurrencyMode;
         this.updateRecordId = init.updateRecordId;
         this.bulkApiV1BatchSize = init.bulkApiV1BatchSize;
+        this.restApiBatchSize = init.restApiBatchSize;
         this.allOrNone = init.allOrNone;
         this.createTargetCSVFiles = init.createTargetCSVFiles;
         this.targetCSVFullFilename = init.targetCSVFullFilename;
         this.simulationMode = init.simulationMode;
+
+
+        this.fieldsNotToWriteInTargetCSVFile = CONSTANTS.FELDS_NOT_TO_OUTPUT_TO_TARGET_CSV.get(this.sObjectName) || new Array<string>();
+
         if (init.targetFieldMapping) {
             Object.assign(this, init.targetFieldMapping);
         }
@@ -98,6 +108,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         let mappedRecords = this.sourceRecordsToTarget(allRecords, this.sObjectName);
         this.sObjectName = mappedRecords.targetSObjectName;
         allRecords = mappedRecords.records;
+        this.numberJobTotalRecordsToProcess = allRecords.length;
 
         // Create CRUD job
         if (!this.simulationMode) {
@@ -207,6 +218,16 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
      * @memberof ApiEngineBase
      */
     protected async writeToTargetCSVFileAsync(records: Array<any>): Promise<void> {
+
+        // Filter records to write to CSV file
+        if (this.fieldsNotToWriteInTargetCSVFile.length > 0){
+            records.forEach(record => {
+                this.fieldsNotToWriteInTargetCSVFile.forEach(fieldName => {
+                    record[fieldName] = !!record[fieldName] ? record[fieldName] = `[${fieldName}]` : record[fieldName];
+                });
+            });
+        }
+
         if (this.createTargetCSVFiles) {
             await Common.writeCsvFileAsync(this.targetCSVFullFilename, records, true);
         }

@@ -26,7 +26,7 @@ import SFieldDescribe from "../sf_models/sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
 
-import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+import { BINARY_DATA_CACHES, DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
 
 
@@ -74,6 +74,7 @@ export default class ScriptObject {
     allRecords: boolean;
     master: boolean = true;
     excludedFields: Array<string> = new Array<string>();
+    binaryDataCache : BINARY_DATA_CACHES = BINARY_DATA_CACHES.InMemory;
 
     @Type(() => ScriptAddonManifestDefinition)
     beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();

@@ -1225,9 +1225,6 @@ export  default class MigrationJobTask {
                 });
             }
 
-            // Call addon onAfterUpdate event
-            await self.runAddonEvent(ADDON_EVENTS.onAfterUpdate)
-
             return totalProcessedAmount;
         }
 
@@ -1614,6 +1611,7 @@ export  default class MigrationJobTask {
                 pollingIntervalMs: this.script.pollingIntervalMs,
                 concurrencyMode: this.script.concurrencyMode,
                 updateRecordId,
+                restApiBatchSize: this.script.restApiBatchSize,
                 allOrNone: this.script.allOrNone,
                 targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                 createTargetCSVFiles: this.script.createTargetCSVFiles,

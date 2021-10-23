@@ -116,6 +116,7 @@ export interface IApiEngineInitParameters {
     targetCSVFullFilename: string,
     createTargetCSVFiles: boolean,
     bulkApiV1BatchSize?: number,
+    restApiBatchSize?: number,
     allOrNone?: boolean,
     targetFieldMapping?: IFieldMapping,
     simulationMode?: boolean

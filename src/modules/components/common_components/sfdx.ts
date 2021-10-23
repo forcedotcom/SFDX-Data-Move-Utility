@@ -54,6 +54,8 @@ export class Sfdx implements IFieldMapping {
     async queryAsync(soql: string, useBulkQueryApi: boolean): Promise<QueryResult<object>> {
 
         let self = this;
+        let nextProgressInfoAtRecord = 0;
+        let lastProgressMessageAt = 0;
 
         const makeQueryAsync = async (soql: string) => new Promise((resolve, reject) => {
 
@@ -64,9 +66,15 @@ export class Sfdx implements IFieldMapping {
 
             if (useBulkQueryApi) {
                 conn.bulk.query(soql).on("record", function (record: any) {
+                    if (records.length >= nextProgressInfoAtRecord) {
+                        nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_RECORDS_INTERVAL;
+                        lastProgressMessageAt = records.length + 1;
+                        self.logger.infoNormal(RESOURCES.apiCallProgress, String(lastProgressMessageAt));
+                    }
                     records.push(record);
                 }).on("end", function () {
                     ___fixRecords(records);
+                    ___outputProgress();
                     resolve(<QueryResult<object>>{
                         done: true,
                         records: records,
@@ -77,9 +85,15 @@ export class Sfdx implements IFieldMapping {
                 });
             } else {
                 let query = conn.query(soql).on("record", function (record: any) {
+                    if (records.length >= nextProgressInfoAtRecord) {
+                        nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_RECORDS_INTERVAL;
+                        lastProgressMessageAt = records.length + 1;
+                        self.logger.infoNormal(RESOURCES.apiCallProgress, String(lastProgressMessageAt));
+                    }
                     records.push(record);
                 }).on("end", function () {
                     ___fixRecords(records);
+                    ___outputProgress();
                     resolve(<QueryResult<object>>{
                         done: true,
                         records: records,
@@ -91,6 +105,13 @@ export class Sfdx implements IFieldMapping {
                     autoFetch: true,
                     maxFetch: CONSTANTS.MAX_FETCH_SIZE
                 });
+            }
+
+            function ___outputProgress() {
+                if (lastProgressMessageAt != records.length) {
+                    self.logger.infoNormal(RESOURCES.apiCallProgress, String(records.length));
+                }
+
             }
         });
 
@@ -124,14 +145,19 @@ export class Sfdx implements IFieldMapping {
         useBulkQueryApi: boolean = false,
         csvFullFilename?: string,
         sFieldsDescribeMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {
+
         let self = this;
+
         try {
+
             if (csvFullFilename && sFieldsDescribeMap) {
                 return await ___readAndFormatCsvRecordsAsync();
             }
+
             // Map query /////
             let parsedQuery = parseQuery(soql);
             soql = this.sourceQueryToTarget(soql, parsedQuery.sObject).query;
+
             // Query records /////
             let records = [].concat(await ___queryAsync(soql));
             if (/FROM Group([\s]+|$)/i.test(soql)) {
@@ -141,8 +167,10 @@ export class Sfdx implements IFieldMapping {
                 soql = soql.replace("FROM User", "FROM Group");
                 records = records.concat(await ___queryAsync(soql));
             }
+
             // Map records /////
             records = this.targetRecordsToSource(records, parsedQuery.sObject).records;
+
             return records;
         } catch (ex) {
             throw new CommandExecutionError(ex.message);
@@ -161,9 +189,7 @@ export class Sfdx implements IFieldMapping {
 
         function ___formatSoql(soql: string): [string, Map<string, Array<string>>, Array<string>, string] {
             let newParsedQuery = parseQuery(soql);
-            // if (newParsedQuery.where && newParsedQuery.where.left && newParsedQuery.where.left.openParen && !newParsedQuery.where.left.closeParen) {
-            //     newParsedQuery.where.left.closeParen = newParsedQuery.where.left.openParen;
-            // }
+            let excludedFields = __getExcludedFields(newParsedQuery.sObject);
             let originalFields: Array<SOQLField> = newParsedQuery.fields.map(x => {
                 return <SOQLField>x;
             });
@@ -182,7 +208,7 @@ export class Sfdx implements IFieldMapping {
                         let newSOQLFieldTmp = <SOQLField>newFieldTmp;
                         let newRawValueTmp = newSOQLFieldTmp["rawValue"] || newSOQLFieldTmp.field;
                         return newRawValueTmp.toLowerCase() == rawValueOrig.toLowerCase();
-                    })) {
+                    }) && excludedFields.indexOf(rawValueOrig) < 0) {
                         newParsedQuery.fields.push(originalField);
                     }
                 } else {
@@ -214,6 +240,20 @@ export class Sfdx implements IFieldMapping {
             return [newQuery, outputMap, originalFieldNamesToKeep, newParsedQuery.sObject];
         }
 
+        function __getExcludedFields(sObject: string): Array<string> {
+
+            let excluded = new Array<string>();
+
+            // Excluded fields 
+            let fields = CONSTANTS.EXCLUDED_QUERY_FIELDS.get(sObject);
+            if (fields != null) {
+                excluded = excluded.concat(fields);
+            }
+
+            return excluded;
+
+        }
+
         function ___parseRecords(rawRecords: Array<any>, query: string): Array<any> {
             const getNestedObject = (nestedObj: any, pathArr: any) => {
                 return pathArr.reduce((obj: any, key: any) => obj && obj[key] !== 'undefined' ? obj[key] : undefined, nestedObj);
@@ -243,31 +283,39 @@ export class Sfdx implements IFieldMapping {
         }
 
         function ___formatRecords(records: Array<any>, soqlFormat: [string, Map<string, Array<string>>, Array<string>, string]): Array<any> {
-            // Process complex keys}
-            if (soqlFormat[1].size == 0) {
-                return records;
-            }
-            let complexKeys = [...soqlFormat[1].keys()];
-            records.forEach(record => {
-                complexKeys.forEach(complexKey => {
-                    let fields = soqlFormat[1].get(complexKey);
-                    let value = [];
-                    fields.forEach(field => {
-                        if (record[field]) {
-                            value.push(record[field]);
-                        }
+            if (soqlFormat[1].size > 0) {
+                let complexKeys = [...soqlFormat[1].keys()];
+                records.forEach(record => {
+                    complexKeys.forEach(complexKey => {
+                        let fields = soqlFormat[1].get(complexKey);
+                        let value = [];
+                        fields.forEach(field => {
+                            if (record[field]) {
+                                value.push(record[field]);
+                            }
+                        });
+                        record[complexKey.toString()] = value.join(';') || null;
                     });
-                    record[complexKey.toString()] = value.join(';') || null;
+                    complexKeys.forEach(complexKey => {
+                        let fields = soqlFormat[1].get(complexKey);
+                        fields.forEach(field => {
+                            if (soqlFormat[2].indexOf(field) < 0) {
+                                delete record[field];
+                            }
+                        });
+                    });
                 });
-                complexKeys.forEach(complexKey => {
-                    let fields = soqlFormat[1].get(complexKey);
-                    fields.forEach(field => {
-                        if (soqlFormat[2].indexOf(field) < 0) {
-                            delete record[field];
-                        }
-                    });
+            }
+
+            // Add extra fields as null
+            let excludedFields = __getExcludedFields(soqlFormat[3]);
+            let extraFields = soqlFormat[2].filter(fieldName => excludedFields.indexOf(fieldName) >= 0);
+            extraFields.forEach(extraField => {
+                records.forEach(record => {
+                    record[extraField] = typeof record[extraField] == 'undefined' ? null : record[extraField];
                 });
             });
+
             return records;
         }
 
@@ -286,7 +334,6 @@ export class Sfdx implements IFieldMapping {
         }
 
         async function ___retrieveBlobFieldData(records: Array<any>, sObjectName: string): Promise<Array<any>> {
-
 
             let blobFields = CONSTANTS.BLOB_FIELDS.filter(field =>
                 records.length > 0
@@ -483,8 +530,15 @@ export class Sfdx implements IFieldMapping {
     async downloadBlobFieldDataAsync(recordIds: Array<string>, blobField: IBlobField): Promise<Map<string, string>> {
 
         let self = this;
+        let recordsCounter = 0;
+        let nextProgressInfoAtRecord = 0;
+        let lastProgressMessageAt = 0;
+
         const queue = recordIds.map(recordId => () => ___getBlobData(recordId, blobField));
         const downloadedBlobs: Array<[string, string]> = await Common.parallelTasksAsync(queue, CONSTANTS.MAX_PARALLEL_DOWNLOAD_THREADS);
+        if (lastProgressMessageAt != recordIds.length) {
+            self.logger.infoNormal(RESOURCES.apiCallProgress, recordIds.length + '/' + recordIds.length);
+        }
         return new Map<string, string>(downloadedBlobs);
 
         // ------------------ internal functions ------------------------- //        
@@ -497,8 +551,15 @@ export class Sfdx implements IFieldMapping {
                     buffers.push(data);
                 });
                 blob.on('end', function () {
+                    if (recordsCounter >= nextProgressInfoAtRecord) {
+                        nextProgressInfoAtRecord += CONSTANTS.DOWNLOAD_BLOB_PROGRESS_RECORDS_INTERVAL;
+                        self.logger.infoNormal(RESOURCES.apiCallProgress, recordsCounter + '/' + recordIds.length);
+                        lastProgressMessageAt = recordsCounter;
+                    }
+                    recordsCounter++;
                     resolve([recordId, Buffer.concat(buffers).toString(blobField.dataType)]);
                 });
+
             });
         }
     }
