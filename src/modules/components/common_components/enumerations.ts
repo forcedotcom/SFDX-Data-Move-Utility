@@ -63,3 +63,9 @@ export enum SPECIAL_MOCK_PATTERN_TYPES {
     haveAnyValue,
     missingValue
 }
+
+export enum BINARY_DATA_CACHES {
+    InMemory = "InMemory",
+    CleanFileCache = "CleanFileCache",
+    FileCache = "FileCache"
+}

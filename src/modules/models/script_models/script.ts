@@ -24,7 +24,7 @@ import MigrationJob from "../job_models/migrationJob";
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+import { BINARY_DATA_CACHES, DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 
 import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
@@ -56,6 +56,7 @@ export default class Script {
     bulkThreshold: number = CONSTANTS.DEFAULT_BULK_API_THRESHOLD_RECORDS;
     bulkApiVersion: string = CONSTANTS.DEFAULT_BULK_API_VERSION;
     bulkApiV1BatchSize: number = CONSTANTS.DEFAULT_BULK_API_V1_BATCH_SIZE;
+    restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
     allOrNone: boolean = false;
     promptOnUpdateError: boolean = true;
     promptOnMissingParentObjects: boolean = true;
@@ -70,6 +71,8 @@ export default class Script {
     keepObjectOrderWhileExecute: boolean = false;
     allowFieldTruncation: boolean = false;
     simulationMode: boolean = false;
+    binaryDataCache: BINARY_DATA_CACHES = BINARY_DATA_CACHES.InMemory;
+
 
 
     @Type(() => ScriptAddonManifestDefinition)
@@ -114,7 +117,7 @@ export default class Script {
 
     get targetDirectory(): string {
         if (!fs.existsSync(this.targetDirectoryPath)) {
-            fs.mkdirSync(this.targetDirectoryPath);
+            fs.mkdirSync(this.targetDirectoryPath, { recursive: true });
         }
         return this.targetDirectoryPath;
     }
@@ -125,9 +128,20 @@ export default class Script {
 
     get sourceDirectory(): string {
         if (!fs.existsSync(this.sourceDirectoryPath)) {
-            fs.mkdirSync(this.sourceDirectoryPath);
+            fs.mkdirSync(this.sourceDirectoryPath, { recursive: true });
         }
         return this.sourceDirectoryPath;
+    }
+
+    get binaryCacheDirectoryPath(): string {
+        return path.join(this.basePath, CONSTANTS.BINARY_CACHE_SUB_DIRECTORY, this.sourceOrg.orgUserName);
+    }
+
+    get binaryCacheDirectory(): string {
+        if (!fs.existsSync(this.binaryCacheDirectoryPath)) {
+            fs.mkdirSync(this.binaryCacheDirectoryPath, { recursive: true });
+        }
+        return this.binaryCacheDirectoryPath;
     }
 
     get hasDeleteFromSourceObjectOperation(): boolean {
@@ -280,6 +294,15 @@ export default class Script {
                 Common.deleteFolderRecursive(this.targetDirectoryPath, true);
             } catch (ex) {
                 throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteTargetDirectory, this.targetDirectoryPath));
+            }
+        }
+
+        // Perform clean-up the cache directories if need -------------- 
+        if (this.binaryDataCache == BINARY_DATA_CACHES.CleanFileCache) {
+            try {
+                Common.deleteFolderRecursive(this.binaryCacheDirectory, true);
+            } catch (ex) {
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteBinaryCacheDirectory, this.binaryCacheDirectory));
             }
         }
     }

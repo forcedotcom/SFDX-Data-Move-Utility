@@ -128,7 +128,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
             progress.batchId = jobResult.jobId;
             if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
                 numberBatchRecordsProcessed = progress.numberRecordsProcessed;
-                progress.numberRecordsProcessed += self.numberJobRecordsSucceeded;
+                progress.numberRecordsProcessed += self.numberJobRecordProcessed;
                 progress.numberRecordsFailed += self.numberJobRecordsFailed;
                 if (progressCallback) {
                     // Progress message: N batch records were processed
@@ -140,9 +140,9 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         // Batch & Job completed **************************************
         batchResult.jobId = jobResult.jobId;
         batchResult.batchId = jobResult.jobId;
-        batchResult.numberRecordsProcessed += self.numberJobRecordsSucceeded;
+        batchResult.numberRecordsProcessed += self.numberJobRecordProcessed;
         batchResult.numberRecordsFailed += self.numberJobRecordsFailed;
-        self.numberJobRecordsSucceeded = batchResult.numberRecordsProcessed;
+        self.numberJobRecordProcessed = batchResult.numberRecordsProcessed;
         self.numberJobRecordsFailed = batchResult.numberRecordsFailed;
         if (progressCallback) {
             // Progress message: job was completed

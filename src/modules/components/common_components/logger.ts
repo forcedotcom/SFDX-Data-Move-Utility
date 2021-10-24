@@ -162,6 +162,7 @@ export enum RESOURCES {
     csvFilesWereUpdated = "csvFilesWereUpdated",
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
     unableToDeleteTargetDirectory = "unableToDeleteTargetDirectory",
+    unableToDeleteBinaryCacheDirectory = "unableToDeleteBinaryCacheDirectory",
     unableToDeleteSourceDirectory = "unableToDeleteSourceDirectory",
     productionModificationApprovalPrompt = "productionModificationApprovalPrompt",
 
@@ -218,6 +219,7 @@ export enum RESOURCES {
     queryingTotallyFetched = "queryingTotallyFetched",
     queryString = "queryString",
     fetchingSummary = "fetchingSummary",
+    apiCallProgress = "apiCallProgress",
 
     updatingTarget = "updatingTarget",
     deletingTarget = "deletingTarget",

@@ -133,6 +133,7 @@
     "validationAndFixingsourceCSVFilesCompleted": "Validating and repairing of the source CSV files have finished.",
     "unableToDeleteTargetDirectory" : "Unable to clean-up the target directory: '%s'. Check whether any files is busy by another application.",
     "unableToDeleteSourceDirectory": "Unable to clean-up the souce directory: '%s'. Check whether any files is busy by another application.",
+    "unableToDeleteBinaryCacheDirectory": "Unable to clean-up the binary cache directory: '%s'. Check whether any files is busy by another application.",
     "productionModificationApprovalPrompt": "WARNING! The Tool has detected that you are about to modify the production environment.\nTo confirm the action and to continue, please, enter the domain name",
 
     "preparingJob": "Preparing has been finished.",
@@ -157,8 +158,8 @@
     "unexpectedApiError": "Unexpected Api error",
     "simulationMode": " (SIMULATION MODE)",
 
-    "gettingRecordsCount": "Getting the total amount of records limited by the object's SOQL query ...",
-    "totalRecordsAmount": "{%s} Total amount of the %s records: %s",
+    "gettingRecordsCount": "ANALYSING THE OVERALL DATA VLOLUME ...",
+    "totalRecordsAmount": "{%s} Total amount of the %s records should be retrieved by the object's SOQL query: %s",
 
     "deletingTargetData": "Deleting old data from the Target ...",
     "deletingSourceData": "Deleting data from the Source ...",
@@ -189,6 +190,7 @@
     "queryingTotallyFetched": "{%s} Total retrieved within all stages (source/target): %s records.",
     "queryString": "{%s} Query string: %s.",
     "fetchingSummary": "Data retrieving summary",
+    "apiCallProgress": "In progress... Completed %s records.",
 
 
     "updatingTarget": "Updating the Target %s ...",

@@ -145,7 +145,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                             numberBatchRecordsProcessed = processed;
                             let progress = new ApiInfo({
                                 jobState: "InProgress",
-                                numberRecordsProcessed: self.numberJobRecordsSucceeded + processed,
+                                numberRecordsProcessed: self.numberJobRecordProcessed + processed,
                                 numberRecordsFailed: self.numberJobRecordsFailed + failed,
                                 jobId: job.id,
                                 batchId: batch.id
@@ -166,7 +166,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                         if (self.operation == OPERATION.Insert && self.updateRecordId) {
                             record["Id"] = resultRecords[index].id;
                         }
-                        self.numberJobRecordsSucceeded++;
+                        self.numberJobRecordProcessed++;
                     } else {
                         if (resultRecords[index].errors) {
                             record[CONSTANTS.ERRORS_FIELD_NAME] = resultRecords[index].errors.join('; ');
@@ -174,6 +174,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                             record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                         }
                         self.numberJobRecordsFailed++;
+                        self.numberJobRecordProcessed++;
                     }
                 });
                 if (progressCallback) {
@@ -181,7 +182,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                         // Some records are failed
                         progressCallback(new ApiInfo({
                             jobState: "JobComplete",
-                            numberRecordsProcessed: self.numberJobRecordsSucceeded,
+                            numberRecordsProcessed: self.numberJobRecordProcessed,
                             numberRecordsFailed: self.numberJobRecordsFailed,
                             jobId: job.id,
                             batchId: batch.id

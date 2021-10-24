@@ -11,11 +11,12 @@ import { ApiInfo, IApiEngine } from ".";
 import { Common } from "../../components/common_components/common";
 import { CsvChunks, ScriptObject } from "..";
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
-import { OPERATION } from "../../components/common_components/enumerations";
+import { BINARY_DATA_CACHES, OPERATION } from "../../components/common_components/enumerations";
 import { CONSTANTS } from "../../components/common_components/statics";
 
 
-
+import * as fs from 'fs';
+import * as path from 'path';
 
 
 
@@ -30,6 +31,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     concurrencyMode: string;
     pollingIntervalMs: number
     bulkApiV1BatchSize: number;
+
     allOrNone: boolean;
     operation: OPERATION;
     updateRecordId: boolean;
@@ -44,8 +46,15 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
     apiJobCreateResult: IApiJobCreateResult;
 
-    numberJobRecordsSucceeded: number = 0;
+    numberJobRecordProcessed: number = 0;
     numberJobRecordsFailed: number = 0;
+    numberJobTotalRecordsToProcess: number = 0;
+
+    binaryDataCache: BINARY_DATA_CACHES = BINARY_DATA_CACHES.InMemory;
+    restApiBatchSize: number;
+    binaryCacheDirectory: string;
+
+    fieldsNotToWriteInTargetCSVFile: Array<string> = new Array<string>();
 
     get instanceUrl() {
         return this.connectionData.instanceUrl;
@@ -64,6 +73,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     }
 
     constructor(init: IApiEngineInitParameters) {
+
         this.logger = init.logger;
         this.connectionData = init.connectionData;
         this.sObjectName = init.sObjectName;
@@ -72,10 +82,17 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         this.concurrencyMode = init.concurrencyMode;
         this.updateRecordId = init.updateRecordId;
         this.bulkApiV1BatchSize = init.bulkApiV1BatchSize;
+        this.restApiBatchSize = init.restApiBatchSize;
         this.allOrNone = init.allOrNone;
         this.createTargetCSVFiles = init.createTargetCSVFiles;
         this.targetCSVFullFilename = init.targetCSVFullFilename;
         this.simulationMode = init.simulationMode;
+        this.binaryDataCache = init.binaryDataCache;
+        this.binaryCacheDirectory = init.binaryCacheDirectory;
+
+
+        this.fieldsNotToWriteInTargetCSVFile = CONSTANTS.FELDS_NOT_TO_OUTPUT_TO_TARGET_CSV.get(this.sObjectName) || new Array<string>();
+
         if (init.targetFieldMapping) {
             Object.assign(this, init.targetFieldMapping);
         }
@@ -98,6 +115,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         let mappedRecords = this.sourceRecordsToTarget(allRecords, this.sObjectName);
         this.sObjectName = mappedRecords.targetSObjectName;
         allRecords = mappedRecords.records;
+        this.numberJobTotalRecordsToProcess = allRecords.length;
 
         // Create CRUD job
         if (!this.simulationMode) {
@@ -207,6 +225,16 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
      * @memberof ApiEngineBase
      */
     protected async writeToTargetCSVFileAsync(records: Array<any>): Promise<void> {
+
+        // Filter records to write to CSV file
+        if (this.fieldsNotToWriteInTargetCSVFile.length > 0) {
+            records.forEach(record => {
+                this.fieldsNotToWriteInTargetCSVFile.forEach(fieldName => {
+                    record[fieldName] = !!record[fieldName] ? record[fieldName] = `[${fieldName}]` : record[fieldName];
+                });
+            });
+        }
+
         if (this.createTargetCSVFiles) {
             await Common.writeCsvFileAsync(this.targetCSVFullFilename, records, true);
         }
@@ -235,6 +263,35 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         } else {
             return records;
         }
+    }
+
+    protected loadBinaryDataFromCache(records: Array<any>): Array<any> {
+
+        if (records.length == 0) {
+            return records;
+        }
+
+        // Load from cache
+        if (this.binaryDataCache == BINARY_DATA_CACHES.FileCache
+            || this.binaryDataCache == BINARY_DATA_CACHES.CleanFileCache) {
+            let binaryFields = Object.keys(records[0]).filter(key => (records[0][key] || '').startsWith(CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER_PREFIX));
+            // Check from cache 
+            if (binaryFields.length > 0) {
+                records.forEach(record => {
+                    binaryFields.forEach(field => {
+                        let binaryId = CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER_ID(record[field]);
+                        if (binaryId) {
+                            let cacheFilename = path.join(this.binaryCacheDirectory, CONSTANTS.BINARY_FILE_CACHE_TEMPLATE(binaryId));
+                            if (fs.existsSync(cacheFilename)) {
+                                let blob = fs.readFileSync(cacheFilename, 'utf-8');
+                                record[field] = blob;
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
     }
 
 }

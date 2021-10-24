@@ -231,7 +231,10 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
                         bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
                         targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
                         createTargetCSVFiles: this.#script.createTargetCSVFiles,
-                        targetFieldMapping: null
+                        targetFieldMapping: null,
+                        restApiBatchSize: this.#script.restApiBatchSize,
+                        binaryDataCache : this.#script.binaryDataCache,
+                        binaryCacheDirectory: this.#script.binaryCacheDirectory
                     });
                     break;
             }
