@@ -53,6 +53,7 @@ export const CONSTANTS = {
 
     CSV_SOURCE_SUB_DIRECTORY: "source",
     CSV_TARGET_SUB_DIRECTORY: "target",
+    BINARY_CACHE_SUB_DIRECTORY: "binary_cache",
     CSV_SOURCE_FILE_SUFFIX: "_source",
     CSV_TARGET_FILE_SUFFIX: "_target",
     CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX: "_person",
@@ -64,6 +65,10 @@ export const CONSTANTS = {
     MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME: "MissingParentRecordsReport.csv",
     FIELD_MAPPING_FILENAME: "FieldMapping.csv",
     CSV_FILES_SOURCENAME: "csvfile",
+    BINARY_FILE_CACHE_TEMPLATE: (id: string) => `${id}.blob`,
+    BINARY_FILE_CACHE_RECORD_PLACEHOLDER: (id:string) => `[blob[${id}]]`,
+    BINARY_FILE_CACHE_RECORD_PLACEHOLDER_ID: (value: any) => /\[blob\[([\w\d]+)\]\]/.exec(value || '')[1],
+    BINARY_FILE_CACHE_RECORD_PLACEHOLDER_PREFIX: '[blob[',
 
     DEFAULT_ORG_MEDIA_TYPE: "csvfile",
 

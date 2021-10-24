@@ -174,6 +174,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                             record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                         }
                         self.numberJobRecordsFailed++;
+                        self.numberJobRecordProcessed++;
                     }
                 });
                 if (progressCallback) {

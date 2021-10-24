@@ -7,7 +7,7 @@
 import { Logger } from '../../components/common_components/logger';
 import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
-import { OPERATION } from '../../components/common_components/enumerations';
+import { BINARY_DATA_CACHES, OPERATION } from '../../components/common_components/enumerations';
 import { ApiInfo } from '.';
 
 
@@ -119,7 +119,9 @@ export interface IApiEngineInitParameters {
     restApiBatchSize?: number,
     allOrNone?: boolean,
     targetFieldMapping?: IFieldMapping,
-    simulationMode?: boolean
+    simulationMode?: boolean,
+    binaryDataCache?: BINARY_DATA_CACHES;
+    binaryCacheDirectory?: string;
 }
 
 export interface ICsvChunk {

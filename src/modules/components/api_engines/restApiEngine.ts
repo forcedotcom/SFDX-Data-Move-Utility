@@ -68,6 +68,8 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
 
         return new Promise<Array<any>>((resolve, reject) => {
 
+            self.loadBinaryDataFromCache(csvChunk.records);
+           
             if (progressCallback) {
                 // Progress message: operation started
                 progressCallback(new ApiInfo({
@@ -129,6 +131,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                     } else {
                         record[CONSTANTS.ERRORS_FIELD_NAME] = resultRecords[index].errors[0].message;
                         self.numberJobRecordsFailed++;
+                        self.numberJobRecordProcessed++;
                     }
                 });
                 if (progressCallback) {
@@ -146,6 +149,8 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                     if (self.numberJobRecordProcessed == self.numberJobTotalRecordsToProcess){
                         progressCallback(new ApiInfo({
                             jobState: "OperationFinished",
+                            numberRecordsProcessed: self.numberJobRecordProcessed,
+                            numberRecordsFailed: self.numberJobRecordsFailed,
                             jobId: apiInfo.jobId,
                             batchId: apiInfo.batchId
                         }));

@@ -19,8 +19,12 @@ import { Common } from './common';
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult, IIdentityInfo } from '../../models/common_models/helper_interfaces';
 import { Logger, RESOURCES } from './logger';
 import { IBlobField } from '../../models/api_models';
+import { BINARY_DATA_CACHES } from './enumerations';
 
 var jsforce = require("jsforce");
+
+import * as fs from 'fs';
+import * as path from 'path';
 
 
 export class Sfdx implements IFieldMapping {
@@ -544,6 +548,16 @@ export class Sfdx implements IFieldMapping {
         // ------------------ internal functions ------------------------- //        
         async function ___getBlobData(recordId: string, blobField: IBlobField): Promise<[string, string]> {
             return new Promise<[string, string]>(resolve => {
+                let cacheFilename = path.join(self.org.script.binaryCacheDirectory, CONSTANTS.BINARY_FILE_CACHE_TEMPLATE(recordId));
+                if (self.org.script.binaryDataCache == BINARY_DATA_CACHES.FileCache
+                    || self.org.script.binaryDataCache == BINARY_DATA_CACHES.CleanFileCache) {
+                    // Check from cache                  
+                    if (fs.existsSync(cacheFilename)) {
+                        resolve([recordId, CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER(recordId)]);
+                        return;
+                    }
+                }
+
                 var conn = self.org.getConnection();
                 let blob = conn.sobject(blobField.objectName).record(recordId).blob(blobField.fieldName);
                 let buffers = new Array<any>();
@@ -557,7 +571,15 @@ export class Sfdx implements IFieldMapping {
                         lastProgressMessageAt = recordsCounter;
                     }
                     recordsCounter++;
-                    resolve([recordId, Buffer.concat(buffers).toString(blobField.dataType)]);
+                    let data = Buffer.concat(buffers).toString(blobField.dataType);
+                    if (self.org.script.binaryDataCache == BINARY_DATA_CACHES.FileCache
+                        || self.org.script.binaryDataCache == BINARY_DATA_CACHES.CleanFileCache) {
+                        // write to cache
+                        fs.writeFileSync(cacheFilename, data, 'utf-8');
+                        resolve([recordId, CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER(recordId)]);
+                        return;
+                    }
+                    resolve([recordId, data]);
                 });
 
             });
