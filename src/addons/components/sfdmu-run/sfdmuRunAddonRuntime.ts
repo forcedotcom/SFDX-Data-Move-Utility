@@ -16,7 +16,7 @@ import { Common } from "../../../modules/components/common_components/common";
 import { Logger } from "../../../modules/components/common_components/logger";
 import { Sfdx } from "../../../modules/components/common_components/sfdx";
 import { CONSTANTS } from "../../../modules/components/common_components/statics";
-import { Script, TaskData } from "../../../modules/models";
+import { OrgConnectionData, Script, TaskData } from "../../../modules/models";
 import { IApiEngine, IBlobField } from "../../../modules/models/api_models";
 import { SFDMU_RUN_ADDON_MESSAGES } from "../../messages/sfdmuRunAddonMessages";
 
@@ -80,12 +80,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
         return isSource ? this.#script.sourceOrg.getConnection() : this.#script.targetOrg.getConnection();
     }
 
-    getOrgInfo(isSource: boolean): {
-        instanceUrl: string;
-        accessToken: string;
-        apiVersion: string;
-        isFile: boolean;
-    } {
+    getOrgInfo(isSource: boolean): OrgConnectionData {
         return isSource ? Object.assign(this.#script.sourceOrg.connectionData, {
             isFile: this.#script.sourceOrg.media == DATA_MEDIA_TYPE.File
         }) : Object.assign(this.#script.targetOrg.connectionData, {

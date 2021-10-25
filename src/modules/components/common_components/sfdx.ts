@@ -520,7 +520,8 @@ export class Sfdx implements IFieldMapping {
             instanceUrl: connectionData.instanceUrl,
             accessToken: connectionData.accessToken,
             version: connectionData.apiVersion,
-            maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS
+            maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS,
+            proxyUrl: connectionData.proxyUrl
         });
     }
 

@@ -9,6 +9,7 @@ export interface IOrgConnectionData {
     instanceUrl: string;
     accessToken: string;
     apiVersion: string;
+    proxyUrl: string;
 }
 
 export interface IMockField {

@@ -9,7 +9,7 @@ import { MigrationJobTask, SFieldDescribe, ScriptObject, ScriptOrg } from "..";
 import { CONSTANTS } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Common } from "../../components/common_components/common";
-import { IMissingParentLookupRecordCsvRow } from "./helper_interfaces";
+import { IMissingParentLookupRecordCsvRow, IOrgConnectionData } from "./helper_interfaces";
 import { ICsvChunk } from "../api_models";
 import "reflect-metadata";
 import "es6-shim";
@@ -516,6 +516,13 @@ export class AddonManifest {
 }
 
 
+export class OrgConnectionData implements IOrgConnectionData {
+    instanceUrl: string;
+    accessToken: string;
+    apiVersion: string;
+    proxyUrl: string
+    isFile: boolean;
+}
 
 
 

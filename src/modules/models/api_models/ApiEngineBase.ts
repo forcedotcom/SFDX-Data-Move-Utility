@@ -68,6 +68,10 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         return this.connectionData.apiVersion;
     }
 
+    get proxyUrl() {
+        return this.connectionData.proxyUrl;
+    }
+
     get strOperation(): string {
         return ScriptObject.getStrOperation(this.operation);
     }

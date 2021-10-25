@@ -54,7 +54,8 @@ export default class ScriptOrg {
         return {
             instanceUrl: this.instanceUrl,
             accessToken: this.accessToken,
-            apiVersion: this.script.apiVersion
+            apiVersion: this.script.apiVersion,
+            proxyUrl: this.script.proxyUrl
         };
     }
 

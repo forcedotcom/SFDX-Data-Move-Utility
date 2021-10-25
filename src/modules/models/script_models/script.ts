@@ -72,6 +72,7 @@ export default class Script {
     allowFieldTruncation: boolean = false;
     simulationMode: boolean = false;
     binaryDataCache: BINARY_DATA_CACHES = BINARY_DATA_CACHES.InMemory;
+    proxyUrl: string;
 
 
 
