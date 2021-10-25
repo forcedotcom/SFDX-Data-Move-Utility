@@ -44,7 +44,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
         if (!this.restApiBatchSize){
             chunks = new CsvChunks().fromArray(this.getSourceRecordsArray(allRecords));
         } else {
-            let recordChunks = Common.chunkArray(allRecords, this.restApiBatchSize);
+            let recordChunks = Common.chunkArray(this.getSourceRecordsArray(allRecords), this.restApiBatchSize);
             chunks = new CsvChunks().fromArrayChunks(recordChunks);
         }
         this.apiJobCreateResult = {

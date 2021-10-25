@@ -58,7 +58,11 @@ export class Sfdx implements IFieldMapping {
     async queryAsync(soql: string, useBulkQueryApi: boolean): Promise<QueryResult<object>> {
 
         let self = this;
-        let nextProgressInfoAtRecord = 0;
+        
+        // Sets, when output the first progress message
+        const firstProgressMessageAt = CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
+
+        let nextProgressInfoAtRecord = firstProgressMessageAt;
         let lastProgressMessageAt = 0;
 
         const makeQueryAsync = async (soql: string) => new Promise((resolve, reject) => {
@@ -71,7 +75,7 @@ export class Sfdx implements IFieldMapping {
             if (useBulkQueryApi) {
                 conn.bulk.query(soql).on("record", function (record: any) {
                     if (records.length >= nextProgressInfoAtRecord) {
-                        nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_RECORDS_INTERVAL;
+                        nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
                         lastProgressMessageAt = records.length + 1;
                         self.logger.infoNormal(RESOURCES.apiCallProgress, String(lastProgressMessageAt));
                     }
@@ -90,7 +94,7 @@ export class Sfdx implements IFieldMapping {
             } else {
                 let query = conn.query(soql).on("record", function (record: any) {
                     if (records.length >= nextProgressInfoAtRecord) {
-                        nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_RECORDS_INTERVAL;
+                        nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
                         lastProgressMessageAt = records.length + 1;
                         self.logger.infoNormal(RESOURCES.apiCallProgress, String(lastProgressMessageAt));
                     }
@@ -112,7 +116,7 @@ export class Sfdx implements IFieldMapping {
             }
 
             function ___outputProgress() {
-                if (lastProgressMessageAt != records.length) {
+                if (lastProgressMessageAt != records.length && records.length >= firstProgressMessageAt) {
                     self.logger.infoNormal(RESOURCES.apiCallProgress, String(records.length));
                 }
 
@@ -566,7 +570,7 @@ export class Sfdx implements IFieldMapping {
                 });
                 blob.on('end', function () {
                     if (recordsCounter >= nextProgressInfoAtRecord) {
-                        nextProgressInfoAtRecord += CONSTANTS.DOWNLOAD_BLOB_PROGRESS_RECORDS_INTERVAL;
+                        nextProgressInfoAtRecord += CONSTANTS.DOWNLOAD_BLOB_PROGRESS_MESSAGE_PER_RECORDS;
                         self.logger.infoNormal(RESOURCES.apiCallProgress, recordsCounter + '/' + recordIds.length);
                         lastProgressMessageAt = recordsCounter;
                     }
