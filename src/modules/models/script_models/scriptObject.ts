@@ -74,6 +74,7 @@ export default class ScriptObject {
     allRecords: boolean;
     master: boolean = true;
     excludedFields: Array<string> = new Array<string>();
+    restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
 
     @Type(() => ScriptAddonManifestDefinition)
     beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();

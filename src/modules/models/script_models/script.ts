@@ -71,10 +71,16 @@ export default class Script {
     keepObjectOrderWhileExecute: boolean = false;
     allowFieldTruncation: boolean = false;
     simulationMode: boolean = false;
+
+    proxyUrl: string;
+
     binaryDataCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
     sourceRecordsCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
-    proxyUrl: string;
-    maxParallelBinaryDownloads: number = CONSTANTS.DEFAULT_MAX_PARALLEL_BLOB_DOWNLOADS;
+
+    parallelBinaryDownloads: number = CONSTANTS.DEFAULT_MAX_PARALLEL_BLOB_DOWNLOADS;
+
+    parallelBulkJobs: number = 1;
+    parallelRestJobs: number = 1;
 
 
 

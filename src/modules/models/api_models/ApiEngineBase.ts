@@ -102,6 +102,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         }
     }
 
+
     sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query, targetSObjectName: sourceObjectName };
     sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
     targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
@@ -137,6 +138,15 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
 
         // Return
         return resultRecords;
+    }
+
+    async executeCRUDMultithreaded(allRecords: any[], progressCallback: (progress: ApiInfo) => void, threadsCount: number): Promise<any[]> {
+        if (!threadsCount || threadsCount <= 1) {
+            return await this.executeCRUD(allRecords, progressCallback);
+        }
+
+        
+
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {

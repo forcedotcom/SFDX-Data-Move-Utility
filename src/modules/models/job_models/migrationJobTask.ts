@@ -37,7 +37,7 @@ import { ApiInfo } from '../api_models';
 
 MockGenerator.createCustomGenerators(casual);
 
-export  default class MigrationJobTask {
+export default class MigrationJobTask {
 
     scriptObject: ScriptObject;
     job: Job;
@@ -1136,10 +1136,10 @@ export  default class MigrationJobTask {
 
             // Deleting ////////
             self.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, self.sObjectName, String(self.sourceData.records.length));
-            
+
             let recordsToDelete = self.sourceData.records.map(record => {
                 return {
-                    Id : record["Id"]
+                    Id: record["Id"]
                 }
             });
 
@@ -1509,19 +1509,19 @@ export  default class MigrationJobTask {
             return updatedRecords;
         }
 
-        function ___testRegex(expr: string, value: string) : boolean{
+        function ___testRegex(expr: string, value: string): boolean {
             switch (expr) {
                 case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.haveAnyValue):
                     // * 
                     return !!value;
 
                 case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.missingValue):
-                        // ^* 
-                        return !value;
-            
+                    // ^* 
+                    return !value;
+
                 default:
                     // regex
-                   return new RegExp(expr, 'ig').test(value);
+                    return new RegExp(expr, 'ig').test(value);
             }
         }
 
@@ -1613,7 +1613,7 @@ export  default class MigrationJobTask {
                 pollingIntervalMs: this.script.pollingIntervalMs,
                 concurrencyMode: this.script.concurrencyMode,
                 updateRecordId,
-                restApiBatchSize: this.script.restApiBatchSize,
+                restApiBatchSize: this.scriptObject.restApiBatchSize || this.script.restApiBatchSize,
                 allOrNone: this.script.allOrNone,
                 targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                 createTargetCSVFiles: this.script.createTargetCSVFiles,

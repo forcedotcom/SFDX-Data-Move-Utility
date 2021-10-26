@@ -1436,14 +1436,14 @@ export class Common {
      * @static
      * @param {Array<(...args: any[]) => Promise<any>>} fns The functions to execute
      * @param {*} [thisArg] This arg to apply to all functions
-     * @param {number} [maxParallelTasks=5] The maximum parallelizm
+     * @param {number} [maxParallelTasks=10] The maximum parallelizm
      * @returns {Promise<any[]>} Array of results of all functions
      * @memberof Common
      */
-    public static async parallelExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any, maxParallelTasks: number = 5): Promise<any[]> {
+    public static async parallelExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any, maxParallelTasks: number = 10): Promise<any[]> {
         thisArg = thisArg || this;
         const queue = fns.map(fn => () => fn.bind(thisArg, ...fn.arguments));
-        const result: any[] = await Common.parallelTasksAsync(queue, maxParallelTasks || CONSTANTS.DEFAULT_MAX_PARALLEL_TASKS);
+        const result: any[] = await Common.parallelTasksAsync(queue, maxParallelTasks || CONSTANTS.DEFAULT_MAX_PARALLEL_EXEC_TASKS);
         return result;
     }
 

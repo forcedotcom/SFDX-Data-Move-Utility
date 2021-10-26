@@ -588,7 +588,7 @@ export class Sfdx implements IFieldMapping {
         let lastProgressMessageAt = 0;
 
         const queue = recordIds.map(recordId => () => ___getBlobData(recordId, blobField));
-        const downloadedBlobs: Array<[string, string]> = await Common.parallelTasksAsync(queue, self.org.script.maxParallelBinaryDownloads);
+        const downloadedBlobs: Array<[string, string]> = await Common.parallelTasksAsync(queue, self.org.script.parallelBinaryDownloads);
         if (lastProgressMessageAt != recordIds.length) {
             self.logger.infoNormal(RESOURCES.apiCallProgress, recordIds.length + '/' + recordIds.length);
         }

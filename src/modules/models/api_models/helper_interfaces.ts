@@ -36,6 +36,19 @@ export interface IApiEngine {
     executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>>;
 
     /**
+     * Executes complete api operation in several threads in parallel
+     * including api job create and api job execute 
+     *
+     * @param {Array<any>} allRecords
+     * @param {(progress: ApiInfo) => void} progressCallback
+     * @param {number} threadsCount The maximum threads count
+     * @return {*}  {Promise<Array<any>>}
+     * @memberof IApiEngine
+     */
+    executeCRUDMultithreaded(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void, threadsCount: number): Promise<Array<any>>;
+
+
+    /**
      * Creates api job
      * @param {Array<any>} allRecords The all source records to process
      * @returns {Promise<IApiJobCreateResult>} 
@@ -43,13 +56,13 @@ export interface IApiEngine {
      */
     createCRUDApiJobAsync: (allrecords: Array<any>) => Promise<IApiJobCreateResult>;
 
-     /**
-     * Creates api job in simulation mode
-     * @param {Array<any>} allRecords The all source records to process
-     * @returns {Promise<IApiJobCreateResult>} 
-     * @memberof IApiProcess
-     */
-      createCRUDSimulationJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult>;
+    /**
+    * Creates api job in simulation mode
+    * @param {Array<any>} allRecords The all source records to process
+    * @returns {Promise<IApiJobCreateResult>} 
+    * @memberof IApiProcess
+    */
+    createCRUDSimulationJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult>;
 
 
     /**
@@ -139,7 +152,7 @@ export interface IApiJobCreateResult {
 /**
  * Holds the meta information about the blob record
  */
- export interface IBlobField {
+export interface IBlobField {
 
     objectName: string,
     fieldName: string,
