@@ -30,6 +30,7 @@ import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
 import IPluginInfo from '../../models/common_models/IPluginInfo';
 import { ISfdmuAddonInfo } from '../../../addons/modules/sfdmu-run/custom-addons/package/common';
+import { Buffer } from 'buffer';
 
 
 const { closest } = require('fastest-levenshtein')
@@ -336,12 +337,36 @@ export class Common {
      * Returns numeric hashcode of the input string
      *
      * @static
-     * @param {string} inputString 
+     * @param {string} inputString the input string value
      * @returns {number}
      * @memberof CommonUtils
      */
     public static getStringHashcode(inputString: string): number {
         return !inputString ? 0 : inputString.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
+    }
+
+    /**
+     * Calculate a 32 bit FNV-1a hash
+     *
+     * @param {string} inputString the input value
+     * @param {boolean} asString set to true to return the hash value as 
+     *                          8-digit hex string instead of an integer
+     * @param {number} seed optionally pass the hash of the previous chunk
+     * @returns {number | string}
+     */
+    public static getString32FNV1AHashcode(inputString: string, asString?: boolean, seed?: number): string | number {
+        var i: number, l: number,
+            hval = (seed === undefined) ? 0x811c9dc5 : seed;
+
+        for (i = 0, l = inputString.length; i < l; i++) {
+            hval ^= inputString.charCodeAt(i);
+            hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+        }
+        if (asString) {
+            // Convert to 8 digit hex string
+            return ("0000000" + (hval >>> 0).toString(16)).substr(-8);
+        }
+        return hval >>> 0;
     }
 
     /**
@@ -1418,7 +1443,7 @@ export class Common {
     public static async parallelExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any, maxParallelTasks: number = 5): Promise<any[]> {
         thisArg = thisArg || this;
         const queue = fns.map(fn => () => fn.bind(thisArg, ...fn.arguments));
-        const result: any[] = await Common.parallelTasksAsync(queue, maxParallelTasks || CONSTANTS.MAX_PARALLEL_DOWNLOAD_THREADS);
+        const result: any[] = await Common.parallelTasksAsync(queue, maxParallelTasks || CONSTANTS.DEFAULT_MAX_PARALLEL_TASKS);
         return result;
     }
 
@@ -1574,5 +1599,6 @@ export class Common {
         const matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
         return matches && matches[1];
     }
+
 
 }

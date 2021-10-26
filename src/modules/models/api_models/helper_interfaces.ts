@@ -7,7 +7,7 @@
 import { Logger } from '../../components/common_components/logger';
 import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
-import { BINARY_DATA_CACHES, OPERATION } from '../../components/common_components/enumerations';
+import { DATA_CACHE_TYPES, OPERATION } from '../../components/common_components/enumerations';
 import { ApiInfo } from '.';
 
 
@@ -120,7 +120,7 @@ export interface IApiEngineInitParameters {
     allOrNone?: boolean,
     targetFieldMapping?: IFieldMapping,
     simulationMode?: boolean,
-    binaryDataCache?: BINARY_DATA_CACHES;
+    binaryDataCache?: DATA_CACHE_TYPES;
     binaryCacheDirectory?: string;
 }
 
@@ -149,4 +149,10 @@ export interface IApiJobCreateResult {
      * but optionally another type can be added.
      */
     dataType: 'base64' // | ....
+}
+
+
+export interface ICachedRecords {
+    query: string;
+    records: any[];
 }

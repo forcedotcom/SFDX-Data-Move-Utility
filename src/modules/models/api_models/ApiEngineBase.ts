@@ -5,13 +5,13 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Logger } from "../../components/common_components/logger";
+import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { IApiJobCreateResult, IApiEngineInitParameters, ICsvChunk } from "./helper_interfaces";
 import { ApiInfo, IApiEngine } from ".";
 import { Common } from "../../components/common_components/common";
 import { CsvChunks, ScriptObject } from "..";
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult } from "../common_models/helper_interfaces";
-import { BINARY_DATA_CACHES, OPERATION } from "../../components/common_components/enumerations";
+import { DATA_CACHE_TYPES, OPERATION } from "../../components/common_components/enumerations";
 import { CONSTANTS } from "../../components/common_components/statics";
 
 
@@ -50,7 +50,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     numberJobRecordsFailed: number = 0;
     numberJobTotalRecordsToProcess: number = 0;
 
-    binaryDataCache: BINARY_DATA_CACHES = BINARY_DATA_CACHES.InMemory;
+    binaryDataCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
     restApiBatchSize: number;
     binaryCacheDirectory: string;
 
@@ -276,8 +276,8 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         }
 
         // Load from cache
-        if (this.binaryDataCache == BINARY_DATA_CACHES.FileCache
-            || this.binaryDataCache == BINARY_DATA_CACHES.CleanFileCache) {
+        if (this.binaryDataCache == DATA_CACHE_TYPES.FileCache
+            || this.binaryDataCache == DATA_CACHE_TYPES.CleanFileCache) {
             let binaryFields = Object.keys(records[0]).filter(key => (records[0][key] || '').startsWith(CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER_PREFIX));
             // Check from cache 
             if (binaryFields.length > 0) {
@@ -285,9 +285,11 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
                     binaryFields.forEach(field => {
                         let binaryId = CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER_ID(record[field]);
                         if (binaryId) {
-                            let cacheFilename = path.join(this.binaryCacheDirectory, CONSTANTS.BINARY_FILE_CACHE_TEMPLATE(binaryId));
-                            if (fs.existsSync(cacheFilename)) {
-                                let blob = fs.readFileSync(cacheFilename, 'utf-8');
+                            let cacheFilename = CONSTANTS.BINARY_FILE_CACHE_TEMPLATE(binaryId);
+                            let fullCacheFilename = path.join(this.binaryCacheDirectory, cacheFilename);
+                            if (fs.existsSync(fullCacheFilename)) {
+                                this.logger.infoNormal(RESOURCES.readingFromCacheFile, this.sObjectName, path.join('./', CONSTANTS.BINARY_CACHE_SUB_DIRECTORY, cacheFilename));
+                                let blob = fs.readFileSync(fullCacheFilename, 'utf-8');
                                 record[field] = blob;
                             }
                         }
