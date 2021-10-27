@@ -28,6 +28,8 @@ import * as path from 'path';
  */
 export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEngineInitParameters {
 
+    isChildJob: boolean;
+
     concurrencyMode: string;
     pollingIntervalMs: number
     bulkApiV1BatchSize: number;
@@ -77,6 +79,8 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
     }
 
     constructor(init: IApiEngineInitParameters) {
+
+        this.isChildJob = init.isChildJob;
 
         this.logger = init.logger;
         this.connectionData = init.connectionData;
@@ -162,12 +166,16 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
             return async () => {
                 let ApiEngine: typeof ApiEngineBase = this.getEngineClassType();
                 let tempApiEngine = new ApiEngine(this);
-                return await tempApiEngine.executeCRUD(chunk, progressCallback);
+                tempApiEngine.isChildJob = true;
+                let result = await tempApiEngine.executeCRUD(chunk, progressCallback);
+                return result || new Array<any>();
             }
         });
 
         let records = await Common.parallelExecAsync(taskQueue, this, threadsCount);
         let outputRecords = Common.flattenArrays(records);
+
+        await this.writeToTargetCSVFileAsync(outputRecords);
 
         return outputRecords;
 
@@ -205,13 +213,18 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
             }
             if (!resultRecords) {
                 // ERROR RESULT
-                await this.writeToTargetCSVFileAsync(new Array<any>());
+                if (!this.isChildJob) {
+                    await this.writeToTargetCSVFileAsync(new Array<any>());
+                }
                 return null;
             } else {
                 allResultRecords = allResultRecords.concat(resultRecords);
             }
         }
-        await this.writeToTargetCSVFileAsync(allResultRecords);
+        // SUCCESS RESULT
+        if (!this.isChildJob) {
+            await this.writeToTargetCSVFileAsync(allResultRecords);
+        }
         return allResultRecords;
     }
 

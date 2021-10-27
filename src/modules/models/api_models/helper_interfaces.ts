@@ -151,6 +151,7 @@ export interface IApiEngineInitParameters {
     simulationMode?: boolean,
     binaryDataCache?: DATA_CACHE_TYPES;
     binaryCacheDirectory?: string;
+    isChildJob?: boolean;
 }
 
 export interface ICsvChunk {
