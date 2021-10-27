@@ -204,9 +204,9 @@ export default class Run extends SfdxCommand {
             await this.command.createJobAsync();
             await this.command.processCSVFilesAsync();
             await this.command.prepareJobAsync();
-            await this.command.runAddonEvent(ADDON_EVENTS.onBefore);
+            await this.command.runAddonEventAsync(ADDON_EVENTS.onBefore);
             await this.command.executeJobAsync();
-            await this.command.runAddonEvent(ADDON_EVENTS.onAfter);
+            await this.command.runAddonEventAsync(ADDON_EVENTS.onAfter);
 
             // Exit - success
             Common.logger.commandExitMessage(

@@ -423,7 +423,7 @@ export default class MigrationJob {
         this.logger.headerNormal(RESOURCES.processingAddon);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            processed = await task.runAddonEvent(ADDON_EVENTS.onBefore) || processed;
+            processed = await task.runAddonEventAsync(ADDON_EVENTS.onBefore) || processed;
         }
         if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
@@ -441,6 +441,10 @@ export default class MigrationJob {
                 task.sObjectName,
                 String(task.sourceData.idRecordsMap.size + "/" + task.targetData.idRecordsMap.size));
         }
+
+
+        // Trigger event
+        await this.runAddonEventAsync(ADDON_EVENTS.onDataRetrieved);
     }
 
     /**
@@ -542,7 +546,7 @@ export default class MigrationJob {
                 this.logger.infoNormal(RESOURCES.deletingDataCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
             else
                 this.logger.infoNormal(RESOURCES.nothingToDelete2);
-                
+
             this.logger.infoNormal(RESOURCES.newLine);
         }
 
@@ -554,7 +558,7 @@ export default class MigrationJob {
         this.logger.headerNormal(RESOURCES.processingAddon);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            processed = await task.runAddonEvent(ADDON_EVENTS.onAfter) || processed;
+            processed = await task.runAddonEventAsync(ADDON_EVENTS.onAfter) || processed;
         }
         if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
@@ -801,6 +805,18 @@ export default class MigrationJob {
             scriptObject
         });
     }
+
+    /**
+     * Executes addon event related to the current executed object
+     *
+     * @param {ADDON_EVENTS} event The addon event to execute
+     * @returns {Promise<void>}
+     * @memberof MigrationJobTask
+     */
+    async runAddonEventAsync(event: ADDON_EVENTS): Promise<boolean> {
+        return await this.script.addonManager.triggerAddonModuleMethodAsync(event);
+    }
+
 
 
 

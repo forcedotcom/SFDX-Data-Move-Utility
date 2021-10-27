@@ -90,7 +90,8 @@ export default class Script {
     @Type(() => ScriptAddonManifestDefinition)
     afterAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
-
+    @Type(() => ScriptAddonManifestDefinition)
+    dataRetrievedAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
     // -----------------------------------
     logger: Logger;

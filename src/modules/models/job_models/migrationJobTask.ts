@@ -1169,7 +1169,7 @@ export default class MigrationJobTask {
             self.processedData = data;
 
             // Call addon onBeforeUpdate event
-            await self.runAddonEvent(ADDON_EVENTS.onBeforeUpdate)
+            await self.runAddonEventAsync(ADDON_EVENTS.onBeforeUpdate)
 
             // Inserting ////////
             if (data.recordsToInsert.length > 0) {
@@ -1644,7 +1644,7 @@ export default class MigrationJobTask {
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async runAddonEvent(event: ADDON_EVENTS): Promise<boolean> {
+    async runAddonEventAsync(event: ADDON_EVENTS): Promise<boolean> {
         return await this.script.addonManager.triggerAddonModuleMethodAsync(event, this.sObjectName);
     }
 

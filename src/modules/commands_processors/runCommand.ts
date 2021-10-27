@@ -196,7 +196,7 @@ export class RunCommand {
      * @returns {Promise<void>}
      * @memberof RunCommand
      */
-    async runAddonEvent(event: ADDON_EVENTS): Promise<void> {
+    async runAddonEventAsync(event: ADDON_EVENTS): Promise<void> {
         this.logger.infoNormal(RESOURCES.newLine);
         this.logger.headerNormal(RESOURCES.processingAddon);
         let processed = await this.script.addonManager.triggerAddonModuleMethodAsync(event);
