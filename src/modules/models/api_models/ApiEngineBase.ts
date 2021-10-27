@@ -26,7 +26,7 @@ import * as path from 'path';
  * @export
  * @class ApiProcessBase
  */
-export default class ApiEngineBase implements IApiEngine, IFieldMapping {
+export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEngineInitParameters {
 
     concurrencyMode: string;
     pollingIntervalMs: number
@@ -103,6 +103,8 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     }
 
 
+
+
     sourceQueryToTarget = (query: string, sourceObjectName: string) => <IFieldMappingResult>{ query, targetSObjectName: sourceObjectName };
     sourceRecordsToTarget = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
     targetRecordsToSource = (records: any[], sourceObjectName: string) => <IFieldMappingResult>{ records, targetSObjectName: sourceObjectName };
@@ -111,6 +113,14 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     // ----------------------- Interface IApiProcess ----------------------------------
     getEngineName(): string {
         return "REST API";
+    }
+
+    getIsRestApiEngine(): boolean {
+        return this.getEngineName() == 'REST API';
+    }
+
+    getEngineClassType(): typeof ApiEngineBase {
+        return ApiEngineBase;
     }
 
     async executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>> {
@@ -141,11 +151,25 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     }
 
     async executeCRUDMultithreaded(allRecords: any[], progressCallback: (progress: ApiInfo) => void, threadsCount: number): Promise<any[]> {
+
         if (!threadsCount || threadsCount <= 1) {
             return await this.executeCRUD(allRecords, progressCallback);
         }
 
-        
+        let chunks = Common.chunkArray(allRecords, threadsCount);
+
+        let taskQueue = chunks.map(chunk => {
+            return async () => {
+                let ApiEngine: typeof ApiEngineBase = this.getEngineClassType();
+                let tempApiEngine = new ApiEngine(this);
+                return await tempApiEngine.executeCRUD(chunk, progressCallback);
+            }
+        });
+
+        let records = await Common.parallelExecAsync(taskQueue, this, threadsCount);
+        let outputRecords = Common.flattenArrays(records);
+
+        return outputRecords;
 
     }
 
@@ -227,6 +251,8 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
     getStrOperation(): string {
         return this.strOperation;
     }
+
+
     // ----------------------- ---------------- -------------------------------------------    
 
 
@@ -309,5 +335,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping {
         }
 
     }
+
+
 
 }

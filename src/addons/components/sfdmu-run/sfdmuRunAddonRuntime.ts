@@ -173,7 +173,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
 
             // Existing task => existing sObject
             task.createApiEngine(task.targetData.org, operation, records.length, false);
-            resultRecords = await task.apiEngine.executeCRUD(records, task.apiProgressCallback);
+            resultRecords = await task.apiEngine.executeCRUDMultithreaded(records, task.apiProgressCallback, task.getParallelThreadCount());
 
         } else {
 
@@ -237,7 +237,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
             task = this.#script.job.createDummyJobTask(sObjectName);
             task.setApiEngine(apiEngine);
 
-            resultRecords = await apiEngine.executeCRUD(records, task.apiProgressCallback);
+            resultRecords = await apiEngine.executeCRUDMultithreaded(records, task.apiProgressCallback,  task.getParallelThreadCount());
 
         }
         return resultRecords;

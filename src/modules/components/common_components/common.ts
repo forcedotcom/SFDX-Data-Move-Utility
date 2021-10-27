@@ -1442,7 +1442,7 @@ export class Common {
      */
     public static async parallelExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any, maxParallelTasks: number = 10): Promise<any[]> {
         thisArg = thisArg || this;
-        const queue = fns.map(fn => () => fn.bind(thisArg, ...fn.arguments));
+        const queue = fns.map(fn => () => fn.call(thisArg));
         const result: any[] = await Common.parallelTasksAsync(queue, maxParallelTasks || CONSTANTS.DEFAULT_MAX_PARALLEL_EXEC_TASKS);
         return result;
     }

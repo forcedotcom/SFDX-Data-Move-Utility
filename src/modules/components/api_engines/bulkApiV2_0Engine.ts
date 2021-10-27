@@ -56,6 +56,11 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         return "Bulk API V2.0";
     }
 
+    getEngineClassType(): typeof ApiEngineBase {
+        return BulkApiV2_0Engine;
+    }
+
+
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let chunks = Common.createCsvStringsFromArray(allRecords,
             CONSTANTS.BULK_API_V2_MAX_CSV_SIZE_IN_BYTES,
@@ -522,6 +527,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         });
     }
 
+  
 
 
 

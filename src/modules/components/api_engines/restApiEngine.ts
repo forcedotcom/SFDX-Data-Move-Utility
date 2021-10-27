@@ -169,6 +169,10 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
             });
         });
     }
+
+    getEngineClassType(): typeof ApiEngineBase {
+        return RestApiEngine;
+    }
     // ----------------------- ---------------- -------------------------------------------    
 
 

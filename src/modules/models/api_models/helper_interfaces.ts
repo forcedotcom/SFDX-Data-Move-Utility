@@ -8,7 +8,7 @@ import { Logger } from '../../components/common_components/logger';
 import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
 import { DATA_CACHE_TYPES, OPERATION } from '../../components/common_components/enumerations';
-import { ApiInfo } from '.';
+import { ApiEngineBase, ApiInfo } from '.';
 
 
 
@@ -115,6 +115,22 @@ export interface IApiEngine {
      * @memberof IApiProcess
      */
     getStrOperation(): string;
+
+    /**
+     * Returns true if this is REST API  engine
+     *
+     * @return {*}  {boolean}
+     * @memberof IApiEngine
+     */
+    getIsRestApiEngine(): boolean;
+
+    /**
+     * Returns the runtime type of the current engine
+     *
+     * @return {*}  {typeof ApiEngineBase}
+     * @memberof IApiEngine
+     */
+    getEngineClassType(): typeof ApiEngineBase;
 
 }
 
