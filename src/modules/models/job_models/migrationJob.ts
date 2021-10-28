@@ -618,6 +618,64 @@ export default class MigrationJob {
     }
 
     /**
+     * Returns the task by the given field path
+     *
+     * @param {string} fieldPath 
+     * @param {Task} [prevTask]
+     * @return {{
+     *              task: ISFdmuRunCustomAddonTask,
+     *              field: string
+     *          }}  
+     * @memberof MigrationJob
+     */
+     getTaskByFieldPath(fieldPath: string, prevTask?: MigrationJobTask): {
+        task: MigrationJobTask,
+        field: string
+    } {
+
+        let parts = (fieldPath || '').split('.');
+
+        if (parts.length == 0) {
+            return null;
+        }
+
+       
+
+        if (!prevTask) {
+            // First => by sobject
+            let objectTask: Task = this.tasks.find(task => task.sObjectName == parts[0]);
+            if (!objectTask) {
+                return null;
+            } else {
+                parts.shift();
+                return this.getTaskByFieldPath(parts.join('.'), objectTask);
+            }
+        }
+
+        // Other => by sfield 
+        let fieldName = parts.length > 1 ? Common.getFieldNameId(null, parts[0]) : parts[0];
+        let fieldDescribe = prevTask.scriptObject.fieldsInQueryMap.get(fieldName);
+        if (!fieldDescribe) {
+            return null;
+        }
+
+        if (fieldDescribe.lookup) {
+            let fieldTask = this.tasks.find(task => task.sObjectName == fieldDescribe.referencedObjectType);
+            if (!fieldTask) {
+                return null;
+            }
+            parts.shift();
+            return this.getTaskByFieldPath(parts.join('.'), fieldTask);
+        }
+
+        return {
+            task: prevTask,
+            field: fieldName
+        };
+
+    }
+
+    /**
      * Save csv file from the data of the input array
      *
      * @param {string} fileName It is just a filename (test.csv) not the full path

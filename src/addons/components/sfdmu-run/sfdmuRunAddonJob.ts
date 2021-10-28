@@ -8,21 +8,37 @@
 
 
 import { MigrationJob } from "../../../modules/models";
-import { ISFdmuRunCustomAddonJob } from "../../modules/sfdmu-run/custom-addons/package";
+import { ISFdmuRunCustomAddonJob, ISFdmuRunCustomAddonTask } from "../../modules/sfdmu-run/custom-addons/package";
 import SfdmuRunAddonTask from "./sfdmuRunAddonTask";
 
 
-export default class SfdmuRunAddonJob implements ISFdmuRunCustomAddonJob  {
-    
-    #migrationJob : MigrationJob;
+export default class SfdmuRunAddonJob implements ISFdmuRunCustomAddonJob {
+
+    #migrationJob: MigrationJob;
     #pluginTasks: SfdmuRunAddonTask[];
 
-    constructor(migrationJob : MigrationJob){ 
-        this.#migrationJob = migrationJob; 
+    constructor(migrationJob: MigrationJob) {
+        this.#migrationJob = migrationJob;
         this.#pluginTasks = this.#migrationJob.tasks.map(jobTask => new SfdmuRunAddonTask(jobTask));
     }
-    
-    get tasks() : SfdmuRunAddonTask[] {
-       return this.#pluginTasks;
+
+
+    get tasks(): SfdmuRunAddonTask[] {
+        return this.#pluginTasks;
+    }
+
+    getTaskByFieldPath(fieldPath: string): { task: ISFdmuRunCustomAddonTask; field: string; } {
+        let out = this.#migrationJob.getTaskByFieldPath(fieldPath);
+        if (!out) {
+            return {
+                field: fieldPath.split('.').pop(),
+                task: null
+            }
+        }
+        let task = this.tasks.find(task => task.sObjectName == out.task.sObjectName);
+        return {
+            field: out.field,
+            task
+        }
     }
 }

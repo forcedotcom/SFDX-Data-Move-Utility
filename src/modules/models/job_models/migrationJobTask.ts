@@ -645,7 +645,7 @@ export default class MigrationJobTask {
         });
 
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
-        let resultRecords = await this.apiEngine.executeCRUDMultithreaded(recordsToDelete, this.apiProgressCallback,  this.getParallelThreadCount());
+        let resultRecords = await this.apiEngine.executeCRUDMultithreaded(recordsToDelete, this.apiProgressCallback, this.getParallelThreadCount());
         if (resultRecords == null) {
             this._apiOperationError(OPERATION.Delete);
         }
@@ -682,7 +682,7 @@ export default class MigrationJobTask {
             return 0;
         }
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
-        let resultRecords = await this.apiEngine.executeCRUDMultithreaded(recordsToDelete, this.apiProgressCallback,  this.getParallelThreadCount());
+        let resultRecords = await this.apiEngine.executeCRUDMultithreaded(recordsToDelete, this.apiProgressCallback, this.getParallelThreadCount());
         if (resultRecords == null) {
             this._apiOperationError(OPERATION.Delete);
         }
@@ -1145,7 +1145,7 @@ export default class MigrationJobTask {
 
             // Create engine
             self.createApiEngine(self.sourceData.org, OPERATION.Delete, recordsToDelete.length, true);
-            let resultRecords = await self.apiEngine.executeCRUDMultithreaded(recordsToDelete, self.apiProgressCallback,  self.getParallelThreadCount());
+            let resultRecords = await self.apiEngine.executeCRUDMultithreaded(recordsToDelete, self.apiProgressCallback, self.getParallelThreadCount());
             if (resultRecords == null) {
                 self._apiOperationError(OPERATION.Delete);
             }
@@ -1179,7 +1179,7 @@ export default class MigrationJobTask {
                     String((data.recordsToInsert.length)));
 
                 self.createApiEngine(self.targetData.org, OPERATION.Insert, data.recordsToInsert.length, true, targetFilenameSuffix);
-                let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToInsert, self.apiProgressCallback,  self.getParallelThreadCount());
+                let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToInsert, self.apiProgressCallback, self.getParallelThreadCount());
 
                 if (targetRecords == null) {
                     self._apiOperationError(OPERATION.Insert);
@@ -1207,7 +1207,7 @@ export default class MigrationJobTask {
                     String((data.recordsToUpdate.length)));
 
                 self.createApiEngine(self.targetData.org, OPERATION.Update, data.recordsToUpdate.length, false, targetFilenameSuffix);
-                let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToUpdate, self.apiProgressCallback,  self.getParallelThreadCount());
+                let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToUpdate, self.apiProgressCallback, self.getParallelThreadCount());
 
                 if (targetRecords == null) {
                     self._apiOperationError(OPERATION.Update);
@@ -1658,7 +1658,6 @@ export default class MigrationJobTask {
         this.apiEngine = engine;
         this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
     }
-
 
     // ----------------------- Private members -------------------------------------------
     private _apiProgressCallback(apiResult: ApiInfo): void {
