@@ -31,9 +31,15 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
     }
 
 
+
+
     // ----------------------- Interface IApiProcess ----------------------------------
     getEngineName(): string {
         return "Bulk API V1.0";
+    }
+
+    getEngineClassType(): typeof ApiEngineBase {
+        return BulkApiV1_0Engine;
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
@@ -200,6 +206,8 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
             });
         });
     }
+
+
     // ----------------------- ---------------- -------------------------------------------    
 
 }

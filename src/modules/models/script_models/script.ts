@@ -24,7 +24,7 @@ import MigrationJob from "../job_models/migrationJob";
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { BINARY_DATA_CACHES, DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+import { DATA_CACHE_TYPES, DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 
 import ICommandRunInfo from "../common_models/ICommandRunInfo";
 import IPluginInfo from "../common_models/IPluginInfo";
@@ -71,8 +71,16 @@ export default class Script {
     keepObjectOrderWhileExecute: boolean = false;
     allowFieldTruncation: boolean = false;
     simulationMode: boolean = false;
-    binaryDataCache: BINARY_DATA_CACHES = BINARY_DATA_CACHES.InMemory;
+
     proxyUrl: string;
+
+    binaryDataCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
+    sourceRecordsCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
+
+    parallelBinaryDownloads: number = CONSTANTS.DEFAULT_MAX_PARALLEL_BLOB_DOWNLOADS;
+
+    parallelBulkJobs: number = 1;
+    parallelRestJobs: number = 1;
 
 
 
@@ -82,7 +90,8 @@ export default class Script {
     @Type(() => ScriptAddonManifestDefinition)
     afterAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
-
+    @Type(() => ScriptAddonManifestDefinition)
+    dataRetrievedAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
     // -----------------------------------
     logger: Logger;
@@ -143,6 +152,17 @@ export default class Script {
             fs.mkdirSync(this.binaryCacheDirectoryPath, { recursive: true });
         }
         return this.binaryCacheDirectoryPath;
+    }
+
+    get sourceRecordsCacheDirectoryPath(): string {
+        return path.join(this.basePath, CONSTANTS.SOURCE_RECORDS_CACHE_SUB_DIRECTORY, this.sourceOrg.orgUserName);
+    }
+
+    get sourceRecordsCacheDirectory(): string {
+        if (!fs.existsSync(this.sourceRecordsCacheDirectoryPath)) {
+            fs.mkdirSync(this.sourceRecordsCacheDirectoryPath, { recursive: true });
+        }
+        return this.sourceRecordsCacheDirectoryPath;
     }
 
     get hasDeleteFromSourceObjectOperation(): boolean {
@@ -299,11 +319,18 @@ export default class Script {
         }
 
         // Perform clean-up the cache directories if need -------------- 
-        if (this.binaryDataCache == BINARY_DATA_CACHES.CleanFileCache) {
+        if (this.binaryDataCache == DATA_CACHE_TYPES.CleanFileCache) {
             try {
                 Common.deleteFolderRecursive(this.binaryCacheDirectory, true);
             } catch (ex) {
-                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteBinaryCacheDirectory, this.binaryCacheDirectory));
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteCacheDirectory, this.binaryCacheDirectory));
+            }
+        }
+        if (this.sourceRecordsCache == DATA_CACHE_TYPES.CleanFileCache) {
+            try {
+                Common.deleteFolderRecursive(this.sourceRecordsCacheDirectory, true);
+            } catch (ex) {
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteCacheDirectory, this.sourceRecordsCacheDirectory));
             }
         }
     }

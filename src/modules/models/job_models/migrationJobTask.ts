@@ -37,7 +37,7 @@ import { ApiInfo } from '../api_models';
 
 MockGenerator.createCustomGenerators(casual);
 
-export  default class MigrationJobTask {
+export default class MigrationJobTask {
 
     scriptObject: ScriptObject;
     job: Job;
@@ -645,7 +645,7 @@ export  default class MigrationJobTask {
         });
 
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
-        let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
+        let resultRecords = await this.apiEngine.executeCRUDMultithreaded(recordsToDelete, this.apiProgressCallback, this.getParallelThreadCount());
         if (resultRecords == null) {
             this._apiOperationError(OPERATION.Delete);
         }
@@ -682,7 +682,7 @@ export  default class MigrationJobTask {
             return 0;
         }
         this.createApiEngine(this.targetData.org, OPERATION.Delete, recordsToDelete.length, true);
-        let resultRecords = await this.apiEngine.executeCRUD(recordsToDelete, this.apiProgressCallback);
+        let resultRecords = await this.apiEngine.executeCRUDMultithreaded(recordsToDelete, this.apiProgressCallback, this.getParallelThreadCount());
         if (resultRecords == null) {
             this._apiOperationError(OPERATION.Delete);
         }
@@ -1136,16 +1136,16 @@ export  default class MigrationJobTask {
 
             // Deleting ////////
             self.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, self.sObjectName, String(self.sourceData.records.length));
-            
+
             let recordsToDelete = self.sourceData.records.map(record => {
                 return {
-                    Id : record["Id"]
+                    Id: record["Id"]
                 }
             });
 
             // Create engine
             self.createApiEngine(self.sourceData.org, OPERATION.Delete, recordsToDelete.length, true);
-            let resultRecords = await self.apiEngine.executeCRUD(recordsToDelete, self.apiProgressCallback);
+            let resultRecords = await self.apiEngine.executeCRUDMultithreaded(recordsToDelete, self.apiProgressCallback, self.getParallelThreadCount());
             if (resultRecords == null) {
                 self._apiOperationError(OPERATION.Delete);
             }
@@ -1169,7 +1169,7 @@ export  default class MigrationJobTask {
             self.processedData = data;
 
             // Call addon onBeforeUpdate event
-            await self.runAddonEvent(ADDON_EVENTS.onBeforeUpdate)
+            await self.runAddonEventAsync(ADDON_EVENTS.onBeforeUpdate)
 
             // Inserting ////////
             if (data.recordsToInsert.length > 0) {
@@ -1179,7 +1179,7 @@ export  default class MigrationJobTask {
                     String((data.recordsToInsert.length)));
 
                 self.createApiEngine(self.targetData.org, OPERATION.Insert, data.recordsToInsert.length, true, targetFilenameSuffix);
-                let targetRecords = await self.apiEngine.executeCRUD(data.recordsToInsert, self.apiProgressCallback);
+                let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToInsert, self.apiProgressCallback, self.getParallelThreadCount());
 
                 if (targetRecords == null) {
                     self._apiOperationError(OPERATION.Insert);
@@ -1207,7 +1207,7 @@ export  default class MigrationJobTask {
                     String((data.recordsToUpdate.length)));
 
                 self.createApiEngine(self.targetData.org, OPERATION.Update, data.recordsToUpdate.length, false, targetFilenameSuffix);
-                let targetRecords = await self.apiEngine.executeCRUD(data.recordsToUpdate, self.apiProgressCallback);
+                let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToUpdate, self.apiProgressCallback, self.getParallelThreadCount());
 
                 if (targetRecords == null) {
                     self._apiOperationError(OPERATION.Update);
@@ -1509,19 +1509,19 @@ export  default class MigrationJobTask {
             return updatedRecords;
         }
 
-        function ___testRegex(expr: string, value: string) : boolean{
+        function ___testRegex(expr: string, value: string): boolean {
             switch (expr) {
                 case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.haveAnyValue):
                     // * 
                     return !!value;
 
                 case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.missingValue):
-                        // ^* 
-                        return !value;
-            
+                    // ^* 
+                    return !value;
+
                 default:
                     // regex
-                   return new RegExp(expr, 'ig').test(value);
+                    return new RegExp(expr, 'ig').test(value);
             }
         }
 
@@ -1613,7 +1613,7 @@ export  default class MigrationJobTask {
                 pollingIntervalMs: this.script.pollingIntervalMs,
                 concurrencyMode: this.script.concurrencyMode,
                 updateRecordId,
-                restApiBatchSize: this.script.restApiBatchSize,
+                restApiBatchSize: this.scriptObject.restApiBatchSize || this.script.restApiBatchSize,
                 allOrNone: this.script.allOrNone,
                 targetCSVFullFilename: this.data.getTargetCSVFilename(operation, targetFilenameSuffix),
                 createTargetCSVFiles: this.script.createTargetCSVFiles,
@@ -1628,13 +1628,23 @@ export  default class MigrationJobTask {
     }
 
     /**
+     * Returns number of parallel jobs can be run simultaneously in parallel
+     *
+     * @return {*}  {number}
+     * @memberof MigrationJobTask
+     */
+    getParallelThreadCount(): number {
+        return this.apiEngine.getIsRestApiEngine() ? this.scriptObject.script.parallelRestJobs : this.scriptObject.script.parallelBulkJobs;
+    }
+
+    /**
      * Executes addon event related to the current executed object
      *
      * @param {ADDON_EVENTS} event The addon event to execute
      * @returns {Promise<void>}
      * @memberof MigrationJobTask
      */
-    async runAddonEvent(event: ADDON_EVENTS): Promise<boolean> {
+    async runAddonEventAsync(event: ADDON_EVENTS): Promise<boolean> {
         return await this.script.addonManager.triggerAddonModuleMethodAsync(event, this.sObjectName);
     }
 
@@ -1648,7 +1658,6 @@ export  default class MigrationJobTask {
         this.apiEngine = engine;
         this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
     }
-
 
     // ----------------------- Private members -------------------------------------------
     private _apiProgressCallback(apiResult: ApiInfo): void {

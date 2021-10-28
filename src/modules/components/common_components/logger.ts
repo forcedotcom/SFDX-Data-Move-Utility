@@ -162,7 +162,7 @@ export enum RESOURCES {
     csvFilesWereUpdated = "csvFilesWereUpdated",
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
     unableToDeleteTargetDirectory = "unableToDeleteTargetDirectory",
-    unableToDeleteBinaryCacheDirectory = "unableToDeleteBinaryCacheDirectory",
+    unableToDeleteCacheDirectory = "unableToDeleteCacheDirectory",
     unableToDeleteSourceDirectory = "unableToDeleteSourceDirectory",
     productionModificationApprovalPrompt = "productionModificationApprovalPrompt",
 
@@ -240,7 +240,10 @@ export enum RESOURCES {
     finishAddonExecute = "finishAddonExecute",
     coreAddonMessageTemplate = "coreAddonMessageTemplate",
     runAddonMethodCompleted = "runAddonMethodCompleted",
-    jobAbortedByAddon = "jobAbortedByAddon"
+    jobAbortedByAddon = "jobAbortedByAddon",
+
+    writingToCacheFile = "writingToCacheFile",
+    readingFromCacheFile = "readingFromCacheFile"
 }
 
 

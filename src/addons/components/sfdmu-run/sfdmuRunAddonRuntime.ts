@@ -36,7 +36,7 @@ import { SfdmuRunCustomAddonService } from './custom';
 
 
 export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmuRunCustomAddonRuntime {
- 
+
     #script: Script;
     #logger: Logger;
 
@@ -66,12 +66,12 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
         return this.#script.basePath;
     }
 
-    
+
     get sourcePath(): string {
         return this.#script.sourceDirectory;
     }
 
-   
+
     get targetPath(): string {
         return this.#script.targetDirectory;
     }
@@ -119,7 +119,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
         return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN, whereClause);
     }
 
-    
+
     getApiEngine(recordsAmount: number, preferredEngine: API_ENGINE): API_ENGINE {
         preferredEngine = preferredEngine || API_ENGINE.DEFAULT_ENGINE;
         if (preferredEngine != API_ENGINE.DEFAULT_ENGINE) {
@@ -164,7 +164,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
         if (!records || records.length == 0 || this.#script.job.tasks.length == 0) {
             return [];
         }
- 
+
         let resultRecords: Array<any>;
 
         let task = this.#script.job.tasks.find(task => task.sObjectName == sObjectName);
@@ -173,7 +173,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
 
             // Existing task => existing sObject
             task.createApiEngine(task.targetData.org, operation, records.length, false);
-            resultRecords = await task.apiEngine.executeCRUD(records, task.apiProgressCallback);
+            resultRecords = await task.apiEngine.executeCRUDMultithreaded(records, task.apiProgressCallback, task.getParallelThreadCount());
 
         } else {
 
@@ -227,8 +227,8 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
                         targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
                         createTargetCSVFiles: this.#script.createTargetCSVFiles,
                         targetFieldMapping: null,
-                        restApiBatchSize: this.#script.restApiBatchSize,
-                        binaryDataCache : this.#script.binaryDataCache,
+                        restApiBatchSize: task.scriptObject.restApiBatchSize || this.#script.restApiBatchSize,
+                        binaryDataCache: this.#script.binaryDataCache,
                         binaryCacheDirectory: this.#script.binaryCacheDirectory
                     });
                     break;
@@ -237,7 +237,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
             task = this.#script.job.createDummyJobTask(sObjectName);
             task.setApiEngine(apiEngine);
 
-            resultRecords = await apiEngine.executeCRUD(records, task.apiProgressCallback);
+            resultRecords = await apiEngine.executeCRUDMultithreaded(records, task.apiProgressCallback,  task.getParallelThreadCount());
 
         }
         return resultRecords;

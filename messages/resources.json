@@ -133,7 +133,7 @@
     "validationAndFixingsourceCSVFilesCompleted": "Validating and repairing of the source CSV files have finished.",
     "unableToDeleteTargetDirectory" : "Unable to clean-up the target directory: '%s'. Check whether any files is busy by another application.",
     "unableToDeleteSourceDirectory": "Unable to clean-up the souce directory: '%s'. Check whether any files is busy by another application.",
-    "unableToDeleteBinaryCacheDirectory": "Unable to clean-up the binary cache directory: '%s'. Check whether any files is busy by another application.",
+    "unableToDeleteCacheDirectory": "Unable to clean-up the cache directory: '%s'. Check whether any files is busy by another application.",
     "productionModificationApprovalPrompt": "WARNING! The Tool has detected that you are about to modify the production environment.\nTo confirm the action and to continue, please, enter the domain name",
 
     "preparingJob": "Preparing has been finished.",
@@ -212,6 +212,9 @@
     "finishAddonExecute" : "[%s] {%s} Executing of the Add-On module has finished",
     "coreAddonMessageTemplate" : "[%s] {%s} %s",
     "runAddonMethodCompleted": "{%s} Executing of the event:%s Add-On handlers has finished",
-    "jobAbortedByAddon": "The job has been aborted by the Add-On module."
+    "jobAbortedByAddon": "The job has been aborted by the Add-On module.",
+
+    "writingToCacheFile": "{%s} Writing to the cache file: %s.",
+    "readingFromCacheFile": "{%s} Reading from the cache file: %s."
     
 }

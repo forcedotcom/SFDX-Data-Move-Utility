@@ -18,8 +18,8 @@ import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError, Obje
 import { Common } from './common';
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult, IIdentityInfo } from '../../models/common_models/helper_interfaces';
 import { Logger, RESOURCES } from './logger';
-import { IBlobField } from '../../models/api_models';
-import { BINARY_DATA_CACHES } from './enumerations';
+import { IBlobField, ICachedRecords } from '../../models/api_models';
+import { DATA_CACHE_TYPES } from './enumerations';
 
 var jsforce = require("jsforce");
 
@@ -58,7 +58,7 @@ export class Sfdx implements IFieldMapping {
     async queryAsync(soql: string, useBulkQueryApi: boolean): Promise<QueryResult<object>> {
 
         let self = this;
-        
+
         // Sets, when output the first progress message
         const firstProgressMessageAt = CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
 
@@ -186,12 +186,56 @@ export class Sfdx implements IFieldMapping {
 
         // ------------------ internal functions ------------------------- //
         async function ___queryAsync(soql: string): Promise<Array<any>> {
+
+            let hash32: string = '';
+            let cacheFullFilename = '';
+            let sObject = '';
+            let cacheFilename = '';
+            let messageCacheFilename = '';
+
+            // Try to get from the record cache
+            if ((self.org.script.sourceRecordsCache == DATA_CACHE_TYPES.CleanFileCache
+                || self.org.script.sourceRecordsCache == DATA_CACHE_TYPES.FileCache)
+                && self.org.isSource) {
+
+                hash32 = String(Common.getString32FNV1AHashcode(soql, true));
+                cacheFilename = CONSTANTS.SOURCE_RECORDS_FILE_CACHE_TEMPLATE(hash32);
+                messageCacheFilename = path.join('./' + CONSTANTS.SOURCE_RECORDS_CACHE_SUB_DIRECTORY, cacheFilename);
+                cacheFullFilename = path.join(self.org.script.sourceRecordsCacheDirectory, cacheFilename);
+                sObject = parseQuery(soql).sObject;
+
+                if (fs.existsSync(cacheFullFilename)) {
+                    let data = fs.readFileSync(cacheFullFilename, 'utf-8');
+                    try {
+                        self.logger.infoNormal(RESOURCES.readingFromCacheFile, sObject, messageCacheFilename);
+                        return (JSON.parse(data) as ICachedRecords).records;
+                    } catch (e) { }
+                }
+
+            }
+
+            // Query the remote
             let soqlFormat = ___formatSoql(soql);
             soql = soqlFormat[0];
             let records = (await self.queryAsync(soql, useBulkQueryApi)).records;
             records = ___parseRecords(records, soql);
             records = ___formatRecords(records, soqlFormat);
             records = await ___retrieveBlobFieldData(records, soqlFormat[3]);
+
+            // put to the record cache
+            if ((self.org.script.sourceRecordsCache == DATA_CACHE_TYPES.CleanFileCache
+                || self.org.script.sourceRecordsCache == DATA_CACHE_TYPES.FileCache)
+                && self.org.isSource) {
+                let data = JSON.stringify({
+                    query: soql,
+                    records
+                } as ICachedRecords);
+                try {
+                    self.logger.infoNormal(RESOURCES.writingToCacheFile, sObject, messageCacheFilename);
+                    fs.writeFileSync(cacheFullFilename, data, 'utf-8');
+                } catch (e) { }
+            }
+
             return records;
         }
 
@@ -520,7 +564,7 @@ export class Sfdx implements IFieldMapping {
             instanceUrl: connectionData.instanceUrl,
             accessToken: connectionData.accessToken,
             version: connectionData.apiVersion,
-            maxRequest: CONSTANTS.MAX_CONCURRENT_PARALLEL_REQUESTS,
+            maxRequest: CONSTANTS.MAX_PARALLEL_REQUESTS,
             proxyUrl: connectionData.proxyUrl
         });
     }
@@ -544,7 +588,7 @@ export class Sfdx implements IFieldMapping {
         let lastProgressMessageAt = 0;
 
         const queue = recordIds.map(recordId => () => ___getBlobData(recordId, blobField));
-        const downloadedBlobs: Array<[string, string]> = await Common.parallelTasksAsync(queue, CONSTANTS.MAX_PARALLEL_DOWNLOAD_THREADS);
+        const downloadedBlobs: Array<[string, string]> = await Common.parallelTasksAsync(queue, self.org.script.parallelBinaryDownloads);
         if (lastProgressMessageAt != recordIds.length) {
             self.logger.infoNormal(RESOURCES.apiCallProgress, recordIds.length + '/' + recordIds.length);
         }
@@ -553,11 +597,14 @@ export class Sfdx implements IFieldMapping {
         // ------------------ internal functions ------------------------- //        
         async function ___getBlobData(recordId: string, blobField: IBlobField): Promise<[string, string]> {
             return new Promise<[string, string]>(resolve => {
-                let cacheFilename = path.join(self.org.script.binaryCacheDirectory, CONSTANTS.BINARY_FILE_CACHE_TEMPLATE(recordId));
-                if (self.org.script.binaryDataCache == BINARY_DATA_CACHES.FileCache
-                    || self.org.script.binaryDataCache == BINARY_DATA_CACHES.CleanFileCache) {
+
+                let cacheFilename = CONSTANTS.BINARY_FILE_CACHE_TEMPLATE(recordId);
+                let cacheFullFilename = path.join(self.org.script.binaryCacheDirectory, cacheFilename);
+
+                if (self.org.script.binaryDataCache == DATA_CACHE_TYPES.FileCache
+                    || self.org.script.binaryDataCache == DATA_CACHE_TYPES.CleanFileCache) {
                     // Check from cache                  
-                    if (fs.existsSync(cacheFilename)) {
+                    if (fs.existsSync(cacheFullFilename)) {
                         resolve([recordId, CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER(recordId)]);
                         return;
                     }
@@ -566,9 +613,11 @@ export class Sfdx implements IFieldMapping {
                 var conn = self.org.getConnection();
                 let blob = conn.sobject(blobField.objectName).record(recordId).blob(blobField.fieldName);
                 let buffers = new Array<any>();
+
                 blob.on('data', function (data: any) {
                     buffers.push(data);
                 });
+
                 blob.on('end', function () {
                     if (recordsCounter >= nextProgressInfoAtRecord) {
                         nextProgressInfoAtRecord += CONSTANTS.DOWNLOAD_BLOB_PROGRESS_MESSAGE_PER_RECORDS;
@@ -577,10 +626,13 @@ export class Sfdx implements IFieldMapping {
                     }
                     recordsCounter++;
                     let data = Buffer.concat(buffers).toString(blobField.dataType);
-                    if (self.org.script.binaryDataCache == BINARY_DATA_CACHES.FileCache
-                        || self.org.script.binaryDataCache == BINARY_DATA_CACHES.CleanFileCache) {
+                    if (self.org.script.binaryDataCache == DATA_CACHE_TYPES.FileCache
+                        || self.org.script.binaryDataCache == DATA_CACHE_TYPES.CleanFileCache) {
                         // write to cache
-                        fs.writeFileSync(cacheFilename, data, 'utf-8');
+                        self.logger.infoNormal(RESOURCES.writingToCacheFile,
+                            blobField.objectName,
+                            path.join('./' + CONSTANTS.BINARY_CACHE_SUB_DIRECTORY, cacheFilename));
+                        fs.writeFileSync(cacheFullFilename, data, 'utf-8');
                         resolve([recordId, CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER(recordId)]);
                         return;
                     }

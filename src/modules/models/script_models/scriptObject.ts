@@ -74,6 +74,7 @@ export default class ScriptObject {
     allRecords: boolean;
     master: boolean = true;
     excludedFields: Array<string> = new Array<string>();
+    restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
 
     @Type(() => ScriptAddonManifestDefinition)
     beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
@@ -153,15 +154,19 @@ export default class ScriptObject {
         }
         return this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
-            let describe = this.targetSObjectDescribe
-                && this.targetSObjectDescribe.fieldsMap
-                && this.targetSObjectDescribe.fieldsMap.get(name);
-            let enabledRule = this.useFieldMapping
+            let targetName = name;
+            let isFieldMapped = this.useFieldMapping
                 && this.sourceTargetFieldMapping.hasChange
                 && this.sourceTargetFieldMapping.fieldMapping.has(name);
+            if (isFieldMapped){
+                targetName = this.sourceTargetFieldMapping.fieldMapping.get(name);
+            }
+            let describe = this.targetSObjectDescribe
+                && this.targetSObjectDescribe.fieldsMap
+                && this.targetSObjectDescribe.fieldsMap.get(targetName); 
             if (!describe
-                || describe.readonly && !enabledRule
-                || this.excludedFieldsFromUpdate.indexOf(name) >= 0) {
+                || describe.readonly && !isFieldMapped
+                || this.excludedFieldsFromUpdate.indexOf(targetName) >= 0) {
                 return null;
             }
             return (<SOQLField>x).field;
@@ -822,22 +827,25 @@ export default class ScriptObject {
 
             let fieldsInQuery = [].concat(this.fieldsInQuery);
 
-            fieldsInQuery.forEach(x => {
-                if (!Common.isComplexOr__rField(x) && !describe.fieldsMap.has(x)) {
+            fieldsInQuery.forEach(sourceFieldName => {
 
-                    if (x.name == this.externalId) {
+                let targetFieldName = !isSource && this.sourceTargetFieldMapping.fieldMapping.get(sourceFieldName) || sourceFieldName;
+
+                if (!Common.isComplexOr__rField(sourceFieldName) && !describe.fieldsMap.has(targetFieldName)) {
+
+                    if (sourceFieldName == this.externalId) {
                         // Missing externalId field. 
                         throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.noExternalKey, this.name, this.strOperation));
                     }
 
                     // Field in the query is missing in the org metadata. Warn user.
                     if (isSource)
-                        this.script.logger.warn(RESOURCES.fieldSourceDoesNtoExist, this.name, x);
+                        this.script.logger.warn(RESOURCES.fieldSourceDoesNtoExist, this.name, sourceFieldName);
                     else
-                        this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, x);
+                        this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, sourceFieldName);
 
                     // Remove missing field from the query                    
-                    Common.removeBy(this.parsedQuery.fields, "field", x);
+                    Common.removeBy(this.parsedQuery.fields, "field", sourceFieldName);
                 }
             });
 

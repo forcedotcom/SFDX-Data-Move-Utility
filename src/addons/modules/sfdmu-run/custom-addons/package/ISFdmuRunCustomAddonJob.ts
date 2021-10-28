@@ -15,7 +15,7 @@ import { ISFdmuRunCustomAddonTask } from ".";
  * @interface ISFdmuRunCustomAddonJob
  */
 export default interface ISFdmuRunCustomAddonJob {
-    
+
     /**
      * The migration Tasks related to this Job.
      *
@@ -23,5 +23,25 @@ export default interface ISFdmuRunCustomAddonJob {
      * @memberof ISFdmuRunCustomAddonJob
      */
     tasks: ISFdmuRunCustomAddonTask[];
+
+
+    /**
+     * Finds the sobject by the provided field path, then returns the {@link ISFdmuRunCustomAddonTask | Task}, 
+     * associated with this sobject. 
+     * This method can help you to locate and access the source/target records which contain the desired field.
+     *
+     * @param {string} fieldPath The  full field path to the field, e.g. ```Account.Test1__r.Text2__r.Name```.
+     *                              In this case the method will find the sobject referenced by the lookup field ```Text2__c```. 
+     *                              So you will be able to access the records of this sobject including the desired Name field.
+    * @return {{
+    *         task: ISFdmuRunCustomAddonTask,
+    *         field: string
+    *     }}  Returns the Task and the field name, for example { task: [Task of Text2__c], field: 'Name' }
+    * @memberof ISFdmuRunCustomAddonJob
+    */
+     getTaskByFieldPath(fieldPath: string): {
+        task: ISFdmuRunCustomAddonTask,
+        field: string
+    };
 
 }

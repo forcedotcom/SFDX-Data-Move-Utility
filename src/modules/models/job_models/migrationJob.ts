@@ -423,7 +423,7 @@ export default class MigrationJob {
         this.logger.headerNormal(RESOURCES.processingAddon);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            processed = await task.runAddonEvent(ADDON_EVENTS.onBefore) || processed;
+            processed = await task.runAddonEventAsync(ADDON_EVENTS.onBefore) || processed;
         }
         if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
@@ -441,6 +441,10 @@ export default class MigrationJob {
                 task.sObjectName,
                 String(task.sourceData.idRecordsMap.size + "/" + task.targetData.idRecordsMap.size));
         }
+
+
+        // Trigger event
+        await this.runAddonEventAsync(ADDON_EVENTS.onDataRetrieved);
     }
 
     /**
@@ -542,7 +546,7 @@ export default class MigrationJob {
                 this.logger.infoNormal(RESOURCES.deletingDataCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
             else
                 this.logger.infoNormal(RESOURCES.nothingToDelete2);
-                
+
             this.logger.infoNormal(RESOURCES.newLine);
         }
 
@@ -554,7 +558,7 @@ export default class MigrationJob {
         this.logger.headerNormal(RESOURCES.processingAddon);
         for (let index = 0; index < this.queryTasks.length; index++) {
             const task = this.queryTasks[index];
-            processed = await task.runAddonEvent(ADDON_EVENTS.onAfter) || processed;
+            processed = await task.runAddonEventAsync(ADDON_EVENTS.onAfter) || processed;
         }
         if (!processed) {
             this.logger.infoNormal(RESOURCES.nothingToProcess);
@@ -611,6 +615,64 @@ export default class MigrationJob {
      */
     getTaskBySObjectName(sObjectName: string) {
         return this.tasks.filter(x => x.sObjectName == sObjectName)[0];
+    }
+
+    /**
+     * Returns the task by the given field path
+     *
+     * @param {string} fieldPath 
+     * @param {Task} [prevTask]
+     * @return {{
+     *              task: ISFdmuRunCustomAddonTask,
+     *              field: string
+     *          }}  
+     * @memberof MigrationJob
+     */
+     getTaskByFieldPath(fieldPath: string, prevTask?: MigrationJobTask): {
+        task: MigrationJobTask,
+        field: string
+    } {
+
+        let parts = (fieldPath || '').split('.');
+
+        if (parts.length == 0) {
+            return null;
+        }
+
+       
+
+        if (!prevTask) {
+            // First => by sobject
+            let objectTask: Task = this.tasks.find(task => task.sObjectName == parts[0]);
+            if (!objectTask) {
+                return null;
+            } else {
+                parts.shift();
+                return this.getTaskByFieldPath(parts.join('.'), objectTask);
+            }
+        }
+
+        // Other => by sfield 
+        let fieldName = parts.length > 1 ? Common.getFieldNameId(null, parts[0]) : parts[0];
+        let fieldDescribe = prevTask.scriptObject.fieldsInQueryMap.get(fieldName);
+        if (!fieldDescribe) {
+            return null;
+        }
+
+        if (fieldDescribe.lookup) {
+            let fieldTask = this.tasks.find(task => task.sObjectName == fieldDescribe.referencedObjectType);
+            if (!fieldTask) {
+                return null;
+            }
+            parts.shift();
+            return this.getTaskByFieldPath(parts.join('.'), fieldTask);
+        }
+
+        return {
+            task: prevTask,
+            field: fieldName
+        };
+
     }
 
     /**
@@ -801,6 +863,18 @@ export default class MigrationJob {
             scriptObject
         });
     }
+
+    /**
+     * Executes addon event related to the current executed object
+     *
+     * @param {ADDON_EVENTS} event The addon event to execute
+     * @returns {Promise<void>}
+     * @memberof MigrationJobTask
+     */
+    async runAddonEventAsync(event: ADDON_EVENTS): Promise<boolean> {
+        return await this.script.addonManager.triggerAddonModuleMethodAsync(event);
+    }
+
 
 
 

@@ -7,8 +7,8 @@
 import { Logger } from '../../components/common_components/logger';
 import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
 import { CsvChunks } from '..';
-import { BINARY_DATA_CACHES, OPERATION } from '../../components/common_components/enumerations';
-import { ApiInfo } from '.';
+import { DATA_CACHE_TYPES, OPERATION } from '../../components/common_components/enumerations';
+import { ApiEngineBase, ApiInfo } from '.';
 
 
 
@@ -36,6 +36,19 @@ export interface IApiEngine {
     executeCRUD(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void): Promise<Array<any>>;
 
     /**
+     * Executes complete api operation in several threads in parallel
+     * including api job create and api job execute 
+     *
+     * @param {Array<any>} allRecords
+     * @param {(progress: ApiInfo) => void} progressCallback
+     * @param {number} threadsCount The maximum threads count
+     * @return {*}  {Promise<Array<any>>}
+     * @memberof IApiEngine
+     */
+    executeCRUDMultithreaded(allRecords: Array<any>, progressCallback: (progress: ApiInfo) => void, threadsCount: number): Promise<Array<any>>;
+
+
+    /**
      * Creates api job
      * @param {Array<any>} allRecords The all source records to process
      * @returns {Promise<IApiJobCreateResult>} 
@@ -43,13 +56,13 @@ export interface IApiEngine {
      */
     createCRUDApiJobAsync: (allrecords: Array<any>) => Promise<IApiJobCreateResult>;
 
-     /**
-     * Creates api job in simulation mode
-     * @param {Array<any>} allRecords The all source records to process
-     * @returns {Promise<IApiJobCreateResult>} 
-     * @memberof IApiProcess
-     */
-      createCRUDSimulationJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult>;
+    /**
+    * Creates api job in simulation mode
+    * @param {Array<any>} allRecords The all source records to process
+    * @returns {Promise<IApiJobCreateResult>} 
+    * @memberof IApiProcess
+    */
+    createCRUDSimulationJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult>;
 
 
     /**
@@ -103,6 +116,22 @@ export interface IApiEngine {
      */
     getStrOperation(): string;
 
+    /**
+     * Returns true if this is REST API  engine
+     *
+     * @return {*}  {boolean}
+     * @memberof IApiEngine
+     */
+    getIsRestApiEngine(): boolean;
+
+    /**
+     * Returns the runtime type of the current engine
+     *
+     * @return {*}  {typeof ApiEngineBase}
+     * @memberof IApiEngine
+     */
+    getEngineClassType(): typeof ApiEngineBase;
+
 }
 
 export interface IApiEngineInitParameters {
@@ -120,8 +149,9 @@ export interface IApiEngineInitParameters {
     allOrNone?: boolean,
     targetFieldMapping?: IFieldMapping,
     simulationMode?: boolean,
-    binaryDataCache?: BINARY_DATA_CACHES;
+    binaryDataCache?: DATA_CACHE_TYPES;
     binaryCacheDirectory?: string;
+    isChildJob?: boolean;
 }
 
 export interface ICsvChunk {
@@ -139,7 +169,7 @@ export interface IApiJobCreateResult {
 /**
  * Holds the meta information about the blob record
  */
- export interface IBlobField {
+export interface IBlobField {
 
     objectName: string,
     fieldName: string,
@@ -149,4 +179,10 @@ export interface IApiJobCreateResult {
      * but optionally another type can be added.
      */
     dataType: 'base64' // | ....
+}
+
+
+export interface ICachedRecords {
+    query: string;
+    records: any[];
 }
