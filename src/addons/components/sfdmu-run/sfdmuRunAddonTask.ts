@@ -25,7 +25,7 @@ export default class SfdmuRunAddonTask implements ISFdmuRunCustomAddonTask  {
         this.#sourceTaskData = new SfdmuRunAddonTaskData(migrationJobTask.sourceData);
         this.#targetTaskData = new SfdmuRunAddonTaskData(migrationJobTask.targetData);
     }
-
+   
 
     getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
         return this.#migrationJobTask.data.getTargetCSVFilename(operation, fileNameSuffix);
@@ -70,6 +70,15 @@ export default class SfdmuRunAddonTask implements ISFdmuRunCustomAddonTask  {
     get updateMode(): "FIRST_UPDATE" | "SECOND_UPDATE" {
         return this.#migrationJobTask.updateMode == 'forwards' ? 'FIRST_UPDATE' : 'SECOND_UPDATE';
     }
+
+    get fieldsInQuery(): string[] {
+        return this.#migrationJobTask.data.fieldsInQuery;
+    }
+
+     get fieldsToUpdate(): string[] {
+        return this.#migrationJobTask.data.fieldsToUpdate;
+    }
+
 
 
 }

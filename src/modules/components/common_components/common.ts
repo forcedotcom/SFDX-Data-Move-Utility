@@ -18,7 +18,9 @@ import {
     Query,
     getComposedField,
     composeQuery,
-    parseQuery
+    parseQuery,
+    FieldType,
+    Field as SOQLField
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 
@@ -1598,6 +1600,37 @@ export class Common {
         if (!url) return url;
         const matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
         return matches && matches[1];
+    }
+
+    /**
+      * Adds desired fields to the given parsed query
+     *
+     * @static
+     * @param {Query} query
+     * @param {Array<string>} [fieldsToAdd]
+     * @param {Array<string>} [fieldsToRemove]
+     * @memberof Common
+     */
+    public static addOrRemoveQueryFields(query: Query, fieldsToAdd: Array<string> = [], fieldsToRemove: Array<string> = []) {
+
+        let fields = [].concat(query.fields.map(f => {
+            let field = (<SOQLField>f);
+            return field.field || field["rawValue"];
+        }));
+
+        fieldsToAdd.forEach(field => {
+            if (fields.indexOf(field) < 0) {
+                fields.push(field);
+            }
+        });
+
+        query.fields = new Array<FieldType>();
+
+        fields.forEach(field => {
+            if (fieldsToRemove.indexOf(field) < 0) {
+                query.fields.push(getComposedField(field));
+            }
+        });
     }
 
 

@@ -31,6 +31,7 @@ import SfdmuRunAddonTask from './sfdmuRunAddonTask';
 import AddonModule from '../common/addonModule';
 import { ISfdmuRunCustomAddonRuntime } from '../../modules/sfdmu-run/custom-addons/package';
 import { SfdmuRunCustomAddonService } from './custom';
+import ISfdmuRunScript from './ISfdmuRunScript';
 
 
 
@@ -51,6 +52,10 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
         this.#script = script;
         this.#logger = script.logger;
         this.service = new SfdmuRunCustomAddonService(this);
+    }
+
+    getScript(): ISfdmuRunScript {
+        return this.#script;
     }
 
     createSfdmuPluginJob() {
@@ -237,7 +242,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
             task = this.#script.job.createDummyJobTask(sObjectName);
             task.setApiEngine(apiEngine);
 
-            resultRecords = await apiEngine.executeCRUDMultithreaded(records, task.apiProgressCallback,  task.getParallelThreadCount());
+            resultRecords = await apiEngine.executeCRUDMultithreaded(records, task.apiProgressCallback, task.getParallelThreadCount());
 
         }
         return resultRecords;

@@ -5,13 +5,13 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ISfdmuRunCustomAddonApiService } from ".";
+import { ISfdmuRunCustomAddonApiService, ISfdmuRunCustomAddonScript } from ".";
 
 
 /**
  * The Custom Add-On runtime. 
  * <br/>
- * This class exposes the instance of the Custom Add-On Api service 
+ * Besides other runtime information, This class exposes the instance of the Custom Add-On Api service 
  *  using the {@link ISfdmuRunCustomAddonRuntime.service} property.
  *
  * @export
@@ -27,5 +27,13 @@ export default interface ISfdmuRunCustomAddonRuntime {
      * @memberof ISfdmuRunCustomAddonRuntime
      */
     service: ISfdmuRunCustomAddonApiService;
+
+    /**
+     * Returns the data of the currently running {@link ISfdmuRunCustomAddonScript | export.json script}. 
+     *
+     * @return {*}  {ISfdmuRunCustomAddonScript}
+     * @memberof ISfdmuRunCustomAddonRuntime
+     */
+    getScript(): ISfdmuRunCustomAddonScript;
 
 }

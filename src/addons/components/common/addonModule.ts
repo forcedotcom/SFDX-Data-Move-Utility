@@ -22,5 +22,6 @@ export default abstract class AddonModule {
     runtime: AddonRuntime;
 
     abstract onExecute(context: IAddonContext, args: any): Promise<AddonResult>;
+    abstract onInit(context: IAddonContext, args: any): Promise<AddonResult>;
 
 }

@@ -28,6 +28,7 @@ import * as deepClone from 'deep.clone';
 
 import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
+import { ISfdmuRunCustomAddonScriptObject } from "../../../addons/modules/sfdmu-run/custom-addons/package";
 
 
 /**
@@ -37,7 +38,7 @@ import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
  * @export
  * @class ScriptObject
  */
-export default class ScriptObject {
+export default class ScriptObject implements ISfdmuRunCustomAddonScriptObject {
 
 
     constructor(name?: string) {
@@ -158,12 +159,12 @@ export default class ScriptObject {
             let isFieldMapped = this.useFieldMapping
                 && this.sourceTargetFieldMapping.hasChange
                 && this.sourceTargetFieldMapping.fieldMapping.has(name);
-            if (isFieldMapped){
+            if (isFieldMapped) {
                 targetName = this.sourceTargetFieldMapping.fieldMapping.get(name);
             }
             let describe = this.targetSObjectDescribe
                 && this.targetSObjectDescribe.fieldsMap
-                && this.targetSObjectDescribe.fieldsMap.get(targetName); 
+                && this.targetSObjectDescribe.fieldsMap.get(targetName);
             if (!describe
                 || describe.readonly && !isFieldMapped
                 || this.excludedFieldsFromUpdate.indexOf(targetName) >= 0) {
@@ -680,7 +681,7 @@ export default class ScriptObject {
         // Filter fields which is not described
         let describedFields = [...describe.fieldsMap.keys()].map(field => field.toLowerCase());
         this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) => {
-            let isComplexField = Common.isComplexField(field.field);
+            let isComplexField = Common.isComplexField(field.field) || field.field.indexOf('.') >= 0;
             return isComplexField || !isComplexField && describedFields.indexOf(field.field.toLowerCase()) >= 0;
         });
 
@@ -865,7 +866,7 @@ export default class ScriptObject {
             } else if (CONSTANTS.MULTISELECT_SOQL_KEYWORDS.indexOf(fieldName) >= 0) {
                 ___set(fieldName);
             } else if (fieldName != "id") {
-                fieldName = (<SOQLField>field).field;
+                fieldName = field["rawValue"] || (<SOQLField>field).field;
                 let parts = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR);
                 if (parts.length > 1) {
                     self.referenceFieldToObjectMap.set(parts[0], parts[1]);

@@ -9,6 +9,12 @@
 
 export enum SFDMU_RUN_ADDON_MESSAGES {
 
+     // Gneral -------------------------
+    General_EventNotSupported = "The event %s is not supported by the %s. Only %s event(s) supported. The Add-On execution has been aborted.",
+    General_ArgumentsCannotBeParsed = "Error during parsing the Add-On arguments provided with the Script. The Add-On execution has been aborted.",
+    
+
+
     // ExportFiles Addon -------------------------
     ExportFiles_Preparing = 'Preparing ...',
     ExportFiles_Analysing = 'Analysing ...',
@@ -32,9 +38,15 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
     ExportFiles_ExportingContentVersions = 'Transferring ContentVersion binary data ...',
     ExportFiles_ExportingContentDocumentLinks = 'Creating target ContentDocumentLink records ...',
     ExportFiles_NothingToProcess = "There is no data to export.",
-    ExportFiles_NothingToUpdate = "The target Files were deleted. There is no data to Update. Define another operation."
+    ExportFiles_NothingToUpdate = "The target Files were deleted. There is no data to Update. Define another operation.",
 
 
+    // RecordsTransform Addon ----------------------
+    RecordsTransform_SourceTaskNotFound = "[WARN] [Field %s]: The task associated with the sobject %s has not been found. This field will be skipped.",
+    RecordsTransform_SourceFieldNotFound = "[WARN] [Field %s]: The field is not found in the source records of the sobject %s. This field will be skipped.",
+    RecordsTransform_TargetFieldNotFound = "[WARN] [Field %s]: The field %s is not found in the target records of the sobject %s. This field will be skipped.",
+
+   
 
 
 }
