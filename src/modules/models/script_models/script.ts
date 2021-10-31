@@ -32,7 +32,8 @@ import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
 
 import SfdmuRunAddonRuntime from "../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime";
 import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
-import { ISfdmuRunCustomAddonScript } from "../../../addons/modules/sfdmu-run/custom-addons/package";
+import ISfdmuRunScript from "../../../addons/components/sfdmu-run/ISfdmuRunScript";
+
 
 
 
@@ -43,7 +44,7 @@ import { ISfdmuRunCustomAddonScript } from "../../../addons/modules/sfdmu-run/cu
  * @export
  * @class Script
  */
-export default class Script implements ISfdmuRunCustomAddonScript {
+export default class Script implements ISfdmuRunScript {
 
     // ------------- JSON --------------
     @Type(() => ScriptOrg)

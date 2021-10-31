@@ -111,4 +111,15 @@ export default interface ISFdmuRunCustomAddonTask {
    * @memberof ISFdmuRunCustomAddonTask
    */
   readonly fieldsToUpdate: Array<string>;
+
+  /**
+   * Applies the Values Mapping (if set for the associated sobject) to the passed records.
+   * The value mapping is defined by the ValueMapping.csv file.
+   * @see {@link /full-documentation/advanced-features/values-mapping | Values Mapping} for the detailed information about this featrue.
+   *
+   * @param {Array<any>} records The records to map, e.g. the source records.
+   * @memberof ISFdmuRunCustomAddonTask
+   */
+  mapRecords(records: Array<any>): void;
+
 }

@@ -45,4 +45,14 @@ export default interface ISfdmuRunCustomAddonScriptObject {
     beforeUpdateAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
     afterUpdateAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
 
+
+    // ---- Runtime -----
+    /**
+     * The API name of the current sObject
+     *
+     * @type {string}
+     * @memberof ISfdmuRunCustomAddonScriptObject
+     */
+    readonly name: string;
+
 }

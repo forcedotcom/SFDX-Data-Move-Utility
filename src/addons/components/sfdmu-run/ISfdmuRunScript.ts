@@ -8,11 +8,13 @@
 
 import ScriptAddonManifestDefinition from "../../../modules/models/script_models/scriptAddonManifestDefinition";
 import { ISfdmuRunCustomAddonScript } from "../../modules/sfdmu-run/custom-addons/package";
+import ISfdmuRunScriptObject from "./ISfdmuRunScriptObject";
 
 
 
 export default interface ISfdmuRunScript extends ISfdmuRunCustomAddonScript {
 
     getAllAddOns(): ScriptAddonManifestDefinition[];
+    objects: ISfdmuRunScriptObject[]
 
 }

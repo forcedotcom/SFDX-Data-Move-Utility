@@ -13,14 +13,24 @@ import { SFDMU_RUN_ADDON_MESSAGES } from "../../../messages/sfdmuRunAddonMessage
 import SfdmuRunAddonTask from "../../../components/sfdmu-run/sfdmuRunAddonTask";
 import { composeQuery, parseQuery } from "soql-parser-js";
 import { Common } from "../../../../modules/components/common_components/common";
+import { SFieldDescribe } from "../../../../modules/models";
 
 
 
 
 interface ITransformation {
+
+    // Original -----
     targetObject: string
     targetField: string,
-    formula: string
+    formula: string,
+    includeLookupFields: Array<string>,
+    expressions: Array<string>,
+
+    // Runtime ------
+    targetTask: SfdmuRunAddonTask,
+    targetSFieldDescribe: SFieldDescribe,
+    lookupFieldMap: Map<string, string[]> // referenced object => child id fields
 }
 
 interface IField {
@@ -32,6 +42,8 @@ interface IField {
 
     // Runtime ------
     sourceTask: SfdmuRunAddonTask,
+    sourceSFieldDescribe: SFieldDescribe,
+    lookupFieldMap: Map<string, string[]> // referenced object => child id fields
 }
 
 interface IOnExecuteArguments {
@@ -50,8 +62,9 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
 
     async onExecute(context: IAddonContext, args: IOnExecuteArguments): Promise<AddonResult> {
 
+        this.runtime.logAddonExecutionStarted(this);
 
-        // Verify event type
+        // Verify current event
         if (CONST.SUPPORTED_EVENTS.indexOf(context.eventName) < 0) {
             this.runtime.logFormattedWarning(this,
                 SFDMU_RUN_ADDON_MESSAGES.General_EventNotSupported,
@@ -62,19 +75,22 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
         }
 
         const job = this.runtime.pluginJob;
-        const task = this.runtime.getPluginTask(this);
         const fieldsMap: Map<string, IField> = new Map<string, IField>();
-        // [Transformation formula] =>  [Field data]
-        const tramsformMap = new Map<string, IField>();
+        const transformsMap: Map<string, ITransformation> = new Map<string, ITransformation>();
 
-        // Verify args
+        this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.General_CheckingArgs);
+
+        // Verify module args
         if (!args) {
             this.runtime.logFormattedWarning(this,
                 SFDMU_RUN_ADDON_MESSAGES.General_ArgumentsCannotBeParsed);
             return null;
         }
 
-        // Create mapping
+        
+        this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.RecordsTransform_CreatingMappingScheme);
+
+        // Create fields map
         try {
             args.fields.forEach(field => {
                 let task = job.tasks.find(task => task.sObjectName == field.sourceObject);
@@ -98,37 +114,140 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
                                 field.sourceObject);
                         } else {
                             fieldsMap.set(field.alias, Object.assign(field, {
-                                sourceTask: task
+                                sourceTask: task,
+                                sourceSFieldDescribe: task.fieldsInQueryMap.get(field.sourceField),
+                                lookupFieldMap: __getLookups(task.fieldsInQueryMap)
                             }));
                         }
 
                     }
                 }
             });
+
+
+            // Create transformations map
+            args.transformations.forEach(transformation => {
+                let task = job.tasks.find(task => task.sObjectName == transformation.targetObject);
+                if (!task) {
+                    this.runtime.logFormattedInfo(this,
+                        SFDMU_RUN_ADDON_MESSAGES.RecordsTransform_TargetFieldNotFound,
+                        transformation.targetField,
+                        transformation.targetObject);
+                } else {
+                    transformsMap.set(transformation.targetField, Object.assign(transformation, {
+                        targetTask: task,
+                        targetSFieldDescribe: task.fieldsInQueryMap.get(transformation.targetField),
+                        lookupFieldMap: __getLookups(task.fieldsInQueryMap)
+                    }));
+                }
+            });
+
+
+            this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.RecordsTransform_Tranforming);
+
+            // Execute
+            transformsMap.forEach((transformation: ITransformation) => {
+
+                let targetRecords = transformation.targetTask.sourceTaskData.records;
+
+                targetRecords.forEach(targetRecord => {
+
+                    let formula = {};
+
+                    // Generate formula properties for further eval() on the targetRecord
+                    fieldsMap.forEach((field: IField) => {
+
+                        if (transformation.targetObject == field.sourceObject) {
+                            // The same object => direct transformation:
+                            //      source field => target field on the same targetRecord
+                            formula[field.alias] = targetRecord[field.sourceField];
+                        } else {
+                            // Different object => lookup based transformation
+                            let sourceIdFields = transformation.lookupFieldMap.get(field.sourceObject);
+                            if (sourceIdFields) {
+                                // Target => source
+                                sourceIdFields.forEach(sourceIdField => {
+                                    let sourceId = targetRecord[sourceIdField];
+                                    let sourceRecord = field.sourceTask.sourceTaskData.idRecordsMap.get(sourceId);
+                                    if (sourceRecord) {
+                                        formula[field.alias] = sourceRecord[field.sourceField];
+                                    }
+                                });
+                            } else {
+                                // Source => target
+                                let targetIdFields = field.lookupFieldMap.get(transformation.targetObject);
+                                if (targetIdFields) {
+                                    let targetId = targetRecord["Id"];
+                                    if (targetId) {
+                                        // Find all the source records which is pointing to the current targetId
+                                        let sourceRecords = field.sourceTask.sourceTaskData.records;
+                                        for (let index = 0; index < sourceRecords.length; index++) {
+                                            const sourceRecord = sourceRecords[index];
+                                            if (Object.keys(sourceRecord).some(fieldName => {
+                                                return sourceRecord[fieldName] == targetId;
+                                            })) {
+                                                formula[field.alias] = sourceRecord[field.sourceField];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        formula[field.alias] = formula[field.alias] || null;
+                    });
+
+                    // Expresisons
+                    if (transformation.expressions) {
+                        transformation.expressions.forEach(expression => eval(expression));
+                    }
+
+                    // Evaluate
+                    targetRecord[transformation.targetField] = eval(transformation.formula);
+
+                });
+
+            });
+
+            this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.RecordsTransform_AppliedValueMapping);
+
+            // Map values
+            transformsMap.forEach((transformation: ITransformation) => {
+                let targetRecords = transformation.targetTask.sourceTaskData.records;
+                transformation.targetTask.mapRecords(targetRecords);
+            });
+
+
         } catch (e) {
             this.runtime.logFormattedWarning(this,
-                SFDMU_RUN_ADDON_MESSAGES.General_ArgumentsCannotBeParsed);
+                SFDMU_RUN_ADDON_MESSAGES.General_AddOnRuntimeError,
+                context.moduleDisplayName);
             return null;
         }
 
-
-
-
-
-        // Create transformMap
-        console.log(job, task, fieldsMap, tramsformMap);
-
-
-
-
+        this.runtime.logAddonExecutionFinished(this);
 
         return null;
+
+
+        // ----------------------- local functions ------------------------- //
+        function __getLookups(fieldsInQueryMap: Map<string, SFieldDescribe>): Map<string, string[]> {
+            const m: Map<string, string[]> = new Map<string, string[]>();
+            fieldsInQueryMap.forEach(field => {
+                if (field.referencedObjectType) {
+                    m.set(field.referencedObjectType, (m.get(field.referencedObjectType) || []).concat(field.name));
+                }
+            });
+            return m;
+        }
     }
 
     async onInit(context: IAddonContext, args: IOnExecuteArguments): Promise<AddonResult> {
 
         let script = this.runtime.getScript();
 
+        // Add all extra fields used in the all transformation to the original query string
         let objects = script.objects.map(object => {
             return {
                 object,
@@ -148,6 +267,15 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
             if (object) {
                 Common.addOrRemoveQueryFields(object.parsedQuery, [tramsformation.targetField]);
             }
+            if (tramsformation.includeLookupFields) {
+                Common.addOrRemoveQueryFields(object.parsedQuery, tramsformation.includeLookupFields);
+            }
+            let scriptObject = script.objects.find(object => object.name == tramsformation.targetObject);
+            if (scriptObject) {
+                if (scriptObject.extraFieldsToUpdate.indexOf(tramsformation.targetField) < 0) {
+                    scriptObject.extraFieldsToUpdate = scriptObject.extraFieldsToUpdate.concat(tramsformation.targetField);
+                }
+            }
         });
 
         objects.forEach(object => {
@@ -156,9 +284,5 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
 
         return null;
     }
-
-
-    // ---------------------- Helpers ------------------------------- //
-
 
 }

@@ -28,7 +28,7 @@ import * as deepClone from 'deep.clone';
 
 import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
-import { ISfdmuRunCustomAddonScriptObject } from "../../../addons/modules/sfdmu-run/custom-addons/package";
+import ISfdmuRunScriptObject from "../../../addons/components/sfdmu-run/ISfdmuRunScriptObject";
 
 
 /**
@@ -38,7 +38,7 @@ import { ISfdmuRunCustomAddonScriptObject } from "../../../addons/modules/sfdmu-
  * @export
  * @class ScriptObject
  */
-export default class ScriptObject implements ISfdmuRunCustomAddonScriptObject {
+export default class ScriptObject implements ISfdmuRunScriptObject {
 
 
     constructor(name?: string) {
@@ -115,6 +115,7 @@ export default class ScriptObject implements ISfdmuRunCustomAddonScriptObject {
     referenceFieldToObjectMap: Map<string, string> = new Map<string, string>();
     excludedFieldsFromUpdate: Array<string> = new Array<string>();
     originalExternalIdIsEmpty: boolean = false;
+    extraFieldsToUpdate: Array<string> = new Array<string>();
 
     get sourceTargetFieldMapping(): ObjectFieldMapping {
         return this.script.sourceTargetFieldMapping.get(this.name) || new ObjectFieldMapping(this.name, this.name);
@@ -147,13 +148,15 @@ export default class ScriptObject implements ISfdmuRunCustomAddonScriptObject {
     }
 
     get fieldsToUpdate(): string[] {
+        
         if (!this.parsedQuery
             || !this.isDescribed
             || this.sourceSObjectDescribe.fieldsMap.size == 0
             || this.operation == OPERATION.Readonly) {
             return new Array<string>();
         }
-        return this.parsedQuery.fields.map(x => {
+
+        let fields = this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
             let targetName = name;
             let isFieldMapped = this.useFieldMapping
@@ -172,6 +175,10 @@ export default class ScriptObject implements ISfdmuRunCustomAddonScriptObject {
             }
             return (<SOQLField>x).field;
         }).filter(x => !!x);
+
+        fields = fields.concat(this.extraFieldsToUpdate);
+
+        return Common.distinctStringArray(fields);
     }
 
     get fieldsToUpdateMap(): Map<string, SFieldDescribe> {

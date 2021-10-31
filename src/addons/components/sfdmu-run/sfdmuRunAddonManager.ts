@@ -73,7 +73,7 @@ export default class SfdmuRunAddonManager {
             const addon = addons[index];
             if (addon[2]) {
                 let result: ISfdmuRunAddonResult = await addon[2]();
-                if (result.cancel) {
+                if (result && result.cancel) {
                     // Stop execution
                     throw new CommandAbortedByAddOnError(addon[1].moduleDisplayName);
                 }
@@ -99,11 +99,9 @@ export default class SfdmuRunAddonManager {
             for (let index = 0; index < addons.length; index++) {
                 let addon = addons[index];
                 let result: ISfdmuRunAddonResult = await addon[0]();
-                if (result) {
-                    if (result.cancel) {
-                        // Stop execution
-                        throw new CommandAbortedByAddOnError(addon[1].moduleDisplayName);
-                    }
+                if (result && result.cancel) {
+                    // Stop execution
+                    throw new CommandAbortedByAddOnError(addon[1].moduleDisplayName);
                 }
             }
 

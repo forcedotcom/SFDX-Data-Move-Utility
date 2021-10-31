@@ -773,7 +773,8 @@ export class Common {
      */
     public static async writeCsvFileAsync(filePath: string,
         array: Array<object>,
-        createEmptyFileOnEmptyArray: boolean = false): Promise<void> {
+        createEmptyFileOnEmptyArray: boolean = false,
+        columns?: Array<string>): Promise<void> {
 
         try {
 
@@ -784,7 +785,7 @@ export class Common {
                 return;
             }
             const csvWriter = createCsvWriter({
-                header: Object.keys(array[0]).map(x => {
+                header: (columns || Object.keys(array[0])).map(x => {
                     return {
                         id: x,
                         title: x
@@ -1619,7 +1620,7 @@ export class Common {
         }));
 
         fieldsToAdd.forEach(field => {
-            if (fields.indexOf(field) < 0) {
+            if (field && fields.indexOf(field) < 0) {
                 fields.push(field);
             }
         });
@@ -1627,7 +1628,7 @@ export class Common {
         query.fields = new Array<FieldType>();
 
         fields.forEach(field => {
-            if (fieldsToRemove.indexOf(field) < 0) {
+            if (field && fieldsToRemove.indexOf(field) < 0) {
                 query.fields.push(getComposedField(field));
             }
         });

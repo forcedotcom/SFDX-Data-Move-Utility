@@ -10,8 +10,10 @@
 export enum SFDMU_RUN_ADDON_MESSAGES {
 
      // Gneral -------------------------
+    General_CheckingArgs = "Checking the args ...",
     General_EventNotSupported = "The event %s is not supported by the %s. Only %s event(s) supported. The Add-On execution has been aborted.",
     General_ArgumentsCannotBeParsed = "Error during parsing the Add-On arguments provided with the Script. The Add-On execution has been aborted.",
+    General_AddOnRuntimeError = "Error occured during executing the Add-On module %s. Check the module source code (if it's a Custom Add-On Module) and the args passed.",
     
 
 
@@ -42,10 +44,14 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
 
 
     // RecordsTransform Addon ----------------------
-    RecordsTransform_SourceTaskNotFound = "[WARN] [Field %s]: The task associated with the sobject %s has not been found. This field will be skipped.",
-    RecordsTransform_SourceFieldNotFound = "[WARN] [Field %s]: The field is not found in the source records of the sobject %s. This field will be skipped.",
-    RecordsTransform_TargetFieldNotFound = "[WARN] [Field %s]: The field %s is not found in the target records of the sobject %s. This field will be skipped.",
+    RecordsTransform_SourceTaskNotFound = "[WARN] [Field %s]: The task associated with the sobject %s has not been found. The field will be skipped.",
+    RecordsTransform_SourceFieldNotFound = "[WARN] [Field %s]: This field was not found in the source records of the sobject %s. The field will be skipped.",
+    RecordsTransform_TargetFieldNotFound = "[WARN] [Field %s]: This field was not found in the target records of the sobject %s. The field will be skipped.",
 
+    
+    RecordsTransform_CreatingMappingScheme = "Creating the transformation map ...",
+    RecordsTransform_Tranforming = "Transforming records ...",
+    RecordsTransform_AppliedValueMapping = "Applying the Values Mapping"
    
 
 
