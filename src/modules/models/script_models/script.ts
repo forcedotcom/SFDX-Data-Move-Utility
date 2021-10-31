@@ -32,6 +32,8 @@ import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
 
 import SfdmuRunAddonRuntime from "../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime";
 import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
+import ISfdmuRunScript from "../../../addons/components/sfdmu-run/ISfdmuRunScript";
+
 
 
 
@@ -42,7 +44,7 @@ import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunA
  * @export
  * @class Script
  */
-export default class Script {
+export default class Script implements ISfdmuRunScript {
 
     // ------------- JSON --------------
     @Type(() => ScriptOrg)
@@ -233,6 +235,9 @@ export default class Script {
             // Fix operations
             object.operation = ScriptObject.getOperation(object.operation);
         });
+
+        // Call addons module initialization
+        await this.addonManager.triggerAddonModuleInitAsync();
 
         // Remove excluded objects and unsupported objects
         this.objects = this.objects.filter(object => {
@@ -602,6 +607,19 @@ export default class Script {
             });
         }
     }
+
+    getAllAddOns(): ScriptAddonManifestDefinition[]{
+        return this.beforeAddons.concat(
+            this.afterAddons,
+            this.dataRetrievedAddons,
+            Common.flattenArrays(this.objects.map(object => object.beforeAddons.concat(
+                object.afterAddons,
+                object.beforeUpdateAddons,
+                object.afterUpdateAddons
+            )))
+        )
+    }
+
 
 
 

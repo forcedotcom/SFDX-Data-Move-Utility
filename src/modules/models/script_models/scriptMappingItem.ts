@@ -5,6 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { ISfdmuRunCustomAddonScriptMappingItem } from "../../../addons/modules/sfdmu-run/custom-addons/package";
+
 
  /**
  * Parsed FieldMapping object of the script.
@@ -13,7 +15,7 @@
  * @export
  * @class ScriptMapping
  */
-export default class ScriptMappingItem {
+export default class ScriptMappingItem implements ISfdmuRunCustomAddonScriptMappingItem {
     targetObject: string;
     sourceField: string;
     targetField: string;

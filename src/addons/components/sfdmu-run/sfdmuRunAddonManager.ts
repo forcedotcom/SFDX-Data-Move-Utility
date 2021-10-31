@@ -26,6 +26,7 @@ import IAddonContext from '../common/IAddonContext';
 import ISfdmuRunAddonResult from './ISfdmuRunAddonResult';
 
 
+
 export default class SfdmuRunAddonManager {
 
     runtime: SfdmuRunAddonRuntime;
@@ -41,7 +42,7 @@ export default class SfdmuRunAddonManager {
     }
 
     manifests: AddonManifest[] = new Array<AddonManifest>();
-    addonsMap: Map<ADDON_EVENTS, [Function, ScriptAddonManifestDefinition][]> = new Map<ADDON_EVENTS, [Function, ScriptAddonManifestDefinition][]>();
+    addonsMap: Map<ADDON_EVENTS, [Function, ScriptAddonManifestDefinition, Function][]> = new Map<ADDON_EVENTS, [Function, ScriptAddonManifestDefinition, Function][]>();
     addons: Map<number, AddonModule[]> = new Map<number, AddonModule[]>();
 
     constructor(script: Script) {
@@ -63,6 +64,23 @@ export default class SfdmuRunAddonManager {
         this._createAddOnsMap();
     }
 
+    async triggerAddonModuleInitAsync(): Promise<void> {
+
+        let addons = [...this.addonsMap.values()].reduce((item, acc) => {
+            return acc.concat(item);
+        }, []);
+        for (let index = 0; index < addons.length; index++) {
+            const addon = addons[index];
+            if (addon[2]) {
+                let result: ISfdmuRunAddonResult = await addon[2]();
+                if (result && result.cancel) {
+                    // Stop execution
+                    throw new CommandAbortedByAddOnError(addon[1].moduleDisplayName);
+                }
+            }
+        }
+    }
+
     async triggerAddonModuleMethodAsync(event: ADDON_EVENTS, objectName: string = ''): Promise<boolean> {
 
         if (!this.addonsMap.has(event)) {
@@ -81,11 +99,9 @@ export default class SfdmuRunAddonManager {
             for (let index = 0; index < addons.length; index++) {
                 let addon = addons[index];
                 let result: ISfdmuRunAddonResult = await addon[0]();
-                if (result) {
-                    if (result.cancel) {
-                        // Stop execution
-                        throw new CommandAbortedByAddOnError(addon[1].moduleDisplayName);
-                    }
+                if (result && result.cancel) {
+                    // Stop execution
+                    throw new CommandAbortedByAddOnError(addon[1].moduleDisplayName);
                 }
             }
 
@@ -99,6 +115,11 @@ export default class SfdmuRunAddonManager {
     triggerAddonModuleMethodSync(event: ADDON_EVENTS, objectName: string): void {
         // tslint:disable-next-line: no-floating-promises
         (async () => await this.triggerAddonModuleMethodAsync(event, objectName))();
+    }
+
+    triggerAddonModuleInitSync(): void {
+        // tslint:disable-next-line: no-floating-promises
+        (async () => await this.triggerAddonModuleInitAsync())();
     }
 
 
@@ -139,13 +160,13 @@ export default class SfdmuRunAddonManager {
                 }
             });
             object.afterAddons.forEach(addon => {
-                if (!addon.excluded && addon.command == this.fullCommandName) { 
+                if (!addon.excluded && addon.command == this.fullCommandName) {
                     addon.event = ADDON_EVENTS.onAfter;
                     addon.objectName = object.name;
                     manifest.addons.push(addon);
                 }
             });
-            
+
             object.beforeUpdateAddons.forEach(addon => {
                 if (!addon.excluded && addon.command == this.fullCommandName) {
                     addon.event = ADDON_EVENTS.onBeforeUpdate;
@@ -204,7 +225,11 @@ export default class SfdmuRunAddonManager {
                             moduleDisplayName: addon.moduleDisplayName,
                             isCore: addon.isCore
                         };
-                        this.addonsMap.get(addon.event).push([moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args), addon]);
+                        this.addonsMap.get(addon.event).push([
+                            moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args),
+                            addon,
+                            moduleInstance.onInit.bind(moduleInstance, moduleInstance.context, addon.args),
+                        ]);
                     }
                 } catch (ex) {
                     this.logger.warn(RESOURCES.canNotLoadModule, addon.moduleRequirePath);

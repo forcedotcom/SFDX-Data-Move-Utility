@@ -9,6 +9,7 @@
 import { CONSTANTS } from "../../components/common_components/statics";
 import * as path from 'path';
 import { ADDON_EVENTS } from "../../components/common_components/enumerations";
+import { ISfdmuRunCustomAddonScriptAddonManifestDefinition } from "../../../addons/modules/sfdmu-run/custom-addons/package";
 
 /**
  * Represent an item of the addons section of the ScriptObject / Script  classes
@@ -17,7 +18,7 @@ import { ADDON_EVENTS } from "../../components/common_components/enumerations";
  * @class AddonManifestDefinition
  * @implements {IAddonManifestDefinition}
  */
-export default class ScriptAddonManifestDefinition {
+export default class ScriptAddonManifestDefinition implements ISfdmuRunCustomAddonScriptAddonManifestDefinition {
 
     // ------------- JSON --------------
     // Common definitions

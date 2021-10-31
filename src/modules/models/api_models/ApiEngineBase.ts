@@ -57,6 +57,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
     binaryCacheDirectory: string;
 
     fieldsNotToWriteInTargetCSVFile: Array<string> = new Array<string>();
+    targetFieldMapping: IFieldMapping;
 
     get instanceUrl() {
         return this.connectionData.instanceUrl;
@@ -97,6 +98,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
         this.simulationMode = init.simulationMode;
         this.binaryDataCache = init.binaryDataCache;
         this.binaryCacheDirectory = init.binaryCacheDirectory;
+        this.targetFieldMapping = init.targetFieldMapping;
 
 
         this.fieldsNotToWriteInTargetCSVFile = CONSTANTS.FELDS_NOT_TO_OUTPUT_TO_TARGET_CSV.get(this.sObjectName) || new Array<string>();
@@ -175,7 +177,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
         let records = await Common.parallelExecAsync(taskQueue, this, threadsCount);
         let outputRecords = Common.flattenArrays(records);
 
-        await this.writeToTargetCSVFileAsync(outputRecords);
+        await this.writeToTargetCSVFileAsync(outputRecords, this.getTargetCsvColumns(outputRecords));
 
         return outputRecords;
 
@@ -223,7 +225,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
         }
         // SUCCESS RESULT
         if (!this.isChildJob) {
-            await this.writeToTargetCSVFileAsync(allResultRecords);
+            await this.writeToTargetCSVFileAsync(allResultRecords, this.getTargetCsvColumns(allResultRecords));
         }
         return allResultRecords;
     }
@@ -277,7 +279,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
      * @returns {Promise<void>}
      * @memberof ApiEngineBase
      */
-    protected async writeToTargetCSVFileAsync(records: Array<any>): Promise<void> {
+    protected async writeToTargetCSVFileAsync(records: Array<any>, columns?: Array<string>): Promise<void> {
 
         // Filter records to write to CSV file
         if (this.fieldsNotToWriteInTargetCSVFile.length > 0) {
@@ -289,7 +291,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
         }
 
         if (this.createTargetCSVFiles) {
-            await Common.writeCsvFileAsync(this.targetCSVFullFilename, records, true);
+            await Common.writeCsvFileAsync(this.targetCSVFullFilename, records, true, columns);
         }
     }
 
@@ -349,6 +351,22 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
 
     }
 
+    protected getTargetCsvColumns(records: Array<any>): Array<string> {
 
+        const LAST_COLS = [
+            "Id",
+            CONSTANTS.ERRORS_FIELD_NAME
+        ];
+        
+        if (!records || records.length == 0) {
+            return new Array<string>();
+        }
+
+        let cols = Object.keys(records[0]).filter(key => LAST_COLS.indexOf(key) < 0);
+        let lastCols = Object.keys(records[0]).filter(key => LAST_COLS.indexOf(key) >= 0);
+
+        return cols.concat(lastCols);
+
+    }
 
 }

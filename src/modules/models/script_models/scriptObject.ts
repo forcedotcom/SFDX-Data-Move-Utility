@@ -28,6 +28,7 @@ import * as deepClone from 'deep.clone';
 
 import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
 import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
+import ISfdmuRunScriptObject from "../../../addons/components/sfdmu-run/ISfdmuRunScriptObject";
 
 
 /**
@@ -37,7 +38,7 @@ import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
  * @export
  * @class ScriptObject
  */
-export default class ScriptObject {
+export default class ScriptObject implements ISfdmuRunScriptObject {
 
 
     constructor(name?: string) {
@@ -114,6 +115,7 @@ export default class ScriptObject {
     referenceFieldToObjectMap: Map<string, string> = new Map<string, string>();
     excludedFieldsFromUpdate: Array<string> = new Array<string>();
     originalExternalIdIsEmpty: boolean = false;
+    extraFieldsToUpdate: Array<string> = new Array<string>();
 
     get sourceTargetFieldMapping(): ObjectFieldMapping {
         return this.script.sourceTargetFieldMapping.get(this.name) || new ObjectFieldMapping(this.name, this.name);
@@ -146,24 +148,26 @@ export default class ScriptObject {
     }
 
     get fieldsToUpdate(): string[] {
+        
         if (!this.parsedQuery
             || !this.isDescribed
             || this.sourceSObjectDescribe.fieldsMap.size == 0
             || this.operation == OPERATION.Readonly) {
             return new Array<string>();
         }
-        return this.parsedQuery.fields.map(x => {
+
+        let fields = this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
             let targetName = name;
             let isFieldMapped = this.useFieldMapping
                 && this.sourceTargetFieldMapping.hasChange
                 && this.sourceTargetFieldMapping.fieldMapping.has(name);
-            if (isFieldMapped){
+            if (isFieldMapped) {
                 targetName = this.sourceTargetFieldMapping.fieldMapping.get(name);
             }
             let describe = this.targetSObjectDescribe
                 && this.targetSObjectDescribe.fieldsMap
-                && this.targetSObjectDescribe.fieldsMap.get(targetName); 
+                && this.targetSObjectDescribe.fieldsMap.get(targetName);
             if (!describe
                 || describe.readonly && !isFieldMapped
                 || this.excludedFieldsFromUpdate.indexOf(targetName) >= 0) {
@@ -171,6 +175,10 @@ export default class ScriptObject {
             }
             return (<SOQLField>x).field;
         }).filter(x => !!x);
+
+        fields = fields.concat(this.extraFieldsToUpdate);
+
+        return Common.distinctStringArray(fields);
     }
 
     get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
@@ -680,7 +688,7 @@ export default class ScriptObject {
         // Filter fields which is not described
         let describedFields = [...describe.fieldsMap.keys()].map(field => field.toLowerCase());
         this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) => {
-            let isComplexField = Common.isComplexField(field.field);
+            let isComplexField = Common.isComplexField(field.field) || field.field.indexOf('.') >= 0;
             return isComplexField || !isComplexField && describedFields.indexOf(field.field.toLowerCase()) >= 0;
         });
 
@@ -865,7 +873,7 @@ export default class ScriptObject {
             } else if (CONSTANTS.MULTISELECT_SOQL_KEYWORDS.indexOf(fieldName) >= 0) {
                 ___set(fieldName);
             } else if (fieldName != "id") {
-                fieldName = (<SOQLField>field).field;
+                fieldName = field["rawValue"] || (<SOQLField>field).field;
                 let parts = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR);
                 if (parts.length > 1) {
                     self.referenceFieldToObjectMap.set(parts[0], parts[1]);

@@ -7,6 +7,12 @@ export { default as ISfdmuRunCustomAddonPluginInfo } from "./ISfdmuRunCustomAddo
 export { default as ISfdmuRunCustomAddonProcessedData } from "./ISfdmuRunCustomAddonProcessedData";
 export { default as ISfdmuRunCustomAddonResult } from "./ISfdmuRunCustomAddonResult";
 export { default as ISfdmuRunCustomAddonRuntime } from "./ISfdmuRunCustomAddonRuntime";
+export { default as ISfdmuRunCustomAddonScript } from "./ISfdmuRunCustomAddonScript";
+export { default as ISfdmuRunCustomAddonScriptAddonManifestDefinition } from "./ISfdmuRunCustomAddonScriptAddonManifestDefinition";
+export { default as ISfdmuRunCustomAddonScriptMappingItem } from "./ISfdmuRunCustomAddonScriptMappingItem";
+export { default as ISfdmuRunCustomAddonScriptMockField } from "./ISfdmuRunCustomAddonScriptMockField";
+export { default as ISfdmuRunCustomAddonScriptObject } from "./ISfdmuRunCustomAddonScriptObject";
+export { default as ISfdmuRunCustomAddonScriptOrg } from "./ISfdmuRunCustomAddonScriptOrg";
 export { default as ISfdmuRunCustomAddonSFieldDescribe } from "./ISfdmuRunCustomAddonSFieldDescribe";
 export { default as ISFdmuRunCustomAddonTask } from "./ISFdmuRunCustomAddonTask";
 export { default as ISfdmuRunCustomAddonTaskData } from "./ISfdmuRunCustomAddonTaskData";

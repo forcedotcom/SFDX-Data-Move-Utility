@@ -18,7 +18,9 @@ import {
     Query,
     getComposedField,
     composeQuery,
-    parseQuery
+    parseQuery,
+    FieldType,
+    Field as SOQLField
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 
@@ -771,7 +773,8 @@ export class Common {
      */
     public static async writeCsvFileAsync(filePath: string,
         array: Array<object>,
-        createEmptyFileOnEmptyArray: boolean = false): Promise<void> {
+        createEmptyFileOnEmptyArray: boolean = false,
+        columns?: Array<string>): Promise<void> {
 
         try {
 
@@ -782,7 +785,7 @@ export class Common {
                 return;
             }
             const csvWriter = createCsvWriter({
-                header: Object.keys(array[0]).map(x => {
+                header: (columns || Object.keys(array[0])).map(x => {
                     return {
                         id: x,
                         title: x
@@ -1598,6 +1601,37 @@ export class Common {
         if (!url) return url;
         const matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
         return matches && matches[1];
+    }
+
+    /**
+      * Adds desired fields to the given parsed query
+     *
+     * @static
+     * @param {Query} query
+     * @param {Array<string>} [fieldsToAdd]
+     * @param {Array<string>} [fieldsToRemove]
+     * @memberof Common
+     */
+    public static addOrRemoveQueryFields(query: Query, fieldsToAdd: Array<string> = [], fieldsToRemove: Array<string> = []) {
+
+        let fields = [].concat(query.fields.map(f => {
+            let field = (<SOQLField>f);
+            return field.field || field["rawValue"];
+        }));
+
+        fieldsToAdd.forEach(field => {
+            if (field && fields.indexOf(field) < 0) {
+                fields.push(field);
+            }
+        });
+
+        query.fields = new Array<FieldType>();
+
+        fields.forEach(field => {
+            if (field && fieldsToRemove.indexOf(field) < 0) {
+                query.fields.push(getComposedField(field));
+            }
+        });
     }
 
 

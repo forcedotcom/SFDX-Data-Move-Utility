@@ -12,6 +12,7 @@ import { Script, OrgInfo, SObjectDescribe } from "..";
 import { CommandAbortedByUserError, CommandInitializationError } from "../common_models/errors";
 import { IOrgConnectionData } from "../common_models/helper_interfaces";
 import { DATA_MEDIA_TYPE } from "../../components/common_components/enumerations";
+import { ISfdmuRunCustomAddonScriptOrg } from "../../../addons/modules/sfdmu-run/custom-addons/package";
 
 
 
@@ -22,7 +23,7 @@ import { DATA_MEDIA_TYPE } from "../../components/common_components/enumerations
  * @export
  * @class ScriptOrg
  */
-export default class ScriptOrg {
+export default class ScriptOrg implements ISfdmuRunCustomAddonScriptOrg {
 
     // ------------- JSON --------------
 

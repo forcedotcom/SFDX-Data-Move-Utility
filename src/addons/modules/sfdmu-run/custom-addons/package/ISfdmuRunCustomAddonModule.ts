@@ -56,4 +56,18 @@ export default interface ISfdmuRunCustomAddonModule {
      */
     onExecute(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult>;
 
+
+    /**
+     * If implemented, this method wil run for each Add-On module (both of core and custom types) immediatelly AFTER the export.json file is parsed 
+     * but BEFORE the migration job is actually started.
+     * Allows to modify the script and to make other necessary prerequisites to get the migration job ready.
+     * 
+     *  @param {ISfdmuRunCustomAddonContext} context The current Add-On runtime context.
+     * @param {*} args The JS object passed into the function from the ```arg``` property 
+     *                  defined in the ```object/[addons]``` section of the Script.  
+     * @return {Promise<ISfdmuRunCustomAddonResult>}
+     * @memberof ISfdmuRunCustomAddonModule
+     */
+    onInit?(context: ISfdmuRunCustomAddonContext, args: any): Promise<ISfdmuRunCustomAddonResult>;
+
 }

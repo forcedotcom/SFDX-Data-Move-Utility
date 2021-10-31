@@ -7,13 +7,13 @@
 
 import SfdmuRunAddonTaskData from "./SfdmuRunAddonTaskData";
 
-import { MigrationJobTask, ProcessedData } from "../../../modules/models";
+import { MigrationJobTask, ProcessedData, SFieldDescribe } from "../../../modules/models";
 import { OPERATION } from "../../../modules/components/common_components/enumerations";
 import { ISFdmuRunCustomAddonTask } from "../../modules/sfdmu-run/custom-addons/package";
 
 
 
-export default class SfdmuRunAddonTask implements ISFdmuRunCustomAddonTask  {
+export default class SfdmuRunAddonTask implements ISFdmuRunCustomAddonTask {
 
     #migrationJobTask: MigrationJobTask;
     #sourceTaskData: SfdmuRunAddonTaskData;
@@ -71,5 +71,24 @@ export default class SfdmuRunAddonTask implements ISFdmuRunCustomAddonTask  {
         return this.#migrationJobTask.updateMode == 'forwards' ? 'FIRST_UPDATE' : 'SECOND_UPDATE';
     }
 
+    get fieldsInQuery(): string[] {
+        return this.#migrationJobTask.data.fieldsInQuery;
+    }
+
+    get fieldsToUpdate(): string[] {
+        return this.#migrationJobTask.data.fieldsToUpdate;
+    }
+
+    get fieldsInQueryMap(): Map<string, SFieldDescribe> {
+        return this.#migrationJobTask.scriptObject.fieldsInQueryMap;
+    }
+
+    get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
+        return this.#migrationJobTask.scriptObject.fieldsToUpdateMap;
+    }
+
+    mapRecords(records: Array<any>): void {
+        this.#migrationJobTask.mapRecords(records);
+    }
 
 }

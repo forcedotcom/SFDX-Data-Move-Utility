@@ -763,7 +763,7 @@ export default class MigrationJobTask {
             }
             if (hasRecords) {
                 // Map records  --------
-                this._mapRecords(records);
+                this.mapRecords(records);
                 // Set external id map ---------
                 let newRecordsCount = this._setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
                 // Completed message ------
@@ -805,7 +805,7 @@ export default class MigrationJobTask {
                     }
                     if (queries.length > 0) {
                         // Map records  --------
-                        this._mapRecords(records);
+                        this.mapRecords(records);
                         // Set external id map ---------
                         let newRecordsCount = this._setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
                         // Completed message ------
@@ -960,7 +960,11 @@ export default class MigrationJobTask {
                     return field.isSimpleReference && self.data.nextTasks.concat(self).indexOf(field.parentLookupObject.task) >= 0;
             }).concat(new SFieldDescribe({
                 name: CONSTANTS.__ID_FIELD_NAME
-            }));
+            }), updateMode == "forwards" ? self.scriptObject.extraFieldsToUpdate.map(name => {
+                return new SFieldDescribe({
+                    name
+                });
+            }) : []);
 
             // Add record Id field ////////
             if (self.operation != OPERATION.Insert) {
@@ -1659,6 +1663,76 @@ export default class MigrationJobTask {
         this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
     }
 
+    mapRecords(records: Array<any>) : void {
+        if (records.length == 0 || !this.scriptObject.useValuesMapping) {
+            return;
+        }
+        this.logger.infoNormal(RESOURCES.mappingRawValues, this.sObjectName);
+        let fields = Object.keys(records[0]);
+        fields.forEach(field => {
+            let key = this.sObjectName + field;
+            let valuesMap = this.job.valueMapping.get(key);
+            if (valuesMap && valuesMap.size > 0) {
+                let sourceExtIdMap: Map<string, string>;
+                let nameId: string;
+                let describe = this.data.sFieldsInQuery.filter(f => {
+                    return f.name == field;
+                })[0];
+                if (describe && describe.is__r) {
+                    let parentTask = this.job.getTaskBySObjectName(describe.parentLookupObject.name);
+                    if (parentTask) {
+                        sourceExtIdMap = parentTask.sourceData.extIdRecordsMap;
+                        nameId = describe.nameId;
+                    }
+                }
+
+                // Regex
+                let regexp: RegExp;
+                let regexpReplaceValue: any;
+                valuesMap.forEach((newValue, rawValue) => {
+                    try {
+                        if (new RegExp(CONSTANTS.FIELDS_MAPPING_REGEX_PATTERN).test(rawValue)) {
+                            let pattern = rawValue.replace(new RegExp(CONSTANTS.FIELDS_MAPPING_REGEX_PATTERN), '$1');
+                            regexpReplaceValue = newValue;
+                            regexp = regexpReplaceValue && new RegExp(pattern, 'gi');
+                        }
+                    } catch (ex) { }
+                });
+
+                records.forEach((record: any) => {
+                    let newValue: any;
+                    let rawValue = (String(record[field]) || "").trim();
+                    if (regexp) {
+                        // Use regex
+                        try {
+                            if (regexp.test(rawValue)) {
+                                newValue = rawValue.replace(regexp, regexpReplaceValue);
+                            }
+                        } catch (ex) { }
+                    }
+                    // Use regular replace
+                    newValue = newValue ? valuesMap.get(String(newValue)) || newValue : valuesMap.get(rawValue);
+
+                    // Correct values
+                    newValue = newValue == 'TRUE' || newValue == 'true' ? true :
+                        newValue == 'FALSE' || newValue == 'false' ? false :
+                            newValue == 'null' || newValue == 'NULL' || newValue == 'undefined' || newValue == '#N/A' || newValue == undefined ? null : newValue;
+                    if (typeof newValue != 'undefined') {
+                        record[field] = newValue;
+                    }
+
+                    // Replace lookups
+                    if (nameId && record.hasOwnProperty(nameId)) {
+                        let newValueId = sourceExtIdMap.get(newValue);
+                        if (newValueId) {
+                            record[nameId] = newValueId;
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     // ----------------------- Private members -------------------------------------------
     private _apiProgressCallback(apiResult: ApiInfo): void {
 
@@ -1866,76 +1940,6 @@ export default class MigrationJobTask {
         return newRecordsCount;
     }
 
-    private _mapRecords(records: Array<any>) {
-        if (records.length == 0 || !this.scriptObject.useValuesMapping) {
-            return;
-        }
-        this.logger.infoNormal(RESOURCES.mappingRawValues, this.sObjectName);
-        let fields = Object.keys(records[0]);
-        fields.forEach(field => {
-            let key = this.sObjectName + field;
-            let valuesMap = this.job.valueMapping.get(key);
-            if (valuesMap && valuesMap.size > 0) {
-                let sourceExtIdMap: Map<string, string>;
-                let nameId: string;
-                let describe = this.data.sFieldsInQuery.filter(f => {
-                    return f.name == field;
-                })[0];
-                if (describe.is__r) {
-                    let parentTask = this.job.getTaskBySObjectName(describe.parentLookupObject.name);
-                    if (parentTask) {
-                        sourceExtIdMap = parentTask.sourceData.extIdRecordsMap;
-                        nameId = describe.nameId;
-                    }
-                }
-
-                // Regex
-                let regexp: RegExp;
-                let regexpReplaceValue: any;
-                valuesMap.forEach((newValue, rawValue) => {
-                    try {
-                        if (new RegExp(CONSTANTS.FIELDS_MAPPING_REGEX_PATTERN).test(rawValue)) {
-                            let pattern = rawValue.replace(new RegExp(CONSTANTS.FIELDS_MAPPING_REGEX_PATTERN), '$1');
-                            regexpReplaceValue = newValue;
-                            regexp = regexpReplaceValue && new RegExp(pattern, 'gi');
-                        }
-                    } catch (ex) { }
-                });
-
-                records.forEach((record: any) => {
-                    let newValue: any;
-                    let rawValue = (String(record[field]) || "").trim();
-                    if (regexp) {
-                        // Use regex
-                        try {
-                            if (regexp.test(rawValue)) {
-                                newValue = rawValue.replace(regexp, regexpReplaceValue);
-                            }
-                        } catch (ex) { }
-                    }
-                    // Use regular replace
-                    newValue = newValue ? valuesMap.get(String(newValue)) || newValue : valuesMap.get(rawValue);
-
-                    // Correct values
-                    newValue = newValue == 'TRUE' || newValue == 'true' ? true :
-                        newValue == 'FALSE' || newValue == 'false' ? false :
-                            newValue == 'null' || newValue == 'NULL' || newValue == 'undefined' || newValue == '#N/A' || newValue == undefined ? null : newValue;
-                    if (typeof newValue != 'undefined') {
-                        record[field] = newValue;
-                    }
-
-                    // Replace lookups
-                    if (nameId && record.hasOwnProperty(nameId)) {
-                        let newValueId = sourceExtIdMap.get(newValue);
-                        if (newValueId) {
-                            record[nameId] = newValueId;
-                        }
-                    }
-                });
-            }
-        });
-    }
-
     private async _retrieveFilteredRecords(queries: string[], orgData: TaskOrgData, targetFieldMapping?: IFieldMapping): Promise<Array<any>> {
         let sfdx = new Sfdx(orgData.org, targetFieldMapping);
         let records = new Array<any>();
@@ -1984,7 +1988,6 @@ export default class MigrationJobTask {
             query
         };
     }
-
 
     private _mapSourceQueryToTarget(query: string, sourceSObjectName: string): IFieldMappingResult {
         let mapping = this.script.sourceTargetFieldMapping.get(sourceSObjectName);
