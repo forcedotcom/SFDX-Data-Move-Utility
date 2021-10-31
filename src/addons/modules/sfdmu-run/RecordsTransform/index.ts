@@ -39,6 +39,7 @@ interface IField {
     alias: string,
     sourceObject: string,
     sourceField: string,
+    includeLookupFields: Array<string>,
 
     // Runtime ------
     sourceTask: SfdmuRunAddonTask,
@@ -87,7 +88,7 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
             return null;
         }
 
-        
+
         this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.RecordsTransform_CreatingMappingScheme);
 
         // Create fields map
@@ -259,21 +260,47 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
             let object = objects.find(ob => ob.parsedQuery.sObject == field.sourceObject);
             if (object) {
                 Common.addOrRemoveQueryFields(object.parsedQuery, [field.sourceField]);
+
+                if (field.includeLookupFields) {
+                    field.includeLookupFields.forEach(field => {
+                        if (field) {
+                            let parts = field.split('.');
+                            if (parts.length == 1) {
+                                Common.addOrRemoveQueryFields(object.parsedQuery, [field]);
+                            } else {
+                                let obj = objects.find(ob => ob.parsedQuery.sObject == parts[0]);
+                                Common.addOrRemoveQueryFields(obj.parsedQuery, [parts[1]]);
+                            }
+                        }
+                    });
+                }
             }
         });
 
-        args.transformations.forEach(tramsformation => {
-            let object = objects.find(ob => ob.parsedQuery.sObject == tramsformation.targetObject);
+        args.transformations.forEach(transformation => {
+            let object = objects.find(ob => ob.parsedQuery.sObject == transformation.targetObject);
             if (object) {
-                Common.addOrRemoveQueryFields(object.parsedQuery, [tramsformation.targetField]);
+
+                Common.addOrRemoveQueryFields(object.parsedQuery, [transformation.targetField]);
+
+                if (transformation.includeLookupFields) {
+                    transformation.includeLookupFields.forEach(field => {
+                        if (field) {
+                            let parts = field.split('.');
+                            if (parts.length == 1) {
+                                Common.addOrRemoveQueryFields(object.parsedQuery, [field]);
+                            } else {
+                                let obj = objects.find(ob => ob.parsedQuery.sObject == parts[0]);
+                                Common.addOrRemoveQueryFields(obj.parsedQuery, [parts[1]]);
+                            }
+                        }
+                    });
+                }
             }
-            if (tramsformation.includeLookupFields) {
-                Common.addOrRemoveQueryFields(object.parsedQuery, tramsformation.includeLookupFields);
-            }
-            let scriptObject = script.objects.find(object => object.name == tramsformation.targetObject);
+            let scriptObject = script.objects.find(object => object.name == transformation.targetObject);
             if (scriptObject) {
-                if (scriptObject.extraFieldsToUpdate.indexOf(tramsformation.targetField) < 0) {
-                    scriptObject.extraFieldsToUpdate = scriptObject.extraFieldsToUpdate.concat(tramsformation.targetField);
+                if (scriptObject.extraFieldsToUpdate.indexOf(transformation.targetField) < 0) {
+                    scriptObject.extraFieldsToUpdate = scriptObject.extraFieldsToUpdate.concat(transformation.targetField);
                 }
             }
         });
