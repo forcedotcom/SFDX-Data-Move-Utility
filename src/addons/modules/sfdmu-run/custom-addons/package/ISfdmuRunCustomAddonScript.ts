@@ -11,7 +11,7 @@ import { DATA_CACHE_TYPES, ISfdmuRunCustomAddonScriptAddonManifestDefinition, IS
 
 /**
  * Provides an access to the currently running export.json script.
- * @see {@link /full-documentation/configuration-and-running/full-exportjson-format | Full export.json format} for the detailed information about the fields.
+ * @see {@link https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format | Full export.json format} for the detailed information about the fields.
  * 
  * @export
  * @interface ISfdmuRunCustomAddonScript

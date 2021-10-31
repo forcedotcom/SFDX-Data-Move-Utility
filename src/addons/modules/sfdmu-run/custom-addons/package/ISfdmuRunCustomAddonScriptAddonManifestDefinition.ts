@@ -10,7 +10,7 @@
 /**
  * The manifest of the Add-On module defined for the whole {@link ISfdmuRunCustomAddonScript} 
  * or for the particular {@link ISfdmuRunCustomAddonScriptObject}. 
- * @see {@link /full-documentation/configuration-and-running/full-exportjson-format | Full export.json format} for the detailed information.
+ * @see {@link https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format | Full export.json format} for the detailed information.
  *
  * @export
  * @interface ISfdmuRunCustomAddonScriptAddonManifestDefinition

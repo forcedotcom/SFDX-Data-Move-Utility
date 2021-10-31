@@ -88,7 +88,7 @@ export interface ISfdmuAddonInfo {
 /**
  * The type of caching (for the bimary data or for records)
  * when the caching feature is enabled.
- * @see {@link /full-documentation/configuration-and-running/full-exportjson-format | Full export.json format} for the detailed information.
+ * @see {@link https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format | Full export.json format} for the detailed information.
  *
  * @export
  * @enum {number}
