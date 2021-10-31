@@ -11,9 +11,14 @@ import IAddonContext from "../../../components/common/IAddonContext";
 import { ADDON_EVENTS } from "../../../../modules/components/common_components/enumerations";
 import { SFDMU_RUN_ADDON_MESSAGES } from "../../../messages/sfdmuRunAddonMessages";
 import SfdmuRunAddonTask from "../../../components/sfdmu-run/sfdmuRunAddonTask";
-import { composeQuery, parseQuery } from "soql-parser-js";
+import { composeQuery, parseQuery, Query } from "soql-parser-js";
 import { Common } from "../../../../modules/components/common_components/common";
 import { SFieldDescribe } from "../../../../modules/models";
+import { OPERATION } from "../custom-addons/package";
+import ISfdmuRunScript from "../../../components/sfdmu-run/ISfdmuRunScript";
+import ISfdmuRunScriptObject from "../../../components/sfdmu-run/ISfdmuRunScriptObject";
+
+
 
 
 
@@ -258,45 +263,74 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
 
         args.fields.forEach(field => {
             let object = objects.find(ob => ob.parsedQuery.sObject == field.sourceObject);
-            if (object) {
-                Common.addOrRemoveQueryFields(object.parsedQuery, [field.sourceField]);
 
-                if (field.includeLookupFields) {
-                    field.includeLookupFields.forEach(field => {
-                        if (field) {
-                            let parts = field.split('.');
-                            if (parts.length == 1) {
-                                Common.addOrRemoveQueryFields(object.parsedQuery, [field]);
-                            } else {
-                                let obj = objects.find(ob => ob.parsedQuery.sObject == parts[0]);
-                                Common.addOrRemoveQueryFields(obj.parsedQuery, [parts[1]]);
-                            }
-                        }
-                    });
-                }
+            if (!object) {
+                object = __addScriptObject(script, {
+                    objectName: field.sourceObject,
+                    operation: OPERATION.Readonly
+                });
+                objects.push(object);
             }
+
+            Common.addOrRemoveQueryFields(object.parsedQuery, [field.sourceField]);
+
+            if (field.includeLookupFields) {
+                field.includeLookupFields.forEach(field => {
+                    if (field) {
+                        let parts = field.split('.');
+                        if (parts.length == 1) {
+                            Common.addOrRemoveQueryFields(object.parsedQuery, [field]);
+                        } else {
+                            let obj = objects.find(ob => ob.parsedQuery.sObject == parts[0]);
+                            if (!obj) {
+                                obj = __addScriptObject(script, {
+                                    objectName: parts[0],
+                                    operation: OPERATION.Readonly
+                                });
+                                objects.push(obj);
+                            }
+                            Common.addOrRemoveQueryFields(obj.parsedQuery, [parts[1]]);
+                        }
+                    }
+                });
+            }
+
         });
 
         args.transformations.forEach(transformation => {
             let object = objects.find(ob => ob.parsedQuery.sObject == transformation.targetObject);
-            if (object) {
 
-                Common.addOrRemoveQueryFields(object.parsedQuery, [transformation.targetField]);
-
-                if (transformation.includeLookupFields) {
-                    transformation.includeLookupFields.forEach(field => {
-                        if (field) {
-                            let parts = field.split('.');
-                            if (parts.length == 1) {
-                                Common.addOrRemoveQueryFields(object.parsedQuery, [field]);
-                            } else {
-                                let obj = objects.find(ob => ob.parsedQuery.sObject == parts[0]);
-                                Common.addOrRemoveQueryFields(obj.parsedQuery, [parts[1]]);
-                            }
-                        }
-                    });
-                }
+            if (!object) {
+                object = __addScriptObject(script, {
+                    objectName: transformation.targetObject,
+                    operation: OPERATION.Readonly
+                });
+                objects.push(object);
             }
+
+            Common.addOrRemoveQueryFields(object.parsedQuery, [transformation.targetField]);
+
+            if (transformation.includeLookupFields) {
+                transformation.includeLookupFields.forEach(field => {
+                    if (field) {
+                        let parts = field.split('.');
+                        if (parts.length == 1) {
+                            Common.addOrRemoveQueryFields(object.parsedQuery, [field]);
+                        } else {
+                            let obj = objects.find(ob => ob.parsedQuery.sObject == parts[0]);
+                            if (!obj) {
+                                obj = __addScriptObject(script, {
+                                    objectName: parts[0],
+                                    operation: OPERATION.Readonly
+                                });
+                                objects.push(obj);
+                            }
+                            Common.addOrRemoveQueryFields(obj.parsedQuery, [parts[1]]);
+                        }
+                    }
+                });
+            }
+
             let scriptObject = script.objects.find(object => object.name == transformation.targetObject);
             if (scriptObject) {
                 if (scriptObject.extraFieldsToUpdate.indexOf(transformation.targetField) < 0) {
@@ -310,6 +344,23 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
         });
 
         return null;
+
+
+
+        // ----------------- Helpers ---------------------------- //
+        function __addScriptObject(script: ISfdmuRunScript, object: ISfdmuRunScriptObject): {
+            object: ISfdmuRunScriptObject,
+            parsedQuery: Query
+        } {
+            let newObject = script.addScriptObject({
+                objectName: object.objectName,
+                operation: OPERATION.Readonly
+            });
+            return {
+                object: newObject,
+                parsedQuery: parseQuery(newObject.query)
+            };
+        }
     }
 
 }

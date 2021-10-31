@@ -14,7 +14,9 @@ import ISfdmuRunScriptObject from "./ISfdmuRunScriptObject";
 
 export default interface ISfdmuRunScript extends ISfdmuRunCustomAddonScript {
 
+    objects: ISfdmuRunScriptObject[];
+
     getAllAddOns(): ScriptAddonManifestDefinition[];
-    objects: ISfdmuRunScriptObject[]
+    addScriptObject(object: ISfdmuRunScriptObject): ISfdmuRunScriptObject;
 
 }

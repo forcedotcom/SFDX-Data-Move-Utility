@@ -12,7 +12,7 @@ import { ISfdmuRunCustomAddonScriptObject } from "../../modules/sfdmu-run/custom
 
 export default interface ISfdmuRunScriptObject extends ISfdmuRunCustomAddonScriptObject {
 
-    extraFieldsToUpdate: Array<string>;
+    extraFieldsToUpdate?: Array<string>;
 
 
 }

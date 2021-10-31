@@ -33,6 +33,7 @@ import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
 import SfdmuRunAddonRuntime from "../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime";
 import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
 import ISfdmuRunScript from "../../../addons/components/sfdmu-run/ISfdmuRunScript";
+import ISfdmuRunScriptObject from "../../../addons/components/sfdmu-run/ISfdmuRunScriptObject";
 
 
 
@@ -94,6 +95,9 @@ export default class Script implements ISfdmuRunScript {
 
     @Type(() => ScriptAddonManifestDefinition)
     dataRetrievedAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
+
+
+
 
     // -----------------------------------
     logger: Logger;
@@ -241,8 +245,8 @@ export default class Script implements ISfdmuRunScript {
 
         // Remove excluded objects and unsupported objects
         this.objects = this.objects.filter(object => {
-            let included = (!object.excluded || object.operation == OPERATION.Readonly)
-                && CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(object.name) < 0;
+            let rule = object.operation != OPERATION.Readonly && CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(object.name) < 0;
+            let included = !object.excluded && (object.operation == OPERATION.Readonly || rule);
             if (!included) {
                 this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
             }
@@ -608,7 +612,7 @@ export default class Script implements ISfdmuRunScript {
         }
     }
 
-    getAllAddOns(): ScriptAddonManifestDefinition[]{
+    getAllAddOns(): ScriptAddonManifestDefinition[] {
         return this.beforeAddons.concat(
             this.afterAddons,
             this.dataRetrievedAddons,
@@ -618,6 +622,14 @@ export default class Script implements ISfdmuRunScript {
                 object.afterUpdateAddons
             )))
         )
+    }
+
+
+    addScriptObject(object: ISfdmuRunScriptObject): ISfdmuRunScriptObject {
+        let newObject = new ScriptObject(object.objectName);
+        newObject.operation = object.operation || OPERATION.Readonly;
+        this.objects.push(newObject);
+        return newObject
     }
 
 

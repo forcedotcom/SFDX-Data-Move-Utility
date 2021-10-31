@@ -18,32 +18,32 @@ import { ISfdmuRunCustomAddonScriptAddonManifestDefinition, ISfdmuRunCustomAddon
  */
 export default interface ISfdmuRunCustomAddonScriptObject {
 
-    mockFields: ISfdmuRunCustomAddonScriptMockField[];
-    fieldMapping: ISfdmuRunCustomAddonScriptMappingItem[];
-    query: string;
-    deleteQuery: string;
-    operation: OPERATION;
-    externalId: string;
-    deleteOldData: boolean;
-    deleteFromSource: boolean;
-    deleteByHierarchy: boolean;
-    updateWithMockData: boolean;
-    mockCSVData: boolean;
-    targetRecordsFilter: string;
-    excluded: boolean;
-    useCSVValuesMapping: boolean;
-    useFieldMapping: boolean;
-    useValuesMapping: boolean;
-    allRecords: boolean;
-    master: boolean;
-    excludedFields: Array<string>;
-    restApiBatchSize: number;
+    mockFields?: ISfdmuRunCustomAddonScriptMockField[];
+    fieldMapping?: ISfdmuRunCustomAddonScriptMappingItem[];
+    query?: string;
+    deleteQuery?: string;
+    operation?: OPERATION;
+    externalId?: string;
+    deleteOldData?: boolean;
+    deleteFromSource?: boolean;
+    deleteByHierarchy?: boolean;
+    updateWithMockData?: boolean;
+    mockCSVData?: boolean;
+    targetRecordsFilter?: string;
+    excluded?: boolean;
+    useCSVValuesMapping?: boolean;
+    useFieldMapping?: boolean;
+    useValuesMapping?: boolean;
+    allRecords?: boolean;
+    master?: boolean;
+    excludedFields?: Array<string>;
+    restApiBatchSize?: number;
 
 
-    beforeAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
-    afterAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
-    beforeUpdateAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
-    afterUpdateAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
+    beforeAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
+    afterAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
+    beforeUpdateAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
+    afterUpdateAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
 
 
     // ---- Runtime -----
@@ -53,6 +53,7 @@ export default interface ISfdmuRunCustomAddonScriptObject {
      * @type {string}
      * @memberof ISfdmuRunCustomAddonScriptObject
      */
-    readonly name: string;
+    readonly name?: string;
+    objectName?: string
 
 }
