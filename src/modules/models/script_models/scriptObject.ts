@@ -75,6 +75,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     allRecords: boolean;
     master: boolean = true;
     excludedFields: Array<string> = new Array<string>();
+    excudedFromUpdateFields: Array<string> = new Array<string>();
     restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
 
     @Type(() => ScriptAddonManifestDefinition)
@@ -148,7 +149,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     }
 
     get fieldsToUpdate(): string[] {
-        
+
         if (!this.parsedQuery
             || !this.isDescribed
             || this.sourceSObjectDescribe.fieldsMap.size == 0
@@ -170,7 +171,8 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
                 && this.targetSObjectDescribe.fieldsMap.get(targetName);
             if (!describe
                 || describe.readonly && !isFieldMapped
-                || this.excludedFieldsFromUpdate.indexOf(targetName) >= 0) {
+                || this.excludedFieldsFromUpdate.indexOf(targetName) >= 0
+                || this.excudedFromUpdateFields.indexOf(name) >= 0) {
                 return null;
             }
             return (<SOQLField>x).field;

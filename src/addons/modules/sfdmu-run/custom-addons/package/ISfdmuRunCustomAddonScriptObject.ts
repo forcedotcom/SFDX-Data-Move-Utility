@@ -37,6 +37,7 @@ export default interface ISfdmuRunCustomAddonScriptObject {
     allRecords?: boolean;
     master?: boolean;
     excludedFields?: Array<string>;
+    excudedFromUpdateFields?: Array<string>;
     restApiBatchSize?: number;
 
 
