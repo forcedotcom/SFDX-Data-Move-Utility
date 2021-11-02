@@ -188,9 +188,12 @@ export default class MigrationJobTask {
             ___mapCSVValues(firstRow);
         }
 
-        if (!firstRow.hasOwnProperty("Id")) {
+        if (!firstRow.hasOwnProperty("Id") || this.script.excludeIdsFromCSVFiles) {
+
             // Add missing id column 
-            ___addMissingIdColumn();
+            if (!firstRow.hasOwnProperty("Id")) {
+                ___addMissingIdColumn();
+            }
 
             // Update child lookup id columns
             let child__rSFields = this.scriptObject.externalIdSFieldDescribe.child__rSFields;
@@ -334,8 +337,8 @@ export default class MigrationJobTask {
          * @param {SFieldDescribe} sField sField to process
          * @returns {Promise<void>}
          */
-        async function ___addMissingLookupColumnsAsync(sField: SFieldDescribe): Promise<void> { 
-            let columnName__r = sField.fullOriginalName__r; 
+        async function ___addMissingLookupColumnsAsync(sField: SFieldDescribe): Promise<void> {
+            let columnName__r = sField.fullOriginalName__r;
             let columnNameId = sField.nameId;
             let parentExternalId = sField.parentLookupObject.complexOriginalExternalId;
             let parentTask = self.job.getTaskBySObjectName(sField.parentLookupObject.name);

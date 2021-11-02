@@ -59,7 +59,8 @@ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox /
 - **Secured and safe**. All operations are performed on the client's machine, there is no cloud interaction, so all is completely safe.
 - **User-friendly configuration.**  Fully configurable using simple JSON file.
 - **Fast performance.** Processes only a selected subset of records and fields that need to be inserted or updated and does not touch others.
--  You also can build and run your own [**Custom Add-On modules**](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which will give you unlimited possibilities to extend the SFDMU with new fully customized features.
+-  You can also **extend the basic SFDMU functionality** by **coding and running your own** [**Custom Add-On modules**](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) 
+-  **Advanced transformation of the source records** before uploading them to the Target using [the **RecordsTransform Core Add-On Module**](https://help.sfdmu.com/full-documentation/add-on-api/records-transform-core-add-on-module)
 
 
 ### Use case.
