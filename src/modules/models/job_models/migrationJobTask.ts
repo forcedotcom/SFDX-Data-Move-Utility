@@ -334,15 +334,8 @@ export default class MigrationJobTask {
          * @param {SFieldDescribe} sField sField to process
          * @returns {Promise<void>}
          */
-        async function ___addMissingLookupColumnsAsync(sField: SFieldDescribe): Promise<void> {
-            // TEST:
-            if (sField.objectName == 'Account') {
-                console.log('Account');
-            }
-            let columnName__r = sField.fullOriginalName__r;
-            if (columnName__r == "Parent.Name") {
-                console.log(columnName__r);
-            }
+        async function ___addMissingLookupColumnsAsync(sField: SFieldDescribe): Promise<void> { 
+            let columnName__r = sField.fullOriginalName__r; 
             let columnNameId = sField.nameId;
             let parentExternalId = sField.parentLookupObject.complexOriginalExternalId;
             let parentTask = self.job.getTaskBySObjectName(sField.parentLookupObject.name);
@@ -441,10 +434,6 @@ export default class MigrationJobTask {
          * @returns {Promise<void>}
          */
         async function ___updateChildOriginalIdColumnsAsync(childIdSField: SFieldDescribe): Promise<void> {
-            // TEST:
-            if (childIdSField.objectName == 'Account') {
-                console.log('Account');
-            }
             let columnChildOriginalName__r = childIdSField.fullOriginalName__r;
             let columnChildIdName__r = childIdSField.fullIdName__r;
             let columnChildNameId = childIdSField.nameId;
