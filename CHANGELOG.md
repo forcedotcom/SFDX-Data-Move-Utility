@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.9.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.0...v4.9.1) (2021-11-02)
+
 ## [4.9.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.3...v4.9.0) (2021-11-01)
 
 ### [4.8.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.2...v4.8.3) (2021-10-31)
