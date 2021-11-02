@@ -291,5 +291,16 @@ export default class SFieldDescribe implements ISFieldDescribe {
     }
 
 
+    complex(key: string): SFieldDescribe {
+        Object.assign(this, {
+            name: key,
+            label: key,
+            calculated: true,
+            isDescribed: true,
+        });
+        return this;
+    }
+
+
 }
 

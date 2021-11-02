@@ -733,6 +733,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
     private _updateSObjectDescribe(describe: SObjectDescribe) {
 
+        // General setups ////////
         [...describe.fieldsMap.values()].forEach(field => {
             // General setups ////////
             field.scriptObject = this;
@@ -744,6 +745,16 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
                 field.polymorphicReferenceObjectType = field.referencedObjectType;
             }
         });
+
+        // Add complex external id fields ///////
+        if (this.hasComplexExternalId) {
+            if (!describe.fieldsMap.has(this.complexExternalId)) {
+                let complexExtIdDescribe = new SFieldDescribe().complex(this.externalId);
+                describe.fieldsMap.set(this.complexExternalId, complexExtIdDescribe);
+                describe.fieldsMap.set(this.externalId, complexExtIdDescribe);
+            }
+        }
+
     }
 
     private async _fixPolymorphicFields(): Promise<void> {
