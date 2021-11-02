@@ -329,7 +329,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
         // Load from cache
         if (this.binaryDataCache == DATA_CACHE_TYPES.FileCache
             || this.binaryDataCache == DATA_CACHE_TYPES.CleanFileCache) {
-            let binaryFields = Object.keys(records[0]).filter(key => (records[0][key] || '').startsWith(CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER_PREFIX));
+            let binaryFields = Object.keys(records[0]).filter(key => (String(records[0][key]) || '').startsWith(CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER_PREFIX));
             // Check from cache 
             if (binaryFields.length > 0) {
                 records.forEach(record => {
