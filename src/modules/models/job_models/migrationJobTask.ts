@@ -335,7 +335,14 @@ export default class MigrationJobTask {
          * @returns {Promise<void>}
          */
         async function ___addMissingLookupColumnsAsync(sField: SFieldDescribe): Promise<void> {
+            // TEST:
+            if (sField.objectName == 'Account') {
+                console.log('Account');
+            }
             let columnName__r = sField.fullOriginalName__r;
+            if (columnName__r == "Parent.Name") {
+                console.log(columnName__r);
+            }
             let columnNameId = sField.nameId;
             let parentExternalId = sField.parentLookupObject.complexOriginalExternalId;
             let parentTask = self.job.getTaskBySObjectName(sField.parentLookupObject.name);
@@ -362,7 +369,7 @@ export default class MigrationJobTask {
                             return;
                         }
                         // Missing id column but __r column provided.
-                        let desiredExternalIdValue = parentTask.getRecordValue(csvRow, parentExternalId);
+                        let desiredExternalIdValue = parentTask.getRecordValue(csvRow, columnName__r);
                         if (desiredExternalIdValue) {
                             isFileChanged = true;
                             let parentCsvRow = parentCSVRowsMap.get(desiredExternalIdValue);
@@ -434,6 +441,10 @@ export default class MigrationJobTask {
          * @returns {Promise<void>}
          */
         async function ___updateChildOriginalIdColumnsAsync(childIdSField: SFieldDescribe): Promise<void> {
+            // TEST:
+            if (childIdSField.objectName == 'Account') {
+                console.log('Account');
+            }
             let columnChildOriginalName__r = childIdSField.fullOriginalName__r;
             let columnChildIdName__r = childIdSField.fullIdName__r;
             let columnChildNameId = childIdSField.nameId;
@@ -454,7 +465,7 @@ export default class MigrationJobTask {
                                 }
                             });
                             [...childFileMap.values()].forEach(csvRow => {
-                                let extIdValue = self.getRecordValue(csvRow, parentOriginalExternalIdColumnName);
+                                let extIdValue = self.getRecordValue(csvRow, columnChildOriginalName__r);
                                 if (extIdValue && parentCSVExtIdMap.has(extIdValue)) {
                                     csvRow[columnChildNameId] = parentCSVExtIdMap.get(extIdValue)["Id"];
                                     csvRow[columnChildIdName__r] = csvRow[columnChildNameId];
@@ -1334,13 +1345,13 @@ export default class MigrationJobTask {
                 if (parentId && !found) {
                     let csvRow: IMissingParentLookupRecordCsvRow = {
                         "Date update": Common.formatDateTime(new Date()),
-                        "Id": source["Id"],
-                        "Child ExternalId": idField.fullName__r,
-                        "Child lookup": idField.nameId,
+                        "Child Id": source["Id"],
+                        "Child Lookup Id Field": idField.nameId,
+                        "Child Lookup Reference Field": idField.fullName__r,
                         "Child SObject": idField.scriptObject.name,
-                        "Missing value": source[idField.fullName__r] || source[idField.nameId],
-                        "Parent ExternalId": idField.parentLookupObject.externalId,
-                        "Parent SObject": idField.parentLookupObject.name
+                        "Parent SObject": idField.parentLookupObject.name,
+                        "Parent ExternalId Field": idField.parentLookupObject.externalId,
+                        "Missing expected parent ExternalID value": source[idField.fullName__r] || source[idField.nameId]
                     };
                     processedData.missingParentLookups.push(csvRow);
                 }
@@ -1376,7 +1387,8 @@ export default class MigrationJobTask {
                 /* Account__c (all lookup id fields, not when ExternalId == Id)*/
                 return (field.name == "Id" || field.isSimpleReference) && !field.isOriginalExternalIdField
                     /* Account__r.Id (only when Original Externalid != Id and ExternalID == Id)*/
-                    || field.is__r && field.parentLookupObject.externalId == "Id" && field.parentLookupObject.originalExternalId != "Id";
+                    //|| field.is__r && field.parentLookupObject.externalId == "Id" && field.parentLookupObject.originalExternalId != "Id";
+                    || field.is__r && field.name.endsWith('.Id') && field.parentLookupObject.externalId == "Id" && field.parentLookupObject.originalExternalId != "Id";
             }).map(field => field.name) : new Array<string>();
 
             // Add ___Id column
@@ -1663,7 +1675,7 @@ export default class MigrationJobTask {
         this.apiProgressCallback = this.apiProgressCallback || this._apiProgressCallback.bind(this);
     }
 
-    mapRecords(records: Array<any>) : void {
+    mapRecords(records: Array<any>): void {
         if (records.length == 0 || !this.scriptObject.useValuesMapping) {
             return;
         }
