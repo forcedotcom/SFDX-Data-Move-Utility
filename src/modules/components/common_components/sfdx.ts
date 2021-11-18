@@ -55,9 +55,10 @@ export class Sfdx implements IFieldMapping {
      * @returns {Promise<QueryResult<object>>}
      * @memberof ApiSf
      */
-    async queryAsync(soql: string, useBulkQueryApi: boolean): Promise<QueryResult<object>> {
+    async queryAsync(soql: string, useBulkQueryApi: boolean, useQueryAll?: boolean): Promise<QueryResult<object>> {
 
         let self = this;
+        useBulkQueryApi = useBulkQueryApi && !useQueryAll;
 
         // Sets, when output the first progress message
         const firstProgressMessageAt = CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
@@ -92,7 +93,7 @@ export class Sfdx implements IFieldMapping {
                     reject(error);
                 });
             } else {
-                let query = conn.query(soql).on("record", function (record: any) {
+                let query = (useQueryAll ? conn.queryAll(soql) : conn.query(soql)).on("record", function (record: any) {
                     if (records.length >= nextProgressInfoAtRecord) {
                         nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
                         lastProgressMessageAt = records.length + 1;
@@ -152,7 +153,8 @@ export class Sfdx implements IFieldMapping {
     async retrieveRecordsAsync(soql: string,
         useBulkQueryApi: boolean = false,
         csvFullFilename?: string,
-        sFieldsDescribeMap?: Map<string, SFieldDescribe>): Promise<Array<any>> {
+        sFieldsDescribeMap?: Map<string, SFieldDescribe>,
+        useQueryAll?: boolean): Promise<Array<any>> {
 
         let self = this;
 
@@ -217,7 +219,7 @@ export class Sfdx implements IFieldMapping {
             // Query the remote
             let soqlFormat = ___formatSoql(soql);
             soql = soqlFormat[0];
-            let records = (await self.queryAsync(soql, useBulkQueryApi)).records;
+            let records = (await self.queryAsync(soql, useBulkQueryApi, useQueryAll)).records;
             records = ___parseRecords(records, soql);
             records = ___formatRecords(records, soqlFormat);
             records = await ___retrieveBlobFieldData(records, soqlFormat[3]);

@@ -735,7 +735,7 @@ export default class MigrationJobTask {
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.getResourceString_Step(queryMode));
                     let sfdx = new Sfdx(this.targetData.org);
-                    records = await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap);
+                    records = await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap, this.scriptObject.useQueryAll);
                     hasRecords = true;
                 }
             } else if (this.sourceData.media == DATA_MEDIA_TYPE.Org) {
@@ -750,7 +750,7 @@ export default class MigrationJobTask {
                     this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                     // Fetch records                
                     let sfdx = new Sfdx(this.sourceData.org, this._sourceFieldMapping);
-                    records = await sfdx.retrieveRecordsAsync(query, this.sourceData.useBulkQueryApi);
+                    records = await sfdx.retrieveRecordsAsync(query, this.sourceData.useBulkQueryApi, undefined, undefined, this.scriptObject.useQueryAll);
                     hasRecords = true;
                 } else if (!this.scriptObject.processAllSource) {
                     // Filtered records ************ //
@@ -759,7 +759,7 @@ export default class MigrationJobTask {
                         // Start message ------
                         this.logger.infoNormal(RESOURCES.queryingIn, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                         // Fetch records
-                        records = await this._retrieveFilteredRecords(queries, this.sourceData, this._sourceFieldMapping);
+                        records = await this._retrieveFilteredRecords(queries, this.sourceData, this._sourceFieldMapping, this.scriptObject.useQueryAll);
                         hasRecords = true;
                     }
                 }
@@ -804,7 +804,7 @@ export default class MigrationJobTask {
                         // Query string message ------
                         this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                         // Fetch records
-                        records = records.concat(await sfdx.retrieveRecordsAsync(query));
+                        records = records.concat(await sfdx.retrieveRecordsAsync(query, undefined, undefined, undefined, this.scriptObject.useQueryAll));
                     }
                     if (queries.length > 0) {
                         // Map records  --------
@@ -1944,7 +1944,7 @@ export default class MigrationJobTask {
         return newRecordsCount;
     }
 
-    private async _retrieveFilteredRecords(queries: string[], orgData: TaskOrgData, targetFieldMapping?: IFieldMapping): Promise<Array<any>> {
+    private async _retrieveFilteredRecords(queries: string[], orgData: TaskOrgData, targetFieldMapping?: IFieldMapping, useQueryAll?: boolean): Promise<Array<any>> {
         let sfdx = new Sfdx(orgData.org, targetFieldMapping);
         let records = new Array<any>();
         for (let index = 0; index < queries.length; index++) {
@@ -1952,7 +1952,7 @@ export default class MigrationJobTask {
             // Query message ------
             this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
             // Fetch records
-            records = records.concat(await sfdx.retrieveRecordsAsync(query, false));
+            records = records.concat(await sfdx.retrieveRecordsAsync(query, false, undefined, undefined, useQueryAll));
         }
         return records;
     }
