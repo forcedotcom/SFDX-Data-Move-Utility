@@ -47,7 +47,7 @@ export default class Run extends SfdxCommand {
     //     to: 'force:package:create'
     // };
 
-    protected static flagsConfig: FlagsConfig = {
+    public static readonly flagsConfig: FlagsConfig = {
         sourceusername: flags.string({
             char: "s",
             description: commandMessages.getMessage('sourceusernameFlagDescription'),
