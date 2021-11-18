@@ -6,7 +6,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "removeComments": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "types": ["node"]
   },
   "include": [
     "./src/**/*",

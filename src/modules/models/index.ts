@@ -15,9 +15,10 @@ export { default as ScriptMockField } from "./script_models/scriptMockField";
 export { default as ScriptMappingItem } from "./script_models/scriptMappingItem";
 export { default as ScriptObject } from "./script_models/scriptObject";
 export { default as ScriptOrg } from "./script_models/scriptOrg";
-export { default as SFieldDescribe } from "./script_models/sfieldDescribe";
-export { default as SObjectDescribe } from "./script_models/sobjectDescribe";
+export { default as SFieldDescribe } from "./sf_models/sfieldDescribe";
+export { default as SObjectDescribe } from "./sf_models/sobjectDescribe";
 export { default as MigrationJobTask } from "./job_models/migrationJobTask";
 export { default as MigrationJob } from "./job_models/migrationJob";
+
 
 

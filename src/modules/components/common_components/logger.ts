@@ -14,6 +14,9 @@ import { Common } from './common';
 import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
+import { ITableMessage } from '../../models/common_models/helper_interfaces';
+
+
 
 
 /**
@@ -45,14 +48,19 @@ export enum RESOURCES {
     noRecords = "noRecords",
     insert = "insert",
     update = "update",
+    delete = "delete",
     personContact = "personContact",
     coreManifest = "coreManifest",
+    userManifest = "userManifest",
     loaded = "loaded",
     cantLoad = "cantLoad",
+    global = "global",
+    canNotLoadModule = "canNotLoadModule",
+    actionIsNotPermitted = "actionIsNotPermitted",
 
     defaultPromptOptions = "defaultPromptOptions",
     defaultPromptNopromptOption = "defaultPromptNopromptOption",
-    defaultPromptSelectedOption = "defaultPromptSelectedOption",    
+    defaultPromptSelectedOption = "defaultPromptSelectedOption",
     promptMessageFormat = "promptMessageFormat",
     promptDefaultOptionFormat = "promptDefaultOptionFormat",
 
@@ -84,6 +92,7 @@ export enum RESOURCES {
     commandExecutionErrorResult = "commandExecutionErrorResult",
     commandUnresolvableWarningResult = "commandUnresolvableWarningResult",
     commandAbortedByUserErrorResult = "commandAbortedByUserErrorResult",
+    commandAbortedByAddOnErrorResult = "commandAbortedByAddOnErrorResult",
     commandUnexpectedErrorResult = "commandUnexpectedErrorResult",
 
 
@@ -91,6 +100,7 @@ export enum RESOURCES {
     packageScript = "packageScript",
     pluginVersion = "pluginVersion",
     runningVersion = "runningVersion",
+    runningSfdmuRunAddOnVersion = "runningSfdmuRunAddOnVersion",
     workingPathDoesNotExist = "workingPathDoesNotExist",
     packageFileDoesNotExist = "packageFileDoesNotExist",
     loadingPackageFile = "loadingPackageFile",
@@ -100,6 +110,7 @@ export enum RESOURCES {
     noUpdateableFieldsInTheSObject = "noUpdateableFieldsInTheSObject",
     scriptJSONFormatError = "scriptJSONFormatError",
     scriptJSONReadError = "scriptJSONReadError",
+    scriptRunInSimulationMode = "scriptRunInSimulationMode",
 
     tryingToConnectCLI = "tryingToConnectCLI",
     successfullyConnected = "successfullyConnected",
@@ -121,10 +132,13 @@ export enum RESOURCES {
     missingFieldsToProcess = "missingFieldsToProcess",
     addedMissingParentLookupObject = "addedMissingParentLookupObject",
     failedToResolveExternalId = "failedToResolveExternalId",
+    fieldIsNotOfPolymorphicType = "fieldIsNotOfPolymorphicType",
+    fieldMissingPolymorphicDeclaration = "fieldMissingPolymorphicDeclaration",
+    theExternalIdNotFoundInTheQuery = "theExternalIdNotFoundInTheQuery",
 
-    loadingAddonManifestFile = "loadingAddonManifestFile",
+    loadingCoreAddonManifestFile = "loadingCoreAddonManifestFile",
+    loadingAddon = "loadingAddon",
     missingNecessaryComponent = "missingNecessaryComponent",
-    addonManifestFileDoesNotFound = "addonManifestFileDoesNotFound",
 
     dataMigrationProcessStarted = "dataMigrationProcessStarted",
     buildingMigrationStaregy = "buildingMigrationStaregy",
@@ -148,12 +162,15 @@ export enum RESOURCES {
     csvFilesWereUpdated = "csvFilesWereUpdated",
     validationAndFixingsourceCSVFilesCompleted = "validationAndFixingsourceCSVFilesCompleted",
     unableToDeleteTargetDirectory = "unableToDeleteTargetDirectory",
+    unableToDeleteCacheDirectory = "unableToDeleteCacheDirectory",
     unableToDeleteSourceDirectory = "unableToDeleteSourceDirectory",
+    productionModificationApprovalPrompt = "productionModificationApprovalPrompt",
 
     preparingJob = "preparingJob",
     executingJob = "executingJob",
     executionOrder = "executionOrder",
     queryingOrder = "queryingOrder",
+    deletingOrder = "deletingOrder",
 
     unprocessedRecord = "unprocessedRecord",
     invalidRecordHashcode = "invalidRecordHashcode",
@@ -169,18 +186,25 @@ export enum RESOURCES {
     apiOperationFinished = "apiOperationFinished",
     invalidApiOperation = "invalidApiOperation",
     unexpectedApiError = "unexpectedApiError",
+    simulationMode = "simulationMode",
 
     gettingRecordsCount = "gettingRecordsCount",
     totalRecordsAmount = "totalRecordsAmount",
 
-    deletingOldData = "deletingOldData",
-    deletingTargetSObject = "deletingTargetSObject",
-    deletingFromTheTargetNRecordsWillBeDeleted = "deletingFromTheTargetNRecordsWillBeDeleted",
-    deletingFromTheTargetCompleted = "deletingFromTheTargetCompleted",
-    deletingOldDataCompleted = "deletingOldDataCompleted",
-    deletingOldDataSkipped = "deletingOldDataSkipped",
+    deletingTargetData = "deletingTargetData",
+    deletingSourceData = "deletingSourceData",
+
+    deletingTargetSObjectRecords = "deletingTargetSObjectRecords",
+    deletingSourceSObjectRecords = "deletingSourceSObjectRecords",
+
+    deletingNRecordsWillBeDeleted = "deletingNRecordsWillBeDeleted",
+    deletingRecordsCompleted = "deletingRecordsCompleted",
     nothingToDelete = "nothingToDelete",
-    
+    nothingToDelete2 = "nothingToDelete2",
+
+    deletingDataCompleted = "deletingDataCompleted",
+    deletingDataSkipped = "deletingDataSkipped",
+
     mappingQuery = "mappingQuery",
     mappingSourceRecords = "mappingSourceRecords",
     mappingTargetRecords = "mappingTargetRecords",
@@ -195,8 +219,10 @@ export enum RESOURCES {
     queryingTotallyFetched = "queryingTotallyFetched",
     queryString = "queryString",
     fetchingSummary = "fetchingSummary",
+    apiCallProgress = "apiCallProgress",
 
     updatingTarget = "updatingTarget",
+    deletingTarget = "deletingTarget",
     updatingTargetNRecordsWillBeUpdated = "updatingTargetNRecordsWillBeUpdated",
     updatingTargetObjectCompleted = "updatingTargetObjectCompleted",
     updatingTargetCompleted = "updatingTargetCompleted",
@@ -205,7 +231,19 @@ export enum RESOURCES {
     skippedUpdatesWarning = "skippedUpdatesWarning",
     missingParentLookupsPrompt = "missingParentLookupsPrompt",
     updatingSummary = "updatingSummary",
-    updatingTotallyUpdated = "updatingTotallyUpdated"
+    updatingTotallyUpdated = "updatingTotallyUpdated",
+
+    processingAddon = "processingAddon",
+    runAddonMethod = "runAddonMethod",
+    nothingToProcess = "nothingToProcess",
+    startAddonExecute = "startAddonExecute",
+    finishAddonExecute = "finishAddonExecute",
+    coreAddonMessageTemplate = "coreAddonMessageTemplate",
+    runAddonMethodCompleted = "runAddonMethodCompleted",
+    jobAbortedByAddon = "jobAbortedByAddon",
+
+    writingToCacheFile = "writingToCacheFile",
+    readingFromCacheFile = "readingFromCacheFile"
 }
 
 
@@ -421,11 +459,26 @@ export class Logger {
     }, ...tokens: string[]
     ): Promise<string> {
 
-        params.options = params.options || this.getResourceString(RESOURCES.defaultPromptOptions);
-        params.default = params.default || this.getResourceString(RESOURCES.defaultPromptSelectedOption);
-        params.nopromptDefault = params.nopromptDefault || this.getResourceString(RESOURCES.defaultPromptNopromptOption);
+        params.options = params.options != "" ? this.getResourceString(RESOURCES.defaultPromptOptions) : params.options;
+
+        params.default = params.default != "" ? this.getResourceString(RESOURCES.defaultPromptSelectedOption) : params.default;
+        params.default = params.default ? String(params.default).trim() : params.default;
+
+        let defaultOption = params.default ? this.getResourceString(RESOURCES.promptDefaultOptionFormat, params.default) : undefined;
+        defaultOption = defaultOption ? String(defaultOption).trim() : defaultOption;
+
+        params.nopromptDefault = params.nopromptDefault != "" ? this.getResourceString(RESOURCES.defaultPromptNopromptOption) : params.nopromptDefault;
+        params.nopromptDefault = params.nopromptDefault ? String(params.nopromptDefault).trim() : params.nopromptDefault;
+
         params.timeout = params.timeout || CONSTANTS.DEFAULT_USER_PROMPT_TIMEOUT_MS;
+
         params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
+        params.message = this.getResourceString(RESOURCES.promptMessageFormat, params.message, params.options);
+        if (!params.options) {
+            // Remove parethenesses
+            params.message = params.message.replace(/[\(\)\?]/g, '');
+        }
+        params.message = params.message.trim();
 
         if (this.uxLoggerVerbosity == LOG_MESSAGE_VERBOSITY.NONE || this.noPromptFlag) {
             // Suppress propmts on --quite or --noprompt, immediately send the default value
@@ -433,12 +486,12 @@ export class Logger {
         }
 
         try {
-            params.message = this.getResourceString.apply(this, [params.message, ...tokens]);
-
-            return await this.uxLogger.prompt(this.getResourceString(RESOURCES.promptMessageFormat, String(params.message), params.options), {
-                default: this.getResourceString(RESOURCES.promptDefaultOptionFormat, params.default),
-                timeout: params.timeout
-            });
+            return await this.uxLogger.prompt(
+                params.message,
+                {
+                    default: defaultOption,
+                    timeout: params.timeout
+                });
         } catch (ex) {
             return params.default;
         }
@@ -452,12 +505,33 @@ export class Logger {
     *
     * @param {string} message  Message to prompt the user
     * @returns {Promise<boolen>} Returns true if user has choosen "yes" (continue job)
+    * @param {...string[]} tokens Tokens for the command resource 
     * @memberof MessageUtils
     */
     async yesNoPromptAsync(message: string, ...tokens: string[]): Promise<boolean> {
         return (await this.promptAsync.apply(this, [{
             message
         }, ...tokens])) != this.getResourceString(RESOURCES.defaultPromptSelectedOption);
+    }
+
+    /**
+     * Outputs prompt to ask user to enter any text.
+     *
+     * @param {string} message Prompt message to display to the user.
+     * @param {string} [defaultResponse=""] The default response string if the user does not respond within the timeout value.
+     * @param {number} [timeout=6000] Timeout in ms if user does not respond 
+     * @param {...string[]} tokens Tokens for the command resource 
+     * @return {*}  {Promise<string>}
+     * @memberof Logger
+     */
+    async textPromptAsync(message: string, timeout?: number, defaultResponse: string = "", ...tokens: string[]): Promise<string> {
+        return (await this.promptAsync.apply(this, [{
+            message,
+            options: "",
+            default: defaultResponse,
+            nopromptDefault: defaultResponse,
+            timeout: timeout || CONSTANTS.DEFAULT_USER_PROMT_TEXT_ENTER_TIMEOUT_MS
+        }, ...tokens]));
     }
 
     /**
@@ -1103,19 +1177,6 @@ interface IResourceBundle {
     getMessage(key: string, tokens?: any): string;
 }
 
-/**
- * Tabular message description
- *
- * @interface ITableMessage
- */
-interface ITableMessage {
-    tableBody: Array<object>,
-    tableColumns: Array<{
-        key: string,
-        label: string,
-        width?: number
-    }>
-}
 
 /**
  * Format of output message for successful command result
@@ -1167,7 +1228,8 @@ export enum COMMAND_EXIT_STATUSES {
     ORG_METADATA_ERROR = 3,
     COMMAND_EXECUTION_ERROR = 4,
     COMMAND_ABORTED_BY_USER = 5,
-    UNRESOLWABLE_WARNING = 6
+    UNRESOLWABLE_WARNING = 6,
+    COMMAND_ABORTED_BY_ADDON = 7,
 }
 
 

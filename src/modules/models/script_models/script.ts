@@ -11,23 +11,30 @@ import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS, ADDON_MODULE_METHODS } from "../../components/common_components/statics";
+import { CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import {
-    parseQuery,
     composeQuery,
-    OrderByClause,
     getComposedField,
     Field as SOQLField
 } from 'soql-parser-js';
 import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
 import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
-import { IPluginInfo } from "../common_models/helper_interfaces";
 import * as path from 'path';
 import * as fs from 'fs';
-import AddonManager from "../../components/common_components/addonManager";
-import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
+
+import { DATA_CACHE_TYPES, DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+
+import ICommandRunInfo from "../common_models/ICommandRunInfo";
+import IPluginInfo from "../common_models/IPluginInfo";
+import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
+
+import SfdmuRunAddonRuntime from "../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime";
+import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
+import ISfdmuRunScript from "../../../addons/components/sfdmu-run/ISfdmuRunScript";
+import ISfdmuRunScriptObject from "../../../addons/components/sfdmu-run/ISfdmuRunScriptObject";
+
 
 
 
@@ -38,7 +45,7 @@ import { ICommandRunInfo } from "../addons_models/addonSharedPackage";
  * @export
  * @class Script
  */
-export default class Script {
+export default class Script implements ISfdmuRunScript {
 
     // ------------- JSON --------------
     @Type(() => ScriptOrg)
@@ -48,9 +55,11 @@ export default class Script {
     objects: ScriptObject[] = new Array<ScriptObject>();
 
     pollingIntervalMs: number = CONSTANTS.DEFAULT_POLLING_INTERVAL_MS;
+    concurrencyMode: "Serial" | "Parallel" = "Parallel";
     bulkThreshold: number = CONSTANTS.DEFAULT_BULK_API_THRESHOLD_RECORDS;
     bulkApiVersion: string = CONSTANTS.DEFAULT_BULK_API_VERSION;
     bulkApiV1BatchSize: number = CONSTANTS.DEFAULT_BULK_API_V1_BATCH_SIZE;
+    restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
     allOrNone: boolean = false;
     promptOnUpdateError: boolean = true;
     promptOnMissingParentObjects: boolean = true;
@@ -64,6 +73,30 @@ export default class Script {
     fileLog: boolean = true;
     keepObjectOrderWhileExecute: boolean = false;
     allowFieldTruncation: boolean = false;
+    simulationMode: boolean = false;
+
+    proxyUrl: string;
+
+    binaryDataCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
+    sourceRecordsCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
+
+    parallelBinaryDownloads: number = CONSTANTS.DEFAULT_MAX_PARALLEL_BLOB_DOWNLOADS;
+
+    parallelBulkJobs: number = 1;
+    parallelRestJobs: number = 1;
+
+
+
+    @Type(() => ScriptAddonManifestDefinition)
+    beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
+
+    @Type(() => ScriptAddonManifestDefinition)
+    afterAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
+
+    @Type(() => ScriptAddonManifestDefinition)
+    dataRetrievedAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
+
+
 
 
     // -----------------------------------
@@ -74,9 +107,17 @@ export default class Script {
     objectsMap: Map<string, ScriptObject> = new Map<string, ScriptObject>();
     sourceTargetFieldMapping: Map<string, ObjectFieldMapping> = new Map<string, ObjectFieldMapping>();
     job: MigrationJob;
-    addonManager: AddonManager;
+    addonManager: SfdmuRunAddonManager;
     runInfo: ICommandRunInfo;
+    canModify: string;
 
+    get sFOrg(): ScriptOrg {
+        return !this.sourceOrg.isFileMedia ? this.sourceOrg : this.targetOrg;
+    }
+
+    get addonRuntime(): SfdmuRunAddonRuntime {
+        return <any>this.addonManager.runtime;
+    }
 
     get isPersonAccountEnabled(): boolean {
         return this.sourceOrg.isPersonAccountEnabled || this.targetOrg.isPersonAccountEnabled;
@@ -92,7 +133,7 @@ export default class Script {
 
     get targetDirectory(): string {
         if (!fs.existsSync(this.targetDirectoryPath)) {
-            fs.mkdirSync(this.targetDirectoryPath);
+            fs.mkdirSync(this.targetDirectoryPath, { recursive: true });
         }
         return this.targetDirectoryPath;
     }
@@ -103,9 +144,39 @@ export default class Script {
 
     get sourceDirectory(): string {
         if (!fs.existsSync(this.sourceDirectoryPath)) {
-            fs.mkdirSync(this.sourceDirectoryPath);
+            fs.mkdirSync(this.sourceDirectoryPath, { recursive: true });
         }
         return this.sourceDirectoryPath;
+    }
+
+    get binaryCacheDirectoryPath(): string {
+        return path.join(this.basePath, CONSTANTS.BINARY_CACHE_SUB_DIRECTORY, this.sourceOrg.orgUserName);
+    }
+
+    get binaryCacheDirectory(): string {
+        if (!fs.existsSync(this.binaryCacheDirectoryPath)) {
+            fs.mkdirSync(this.binaryCacheDirectoryPath, { recursive: true });
+        }
+        return this.binaryCacheDirectoryPath;
+    }
+
+    get sourceRecordsCacheDirectoryPath(): string {
+        return path.join(this.basePath, CONSTANTS.SOURCE_RECORDS_CACHE_SUB_DIRECTORY, this.sourceOrg.orgUserName);
+    }
+
+    get sourceRecordsCacheDirectory(): string {
+        if (!fs.existsSync(this.sourceRecordsCacheDirectoryPath)) {
+            fs.mkdirSync(this.sourceRecordsCacheDirectoryPath, { recursive: true });
+        }
+        return this.sourceRecordsCacheDirectoryPath;
+    }
+
+    get hasDeleteFromSourceObjectOperation(): boolean {
+        return this.objects.some(object => object.isDeletedFromSourceOperation);
+    }
+
+    get hasDeleteByHierarchyOperation(): boolean {
+        return this.objects.some(object => object.isHierarchicalDeleteOperation);
     }
 
 
@@ -127,15 +198,18 @@ export default class Script {
         sourceUsername: string,
         targetUsername: string,
         basePath: string,
-        apiVersion: string): Promise<void> {
+        apiVersion: string,
+        canModify: string): Promise<void> {
 
         // Initialize script
         this.logger = logger;
         this.basePath = basePath;
         this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
+        this.canModify = canModify || "";
 
         // Message about the running version      
         this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
+        this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningSfdmuRunAddOnVersion)]: pinfo.runAddOnApiInfo.version });
         this.logger.infoMinimal(RESOURCES.newLine);
 
         // Create add on manager
@@ -146,24 +220,33 @@ export default class Script {
             basePath,
             pinfo
         };
-        this.addonManager = new AddonManager(this);
-
-        // Triggering Addons
-        await this.__triggerAddOns.onScriptSetup();
+        this.addonManager = new SfdmuRunAddonManager(this);
 
         this.sourceOrg = this.orgs.filter(x => x.name == this.runInfo.sourceUsername)[0] || new ScriptOrg();
         this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();
         this.apiVersion = this.runInfo.apiVersion || this.apiVersion;
 
-
         if (this.runInfo.sourceUsername.toLowerCase() == this.runInfo.targetUsername.toLowerCase()) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
         }
 
+        if (this.simulationMode) {
+            this.logger.infoMinimal(RESOURCES.scriptRunInSimulationMode);
+        }
+
+        // Fix object values
+        this.objects.forEach(object => {
+            // Fix operations
+            object.operation = ScriptObject.getOperation(object.operation);
+        });
+
+        // Call addons module initialization
+        await this.addonManager.triggerAddonModuleInitAsync();
+
         // Remove excluded objects and unsupported objects
         this.objects = this.objects.filter(object => {
-            let included = (!object.excluded || object.operation == OPERATION.Readonly)
-                && CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(object.name) < 0;
+            let rule = object.operation != OPERATION.Readonly && CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(object.name) < 0;
+            let included = !object.excluded && (object.operation == OPERATION.Readonly || rule);
             if (!included) {
                 this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
             }
@@ -208,11 +291,13 @@ export default class Script {
             object.setup(this);
         });
 
+        // Validate production update
+        await this.sourceOrg.promptUserForProductionModificationAsync();
+        await this.targetOrg.promptUserForProductionModificationAsync();
+
         // Cleanup the source / target directories
         await this.cleanupDirectories();
 
-        // Triggering Addons
-        await this.__triggerAddOns.onOrgsConnected();
 
     }
 
@@ -239,6 +324,22 @@ export default class Script {
                 Common.deleteFolderRecursive(this.targetDirectoryPath, true);
             } catch (ex) {
                 throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteTargetDirectory, this.targetDirectoryPath));
+            }
+        }
+
+        // Perform clean-up the cache directories if need -------------- 
+        if (this.binaryDataCache == DATA_CACHE_TYPES.CleanFileCache) {
+            try {
+                Common.deleteFolderRecursive(this.binaryCacheDirectory, true);
+            } catch (ex) {
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteCacheDirectory, this.binaryCacheDirectory));
+            }
+        }
+        if (this.sourceRecordsCache == DATA_CACHE_TYPES.CleanFileCache) {
+            try {
+                Common.deleteFolderRecursive(this.sourceRecordsCacheDirectory, true);
+            } catch (ex) {
+                throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.unableToDeleteCacheDirectory, this.sourceRecordsCacheDirectory));
             }
         }
     }
@@ -302,23 +403,10 @@ export default class Script {
                         Object.assign(thisField.parentLookupObject, <ScriptObject>{
                             isExtraObject: true,
                             allRecords,
-                            query: `SELECT Id, ${externalId} FROM ${referencedObjectType}`,
+                            query: `SELECT Id, ${Common.getComplexField(externalId)} FROM ${referencedObjectType}`,
                             operation: OPERATION.Readonly,
                             externalId
                         });
-
-                        if (referencedObjectType == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
-                            let objectsWithRecordTypeFields = this.objects.filter(x => x.hasRecordTypeIdField).map(x => x.name);
-                            thisField.parentLookupObject.parsedQuery = parseQuery(thisField.parentLookupObject.query);
-                            thisField.parentLookupObject.parsedQuery.fields.push(getComposedField("SobjectType"));
-                            thisField.parentLookupObject.parsedQuery.where = Common.composeWhereClause(thisField.parentLookupObject.parsedQuery.where, "SobjectType", objectsWithRecordTypeFields);
-                            thisField.parentLookupObject.parsedQuery.orderBy = <OrderByClause>({
-                                field: "SobjectType",
-                                order: "ASC"
-                            });
-                            thisField.parentLookupObject.query = composeQuery(thisField.parentLookupObject.parsedQuery);
-
-                        }
 
                         isParentLookupObjectAdded = true;
 
@@ -330,7 +418,8 @@ export default class Script {
 
                     // Validate and fix the default external id key for the parent object.
                     if ((thisField.parentLookupObject.isExtraObject || thisField.parentLookupObject.originalExternalIdIsEmpty)
-                        && thisField.parentLookupObject.externalId != thisField.parentLookupObject.defaultExternalId) {
+                        && thisField.parentLookupObject.externalId != thisField.parentLookupObject.defaultExternalId
+                        && thisField.scriptObject != thisField.parentLookupObject) {
                         // Extra object => automatically get possible unique "name" field to make it external id
                         if (thisField.parentLookupObject.externalId != "Id") {
                             // Remove old external id from the query
@@ -345,20 +434,30 @@ export default class Script {
                         thisField.parentLookupObject.script = null;
                         thisField.parentLookupObject.setup(this);
 
-                        // The permanent solution of "Cannot read property 'child__rSFields' of undefined"
-                        let externalIdFieldName = Common.getComplexField(thisField.parentLookupObject.externalId);
-                        let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName);
-                        if (!parentExternalIdField) {
-                            // The new externalid field does not found in the query.
-                            // Set 'Id' as externalid field.
-                            thisField.parentLookupObject.externalId = "Id";
-                            thisField.parentLookupObject.script = null;
-                            thisField.parentLookupObject.setup(this);
-                        }
+                    }
+
+                    // The permanent solution of "Cannot read property 'child__rSFields' of undefined"
+                    let externalIdFieldName1 = Common.getComplexField(thisField.parentLookupObject.externalId);
+                    let parentExternalIdField1 = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName1);
+                    if (!parentExternalIdField1) {
+                        // The new externalid field does not found in the query.
+                        // Set 'Id' as externalid field.
+                        thisField.parentLookupObject.externalId = "Id";
+                        thisField.parentLookupObject.script = null;
+                        thisField.parentLookupObject.setup(this);
+
+                        // Output the message about not found external id for the parent object
+                        this.logger.infoNormal(RESOURCES.theExternalIdNotFoundInTheQuery,
+                            thisField.objectName,
+                            thisField.nameId,
+                            externalIdFieldName1,
+                            thisField.parentLookupObject.name,
+                            thisField.parentLookupObject.name,
+                            thisField.parentLookupObject.externalId);
                     }
 
                     if (thisField.parentLookupObject.isExtraObject && isParentLookupObjectAdded) {
-                        // Output the nmessage about adding extra object missing in the script
+                        // Output the message about adding extra object missing in the script
                         this.logger.infoNormal(RESOURCES.addedMissingParentLookupObject,
                             thisField.parentLookupObject.name,
                             thisField.objectName,
@@ -378,26 +477,37 @@ export default class Script {
                     let externalIdFieldName = Common.getComplexField(thisField.parentLookupObject.externalId);
                     let parentExternalIdField = thisField.parentLookupObject.fieldsInQueryMap.get(externalIdFieldName);
 
-                    let __rSField = thisObject.fieldsInQueryMap.get(__rFieldName);
-                    __rSField.objectName = thisObject.name;
-                    __rSField.scriptObject = thisObject;
-                    __rSField.custom = thisField.custom;
-                    __rSField.parentLookupObject = thisField.parentLookupObject;
-                    __rSField.isPolymorphicField = thisField.isPolymorphicField;
-                    __rSField.polymorphicReferenceObjectType = thisField.polymorphicReferenceObjectType;
-                    __rSField.lookup = true;
-
+                    let __rSField = ___setRSField(__rFieldName);
                     thisField.__rSField = __rSField;
-                    __rSField.idSField = thisField;
+
+                    if (__rFieldName != __rOriginalFieldName) {
+                        ___setRSField(__rOriginalFieldName);
+                    }
 
                     try {
                         parentExternalIdField.child__rSFields.push(__rSField);
                     } catch (ex) {
                         this.logger.warn(RESOURCES.failedToResolveExternalId,
-                            thisField.parentLookupObject.externalId, 
-                            thisField.parentLookupObject.name, 
-                            thisField.objectName, 
+                            thisField.parentLookupObject.externalId,
+                            thisField.parentLookupObject.name,
+                            thisField.objectName,
                             thisField.nameId);
+                    }
+
+                    // ---------------------- Internal functions --------------------------- //   
+                    function ___setRSField(fieldName: string) {
+                        let __rSField = thisObject.fieldsInQueryMap.get(fieldName);
+                        if (__rSField) {
+                            __rSField.objectName = thisObject.name;
+                            __rSField.scriptObject = thisObject;
+                            __rSField.custom = thisField.custom;
+                            __rSField.parentLookupObject = thisField.parentLookupObject;
+                            __rSField.isPolymorphicField = thisField.isPolymorphicField;
+                            __rSField.polymorphicReferenceObjectType = thisField.polymorphicReferenceObjectType;
+                            __rSField.lookup = true;
+                            __rSField.idSField = thisField;
+                        }
+                        return __rSField;
                     }
                 }
 
@@ -411,7 +521,8 @@ export default class Script {
             object.query = composeQuery(object.parsedQuery);
 
             // Warn user if there are no any fields to update
-            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0) {
+            if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0
+                && !(object.fieldsInQuery.length == 1 && object.fieldsInQuery[0] == "Id")) {
                 this.logger.warn(RESOURCES.noUpdateableFieldsInTheSObject, object.name);
             }
         });
@@ -501,16 +612,28 @@ export default class Script {
         }
     }
 
-
-    // ------------------ Private members --------------------- //
-    private __triggerAddOns = {
-        onScriptSetup: async (): Promise<void> => {
-            this.runInfo = await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onScriptSetup, this.runInfo) || this.runInfo;
-        },
-        onOrgsConnected: async (): Promise<void> => {
-            await this.addonManager.triggerAddonModuleMethodAsync(ADDON_MODULE_METHODS.onOrgsConnected);
-        }
+    getAllAddOns(): ScriptAddonManifestDefinition[] {
+        return this.beforeAddons.concat(
+            this.afterAddons,
+            this.dataRetrievedAddons,
+            Common.flattenArrays(this.objects.map(object => object.beforeAddons.concat(
+                object.afterAddons,
+                object.beforeUpdateAddons,
+                object.afterUpdateAddons
+            )))
+        )
     }
+
+
+    addScriptObject(object: ISfdmuRunScriptObject): ISfdmuRunScriptObject {
+        let newObject = new ScriptObject(object.objectName);
+        newObject.operation = object.operation || OPERATION.Readonly;
+        this.objects.push(newObject);
+        return newObject
+    }
+
+
+
 
 }
 

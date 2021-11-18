@@ -5,23 +5,35 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { IBlobField } from "../../models/common_models/helper_interfaces";
+
+
+
+import { IBlobField } from "../../models/api_models";
+import { SPECIAL_MOCK_PATTERN_TYPES } from "./enumerations";
 
 
 export const CONSTANTS = {
 
     DEFAULT_USER_PROMPT_TIMEOUT_MS: 6000,
+    DEFAULT_USER_PROMT_TEXT_ENTER_TIMEOUT_MS:  20000,
     DEFAULT_POLLING_INTERVAL_MS: 5000,
     DEFAULT_BULK_API_THRESHOLD_RECORDS: 200,
     DEFAULT_BULK_API_VERSION: '2.0',
     DEFAULT_BULK_API_V1_BATCH_SIZE: 9500,
-    DEFAULT_API_VERSION: '47.0',
+    DEFAULT_REST_API_BATCH_SIZE: undefined,
+    DEFAULT_API_VERSION: '52.0',
     DEFAULT_EXTERNAL_ID_FIELD_NAME: "Name",
+
+    QUERY_PROGRESS_MESSAGE_PER_RECORDS: 2000,
+    DOWNLOAD_BLOB_PROGRESS_MESSAGE_PER_RECORDS: 10,
+
 
     __ID_FIELD_NAME: "___Id",
     __IS_PROCESSED_FIELD_NAME: "___IsProcessed",
+
     ERRORS_FIELD_NAME: "Errors",
-    DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName",
+    DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName;NamespacePrefix;SobjectType",
+    OLD_DEFAULT_RECORD_TYPE_ID_FIELD_R_NAME: "RecordType.DeveloperName",
     COMPLEX_FIELDS_QUERY_SEPARATOR: '$',
     COMPLEX_FIELDS_QUERY_PREFIX: '$$',
     COMPLEX_FIELDS_SEPARATOR: ';',
@@ -29,10 +41,20 @@ export const CONSTANTS = {
     FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
 
     SCRIPT_FILE_NAME: 'export.json',
-    CORE_ADDON_MANIFEST_FILE_NAME: "../../../addons/addonsCore.json",
+   
+    CORE_ADDON_MANIFEST_FILE_NAME: "../../addons/addonsCore.json",
     USER_ADDON_MANIFEST_FILE_NAME: "addons.json",
+    CORE_ADDON_MODULES_BASE_PATH: "../../../addons/modules/",
+    CORE_ADDON_MODULES_FOLDER_SEPARATOR: ':',
+    CORE_ADDON_MODULES_NAME_PREFIX: 'core:',
+    CUSTOM_ADDON_MODULES_NAME_PREFIX: 'custom:',
+    CORE_ADDON_MODULES_FOLDER_NAME_SEPARATOR: '-',
+    ADDON_TEMP_RELATIVE_FOLDER: 'temp_%s/',
+
     CSV_SOURCE_SUB_DIRECTORY: "source",
     CSV_TARGET_SUB_DIRECTORY: "target",
+    BINARY_CACHE_SUB_DIRECTORY: "binary_cache",
+    SOURCE_RECORDS_CACHE_SUB_DIRECTORY: "source_records_cache",
     CSV_SOURCE_FILE_SUFFIX: "_source",
     CSV_TARGET_FILE_SUFFIX: "_target",
     CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX: "_person",
@@ -44,9 +66,19 @@ export const CONSTANTS = {
     MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME: "MissingParentRecordsReport.csv",
     FIELD_MAPPING_FILENAME: "FieldMapping.csv",
     CSV_FILES_SOURCENAME: "csvfile",
+    BINARY_FILE_CACHE_TEMPLATE: (id: string) => `${id}.blob`,
+    BINARY_FILE_CACHE_RECORD_PLACEHOLDER: (id:string) => `[blob[${id}]]`,
+    BINARY_FILE_CACHE_RECORD_PLACEHOLDER_ID: (value: any) => /\[blob\[([\w\d]+)\]\]/.exec(value || '')[1],
+    BINARY_FILE_CACHE_RECORD_PLACEHOLDER_PREFIX: '[blob[',
 
-    MAX_CONCURRENT_PARALLEL_REQUESTS: 10,
-    MAX_PARALLEL_DOWNLOAD_THREADS: 5,
+    SOURCE_RECORDS_FILE_CACHE_TEMPLATE: (id: string) => `${id}.dat`,
+
+    DEFAULT_ORG_MEDIA_TYPE: "csvfile",
+
+    MAX_PARALLEL_REQUESTS: 10,
+    DEFAULT_MAX_PARALLEL_BLOB_DOWNLOADS: 20,
+    DEFAULT_MAX_PARALLEL_EXEC_TASKS: 10,
+
     MAX_FETCH_SIZE: 100000,
     QUERY_BULK_API_THRESHOLD: 30000,
     BULK_API_V2_BLOCK_SIZE: 1000,
@@ -54,8 +86,8 @@ export const CONSTANTS = {
     POLL_TIMEOUT: 3000000,
     BULK_QUERY_API_POLL_TIMEOUT: 4 * 60 * 1000,
     SHORT_QUERY_STRING_MAXLENGTH: 250,
-    MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,  
-    USER_ADDON_PRIORITY_OFFSET: 1000000,  
+    MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH: 3900,
+    USER_ADDON_PRIORITY_OFFSET: 1000000,
 
     MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
     SPECIAL_MOCK_COMMANDS: [
@@ -63,31 +95,54 @@ export const CONSTANTS = {
         "c_seq_date"
     ],
 
+    SPECIAL_MOCK_PATTERNS: new Map<SPECIAL_MOCK_PATTERN_TYPES, string>(
+        [
+            [SPECIAL_MOCK_PATTERN_TYPES.haveAnyValue, "*"],
+            [SPECIAL_MOCK_PATTERN_TYPES.missingValue, "^*"]
+        ]
+    ),
+
     RECORD_TYPE_SOBJECT_NAME: "RecordType",
+
+    DEFAULT_EXTERNAL_IDS: {
+        'EmailMessage' : 'Subject'
+    },
+
     NOT_SUPPORTED_OBJECTS: [
         'Profile',
-        'RecordType',
         'User',
         'Group',
-        'DandBCompany'
+        'DandBCompany',
+        'ContentVersion'// Content version has deprecated using the SFDMU core in favor to the ExportFiles Add-On Module 
     ],
+
     NOT_SUPPORTED_OBJECTS_IN_BULK_API: [
         "Attachment",
         "ContentVersion"
     ],
+
     SPECIAL_OBJECTS: [
         "Group",
         "User",
         "RecordType"
     ],
+
     OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE: [
-        "RecordType"
+        'RecordType',
+        'User',
+        'Group',
+        'DandBCompany'
     ],
+
     OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT: [
         'RecordType',
         'User',
         'Group',
         'DandBCompany'
+    ],
+
+    FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT: [
+        'MasterRecordId'
     ],
 
     FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_ACCOUNT: [
@@ -105,13 +160,17 @@ export const CONSTANTS = {
         "Name"
     ],
 
+    FIELDS_NOT_CHECK_FOR_POLYMORPHIC_ISSUES : [
+        'OwnerId'
+    ],
+
     MULTISELECT_SOQL_KEYWORDS: [
         "readonly_true",
         "readonly_false",
         "custom_true",
         "custom_false",
         "standard_true",
-        "standard_false",        
+        "standard_false",
         "updateable_true",
         "updateable_false",
         "createable_true",
@@ -121,6 +180,15 @@ export const CONSTANTS = {
         "person_true",
         "person_false"
     ],
+
+    SPECIAL_OBJECT_LOOKUP_MASTER_DETAIL_ORDER: new Map<string, Array<string>>([
+        ['Contact', ['Case']],
+        ['Account', ['Case']]
+    ]),
+
+    SPECIAL_OBJECT_QUERY_ORDER: new Map<string, Array<string>>([
+        ['AccountContactRelation', ['Account', 'Contact', 'Case']]
+    ]),
 
     BLOB_FIELDS: new Array<IBlobField>(
         {
@@ -160,7 +228,7 @@ export const CONSTANTS = {
             "Description",
             "PathOnClient",
             "ContentUrl",
-            "FirstPublishLocationId"            
+            "FirstPublishLocationId"
         )]
     ]),
 
@@ -172,6 +240,12 @@ export const CONSTANTS = {
         ["ContentVersion", new Array<string>(
             "Title",
             "Description"
+        )]
+    ]),
+
+    EXCLUDED_QUERY_FIELDS: new Map<string, Array<string>>([
+        ["Attachment", new Array<string>(
+            "Body"
         )]
     ]),
 
@@ -192,6 +266,16 @@ export const CONSTANTS = {
     // since they are not of comparable type and are overloading the API.
     // We need to exclude such fields from querying the Target.
     FIELDS_EXCLUDED_FROM_TARGET_QUERY: new Map<string, Array<string>>([
+        ["Attachment", new Array<string>(
+            "Body"
+        )],
+        ["ContentVersion", new Array<string>(
+            "VersionData"
+        )]
+    ]),
+
+
+    FELDS_NOT_TO_OUTPUT_TO_TARGET_CSV: new Map<string, Array<string>>([
         ["Attachment", new Array<string>(
             "Body"
         )],
@@ -232,48 +316,13 @@ export const CONSTANTS = {
             "MailingStreet"
         )]
     ]),
+    
+
+
+    // ------ AddOns -------------------- //
+    MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE: 50000000
 
 }
 
-export enum DATA_MEDIA_TYPE {
-    Org,
-    File
-}
 
-export enum OPERATION {
-    Insert,
-    Update,
-    Upsert,
-    Readonly,
-    Delete,
-    Unknown
-}
-
-export enum RESULT_STATUSES {
-    Undefined = "Undefined",
-    ApiOperationStarted = "ApiOperationStarted",
-    ApiOperationFinished = "ApiOperationFinished",
-    Information = "Information",
-    JobCreated = "JobCreated",
-    BatchCreated = "BatchCreated",
-    DataUploaded = "DataUploaded",
-    InProgress = "InProgress",
-    Completed = "Completed",
-    FailedOrAborted = "FailedOrAborted",
-    ProcessError = "ProcessError"
-}
-
-export enum MESSAGE_IMPORTANCE {
-    Silent,
-    Low,
-    Normal,
-    High,
-    Warn,
-    Error
-}
-
-export enum ADDON_MODULE_METHODS {
-    onScriptSetup = "onScriptSetup",
-    onOrgsConnected = "onOrgsConnected"
-}
 

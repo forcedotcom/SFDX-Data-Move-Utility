@@ -12,7 +12,7 @@ import "es6-shim";
 import { Type } from "class-transformer";
 import { Query } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
-import { DATA_MEDIA_TYPE, OPERATION, CONSTANTS } from "../../components/common_components/statics";
+import { CONSTANTS } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
@@ -22,9 +22,13 @@ import {
     getComposedField
 } from 'soql-parser-js';
 import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappingItem, ObjectFieldMapping } from "..";
-import SFieldDescribe from "./sfieldDescribe";
+import SFieldDescribe from "../sf_models/sfieldDescribe";
 import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
 import * as deepClone from 'deep.clone';
+
+import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
+import ISfdmuRunScriptObject from "../../../addons/components/sfdmu-run/ISfdmuRunScriptObject";
 
 
 /**
@@ -34,7 +38,7 @@ import * as deepClone from 'deep.clone';
  * @export
  * @class ScriptObject
  */
-export default class ScriptObject {
+export default class ScriptObject implements ISfdmuRunScriptObject {
 
 
     constructor(name?: string) {
@@ -55,26 +59,36 @@ export default class ScriptObject {
     operation: OPERATION = OPERATION.Readonly;
     externalId: string;
     deleteOldData: boolean = false;
+    deleteFromSource: boolean = false;
+    deleteByHierarchy: boolean = false;
     updateWithMockData: boolean = false;
     mockCSVData: boolean = false;
     targetRecordsFilter: string = "";
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
-
     useFieldMapping: boolean = false;
     useValuesMapping: boolean = false;
-
     /**
      * [Obsolete] Replaced with "master".
      * Preserved for backwards compability
      */
     allRecords: boolean;
     master: boolean = true;
-
     excludedFields: Array<string> = new Array<string>();
+    excudedFromUpdateFields: Array<string> = new Array<string>();
+    restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
 
+    @Type(() => ScriptAddonManifestDefinition)
+    beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
+    @Type(() => ScriptAddonManifestDefinition)
+    afterAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
+    @Type(() => ScriptAddonManifestDefinition)
+    beforeUpdateAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
+
+    @Type(() => ScriptAddonManifestDefinition)
+    afterUpdateAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
     // -----------------------------------
     script: Script;
@@ -102,6 +116,7 @@ export default class ScriptObject {
     referenceFieldToObjectMap: Map<string, string> = new Map<string, string>();
     excludedFieldsFromUpdate: Array<string> = new Array<string>();
     originalExternalIdIsEmpty: boolean = false;
+    extraFieldsToUpdate: Array<string> = new Array<string>();
 
     get sourceTargetFieldMapping(): ObjectFieldMapping {
         return this.script.sourceTargetFieldMapping.get(this.name) || new ObjectFieldMapping(this.name, this.name);
@@ -113,7 +128,8 @@ export default class ScriptObject {
 
     get externalIdSFieldDescribe(): SFieldDescribe {
         return this.isDescribed
-            && this.sourceSObjectDescribe.fieldsMap.get(this.externalId);
+            && this.sourceSObjectDescribe.fieldsMap.get(this.externalId)
+            || new SFieldDescribe();
     }
 
     get fieldsInQuery(): string[] {
@@ -133,27 +149,38 @@ export default class ScriptObject {
     }
 
     get fieldsToUpdate(): string[] {
+
         if (!this.parsedQuery
             || !this.isDescribed
             || this.sourceSObjectDescribe.fieldsMap.size == 0
             || this.operation == OPERATION.Readonly) {
             return new Array<string>();
         }
-        return this.parsedQuery.fields.map(x => {
+
+        let fields = this.parsedQuery.fields.map(x => {
             let name = (<SOQLField>x).field;
-            let describe = this.targetSObjectDescribe
-                && this.targetSObjectDescribe.fieldsMap
-                && this.targetSObjectDescribe.fieldsMap.get(name);
-            let enabledRule = this.useFieldMapping
+            let targetName = name;
+            let isFieldMapped = this.useFieldMapping
                 && this.sourceTargetFieldMapping.hasChange
                 && this.sourceTargetFieldMapping.fieldMapping.has(name);
+            if (isFieldMapped) {
+                targetName = this.sourceTargetFieldMapping.fieldMapping.get(name);
+            }
+            let describe = this.targetSObjectDescribe
+                && this.targetSObjectDescribe.fieldsMap
+                && this.targetSObjectDescribe.fieldsMap.get(targetName);
             if (!describe
-                || describe.readonly && !enabledRule
-                || this.excludedFieldsFromUpdate.indexOf(name) >= 0) {
+                || describe.readonly && !isFieldMapped
+                || this.excludedFieldsFromUpdate.indexOf(targetName) >= 0
+                || this.excudedFromUpdateFields.indexOf(name) >= 0) {
                 return null;
             }
             return (<SOQLField>x).field;
         }).filter(x => !!x);
+
+        fields = fields.concat(this.extraFieldsToUpdate);
+
+        return Common.distinctStringArray(fields);
     }
 
     get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
@@ -223,7 +250,14 @@ export default class ScriptObject {
 
     get parentMasterDetailObjects(): ScriptObject[] {
         return Common.distinctArray([...this.fieldsInQueryMap.values()].map(x => {
+            // Master-detail
             if (x.isMasterDetail) {
+                return x.parentLookupObject;
+            }
+            // Special order
+            if (x.lookup
+                && CONSTANTS.SPECIAL_OBJECT_LOOKUP_MASTER_DETAIL_ORDER.get(x.parentLookupObject.name)
+                && CONSTANTS.SPECIAL_OBJECT_LOOKUP_MASTER_DETAIL_ORDER.get(x.parentLookupObject.name).indexOf(this.name) >= 0) {
                 return x.parentLookupObject;
             }
         }).filter(x => !!x), 'name');
@@ -306,7 +340,7 @@ export default class ScriptObject {
         return this.script.sourceTargetFieldMapping.size > 0;
     }
 
-    get sourceTargetFieldNameMap(): Map<string, string> {
+    get sourceToTargetFieldNameMap(): Map<string, string> {
         let m = new Map<string, string>();
         this.fieldsInQueryMap.forEach(field => {
             m.set(field.name, field.targetName);
@@ -321,11 +355,29 @@ export default class ScriptObject {
         if (!this.isDescribed) {
             return "Id";
         }
+        if (CONSTANTS.DEFAULT_EXTERNAL_IDS[this.name]) {
+            return CONSTANTS.DEFAULT_EXTERNAL_IDS[this.name];
+        }
         return ([].concat(
             [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.nameField),
             [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.autoNumber),
             [...this.sourceSObjectDescribe.fieldsMap.values()].filter(field => field.unique))[0]
             || { name: "Id" })["name"];
+    }
+
+    get idFieldIsMapped(): boolean {
+        return this.isMapped && this.sourceToTargetFieldNameMap.get("Id") != "Id";
+    }
+
+    get isDeletedFromSourceOperation(): boolean {
+        return this.operation == OPERATION.Delete
+            && this.deleteFromSource
+            && this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org;
+    }
+
+    get isHierarchicalDeleteOperation(): boolean {
+        return this.deleteByHierarchy
+            && this.script.targetOrg.media == DATA_MEDIA_TYPE.Org;
     }
 
 
@@ -349,11 +401,21 @@ export default class ScriptObject {
         this.originalExternalId = this.externalId;
         this.allRecords = typeof this.allRecords == "undefined" ? this.master : this.allRecords;
 
-        // Fixes operation value
-        this.operation = ScriptObject.getOperation(this.operation);
+        // Fix / Setup operation value ???
+        //this.operation = ScriptObject.getOperation(this.operation);
 
+        if (this.operation == OPERATION.DeleteSource) {
+            this.deleteFromSource = true;
+            this.operation = OPERATION.Delete;
+        }
+        if (this.operation == OPERATION.DeleteHierarchy) {
+            this.deleteByHierarchy = true;
+            this.operation = OPERATION.Delete;
+        }
+
+        // Fix script object parameters
         // Always set explicit externalId to 'Id' on Insert operation
-        if (this.operation == OPERATION.Insert) {
+        if (this.operation == OPERATION.Insert || this.isDeletedFromSourceOperation) {
             this.externalId = "Id";
         }
 
@@ -363,10 +425,19 @@ export default class ScriptObject {
         } catch (ex) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
-        if (this.operation == OPERATION.Delete) {
+
+        if (this.operation == OPERATION.Delete && !this.isDeletedFromSourceOperation && !this.deleteByHierarchy) {
             this.deleteOldData = true;
             this.parsedQuery.fields = [getComposedField("Id")];
+        } else if (this.deleteByHierarchy) {
+            if (this.operation == OPERATION.Delete) {
+                this.operation = OPERATION.Readonly;
+                this.deleteOldData = false;
+            } else {
+                this.deleteByHierarchy = false;
+            }
         }
+
         // Add record Id field to the query
         if (!this.fieldsInQuery.some(x => x == "Id")) {
             this.parsedQuery.fields.push(getComposedField("Id"));
@@ -396,7 +467,7 @@ export default class ScriptObject {
         }
 
         // Make each field appear only once in the query
-        this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
+        this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field").filter(field => !!(<SOQLField>field).field);
 
         // Update object
         this.query = composeQuery(this.parsedQuery);
@@ -501,6 +572,9 @@ export default class ScriptObject {
                     throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectTargetDoesNotExist, this.name));
                 }
             }
+
+            // Fix the incorrect polymorphic field definitions
+            await this._fixPolymorphicFields();
         }
     }
 
@@ -561,7 +635,14 @@ export default class ScriptObject {
             [...describe.fieldsMap.values()].forEach(fieldDescribe => {
                 if ((___compare(pattern.all != "undefined", pattern.all == true)
                     || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))) {
-                    if (!(fieldDescribe.lookup && CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0)) {
+                    if (!(
+                        fieldDescribe.lookup &&
+                        (
+                            CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
+                            || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.name) >= 0
+                        )
+                    )
+                    ) {
                         this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
                         this.excludedFieldsFromUpdate = this.excludedFieldsFromUpdate.filter(fieldName => fieldName != fieldDescribe.name);
                     }
@@ -596,6 +677,23 @@ export default class ScriptObject {
             }
         });
 
+        // Verify external id value when the original one was not supplied with the script
+        if (this.originalExternalIdIsEmpty
+            && !describe.fieldsMap.get(this.externalId)) {
+            this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
+                field.field != this.externalId
+            );
+            this.externalId = this.defaultExternalId;
+            this.parsedQuery.fields.push(getComposedField(this.externalId));
+        }
+
+        // Filter fields which is not described
+        let describedFields = [...describe.fieldsMap.keys()].map(field => field.toLowerCase());
+        this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) => {
+            let isComplexField = Common.isComplexField(field.field) || field.field.indexOf('.') >= 0;
+            return isComplexField || !isComplexField && describedFields.indexOf(field.field.toLowerCase()) >= 0;
+        });
+
         // Make each field appear only once
         this.parsedQuery.fields = Common.distinctArray(this.parsedQuery.fields, "field");
 
@@ -613,9 +711,9 @@ export default class ScriptObject {
 
     private _fixObjectName() {
         if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.Org && this.script.sourceOrg.isDescribed) {
-            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.sourceOrg.objectNamesList);
+            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.sourceOrg.objectNamesList, true) || this.parsedQuery.sObject;
         } else if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org && this.script.targetOrg.isDescribed) {
-            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.targetOrg.objectNamesList);
+            this.parsedQuery.sObject = Common.searchClosest(this.parsedQuery.sObject, this.script.targetOrg.objectNamesList, true) || this.parsedQuery.sObject;
         }
     }
 
@@ -625,7 +723,7 @@ export default class ScriptObject {
         this.parsedQuery.fields = new Array<SOQLField>();
         fieldsInOriginalQuery.forEach(fieldName => {
             if (!Common.isComplexOr__rField(fieldName)) {
-                fieldName = Common.searchClosest(fieldName, availableFields);
+                fieldName = Common.searchClosest(fieldName, availableFields, true) || fieldName;
             }
             this.parsedQuery.fields.push(getComposedField(fieldName));
         });
@@ -634,17 +732,110 @@ export default class ScriptObject {
     }
 
     private _updateSObjectDescribe(describe: SObjectDescribe) {
-        [...describe.fieldsMap.values()].forEach(x => {
+
+        // General setups ////////
+        [...describe.fieldsMap.values()].forEach(field => {
             // General setups ////////
-            x.scriptObject = this;
+            field.scriptObject = this;
 
             // Setup the polymorphic field /////           
-            if (x.lookup && this.referenceFieldToObjectMap.has(x.name)) {
-                x.referencedObjectType = this.referenceFieldToObjectMap.get(x.name);
-                x.isPolymorphicField = true;
-                x.polymorphicReferenceObjectType = x.referencedObjectType;
+            if (field.lookup && this.referenceFieldToObjectMap.has(field.name)) {
+                field.referencedObjectType = this.referenceFieldToObjectMap.get(field.name);
+                field.isPolymorphicField = true;
+                field.polymorphicReferenceObjectType = field.referencedObjectType;
             }
         });
+
+        // Add complex external id fields ///////
+        if (this.hasComplexExternalId) {
+            if (!describe.fieldsMap.has(this.complexExternalId)) {
+                let complexExtIdDescribe = new SFieldDescribe().complex(this.externalId);
+                describe.fieldsMap.set(this.complexExternalId, complexExtIdDescribe);
+                describe.fieldsMap.set(this.externalId, complexExtIdDescribe);
+            }
+        }
+
+    }
+
+    private async _fixPolymorphicFields(): Promise<void> {
+
+        let self = this;
+
+        // Get all polymorphic fields for the current object
+        let apiSf = new Sfdx(this.script.sFOrg);
+        let polymorphicFields = await apiSf.getPolymorphicObjectFields(this.name);
+
+        // => NON-polymorphic fields explicitely declared with object reference (ParentId$Account)
+        let nonPolymorphicFieldsButDeclared = new Array<string>();
+
+        // Polymorphic fields which are MISSING object reference declarations
+        // => Can be caused by the human error (incorrect query string) or then using multiselect keywords (e.g. "all")
+        let missingDeclarations = ___getIncorrectPolymorphicFields(this.targetSObjectDescribe, nonPolymorphicFieldsButDeclared);
+        missingDeclarations = ___getIncorrectPolymorphicFields(this.sourceSObjectDescribe, nonPolymorphicFieldsButDeclared);
+
+        nonPolymorphicFieldsButDeclared.forEach(fieldName => {
+            this.script.logger.infoNormal(RESOURCES.fieldIsNotOfPolymorphicType, this.name, fieldName);
+        });
+
+        if (missingDeclarations.length > 0) {
+
+            //***** Found incorrect fields => 
+            ///      remove them from the query string
+            let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
+            this.parsedQuery.fields = new Array<SOQLField>();
+            fieldsInOriginalQuery.forEach(fieldName => {
+                fieldName = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR)[0];
+                if (missingDeclarations.indexOf(fieldName) < 0) {
+                    this.parsedQuery.fields.push(getComposedField(fieldName));
+                } else {
+                    this.script.logger.infoNormal(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
+                }
+            });
+
+            // Create new query string
+            this.query = composeQuery(this.parsedQuery);
+        }
+
+
+        // -----------------  Private functions ----------------- //
+        function ___getIncorrectPolymorphicFields(describe: SObjectDescribe, incorrectDeclarations: Array<string>): Array<string> {
+
+            let incorrectFields = new Array<string>();
+
+            [...describe.fieldsMap.values()].forEach(field => {
+
+                if (CONSTANTS.FIELDS_NOT_CHECK_FOR_POLYMORPHIC_ISSUES.indexOf(field.name) < 0) {
+
+                    field.isPolymorphicFieldDefinition = polymorphicFields.indexOf(field.name) >= 0;
+
+                    if (field.isPolymorphicField && !field.isPolymorphicFieldDefinition) {
+
+                        //***** Incorect polymorphic definition, regular lookup marked as polymorphic =>
+                        // this field should be changed to regular field type, 
+                        //   we should restore original lookup settings
+                        field.isPolymorphicField = false;
+                        field.polymorphicReferenceObjectType = '';
+                        field.referencedObjectType = field.originalReferencedObjectType;
+
+                        // Remove from polymorphic mappings
+                        self.referenceFieldToObjectMap.delete(field.name);
+
+                        if (incorrectDeclarations.indexOf(field.name) < 0) {
+                            incorrectDeclarations.push(field.name);
+                        }
+
+                    } else if (!field.isPolymorphicField && field.isPolymorphicFieldDefinition) {
+
+                        //***** Incorect polymorphic definition, polymorphic NOT marked =>
+                        // Add it to incorrect list since we do'nt know to which object it should be linked
+                        incorrectFields.push(field.name);
+                    }
+                }
+            });
+
+            return Common.distinctStringArray(incorrectFields);
+        }
+
     }
 
     private _validateFields(describe: SObjectDescribe, isSource: boolean) {
@@ -657,22 +848,25 @@ export default class ScriptObject {
 
             let fieldsInQuery = [].concat(this.fieldsInQuery);
 
-            fieldsInQuery.forEach(x => {
-                if (!Common.isComplexOr__rField(x) && !describe.fieldsMap.has(x)) {
+            fieldsInQuery.forEach(sourceFieldName => {
 
-                    if (x.name == this.externalId) {
+                let targetFieldName = !isSource && this.sourceTargetFieldMapping.fieldMapping.get(sourceFieldName) || sourceFieldName;
+
+                if (!Common.isComplexOr__rField(sourceFieldName) && !describe.fieldsMap.has(targetFieldName)) {
+
+                    if (sourceFieldName == this.externalId) {
                         // Missing externalId field. 
                         throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.noExternalKey, this.name, this.strOperation));
                     }
 
                     // Field in the query is missing in the org metadata. Warn user.
                     if (isSource)
-                        this.script.logger.warn(RESOURCES.fieldSourceDoesNtoExist, this.name, x);
+                        this.script.logger.warn(RESOURCES.fieldSourceDoesNtoExist, this.name, sourceFieldName);
                     else
-                        this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, x);
+                        this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, sourceFieldName);
 
                     // Remove missing field from the query                    
-                    Common.removeBy(this.parsedQuery.fields, "field", x);
+                    Common.removeBy(this.parsedQuery.fields, "field", sourceFieldName);
                 }
             });
 
@@ -692,7 +886,7 @@ export default class ScriptObject {
             } else if (CONSTANTS.MULTISELECT_SOQL_KEYWORDS.indexOf(fieldName) >= 0) {
                 ___set(fieldName);
             } else if (fieldName != "id") {
-                fieldName = (<SOQLField>field).field;
+                fieldName = field["rawValue"] || (<SOQLField>field).field;
                 let parts = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR);
                 if (parts.length > 1) {
                     self.referenceFieldToObjectMap.set(parts[0], parts[1]);

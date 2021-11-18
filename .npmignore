@@ -2,6 +2,7 @@
 *-error.log
 /.nyc_output
 /dist
+/dist2
 /lib
 /package-lock.json
 /tmp
@@ -9,8 +10,10 @@ node_modules
 /export*.json
 ._*
 .DS_Store
-/bin
 /logs
 /source
 /target
 /development
+/test-addons
+/documentation
+/src/addons/modules/sfdmu-run/custom-addons/TestModule*

@@ -6,10 +6,15 @@
  */
 import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
-import { OPERATION, CONSTANTS } from '../common_components/statics';
+import { CONSTANTS } from '../common_components/statics';
 import { RESOURCES } from '../common_components/logger';
 import { Sfdx } from '../common_components/sfdx';
 import { CsvChunks } from '../../models';
+import { OPERATION } from '../common_components/enumerations';
+import { Common } from '../common_components/common';
+
+
+
 
 
 
@@ -35,7 +40,13 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let connection = Sfdx.createOrgConnection(this.connectionData);
-        let chunks = new CsvChunks().fromArray(this._getSourceRecordsArray(allRecords));
+        let chunks: CsvChunks;
+        if (!this.restApiBatchSize){
+            chunks = new CsvChunks().fromArray(this.getSourceRecordsArray(allRecords));
+        } else {
+            let recordChunks = Common.chunkArray(this.getSourceRecordsArray(allRecords), this.restApiBatchSize);
+            chunks = new CsvChunks().fromArrayChunks(recordChunks);
+        }
         this.apiJobCreateResult = {
             chunks,
             apiInfo: new ApiInfo({
@@ -57,6 +68,8 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
 
         return new Promise<Array<any>>((resolve, reject) => {
 
+            self.loadBinaryDataFromCache(csvChunk.records);
+           
             if (progressCallback) {
                 // Progress message: operation started
                 progressCallback(new ApiInfo({
@@ -107,17 +120,18 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                     // ERROR RESULT
                     resolve(null);
                 }
-                records = self._getResultRecordsArray(records);
+                records = self.getResultRecordsArray(records);
                 records.forEach((record, index) => {
                     if (resultRecords[index].success) {
                         record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                         if (self.operation == OPERATION.Insert && self.updateRecordId) {
                             record["Id"] = resultRecords[index].id;
                         }
-                        self.numberJobRecordsSucceeded++;
+                        self.numberJobRecordProcessed++;
                     } else {
                         record[CONSTANTS.ERRORS_FIELD_NAME] = resultRecords[index].errors[0].message;
                         self.numberJobRecordsFailed++;
+                        self.numberJobRecordProcessed++;
                     }
                 });
                 if (progressCallback) {
@@ -125,47 +139,44 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                         // Some records are failed
                         progressCallback(new ApiInfo({
                             jobState: "JobComplete",
-                            numberRecordsProcessed: self.numberJobRecordsSucceeded,
+                            numberRecordsProcessed: self.numberJobRecordProcessed,
                             numberRecordsFailed: self.numberJobRecordsFailed,
                             jobId: apiInfo.jobId,
                             batchId: apiInfo.batchId
                         }));
                     }
                     // Progress message: operation finished
-                    progressCallback(new ApiInfo({
-                        jobState: "OperationFinished",
-                        jobId: apiInfo.jobId,
-                        batchId: apiInfo.batchId
-                    }));
+                    if (self.numberJobRecordProcessed == self.numberJobTotalRecordsToProcess){
+                        progressCallback(new ApiInfo({
+                            jobState: "OperationFinished",
+                            numberRecordsProcessed: self.numberJobRecordProcessed,
+                            numberRecordsFailed: self.numberJobRecordsFailed,
+                            jobId: apiInfo.jobId,
+                            batchId: apiInfo.batchId
+                        }));
+                    } else {
+                        progressCallback (new ApiInfo({
+                            jobState: "InProgress",
+                            numberRecordsProcessed: self.numberJobRecordProcessed,
+                            numberRecordsFailed: self.numberJobRecordsFailed,
+                            jobId: apiInfo.jobId,
+                            batchId: apiInfo.batchId
+                        }));
+                    }
                 }
                 //SUCCESS RESULT
                 resolve(records);
             });
         });
     }
+
+    getEngineClassType(): typeof ApiEngineBase {
+        return RestApiEngine;
+    }
     // ----------------------- ---------------- -------------------------------------------    
 
 
 
-    // ----------------------- Private members -------------------------------------------        
-    private _getSourceRecordsArray(records: Array<any>): Array<any> {
-        if (this.operation == OPERATION.Delete) {
-            return records.map(x => x["Id"]);
-        } else {
-            return records;
-        }
-    }
-
-    private _getResultRecordsArray(records: Array<any>): Array<any> {
-        if (this.operation == OPERATION.Delete) {
-            return records.map(Id => {
-                return {
-                    Id
-                };
-            });
-        } else {
-            return records;
-        }
-    }
+   
 
 }

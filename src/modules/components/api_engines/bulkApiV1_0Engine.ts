@@ -6,10 +6,14 @@
  */
 import { ApiEngineBase, ApiInfo, IApiEngineInitParameters } from '../../models/api_models';
 import { Common } from '../common_components/common';
-import { CONSTANTS, OPERATION } from '../common_components/statics';
+import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { Sfdx } from '../common_components/sfdx';
 import { CsvChunks } from '../../models';
+import { OPERATION } from '../common_components/enumerations';
+
+
+
 
 
 
@@ -19,6 +23,7 @@ import { CsvChunks } from '../../models';
  * @export
  * @class BulkApiV1_0sf
  */
+// tslint:disable-next-line: class-name
 export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
 
     constructor(init: IApiEngineInitParameters) {
@@ -26,15 +31,27 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
     }
 
 
+
+
     // ----------------------- Interface IApiProcess ----------------------------------
     getEngineName(): string {
         return "Bulk API V1.0";
     }
 
+    getEngineClassType(): typeof ApiEngineBase {
+        return BulkApiV1_0Engine;
+    }
+
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let connection = Sfdx.createOrgConnection(this.connectionData);
         connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
-        let job = connection.bulk.createJob(this.sObjectName, this.strOperation.toLowerCase());
+        let job = connection.bulk.createJob(
+            this.sObjectName,
+            this.strOperation.toLowerCase(),
+            {
+                concurrencyMode: this.concurrencyMode
+            }
+        );
         let recordChunks = Common.chunkArray(allRecords, this.bulkApiV1BatchSize);
         let chunks = new CsvChunks().fromArrayChunks(recordChunks);
         this.apiJobCreateResult = {
@@ -81,7 +98,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                         jobState: "Failed",
                         errorMessage: batchInfo.stateMessage,
                         jobId: job.id,
-                        batchId: batch.id                        
+                        batchId: batch.id
                     }));
                 }
                 // ERROR RESULT
@@ -112,7 +129,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                                     jobState: "Failed",
                                     errorMessage: error,
                                     jobId: job.id,
-                                    batchId: batch.id                                    
+                                    batchId: batch.id
                                 }));
                             }
                             // ERROR RESULT                                                        
@@ -134,7 +151,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                             numberBatchRecordsProcessed = processed;
                             let progress = new ApiInfo({
                                 jobState: "InProgress",
-                                numberRecordsProcessed: self.numberJobRecordsSucceeded + processed,
+                                numberRecordsProcessed: self.numberJobRecordProcessed + processed,
                                 numberRecordsFailed: self.numberJobRecordsFailed + failed,
                                 jobId: job.id,
                                 batchId: batch.id
@@ -155,7 +172,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                         if (self.operation == OPERATION.Insert && self.updateRecordId) {
                             record["Id"] = resultRecords[index].id;
                         }
-                        self.numberJobRecordsSucceeded++;
+                        self.numberJobRecordProcessed++;
                     } else {
                         if (resultRecords[index].errors) {
                             record[CONSTANTS.ERRORS_FIELD_NAME] = resultRecords[index].errors.join('; ');
@@ -163,19 +180,20 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
                             record[CONSTANTS.ERRORS_FIELD_NAME] = null;
                         }
                         self.numberJobRecordsFailed++;
+                        self.numberJobRecordProcessed++;
                     }
                 });
                 if (progressCallback) {
-                    if (self.numberJobRecordsFailed > 0)  {
+                    if (self.numberJobRecordsFailed > 0) {
                         // Some records are failed
                         progressCallback(new ApiInfo({
                             jobState: "JobComplete",
-                            numberRecordsProcessed: self.numberJobRecordsSucceeded,
+                            numberRecordsProcessed: self.numberJobRecordProcessed,
                             numberRecordsFailed: self.numberJobRecordsFailed,
                             jobId: job.id,
                             batchId: batch.id
                         }));
-                    }                    
+                    }
                     // Progress message: operation finished
                     progressCallback(new ApiInfo({
                         jobState: "OperationFinished",
@@ -188,6 +206,8 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
             });
         });
     }
+
+
     // ----------------------- ---------------- -------------------------------------------    
 
 }

@@ -7,13 +7,14 @@
 
 
 import { Common } from "../../components/common_components/common";
-import { CONSTANTS, DATA_MEDIA_TYPE } from "../../components/common_components/statics";
+import { CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES } from "../../components/common_components/logger";
 import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping, SFieldDescribe } from "..";
 import * as path from 'path';
 import * as fs from 'fs';
 import MigrationJobTask from "./migrationJobTask";
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_models/helper_interfaces";
+import { ADDON_EVENTS, DATA_MEDIA_TYPE } from "../../components/common_components/enumerations";
 
 
 
@@ -22,6 +23,7 @@ export default class MigrationJob {
     script: Script;
     tasks: Task[] = new Array<Task>();
     queryTasks: Task[] = new Array<Task>();
+    deleteTasks: Task[] = new Array<Task>();
     valueMapping: Map<string, Map<string, string>> = new Map<string, Map<string, string>>();
     csvIssues: Array<ICSVIssueCsvRow> = new Array<ICSVIssueCsvRow>();
     cachedCSVContent: CachedCSVContent = new CachedCSVContent();
@@ -39,7 +41,6 @@ export default class MigrationJob {
     get objects(): ScriptObject[] {
         return this.script.objects;
     }
-
 
 
 
@@ -93,7 +94,7 @@ export default class MigrationJob {
                 // ************** //
 
                 this.tasks.push(newTask);
-            } else if (objectToAdd.isReadonlyObject) {
+            } else if (objectToAdd.isReadonlyObject && !objectToAdd.isHierarchicalDeleteOperation) {
                 // *** Using the smart automatic execution order *** //
                 // ************** //
 
@@ -131,6 +132,7 @@ export default class MigrationJob {
             // *** Use the explicit query order as the objects appear in the Script **** //            
             // ************** //
             this.queryTasks = this.tasks.map(task => task);
+            this.deleteTasks = this.queryTasks;
         } else {
             // *** Use smart automatic query order *** // 
             // ************** //
@@ -152,6 +154,14 @@ export default class MigrationJob {
                     this.queryTasks.push(task);
                 }
             });
+            // -- correct the order
+            swapped = true;
+            for (let iteration = 0; iteration < 10 && swapped; iteration++) {
+                swapped = ___updateQueryTaskOrder();
+            }
+
+            // Create delete task order
+            this.deleteTasks = this.tasks.slice().reverse();
         }
 
         // Output execution orders
@@ -159,12 +169,45 @@ export default class MigrationJob {
             [this.logger.getResourceString(RESOURCES.queryingOrder)]: this.queryTasks.map(x => x.sObjectName).join("; ")
         });
         this.logger.objectMinimal({
+            [this.logger.getResourceString(RESOURCES.deletingOrder)]: this.deleteTasks.map(x => x.sObjectName).join("; ")
+        });
+        this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.executionOrder)]: this.tasks.map(x => x.sObjectName).join("; ")
         });
 
-
+        // Initialize the runtime job
+        this.script.addonRuntime.createSfdmuPluginJob();
 
         // ------------------------------- Internal functions --------------------------------------- //
+        function ___updateQueryTaskOrder() {
+            let swapped = false;
+            let tempTasks: Array<MigrationJobTask> = [].concat(self.queryTasks);
+            for (let leftIndex = 0; leftIndex < tempTasks.length - 1; leftIndex++) {
+                const leftTask = tempTasks[leftIndex];
+                for (let rightIndex = leftIndex + 1; rightIndex < tempTasks.length; rightIndex++) {
+                    const rightTask = tempTasks[rightIndex];
+                    // The right object should be first + it is master or both objects are master=false.
+                    // It's better to keep the left object as master, 
+                    // because if we put the master object to the right 
+                    //      => sometimes we can get issues with finding the related records,
+                    // since the left object is filtered by the right and the right object records are not retrieved yet.
+                    let rightShouldBeBeforeTheLeft = CONSTANTS.SPECIAL_OBJECT_QUERY_ORDER.get(rightTask.scriptObject.name)
+                        && CONSTANTS.SPECIAL_OBJECT_QUERY_ORDER.get(rightTask.scriptObject.name).indexOf(leftTask.scriptObject.name) >= 0
+                        && (rightTask.scriptObject.allRecords || !leftTask.scriptObject.allRecords && !rightTask.scriptObject.allRecords);
+                    let leftTaskIndex = self.queryTasks.indexOf(leftTask);
+                    let rightTaskIndex = self.queryTasks.indexOf(rightTask);
+                    if (rightShouldBeBeforeTheLeft && rightTaskIndex > leftTaskIndex) {
+                        // Swape places and put right before left
+                        self.queryTasks.splice(rightTaskIndex, 1);
+                        self.queryTasks.splice(leftTaskIndex, 0, rightTask);
+                        swapped = true;
+                        console.log(self.queryTasks.map(x => x.sObjectName).join());
+                    }
+                }
+            }
+            return swapped;
+        }
+
         function ___putMasterDetailsBefore(): boolean {
             let swapped = false;
             let tempTasks: Array<MigrationJobTask> = [].concat(self.tasks);
@@ -262,18 +305,18 @@ export default class MigrationJob {
     async deleteOldRecordsAsync(): Promise<void> {
 
         this.logger.infoMinimal(RESOURCES.newLine);
-        this.logger.headerMinimal(RESOURCES.deletingOldData);
+        this.logger.headerMinimal(RESOURCES.deletingTargetData);
 
         let deleted = false;
-        for (let index = this.tasks.length - 1; index >= 0; index--) {
-            const task = this.tasks[index];
+        for (let index = 0; index < this.deleteTasks.length; index++) {
+            const task = this.deleteTasks[index];
             deleted = await task.deleteOldTargetRecords() || deleted;
         }
 
         if (deleted) {
-            this.logger.infoVerbose(RESOURCES.deletingOldDataCompleted);
+            this.logger.infoVerbose(RESOURCES.deletingDataCompleted);
         } else {
-            this.logger.infoVerbose(RESOURCES.deletingOldDataSkipped);
+            this.logger.infoVerbose(RESOURCES.deletingDataSkipped);
         }
     }
 
@@ -373,6 +416,21 @@ export default class MigrationJob {
         this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
 
 
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // RUN ON-BEFORE ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
+        let processed = false;
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.processingAddon);
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            processed = await task.runAddonEventAsync(ADDON_EVENTS.onBefore) || processed;
+        }
+        if (!processed) {
+            this.logger.infoNormal(RESOURCES.nothingToProcess);
+        }
+        this.logger.infoNormal(RESOURCES.newLine);
+
+
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // TOTAL FETCHED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
         this.logger.infoNormal(RESOURCES.newLine);
@@ -383,25 +441,36 @@ export default class MigrationJob {
                 task.sObjectName,
                 String(task.sourceData.idRecordsMap.size + "/" + task.targetData.idRecordsMap.size));
         }
+
+
+        // Trigger event
+        await this.runAddonEventAsync(ADDON_EVENTS.onDataRetrieved);
     }
 
+    /**
+     * Makes the all job for updating the target org / csv file
+     *
+     * @returns {Promise<void>}
+     * @memberof MigrationJob
+     */
     async updateRecordsAsync(): Promise<void> {
 
         let self = this;
-
-        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        // STEP 1 FORWARDS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-        this.logger.infoMinimal(RESOURCES.newLine);
-        this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
 
         let noAbortPrompt = false;
         let totalProcessedRecordsAmount = 0;
         let totalProcessedRecordsByObjectsMap = new Map<string, number>();
 
         let allMissingParentLookups: IMissingParentLookupRecordCsvRow[] = new Array<IMissingParentLookupRecordCsvRow>();
+        let tasksToProcess = this.script.hasDeleteFromSourceObjectOperation ? this.deleteTasks : this.tasks;
 
-        for (let index = 0; index < this.tasks.length; index++) {
-            const task = this.tasks[index];
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // STEP 1 FORWARDS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        this.logger.infoMinimal(RESOURCES.newLine);
+        this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
+
+        for (let index = 0; index < tasksToProcess.length; index++) {
+            const task = tasksToProcess[index];
             let processedRecordsAmount = (await task.updateRecords("forwards", async (data: ProcessedData) => {
                 allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
                 if (noAbortPrompt) {
@@ -454,6 +523,49 @@ export default class MigrationJob {
         else
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
+
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // DELETE BY HIERARCHY ::::::::::::::::::::::::::::::::::::::::::::::::::::
+        if (this.script.hasDeleteByHierarchyOperation) {
+            this.logger.infoMinimal(RESOURCES.newLine);
+            this.logger.headerMinimal(RESOURCES.deletingTarget, this.logger.getResourceString(RESOURCES.Step1));
+
+            for (let index = 0; index < this.deleteTasks.length; index++) {
+                const task = this.deleteTasks[index];
+                if (task.scriptObject.isHierarchicalDeleteOperation) {
+                    let processedRecordsAmount = await task.deleteRecords();
+                    if (processedRecordsAmount > 0) {
+                        this.logger.infoNormal(RESOURCES.deletingRecordsCompleted, task.sObjectName, String(processedRecordsAmount));
+                    }
+                    totalProcessedRecordsAmount += processedRecordsAmount;
+                    totalProcessedRecordsByObjectsMap.set(task.sObjectName, processedRecordsAmount);
+                }
+            }
+
+            if (totalProcessedRecordsAmount > 0)
+                this.logger.infoNormal(RESOURCES.deletingDataCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
+            else
+                this.logger.infoNormal(RESOURCES.nothingToDelete2);
+
+            this.logger.infoNormal(RESOURCES.newLine);
+        }
+
+
+        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        // RUN ON-AFTER ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
+        let processed = false;
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.processingAddon);
+        for (let index = 0; index < this.queryTasks.length; index++) {
+            const task = this.queryTasks[index];
+            processed = await task.runAddonEventAsync(ADDON_EVENTS.onAfter) || processed;
+        }
+        if (!processed) {
+            this.logger.infoNormal(RESOURCES.nothingToProcess);
+        }
+        this.logger.infoNormal(RESOURCES.newLine);
+
+
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // TOTAL PROCESSED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
         this.logger.infoNormal(RESOURCES.newLine);
@@ -503,6 +615,64 @@ export default class MigrationJob {
      */
     getTaskBySObjectName(sObjectName: string) {
         return this.tasks.filter(x => x.sObjectName == sObjectName)[0];
+    }
+
+    /**
+     * Returns the task by the given field path
+     *
+     * @param {string} fieldPath 
+     * @param {Task} [prevTask]
+     * @return {{
+     *              task: ISFdmuRunCustomAddonTask,
+     *              field: string
+     *          }}  
+     * @memberof MigrationJob
+     */
+     getTaskByFieldPath(fieldPath: string, prevTask?: MigrationJobTask): {
+        task: MigrationJobTask,
+        field: string
+    } {
+
+        let parts = (fieldPath || '').split('.');
+
+        if (parts.length == 0) {
+            return null;
+        }
+
+       
+
+        if (!prevTask) {
+            // First => by sobject
+            let objectTask: Task = this.tasks.find(task => task.sObjectName == parts[0]);
+            if (!objectTask) {
+                return null;
+            } else {
+                parts.shift();
+                return this.getTaskByFieldPath(parts.join('.'), objectTask);
+            }
+        }
+
+        // Other => by sfield 
+        let fieldName = parts.length > 1 ? Common.getFieldNameId(null, parts[0]) : parts[0];
+        let fieldDescribe = prevTask.scriptObject.fieldsInQueryMap.get(fieldName);
+        if (!fieldDescribe) {
+            return null;
+        }
+
+        if (fieldDescribe.lookup) {
+            let fieldTask = this.tasks.find(task => task.sObjectName == fieldDescribe.referencedObjectType);
+            if (!fieldTask) {
+                return null;
+            }
+            parts.shift();
+            return this.getTaskByFieldPath(parts.join('.'), fieldTask);
+        }
+
+        return {
+            task: prevTask,
+            field: fieldName
+        };
+
     }
 
     /**
@@ -677,6 +847,36 @@ export default class MigrationJob {
             return fieldName;
         }
     }
+
+    /**
+     * Creates new dummy job task for the given object
+     *
+     * @param {string} sObjectName
+     * @returns
+     * @memberof MigrationJob
+     */
+    createDummyJobTask(sObjectName: string) {
+        let scriptObject: ScriptObject = new ScriptObject(sObjectName);
+        scriptObject.script = this.script;
+        return new MigrationJobTask({
+            job: this,
+            scriptObject
+        });
+    }
+
+    /**
+     * Executes addon event related to the current executed object
+     *
+     * @param {ADDON_EVENTS} event The addon event to execute
+     * @returns {Promise<void>}
+     * @memberof MigrationJobTask
+     */
+    async runAddonEventAsync(event: ADDON_EVENTS): Promise<boolean> {
+        return await this.script.addonManager.triggerAddonModuleMethodAsync(event);
+    }
+
+
+
 
 
     // --------------------------- Private members -------------------------------------

@@ -17,7 +17,10 @@ import {
     Operator,
     Query,
     getComposedField,
-    composeQuery
+    composeQuery,
+    parseQuery,
+    FieldType,
+    Field as SOQLField
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 
@@ -27,11 +30,16 @@ import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionError } from '../../models';
 import readline = require('readline');
 import * as Throttle from 'promise-parallel-throttle';
-import { IPluginInfo } from '../../models/common_models/helper_interfaces';
+import IPluginInfo from '../../models/common_models/IPluginInfo';
+import { ISfdmuAddonInfo } from '../../../addons/modules/sfdmu-run/custom-addons/package/common';
+import { Buffer } from 'buffer';
+
+
 const { closest } = require('fastest-levenshtein')
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
+
 
 
 /**
@@ -92,11 +100,13 @@ export class Common {
     public static getPluginInfo(command: SfdxCommand): IPluginInfo {
         let statics: typeof SfdxCommand = command["statics"];
         let pjson = require(path.join(statics.plugin.root, '/package.json'));
+        let runAddOnApiInfo = (pjson.addons.run as ISfdmuAddonInfo);
         let info = <IPluginInfo>{
             commandName: statics.name.toLowerCase(),
             pluginName: statics.plugin.name,
             version: pjson.version,
-            path: statics.plugin.root
+            path: statics.plugin.root,
+            runAddOnApiInfo
         };
         info.commandString = `sfdx ${info.pluginName}:${info.commandName} ${command.argv.join(' ')}`;
         info.argv = command.argv;
@@ -329,12 +339,36 @@ export class Common {
      * Returns numeric hashcode of the input string
      *
      * @static
-     * @param {string} inputString 
+     * @param {string} inputString the input string value
      * @returns {number}
      * @memberof CommonUtils
      */
     public static getStringHashcode(inputString: string): number {
         return !inputString ? 0 : inputString.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
+    }
+
+    /**
+     * Calculate a 32 bit FNV-1a hash
+     *
+     * @param {string} inputString the input value
+     * @param {boolean} asString set to true to return the hash value as 
+     *                          8-digit hex string instead of an integer
+     * @param {number} seed optionally pass the hash of the previous chunk
+     * @returns {number | string}
+     */
+    public static getString32FNV1AHashcode(inputString: string, asString?: boolean, seed?: number): string | number {
+        var i: number, l: number,
+            hval = (seed === undefined) ? 0x811c9dc5 : seed;
+
+        for (i = 0, l = inputString.length; i < l; i++) {
+            hval ^= inputString.charCodeAt(i);
+            hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+        }
+        if (asString) {
+            // Convert to 8 digit hex string
+            return ("0000000" + (hval >>> 0).toString(16)).substr(-8);
+        }
+        return hval >>> 0;
     }
 
     /**
@@ -442,12 +476,18 @@ export class Common {
      * @template T
      * @param {Array<T>} array 
      * @param {string} distinctByProp 
+     * @param {boolean} stringIgnoreCase  
      * @returns {Array<T>}
      * @memberof CommonUtils
      */
-    public static distinctArray<T>(array: Array<T>, distinctByProp: string): Array<T> {
+    public static distinctArray<T>(array: Array<T>, distinctByProp: string, stringIgnoreCase?: boolean): Array<T> {
         return array.filter((obj, pos, arr) => {
-            return arr.map<T>(mapObj => mapObj[distinctByProp]).indexOf(obj[distinctByProp]) === pos;
+            if (!stringIgnoreCase) {
+                return arr.map<T>(mapObj => mapObj[distinctByProp])
+                    .indexOf(obj[distinctByProp]) === pos;
+            }
+            return arr.map<T>(mapObj => ((mapObj[distinctByProp] as any) || '').toLowerCase())
+                .indexOf(((obj[distinctByProp] as any) || '').toLowerCase()) === pos;
         });
     }
 
@@ -457,10 +497,15 @@ export class Common {
      * @static
      * @param {string[]} array 
      * @returns {Array<string>}
+     * @param {boolean} stringIgnoreCase  
      * @memberof CommonUtils
      */
-    public static distinctStringArray(array: string[]): Array<string> {
-        return [...new Set<string>(array)];
+    public static distinctStringArray(array: string[], stringIgnoreCase?: boolean): Array<string> {
+        if (!stringIgnoreCase) {
+            return [...new Set<string>(array)];
+        }
+        let m = new Map(array.map(s => [s.toLowerCase(), s]));
+        return [...m.values()];
     }
 
     /**
@@ -728,7 +773,8 @@ export class Common {
      */
     public static async writeCsvFileAsync(filePath: string,
         array: Array<object>,
-        createEmptyFileOnEmptyArray: boolean = false): Promise<void> {
+        createEmptyFileOnEmptyArray: boolean = false,
+        columns?: Array<string>): Promise<void> {
 
         try {
 
@@ -739,7 +785,7 @@ export class Common {
                 return;
             }
             const csvWriter = createCsvWriter({
-                header: Object.keys(array[0]).map(x => {
+                header: (columns || Object.keys(array[0])).map(x => {
                     return {
                         id: x,
                         title: x
@@ -981,54 +1027,6 @@ export class Common {
         return result;
     }
 
-
-    /**
-    * Get record value by given property name
-    *     for this sobject
-    *
-    * @param {*} record The record
-    * @param {string} thisSobjectName The current sObject name that we want to retrieve value for the record object
-    * @param {string} propName The property name to extract value from the record object
-    * @param {string} [sObjectName] If the current task is RecordType and propName = DeveloperName - 
-    *                               pass here the SobjectType o include in the returned value
-    * @param {string} [sFieldName]  If the current task is RecordType and propName = DeveloperName -
-    *                               pass here the property name to extract value from the record object
-    *                               instead of passing it with the "propName" parameter
-    * @returns {*}
-    * @memberof MigrationJobTask
-    */
-    public static getRecordValue(thisSobjectName: string, record: any, propName: string, sObjectName?: string, sFieldName?: string): any {
-        if (!record) return null;
-        let value = record[sFieldName || propName];
-        if (!value) return value;
-        sObjectName = sObjectName || record["SobjectType"];
-        if (thisSobjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && propName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
-            return String(value).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0] + CONSTANTS.COMPLEX_FIELDS_SEPARATOR + sObjectName;
-        } else {
-            return value;
-        }
-    }
-
-    /**
-     * Parsed value and retrieves clear value.
-     * For example for the field RecordType.DeveloperName: "AccountRT;Account" => "AccountRT"
-     *
-     * @static
-     * @param {string} sObjectName The sObject name
-     * @param {*} rawFieldValue The raw field value to transform
-     * @param {string} fieldName The field name
-     * @returns {string}
-     * @memberof Common
-     */
-    public static getFieldValue(sObjectName: string, rawFieldValue: any, fieldName: string): any {
-        if (!rawFieldValue) return rawFieldValue;
-        if (sObjectName == CONSTANTS.RECORD_TYPE_SOBJECT_NAME && fieldName == CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME) {
-            //"AccountRT;Account" => "AccountRT"
-            return String(rawFieldValue).split(CONSTANTS.COMPLEX_FIELDS_SEPARATOR)[0];
-        }
-        return rawFieldValue;
-    }
-
     /**
      * Returns true if this object is custom
      *
@@ -1066,6 +1064,7 @@ export class Common {
        * @param {Array<string>} selectFields Field names to select
        * @param {string} [fieldName="Id"] The field name to use in the  WHERE Field IN (Values) clause 
        * @param {Array<string>} valuesIN Values to use in in the WHERE Field IN (Values) clause 
+       * @param {string} whereClause The additional where clause to add besides the IN, like (Id Name ('Name1', 'Name2)) AND (Field__c = 'value')
        * @returns {Array<string>} Returns an array of SOQLs
        * @memberof SfdxUtils
        */
@@ -1073,7 +1072,8 @@ export class Common {
         selectFields: Array<string>,
         fieldName: string = "Id",
         sObjectName: string,
-        valuesIN: Array<string>): Array<string> {
+        valuesIN: Array<string>,
+        whereClause?: string): Array<string> {
 
         if (valuesIN.length == 0) {
             return new Array<string>();
@@ -1086,11 +1086,19 @@ export class Common {
         };
         let whereValuesCounter: number = 0;
         let whereValues = new Array<string>();
+        let parsedWhere: Query;
+        if (whereClause) {
+            parsedWhere = whereClause && parseQuery('SELECT Id FROM Account WHERE ' + whereClause);
+            parsedWhere.where.left.openParen = 1;
+            parsedWhere.where.left.closeParen = 1;
+
+        }
+
 
         function* queryGen() {
             while (true) {
                 for (let whereClausLength = 0; whereClausLength < CONSTANTS.MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH;) {
-                    let value = String(valuesIN[whereValuesCounter] || "").replace(/'/g, "\\'");
+                    let value = String(valuesIN[whereValuesCounter] || "").replace(/(['\\])/g, "\\$1");
                     whereValues.push(value);
                     whereClausLength += value.length + 4;
                     whereValuesCounter++;
@@ -1104,8 +1112,18 @@ export class Common {
                     value: whereValues,
                     literalType: "STRING"
                 };
+
                 tempQuery.where.left = c;
+                if (parsedWhere) {
+                    tempQuery.where.left.openParen = 1;
+                    tempQuery.where.left.closeParen = 1;
+                    tempQuery.where.right = <WhereClause>{
+                        left: parsedWhere.where.left
+                    };
+                    tempQuery.where.operator = "AND";
+                }
                 yield composeQuery(tempQuery);
+
                 whereValues = new Array<string>();
 
                 if (whereValuesCounter == valuesIN.length)
@@ -1162,13 +1180,45 @@ export class Common {
     }
 
     /**
+     * Clone object including only the given properties
+     *
+     * @static
+     * @param {object} objectToClone
+     * @param {...string[]} propsToInclude
+     * @returns
+     * @memberof Common
+     */
+    public static cloneObjectIncludeProps(objectToClone: object, ...propsToInclude: string[]) {
+        if (!objectToClone || Array.isArray(objectToClone) || typeof objectToClone != 'object') return objectToClone;
+        return Object.keys(objectToClone)
+            .filter(key => propsToInclude.indexOf(key) >= 0)
+            .reduce((outObject, key) => (outObject[key] = objectToClone[key], outObject), {});
+    }
+
+    /**
+     * Clone object with all its properties, but the given ones
+     *
+     * @static
+     * @param {object} objectToClone
+     * @param {...string[]} propsToInclude
+     * @returns
+     * @memberof Common
+     */
+    public static cloneObjectExcludeProps(objectToClone: object, ...propsToExclude: string[]) {
+        if (!objectToClone || Array.isArray(objectToClone) || typeof objectToClone != 'object') return objectToClone;
+        return Object.keys(objectToClone)
+            .filter(key => propsToExclude.indexOf(key) < 0)
+            .reduce((outObject, key) => (outObject[key] = objectToClone[key], outObject), {});
+    }
+
+    /**
      * Remove folder with all files
      *
      * @static
-     * @param {string} path
+     * @param {string} path Path to the folder to remove
      * @memberof Common
      */
-    public static deleteFolderRecursive(path: string, throwIOErrors?: boolean) {
+    public static deleteFolderRecursive(path: string, throwIOErrors?: boolean, removeSelfDirectory: boolean = true) {
         if (fs.existsSync(path)) {
             fs.readdirSync(path).forEach(file => {
                 var curPath = path + "/" + file;
@@ -1187,7 +1237,9 @@ export class Common {
                 }
             });
             try {
-                fs.rmdirSync(path);
+                if (removeSelfDirectory) {
+                    fs.rmdirSync(path);
+                }
             } catch (ex) {
                 if (throwIOErrors) {
                     throw new Error(ex.message);
@@ -1196,19 +1248,7 @@ export class Common {
         }
     }
 
-    /**
-     * @static Runs async functions in parallel with maximum simultaneous runnings
-     * 
-     * @param {Array<Throttle.Task<any>>} tasks The async functions to run
-     * @param {number} [maxInProgress=5] The maximum parallelism
-     * @returns {Promise<any>} The summarized array of all results returned by all promises
-     * @memberof Common
-     */
-    public static async parallelTasksAsync(tasks: Array<Throttle.Task<any>>, maxInProgress: number = 5): Promise<Array<any>> {
-        return await Throttle.all(tasks, {
-            maxInProgress
-        });
-    }
+
 
     /**
          * @static Transforms field name into __r field
@@ -1285,11 +1325,16 @@ export class Common {
      * @static
      * @param {string} itemToSearchFor Item to search for in the source array
      * @param {Array<string>} arrayToSearchIn Array of items
+     * @param {boolean} exactlyCaseInsensitiveMatch Optionally allows fo find 
+     *                                              the exaclty match that is case insensitive
      * @returns {string}
      * @memberof Common
      */
-    public static searchClosest(itemToSearchFor: string, arrayToSearchIn: Array<string>): string {
+    public static searchClosest(itemToSearchFor: string, arrayToSearchIn: Array<string>, exactlyCaseInsensitiveMatch: boolean = false): string {
         if (!itemToSearchFor) return itemToSearchFor;
+        if (exactlyCaseInsensitiveMatch) {
+            return arrayToSearchIn.find(item => item && item.toLowerCase() == itemToSearchFor.toLowerCase());
+        }
         return closest(itemToSearchFor, arrayToSearchIn);
     }
 
@@ -1313,7 +1358,16 @@ export class Common {
         return members;
     }
 
-
+    /**
+     * Extracts only certain properties from the object
+     *
+     * @static
+     * @template T The bject type
+     * @param {T} object The object instance
+     * @param {Record<keyof T, boolean>} propertiesToExtract Property=>yes/no pairs { 'a' : true, 'b' : false} to extract
+     * @returns
+     * @memberof Common
+     */
     public static extractObjectMembers<T>(object: T, propertiesToExtract: Record<keyof T, boolean>) {
         return (function <TActual extends T>(value: TActual) {
             let result = {} as T;
@@ -1322,6 +1376,262 @@ export class Common {
             }
             return result;
         })(object);
+    }
+
+    /**
+     * Composes the filename for the csv file
+     *
+     * @static
+     * @param {string} rootPath The root directory
+     * @param {string} sObjectName The object name
+     * @param {string} [pattern] The suffix to put to the end of the filename
+     * @returns {string}
+     * @memberof Common
+     */
+    public static getCSVFilename(rootPath: string, sObjectName: string, pattern?: string): string {
+        let suffix = `${pattern || ''}.csv`;
+        if (sObjectName == "User" || sObjectName == "Group") {
+            return path.join(rootPath, CONSTANTS.USER_AND_GROUP_FILENAME) + suffix;
+        } else {
+            return path.join(rootPath, sObjectName) + suffix;
+        }
+    }
+
+    /**
+     * The polyfill of bind function with accessible bound arguments
+     *
+     * @static
+     * @param {Function} fn The funciton to bind
+     * @param {*} thisArg The this arg
+     * @param {...any[]} boundArgs The list of bound arguments
+     * @returns new bound function
+     * @memberof Common
+     */
+    public static bind(fn: Function, thisArg: any, ...boundArgs: any[]) {
+        const func = function (...args: any[]) {
+            return fn.call(thisArg, ...boundArgs, ...args)
+        }
+        Object.defineProperties(func, {
+            __boundArgs: { value: boundArgs },
+            __thisArg: { value: thisArg },
+            __boundFunction: { value: fn }
+        })
+        return func;
+    }
+
+    /**
+     * @static Runs async functions in parallel with maximum simultaneous runnings
+     * 
+     * @param {Array<Throttle.Task<any>>} tasks The async functions to run
+     * @param {number} [maxParallelTasks=5] The maximum parallelism
+     * @returns {Promise<any>} The summarized array of all results returned by all promises
+     * @memberof Common
+     */
+    public static async parallelTasksAsync(tasks: Array<Throttle.Task<any>>, maxParallelTasks: number = 5): Promise<Array<any>> {
+        return await Throttle.all(tasks, {
+            maxInProgress: maxParallelTasks
+        });
+    }
+
+    /**
+     * Execute several async functions in parallel
+     *
+     * @static
+     * @param {Array<(...args: any[]) => Promise<any>>} fns The functions to execute
+     * @param {*} [thisArg] This arg to apply to all functions
+     * @param {number} [maxParallelTasks=10] The maximum parallelizm
+     * @returns {Promise<any[]>} Array of results of all functions
+     * @memberof Common
+     */
+    public static async parallelExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any, maxParallelTasks: number = 10): Promise<any[]> {
+        thisArg = thisArg || this;
+        const queue = fns.map(fn => () => fn.call(thisArg));
+        const result: any[] = await Common.parallelTasksAsync(queue, maxParallelTasks || CONSTANTS.DEFAULT_MAX_PARALLEL_EXEC_TASKS);
+        return result;
+    }
+
+    /**
+     * Execute secveral async functions in serial mode 
+     *
+     * @static
+     * @param {Array<(...args: any[]) => Promise<any>>} fns The functions to execute
+     * @param {*} [thisArg] This arg to apply to all functions
+     * @returns {Promise<any[]>} Array of results of all functions 
+     * @memberof Common
+     */
+    public static async serialExecAsync(fns: Array<(...args: any[]) => Promise<any>>, thisArg?: any): Promise<any[]> {
+        thisArg = thisArg || this;
+        let result = [];
+        const queue = fns.map(fn => async () => fn.bind(thisArg, ...fn.arguments));
+        for (let index = 0; index < queue.length; index++) {
+            const fn = queue[index];
+            result = result.concat(await fn());
+        }
+        return result;
+    }
+
+    /**
+     * Converts array to map by given key composed from the item properties (multiple value version)
+     *
+     * @static
+     * @param {Array<any>} array The array to convert
+     * @param {Array<string>} keyProps The props to compose the map key
+     * @param {('|')} keyDelimiter The delimiter to separate the key values 
+     * @param {string} defaultValue The default value to put into the key if the value missing in the object item 
+     * @param {Array<string>} valueProps The array of props to compose the value, if null - the whole item object used as a value
+     * @returns {Map<string, Array<any>>} The resulting map as: key => [array of items with the given key]
+     * @memberof Common
+     */
+    public static arrayToMapMulti(array: Array<any>,
+        keyProps: Array<string>,
+        keyDelimiter: string = '|',
+        defaultValue: string = '',
+        valueProps?: Array<string>): Map<string, Array<any>> {
+        let out = new Map<string, Array<any>>();
+        array.forEach(item => {
+            let key = keyProps.map(keyProp => String(item[keyProp] || defaultValue)).join(keyDelimiter);
+            if (!out.has(key)) {
+                out.set(key, []);
+            }
+            if (!valueProps)
+                out.get(key).push(item);
+            else
+                out.get(key).push(valueProps.map(valueProp => String(item[valueProp] || '')));
+        });
+        return out;
+    }
+
+    /**
+        * Converts array to map by given key composed from the item properties (multiple value version)
+        *
+        * @static
+        * @param {Array<any>} array The array to convert
+        * @param {Array<string>} keyProps The props to compose the map key
+        * @param {('|')} keyDelimiter The delimiter to separate the key values 
+        * @param {string} defaultValue The default value to put into the key if the value missing in the object item
+        * @param {Array<string>} valueProps The array of props to compose the value, if null - the whole item object used as a value 
+        * @returns {Map<string, Array<any>>} The resulting map as: key => [item of the key]
+        * @memberof Common
+        */
+    public static arrayToMap(array: Array<any>,
+        keyProps: Array<string>,
+        keyDelimiter: string = '|',
+        defaultValue: string = '',
+        valueProps?: Array<string>): Map<string, any> {
+        let out = new Map<string, any>();
+        array.forEach(item => {
+            let key = keyProps.map(keyProp => String(item[keyProp] || defaultValue)).join(keyDelimiter);
+            if (!valueProps)
+                out.set(key, item);
+            else
+                out.set(key, valueProps.map(valueProp => String(item[valueProp] || '')));
+        });
+        return out;
+    }
+
+    /**
+     * Converts array of object to array of strings
+     *
+     * @static
+     * @param {Array<any>} array The array to convert
+     * @param {Array<string>} keyProps The props to compose the map key
+     * @param {string} [keyDelimiter='|'] The delimiter to separate the key values
+     * @param {string} [defaultValue=''] he default value to put into the key if the value missing in the object item
+     * @returns {Array<string>} The resulting array of strings, composed from the given keys
+     * @memberof Common
+     */
+    public static arrayToPropsArray(array: Array<any>,
+        keyProps: Array<string>,
+        keyDelimiter: string = '|',
+        defaultValue: string = ''): Array<string> {
+        return array.map(item => {
+            let key = keyProps.map(keyProp => String(item[keyProp] || defaultValue)).join(keyDelimiter);
+            return key;
+        });
+    }
+    /**
+     * Formats string in object-like style like:
+     * 
+     * formatString('My Name is {name} and my age is {age}.', {name: 'Mike', age : '26'})
+     *
+     * @static
+     * @param {string} inputString The input string
+     * @param {*} placeholderObject The replacement object
+     * @returns {string}
+     * @memberof Common
+     */
+    public static formatStringObject(inputString: string, placeholderObject: any): string {
+        return inputString.replace(/{(\w+)}/g, (placeholderWithDelimiters: any, placeholderWithoutDelimiters: any) =>
+            placeholderObject.hasOwnProperty(placeholderWithoutDelimiters) ?
+                placeholderObject[placeholderWithoutDelimiters] : placeholderWithDelimiters
+        );
+    }
+
+    /**
+     * Formats strings in 'console.log' style like: 
+     * 
+     * formatStringS('This is replacement: %s', 'replacement')
+     *
+     * @static
+     * @returns {string} The input string
+     * @memberof Common
+     */
+    public static formatStringLog(...args: string[]): string {
+        var argum = Array.prototype.slice.call(args);
+        var rep = argum.slice(1, argum.length);
+        var i = 0;
+        var output = argum[0].replace(/%s/g, () => {
+            var subst = rep.slice(i, ++i);
+            return subst;
+        });
+        return output;
+    }
+
+    /**
+     * Extracts only domain name from full url string.
+     * For example "https://stackoverflow.com/questions/8498592/extract-hostname-name-from-string/"
+     * => stackoverflow.com
+     *
+     * @static
+     * @param {string} url The url string to process
+     * @return {*} 
+     * @memberof Common
+     */
+    public static extractDomainFromUrlString(url: string): string {
+        if (!url) return url;
+        const matches = url.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
+        return matches && matches[1];
+    }
+
+    /**
+      * Adds desired fields to the given parsed query
+     *
+     * @static
+     * @param {Query} query
+     * @param {Array<string>} [fieldsToAdd]
+     * @param {Array<string>} [fieldsToRemove]
+     * @memberof Common
+     */
+    public static addOrRemoveQueryFields(query: Query, fieldsToAdd: Array<string> = [], fieldsToRemove: Array<string> = []) {
+
+        let fields = [].concat(query.fields.map(f => {
+            let field = (<SOQLField>f);
+            return field.field || field["rawValue"];
+        }));
+
+        fieldsToAdd.forEach(field => {
+            if (field && fields.indexOf(field) < 0) {
+                fields.push(field);
+            }
+        });
+
+        query.fields = new Array<FieldType>();
+
+        fields.forEach(field => {
+            if (field && fieldsToRemove.indexOf(field) < 0) {
+                query.fields.push(getComposedField(field));
+            }
+        });
     }
 
 

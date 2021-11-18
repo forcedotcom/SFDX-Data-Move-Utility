@@ -5,16 +5,20 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-    ApiEngineBase,
-    ApiInfo,
-    ApiResultRecord,
+    ApiEngineBase, 
+    ApiInfo, 
     IApiEngineInitParameters
 } from '../../models/api_models';
 import { Common } from '../common_components/common';
-import { CONSTANTS, OPERATION, RESULT_STATUSES } from '../common_components/statics';
+import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { RESOURCES } from '../common_components/logger';
 import parse = require('csv-parse/lib/sync');
+import { OPERATION, RESULT_STATUSES } from '../common_components/enumerations';
+
+import ApiResultRecord from '../../models/api_models/ApiResultRecord';
+
+
 
 const request = require('request');
 const endpoint = '/services/data/[v]/jobs/ingest';
@@ -30,6 +34,7 @@ const requestTimeout = 10 * 60 * 1000;// 10 minutes of timeout for long-time ope
  * @export
  * @class BulkApiV2_0sf
  */
+// tslint:disable-next-line: class-name
 export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
 
     operationType: string | "insert" | "update" | "delete";
@@ -50,6 +55,11 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
     getEngineName(): string {
         return "Bulk API V2.0";
     }
+
+    getEngineClassType(): typeof ApiEngineBase {
+        return BulkApiV2_0Engine;
+    }
+
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let chunks = Common.createCsvStringsFromArray(allRecords,
@@ -123,7 +133,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
             progress.batchId = jobResult.jobId;
             if (numberBatchRecordsProcessed != progress.numberRecordsProcessed) {
                 numberBatchRecordsProcessed = progress.numberRecordsProcessed;
-                progress.numberRecordsProcessed += self.numberJobRecordsSucceeded;
+                progress.numberRecordsProcessed += self.numberJobRecordProcessed;
                 progress.numberRecordsFailed += self.numberJobRecordsFailed;
                 if (progressCallback) {
                     // Progress message: N batch records were processed
@@ -135,9 +145,9 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         // Batch & Job completed **************************************
         batchResult.jobId = jobResult.jobId;
         batchResult.batchId = jobResult.jobId;
-        batchResult.numberRecordsProcessed += self.numberJobRecordsSucceeded;
+        batchResult.numberRecordsProcessed += self.numberJobRecordProcessed;
         batchResult.numberRecordsFailed += self.numberJobRecordsFailed;
-        self.numberJobRecordsSucceeded = batchResult.numberRecordsProcessed;
+        self.numberJobRecordProcessed = batchResult.numberRecordsProcessed;
         self.numberJobRecordsFailed = batchResult.numberRecordsFailed;
         if (progressCallback) {
             // Progress message: job was completed
@@ -517,6 +527,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         });
     }
 
+  
 
 
 

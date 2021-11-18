@@ -14,7 +14,9 @@ import * as models from '../models';
 import { CONSTANTS } from '../components/common_components/statics';
 import { MigrationJob as Job } from '../models';
 import { CommandInitializationError } from '../models/common_models/errors';
-import { IPluginInfo } from '../models/common_models/helper_interfaces';
+import { ADDON_EVENTS } from '../components/common_components/enumerations';
+import IPluginInfo from '../models/common_models/IPluginInfo';
+
 
 
 
@@ -27,11 +29,12 @@ import { IPluginInfo } from '../models/common_models/helper_interfaces';
 export class RunCommand {
 
     logger: Logger;
-    pinfo : IPluginInfo;
+    pinfo: IPluginInfo;
     basePath: string;
     targetUsername: string;
     sourceUsername: string;
     apiVersion: string;
+    canModify: string;
     script: models.Script;
     job: Job;
 
@@ -50,7 +53,8 @@ export class RunCommand {
         basePath: string,
         sourceUsername: string,
         targetUsername: string,
-        apiVersion: string) {
+        apiVersion: string,
+        canModify: string) {
 
         this.pinfo = pinfo;
         this.logger = logger;
@@ -58,6 +62,7 @@ export class RunCommand {
         this.targetUsername = targetUsername;
         this.sourceUsername = sourceUsername;
         this.apiVersion = apiVersion;
+        this.canModify = canModify;
     }
 
 
@@ -99,7 +104,13 @@ export class RunCommand {
         }
 
         // Setup script object
-        await this.script.setupAsync(this.pinfo, this.logger, this.sourceUsername, this.targetUsername, this.basePath, this.apiVersion);
+        await this.script.setupAsync(this.pinfo,
+            this.logger,
+            this.sourceUsername,
+            this.targetUsername,
+            this.basePath,
+            this.apiVersion,
+            this.canModify);
 
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.source)]: this.logger.getResourceString(RESOURCES.sourceOrg, this.script.sourceOrg.name),
@@ -156,12 +167,9 @@ export class RunCommand {
     * @memberof RunCommand
     */
     async prepareJobAsync(): Promise<void> {
-        
         this.logger.infoNormal(RESOURCES.preparingJob);
-
         this.job.prepareJob();
         await this.job.getTotalRecordsCountAsync();
-        await this.job.deleteOldRecordsAsync();
     }
 
     /**
@@ -174,9 +182,28 @@ export class RunCommand {
 
         this.logger.infoNormal(RESOURCES.executingJob);
 
+        await this.job.deleteOldRecordsAsync();
         await this.job.retrieveRecordsAsync();
         await this.job.updateRecordsAsync();
+
         this.logger.infoMinimal(RESOURCES.newLine);
+    }
+
+    /**
+     * Executes global addon event
+     *
+     * @param {ADDON_EVENTS} event The event to execute
+     * @returns {Promise<void>}
+     * @memberof RunCommand
+     */
+    async runAddonEventAsync(event: ADDON_EVENTS): Promise<void> {
+        this.logger.infoNormal(RESOURCES.newLine);
+        this.logger.headerNormal(RESOURCES.processingAddon);
+        let processed = await this.script.addonManager.triggerAddonModuleMethodAsync(event);
+        if (!processed) {
+            this.logger.infoNormal(RESOURCES.nothingToProcess);
+        }
+        this.logger.infoNormal(RESOURCES.newLine);
     }
 
 }
