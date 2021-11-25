@@ -521,25 +521,53 @@ export default class MigrationJobTask {
      * @returns {string}
      * @memberof MigrationJobTask
      */
-    createQuery(fieldNames?: Array<string>, removeLimits: boolean = false, parsedQuery?: Query, useFieldMapping: boolean = false): string {
+    createQuery(fieldNames?: Array<string>,
+        removeLimits: boolean = false,
+        parsedQuery?: Query,
+        useFieldMapping: boolean = false,
+        isTargetQuery: boolean = false): string {
+
         parsedQuery = parsedQuery || this.scriptObject.parsedQuery;
+
         let tempQuery = deepClone.deepCloneSync(parsedQuery, {
             absolute: true,
         });
+
         if (!fieldNames)
             tempQuery.fields = this.data.fieldsInQuery.map(fieldName => getComposedField(fieldName));
         else
             tempQuery.fields = fieldNames.map(fieldName => getComposedField(fieldName));
+
         if (removeLimits) {
             tempQuery.limit = undefined;
             tempQuery.offset = undefined;
             tempQuery.orderBy = undefined;
         }
+
+        if (isTargetQuery) {
+            // Fix target query
+            ___filterTargetQuery(tempQuery.where);
+        }
+
         let query = composeQuery(tempQuery);
         if (useFieldMapping) {
             query = this._mapSourceQueryToTarget(query, parsedQuery.sObject).query;
         }
         return query;
+
+
+        // -------------- Helpers ----------------------- //
+        function ___filterTargetQuery(tempQuery: WhereClause){
+            if (!tempQuery) return;
+            if (tempQuery.right){
+                if ((tempQuery.right.left.field || '').toLowerCase() == 'isdeleted'){
+                    tempQuery.right = null;
+                    tempQuery.operator = null;
+                } else {
+                    ___filterTargetQuery(tempQuery.right);
+                }
+            }
+        }
     }
 
     /**
@@ -830,7 +858,7 @@ export default class MigrationJobTask {
             if (this.targetData.media == DATA_MEDIA_TYPE.Org && this.operation != OPERATION.Insert) {
                 // Read from the TARGET ORG *********
                 let fieldsInQuery = this.data.fieldsInQuery.filter(field => this.data.fieldsExcludedFromTargetQuery.indexOf(field) < 0);
-                let query = this.createQuery(fieldsInQuery);
+                let query = this.createQuery(fieldsInQuery, undefined, undefined, undefined, true);
                 records = new Array<any>();
                 if (this.scriptObject.processAllTarget) {
                     // All records ****** //                  
