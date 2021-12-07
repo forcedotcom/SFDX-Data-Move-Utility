@@ -11,10 +11,10 @@ import { LoggerLevel } from '@salesforce/core';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Common } from './common';
-import { SfdxCommand } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
 import { ITableMessage } from '../../models/common_models/helper_interfaces';
+import ISfdmuCommand from '../../models/common_models/ISfdxCommand';
 
 
 
@@ -383,7 +383,7 @@ export class Logger {
         resources: IResourceBundle,
         commandMessages: IResourceBundle,
         uxLogger: IUxLogger,
-        command: SfdxCommand,
+        command: ISfdmuCommand,
         logLevelFlag: string,
         rootPath: string,
         verboseFlag: boolean,
@@ -1154,7 +1154,7 @@ export enum LOG_MESSAGE_VERBOSITY {
  *
  * @interface ISfdxUxLogger
  */
-interface IUxLogger {
+export interface IUxLogger {
     log: Function,
     styledJSON: Function,
     warn: Function,
@@ -1173,7 +1173,7 @@ interface IUxLogger {
  *
  * @interface IResourceBundle
  */
-interface IResourceBundle {
+export interface IResourceBundle {
     getMessage(key: string, tokens?: any): string;
 }
 
@@ -1183,7 +1183,7 @@ interface IResourceBundle {
  *
  * @interface IExitSuccessMessage
  */
-interface IExitSuccessMessage {
+export interface IExitSuccessMessage {
     command: string,
     cliCommandString: string,
     result: string,
@@ -1201,7 +1201,7 @@ interface IExitSuccessMessage {
  *
  * @interface IExitFailedMessage
  */
-interface IExitFailedMessage {
+export interface IExitFailedMessage {
     command: string,
     cliCommandString: string,
     message: string,

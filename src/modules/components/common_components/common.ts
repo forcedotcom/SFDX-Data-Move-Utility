@@ -8,7 +8,6 @@
 import { execSync } from 'child_process';
 import path = require('path');
 import * as fs from 'fs';
-import { SfdxCommand } from '@salesforce/command';
 import {
     Condition,
     LiteralType,
@@ -33,6 +32,7 @@ import * as Throttle from 'promise-parallel-throttle';
 import IPluginInfo from '../../models/common_models/IPluginInfo';
 import { ISfdmuAddonInfo } from '../../../addons/modules/sfdmu-run/custom-addons/package/common';
 import { Buffer } from 'buffer';
+import ISfdmuCommand from '../../models/common_models/ISfdxCommand';
 
 
 const { closest } = require('fastest-levenshtein')
@@ -93,12 +93,12 @@ export class Common {
     /**
     * @static Returns the plugin info
     * 
-    * @param {typeof SfdxCommand} command
+    * @param {ISfdmuCommand} command
     * @returns {IPluginInfo}
     * @memberof CommonUtils
     */
-    public static getPluginInfo(command: SfdxCommand): IPluginInfo {
-        let statics: typeof SfdxCommand = command["statics"];
+    public static getPluginInfo(command: ISfdmuCommand): IPluginInfo {
+        let statics = command.statics;
         let pjson = require(path.join(statics.plugin.root, '/package.json'));
         let runAddOnApiInfo = (pjson.addons.run as ISfdmuAddonInfo);
         let info = <IPluginInfo>{
