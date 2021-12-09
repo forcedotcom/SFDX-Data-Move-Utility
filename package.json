@@ -90,7 +90,6 @@
         "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
         "version": "oclif-dev readme && git add README.md",
         "build": "tsc -b",
-        "typedoc-sfdmu-run-addons": "typedoc --options typedoc-sfdmu-run-addons.json",
-        "sfdmu-run": "node ./lib/sfdmu_run.js"
+        "typedoc-sfdmu-run-addons": "typedoc --options typedoc-sfdmu-run-addons.json"
     }
 }

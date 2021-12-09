@@ -17,7 +17,9 @@ const rl = readline.createInterface({ input, output });
 
 export default class ConsoleLogger implements IUxLogger {
 
-    log = (message: any): void => console.log(`${message}`);
+    log = (message: any): void => { 
+        console.log(`${message}`); 
+    }
 
     styledJSON = (message: string): void => console.log('\x1b[34m%s\x1b[0m', JSON.stringify(JSON.parse(message || '{}'), null, 4));
 
@@ -57,6 +59,3 @@ export default class ConsoleLogger implements IUxLogger {
 
 }
 
-// rl.on("close", function () {
-//     // TODO:
-// });
