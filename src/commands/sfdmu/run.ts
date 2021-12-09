@@ -28,7 +28,8 @@ const commandMessages = Messages.loadMessages('sfdmu', 'run');
 const resources = Messages.loadMessages('sfdmu', 'resources');
 
 export default class Run extends SfdxCommand implements IRunProcess {
-    
+
+   
     m_flags: any;
     m_ux: IUxLogger;   
 
@@ -151,6 +152,11 @@ export default class Run extends SfdxCommand implements IRunProcess {
 
         return {};
     }
+
+    runCommand(): Promise<any> {
+        throw new Error('Method not implemented.');
+    }
+    
 }
 
 

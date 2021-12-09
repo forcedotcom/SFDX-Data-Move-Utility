@@ -18,4 +18,5 @@ export interface IRunProcess {
     m_flags: any;
     commandMessages: IResourceBundle;
     resources: IResourceBundle;
+    runCommand(): Promise<any>;
 }
