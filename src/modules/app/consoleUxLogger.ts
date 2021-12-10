@@ -23,8 +23,8 @@ export default class ConsoleLogger implements IUxLogger {
 
     styledJSON = (message: string): void => console.log('\x1b[34m%s\x1b[0m', JSON.stringify(JSON.parse(message || '{}'), null, 4));
 
-    warn = (message: any): void => console.warn('\x1b[33m%s\x1b[0m', `[WARNING] ${message}`);
-    error = (message: any): void => console.error('\x1b[31m%s\x1b[0m', `[ERROR] ${message}`);
+    warn = (message: any): void => console.warn('\x1b[33m%s\x1b[0m', `${message}`);
+    error = (message: any): void => console.error('\x1b[31m%s\x1b[0m', `${message}`);
     styledObject = (message: any): void => console.log('\x1b[34m%s\x1b[0m', JSON.stringify(message || {}, null, 4));
     table = (message: any): void => console.log(message);
 

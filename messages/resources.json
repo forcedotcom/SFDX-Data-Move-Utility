@@ -62,7 +62,8 @@
     "commandExecutionErrorResult": "Error during execution of the command: %s.",
     "commandUnresolvableWarningResult": "Execution of the command was ABORTED due to an unresolvable warning: %s.",
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
-    "commandAbortedByAddOnErrorResult": "Execution of the command was ANORTED by the Add-On module",
+    "commandAbortedByAddOnErrorResult": "Execution of the command was ABORTED by the Add-On module",
+    "commandAbortedByUnexpectedError": "Execution of the command was ABORTED",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
 
     "loadingCoreAddonManifestFile" : "Loading core Add-On declarations ...",

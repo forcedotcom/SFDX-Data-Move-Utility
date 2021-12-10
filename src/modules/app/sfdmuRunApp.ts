@@ -6,10 +6,6 @@
  */
 
 
-//import { RunCommand } from "./modules/commands_processors/runCommand";
-//import { Logger } from "./modules/components/common_components/logger";
-//import { Common } from "./modules/components/common_components/common";
-
 import ISfdmuCommand from "../models/common_models/ISfdxCommand";
 import { RunCommand } from "../commands_processors/runCommand";
 import JsonMessages from './JsonMessages';
@@ -20,12 +16,11 @@ import { IRunProcess } from "../commands_processors/IRunProcess";
 import { IResourceBundle, IUxLogger } from "../components/common_components/logger";
 import ISfdmuStatics from "../models/common_models/ISfdmuStatics";
 import RunCommandExecutor from "../commands_processors/runCommandExecutor";
+import { Common } from "../components/common_components/common";
 
 const root = path.resolve(__dirname, '../../../');
 const commandMessages = new JsonMessages(root, "run");
 const resources = new JsonMessages(root, "resources");
-const minimist = require('minimist');
-
 
 export default class SfdmuRunApp implements IRunProcess {
 
@@ -43,7 +38,7 @@ export default class SfdmuRunApp implements IRunProcess {
 
     constructor(argv: Array<string>) {
         this.argv = argv.splice(2);
-        let flags = minimist(this.argv);
+        let flags = Common.parseArgv(...this.argv);
         Object.assign(this.m_flags, flags);
         this.statics = {
             name: "Run",

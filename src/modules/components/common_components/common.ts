@@ -1005,7 +1005,7 @@ export class Common {
                 if (onBeforeAbortAsync) {
                     await onBeforeAbortAsync();
                 }
-                throw new CommandAbortedByUserError(this.logger.getResourceString(errorMessage));
+                throw new CommandAbortedByUserError(errorMessage);
             }
             this.logger.log(RESOURCES.newLine);
         }
@@ -1632,6 +1632,64 @@ export class Common {
                 query.fields.push(getComposedField(field));
             }
         });
+    }
+
+    /**
+     * Trims specific character at the start and at the end of the string
+     *
+     * @static
+     * @param {string} str
+     * @param {string} charToTrim
+     * @return {*}  {string}
+     * @memberof Common
+     */
+    public static trimChar(str: string, charToTrim: string): string {
+        while (str.charAt(0) == charToTrim) {
+            str = str.substring(1);
+        }
+
+        while (str.charAt(str.length - 1) == charToTrim) {
+            str = str.substring(0, str.length - 1);
+        }
+
+        return str;
+    }
+
+    /**
+     * Parses command line arguments into object,
+     * e.g.: --arg1 value --arg2 --arg3 "value2" => {
+     *      arg1: "value",
+     *      arg2: true,
+     *      arg3: "value2"
+     * }
+     *
+     * @static
+     * @param {...string[]} argv
+     * @return {*}  {*}
+     * @memberof Common
+     */
+    public static parseArgv(...argv: string[]): any {
+        argv = argv || [];
+        let argvObject = {};
+        let index = 0;
+        while (index < argv.length) {
+            let command = argv[index] || "";
+            if (command) {
+                if (command.startsWith('-')) {
+                    command = Common.trimChar(Common.trimChar(command.trim(), "-"), "\"");
+                    let value: any = argv[index + 1] || "";
+                    if (value.startsWith("-")) {
+                        value = true;
+                    } else {
+                        value = value || true;
+                        index++;
+                    }
+                    argvObject[command] = value;
+                }
+                index++;
+            }
+        }
+        return argvObject;
     }
 
 

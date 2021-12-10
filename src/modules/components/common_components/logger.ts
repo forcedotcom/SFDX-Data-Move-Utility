@@ -93,6 +93,7 @@ export enum RESOURCES {
     commandUnresolvableWarningResult = "commandUnresolvableWarningResult",
     commandAbortedByUserErrorResult = "commandAbortedByUserErrorResult",
     commandAbortedByAddOnErrorResult = "commandAbortedByAddOnErrorResult",
+    commandAbortedByUnexpectedError = "commandAbortedByUnexpectedError",
     commandUnexpectedErrorResult = "commandUnexpectedErrorResult",
 
 
