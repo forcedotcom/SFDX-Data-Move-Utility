@@ -159,7 +159,7 @@
     "unexpectedApiError": "Unexpected Api error",
     "simulationMode": " (SIMULATION MODE)",
 
-    "gettingRecordsCount": "ANALYSING THE OVERALL DATA VLOLUME ...",
+    "gettingRecordsCount": "ANALYSING THE OVERALL DATA VOLUME ...",
     "totalRecordsAmount": "{%s} Total amount of the %s records should be retrieved by the object's SOQL query: %s",
 
     "deletingTargetData": "Deleting old data from the Target ...",

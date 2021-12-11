@@ -78,6 +78,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     excudedFromUpdateFields: Array<string> = new Array<string>();
     restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
     useQueryAll: boolean;
+    queryAllTarget: boolean;
 
     @Type(() => ScriptAddonManifestDefinition)
     beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();

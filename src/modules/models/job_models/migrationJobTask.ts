@@ -527,6 +527,8 @@ export default class MigrationJobTask {
         useFieldMapping: boolean = false,
         isTargetQuery: boolean = false): string {
 
+        let self = this;
+
         parsedQuery = parsedQuery || this.scriptObject.parsedQuery;
 
         let tempQuery = deepClone.deepCloneSync(parsedQuery, {
@@ -546,7 +548,7 @@ export default class MigrationJobTask {
 
         if (isTargetQuery) {
             // Fix target query
-            ___filterTargetQuery(tempQuery.where);
+            ___filterTargetQuery(tempQuery);
         }
 
         let query = composeQuery(tempQuery);
@@ -557,16 +559,49 @@ export default class MigrationJobTask {
 
 
         // -------------- Helpers ----------------------- //
-        function ___filterTargetQuery(tempQuery: WhereClause){
+        function ___filterTargetQuery(tempQuery: WhereClause | Query) {
+
+            if (tempQuery['sObject']) {
+
+                // Filter Query ////////////////////
+                tempQuery = tempQuery as Query; 
+
+                if (self.scriptObject.queryAllTarget) {
+                    // ignoreTargetWhere --- 
+                    tempQuery.where = null;
+                    tempQuery.limit = null;
+                    tempQuery.offset = null;
+                    tempQuery.orderBy = null;
+                    return;
+                }
+
+                if (tempQuery.where && tempQuery.where.left) {
+                    // IsDeleted -----------
+                    if ((tempQuery.where.left.field || '').toLowerCase() == 'isdeleted') {
+                        tempQuery.where = null;
+                        return;
+                    }
+                }
+
+                // Continue to Filter Where
+                ___filterTargetQuery(tempQuery.where);
+                return;
+            }
+
+            // Filter Where ////////////////////////
+            tempQuery = tempQuery as WhereClause;
             if (!tempQuery) return;
-            if (tempQuery.right){
-                if ((tempQuery.right.left.field || '').toLowerCase() == 'isdeleted'){
+
+            // IsDeleted --------------------
+            if (tempQuery.right) {
+                if ((tempQuery.right.left.field || '').toLowerCase() == 'isdeleted') {
                     tempQuery.right = null;
                     tempQuery.operator = null;
                 } else {
                     ___filterTargetQuery(tempQuery.right);
                 }
-            }
+            } 
+
         }
     }
 
