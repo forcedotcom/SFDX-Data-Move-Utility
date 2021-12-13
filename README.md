@@ -4,7 +4,7 @@
 - **The changelog (including only important updates) can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
 - **You can also use the [SFDMU Desktop GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) that can help you to configure and to run the Plugin**
 
--- **THE DOUCMENTATION WEBSITE IS TEMPORARY UNDER CONSTRUCTION AND SOMETIMES MIGHT BE UNAVAILABLE. WE WILL BRING IT BACK SOON**
+-- **THE DOCUMENTATION WEBSITE IS TEMPORARY UNDER CONSTRUCTION AND SOMETIMES MIGHT BE UNAVAILABLE. WE WILL BRING IT BACK SOON**
 
 ```bash
 > ** PLEASE NOTE, THAT THIS TOOL HAS LIMITED SUPPORT AND SLA IS NOT ENFORCED AS SUPPORT TO ISSUES RAISED. **
