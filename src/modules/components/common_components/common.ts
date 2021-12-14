@@ -8,7 +8,6 @@
 import { execSync } from 'child_process';
 import path = require('path');
 import * as fs from 'fs';
-import { SfdxCommand } from '@salesforce/command';
 import {
     Condition,
     LiteralType,
@@ -33,6 +32,7 @@ import * as Throttle from 'promise-parallel-throttle';
 import IPluginInfo from '../../models/common_models/IPluginInfo';
 import { ISfdmuAddonInfo } from '../../../addons/modules/sfdmu-run/custom-addons/package/common';
 import { Buffer } from 'buffer';
+import ISfdmuCommand from '../../models/common_models/ISfdxCommand';
 
 
 const { closest } = require('fastest-levenshtein')
@@ -93,12 +93,12 @@ export class Common {
     /**
     * @static Returns the plugin info
     * 
-    * @param {typeof SfdxCommand} command
+    * @param {ISfdmuCommand} command
     * @returns {IPluginInfo}
     * @memberof CommonUtils
     */
-    public static getPluginInfo(command: SfdxCommand): IPluginInfo {
-        let statics: typeof SfdxCommand = command["statics"];
+    public static getPluginInfo(command: ISfdmuCommand): IPluginInfo {
+        let statics = command.statics;
         let pjson = require(path.join(statics.plugin.root, '/package.json'));
         let runAddOnApiInfo = (pjson.addons.run as ISfdmuAddonInfo);
         let info = <IPluginInfo>{
@@ -1005,7 +1005,7 @@ export class Common {
                 if (onBeforeAbortAsync) {
                     await onBeforeAbortAsync();
                 }
-                throw new CommandAbortedByUserError(this.logger.getResourceString(errorMessage));
+                throw new CommandAbortedByUserError(errorMessage);
             }
             this.logger.log(RESOURCES.newLine);
         }
@@ -1632,6 +1632,64 @@ export class Common {
                 query.fields.push(getComposedField(field));
             }
         });
+    }
+
+    /**
+     * Trims specific character at the start and at the end of the string
+     *
+     * @static
+     * @param {string} str
+     * @param {string} charToTrim
+     * @return {*}  {string}
+     * @memberof Common
+     */
+    public static trimChar(str: string, charToTrim: string): string {
+        while (str.charAt(0) == charToTrim) {
+            str = str.substring(1);
+        }
+
+        while (str.charAt(str.length - 1) == charToTrim) {
+            str = str.substring(0, str.length - 1);
+        }
+
+        return str;
+    }
+
+    /**
+     * Parses command line arguments into object,
+     * e.g.: --arg1 value --arg2 --arg3 "value2" => {
+     *      arg1: "value",
+     *      arg2: true,
+     *      arg3: "value2"
+     * }
+     *
+     * @static
+     * @param {...string[]} argv
+     * @return {*}  {*}
+     * @memberof Common
+     */
+    public static parseArgv(...argv: string[]): any {
+        argv = argv || [];
+        let argvObject = {};
+        let index = 0;
+        while (index < argv.length) {
+            let command = argv[index] || "";
+            if (command) {
+                if (command.startsWith('-')) {
+                    command = Common.trimChar(Common.trimChar(command.trim(), "-"), "\"");
+                    let value: any = argv[index + 1] || "";
+                    if (value.startsWith("-")) {
+                        value = true;
+                    } else {
+                        value = value || true;
+                        index++;
+                    }
+                    argvObject[command] = value;
+                }
+                index++;
+            }
+        }
+        return argvObject;
     }
 
 

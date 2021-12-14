@@ -26,7 +26,8 @@
                 "--reporter", "spec",
                 "test/**/*.test.ts"
             ],
-            "cwd": "${workspaceRoot}"
+            "cwd": "${workspaceRoot}",
+            "console": "integratedTerminal"
         }
     ]
 }

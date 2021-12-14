@@ -62,7 +62,8 @@
     "commandExecutionErrorResult": "Error during execution of the command: %s.",
     "commandUnresolvableWarningResult": "Execution of the command was ABORTED due to an unresolvable warning: %s.",
     "commandAbortedByUserErrorResult": "Execution of the command was ABORTED by the user.",
-    "commandAbortedByAddOnErrorResult": "Execution of the command was ANORTED by the Add-On module",
+    "commandAbortedByAddOnErrorResult": "Execution of the command was ABORTED by the Add-On module",
+    "commandAbortedByUnexpectedError": "Execution of the command was ABORTED",
     "commandUnexpectedErrorResult": "Execution of the command was ABORTED due to unexpected error: %s.",
 
     "loadingCoreAddonManifestFile" : "Loading core Add-On declarations ...",
@@ -158,7 +159,7 @@
     "unexpectedApiError": "Unexpected Api error",
     "simulationMode": " (SIMULATION MODE)",
 
-    "gettingRecordsCount": "ANALYSING THE OVERALL DATA VLOLUME ...",
+    "gettingRecordsCount": "ANALYSING THE OVERALL DATA VOLUME ...",
     "totalRecordsAmount": "{%s} Total amount of the %s records should be retrieved by the object's SOQL query: %s",
 
     "deletingTargetData": "Deleting old data from the Target ...",
