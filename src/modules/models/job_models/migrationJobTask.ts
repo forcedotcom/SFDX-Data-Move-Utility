@@ -560,6 +560,8 @@ export default class MigrationJobTask {
 
         // -------------- Helpers ----------------------- //
         function ___filterTargetQuery(tempQuery: WhereClause | Query) {
+            
+            if (!tempQuery) return;
 
             if (tempQuery['sObject']) {
 
