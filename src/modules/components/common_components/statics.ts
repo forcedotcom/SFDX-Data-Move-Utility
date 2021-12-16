@@ -149,7 +149,9 @@ export const CONSTANTS = {
         "FirstName",
         "LastName",
         "IsPersonAccount",
-        "Salutation"
+        "Salutation",
+        "MiddleName",
+        "Suffix"
     ],
     FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_CONTACT: [
         "IsPersonAccount",

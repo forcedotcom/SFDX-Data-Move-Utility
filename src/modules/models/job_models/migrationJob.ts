@@ -72,10 +72,10 @@ export default class MigrationJob {
                 || objectToAdd.isSpecialObject
                 || objectToAdd.isObjectWithoutRelationships
             ) {
-                objectToAdd.processAllSource = true;
+                objectToAdd.processAllSource = true; // Query string as is
                 objectToAdd.processAllTarget = true;
             } else {
-                objectToAdd.processAllSource = false;
+                objectToAdd.processAllSource = false; // Filtered query
                 if (objectToAdd.hasComplexExternalId || objectToAdd.hasAutonumberExternalId) {
                     objectToAdd.processAllTarget = true;
                 } else {
