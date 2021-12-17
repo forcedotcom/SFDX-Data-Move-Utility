@@ -31,8 +31,6 @@ import { MockGenerator } from '../../components/common_components/mockGenerator'
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
 import { ADDON_EVENTS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../components/common_components/enumerations';
 import { ApiInfo } from '../api_models';
-import { sfdc } from '@salesforce/core';
-
 
 
 
