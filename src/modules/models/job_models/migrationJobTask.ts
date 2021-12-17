@@ -31,6 +31,7 @@ import { MockGenerator } from '../../components/common_components/mockGenerator'
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
 import { ADDON_EVENTS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../components/common_components/enumerations';
 import { ApiInfo } from '../api_models';
+import { sfdc } from '@salesforce/core';
 
 
 
@@ -136,17 +137,23 @@ export default class MigrationJobTask {
                     || nameParts.some(namePart => namePart == fieldName);
             });
             if (!columnExists) {
-                // Column is missing in the csv file
-                csvIssues.push({
-                    "Date update": Common.formatDateTime(new Date()),
-                    "Child sObject": this.sObjectName,
-                    "Child field": fieldName,
-                    "Child value": null,
-                    "Parent sObject": null,
-                    "Parent field": null,
-                    "Parent value": null,
-                    "Error": this.logger.getResourceString(RESOURCES.columnsMissingInCSV)
-                });
+
+                // Detect id column
+                const sField = this.data.fieldsInQueryMap.get(fieldName);
+                if (!(sField && (sField.isSimpleReference || fieldName == "Id") // Negative rule to not show warning about missing columns
+                    && this.script.excludeIdsFromCSVFiles)) {
+                    // Column is missing in the csv file
+                    csvIssues.push({
+                        "Date update": Common.formatDateTime(new Date()),
+                        "Child sObject": this.sObjectName,
+                        "Child field": fieldName,
+                        "Child value": null,
+                        "Parent sObject": null,
+                        "Parent field": null,
+                        "Parent value": null,
+                        "Error": this.logger.getResourceString(RESOURCES.columnsMissingInCSV)
+                    });
+                }
             }
         });
 
@@ -560,13 +567,13 @@ export default class MigrationJobTask {
 
         // -------------- Helpers ----------------------- //
         function ___filterTargetQuery(tempQuery: WhereClause | Query) {
-            
+
             if (!tempQuery) return;
 
             if (tempQuery['sObject']) {
 
                 // Filter Query ////////////////////
-                tempQuery = tempQuery as Query; 
+                tempQuery = tempQuery as Query;
 
                 if (self.scriptObject.queryAllTarget) {
                     // ignoreTargetWhere --- 
@@ -602,7 +609,7 @@ export default class MigrationJobTask {
                 } else {
                     ___filterTargetQuery(tempQuery.right);
                 }
-            } 
+            }
 
         }
     }
