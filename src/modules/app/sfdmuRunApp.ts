@@ -17,6 +17,7 @@ import { IResourceBundle, IUxLogger } from "../components/common_components/logg
 import ISfdmuStatics from "../models/common_models/ISfdmuStatics";
 import RunCommandExecutor from "../commands_processors/runCommandExecutor";
 import { Common } from "../components/common_components/common";
+import ISfdmuRunModuleArgs from "./ISfdmuRunModuleArgs";
 
 const root = path.resolve(__dirname, '../../../');
 const commandMessages = new JsonMessages(root, "run");
@@ -25,21 +26,32 @@ const resources = new JsonMessages(root, "resources");
 export default class SfdmuRunApp implements IRunProcess {
 
     argv: Array<string>;
+    exportJson: string;
 
     cmd: ISfdmuCommand;
     command: RunCommand;
     statics: ISfdmuStatics;
 
-    m_ux: IUxLogger = new ConsoleLogger();
+    m_ux: IUxLogger;
     m_flags: any = {};
 
-    commandMessages: IResourceBundle = commandMessages;
-    resources: IResourceBundle = resources;
+    commandMessages: IResourceBundle;
+    resources: IResourceBundle;
 
-    constructor(argv: Array<string>) {
-        this.argv = argv.splice(2);
+    constructor(args: ISfdmuRunModuleArgs) {
+
+        this.m_ux = args.logger || new ConsoleLogger();
+        this.argv = args.argv.splice(2);
+
+        this.exportJson = args.exportJson;
+
+        this.commandMessages = args.commandMessages || commandMessages;
+        this.resources = args.resources || resources;
+
+
         let flags = Common.parseArgv(...this.argv);
         Object.assign(this.m_flags, flags);
+        
         this.statics = {
             name: "Run",
             plugin: {

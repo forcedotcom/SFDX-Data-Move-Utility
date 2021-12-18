@@ -90,7 +90,8 @@ export default class RunCommandExecutor {
                 runProcess.m_flags.sourceusername,
                 runProcess.m_flags.targetusername,
                 runProcess.m_flags.apiversion,
-                runProcess.m_flags.canmodify);
+                runProcess.m_flags.canmodify,
+                runProcess.exportJson);
 
             await runProcess.command.setupAsync();
             await runProcess.command.createJobAsync();
@@ -108,7 +109,7 @@ export default class RunCommandExecutor {
             process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
             // --
 
-        } catch (e) {
+        } catch (e: any) {
 
             // Exit - errors
             switch (e.constructor) {

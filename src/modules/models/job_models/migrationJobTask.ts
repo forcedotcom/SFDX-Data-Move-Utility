@@ -7,15 +7,20 @@
 
 
 
-import { Query, parseQuery, Condition, WhereClause } from 'soql-parser-js';
+
 import { Common } from "../../components/common_components/common";
 import { CONSTANTS } from "../../components/common_components/statics";
 import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
+    Query,
+    parseQuery,
+    Condition,
+    WhereClause,
     composeQuery,
     getComposedField,
-    Field as SOQLField
+    Field as SOQLField,
+    FieldType
 } from 'soql-parser-js';
 import { ScriptObject, MigrationJob as Job, CommandExecutionError, ScriptOrg, Script, ScriptMockField, TaskData, TaskOrgData, CachedCSVContent, ProcessedData } from "..";
 import SFieldDescribe from "../sf_models/sfieldDescribe";
@@ -26,7 +31,7 @@ import { IApiEngine } from "../api_models/helper_interfaces";
 import { BulkApiV1_0Engine } from "../../components/api_engines/bulkApiV1_0Engine";
 import { RestApiEngine } from "../../components/api_engines/restApiEngine";
 const alasql = require("alasql");
-import casual = require("casual");
+import * as casual from "casual";
 import { MockGenerator } from '../../components/common_components/mockGenerator';
 import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
 import { ADDON_EVENTS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../components/common_components/enumerations';
@@ -2033,7 +2038,8 @@ export default class MigrationJobTask {
         let scriptObject = this.script.objectsMap.get(sourceSObjectName);
         if (scriptObject) {
             let fields = [];
-            sourceParsedQuery.fields.forEach((field: SOQLField) => {
+            sourceParsedQuery.fields.forEach((f: FieldType) => {
+                let field = f as SOQLField;
                 let rawValue = String(field["rawValue"] || field.field);
                 let describe = scriptObject.fieldsInQueryMap.get(rawValue);
                 describe = describe || [...scriptObject.fieldsInQueryMap.values()]
@@ -2071,7 +2077,8 @@ export default class MigrationJobTask {
                 let targetParsedQuery = parseQuery(query);
                 targetParsedQuery.sObject = mapping.targetSObjectName;
                 let fields = [];
-                targetParsedQuery.fields.forEach((field: SOQLField) => {
+                targetParsedQuery.fields.forEach((f: FieldType) => {
+                    let field = f as SOQLField;
                     let rawValue = String(field["rawValue"] || field.field);
                     let describe = scriptObject.fieldsInQueryMap.get(rawValue);
                     if (describe) {

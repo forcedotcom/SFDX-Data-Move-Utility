@@ -131,12 +131,12 @@ export default class SfdmuRunAddonManager {
             return null;
         }
         try {
-            let manifestPlain = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+            let manifestPlain: string = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
             let manifest = plainToClass(AddonManifest, manifestPlain);
             manifest.addons.forEach(addon => this._setupAddonDefinition(addon));
             manifest.addons = manifest.addons.filter(addon => !addon.excluded);
             return manifest;
-        } catch (ex) {
+        } catch (ex: any) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
         }
     }

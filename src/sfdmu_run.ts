@@ -6,9 +6,14 @@
  */
 
 
+import ISfdmuRunModuleArgs from "./modules/app/ISfdmuRunModuleArgs";
 import SfdmuRunApp from "./modules/app/sfdmuRunApp";
 
-const application = new SfdmuRunApp(process.argv);
+const args: ISfdmuRunModuleArgs = {
+    argv: process.argv
+};
+
+const application = new SfdmuRunApp(args);
 (async () => await application.runCommand())();
 
 

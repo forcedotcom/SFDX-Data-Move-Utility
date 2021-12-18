@@ -182,7 +182,7 @@ export class Sfdx implements IFieldMapping {
             records = this.targetRecordsToSource(records, parsedQuery.sObject).records;
 
             return records;
-        } catch (ex) {
+        } catch (ex: any) {
             throw new CommandExecutionError(ex.message);
         }
 

@@ -6,8 +6,13 @@
  */
 
 import { IRunProcess } from "../commands_processors/IRunProcess";
+import { IResourceBundle, IUxLogger } from "../components/common_components/logger";
 
 export default interface ISfdmuRunModuleArgs {
     argv: Array<string>;
-    runProcess: IRunProcess;
+    runProcess?: IRunProcess;
+    logger?: IUxLogger;
+    exportJson?: string; 
+    commandMessages?: IResourceBundle;
+    resources?: IResourceBundle;
 }

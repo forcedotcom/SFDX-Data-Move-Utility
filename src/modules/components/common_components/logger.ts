@@ -7,16 +7,12 @@
 
 
 
-import { LoggerLevel } from '@salesforce/core';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Common } from './common';
-import { Messages } from '@salesforce/core';
 import { CONSTANTS } from './statics';
 import { ITableMessage } from '../../models/common_models/helper_interfaces';
 import ISfdmuCommand from '../../models/common_models/ISfdxCommand';
-
-
 
 
 /**
@@ -246,6 +242,7 @@ export enum RESOURCES {
     writingToCacheFile = "writingToCacheFile",
     readingFromCacheFile = "readingFromCacheFile"
 }
+
 
 
 
@@ -1032,7 +1029,7 @@ export class Logger {
      * @returns {string}
      * @memberof MessageUtils
      */
-    public static getMessagesString(messages: Messages, key: string, ...tokens: string[]): string {
+    public static getMessagesString(messages: IMessages, key: string, ...tokens: string[]): string {
         try {
             return messages.getMessage(String(key), tokens);
         } catch (ex) {
@@ -1150,6 +1147,16 @@ export enum LOG_MESSAGE_VERBOSITY {
 
 }
 
+export enum LoggerLevel {
+    TRACE = 10,
+    DEBUG = 20,
+    INFO = 30,
+    WARN = 40,
+    ERROR = 50,
+    FATAL = 60
+}
+
+
 /**
  * UX Logger type description
  *
@@ -1168,6 +1175,12 @@ export interface IUxLogger {
     stopSpinner: Function,
     setSpinnerStatus: Function
 }
+
+export declare type Tokens = Array<string | boolean | number | null | undefined>;
+
+export interface IMessages {
+    getMessage(key: string, tokens?: Tokens): string;
+} 
 
 /**
  * Represents message bundle type

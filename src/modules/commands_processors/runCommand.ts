@@ -37,6 +37,7 @@ export class RunCommand {
     canModify: string;
     script: models.Script;
     job: Job;
+    exportJson: string;
 
     /**
      * New instance of RunCommand.
@@ -54,7 +55,8 @@ export class RunCommand {
         sourceUsername: string,
         targetUsername: string,
         apiVersion: string,
-        canModify: string) {
+        canModify: string,
+        exportJson: string) {
 
         this.pinfo = pinfo;
         this.logger = logger;
@@ -63,6 +65,7 @@ export class RunCommand {
         this.sourceUsername = sourceUsername;
         this.apiVersion = apiVersion;
         this.canModify = canModify;
+        this.exportJson = exportJson;
     }
 
 
@@ -76,30 +79,39 @@ export class RunCommand {
      */
     async setupAsync(): Promise<void> {
 
+        // By default the explicitely provided export.json text is used
+        let json: string = this.exportJson;
+        let filePath: string = "[JSON TEXT]";
+
         // Load script file
         if (!fs.existsSync(this.basePath)) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.workingPathDoesNotExist));
         }
-        let filePath = path.join(this.basePath, CONSTANTS.SCRIPT_FILE_NAME);
 
-        if (!fs.existsSync(filePath)) {
-            throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.packageFileDoesNotExist));
+        if (!json) {
+
+            filePath = path.join(this.basePath, CONSTANTS.SCRIPT_FILE_NAME);
+
+            if (!fs.existsSync(filePath)) {
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.packageFileDoesNotExist));
+            }
+
+            this.logger.infoMinimal(RESOURCES.newLine);
+            this.logger.headerMinimal(RESOURCES.loadingPackageFile);
+
+
+            try {
+                json = fs.readFileSync(filePath, 'utf8');
+            } catch (ex: any) {
+                throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
+            }
         }
 
-        this.logger.infoMinimal(RESOURCES.newLine);
-        this.logger.headerMinimal(RESOURCES.loadingPackageFile);
-
-        let json: string;
-        try {
-            json = fs.readFileSync(filePath, 'utf8');
-        } catch (ex) {
-            throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
-        }
 
         try {
             let jsonObject = JSON.parse(json);
             this.script = plainToClass(models.Script, jsonObject);
-        } catch (ex) {
+        } catch (ex: any) {
             throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONFormatError, ex.message));
         }
 

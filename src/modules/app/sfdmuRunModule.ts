@@ -12,7 +12,7 @@ import SfdmuRunApp from "./sfdmuRunApp";
 export class SfdmuRunModule {
 
     public static async runCommand(args: ISfdmuRunModuleArgs) {
-        args.runProcess = new SfdmuRunApp(args.argv);
+        args.runProcess = new SfdmuRunApp(args);
         await args.runProcess.runCommand();
     }
 

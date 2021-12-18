@@ -5,15 +5,17 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 import {
-    ApiEngineBase, 
-    ApiInfo, 
+    ApiEngineBase,
+    ApiInfo,
     IApiEngineInitParameters
 } from '../../models/api_models';
 import { Common } from '../common_components/common';
 import { CONSTANTS } from '../common_components/statics';
 import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
 import { RESOURCES } from '../common_components/logger';
-import parse = require('csv-parse/lib/sync');
+import * as parse2 from 'csv-parse/lib/sync';
+const parse = (parse2 as any).parse || parse2;
+
 import { OPERATION, RESULT_STATUSES } from '../common_components/enumerations';
 
 import ApiResultRecord from '../../models/api_models/ApiResultRecord';
@@ -454,6 +456,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                     }
 
                     try {
+                        
                         let csv = parse(body, {
                             skip_empty_lines: true,
                             cast: self._csvCast
@@ -501,7 +504,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                             sObjectName: self.sObjectName,
                             strOperation: self.strOperation
                         }));
-                    } catch (e) {
+                    } catch (e : any) {
                         if (typeof e.message == "string") {
                             self._apiRequestErrorHandler(
                                 resolve,
@@ -527,7 +530,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         });
     }
 
-  
+
 
 
 

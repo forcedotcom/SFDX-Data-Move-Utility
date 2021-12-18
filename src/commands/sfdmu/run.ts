@@ -29,7 +29,8 @@ const resources = Messages.loadMessages('sfdmu', 'resources');
 
 export default class Run extends SfdxCommand implements IRunProcess {
 
-   
+    exportJson: string;
+
     m_flags: any;
     m_ux: IUxLogger;   
 

@@ -6,8 +6,9 @@
  */
 
 import { execSync } from 'child_process';
-import path = require('path');
+import * as path from 'path';
 import * as fs from 'fs';
+
 import {
     Condition,
     LiteralType,
@@ -21,13 +22,18 @@ import {
     FieldType,
     Field as SOQLField
 } from 'soql-parser-js';
+
 import { CONSTANTS } from './statics';
 
-import parse = require('csv-parse/lib/sync');
-import glob = require("glob");
+import * as parse2 from 'csv-parse/lib/sync';
+const parse = (parse2 as any).parse || parse2;
+
+import * as glob2 from "glob";
+const glob = (glob2 as any).glob || glob2;
+
 import { Logger, RESOURCES } from './logger';
 import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionError } from '../../models';
-import readline = require('readline');
+import * as readline from 'readline';
 import * as Throttle from 'promise-parallel-throttle';
 import IPluginInfo from '../../models/common_models/IPluginInfo';
 import { ISfdmuAddonInfo } from '../../../addons/modules/sfdmu-run/custom-addons/package/common';
@@ -879,20 +885,20 @@ export class Common {
         });
         let header = csvStringifier.getHeaderString();
         let csvStrings: Array<[Array<object>, string]> = new Array<[Array<object>, string]>();
-        let buffer: Buffer = Buffer.from('', encoding);
+        let buffer: Buffer = Buffer.from('', <BufferEncoding>encoding);
         let totalCsvChunkSize = 0;
         let csvBlock: Buffer;
         let arrayBuffer: Array<object> = new Array<object>();
         for (let index = 0; index < arrayBlocks.length; index++) {
             const arrayBlock = arrayBlocks[index];
-            csvBlock = Buffer.from(csvStringifier.stringifyRecords(arrayBlock), encoding);
+            csvBlock = Buffer.from(csvStringifier.stringifyRecords(arrayBlock), <BufferEncoding>encoding);
             let csvBlockSize = csvBlock.toString('base64').length;
             if (totalCsvChunkSize + csvBlockSize <= maxCsvStringSizeInBytes) {
                 buffer = Buffer.concat([buffer, csvBlock]);
                 arrayBuffer = arrayBuffer.concat(arrayBlock);
             } else {
                 if (arrayBuffer.length > 0) {
-                    csvStrings.push([arrayBuffer, (header + buffer.toString(encoding)).trim()]);
+                    csvStrings.push([arrayBuffer, (header + buffer.toString(<BufferEncoding>encoding)).trim()]);
                 }
                 buffer = csvBlock
                 arrayBuffer = arrayBlock;

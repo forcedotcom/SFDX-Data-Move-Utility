@@ -17,3 +17,5 @@ node_modules
 /test-addons
 /documentation
 /src/addons/modules/sfdmu-run/custom-addons/TestModule*
+/temp
+*-private*

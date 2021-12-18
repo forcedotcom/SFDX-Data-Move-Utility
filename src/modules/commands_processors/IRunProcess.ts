@@ -16,6 +16,7 @@ export interface IRunProcess {
     cmd: ISfdmuCommand;
     m_ux: IUxLogger;
     m_flags: any;
+    exportJson: string;
     commandMessages: IResourceBundle;
     resources: IResourceBundle;
     runCommand(): Promise<any>;

@@ -10,12 +10,13 @@
 import "reflect-metadata";
 import "es6-shim";
 import { Type } from "class-transformer";
-import { Query } from 'soql-parser-js';
 import { Common } from "../../components/common_components/common";
 import { CONSTANTS } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
+    FieldType, 
+    Query,
     parseQuery,
     composeQuery,
     Field as SOQLField,
@@ -247,6 +248,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
             if (x.lookup) {
                 return x.parentLookupObject;
             }
+            return null;
         }).filter(x => !!x), 'name');
     }
 
@@ -262,6 +264,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
                 && CONSTANTS.SPECIAL_OBJECT_LOOKUP_MASTER_DETAIL_ORDER.get(x.parentLookupObject.name).indexOf(this.name) >= 0) {
                 return x.parentLookupObject;
             }
+            return null;
         }).filter(x => !!x), 'name');
     }
 
@@ -424,7 +427,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
         try {
             // Parse query string    
             this.parsedQuery = this._parseQuery(this.query);
-        } catch (ex) {
+        } catch (ex: any) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
         }
 
@@ -488,7 +491,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
                     this.parsedDeleteQuery.where = Common.composeWhereClause(this.parsedDeleteQuery.where, "IsPersonAccount", "false", "=", "BOOLEAN", "AND");
                 }
                 this.deleteQuery = composeQuery(this.parsedDeleteQuery);
-            } catch (ex) {
+            } catch (ex: any) {
                 throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedDeleteQuery, this.name, this.deleteQuery, ex));
             }
         }
@@ -668,9 +671,10 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
         });
 
         // Filter excluded fields
-        this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
-            this.excludedFields.indexOf(field.field) < 0
-        );
+        this.parsedQuery.fields = this.parsedQuery.fields.filter((f: FieldType) => {
+            let field = f as SOQLField;
+            return this.excludedFields.indexOf(field.field) < 0
+        });
 
         // Add mandatory fields
         this.getMandatoryQueryFields().forEach((fieldName: string) => {
@@ -682,16 +686,18 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
         // Verify external id value when the original one was not supplied with the script
         if (this.originalExternalIdIsEmpty
             && !describe.fieldsMap.get(this.externalId)) {
-            this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) =>
-                field.field != this.externalId
-            );
+            this.parsedQuery.fields = this.parsedQuery.fields.filter((f: FieldType) => {
+                let field = f as SOQLField;
+                return field.field != this.externalId
+            });
             this.externalId = this.defaultExternalId;
             this.parsedQuery.fields.push(getComposedField(this.externalId));
         }
 
         // Filter fields which is not described
         let describedFields = [...describe.fieldsMap.keys()].map(field => field.toLowerCase());
-        this.parsedQuery.fields = this.parsedQuery.fields.filter((field: SOQLField) => {
+        this.parsedQuery.fields = this.parsedQuery.fields.filter((f: FieldType) => {
+            let field = f as SOQLField;
             let isComplexField = Common.isComplexField(field.field) || field.field.indexOf('.') >= 0;
             return isComplexField || !isComplexField && describedFields.indexOf(field.field.toLowerCase()) >= 0;
         });
