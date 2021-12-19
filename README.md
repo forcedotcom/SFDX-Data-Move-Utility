@@ -20,18 +20,6 @@
 >  - **The [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
 >  - **When you have an issue with failed rows, provide also the dump of the [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant full rows).**
 
-
-
-> *\* Most of the issues are coming due to incorrect configuration or stuff are related to the client environment,*
-> *so **carefully reading** the **[documentation](https://help.sfdmu.com/quick-start)** as well as an examination of the **[target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files)** before opening a bug will save your time waiting for our response :)*
-
-<br />
-
->Try out our new  [**Custom Add-On Api**](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which gives you a large amount of extended possibilities for the data migration.
-
-<br />
-<br />
-
 ## Introduction:
 
 **The SFDMU Plugin (SFDX Data Move Utility) is the powerful salesforce data migration tool and it is the innovative and very handy alternative to the traditional Salesforce Data Loader application as well as to the set of the force:data:tree commands.** 
