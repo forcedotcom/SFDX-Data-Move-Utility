@@ -16,8 +16,8 @@
 > **Please, always follow the below guidelines when opening isues:**
 > - **Always use one of our issue tracker templates.**
 > - **For Plugin bugs always attach:**
->  - **The latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
->  - **The [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
+>  - **The FULL latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
+>  - **The FULL [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
 >  - **When you have an issue with failed rows, provide also the dump of the [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant full rows).**
 
 ## Introduction:
