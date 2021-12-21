@@ -12,15 +12,17 @@ import AppMessagesBase from "./appMessagesBase";
 export default class JsonMessages extends AppMessagesBase implements IResourceBundle {
 
     jsonPath: string;
-   
+
     constructor(rootPath: string, bundleName: string) {
         super();
         this.jsonPath = path.join(rootPath, "messages", bundleName + ".json");
-        let json = require(this.jsonPath);
-        this.messages = Object.keys(json).reduce((acc: Map<string, string>, key: string) => {
-            acc.set(key, String(json[key]));
-            return acc;
-        }, new Map<string, string>());
+        try {
+            let json = require(this.jsonPath);
+            this.messages = Object.keys(json).reduce((acc: Map<string, string>, key: string) => {
+                acc.set(key, String(json[key]));
+                return acc;
+            }, new Map<string, string>());
+        } catch (e: any) { }
     }
 
 }

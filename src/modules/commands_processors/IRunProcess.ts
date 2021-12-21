@@ -19,5 +19,6 @@ export interface IRunProcess {
     exportJson: string;
     commandMessages: IResourceBundle;
     resources: IResourceBundle;
+    exitProcess: boolean;   
     runCommand(): Promise<any>;
 }

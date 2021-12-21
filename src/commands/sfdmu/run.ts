@@ -31,6 +31,8 @@ export default class Run extends SfdxCommand implements IRunProcess {
 
     exportJson: string;
 
+    exitProcess: boolean = true;
+
     m_flags: any;
     m_ux: IUxLogger;   
 

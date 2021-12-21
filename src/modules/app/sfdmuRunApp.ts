@@ -32,6 +32,8 @@ export default class SfdmuRunApp implements IRunProcess {
     command: RunCommand;
     statics: ISfdmuStatics;
 
+    exitProcess: boolean;
+
     m_ux: IUxLogger;
     m_flags: any = {};
 
@@ -47,6 +49,8 @@ export default class SfdmuRunApp implements IRunProcess {
 
         this.commandMessages = args.commandMessages || commandMessages;
         this.resources = args.resources || resources;
+
+        this.exitProcess = args.exitProcess;
 
 
         let flags = Common.parseArgv(...this.argv);

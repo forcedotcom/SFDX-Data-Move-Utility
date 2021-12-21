@@ -15,4 +15,5 @@ export default interface ISfdmuRunModuleArgs {
     exportJson?: string; 
     commandMessages?: IResourceBundle;
     resources?: IResourceBundle;
+    exitProcess?: boolean;
 }

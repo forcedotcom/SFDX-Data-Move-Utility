@@ -65,7 +65,7 @@ export default class RunCommandExecutor {
                     undefined,
                     pinfo.pluginName, pinfo.version);
 
-                process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
+                runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
                 // --
             }
 
@@ -106,7 +106,7 @@ export default class RunCommandExecutor {
                 commandResult || RESOURCES.successfullyCompletedResult,
                 COMMAND_EXIT_STATUSES.SUCCESS);
 
-            process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
+            runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
             // --
 
         } catch (e: any) {
@@ -118,7 +118,7 @@ export default class RunCommandExecutor {
                     Common.logger.commandExitMessage(
                         RESOURCES.successfullyCompletedResult,
                         COMMAND_EXIT_STATUSES.SUCCESS);
-                    process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
+                    runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.SUCCESS);
 
 
                 case CommandInitializationError:
@@ -126,7 +126,7 @@ export default class RunCommandExecutor {
                         RESOURCES.commandInitializationErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR,
                         e.stack, e.message);
-                    process.exit(COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR);
+                    runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.COMMAND_INITIALIZATION_ERROR);
 
 
                 case OrgMetadataError:
@@ -134,7 +134,7 @@ export default class RunCommandExecutor {
                         RESOURCES.orgMetadataErrorResult,
                         COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR,
                         e.stack, e.message);
-                    process.exit(COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR);
+                    runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.ORG_METADATA_ERROR);
 
 
                 case CommandExecutionError:
@@ -142,14 +142,14 @@ export default class RunCommandExecutor {
                         RESOURCES.commandExecutionErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR,
                         e.stack, e.message);
-                    process.exit(COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR);
+                    runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR);
 
 
                 case UnresolvableWarning:
                     Common.logger.commandExitMessage(
                         RESOURCES.commandUnresolvableWarningResult,
                         COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING, e.message);
-                    process.exit(COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING);
+                    runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.UNRESOLWABLE_WARNING);
 
 
                 case CommandAbortedByUserError:
@@ -157,14 +157,14 @@ export default class RunCommandExecutor {
                         RESOURCES.commandAbortedByUserErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER,
                         e.stack, e.message);
-                    process.exit(COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER);
+                    runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER);
 
                 case CommandAbortedByAddOnError:
                     Common.logger.commandExitMessage(
                         RESOURCES.commandAbortedByAddOnErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_ADDON,
                         e.stack, e.message);
-                    process.exit(COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_ADDON);
+                    runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_ADDON);
 
 
                 default:
@@ -172,7 +172,7 @@ export default class RunCommandExecutor {
                         RESOURCES.commandUnexpectedErrorResult,
                         COMMAND_EXIT_STATUSES.COMMAND_UNEXPECTED_ERROR,
                         e.stack, e.message);
-                    process.exit(COMMAND_EXIT_STATUSES.COMMAND_UNEXPECTED_ERROR);
+                    runProcess.exitProcess && process.exit(COMMAND_EXIT_STATUSES.COMMAND_UNEXPECTED_ERROR);
 
             }
             // --
