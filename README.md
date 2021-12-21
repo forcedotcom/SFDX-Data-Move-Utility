@@ -6,7 +6,7 @@
 
 
 ```bash
-> ** PLEASE NOTE, THAT THIS TOOL HAS LIMITED SUPPORT AND SLA IS NOT ENFORCED AS SUPPORT TO ISSUES RAISED. **
+> ** INPORTANT NOTICE! THIS TOOL HAS LIMITED SUPPORT AND SLA IS NOT ENFORCED AS SUPPORT TO ISSUES RAISED. **
 > ** WE CANNOT GUARANTEE THAT YOUR ISSUES WILL BE PROCESSED WITHIN ANY TIME FRAME AND SOMETIMES IT CAN TAKE A LONG TIME. **
 > ** HOWEVER, WE GIVE OUR BEST EFFORT TO RETURN AND ADDRESS EACH ISSUE AS POSSIBLE. **
 ```
@@ -16,21 +16,9 @@
 > **Please, always follow the below guidelines when opening isues:**
 > - **Always use one of our issue tracker templates.**
 > - **For Plugin bugs always attach:**
->  - **The latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
->  - **The [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
+>  - **The FULL latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
+>  - **The FULL [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
 >  - **When you have an issue with failed rows, provide also the dump of the [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant full rows).**
-
-
-
-> *\* Most of the issues are coming due to incorrect configuration or stuff are related to the client environment,*
-> *so **carefully reading** the **[documentation](https://help.sfdmu.com/quick-start)** as well as an examination of the **[target CSV files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files)** before opening a bug will save your time waiting for our response :)*
-
-<br />
-
->Try out our new  [**Custom Add-On Api**](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) which gives you a large amount of extended possibilities for the data migration.
-
-<br />
-<br />
 
 ## Introduction:
 
