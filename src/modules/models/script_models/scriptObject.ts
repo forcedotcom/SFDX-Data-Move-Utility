@@ -15,7 +15,7 @@ import { CONSTANTS } from "../../components/common_components/statics";
 import { RESOURCES } from "../../components/common_components/logger";
 import { Sfdx } from "../../components/common_components/sfdx";
 import {
-    FieldType, 
+    FieldType,
     Query,
     parseQuery,
     composeQuery,
@@ -33,8 +33,8 @@ import ISfdmuRunScriptObject from "../../../addons/components/sfdmu-run/ISfdmuRu
 
 
 /**
- * Parsed object 
- * from the script file 
+ * Parsed object
+ * from the script file
  *
  * @export
  * @class ScriptObject
@@ -388,7 +388,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
 
 
-    // ----------------------- Public methods -------------------------------------------    
+    // ----------------------- Public methods -------------------------------------------
     /**
      * Setup this object
      *
@@ -425,7 +425,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
         }
 
         try {
-            // Parse query string    
+            // Parse query string
             this.parsedQuery = this._parseQuery(this.query);
         } catch (ex: any) {
             throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
@@ -458,7 +458,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
         // Additional fields for Person Accounts & Contacts
         if (this.script.isPersonAccountEnabled && (this.name == "Account" || this.name == "Contact")) {
-            // Add IsPersonAccount field            
+            // Add IsPersonAccount field
             this.parsedQuery.fields.push(getComposedField("IsPersonAccount"));
             // Person Contacts >
             if (this.name == "Contact") {
@@ -547,7 +547,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
             if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
 
-                // Describe object in the target org        
+                // Describe object in the target org
                 try {
 
                     // Retrieve sobject metadata
@@ -590,7 +590,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
 
 
-    // ----------------------- Static members -------------------------------------------    
+    // ----------------------- Static members -------------------------------------------
     /**
      * Converts numeric enum value into string
      *
@@ -646,6 +646,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
                             CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
                             || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.name) >= 0
                         )
+                        || !fieldDescribe.isSimple
                     )
                     ) {
                         this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
@@ -708,7 +709,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
         // Create new query string
         this.query = composeQuery(this.parsedQuery);
 
-        // ---------------------- Internal functions --------------------------- //        
+        // ---------------------- Internal functions --------------------------- //
         function ___compare(fieldDescribeProperty: any, patternProperty: any, negative: boolean = false): boolean {
             if (!negative)
                 return fieldDescribeProperty == patternProperty || typeof patternProperty == "undefined";
@@ -746,7 +747,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
             // General setups ////////
             field.scriptObject = this;
 
-            // Setup the polymorphic field /////           
+            // Setup the polymorphic field /////
             if (field.lookup && this.referenceFieldToObjectMap.has(field.name)) {
                 field.referencedObjectType = this.referenceFieldToObjectMap.get(field.name);
                 field.isPolymorphicField = true;
@@ -787,7 +788,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
         if (missingDeclarations.length > 0) {
 
-            //***** Found incorrect fields => 
+            //***** Found incorrect fields =>
             ///      remove them from the query string
             let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
             this.parsedQuery.fields = new Array<SOQLField>();
@@ -819,7 +820,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
                     if (field.isPolymorphicField && !field.isPolymorphicFieldDefinition) {
 
                         //***** Incorect polymorphic definition, regular lookup marked as polymorphic =>
-                        // this field should be changed to regular field type, 
+                        // this field should be changed to regular field type,
                         //   we should restore original lookup settings
                         field.isPolymorphicField = false;
                         field.polymorphicReferenceObjectType = '';
@@ -863,7 +864,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
                 if (!Common.isComplexOr__rField(sourceFieldName) && !describe.fieldsMap.has(targetFieldName)) {
 
                     if (sourceFieldName == this.externalId) {
-                        // Missing externalId field. 
+                        // Missing externalId field.
                         throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.noExternalKey, this.name, this.strOperation));
                     }
 
@@ -873,7 +874,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
                     else
                         this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, sourceFieldName);
 
-                    // Remove missing field from the query                    
+                    // Remove missing field from the query
                     Common.removeBy(this.parsedQuery.fields, "field", sourceFieldName);
                 }
             });
