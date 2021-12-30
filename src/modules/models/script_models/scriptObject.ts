@@ -65,6 +65,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     updateWithMockData: boolean = false;
     mockCSVData: boolean = false;
     targetRecordsFilter: string = "";
+    targetRecordsFilterParams: any ;
     excluded: boolean = false;
     useCSVValuesMapping: boolean = false;
     useFieldMapping: boolean = false;

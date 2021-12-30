@@ -10,9 +10,9 @@ import { ISfdmuRunCustomAddonScriptAddonManifestDefinition, ISfdmuRunCustomAddon
 
 
 /**
- * Provides an access to the object included in the currently running {@link ISfdmuRunCustomAddonScript}. 
+ * Provides an access to the object included in the currently running {@link ISfdmuRunCustomAddonScript}.
  * @see {@link https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format | Full export.json format} for the detailed information about the fields.
- * 
+ *
  * @export
  * @interface ISfdmuRunCustomAddonScriptObject
  */
@@ -30,6 +30,7 @@ export default interface ISfdmuRunCustomAddonScriptObject {
     updateWithMockData?: boolean;
     mockCSVData?: boolean;
     targetRecordsFilter?: string;
+    targetRecordsFilterParams?: string;
     excluded?: boolean;
     useCSVValuesMapping?: boolean;
     useFieldMapping?: boolean;

@@ -298,7 +298,7 @@ export class Sfdx implements IFieldMapping {
 
             let excluded = new Array<string>();
 
-            // Excluded fields 
+            // Excluded fields
             let fields = CONSTANTS.EXCLUDED_QUERY_FIELDS.get(sObject);
             if (fields != null) {
                 excluded = excluded.concat(fields);
@@ -329,6 +329,10 @@ export class Sfdx implements IFieldMapping {
                 for (var prop in fieldMapping) {
                     if (fieldMapping.hasOwnProperty(prop)) {
                         o[prop] = getNestedObject(record, fieldMapping[prop]);
+                        // Set value when possible if getNestedObject returned "undefined"
+                        if (o[prop] === undefined && record[prop]) {
+                          o[prop] = record[prop];
+                        }
                     }
                 }
                 return o;
@@ -429,9 +433,9 @@ export class Sfdx implements IFieldMapping {
      * @memberof Sfdx
      */
     public async describeOrgAsync(): Promise<Array<SObjectDescribe>> {
-        let query = `SELECT  QualifiedApiName, Label 
-                    FROM EntityDefinition 
-                    WHERE IsDeprecatedAndHidden = false 
+        let query = `SELECT  QualifiedApiName, Label
+                    FROM EntityDefinition
+                    WHERE IsDeprecatedAndHidden = false
                     ORDER BY QualifiedApiName`;
         let records = await this.queryAsync(query, false);
         return records.records.map((record: any) => {
@@ -455,9 +459,9 @@ export class Sfdx implements IFieldMapping {
      */
     public async getPolymorphicObjectFields(sObjectName: string): Promise<string[]> {
 
-        let query = `SELECT QualifiedApiName	 
-                     FROM FieldDefinition 
-                     WHERE EntityDefinitionId = '${sObjectName}' 
+        let query = `SELECT QualifiedApiName
+                     FROM FieldDefinition
+                     WHERE EntityDefinitionId = '${sObjectName}'
                         AND IsPolymorphicForeignKey = true`;
         let records = await this.queryAsync(query, false);
         return records.records.map(record => record["QualifiedApiName"]);
@@ -485,7 +489,7 @@ export class Sfdx implements IFieldMapping {
 
     /**
     * Describes given SObject by retrieving field descriptions
-    * 
+    *
     * @param  {string} objectName Object API name to describe
     * @param  {Map<string, SObjectDescribe>} objectFieldMapping The mapping between the source and target object / field
     * @returns SfdmSObjectDescribe
@@ -574,11 +578,11 @@ export class Sfdx implements IFieldMapping {
     /**
      * The function downloads blob (binary) data of the given field.
      * The function works in parallel mode.
-     * 
+     *
      * @param {Array<string>} recordIds The record ids to download the data
      * @param {IBlobField} blobField The data about the field
-     * @returns {Promise<Map<string, string>>} Returns map between the record Id 
-     *                                          and the base64 string representations 
+     * @returns {Promise<Map<string, string>>} Returns map between the record Id
+     *                                          and the base64 string representations
      *                                          of the corresponding binary data
      * @memberof Sfdx
      */
@@ -596,7 +600,7 @@ export class Sfdx implements IFieldMapping {
         }
         return new Map<string, string>(downloadedBlobs);
 
-        // ------------------ internal functions ------------------------- //        
+        // ------------------ internal functions ------------------------- //
         async function ___getBlobData(recordId: string, blobField: IBlobField): Promise<[string, string]> {
             return new Promise<[string, string]>(resolve => {
 
@@ -605,7 +609,7 @@ export class Sfdx implements IFieldMapping {
 
                 if (self.org.script.binaryDataCache == DATA_CACHE_TYPES.FileCache
                     || self.org.script.binaryDataCache == DATA_CACHE_TYPES.CleanFileCache) {
-                    // Check from cache                  
+                    // Check from cache
                     if (fs.existsSync(cacheFullFilename)) {
                         resolve([recordId, CONSTANTS.BINARY_FILE_CACHE_RECORD_PLACEHOLDER(recordId)]);
                         return;

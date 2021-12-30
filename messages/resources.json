@@ -159,18 +159,26 @@
     "unexpectedApiError": "Unexpected Api error",
     "simulationMode": " (SIMULATION MODE)",
 
+    "filterOperationFailed": "Error in targetRecordsFilter module %s: %s",
+    "filterUnknown": "Unknown filter %s",
+    "badwordsDetectStart": "{%s} Filtering results on badwords from file %s on %s...",
+    "badwordsDetectEnd": "{%s} %s records has been filtered",
+    "badwordsDetectFileError": "Badwords file not found at location %s",
+    "badwordsDetectRegex": "Full badwords detection regular expression %s",
+    "badwordsDetected": "- %s: %s",
+
     "gettingRecordsCount": "ANALYSING THE OVERALL DATA VOLUME ...",
     "totalRecordsAmount": "{%s} Total amount of the %s records should be retrieved by the object's SOQL query: %s",
 
     "deletingTargetData": "Deleting old data from the Target ...",
     "deletingSourceData": "Deleting data from the Source ...",
-    
+
 
     "deletingTargetSObjectRecords": "{%s} Deleting old records from the Target ...",
     "deletingSourceSObjectRecords": "{%s} Deleting records from the Source ...",
 
     "deletingNRecordsWillBeDeleted": "{%s} Number of records to Delete: %s.",
-    "deletingRecordsCompleted": "{%s} Deleting records has been completed.",    
+    "deletingRecordsCompleted": "{%s} Deleting records has been completed.",
     "nothingToDelete": "{%s} No records to delete.",
     "nothingToDelete2": "No data to delete.",
 
@@ -206,7 +214,7 @@
     "updatingSummary": "Data processing summary",
     "updatingTotallyUpdated": "{%s} Total processed within all stages (Insert + Update): %s records.",
 
-    "processingAddon": "Processing Add-On event handlers ...", 
+    "processingAddon": "Processing Add-On event handlers ...",
     "runAddonMethod": "{%s} Executing of the event:%s Add-On handlers has started",
     "nothingToProcess": "No Add-On modules found to process.",
     "startAddonExecute" : "[%s] {%s} Executing of the Add-On module has started",
@@ -217,5 +225,5 @@
 
     "writingToCacheFile": "{%s} Writing to the cache file: %s.",
     "readingFromCacheFile": "{%s} Reading from the cache file: %s."
-    
+
 }

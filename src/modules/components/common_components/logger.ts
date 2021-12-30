@@ -17,7 +17,7 @@ import ISfdmuCommand from '../../models/common_models/ISfdxCommand';
 
 /**
  * Tokens from the common.json resource file.
- * The shared tokens are being used by all commands of the plugin 
+ * The shared tokens are being used by all commands of the plugin
  * (the sfdmu:run command and every additional commands as well)
  *
  * @export
@@ -185,6 +185,14 @@ export enum RESOURCES {
     unexpectedApiError = "unexpectedApiError",
     simulationMode = "simulationMode",
 
+    filterOperationFailed = "filterOperationFailed",
+    filterUnknown = "filterUnknown",
+    badwordsDetectStart = "badwordsDetectStart",
+    badwordsDetectEnd = "badwordsDetectEnd",
+    badwordsDetectFileError = "badwordsDetectFileError",
+    badwordsDetectRegex = "badwordsDetectRegex",
+    badwordsDetected = "badwordsDetected",
+
     gettingRecordsCount = "gettingRecordsCount",
     totalRecordsAmount = "totalRecordsAmount",
 
@@ -273,7 +281,7 @@ class FileLogger {
         this.fileName = path.join(filePath, fileName);
     }
 
-    /** 
+    /**
      * Writes INFO message into log file
      *
      * @param {string} message
@@ -445,7 +453,7 @@ export class Logger {
      * @param {string} [nopromptDefault=getMessage('defaultPromptNopromptOption')]  Default option when noprompt flag is set
      * @param {number} [timeout=6000] Timeout in ms if user does not respond
      * @param {...string[]} tokens Tokens for the command resource
-     * @returns {Promise<string>} 
+     * @returns {Promise<string>}
      * @memberof MessageUtils
      */
     async promptAsync(params: {
@@ -503,7 +511,7 @@ export class Logger {
     *
     * @param {string} message  Message to prompt the user
     * @returns {Promise<boolen>} Returns true if user has choosen "yes" (continue job)
-    * @param {...string[]} tokens Tokens for the command resource 
+    * @param {...string[]} tokens Tokens for the command resource
     * @memberof MessageUtils
     */
     async yesNoPromptAsync(message: string, ...tokens: string[]): Promise<boolean> {
@@ -517,8 +525,8 @@ export class Logger {
      *
      * @param {string} message Prompt message to display to the user.
      * @param {string} [defaultResponse=""] The default response string if the user does not respond within the timeout value.
-     * @param {number} [timeout=6000] Timeout in ms if user does not respond 
-     * @param {...string[]} tokens Tokens for the command resource 
+     * @param {number} [timeout=6000] Timeout in ms if user does not respond
+     * @param {...string[]} tokens Tokens for the command resource
      * @return {*}  {Promise<string>}
      * @memberof Logger
      */
@@ -559,7 +567,7 @@ export class Logger {
         // Try to fetch message string from the resource
         message = this.getResourceString.apply(this, [message, ...tokens]);
 
-        // Check verbosity 
+        // Check verbosity
         let allowUxOutput = true;
         if ([LOG_MESSAGE_TYPE.ERROR,
         LOG_MESSAGE_TYPE.IMPORTANT_JSON,
@@ -583,7 +591,7 @@ export class Logger {
             if (typeof message !== "object") {
                 // A string - incorrect --
                 try {
-                    // Try to treat the message as json string                    
+                    // Try to treat the message as json string
                     uxLogMessage = JSON.parse(String(message));
                     // Stringify to compress json string back if originally it was prettified
                     fileLogMessage = JSON.stringify(uxLogMessage);
@@ -843,7 +851,7 @@ export class Logger {
      * Method to update ux spinner
      *
      * @param {string} message Message to set to the spinner
-     * @param {...string[]} tokens 
+     * @param {...string[]} tokens
      * @memberof MessageUtils
      */
     spinner(message: string, ...tokens: string[]): void {
@@ -863,7 +871,7 @@ export class Logger {
      *                                  When --json = false the method prints formatted object or plain text
      *                                    according to the type of the message object.
      * @param {COMMAND_EXIT_STATUSES} status Status of the command
-     * @param {string} [stack] Stack trace to output as text along with the string message 
+     * @param {string} [stack] Stack trace to output as text along with the string message
      *                         in case of unknown error or --logLevel = trace.
      *                         Json output will aways contain stack trace regardless --loglevel value.
      * @param {...string[]} tokens Tokens for the command resource
@@ -985,7 +993,7 @@ export class Logger {
                 LOG_MESSAGE_VERBOSITY.NORMAL
             );
 
-            // "Time elapsed" to stdout 
+            // "Time elapsed" to stdout
             this.log(
                 this.getResourceString(RESOURCES.loggerTimeElapsedString, timeElapsedString),
                 LOG_MESSAGE_TYPE.STRING,
@@ -1022,7 +1030,7 @@ export class Logger {
 
     /**
      * @static Returns resource string from the Messages framework by the given key
-     * 
+     *
      * @param {Messages} messages The instance of Messages
      * @param {string} key The key of the resource
      * @param {...string[]} tokens Tokens for the resource
@@ -1180,7 +1188,7 @@ export declare type Tokens = Array<string | boolean | number | null | undefined>
 
 export interface IMessages {
     getMessage(key: string, tokens?: Tokens): string;
-} 
+}
 
 /**
  * Represents message bundle type
