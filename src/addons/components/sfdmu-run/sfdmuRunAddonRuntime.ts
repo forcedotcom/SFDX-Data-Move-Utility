@@ -116,7 +116,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
      *
      * @param {string[]} selectFields The fields to include into the SELECT statement in each query
      * @param {string} [fieldName="Id"] The field of the IN clause
-     * @param {string} sObjectName The object api name to select 
+     * @param {string} sObjectName The object api name to select
      * @param {string[]} valuesIN The array of values to use in the IN clause
      * @returns {string[]} The array of SOQLs depend on the given values to include all of them
      */
@@ -144,22 +144,22 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
 
     /**
      * Performs DML operation on the Target org pr writes into the target CSV file.
-     * 
+     *
      * if the target object exists in the Script - the settings
-     * defined in the script for this object will be used, 
-     * otherwise it leverages the default settings for other objects. 
-     * 
-     * If the target is csvfile it will write into the CSV file according to the script settings.    
+     * defined in the script for this object will be used,
+     * otherwise it leverages the default settings for other objects.
+     *
+     * If the target is csvfile it will write into the CSV file according to the script settings.
     *
     * @param {string} sObjectName The sObject name to update.
     * @param {OPERATION} operation The operation
     * @param {any[]} records The records to process
     * @param {API_ENGINE} [engine] You can choose the API engine to use
-    * @param {boolean} [updateRecordId] When true it will override the Ids of the source records passed to the method by the Ids returned 
+    * @param {boolean} [updateRecordId] When true it will override the Ids of the source records passed to the method by the Ids returned
     *                                    from the SF API, otherwise it will remain the source records as is and will return them from the method.
     *
     * @returns {Promise<any[]>} The result records. Typeically it is THE SAME records as passed to the method, but you can override the IDs
-    *                           with the target Ids by putting updateRecordId = true   
+    *                           with the target Ids by putting updateRecordId = true
     */
     async updateTargetRecordsAsync(sObjectName: string,
         operation: OPERATION, records: any[],
@@ -185,6 +185,8 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
             // Missing task => new sObject
             let apiEngine: IApiEngine;
             engine = this.getApiEngine(records.length, engine);
+
+            task = this.#script.job.createDummyJobTask(sObjectName);
 
             switch (engine) {
                 case API_ENGINE.BULK_API_V1:
@@ -239,7 +241,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
                     break;
             }
 
-            task = this.#script.job.createDummyJobTask(sObjectName);
+
             task.setApiEngine(apiEngine);
 
             resultRecords = await apiEngine.executeCRUDMultithreaded(records, task.apiProgressCallback, task.getParallelThreadCount());
@@ -256,7 +258,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
      * @param {Array<string>} recordIds The list of record ids to download the blob data using the given blob field
      * @param {IBlobField} blobField The field of blob type from where to download the data (for example Attachment.Body)
      * @returns {Promise<Map<string, string>>} Map: [record Id] => [blob data as bas64 string]
-    
+
      */
     async downloadBlobDataAsync(isSource: boolean, recordIds: string[], blobField: IBlobField): Promise<Map<string, string>> {
         let apiSf = new Sfdx(isSource ? this.#script.sourceOrg : this.#script.targetOrg);
@@ -266,8 +268,8 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
     /**
      * Downloads the given ContentVersions from the source org and uploads it to the target org.
      * Supports both binary and url contents.
-     * 
-     * Creates or updates ContentDocument object if necessary. 
+     *
+     * Creates or updates ContentDocument object if necessary.
      * If ContentDocument does exist it will add a new ContentVersion to it.
      *
      * @param {ISfdmuContentVersion} sourceVersions The ContentVersion records to process
@@ -426,7 +428,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
 
     /**
      * Creates if not exist or returns the path to the temporary folder
-     * dedicated to this Addon 
+     * dedicated to this Addon
      */
     getOrCreateTempPath(module: AddonModule): string {
         let tmp = path.normalize(this.basePath
