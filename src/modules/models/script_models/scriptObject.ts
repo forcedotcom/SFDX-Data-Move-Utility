@@ -94,6 +94,11 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   @Type(() => ScriptAddonManifestDefinition)
   afterUpdateAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
+  @Type(() => ScriptAddonManifestDefinition)
+  filterRecordsAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
+
+
+
   // -----------------------------------
   script: Script;
 

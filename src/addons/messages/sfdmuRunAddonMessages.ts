@@ -14,7 +14,7 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
     General_EventNotSupported = "The event %s is not supported by the %s. Only %s event(s) supported. The Add-On execution has been aborted.",
     General_ArgumentsCannotBeParsed = "Error during parsing the Add-On arguments provided with the Script. The Add-On execution has been aborted.",
     General_AddOnRuntimeError = "Error occured during executing the Add-On module %s. Check the module source code (if it's a Custom Add-On Module) and the args passed.",
-    
+    General_MissingRequiredArguments = 'Missing required arguments: %s. Can not start the Add-on.',
 
 
     // ExportFiles Addon -------------------------
@@ -48,11 +48,22 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
     RecordsTransform_SourceFieldNotFound = "[WARN] [Field %s]: This field was not found in the source records of the sobject %s. The field will be skipped.",
     RecordsTransform_TargetFieldNotFound = "[WARN] [Field %s]: This field was not found in the target records of the sobject %s. The field will be skipped.",
 
-    
+
     RecordsTransform_CreatingMappingScheme = "Creating the transformation map ...",
     RecordsTransform_Tranforming = "Transforming records ...",
-    RecordsTransform_AppliedValueMapping = "Applying the Values Mapping"
-   
+    RecordsTransform_AppliedValueMapping = "Applying the Values Mapping",
+
+
+    // RecordsFilter Addon -------------------------
+    BadwordFilter_filterOperationFailed = "Error in targetRecordsFilter module %s: %s",
+    BadwordFilter_filterUnknown = "Unknown filter %s",
+    BadwordFilter_badwordsDetectStart= "{%s} Filtering results on badwords from file %s on %s...",
+    BadwordFilter_badwordsDetectEnd= "{%s} %s records has been filtered",
+    BadwordFilter_badwordsDetectFileError= "Badwords file not found at location %s",
+    BadwordFilter_badwordsDetectRegex= "Full badwords detection regular expression %s",
+    BadwordFilter_badwordsDetected= "- %s: %s",
+
+
 
 
 }

@@ -15,80 +15,90 @@ import { ISFdmuRunCustomAddonTask } from "../../modules/sfdmu-run/custom-addons/
 
 export default class SfdmuRunAddonTask implements ISFdmuRunCustomAddonTask {
 
-    #migrationJobTask: MigrationJobTask;
-    #sourceTaskData: SfdmuRunAddonTaskData;
-    #targetTaskData: SfdmuRunAddonTaskData;
+  #migrationJobTask: MigrationJobTask;
+  #sourceTaskData: SfdmuRunAddonTaskData;
+  #targetTaskData: SfdmuRunAddonTaskData;
 
 
-    constructor(migrationJobTask: MigrationJobTask) {
-        this.#migrationJobTask = migrationJobTask;
-        this.#sourceTaskData = new SfdmuRunAddonTaskData(migrationJobTask.sourceData);
-        this.#targetTaskData = new SfdmuRunAddonTaskData(migrationJobTask.targetData);
-    }
+  constructor(migrationJobTask: MigrationJobTask) {
+    this.#migrationJobTask = migrationJobTask;
+    this.#sourceTaskData = new SfdmuRunAddonTaskData(migrationJobTask.sourceData);
+    this.#targetTaskData = new SfdmuRunAddonTaskData(migrationJobTask.targetData);
+  }
 
 
-    getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
-        return this.#migrationJobTask.data.getTargetCSVFilename(operation, fileNameSuffix);
-    }
+  getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
+    return this.#migrationJobTask.data.getTargetCSVFilename(operation, fileNameSuffix);
+  }
 
-    get sourceCsvFilename(): string {
-        return this.#migrationJobTask.data.sourceCsvFilename;
-    }
+  get sourceCsvFilename(): string {
+    return this.#migrationJobTask.data.sourceCsvFilename;
+  }
 
-    get operation(): OPERATION {
-        return this.#migrationJobTask.operation;
-    }
+  get operation(): OPERATION {
+    return this.#migrationJobTask.operation;
+  }
 
-    get sObjectName(): string {
-        return this.#migrationJobTask.sObjectName;
-    }
+  get sObjectName(): string {
+    return this.#migrationJobTask.sObjectName;
+  }
 
-    get targetSObjectName(): string {
-        return this.#migrationJobTask.scriptObject.targetObjectName;
-    }
+  get targetSObjectName(): string {
+    return this.#migrationJobTask.scriptObject.targetObjectName;
+  }
 
-    get sourceToTargetRecordMap(): Map<any, any> {
-        return this.#migrationJobTask.data.sourceToTargetRecordMap;
-    }
+  get sourceToTargetRecordMap(): Map<any, any> {
+    return this.#migrationJobTask.data.sourceToTargetRecordMap;
+  }
 
-    get sourceToTargetFieldNameMap(): Map<any, any> {
-        return this.#migrationJobTask.scriptObject.sourceToTargetFieldNameMap;
-    }
+  get sourceToTargetFieldNameMap(): Map<any, any> {
+    return this.#migrationJobTask.scriptObject.sourceToTargetFieldNameMap;
+  }
 
-    get sourceTaskData(): SfdmuRunAddonTaskData {
-        return this.#sourceTaskData;
-    }
+  get sourceTaskData(): SfdmuRunAddonTaskData {
+    return this.#sourceTaskData;
+  }
 
-    get targetTaskData(): SfdmuRunAddonTaskData {
-        return this.#targetTaskData;
-    }
+  get targetTaskData(): SfdmuRunAddonTaskData {
+    return this.#targetTaskData;
+  }
 
-    get processedData(): ProcessedData {
-        return this.#migrationJobTask.processedData;
-    }
+  get processedData(): ProcessedData {
+    return this.#migrationJobTask.processedData;
+  }
 
-    get updateMode(): "FIRST_UPDATE" | "SECOND_UPDATE" {
-        return this.#migrationJobTask.updateMode == 'forwards' ? 'FIRST_UPDATE' : 'SECOND_UPDATE';
-    }
+  get updateMode(): "FIRST_UPDATE" | "SECOND_UPDATE" {
+    return this.#migrationJobTask.updateMode == 'forwards' ? 'FIRST_UPDATE' : 'SECOND_UPDATE';
+  }
 
-    get fieldsInQuery(): string[] {
-        return this.#migrationJobTask.data.fieldsInQuery;
-    }
+  get fieldsInQuery(): string[] {
+    return this.#migrationJobTask.data.fieldsInQuery;
+  }
 
-    get fieldsToUpdate(): string[] {
-        return this.#migrationJobTask.data.fieldsToUpdate;
-    }
+  get fieldsToUpdate(): string[] {
+    return this.#migrationJobTask.data.fieldsToUpdate;
+  }
 
-    get fieldsInQueryMap(): Map<string, SFieldDescribe> {
-        return this.#migrationJobTask.scriptObject.fieldsInQueryMap;
-    }
+  get fieldsInQueryMap(): Map<string, SFieldDescribe> {
+    return this.#migrationJobTask.scriptObject.fieldsInQueryMap;
+  }
 
-    get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
-        return this.#migrationJobTask.scriptObject.fieldsToUpdateMap;
-    }
+  get fieldsToUpdateMap(): Map<string, SFieldDescribe> {
+    return this.#migrationJobTask.scriptObject.fieldsToUpdateMap;
+  }
 
-    mapRecords(records: Array<any>): void {
-        this.#migrationJobTask.mapRecords(records);
-    }
+  mapRecords(records: Array<any>): void {
+    this.#migrationJobTask.mapRecords(records);
+  }
+
+  get tempRecords(): any[] {
+    return this.#migrationJobTask.tempRecords;
+  }
+  set tempRecords(records: any[]) {
+    // Preserving the refference to the original array
+    this.#migrationJobTask.tempRecords = this.#migrationJobTask.tempRecords || [];
+    this.#migrationJobTask.tempRecords.splice(0, this.#migrationJobTask.tempRecords.length);
+    this.#migrationJobTask.tempRecords = this.#migrationJobTask.tempRecords.concat(records);
+  }
 
 }
