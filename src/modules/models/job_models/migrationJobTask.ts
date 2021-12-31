@@ -96,7 +96,7 @@ export default class MigrationJobTask {
 
 
 
-    // ----------------------- Public methods -------------------------------------------    
+    // ----------------------- Public methods -------------------------------------------
     /**
      * Check the structure of the CSV source file.
      *
@@ -130,7 +130,7 @@ export default class MigrationJobTask {
         }
 
         // Check columns in the csv file ------------------------
-        // Only checking for the mandatory fields (to be updated), 
+        // Only checking for the mandatory fields (to be updated),
         // Not checking for all fields in the query (like RecordType.DevelopeName).
         [...this.data.fieldsToUpdateMap.keys()].forEach(fieldName => {
             const columnExists = Object.keys(csvColumnsRow[0]).some(columnName => {
@@ -200,7 +200,7 @@ export default class MigrationJobTask {
 
         if (!firstRow.hasOwnProperty("Id") || this.script.excludeIdsFromCSVFiles) {
 
-            // Add missing id column 
+            // Add missing id column
             if (!firstRow.hasOwnProperty("Id")) {
                 ___addMissingIdColumn();
             }
@@ -213,7 +213,7 @@ export default class MigrationJobTask {
             }
         }
 
-        // Add missing lookup columns 
+        // Add missing lookup columns
         for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
             const sField = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
             if (sField.lookup && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
@@ -278,7 +278,7 @@ export default class MigrationJobTask {
         }
 
         /**
-         * Add Id column to the current csv file (if it is missing), 
+         * Add Id column to the current csv file (if it is missing),
          * then update all its child lookup "__r" columns in other csv files
          */
         function ___addMissingIdColumn() {
@@ -290,7 +290,7 @@ export default class MigrationJobTask {
         }
 
         /**
-         * Replaces the RecordType.DeveloperName column label of the old-formatted csv file 
+         * Replaces the RecordType.DeveloperName column label of the old-formatted csv file
          * with RecordType.$$DeveloperName$NamespacePrefix$SobjectType
          * (current external id for the RecordType object)
          * ----
@@ -366,7 +366,7 @@ export default class MigrationJobTask {
                     let csvRow = currentFileMap.get(id);
                     if (!csvRow.hasOwnProperty(columnNameId)) {
                         if (!csvRow.hasOwnProperty(columnName__r)) {
-                            // Missing both id and __r columns 
+                            // Missing both id and __r columns
                             //        => fill them with next incremental numbers
                             // Since the missing columns were already reported no additional report provided.
                             isFileChanged = true;
@@ -397,7 +397,7 @@ export default class MigrationJobTask {
                         }
                     } else if (!csvRow.hasOwnProperty(columnName__r)) {
                         if (!csvRow.hasOwnProperty(columnNameId)) {
-                            // Missing both id and __r columns 
+                            // Missing both id and __r columns
                             //        => fill them with next incremental numbers
                             // Since the missing columns were already reported no additional report provided.
                             isFileChanged = true;
@@ -437,10 +437,10 @@ export default class MigrationJobTask {
         }
 
         /**
-         * When Id column was added 
+         * When Id column was added
          *      - updates child lookup id columns
          *      for all other objects.
-         * For ex. if the current object is "Account", it will update 
+         * For ex. if the current object is "Account", it will update
          *     the child lookup id column "Account__c" of the child "Case" object
          *
          * @param {SFieldDescribe} childIdSField Child lookup id sField to process
@@ -500,7 +500,7 @@ export default class MigrationJobTask {
      *     for this sobject
      *
      * @param {*} record The record
-     * @param {string} propName The property name to extract value from the record object        
+     * @param {string} propName The property name to extract value from the record object
      * @memberof MigrationJobTask
      */
     getRecordValue(record: any, propName: string): any {
@@ -522,8 +522,8 @@ export default class MigrationJobTask {
     /**
      * Creates SOQL query to retrieve records
      *
-     * @param {Array<string>} [fieldNames] Field names to include in the query, 
-     *                                     pass undefined value to use all fields 
+     * @param {Array<string>} [fieldNames] Field names to include in the query,
+     *                                     pass undefined value to use all fields
      *                                      of the current task
      * @param {boolean} [removeLimits=false]  true to remove LIMIT, OFFSET, ORDERBY clauses
      * @param {Query} [parsedQuery]  Default parsed query.
@@ -579,7 +579,7 @@ export default class MigrationJobTask {
                 tempQuery = tempQuery as Query;
 
                 if (self.scriptObject.queryAllTarget) {
-                    // ignoreTargetWhere --- 
+                    // ignoreTargetWhere ---
                     tempQuery.where = null;
                     tempQuery.limit = null;
                     tempQuery.offset = null;
@@ -649,7 +649,7 @@ export default class MigrationJobTask {
     }
 
     /**
-    * Retireve the total records count 
+    * Retireve the total records count
     *
     * @returns {Promise<void>}
     * @memberof MigrationJobTask
@@ -660,8 +660,8 @@ export default class MigrationJobTask {
             let queryOrNumber = this.createQuery(['COUNT(Id) CNT'], true);
             try {
                 let apiSf = new Sfdx(this.sourceData.org);
-                let ret = await apiSf.queryAsync(queryOrNumber, false);
-                this.sourceTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
+                let ret = await apiSf.queryOrgAsync(queryOrNumber, false);
+                this.sourceTotalRecorsCount = Number.parseInt(ret[0]["CNT"]);
                 if (this.scriptObject.parsedQuery.limit) {
                     this.sourceTotalRecorsCount = Math.min(this.sourceTotalRecorsCount, this.scriptObject.parsedQuery.limit);
                 }
@@ -677,8 +677,8 @@ export default class MigrationJobTask {
             let queryOrNumber = this.createQuery(['COUNT(Id) CNT'], true, null, true);
             try {
                 let apiSf = new Sfdx(this.targetData.org);
-                let ret = await apiSf.queryAsync(queryOrNumber, false);
-                this.targetTotalRecorsCount = Number.parseInt(ret.records[0]["CNT"]);
+                let ret = await apiSf.queryOrgAsync(queryOrNumber, false);
+                this.targetTotalRecorsCount = Number.parseInt(ret[0]["CNT"]);
                 if (this.scriptObject.parsedQuery.limit) {
                     this.targetTotalRecorsCount = Math.min(this.targetTotalRecorsCount, this.scriptObject.parsedQuery.limit);
                 }
@@ -709,14 +709,14 @@ export default class MigrationJobTask {
         this.logger.infoNormal(RESOURCES.deletingTargetSObjectRecords, this.sObjectName);
         let soql = this.createDeleteQuery();
         let apiSf = new Sfdx(this.targetData.org);
-        let queryResult = await apiSf.queryAsync(soql, this.targetData.useBulkQueryApi);
-        if (queryResult.totalSize == 0) {
+        let queryResult = await apiSf.queryOrgAsync(soql, this.targetData.useBulkQueryApi);
+        if (queryResult.length == 0) {
             this.logger.infoNormal(RESOURCES.nothingToDelete, this.sObjectName);
             return false;
         }
         // Deleting
-        this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(queryResult.totalSize));
-        let recordsToDelete = queryResult.records.map(x => {
+        this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(queryResult.length));
+        let recordsToDelete = queryResult.map(x => {
             return {
                 Id: x["Id"]
             }
@@ -743,7 +743,7 @@ export default class MigrationJobTask {
     async deleteRecords(): Promise<number> {
 
         //  DELETE ORG :::::::::
-        //  Create delete data => only the target records which are existing in the Source        
+        //  Create delete data => only the target records which are existing in the Source
         let recordsToDelete = this.sourceData.records.map(sourceRecord => {
             let targetRecord = this.data.sourceToTargetRecordMap.get(sourceRecord);
             if (targetRecord) {
@@ -773,7 +773,7 @@ export default class MigrationJobTask {
 
     /**
      * Retrieve records for this task
-     * 
+     *
      * @param {number} queryMode The mode of record processing
      * @param {boolean} reversed If TRUE - queries from the child related object to parent object
      *                           (selects all parent objects that exist in the child objects)
@@ -799,7 +799,7 @@ export default class MigrationJobTask {
 
 
         // Read SOURCE DATA *********************************************************************************************
-        // **************************************************************************************************************       
+        // **************************************************************************************************************
         if (queryMode != "target") {
             // Read main data *************************************
             // ****************************************************
@@ -810,7 +810,7 @@ export default class MigrationJobTask {
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_csvFile, this.data.getResourceString_Step(queryMode));
                     let sfdx = new Sfdx(this.targetData.org);
-                    records = await sfdx.retrieveRecordsAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap, this.scriptObject.useQueryAll);
+                    records = await sfdx.queryOrgOrCsvAsync(query, false, this.data.sourceCsvFilename, this.targetData.fieldsMap, this.scriptObject.useQueryAll);
                     hasRecords = true;
                 }
             } else if (this.sourceData.media == DATA_MEDIA_TYPE.Org) {
@@ -821,11 +821,11 @@ export default class MigrationJobTask {
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.sourceData.resourceString_Source_Target, this.data.resourceString_org,
                         this.data.getResourceString_Step(queryMode));
-                    // Query string message ------    
+                    // Query string message ------
                     this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
-                    // Fetch records                
+                    // Fetch records
                     let sfdx = new Sfdx(this.sourceData.org, this._sourceFieldMapping);
-                    records = await sfdx.retrieveRecordsAsync(query, this.sourceData.useBulkQueryApi, undefined, undefined, this.scriptObject.useQueryAll);
+                    records = await sfdx.queryOrgOrCsvAsync(query, this.sourceData.useBulkQueryApi, undefined, undefined, this.scriptObject.useQueryAll);
                     hasRecords = true;
                 } else if (!this.scriptObject.processAllSource) {
                     // Filtered records ************ //
@@ -851,7 +851,7 @@ export default class MigrationJobTask {
             // Read SELF REFERENCE records from the SOURCE *************
             // *********************************************************
             if (this.sourceData.media == DATA_MEDIA_TYPE.Org && queryMode == "forwards"
-                // When there is allRecords source mode 
+                // When there is allRecords source mode
                 //     => no any addtional records should be fetched,
                 //        so need to skip retrieving the self-reference records a well...
                 && !this.sourceData.allRecords
@@ -879,7 +879,7 @@ export default class MigrationJobTask {
                         // Query string message ------
                         this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                         // Fetch records
-                        records = records.concat(await sfdx.retrieveRecordsAsync(query, undefined, undefined, undefined, this.scriptObject.useQueryAll));
+                        records = records.concat(await sfdx.queryOrgOrCsvAsync(query, undefined, undefined, undefined, this.scriptObject.useQueryAll));
                     }
                     if (queries.length > 0) {
                         // Map records  --------
@@ -908,14 +908,14 @@ export default class MigrationJobTask {
                 let query = this.createQuery(fieldsInQuery, undefined, undefined, undefined, true);
                 records = new Array<any>();
                 if (this.scriptObject.processAllTarget) {
-                    // All records ****** //                  
+                    // All records ****** //
                     // Start message ------
                     this.logger.infoNormal(RESOURCES.queryingAll, this.sObjectName, this.targetData.resourceString_Source_Target, this.data.resourceString_org, this.data.getResourceString_Step(queryMode));
                     // Query string message ------
                     this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
                     // Fetch records
                     let sfdx = new Sfdx(this.targetData.org, this._targetFieldMapping);
-                    records = await sfdx.retrieveRecordsAsync(query, this.targetData.useBulkQueryApi);
+                    records = await sfdx.queryOrgOrCsvAsync(query, this.targetData.useBulkQueryApi);
                     hasRecords = true;
                 } else {
                     // Filtered records ***** //
@@ -995,7 +995,7 @@ export default class MigrationJobTask {
             totalProcessedRecordsAmount += (await ___updateData(data));
             totalNonProcessedRecordsAmount += data.nonProcessedRecordsAmount;
 
-            // Person Accounts/Contacts only /////////////           
+            // Person Accounts/Contacts only /////////////
             if (this.data.isPersonAccountOrContact) {
                 // Create data ****
                 data = await ___createUpdateData(true);
@@ -1083,7 +1083,7 @@ export default class MigrationJobTask {
 
             // Field do not Insert //////////////
             let fieldsToCompareRecords = self.data.fieldsToCompareSourceWithTarget;
-            // Non-insertable is the same as fields to compare but not included in the Update             
+            // Non-insertable is the same as fields to compare but not included in the Update
             let notIsertableFields = fieldsToCompareRecords.filter(field => !processedData.fields.some(f => f.nameId == field));
             notUpdateableFields = notUpdateableFields.concat(notIsertableFields); // Must include both non-updateable & non-insertable
 
@@ -1096,7 +1096,7 @@ export default class MigrationJobTask {
 
             if (processedData.fields.some(field => field.name != "Id" && field.name != CONSTANTS.__ID_FIELD_NAME)) {
 
-                // Map: cloned => source 
+                // Map: cloned => source
                 let tempClonedToSourceMap = Common.cloneArrayOfObjects(self.sourceData.records, fieldNamesToClone);
 
                 // Map: "___Id" => cloned
@@ -1105,7 +1105,7 @@ export default class MigrationJobTask {
                     ___IdToClonedMap.set(cloned[CONSTANTS.__ID_FIELD_NAME], cloned);
                 });
 
-                // Map: cloned => source 
+                // Map: cloned => source
                 //    + update lookup Id fields (f.ex. Account__c)
                 if (self.data.isPersonAccountOrContact) {
                     // Person accounts are supported --------- *** /
@@ -1114,7 +1114,7 @@ export default class MigrationJobTask {
                         tempClonedToSourceMap.forEach((source, cloned) => {
                             if (!source["IsPersonAccount"]) {
                                 ___updateLookupIdFields(processedData, source, cloned);
-                                // Always ensure that account Name field is not empty, 
+                                // Always ensure that account Name field is not empty,
                                 //   join FirstName + LastName fields into Name field if necessary
                                 ___updatePrsonAccountFields(processedData, source, cloned, false);
                                 processedData.clonedToSourceMap.set(cloned, source);
@@ -1125,7 +1125,7 @@ export default class MigrationJobTask {
                         tempClonedToSourceMap.forEach((source, cloned) => {
                             if (!!source["IsPersonAccount"]) {
                                 ___updateLookupIdFields(processedData, source, cloned);
-                                // Always ensure that account FirstName / LastName fields are not empty, 
+                                // Always ensure that account FirstName / LastName fields are not empty,
                                 //   split Name field if necessary
                                 ___updatePrsonAccountFields(processedData, source, cloned, true);
                                 processedData.clonedToSourceMap.set(cloned, source);
@@ -1369,7 +1369,7 @@ export default class MigrationJobTask {
             if (self.sObjectName == "Account") {
                 if (isPersonRecord) {
                     // Person account record
-                    // Name of Person account => split into First name / Last name                    
+                    // Name of Person account => split into First name / Last name
                     if (!cloned["FirstName"] && !cloned["LastName"]
                         && processedData.fieldNames.indexOf("FirstName") >= 0 // Currently updating First/Last names fo account
                     ) {
@@ -1484,7 +1484,7 @@ export default class MigrationJobTask {
                     records = records.filter(record => {
                         let targetContact = contactTask.targetData.idRecordsMap.get(record["ContactId"]);
                         if (targetContact && targetContact["AccountId"] == record["AccountId"]) {
-                            // This is the primary Contact for given Account, 
+                            // This is the primary Contact for given Account,
                             //   so don't need to insert AccountRelationObject for this
                             //     => record is not encessary, remove it
                             return false;
@@ -1595,11 +1595,11 @@ export default class MigrationJobTask {
         function ___testRegex(expr: string, value: string): boolean {
             switch (expr) {
                 case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.haveAnyValue):
-                    // * 
+                    // *
                     return !!value;
 
                 case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.missingValue):
-                    // ^* 
+                    // ^*
                     return !value;
 
                 default:
@@ -1638,10 +1638,10 @@ export default class MigrationJobTask {
      *
      * @param {ScriptOrg} org The org to connect the api engine
      * @param {OPERATION} operation The operation to perform
-     * @param {boolean} updateRecordId Allow update Id property 
-     *                                of the processed (the source) records 
+     * @param {boolean} updateRecordId Allow update Id property
+     *                                of the processed (the source) records
      *                                with the target record ids
-     * @param {number} amountOfRecordsToProcess The total amount of records that should 
+     * @param {number} amountOfRecordsToProcess The total amount of records that should
      *                                          be processed using this engine instance
      * @returns {IApiEngine}
      * @memberof MigrationJobTask
@@ -1905,7 +1905,7 @@ export default class MigrationJobTask {
             this.data.sFieldsInQuery.forEach(field => {
                 if (isSource) {
                     // SOURCE
-                    // For source => |SOURCE Case|Account__c IN (|SOURCE Account|Id....)            
+                    // For source => |SOURCE Case|Account__c IN (|SOURCE Account|Id....)
                     if (field.isSimpleReference
                         && field.parentLookupObject.isInitialized
                         && CONSTANTS.OBJECTS_NOT_TO_USE_IN_FILTERED_QUERYIN_CLAUSE.indexOf(field.referencedObjectType) < 0) {
@@ -2027,7 +2027,7 @@ export default class MigrationJobTask {
             // Query message ------
             this.logger.infoVerbose(RESOURCES.queryString, this.sObjectName, this.createShortQueryString(query));
             // Fetch records
-            records = records.concat(await sfdx.retrieveRecordsAsync(query, false, undefined, undefined, useQueryAll));
+            records = records.concat(await sfdx.queryOrgOrCsvAsync(query, false, undefined, undefined, useQueryAll));
         }
         return records;
     }
@@ -2047,14 +2047,14 @@ export default class MigrationJobTask {
                     .filter(x => !!x)[0];
                 if (describe) {
 
-                    // Start to transform fields///// 
+                    // Start to transform fields/////
                     // 1. Trasnsform polymorfic fields
                     if (describe.isPolymorphicField && describe.is__r) {
                         fields.push(getComposedField(describe.getPolymorphicQueryField(rawValue)));
                     } else {
                         fields.push(getComposedField(rawValue));
                     }
-                    // End to transform fields ////// 
+                    // End to transform fields //////
 
                 } else {
                     fields.push(getComposedField(rawValue));
