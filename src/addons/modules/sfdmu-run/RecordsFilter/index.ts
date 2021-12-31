@@ -88,4 +88,10 @@ export default class RecordsFilter extends SfdmuRunAddonModule {
     return null;
   }
 
+  async onInit(context: IAddonContext, args: IOnExecuteArguments): Promise<AddonResult> {
+    this.context.moduleDisplayName += ':' + (args.filterType || 'UnknownFilter');
+    return null;
+  }
+
+
 }
