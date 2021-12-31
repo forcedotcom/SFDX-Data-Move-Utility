@@ -14,10 +14,10 @@ import {
 } from 'soql-parser-js';
 import { CONSTANTS } from './statics';
 import { DescribeSObjectResult, QueryResult } from 'jsforce';
-import { SFieldDescribe, SObjectDescribe, ScriptOrg, CommandExecutionError, ObjectFieldMapping } from '../../models';
+import { SFieldDescribe, SObjectDescribe, CommandExecutionError, ObjectFieldMapping } from '../../models';
 import { Common } from './common';
 import { IOrgConnectionData, IFieldMapping, IFieldMappingResult, IIdentityInfo } from '../../models/common_models/helper_interfaces';
-import { Logger, RESOURCES } from './logger';
+import { RESOURCES } from './logger';
 import { IBlobField, ICachedRecords } from '../../models/api_models';
 import { DATA_CACHE_TYPES } from './enumerations';
 
@@ -25,18 +25,18 @@ var jsforce = require("jsforce");
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { IAppSfdxService } from '../../app/appModels';
+import { IAppLogger, IAppScriptOrg, IAppSfdxService } from '../../app/appModels';
 
 
 export class Sfdx implements IAppSfdxService, IFieldMapping {
 
-  org: ScriptOrg;
+  org: IAppScriptOrg;
 
-  get logger(): Logger {
+  get logger(): IAppLogger {
     return this.org.script.logger;
   }
 
-  constructor(org: ScriptOrg, targetFieldMapping?: IFieldMapping) {
+  constructor(org: IAppScriptOrg, targetFieldMapping?: IFieldMapping) {
     this.org = org;
     if (targetFieldMapping) {
       Object.assign(this, targetFieldMapping);
@@ -337,6 +337,9 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
         for (var prop in fieldMapping) {
           if (fieldMapping.hasOwnProperty(prop)) {
             o[prop] = getNestedObject(record, fieldMapping[prop]);
+            if (typeof o[prop] == 'undefined' && record[prop]) {
+              o[prop] = record[prop];
+            }
           }
         }
         return o;

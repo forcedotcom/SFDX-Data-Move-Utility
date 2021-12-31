@@ -8,8 +8,8 @@
 
 import ISfdmuCommand from "../models/common_models/ISfdxCommand";
 import { RunCommand } from "../commands_processors/runCommand";
-import JsonMessages from './JsonMessages';
-import ConsoleLogger from './consoleUxLogger';
+import AppJsonMessages from './appJsonMessages';
+import AppConsoleLogger from './appConsoleUxLogger';
 
 import * as path from 'path';
 import { IRunProcess } from "../commands_processors/IRunProcess";
@@ -17,13 +17,13 @@ import { IResourceBundle, IUxLogger } from "../components/common_components/logg
 import ISfdmuStatics from "../models/common_models/ISfdmuStatics";
 import RunCommandExecutor from "../commands_processors/runCommandExecutor";
 import { Common } from "../components/common_components/common";
-import ISfdmuRunModuleArgs from "./ISfdmuRunModuleArgs";
+import IAppSfdmuRunModuleArgs from "./IAppSfdmuRunModuleArgs";
 
 const root = path.resolve(__dirname, '../../../');
-const commandMessages = new JsonMessages(root, "run");
-const resources = new JsonMessages(root, "resources");
+const commandMessages = new AppJsonMessages(root, "run");
+const resources = new AppJsonMessages(root, "resources");
 
-export default class SfdmuRunApp implements IRunProcess {
+export default class AppSfdmuRunApp implements IRunProcess {
 
     argv: Array<string>;
     exportJson: string;
@@ -40,9 +40,9 @@ export default class SfdmuRunApp implements IRunProcess {
     commandMessages: IResourceBundle;
     resources: IResourceBundle;
 
-    constructor(args: ISfdmuRunModuleArgs) {
+    constructor(args: IAppSfdmuRunModuleArgs) {
 
-        this.m_ux = args.logger || new ConsoleLogger();
+        this.m_ux = args.logger || new AppConsoleLogger();
         this.argv = args.argv.splice(2);
 
         this.exportJson = args.exportJson;
@@ -55,7 +55,7 @@ export default class SfdmuRunApp implements IRunProcess {
 
         let flags = Common.parseArgv(...this.argv);
         Object.assign(this.m_flags, flags);
-        
+
         this.statics = {
             name: "Run",
             plugin: {

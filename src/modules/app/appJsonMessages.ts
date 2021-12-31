@@ -9,7 +9,7 @@ import { IResourceBundle } from "../components/common_components/logger";
 import * as path from 'path';
 import AppMessagesBase from "./appMessagesBase";
 
-export default class JsonMessages extends AppMessagesBase implements IResourceBundle {
+export default class AppJsonMessages extends AppMessagesBase implements IResourceBundle {
 
     jsonPath: string;
 

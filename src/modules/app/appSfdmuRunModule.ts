@@ -5,14 +5,14 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import ISfdmuRunModuleArgs from "./ISfdmuRunModuleArgs";
-import SfdmuRunApp from "./sfdmuRunApp";
+import IAppSfdmuRunModuleArgs from "./IAppSfdmuRunModuleArgs";
+import AppSfdmuRunApp from "./appSfdmuRunApp";
 
 
-export class SfdmuRunModule {
+export class AppSfdmuRunModule {
 
-    public static async runCommand(args: ISfdmuRunModuleArgs) {
-        args.runProcess = new SfdmuRunApp(args);
+    public static async runCommand(args: IAppSfdmuRunModuleArgs) {
+        args.runProcess = new AppSfdmuRunApp(args);
         await args.runProcess.runCommand();
     }
 

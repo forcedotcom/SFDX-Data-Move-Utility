@@ -21,3 +21,5 @@ export interface IRecordsFilter {
   isInitialized: boolean;
   filterRecords(records: any[]): Promise<any[]>;
 }
+
+

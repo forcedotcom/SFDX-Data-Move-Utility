@@ -47,6 +47,10 @@ export default class AddonRuntime {
     this.log(this.createFormattedMessage(module, message, ...tokens), "INFO");
   }
 
+  logFormattedInfoVerbose(module: AddonModule, message: SFDMU_RUN_ADDON_MESSAGES | string, ...tokens: string[]): void {
+    this.log(this.createFormattedMessage(module, message, ...tokens), "INFO_VERBOSE");
+  }
+
   logFormattedWarning(module: AddonModule, message: SFDMU_RUN_ADDON_MESSAGES | string, ...tokens: string[]): void {
     this.log(this.createFormattedMessage(module, message, ...tokens), "WARNING");
   }
@@ -74,7 +78,7 @@ export default class AddonRuntime {
   }
 
 
-  log(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE" | "JSON", ...tokens: string[]): void {
+  log(message: string | object | ITableMessage, messageType?: "INFO" | "WARNING" | "ERROR" | "OBJECT" | "TABLE" | "JSON" | "INFO_VERBOSE", ...tokens: string[]): void {
 
     switch (messageType) {
       case "WARNING":
@@ -95,6 +99,10 @@ export default class AddonRuntime {
 
       case "JSON":
         this.#logger.log(<string>message, LOG_MESSAGE_TYPE.JSON, LOG_MESSAGE_VERBOSITY.NORMAL, ...tokens);
+        break;
+
+      case "INFO_VERBOSE":
+        this.#logger.infoVerbose(<string>message, ...tokens);
         break;
 
       default:

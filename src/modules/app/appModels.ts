@@ -28,6 +28,7 @@ export interface IAppScript {
   binaryDataCache: DATA_CACHE_TYPES;
   parallelBinaryDownloads: number;
   binaryCacheDirectory: string;
+  sourceRecordsCacheDirectory: string;
 }
 
 export interface IAppScriptOrg {
