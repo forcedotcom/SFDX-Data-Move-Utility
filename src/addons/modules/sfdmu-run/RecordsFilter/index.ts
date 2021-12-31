@@ -10,12 +10,13 @@ import AddonResult from "../../../components/common/addonResult";
 import IAddonContext from "../../../components/common/IAddonContext";
 import { ADDON_EVENTS } from "../../../../modules/components/common_components/enumerations";
 import { SFDMU_RUN_ADDON_MESSAGES } from "../../../messages/sfdmuRunAddonMessages";
-import { BadwordFilterArgs, BadWordsFilter } from "./BadWordsFilter";
+import { BadWordsFilter } from "./BadWordsFilter";
+import { IRecordsFilterArgs } from "./IRecordsFilter";
 
 
 
 
-export interface IOnExecuteArguments extends BadwordFilterArgs {}
+export interface IOnExecuteArguments extends IRecordsFilterArgs { }
 
 const CONST = {
   SUPPORTED_EVENTS: [
@@ -40,7 +41,7 @@ export default class RecordsFilter extends SfdmuRunAddonModule {
       return null;
     }
 
-    let b : BadWordsFilter = new BadWordsFilter(args, this);
+    let b: BadWordsFilter = new BadWordsFilter(args, this);
     console.log(b);
 
 

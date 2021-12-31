@@ -13,6 +13,7 @@ import { IRecordsFilter, IRecordsFilterArgs, IRecordsFilterSetting } from "./IRe
 import * as fs from "fs";
 import * as path from "path";
 
+
 // Specific interfaces for this filter
 interface IBadwordFilterSettings extends IRecordsFilterSetting {
   badwordsFile: string;
@@ -44,9 +45,9 @@ export class BadWordsFilter implements IRecordsFilter {
 
   isInitialized: boolean;
 
-  constructor(args: BadwordFilterArgs, module: SfdmuRunAddonModule) {
+  constructor(args: IRecordsFilterArgs, module: SfdmuRunAddonModule) {
 
-    this._args = args;
+    this._args = args as BadwordFilterArgs;
     this._module = module;
 
     // Checking required arguments
@@ -63,15 +64,16 @@ export class BadWordsFilter implements IRecordsFilter {
       }
     }
 
+    // Locate the badword file
     this._args.settings.badwordsFile = this._args.settings.badwordsFile || "badword.json";
-
-    // Get badwords file
     this.badwordsFile = path.isAbsolute(this._args.settings.badwordsFile) ? this._args.settings.badwordsFile // Absolute path provided -> as is
                         : path.join(this._module.runtime.basePath, path.normalize(this._args.settings.badwordsFile)); // Relative to the base folder path -> resolving
     if (!fs.existsSync(this.badwordsFile)) {
       this._module.runtime.logFormattedWarning(this._module, SFDMU_RUN_ADDON_MESSAGES.BadwordFilter_badwordsDetectFileError);
       return;
     }
+
+
 
 
     // // Build badwords regex (and complete with values without special characters)
