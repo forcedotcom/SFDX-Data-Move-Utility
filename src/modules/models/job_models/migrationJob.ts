@@ -44,7 +44,7 @@ export default class MigrationJob {
 
 
 
-    // ----------------------- Public methods -------------------------------------------        
+    // ----------------------- Public methods -------------------------------------------
     /**
      * Setup this object
      *
@@ -84,7 +84,7 @@ export default class MigrationJob {
             }
 
             if (objectToAdd.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
-                // RecordType object is always at the beginning 
+                // RecordType object is always at the beginning
                 //   of the task chain
                 this.tasks.unshift(newTask);
                 lowerIndexForAnyObjects++;
@@ -98,8 +98,8 @@ export default class MigrationJob {
                 // *** Using the smart automatic execution order *** //
                 // ************** //
 
-                // Readonly objects are always at the beginning 
-                //   of the task chain 
+                // Readonly objects are always at the beginning
+                //   of the task chain
                 //   but after RecordType
                 this.tasks.splice(lowerIndexForReadonlyObjects, 0, newTask);
                 lowerIndexForAnyObjects++;
@@ -114,14 +114,14 @@ export default class MigrationJob {
                     // Check if the new object is parent lookup to the existed task
                     let isObjectToAdd_ParentLookup = existedTask.scriptObject.parentLookupObjects.some(x => x.name == objectToAdd.name);
                     if (isObjectToAdd_ParentLookup) {
-                        // The new object is the parent lookup 
+                        // The new object is the parent lookup
                         //                  => it should be before BEFORE the existed task (replace existed task with it)
                         indexToInsert = existedTaskIndex;
                     }
-                    // The existed task is the parent lookup or the parent master-detail 
+                    // The existed task is the parent lookup or the parent master-detail
                     //                      => it should be AFTER the exited task (continue as is)
                 }
-                // Insert the new object 
+                // Insert the new object
                 //   into the task chain
                 //   at the calculated index
                 this.tasks.splice(indexToInsert, 0, newTask);
@@ -129,12 +129,12 @@ export default class MigrationJob {
         });
 
         if (this.script.keepObjectOrderWhileExecute) {
-            // *** Use the explicit query order as the objects appear in the Script **** //            
+            // *** Use the explicit query order as the objects appear in the Script **** //
             // ************** //
             this.queryTasks = this.tasks.map(task => task);
             this.deleteTasks = this.queryTasks;
         } else {
-            // *** Use smart automatic query order *** // 
+            // *** Use smart automatic query order *** //
             // ************** //
             // Put master-detail lookups before
             let swapped = true;
@@ -187,8 +187,8 @@ export default class MigrationJob {
                 for (let rightIndex = leftIndex + 1; rightIndex < tempTasks.length; rightIndex++) {
                     const rightTask = tempTasks[rightIndex];
                     // The right object should be first + it is master or both objects are master=false.
-                    // It's better to keep the left object as master, 
-                    // because if we put the master object to the right 
+                    // It's better to keep the left object as master,
+                    // because if we put the master object to the right
                     //      => sometimes we can get issues with finding the related records,
                     // since the left object is filtered by the right and the right object records are not retrieved yet.
                     let rightShouldBeBeforeTheLeft = CONSTANTS.SPECIAL_OBJECT_QUERY_ORDER.get(rightTask.scriptObject.name)
@@ -345,7 +345,7 @@ export default class MigrationJob {
 
         //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // STEP 2 SOURCE BACKWARDS ::::::::::::::::::::::::::::::::::::::::::::::::
-        // PASS 1 --- 
+        // PASS 1 ---
         retrieved = false;
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step2));
@@ -360,7 +360,7 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.noRecords);
         }
 
-        // PASS 2 --- 
+        // PASS 2 ---
         retrieved = false;
         this.logger.infoNormal(RESOURCES.newLine);
         this.logger.infoNormal(RESOURCES.Pass2);
@@ -386,7 +386,7 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.noRecords);
         }
 
-        // PASS 4 --- SOURCE FORWARDS (REVERSE B) 
+        // PASS 4 --- SOURCE FORWARDS (REVERSE B)
         retrieved = false;
         this.logger.infoNormal(RESOURCES.newLine);
         this.logger.infoNormal(RESOURCES.Pass4);
@@ -492,7 +492,7 @@ export default class MigrationJob {
             this.logger.infoNormal(RESOURCES.nothingUpdated);
 
 
-        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::            
+        //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         // STEP 2 BACKWARDS :::::::::::::::::::::::::::::::::::::::::::::::::::::::
         this.logger.infoMinimal(RESOURCES.newLine);
         this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step2));
@@ -609,7 +609,7 @@ export default class MigrationJob {
     /**
      * Returns a task by the given sObject name
      *
-     * @param {string} sObjectName 
+     * @param {string} sObjectName
      * @returns
      * @memberof MigrationJob
      */
@@ -620,12 +620,12 @@ export default class MigrationJob {
     /**
      * Returns the task by the given field path
      *
-     * @param {string} fieldPath 
+     * @param {string} fieldPath
      * @param {Task} [prevTask]
      * @return {{
      *              task: ISFdmuRunCustomAddonTask,
      *              field: string
-     *          }}  
+     *          }}
      * @memberof MigrationJob
      */
      getTaskByFieldPath(fieldPath: string, prevTask?: MigrationJobTask): {
@@ -639,7 +639,7 @@ export default class MigrationJob {
             return null;
         }
 
-       
+
 
         if (!prevTask) {
             // First => by sobject
@@ -652,7 +652,7 @@ export default class MigrationJob {
             }
         }
 
-        // Other => by sfield 
+        // Other => by sfield
         let fieldName = parts.length > 1 ? Common.getFieldNameId(null, parts[0]) : parts[0];
         let fieldDescribe = prevTask.scriptObject.fieldsInQueryMap.get(fieldName);
         if (!fieldDescribe) {
@@ -679,7 +679,7 @@ export default class MigrationJob {
      * Save csv file from the data of the input array
      *
      * @param {string} fileName It is just a filename (test.csv) not the full path
-     * @param {Array<any>} data 
+     * @param {Array<any>} data
      * @returns {Promise<void>}
      * @memberof MigrationJob
      */
@@ -718,8 +718,8 @@ export default class MigrationJob {
 
 
     /**
-     * Updates target field names 
-     * for all fields for all fields 
+     * Updates target field names
+     * for all fields for all fields
      *
      * @memberof MigrationJob
      */
@@ -767,7 +767,7 @@ export default class MigrationJob {
             })
         }
 
-        // --------------------------- Internal functions -------------------------------------        
+        // --------------------------- Internal functions -------------------------------------
         function ___mapField(objectName: string, fieldName: string, field?: SFieldDescribe): { fieldName: string, changed: boolean } {
             fieldName = Common.getFieldNameId(field, fieldName);
             let objectFieldMapping = self.script.sourceTargetFieldMapping.get(objectName) || new ObjectFieldMapping("", "");
@@ -808,7 +808,7 @@ export default class MigrationJob {
                     return parts.join('.');
                 }
                 if (sField.isSimple || sField.isSimpleReference) {
-                    // Object__c = simple field (Object__c) 
+                    // Object__c = simple field (Object__c)
                     //            or __r field (Object__r.ExternalId__c)
                     let ret = ___mapField(objectName, nameId);
                     if (ret.changed) {
@@ -824,7 +824,7 @@ export default class MigrationJob {
                 parts[0] = Common.getFieldName__r(null, parts[0]);
 
                 // Object__c = simple reference field (Object__r.ExternalId__c)
-                //             or very complex field (Object__r.ExternalId__r.Name__c)                
+                //             or very complex field (Object__r.ExternalId__r.Name__c)
                 let parentObject_level2 = self.script.objectsMap.get(sField.referencedObjectType);
                 if (!parentObject_level2 || !parentObject_level2.useFieldMapping) {
                     return parts.join('.');
@@ -927,7 +927,7 @@ export default class MigrationJob {
             this.csvIssues = this.csvIssues.concat(await task.validateCSV());
         }
 
-        // if csv structure issues were found - prompt to abort the job 
+        // if csv structure issues were found - prompt to abort the job
         let noAbortPrompt = false;
         if (this.csvIssues.length > 0) {
             await ___promptToAbort();
@@ -944,7 +944,7 @@ export default class MigrationJob {
         await this.saveCachedCsvDataFiles();
         this.logger.infoVerbose(RESOURCES.csvFilesWereUpdated, String(this.cachedCSVContent.updatedFilenames.size));
 
-        // if csv data issues were found - prompt to abort the job 
+        // if csv data issues were found - prompt to abort the job
         //  and save the report
         if (this.csvIssues.length > 0) {
             if (!noAbortPrompt) {

@@ -20,7 +20,7 @@ import { OPERATION } from "./common";
 export default interface ISFdmuRunCustomAddonTask {
 
   /**
-   * The operation, performed with the current SF object. 
+   * The operation, performed with the current SF object.
    *
    * @type {OPERATION}
    * @memberof ISFdmuRunCustomAddonTask
@@ -38,7 +38,7 @@ export default interface ISFdmuRunCustomAddonTask {
 
 
   /**
-   * The target Api name of the SF object in case the Field Mapping feature is active. 
+   * The target Api name of the SF object in case the Field Mapping feature is active.
    *
    * @type {string}
    * @memberof ISFdmuRunCustomAddonTask
@@ -49,7 +49,7 @@ export default interface ISFdmuRunCustomAddonTask {
   /**
    * The mapping between the record retireved from the Source to the record, retireved from the Target.
    * The records are matched using the specified externalId.
-   * 
+   *
    * @type {Map<any, any>}
    * @memberof ISFdmuRunCustomAddonTask
    */
@@ -68,7 +68,7 @@ export default interface ISFdmuRunCustomAddonTask {
   /**
    * The current update mode.
    * Each SF object can be updated twice, for the first time when the records are inserted
-   * and for the second time when the Plugin populates the missing lookups 
+   * and for the second time when the Plugin populates the missing lookups
    * from the previously inserted records.
    *
    * @type {("FIRST_UPDATE" | "SECOND_UPDATE")}
@@ -104,7 +104,7 @@ export default interface ISFdmuRunCustomAddonTask {
 
   /**
    * The list of the fields which should be updated with this sobject.
-   * This property returns the subset of the fields from the {@link ISFdmuRunCustomAddonTask.fieldsInQuery | fieldsInQuery}, 
+   * This property returns the subset of the fields from the {@link ISFdmuRunCustomAddonTask.fieldsInQuery | fieldsInQuery},
    * containing only the fields which can be updated in the Target.
    *
    * @type {Array<string>}
@@ -121,5 +121,12 @@ export default interface ISFdmuRunCustomAddonTask {
    * @memberof ISFdmuRunCustomAddonTask
    */
   mapRecords(records: Array<any>): void;
+
+  /**
+   * Get or sets the temporary records data during the records transformation process.
+   * For example you can use this property to access and to modify the live source records when
+   * firing the onTargetDataFiltering Add-On event.
+   */
+  tempRecords: any[];
 
 }

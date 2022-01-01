@@ -6,15 +6,15 @@
  */
 
 
-import ISfdmuRunModuleArgs from "./modules/app/ISfdmuRunModuleArgs";
-import SfdmuRunApp from "./modules/app/sfdmuRunApp";
+import IAppSfdmuRunModuleArgs from "./modules/app/IAppSfdmuRunModuleArgs";
+import AppSfdmuRunApp from "./modules/app/appSfdmuRunApp";
 
-const args: ISfdmuRunModuleArgs = {
+const args: IAppSfdmuRunModuleArgs = {
     argv: [
          // The 2 first members of the array should always be empty
-    "", 
     "",
-    
+    "",
+
     // list of the CLI flags
     "--path",
     "C:\\PathToExportJson",
@@ -26,5 +26,5 @@ const args: ISfdmuRunModuleArgs = {
     ]
 };
 
-const app = new SfdmuRunApp(args);
+const app = new AppSfdmuRunApp(args);
 (async () => await app.runCommand())();

@@ -8,13 +8,13 @@
 import { IResourceBundle } from "../components/common_components/logger";
 import AppMessagesBase from "./appMessagesBase";
 
-export default class EmbeddedMessages extends AppMessagesBase implements IResourceBundle {
+export default class AppEmbeddedMessages extends AppMessagesBase implements IResourceBundle {
 
     constructor() {
         super();
     }
 
-    setup<RType>(resourceInstance: RType): EmbeddedMessages {
+    setup<RType>(resourceInstance: RType): AppEmbeddedMessages {
         resourceInstance = (resourceInstance as any) || {};
         this.messages.clear();
         Object.keys(resourceInstance).forEach(key => {
