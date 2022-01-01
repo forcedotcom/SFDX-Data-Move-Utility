@@ -56,12 +56,13 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
 
     // RecordsFilter Addon -------------------------
     FilterUnknown = "Unknown filter %s",
-    FilteringEnd= "{%s} %s records has been filtered",
+    FilteringEnd= "%s records has been filtered (%s remaining)",
     FilterOperationError = "Error in the target RecordsFilter module %s: %s",
 
     // Badword filter *** 
-    BadwordFilter_badwordsDetectStart= "{%s} Filtering results on badwords from file %s on %s...",
+    BadwordFilter_badwordsDetectStart= "Filtering results on badwords from file %s on %s...",
     BadwordFilter_badwordsDetectFileError= "Badwords file not found at location %s",
+    BadwordFilter_badwordsDetectFileEmptyList= "Badwords file %s must contain a property \"badwords\" with at least one word",
     BadwordFilter_badwordsDetectRegex= "Full badwords detection regular expression %s",
     BadwordFilter_badwordsDetected= "- %s: %s",
 
