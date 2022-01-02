@@ -43,6 +43,7 @@ export class BadWordsFilter implements IRecordsFilter {
   _badwords: string[];
   _badwordsRegex: RegExp;
   _filteredNumber = 0;
+  _keptNumber = 0;
 
   constructor(args: IRecordsFilterArgs, module: SfdmuRunAddonModule) {
 
@@ -73,7 +74,13 @@ export class BadWordsFilter implements IRecordsFilter {
     }
 
     // Build badwords regex (and complete with values without special characters)
-    this._badwords = JSON.parse(fs.readFileSync(this._badwordsFile).toString()).badwords;
+    const badwordsConfig = JSON.parse(fs.readFileSync(this._badwordsFile).toString());
+    if (badwordsConfig.badwords == null || badwordsConfig.badwords.length === 0) {
+      // JSON file property must contain at least one badword
+      this._module.runtime.logFormattedError(this._module, SFDMU_RUN_ADDON_MESSAGES.BadwordFilter_badwordsDetectFileEmptyList, this._badwordsFile);
+      return ;
+    }
+    this._badwords = badwordsConfig.badwords ;
     for (const word of this._badwords) {
       const wordWithSpecialChars = word.normalize("NFD").replace(/\p{Diacritic}/gu, "");
       if (!this._badwords.includes(wordWithSpecialChars)) {
@@ -93,7 +100,6 @@ export class BadWordsFilter implements IRecordsFilter {
   async filterRecords(records: any[]): Promise<any[]> {
     this._module.runtime.logFormattedInfo(this._module,
       SFDMU_RUN_ADDON_MESSAGES.BadwordFilter_badwordsDetectStart,
-      this._module.context.objectName,
       this._badwordsFile,
       this._detectFields.length > 0 ? this._detectFields.join(",") : "all fields");
     let filteredRecords = records.filter((record) => this._checkRecord(record));
@@ -103,8 +109,8 @@ export class BadWordsFilter implements IRecordsFilter {
     }
     this._module.runtime.logFormattedInfo(this._module,
       SFDMU_RUN_ADDON_MESSAGES.FilteringEnd,
-      this._module.context.objectName,
-      this._filteredNumber.toString());
+      this._filteredNumber.toString(),
+      this._keptNumber.toString());
     return filteredRecords;
   }
 
@@ -128,6 +134,7 @@ export class BadWordsFilter implements IRecordsFilter {
           SFDMU_RUN_ADDON_MESSAGES.BadwordFilter_badwordsDetected, record.Name,
           foundStr);
       }
+      this._keptNumber++;
       return true;
     }
     this._filteredNumber++;
