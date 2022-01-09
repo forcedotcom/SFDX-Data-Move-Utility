@@ -731,7 +731,7 @@ export default class MigrationJob {
             this.script.objects.forEach(object => {
                 object.fieldsInQueryMap.forEach(field => {
                     let parts = field.name.split('.');
-                    if (field.isSimple || field.isSimpleReference) {
+                    if (field.isSimpleNotLookup || field.isSimpleReference) {
                         // Simple fields, lookups and non-lookups (Account__c, TEST__c)
                         let ret = ___mapField(object.name, null, field);
                         if (ret.changed) {
@@ -807,7 +807,7 @@ export default class MigrationJob {
                 if (!sField) {
                     return parts.join('.');
                 }
-                if (sField.isSimple || sField.isSimpleReference) {
+                if (sField.isSimpleNotLookup || sField.isSimpleReference) {
                     // Object__c = simple field (Object__c)
                     //            or __r field (Object__r.ExternalId__c)
                     let ret = ___mapField(objectName, nameId);

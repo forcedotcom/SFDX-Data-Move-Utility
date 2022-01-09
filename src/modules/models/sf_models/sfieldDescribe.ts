@@ -13,7 +13,7 @@ import { FieldType } from 'jsforce';
 import { ISfdmuRunCustomAddonSFieldDescribe } from "../../../addons/modules/sfdmu-run/custom-addons/package";
 
 
-// Construct the end interface in case we need 
+// Construct the end interface in case we need
 //  multiple interface implementation for the single class
 type ISFieldDescribe = ISfdmuRunCustomAddonSFieldDescribe;
 
@@ -71,8 +71,8 @@ export default class SFieldDescribe implements ISFieldDescribe {
 
     /**
      * For the externalId field -> holds the list of all the child __r sfields
-     * 
-     *  For example, if the current sfield is externalId "|Account|Name", 
+     *
+     *  For example, if the current sfield is externalId "|Account|Name",
      *  so this property will return a list of all the child lookup  __r  sfields, which point to this externalId field, as following:
      *  [ "|Case|Account__r.Name", "|Lead|ConvertedAccount.Name", "|CustomObject__c|MyAccount__r.Name", ... ]
      */
@@ -161,8 +161,12 @@ export default class SFieldDescribe implements ISFieldDescribe {
         return Common.isComplexOr__rField(this.name);
     }
 
+    get isSimpleNotLookup(): boolean {
+        return this.isSimple && !this.lookup;
+    }
+
     get isSimple(): boolean {
-        return !this.isComplexOr__r && !this.lookup;
+      return !this.isComplexOr__r;
     }
 
     get isSimpleReference(): boolean {
@@ -194,11 +198,11 @@ export default class SFieldDescribe implements ISFieldDescribe {
 
     /**
     * Ensured to be always set to original
-    * field api name, regardless of being 
+    * field api name, regardless of being
     * a _r field or an original field:
     * f.ex. Account__r.Name => Account__c
     *       Id => Id,
-    *       Account__c => Account__c         
+    *       Account__c => Account__c
     *
     * @readonly
     * @type {string}
@@ -209,7 +213,7 @@ export default class SFieldDescribe implements ISFieldDescribe {
     }
 
     /**
-     * Account__c => Account__r.Id 
+     * Account__c => Account__r.Id
      * ("Id" is current external id for Account)
      *
      * @readonly
@@ -225,7 +229,7 @@ export default class SFieldDescribe implements ISFieldDescribe {
     }
 
     /**
-     * Account__c => Account__r.Name 
+     * Account__c => Account__r.Name
      * ("Name" is the original external id for Account defained in the script)
      *
      * @readonly
@@ -241,7 +245,7 @@ export default class SFieldDescribe implements ISFieldDescribe {
     }
 
     /**
-    * Account__c => Account__r.Id 
+    * Account__c => Account__r.Id
     * ("Name" is the original external id for Account defained in the script)
     *
     * @readonly

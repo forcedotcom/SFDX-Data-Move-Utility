@@ -1034,7 +1034,7 @@ export default class MigrationJobTask {
       processedData.fields = self.data.sFieldsToUpdate.filter((field: SFieldDescribe) => {
         if (updateMode == "forwards")
           // For Step 1 : Simple sFields or reference fields with the parent lookup BEFORE
-          return field.isSimple || field.isSimpleReference && self.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0;
+          return field.isSimpleNotLookup || field.isSimpleReference && self.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0;
         else
           // For Step 2 : Reference sFields with the parent lookup AFTER + self
           return field.isSimpleReference && self.data.nextTasks.concat(self).indexOf(field.parentLookupObject.task) >= 0;
@@ -1954,7 +1954,7 @@ export default class MigrationJobTask {
         } else {
           // TARGET
           // For target => |TARGET Account|Name IN (|SOURCE Account|Name....)
-          if (field.isSimple && field.isExternalIdField) {
+          if (field.isSimpleNotLookup && field.isExternalIdField) {
             // Only for current object's external id (f.ex.: Name) - not complex and not Id - only simple
             fieldsToQueryMap.set(field, [...this.sourceData.extIdRecordsMap.keys()]);
           }
