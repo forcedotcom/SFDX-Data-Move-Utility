@@ -21,7 +21,7 @@ export const CONSTANTS = {
     DEFAULT_BULK_API_VERSION: '2.0',
     DEFAULT_BULK_API_V1_BATCH_SIZE: 9500,
     DEFAULT_REST_API_BATCH_SIZE: undefined,
-    DEFAULT_API_VERSION: '52.0',
+    DEFAULT_API_VERSION: '53.0',
     DEFAULT_EXTERNAL_ID_FIELD_NAME: "Name",
 
     QUERY_PROGRESS_MESSAGE_PER_RECORDS: 2000,
@@ -41,7 +41,7 @@ export const CONSTANTS = {
     FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
 
     SCRIPT_FILE_NAME: 'export.json',
-   
+
     CORE_ADDON_MANIFEST_FILE_NAME: "../../addons/addonsCore.json",
     USER_ADDON_MANIFEST_FILE_NAME: "addons.json",
     CORE_ADDON_MODULES_BASE_PATH: "../../../addons/modules/",
@@ -113,7 +113,7 @@ export const CONSTANTS = {
         'User',
         'Group',
         'DandBCompany',
-        'ContentVersion'// Content version has deprecated using the SFDMU core in favor to the ExportFiles Add-On Module 
+        'ContentVersion'// Content version has deprecated using the SFDMU core in favor to the ExportFiles Add-On Module
     ],
 
     NOT_SUPPORTED_OBJECTS_IN_BULK_API: [
@@ -318,7 +318,7 @@ export const CONSTANTS = {
             "MailingStreet"
         )]
     ]),
-    
+
 
 
     // ------ AddOns -------------------- //
