@@ -113,8 +113,9 @@ export const CONSTANTS = {
         'User',
         'Group',
         'DandBCompany',
-        'ContentVersion'// Content version has deprecated using the SFDMU core in favor to the ExportFiles Add-On Module
-    ],
+        'ContentVersion',// Content version has deprecated using the SFDMU core in favor to the ExportFiles Add-On Module
+        'FeedComment'
+      ],
 
     NOT_SUPPORTED_OBJECTS_IN_BULK_API: [
         "Attachment",
