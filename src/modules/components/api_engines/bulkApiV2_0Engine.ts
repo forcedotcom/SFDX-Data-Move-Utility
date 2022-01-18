@@ -193,7 +193,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         // SUCCESS RESULT
         return csvChunk.records;
     }
-    // ----------------------- ---------------- -------------------------------------------    
+    // ----------------------- ---------------- -------------------------------------------
 
 
     /**
@@ -288,7 +288,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
     }
 
     /**
-     * Closes bulk job and forces csv content to be uploaded 
+     * Closes bulk job and forces csv content to be uploaded
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
      * @returns {Promise<ApiInfo>}
@@ -329,7 +329,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
      * Polls  job for the status
      *
      * @param {string} contentUrl Content url returned by createBulkJob()
-     * @returns {Promise<ApiInfo>} 
+     * @returns {Promise<ApiInfo>}
      * @memberof BulkAPI2sf
      */
     async pollBulkJobAsync(contentUrl: string): Promise<ApiInfo> {
@@ -364,7 +364,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
     }
 
     /**
-     * Asks the server for the job status by given polling 
+     * Asks the server for the job status by given polling
      * interval and returns job status when the job is completed or failed
      *
      * @param {string} contentUrl
@@ -456,9 +456,10 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                     }
 
                     try {
-                        
+
                         let csv = parse(body, {
                             skip_empty_lines: true,
+                            skip_lines_with_error: true,
                             cast: self._csvCast
                         });
 
@@ -552,6 +553,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                 if (!error && response.statusCode == 200) {
                     let csv = parse(body, {
                         skip_empty_lines: true,
+                        skip_lines_with_error: true,
                         cast: self._csvCast
                     });
                     let unprocessedRecords = Common.transformArrayOfArrays(csv);
