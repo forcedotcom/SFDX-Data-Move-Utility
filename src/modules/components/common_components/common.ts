@@ -691,6 +691,7 @@ export class Common {
           const records = parse(input, {
             columns: ___columns,
             skip_empty_lines: true,
+            skip_lines_with_error : true,
             cast: ___csvCast
           });
           resolve([...records]);
@@ -719,6 +720,7 @@ export class Common {
             const records = parse(input, {
               columns: true,
               skip_empty_lines: true,
+              skip_lines_with_error : true,
               cast: ___csvCast
             });
             resolve([...records]);
