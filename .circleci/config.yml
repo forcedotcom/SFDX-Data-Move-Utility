@@ -4,10 +4,11 @@ orbs:
 workflows:
   version: 2
   test-and-release:
-    jobs:      
+    jobs:
       - release-management/release-package:
           sign: true
           github-release: true
+          context: AWS
           filters:
             branches:
               only: master
