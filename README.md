@@ -5,15 +5,15 @@
 
 
 ```bash
-> ** INPORTANT NOTICE! THIS TOOL HAS LIMITED SUPPORT AND SLA IS NOT ENFORCED AS SUPPORT TO ISSUES RAISED. **
-> ** WE CANNOT GUARANTEE THAT YOUR ISSUES WILL BE PROCESSED WITHIN ANY TIME FRAME AND SOMETIMES IT CAN TAKE A LONG TIME. **
+> ** INPORTANT! THIS TOOL HAS LIMITED SUPPORT BASED ON OUR FREE TIME. **
+> ** NO SLA ENFORCED AS SUPPORT TO ISSUES RAISED. **
 > ** HOWEVER, WE GIVE OUR BEST EFFORT TO RETURN AND ADDRESS EACH ISSUE AS POSSIBLE. **
 ```
 
 > **ALWAYS FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
->
+> - **Important! Due to lack of time, we DO NOT OFFER SUPPORT for configuration issues. For this moment the support is ONLY FOR RUNTIME BUGS. We apologize for the possible inconvenience.**
 > - **You MUST use one of our issue tracker templates.**
-> - **For Plugin bugs always attach:**
+> - **For Plugin runtime bugs always attach:**
 >  - **The FULL latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
 >  - **The FULL [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
 >  - **When you have an issue with failed rows, provide also the dump of the [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant full rows).**
