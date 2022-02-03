@@ -3,16 +3,15 @@
 - **For the detailed documentation, visit the [SFDMU Help Center](https://help.sfdmu.com/)**
 - **The changelog (including only important updates) can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
 
-
 ```bash
 > ** INPORTANT! THIS TOOL HAS LIMITED SUPPORT BASED ON OUR FREE TIME. **
 > ** NO SLA ENFORCED AS SUPPORT TO ISSUES RAISED. **
 > ** HOWEVER, WE GIVE OUR BEST EFFORT TO RETURN AND ADDRESS EACH ISSUE AS POSSIBLE. **
+> ** IMPORTANT! DUE TO LACK OF TIME CURRENTLY WE CAN NOT OFFER SUPPORT FOR CONFIGURATION ISSUES, ONLY FOR RUNTIME BUGS.
 ```
 
-> **ALWAYS FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
-> - **Important! Due to lack of time, we DO NOT OFFER SUPPORT for configuration issues. For this moment the support is ONLY FOR RUNTIME BUGS. We apologize for the possible inconvenience.**
-> - **You MUST use one of our issue tracker templates.**
+> **FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
+> - **Use one of our issue tracker templates.**
 > - **For Plugin runtime bugs always attach:**
 >  - **The FULL latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
 >  - **The FULL [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
