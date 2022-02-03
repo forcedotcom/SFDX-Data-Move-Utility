@@ -4,8 +4,7 @@
 - **The changelog (including only important updates) can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
 
 ```bash
-> ** THIS TOOL HAS LIMITED SUPPORT BASED ON OUR FREE TIME. **
-> ** NO SLA ENFORCED AS SUPPORT TO ISSUES RAISED. **
+> ** THIS TOOL HAS LIMITED SUPPORT AND NO SLA ENFORCED AS SUPPORT TO ISSUES RAISED. **
 > ** HOWEVER, WE GIVE OUR BEST EFFORT TO RETURN AND ADDRESS EACH ISSUE AS POSSIBLE. **
 ```
 
