@@ -1,7 +1,7 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
 - **For the detailed documentation, visit the [SFDMU Help Center](https://help.sfdmu.com/)**
-- **The changelog (including only important updates) can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
+- **The changelog can be found [here](https://help.sfdmu.com/full-documentation/additional-information/changelog)**
 
 ```bash
 > **       PLEASE NOTE, THIS TOOL HAS LIMITED SUPPORT
