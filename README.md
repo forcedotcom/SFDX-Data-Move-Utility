@@ -3,7 +3,7 @@
 - **For the documentation, visit the [SFDMU Help Center](https://help.sfdmu.com/)**
 
 ```bash
-> **     PLEASE NOTE, THIS TOOL HAS LIMITED SUPPORT
+> **     THIS TOOL HAS LIMITED SUPPORT
 > **     AND NO SLA ENFORCED AS SUPPORT TO ISSUES RAISED.
 > **
 > ** !!! IMORTANT NOTE! AT THIS MOMENT WE DO NOT OFFER SUPPORT    !!! ☜ ☜ ☜
