@@ -1,6 +1,6 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
-- **For the documentation, visit the [SFDMU Help Center](https://help.sfdmu.com/)**
+- **For the documentation, visit the [SFDMU Help Center](https://wiki-sfdmu.herokuapp.com/)**
 
 ```bash
 > **     THIS TOOL HAS LIMITED SUPPORT
