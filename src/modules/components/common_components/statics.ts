@@ -142,9 +142,10 @@ export const CONSTANTS = {
         'DandBCompany'
     ],
 
-    FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT: [
-        'MasterRecordId'
-    ],
+    FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT: {
+        '*' : ['MasterRecordId'],
+        'Opportunity' : ['ContactId']
+    },
 
     FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_ACCOUNT: [
         "FirstName",

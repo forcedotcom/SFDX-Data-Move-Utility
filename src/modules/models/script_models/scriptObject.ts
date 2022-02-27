@@ -649,8 +649,13 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
           if (!(
             fieldDescribe.lookup &&
             (
+              // By fields
               CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
-              || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.name) >= 0
+              // By object (all objects)
+              || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT['*'].indexOf(fieldDescribe.name) >= 0
+              // By object (speciic object)
+              || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name]
+                    && CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name].indexOf(fieldDescribe.name) >= 0
             )
             || !fieldDescribe.isSimple
           )
