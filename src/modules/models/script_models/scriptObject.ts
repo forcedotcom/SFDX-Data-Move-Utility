@@ -655,7 +655,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
               || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT['*'].indexOf(fieldDescribe.name) >= 0
               // By object (speciic object)
               || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name]
-                    && CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name].indexOf(fieldDescribe.name) >= 0
+              && CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name].indexOf(fieldDescribe.name) >= 0
             )
             || !fieldDescribe.isSimple
           )
@@ -804,11 +804,15 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       let fieldsInOriginalQuery: string[] = [].concat(this.fieldsInQuery);
       this.parsedQuery.fields = new Array<SOQLField>();
       fieldsInOriginalQuery.forEach(fieldName => {
-        fieldName = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR)[0];
-        if (missingDeclarations.indexOf(fieldName) < 0) {
+        if (Common.isComplexOr__rField(fieldName)) {
           this.parsedQuery.fields.push(getComposedField(fieldName));
         } else {
-          this.script.logger.infoNormal(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
+          fieldName = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR)[0];
+          if (missingDeclarations.indexOf(fieldName) < 0) {
+            this.parsedQuery.fields.push(getComposedField(fieldName));
+          } else {
+            this.script.logger.infoNormal(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
+          }
         }
       });
 
