@@ -194,6 +194,9 @@ export const CONSTANTS = {
         ['AccountContactRelation', ['Account', 'Contact', 'Case']]
     ]),
 
+    OBJECTS_TO_FERIFY_IN_QUERY_TRANSFORM : ['Group'],
+    EXTRA_OBJECTS_TO_DESCRIBE: ['Group'],
+
     BLOB_FIELDS: new Array<IBlobField>(
         {
             objectName: "Attachment",

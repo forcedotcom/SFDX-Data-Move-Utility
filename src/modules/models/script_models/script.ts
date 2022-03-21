@@ -1,3 +1,4 @@
+import { Sfdx } from './../../components/common_components/sfdx';
 /*
  * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
@@ -18,7 +19,7 @@ import {
   getComposedField,
   Field as SOQLField
 } from 'soql-parser-js';
-import { ScriptOrg, ScriptObject, ObjectFieldMapping } from "..";
+import { ScriptOrg, ScriptObject, ObjectFieldMapping, SObjectDescribe } from "..";
 import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
 import * as path from 'path';
@@ -112,6 +113,10 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   addonManager: SfdmuRunAddonManager;
   runInfo: ICommandRunInfo;
   canModify: string;
+
+  // Additional sobject descriptions for sobject which were nbot included into the export.json
+  // but necessary for the job
+  extraSObjectDescriptions: Map<string, SObjectDescribe> = new Map<string, SObjectDescribe>();
 
   get sFOrg(): ScriptOrg {
     return !this.sourceOrg.isFileMedia ? this.sourceOrg : this.targetOrg;
@@ -368,6 +373,11 @@ export default class Script implements IAppScript, ISfdmuRunScript {
       await thisObject.describeAsync();
     }
 
+    for (let objectIndex = 0; objectIndex < CONSTANTS.EXTRA_OBJECTS_TO_DESCRIBE.length; objectIndex++) {
+      const objectName = CONSTANTS.EXTRA_OBJECTS_TO_DESCRIBE[objectIndex];
+      await this.describeExtraObjectAsync(objectName);
+    }
+
     // Add parent related ScriptObjects and link between related objects
     for (let objectIndex = this.objects.length - 1; objectIndex >= 0; objectIndex--) {
 
@@ -530,6 +540,18 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     });
 
 
+  }
+
+  /**
+  * Describes extra object
+  */
+  async describeExtraObjectAsync(objectName: string): Promise<void> {
+    const org = this.sourceOrg.media == DATA_MEDIA_TYPE.Org ? this.sourceOrg : this.targetOrg;
+    const messageSource = this.sourceOrg.media == DATA_MEDIA_TYPE.Org ? RESOURCES.source : RESOURCES.target;
+    this.logger.infoNormal(RESOURCES.gettingMetadataForSObject, objectName, this.logger.getResourceString(messageSource));
+    let apisf = new Sfdx(org);
+    const description = await apisf.describeSObjectAsync(objectName);
+    this.extraSObjectDescriptions.set(objectName, description);
   }
 
   /**

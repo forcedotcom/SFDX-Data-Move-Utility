@@ -2040,14 +2040,21 @@ export default class MigrationJobTask {
   }
 
   private _transformQuery(query: string, sourceSObjectName: string) {
+
     let sourceParsedQuery = parseQuery(query);
     sourceSObjectName = sourceParsedQuery.sObject;
     let scriptObject = this.script.objectsMap.get(sourceSObjectName);
-    if (scriptObject) {
-      let fields = [];
-      sourceParsedQuery.fields.forEach((f: FieldType) => {
-        let field = f as SOQLField;
-        let rawValue = String(field["rawValue"] || field.field);
+    let extraObjectDescr = this.script.extraSObjectDescriptions.get(sourceSObjectName);
+
+    let fields = [];
+    sourceParsedQuery.fields.forEach((f: FieldType) => {
+
+      let field = f as SOQLField;
+      let rawValue = String(field["rawValue"] || field.field);
+      let fieldToAdd = rawValue;
+
+      // Object-related filters ++++++++++++++
+      if (scriptObject) {
         let describe = scriptObject.fieldsInQueryMap.get(rawValue);
         describe = describe || [...scriptObject.fieldsInQueryMap.values()]
           .filter(field => field.__rNames.filter(x => x == rawValue)[0])
@@ -2057,23 +2064,35 @@ export default class MigrationJobTask {
           // Start to transform fields/////
           // 1. Trasnsform polymorfic fields
           if (describe.isPolymorphicField && describe.is__r) {
-            fields.push(getComposedField(describe.getPolymorphicQueryField(rawValue)));
-          } else {
-            fields.push(getComposedField(rawValue));
+            fieldToAdd = describe.getPolymorphicQueryField(rawValue);
           }
-          // End to transform fields //////
-
-        } else {
-          fields.push(getComposedField(rawValue));
         }
-      });
-      sourceParsedQuery.fields = fields;
-      query = composeQuery(sourceParsedQuery);
-    }
+      }
+
+      // Other filters +++++++++++++
+      // 1. Field verification
+      if (extraObjectDescr && CONSTANTS.OBJECTS_TO_FERIFY_IN_QUERY_TRANSFORM.indexOf(sourceSObjectName) >= 0) {
+        if (!extraObjectDescr.fieldsMap.has(rawValue)) {
+          fieldToAdd = '';
+        }
+      }
+
+      // Add to fields list ++++++++
+      if (fieldToAdd) {
+        fields.push(getComposedField(fieldToAdd));
+      }
+
+
+    });
+
+    sourceParsedQuery.fields = fields;
+    query = composeQuery(sourceParsedQuery);
+
     return {
       targetSObjectName: sourceSObjectName,
       query
     };
+
   }
 
   private _mapSourceQueryToTarget(query: string, sourceSObjectName: string): IFieldMappingResult {
