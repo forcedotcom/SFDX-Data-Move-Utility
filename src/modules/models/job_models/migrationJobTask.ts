@@ -1797,7 +1797,7 @@ export default class MigrationJobTask {
             } catch (ex) { }
           }
           // Use regular replace
-          newValue = newValue ? valuesMap.get(String(newValue)) || newValue : valuesMap.get(rawValue);
+          newValue = newValue ? valuesMap.get(String(newValue)) || newValue : valuesMap.get(rawValue) || rawValue;
 
           // Correct values
           newValue = newValue == 'TRUE' || newValue == 'true' ? true :
