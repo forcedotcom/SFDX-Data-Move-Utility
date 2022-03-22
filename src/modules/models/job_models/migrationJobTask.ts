@@ -1798,6 +1798,7 @@ export default class MigrationJobTask {
           }
           // Use regular replace
           newValue = newValue ? valuesMap.get(String(newValue)) || newValue : valuesMap.get(rawValue);
+          newValue = newValue == undefined && rawValue != undefined ? rawValue : newValue;
 
           // Correct values
           newValue = newValue == 'TRUE' || newValue == 'true' ? true :
