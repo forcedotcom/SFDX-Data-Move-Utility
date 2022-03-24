@@ -1724,7 +1724,9 @@ export default class MigrationJobTask {
    * @memberof MigrationJobTask
    */
   getParallelThreadCount(): number {
-    return this.apiEngine.getIsRestApiEngine() ? this.scriptObject.script.parallelRestJobs : this.scriptObject.script.parallelBulkJobs;
+    return this.apiEngine.getIsRestApiEngine() ?
+      (this.scriptObject.parallelRestJobs || this.scriptObject.script.parallelRestJobs)
+      : (this.scriptObject.parallelBulkJobs || this.scriptObject.script.parallelBulkJobs);
   }
 
   /**
