@@ -82,6 +82,9 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   useQueryAll: boolean;
   queryAllTarget: boolean;
 
+  parallelBulkJobs: number = 1;
+  parallelRestJobs: number = 1;
+
   @Type(() => ScriptAddonManifestDefinition)
   beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
