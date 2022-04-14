@@ -78,7 +78,8 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   master: boolean = true;
   excludedFields: Array<string> = new Array<string>();
   excudedFromUpdateFields: Array<string> = new Array<string>();
-  restApiBatchSize: number = CONSTANTS.DEFAULT_REST_API_BATCH_SIZE;
+  bulkApiV1BatchSize: number;
+  restApiBatchSize: number;
   useQueryAll: boolean;
   queryAllTarget: boolean;
 
@@ -129,6 +130,22 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   excludedFieldsFromUpdate: Array<string> = new Array<string>();
   originalExternalIdIsEmpty: boolean = false;
   extraFieldsToUpdate: Array<string> = new Array<string>();
+
+
+
+  get batchSizes(): {
+    restBatchSize: number,
+    bulkV1BatchSize: number
+  } {
+    return {
+      restBatchSize: this.restApiBatchSize ? this.restApiBatchSize
+        : this.script.restApiBatchSize ? this.script.restApiBatchSize
+          : CONSTANTS.DEFAULT_REST_API_BATCH_SIZE,
+      bulkV1BatchSize: this.restApiBatchSize ? this.restApiBatchSize
+        : this.script.restApiBatchSize ? this.script.restApiBatchSize
+          : CONSTANTS.DEFAULT_BULK_API_V1_BATCH_SIZE
+    }
+  }
 
   get sourceTargetFieldMapping(): ObjectFieldMapping {
     return this.script.sourceTargetFieldMapping.get(this.name) || new ObjectFieldMapping(this.name, this.name);

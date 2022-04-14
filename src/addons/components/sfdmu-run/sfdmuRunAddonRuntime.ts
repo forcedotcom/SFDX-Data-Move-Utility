@@ -198,7 +198,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
                         pollingIntervalMs: this.#script.pollingIntervalMs,
                         concurrencyMode: this.#script.concurrencyMode,
                         updateRecordId,
-                        bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
+                        bulkApiV1BatchSize: task.scriptObject.batchSizes.bulkV1BatchSize,
                         targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
                         createTargetCSVFiles: this.#script.createTargetCSVFiles,
                         targetFieldMapping: null
@@ -214,7 +214,6 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
                         pollingIntervalMs: this.#script.pollingIntervalMs,
                         concurrencyMode: this.#script.concurrencyMode,
                         updateRecordId,
-                        bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
                         targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
                         createTargetCSVFiles: this.#script.createTargetCSVFiles,
                         targetFieldMapping: null
@@ -230,11 +229,10 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
                         pollingIntervalMs: this.#script.pollingIntervalMs,
                         concurrencyMode: this.#script.concurrencyMode,
                         updateRecordId,
-                        bulkApiV1BatchSize: this.#script.bulkApiV1BatchSize,
                         targetCSVFullFilename: TaskData.getTargetCSVFilename(this.#script.targetDirectory, sObjectName, operation),
                         createTargetCSVFiles: this.#script.createTargetCSVFiles,
                         targetFieldMapping: null,
-                        restApiBatchSize: task.scriptObject.restApiBatchSize || this.#script.restApiBatchSize,
+                        restApiBatchSize: task.scriptObject.batchSizes.restBatchSize,
                         binaryDataCache: this.#script.binaryDataCache,
                         binaryCacheDirectory: this.#script.binaryCacheDirectory
                     });

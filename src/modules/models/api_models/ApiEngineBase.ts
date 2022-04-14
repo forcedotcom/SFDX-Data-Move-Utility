@@ -32,7 +32,7 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
 
   concurrencyMode: string;
   pollingIntervalMs: number
-  bulkApiV1BatchSize: number;
+
 
   allOrNone: boolean;
   operation: OPERATION;
@@ -53,7 +53,10 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
   numberJobTotalRecordsToProcess: number = 0;
 
   binaryDataCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
+
   restApiBatchSize: number;
+  bulkApiV1BatchSize: number;
+
   binaryCacheDirectory: string;
 
   fieldsNotToWriteInTargetCSVFile: Array<string> = new Array<string>();
