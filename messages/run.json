@@ -41,5 +41,8 @@
     "errorMissingRequiredFlag": "Missing required flag %s",
 
     "canModifyFlagDescription": "[Optional] Allows modification of target production environment without preliminary prompting the user about it.",
-    "canModifyFlagLongDescription": "[Optional] When production environment is set as the Target and this flag is set to the target DOMAIN NAME (for example prod-instance.my.salesforce.com), the Plugin will not ask the user for the approval to make modifications, otherwise the user will be prompted to prevent the critical data from destroying by accident."
-}
+    "canModifyFlagLongDescription": "[Optional] When production environment is set as the Target and this flag is set to the target DOMAIN NAME (for example prod-instance.my.salesforce.com), the Plugin will not ask the user for the approval to make modifications, otherwise the user will be prompted to prevent the critical data from destroying by accident.",
+
+    "simulationFlagDescription": "[Optional] Turn on the simulation mode",
+    "simulationLongFlagDescription": "[Optional] The simulation mode allows to check which records will be affected by the export.json configuration without actual update, delete or insert them. It produces the similar output (target.csv, .log files) as the live mode, but there are no actual records will be affected."
+  }

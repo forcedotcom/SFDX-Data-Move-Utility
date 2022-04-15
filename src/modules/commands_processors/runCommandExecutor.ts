@@ -69,7 +69,7 @@ export default class RunCommandExecutor {
                 // --
             }
 
-            // At least one of the flags is required. 
+            // At least one of the flags is required.
             // The second is always the default one.
             if (!runProcess.m_flags.sourceusername && !runProcess.m_flags.targetusername) {
                 throw new CommandInitializationError(runProcess.commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
@@ -91,6 +91,7 @@ export default class RunCommandExecutor {
                 runProcess.m_flags.targetusername,
                 runProcess.m_flags.apiversion,
                 runProcess.m_flags.canmodify,
+                runProcess.m_flags.simulation,
                 runProcess.exportJson);
 
             await runProcess.command.setupAsync();

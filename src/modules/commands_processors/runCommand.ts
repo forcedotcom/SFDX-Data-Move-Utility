@@ -38,6 +38,7 @@ export class RunCommand {
     script: models.Script;
     job: Job;
     exportJson: string;
+    simulation: boolean;
 
     /**
      * New instance of RunCommand.
@@ -56,6 +57,7 @@ export class RunCommand {
         targetUsername: string,
         apiVersion: string,
         canModify: string,
+        simulation: boolean,
         exportJson: string) {
 
         this.pinfo = pinfo;
@@ -66,11 +68,12 @@ export class RunCommand {
         this.apiVersion = apiVersion;
         this.canModify = canModify;
         this.exportJson = exportJson;
+        this.simulation = simulation;
     }
 
 
 
-    // ----------------------- Public methods -------------------------------------------    
+    // ----------------------- Public methods -------------------------------------------
     /**
      * Setup the Command
      *
@@ -122,7 +125,8 @@ export class RunCommand {
             this.targetUsername,
             this.basePath,
             this.apiVersion,
-            this.canModify);
+            this.canModify,
+            this.simulation);
 
         this.logger.objectMinimal({
             [this.logger.getResourceString(RESOURCES.source)]: this.logger.getResourceString(RESOURCES.sourceOrg, this.script.sourceOrg.name),
@@ -174,7 +178,7 @@ export class RunCommand {
 
     /**
     * Prepare the migration job
-    * 
+    *
     * @returns {Promise<void>}
     * @memberof RunCommand
     */

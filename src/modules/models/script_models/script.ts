@@ -206,13 +206,15 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     targetUsername: string,
     basePath: string,
     apiVersion: string,
-    canModify: string): Promise<void> {
+    canModify: string,
+    simulation: boolean): Promise<void> {
 
     // Initialize script
     this.logger = logger;
     this.basePath = basePath;
     this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
     this.canModify = canModify || "";
+    this.simulationMode = this.simulationMode || simulation;
 
     // Message about the running version
     this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
