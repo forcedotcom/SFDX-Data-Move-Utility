@@ -2,7 +2,7 @@
 name: FEATURE REQUEST
 about: Suggest an idea for this project
 title: "[FEATURE REQUEST]-Title"
-labels: Roadmap
+labels: New feature/Change
 assignees: hknokh
 
 ---
