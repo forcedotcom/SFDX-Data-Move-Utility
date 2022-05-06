@@ -1040,7 +1040,7 @@ export default class MigrationJobTask {
           return field.isSimpleReference && self.data.nextTasks.concat(self).indexOf(field.parentLookupObject.task) >= 0;
       }).concat(new SFieldDescribe({
         name: CONSTANTS.__ID_FIELD_NAME
-      }), updateMode == "forwards" ? self.scriptObject.extraFieldsToUpdate.map(name => {
+      }), updateMode == "forwards" ? self.scriptObject.getExtraFieldsToUpdate().map(name => {
         return new SFieldDescribe({
           name
         });
