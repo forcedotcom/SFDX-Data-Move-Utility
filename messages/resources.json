@@ -9,6 +9,7 @@
     "Pass2": "PASS 2",
     "Pass3": "PASS 3",
     "Pass4": "PASS 4",
+    "ObjectSetStarted": "OBJECT SET #%s STARTED",
     "csvFile": "CSV file",
     "org": "Org",
     "sourceOrg": "%s.",
@@ -164,13 +165,12 @@
 
     "deletingTargetData": "Deleting old data from the Target ...",
     "deletingSourceData": "Deleting data from the Source ...",
-    
 
     "deletingTargetSObjectRecords": "{%s} Deleting old records from the Target ...",
     "deletingSourceSObjectRecords": "{%s} Deleting records from the Source ...",
 
     "deletingNRecordsWillBeDeleted": "{%s} Number of records to Delete: %s.",
-    "deletingRecordsCompleted": "{%s} Deleting records has been completed.",    
+    "deletingRecordsCompleted": "{%s} Deleting records has been completed.",
     "nothingToDelete": "{%s} No records to delete.",
     "nothingToDelete2": "No data to delete.",
 
@@ -206,7 +206,7 @@
     "updatingSummary": "Data processing summary",
     "updatingTotallyUpdated": "{%s} Total processed within all stages (Insert + Update): %s records.",
 
-    "processingAddon": "Processing Add-On event handlers ...", 
+    "processingAddon": "Processing Add-On event handlers ...",
     "runAddonMethod": "{%s} Executing of the event:%s Add-On handlers has started",
     "nothingToProcess": "No Add-On modules found to process.",
     "startAddonExecute" : "[%s] {%s} Executing of the Add-On module has started",
@@ -217,5 +217,5 @@
 
     "writingToCacheFile": "{%s} Writing to the cache file: %s.",
     "readingFromCacheFile": "{%s} Reading from the cache file: %s."
-    
+
 }

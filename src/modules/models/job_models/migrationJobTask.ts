@@ -1051,6 +1051,9 @@ export default class MigrationJobTask {
         processedData.fields.push(self.data.sFieldsInQuery.filter(field => field.nameId == "Id")[0]);
       }
 
+      // Remove incorrect fields
+      processedData.fields = processedData.fields.filter(x => !!x);
+
       // Remove unsupported fields for person accounts/contacts /////////
       if (self.data.isPersonAccountOrContact) {
         if (!processPersonAccounts) {

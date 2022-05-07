@@ -49,12 +49,6 @@ export default class Run extends SfdxCommand implements IRunProcess {
   public static description = commandMessages.getMessage('commandDescription');
   public static longDescription = commandMessages.getMessage('commandLongDescription');
 
-  // TODO: Add deprecation to the command if neededsfdx sfdmu:
-  // public static deprecated = {
-  //     version: 47,
-  //     to: 'force:package:create'
-  // };
-
   public static readonly flagsConfig: FlagsConfig = {
     sourceusername: flags.string({
       char: "s",

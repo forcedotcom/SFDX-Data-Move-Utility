@@ -94,13 +94,17 @@ export default class RunCommandExecutor {
                 runProcess.m_flags.simulation,
                 runProcess.exportJson);
 
-            await runProcess.command.setupAsync();
-            await runProcess.command.createJobAsync();
-            await runProcess.command.processCSVFilesAsync();
-            await runProcess.command.prepareJobAsync();
-            await runProcess.command.runAddonEventAsync(ADDON_EVENTS.onBefore);
-            await runProcess.command.executeJobAsync();
-            await runProcess.command.runAddonEventAsync(ADDON_EVENTS.onAfter);
+            const objectSetsAmount = await runProcess.command.loadAsync();
+
+            for (let objectSetIndex = 0; objectSetIndex < objectSetsAmount; objectSetIndex++) {
+              await runProcess.command.setupObjectSetAsync(objectSetIndex);
+              await runProcess.command.createJobAsync();
+              await runProcess.command.processCSVFilesAsync();
+              await runProcess.command.prepareJobAsync();
+              await runProcess.command.runAddonEventAsync(ADDON_EVENTS.onBefore);
+              await runProcess.command.executeJobAsync();
+              await runProcess.command.runAddonEventAsync(ADDON_EVENTS.onAfter);
+            }
 
             // Exit - success
             Common.logger.commandExitMessage(
