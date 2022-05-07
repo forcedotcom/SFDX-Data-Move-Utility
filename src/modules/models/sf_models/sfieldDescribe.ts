@@ -170,7 +170,8 @@ export default class SFieldDescribe implements ISFieldDescribe {
     }
 
     get isSimpleReference(): boolean {
-        return this.lookup && !this.is__r;
+        const isSimpleReference = (CONSTANTS.SIMPLE_REFERENCE_FIELDS.get(this.objectName) || []).includes(this.name);
+        return isSimpleReference || this.lookup && !this.is__r;
     }
 
     get isSimpleSelfReference(): boolean {
@@ -222,7 +223,9 @@ export default class SFieldDescribe implements ISFieldDescribe {
      */
     get fullName__r(): string {
         if (this.lookup) {
-            return this.name__r + "." + Common.getComplexField(this.parentLookupObject.externalId);
+            const name = this.name__r + "." + Common.getComplexField(this.parentLookupObject.externalId);
+            const specialField = (CONSTANTS.__R_FIELD_MAPPING.get(this.objectName) || {})[name];
+            return specialField || name;
         } else {
             return this.name__r;
         }
@@ -238,7 +241,9 @@ export default class SFieldDescribe implements ISFieldDescribe {
      */
     get fullOriginalName__r(): string {
         if (this.lookup) {
-            return this.name__r + "." + Common.getComplexField(this.parentLookupObject.originalExternalId);
+            const name = this.name__r + "." + Common.getComplexField(this.parentLookupObject.originalExternalId);
+            const specialField = (CONSTANTS.__R_FIELD_MAPPING.get(this.objectName) || {})[name];
+            return specialField || name;
         } else {
             return this.name__r;
         }

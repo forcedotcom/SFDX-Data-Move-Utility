@@ -207,7 +207,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       return (<SOQLField>x).field;
     }).filter(x => !!x);
 
-    fields = fields.concat(this.extraFieldsToUpdate);
+    fields = fields.concat(this.getExtraFieldsToUpdate());
 
     return Common.distinctStringArray(fields);
   }
@@ -655,6 +655,9 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     return <OPERATION>operation;
   }
 
+  getExtraFieldsToUpdate() : string[] {
+    return  [].concat(CONSTANTS.FIELDS_TO_UPDATE_ALWAYS.get(this.name) || [], this.extraFieldsToUpdate);
+  }
 
 
   // ----------------------- Private members -------------------------------------------
@@ -831,6 +834,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
           if (missingDeclarations.indexOf(fieldName) < 0) {
             this.parsedQuery.fields.push(getComposedField(fieldName));
           } else {
+            this.parsedQuery.fields.push(getComposedField(fieldName));
             this.script.logger.infoNormal(RESOURCES.fieldMissingPolymorphicDeclaration, this.name, fieldName, fieldName);
           }
         }

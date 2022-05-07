@@ -254,7 +254,12 @@ export default class Script implements IAppScript, ISfdmuRunScript {
 
     // Remove excluded objects and unsupported objects
     this.objects = this.objects.filter(object => {
-      let rule = object.operation != OPERATION.Readonly && CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(object.name) < 0;
+      let supportedObjectsForOpertation = CONSTANTS.SUPPORTED_OBJECTS_FOR_OPERATION.get(object.name) || [];
+      let isSupportedForOperation = !supportedObjectsForOpertation.length
+        || supportedObjectsForOpertation.length && supportedObjectsForOpertation.includes(object.strOperation);
+      let rule = object.operation != OPERATION.Readonly
+        && CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(object.name) < 0
+        && isSupportedForOperation;
       let included = !object.excluded && (object.operation == OPERATION.Readonly || rule);
       if (!included) {
         this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
@@ -386,9 +391,10 @@ export default class Script implements IAppScript, ISfdmuRunScript {
       const thisObject = this.objects[objectIndex];
       this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
 
-      for (let fieldIndex = 0; fieldIndex < thisObject.fieldsInQuery.length; fieldIndex++) {
+      const fieldsInQuery = [...thisObject.fieldsInQuery];
+      for (let fieldIndex = 0; fieldIndex < fieldsInQuery.length; fieldIndex++) {
 
-        const thisField = thisObject.fieldsInQueryMap.get(thisObject.fieldsInQuery[fieldIndex]);
+        const thisField = thisObject.fieldsInQueryMap.get(fieldsInQuery[fieldIndex]);
 
         // Group + User => User
         let referencedObjectType = thisField.referencedObjectType == "Group" ? "User" : thisField.referencedObjectType;
