@@ -36,6 +36,7 @@ export enum RESOURCES {
   Pass2 = "Pass2",
   Pass3 = "Pass3",
   Pass4 = "Pass4",
+  ObjectSetStarted = "ObjectSetStarted",
   csvFile = "csvFile",
   org = "org",
   sourceOrg = "sourceOrg",

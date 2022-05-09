@@ -19,7 +19,7 @@ import {
   getComposedField,
   Field as SOQLField
 } from 'soql-parser-js';
-import { ScriptOrg, ScriptObject, ObjectFieldMapping, SObjectDescribe } from "..";
+import { ScriptOrg, ScriptObject, ObjectFieldMapping, SObjectDescribe, ScriptObjectSet } from "..";
 import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
 import MigrationJob from "../job_models/migrationJob";
 import * as path from 'path';
@@ -56,6 +56,9 @@ export default class Script implements IAppScript, ISfdmuRunScript {
 
   @Type(() => ScriptObject)
   objects: ScriptObject[] = new Array<ScriptObject>();
+
+  @Type(() => ScriptObjectSet)
+  objectSets: ScriptObjectSet[] = new Array<ScriptObjectSet>();
 
   pollingIntervalMs: number = CONSTANTS.DEFAULT_POLLING_INTERVAL_MS;
   concurrencyMode: "Serial" | "Parallel" = "Parallel";
