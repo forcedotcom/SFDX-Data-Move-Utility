@@ -165,6 +165,8 @@ export default class MigrationJobTask {
     return csvIssues;
   }
 
+
+
   /**
    * Try to add missing lookup csv columns
    * - Adds missing id column on Insert operation.
@@ -174,7 +176,7 @@ export default class MigrationJobTask {
    * @returns {Promise<Array<ICSVIssueCsvRow>>}
    * @memberof MigrationJobTask
    */
-  async repairCSV(cachedCSVContent: CachedCSVContent): Promise<Array<ICSVIssueCsvRow>> {
+  async repairCSV(cachedCSVContent: CachedCSVContent, fixColumns: boolean): Promise<Array<ICSVIssueCsvRow>> {
 
     let self = this;
     let csvIssues = new Array<ICSVIssueCsvRow>();
@@ -192,39 +194,45 @@ export default class MigrationJobTask {
 
     let firstRow = currentFileMap.values().next().value;
 
-    // Removes extra spaces from column headers
-    ___trimColumnNames(firstRow);
+    if (fixColumns) {
 
-    if (this.scriptObject.useCSVValuesMapping && this.job.valueMapping.size > 0) {
-      // Update csv rows with csv value mapping
-      ___mapCSVValues(firstRow);
-    }
+      // Removes extra spaces from column headers
+      ___trimColumnNames(firstRow);
 
-    if (!firstRow.hasOwnProperty("Id") || this.script.excludeIdsFromCSVFiles) {
+      if (this.scriptObject.useCSVValuesMapping && this.job.valueMapping.size > 0) {
+        // Update csv rows with csv value mapping
+        ___mapCSVValues(firstRow);
+      }
 
       // Add missing id column
       if (!firstRow.hasOwnProperty("Id")) {
         ___addMissingIdColumn();
       }
 
-      // Update child lookup id columns
-      let child__rSFields = this.scriptObject.externalIdSFieldDescribe.child__rSFields;
-      for (let fieldIndex = 0; fieldIndex < child__rSFields.length; fieldIndex++) {
-        const childIdSField = child__rSFields[fieldIndex].idSField;
-        await ___updateChildOriginalIdColumnsAsync(childIdSField);
-      }
-    }
+    } else {
 
-    // Add missing lookup columns
-    for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
-      const sField = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
-      if (sField.lookup && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
-        await ___addMissingLookupColumnsAsync(sField);
-      }
-    }
+      if (!firstRow.hasOwnProperty("Id") || this.script.excludeIdsFromCSVFiles) {
 
-    // RecordType.DeveloperName old-fashion backward support
-    ___fixOldRecordTypeColumns();
+        // Update child lookup id columns
+        let child__rSFields = this.scriptObject.externalIdSFieldDescribe.child__rSFields;
+        for (let fieldIndex = 0; fieldIndex < child__rSFields.length; fieldIndex++) {
+          const childIdSField = child__rSFields[fieldIndex].idSField;
+          await ___updateChildOriginalIdColumnsAsync(childIdSField);
+        }
+      }
+
+      // Add missing lookup columns
+      for (let fieldIndex = 0; fieldIndex < this.data.fieldsInQuery.length; fieldIndex++) {
+        const sField = this.data.fieldsInQueryMap.get(this.data.fieldsInQuery[fieldIndex]);
+        if (sField.lookup && (!firstRow.hasOwnProperty(sField.fullName__r) || !firstRow.hasOwnProperty(sField.nameId))) {
+          await ___addMissingLookupColumnsAsync(sField);
+        }
+      }
+
+      // RecordType.DeveloperName old-fashion backward support
+      ___fixOldRecordTypeColumns();
+
+    }
 
     return csvIssues;
 
