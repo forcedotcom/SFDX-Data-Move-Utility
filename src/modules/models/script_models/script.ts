@@ -130,7 +130,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   }
 
   get isPersonAccountEnabled(): boolean {
-    return this.sourceOrg.isPersonAccountEnabled || this.targetOrg.isPersonAccountEnabled;
+    return this.sourceOrg.isPersonAccountEnabled && this.targetOrg.isPersonAccountEnabled;
   }
 
   get bulkApiVersionNumber(): number {
