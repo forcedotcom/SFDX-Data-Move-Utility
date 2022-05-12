@@ -115,9 +115,11 @@ export class RunCommand {
 
     try {
       let jsonObject = JSON.parse(json);
-      jsonObject.objects =  jsonObject.objects || [];
+      jsonObject.objects = jsonObject.objects || [];
       jsonObject.objectSets = jsonObject.objectSets || [];
-      jsonObject.objectSets.unshift(new ScriptObjectSet(jsonObject.objects));
+      if (jsonObject.objects.length) {
+        jsonObject.objectSets.unshift(new ScriptObjectSet(jsonObject.objects));
+      }
       this.workingJson = JSON.stringify(jsonObject);
       jsonObject.objects = [];
       this.script = plainToClass(models.Script, jsonObject);
@@ -143,10 +145,6 @@ export class RunCommand {
 
     //Initialize script for multi object set
     this._initScript(objectSetIndex);
-
-    if (this.script.objects.length == 0 && objectSetIndex > 0) {
-      return;
-    }
 
     // Setup script object
     await this.script.setupAsync(this.pinfo,
