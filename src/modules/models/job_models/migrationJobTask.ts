@@ -404,6 +404,8 @@ export default class MigrationJobTask {
               } else {
                 csvRow[columnNameId] = parentCsvRow["Id"];
               }
+            } else {
+              csvRow[columnNameId] = null;
             }
           } else if (!csvRow.hasOwnProperty(columnName__r)) {
             if (!csvRow.hasOwnProperty(columnNameId)) {
@@ -437,6 +439,8 @@ export default class MigrationJobTask {
                 isFileChanged = true;
                 csvRow[columnName__r] = parentCsvRow[parentExternalId];
               }
+            } else {
+              csvRow[columnName__r] = null;
             }
           }
         });
