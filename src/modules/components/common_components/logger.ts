@@ -115,6 +115,7 @@ export enum RESOURCES {
   successfullyConnected = "successfullyConnected",
   tryingToConnectCLIFailed = "tryingToConnectCLIFailed",
   sourceTargetCouldNotBeTheSame = "sourceTargetCouldNotBeTheSame",
+  youCantImportAndExportIntoCSVFile = "youCantImportAndExportIntoCSVFile",
   accessToOrgExpired = "accessToOrgExpired",
   MalformedQuery = "MalformedQuery",
   MalformedDeleteQuery = "MalformedDeleteQuery",

@@ -655,8 +655,8 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     return <OPERATION>operation;
   }
 
-  getExtraFieldsToUpdate() : string[] {
-    return  [].concat(CONSTANTS.FIELDS_TO_UPDATE_ALWAYS.get(this.name) || [], this.extraFieldsToUpdate);
+  getExtraFieldsToUpdate(): string[] {
+    return [].concat(CONSTANTS.FIELDS_TO_UPDATE_ALWAYS.get(this.name) || [], this.extraFieldsToUpdate);
   }
 
 
@@ -667,20 +667,40 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     if (this.multiselectPattern) {
       let pattern = this.multiselectPattern;
       [...describe.fieldsMap.values()].forEach(fieldDescribe => {
-        if ((___compare(pattern.all != "undefined", pattern.all == true)
-          || !Object.keys(pattern).some(prop => ___compare(fieldDescribe[prop], pattern[prop], true)))) {
-          if (!(
+
+        // *** Rules when to add this field to the query:
+        if (
+          // 1. if "all" query multiselect keyword is used
+          (Common.isDescriptionPropertyMatching(pattern.all != "undefined", pattern.all == true)
+
+          // 2. OR no one of the query multiselect keywords is not matching the given field description
+          //            ==>  all leywords ARE MATCHING
+          || !Object.keys(pattern).some(prop => Common.isDescriptionPropertyMatching(fieldDescribe[prop], pattern[prop], true)))
+        ) {
+          if (
+            // *** Rules when we should OMIT THIS FIELD,
+            //     even it is matching the multiselect keyword (has passed the above rule check):
+            !(
+
+            // 1. If this is LOOKUP field + one of the following conditions are met:
             fieldDescribe.lookup &&
             (
-              // By fields
+              // THIS FIELD is restricted for use in multiselect within the PARENT OBJECT
               CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
-              // By object (all objects)
+              // ...OR THIS FIELD is restricted for use in multiselect within ALL OBJECTS
               || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT['*'].indexOf(fieldDescribe.name) >= 0
-              // By object (speciic object)
-              || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name]
-              && CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name].indexOf(fieldDescribe.name) >= 0
+
+              // ...OR ALL FIELDS for the current object ARE RESTRICTED for use in multiselect
+              || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name] // this object is restricted
+                                && CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name].indexOf(fieldDescribe.name) >= 0 // + this field is restricted for this object
             )
+
+
+            // 2. OR if this is NOT LOOKUP field,
+            //        but still again it's not a simple field (like 'Name' or 'Test__c'), but it's something other complex field type
+            //        like a "Account__r.ParentId"
             || !fieldDescribe.isSimple
+
           )
           ) {
             this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
@@ -743,13 +763,6 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     // Create new query string
     this.query = composeQuery(this.parsedQuery);
 
-    // ---------------------- Internal functions --------------------------- //
-    function ___compare(fieldDescribeProperty: any, patternProperty: any, negative: boolean = false): boolean {
-      if (!negative)
-        return fieldDescribeProperty == patternProperty || typeof patternProperty == "undefined";
-      else
-        return fieldDescribeProperty != patternProperty && typeof fieldDescribeProperty != "undefined";
-    }
   }
 
   private _fixObjectName() {
@@ -929,11 +942,17 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     parsedQuery.fields = [getComposedField("Id")];
     fields.forEach(field => {
       let fieldName = ((<SOQLField>field).field).toLowerCase();
+      let parts = fieldName.split('_');
+      let multiselectAllPatternFieldName =  parts.length == 2 ? (parts[0] + '_*') : null;
       if (fieldName == "all") {
         ___set("all_true");
       } else if (CONSTANTS.MULTISELECT_SOQL_KEYWORDS.indexOf(fieldName) >= 0) {
         ___set(fieldName);
-      } else if (fieldName != "id") {
+      }
+      else if (CONSTANTS.MULTISELECT_SOQL_KEYWORDS.indexOf(multiselectAllPatternFieldName) >= 0) {
+        ___set(fieldName);
+      }
+      else if (fieldName != "id") {
         fieldName = field["rawValue"] || (<SOQLField>field).field;
         let parts = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR);
         if (parts.length > 1) {
@@ -950,7 +969,12 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     function ___set(fieldName: string) {
       self.multiselectPattern = self.multiselectPattern || {};
       let parts = fieldName.split('_');
-      self.multiselectPattern[parts[0]] = parts[1] == "true";
+      if (parts[1] == "true"
+        || parts[1] == "false") {
+        self.multiselectPattern[parts[0]] = parts[1] == "true";
+      } else {
+        self.multiselectPattern[parts[0]] = parts[1];
+      }
     }
   }
 

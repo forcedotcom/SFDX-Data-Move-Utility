@@ -46,6 +46,10 @@ export class MockGenerator {
             return prefix + self.counter.counter[field];
         });
 
+        casual.define('c_set_value', function (field : any, value: any = null) {
+          return value;
+        });
+
         casual.define('c_seq_date', function (field: any, from: any, step: any) {
             step = step || "d";
             if (!self.counter.counter[field]) {

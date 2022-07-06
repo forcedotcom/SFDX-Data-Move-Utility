@@ -577,6 +577,25 @@ export class Common {
   }
 
   /**
+   * Compares sfield property value against the given pattern.
+   * For example: description.type == 'string'.
+   * Typically used to test field names against multiselect keywords
+   *
+   * @static
+   * @param {*} fieldDescribeProperty The SDescription property value to test
+   * @param {*} patternProperty The pattern property to test
+   * @param {boolean} [negative=false] If true => returns a negative result
+   * @return {*}  {boolean}
+   * @memberof Common
+   */
+  public static isDescriptionPropertyMatching(fieldDescribeProperty: any, patternProperty: any, negative: boolean = false): boolean {
+    if (!negative)
+      return fieldDescribeProperty == patternProperty || typeof patternProperty == "undefined";
+    else
+      return fieldDescribeProperty != patternProperty && typeof fieldDescribeProperty != "undefined";
+  }
+
+  /**
    * Returns true if the field name is a  __r field name
    * (f.ex: for "Account__r.Name" => will return true,
    *        for "Id"  => will return false)
@@ -691,7 +710,7 @@ export class Common {
           const records = parse(input, {
             columns: ___columns,
             skip_empty_lines: true,
-            skip_lines_with_error : true,
+            skip_lines_with_error: true,
             cast: ___csvCast
           });
           resolve([...records]);
@@ -720,7 +739,7 @@ export class Common {
             const records = parse(input, {
               columns: true,
               skip_empty_lines: true,
-              skip_lines_with_error : true,
+              skip_lines_with_error: true,
               cast: ___csvCast
             });
             resolve([...records]);
@@ -1700,16 +1719,16 @@ export class Common {
     return argvObject;
   }
 
-/**
- * REturns the list of all enum values
- *
- * @static
- * @template T
- * @param {T} enumType
- * @return {*}
- * @memberof Common
- */
-public static getEnumValues<T>(enumType: T) {
+  /**
+   * REturns the list of all enum values
+   *
+   * @static
+   * @template T
+   * @param {T} enumType
+   * @return {*}
+   * @memberof Common
+   */
+  public static getEnumValues<T>(enumType: T) {
     type ValType = T extends { [k: string]: infer X } ? Exclude<X, string> : any;
 
     const entryNames = Object.keys(enumType).filter(key => !/[0-9]+/.test(key[0]));

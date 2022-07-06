@@ -38,7 +38,7 @@
     "jsonFlagDescription": "[Optional] Format the command output as json",
     "jsonLongFlagDescription": "[Optional] Return formatted json instead of text to stdout as a result of the command execution. Json result will also contain extended information as start time, end time, time elapsed etc.",
 
-    "errorMissingRequiredFlag": "Missing required flag %s",
+    "errorMissingRequiredFlag": "Missing required flag(s): %s",
 
     "canModifyFlagDescription": "[Optional] Allows modification of target production environment without preliminary prompting the user about it.",
     "canModifyFlagLongDescription": "[Optional] When production environment is set as the Target and this flag is set to the target DOMAIN NAME (for example prod-instance.my.salesforce.com), the Plugin will not ask the user for the approval to make modifications, otherwise the user will be prompted to prevent the critical data from destroying by accident.",

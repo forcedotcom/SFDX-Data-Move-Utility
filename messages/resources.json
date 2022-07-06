@@ -92,6 +92,7 @@
     "successfullyConnected": "Successfully connected to %s.",
     "tryingToConnectCLIFailed": "Attempt to connect to %s failed. Please, try to refresh your local SFDX CLI connection.",
     "sourceTargetCouldNotBeTheSame": "The source and the target could not be the same.",
+    "youCantImportAndExportIntoCSVFile": "You cannot import and export from/into CSV files. At least one org is required.",
     "accessToOrgExpired": "Access token to the %s has expired or the user has no access.",
     "MalformedQuery": "Malformed select query for the sObject %s: %s, error: %s.",
     "MalformedDeleteQuery": "Malformed delete query for the sObject %s: %s, error: %s.",
