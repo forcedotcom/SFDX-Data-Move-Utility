@@ -142,26 +142,25 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
 
 
   // ----------------------- Private members -------------------------------------------
-  private _parseForceOrgDisplayResult(commandResult: String): OrgInfo {
+  private _parseForceOrgDisplayResult(commandResult: string): OrgInfo {
     if (!commandResult) return null;
-    let lines = commandResult.split('\n');
+
+    const jsonObj = JSON.parse(commandResult);
+    if (jsonObj.status || !jsonObj.result) {
+      return null;
+    }
+
     let output: OrgInfo = new OrgInfo();
-    lines.forEach(line => {
-      if (line.startsWith("Access Token"))
-        output.AccessToken = line.split(' ').pop();
-      if (line.startsWith("Client Id"))
-        output.ClientId = line.split(' ').pop();
-      if (line.startsWith("Connected Status"))
-        output.ConnectedStatus = line.split(' ').pop();
-      if (line.startsWith("Status"))
-        output.Status = line.split(' ').pop();
-      if (line.startsWith("Id"))
-        output.OrgId = line.split(' ').pop();
-      if (line.startsWith("Instance Url"))
-        output.InstanceUrl = line.split(' ').pop();
-      if (line.startsWith("Username"))
-        output.Username = line.split(' ').pop();
+    Object.assign(output, {
+      AccessToken: jsonObj.result.accessToken,
+      ClientId: jsonObj.result.clientId,
+      ConnectedStatus: jsonObj.result.connectedStatus,
+      Status: jsonObj.result.status,
+      OrgId: jsonObj.result.id,
+      InstanceUrl: jsonObj.result.instanceUrl,
+      Username: jsonObj.result.username,
     });
+
     return output;
   };
 
@@ -200,7 +199,7 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
       if (!this.isConnected) {
         // Connect with SFDX
         this.script.logger.infoNormal(RESOURCES.tryingToConnectCLI, this.name);
-        let processResult = Common.execSfdx("force:org:display", this.name);
+        let processResult = Common.execSfdx("force:org:display --json", this.name);
         let orgInfo = this._parseForceOrgDisplayResult(processResult);
         if (!orgInfo.isConnected) {
           throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.tryingToConnectCLIFailed, this.name));

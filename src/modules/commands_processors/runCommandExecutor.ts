@@ -69,10 +69,15 @@ export default class RunCommandExecutor {
                 // --
             }
 
-            // At least one of the flags is required.
-            // The second is always the default one.
+            // At least one of the orgs is required to be specified.
+            // The second org is always the default one.
             if (!runProcess.m_flags.sourceusername && !runProcess.m_flags.targetusername) {
-                throw new CommandInitializationError(runProcess.commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
+                if (!runProcess.m_flags.targetusername) {
+                  throw new CommandInitializationError(runProcess.commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
+                }
+                if (!runProcess.m_flags.sourceusername) {
+                  throw new CommandInitializationError(runProcess.commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername']));
+                }
             }
 
             if (!runProcess.m_flags.sourceusername) {
