@@ -141,8 +141,8 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       restBatchSize: this.restApiBatchSize ? this.restApiBatchSize
         : this.script.restApiBatchSize ? this.script.restApiBatchSize
           : CONSTANTS.DEFAULT_REST_API_BATCH_SIZE,
-      bulkV1BatchSize: this.restApiBatchSize ? this.restApiBatchSize
-        : this.script.restApiBatchSize ? this.script.restApiBatchSize
+      bulkV1BatchSize: this.bulkApiV1BatchSize ? this.bulkApiV1BatchSize
+        : this.script.bulkApiV1BatchSize ? this.script.bulkApiV1BatchSize
           : CONSTANTS.DEFAULT_BULK_API_V1_BATCH_SIZE
     }
   }
