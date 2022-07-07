@@ -8,7 +8,7 @@
 import { Common } from "../components/common_components/common";
 import { ADDON_EVENTS } from "../components/common_components/enumerations";
 import { COMMAND_EXIT_STATUSES, Logger, RESOURCES } from "../components/common_components/logger";
-import { CONSTANTS } from "../components/common_components/statics";
+
 import {
     CommandAbortedByAddOnError,
     CommandAbortedByUserError,
@@ -70,22 +70,17 @@ export default class RunCommandExecutor {
             }
 
             // At least one of the orgs is required to be specified.
-            // The second org is always the default one.
+            // If missing, the second org will be the same one.
             if (!runProcess.m_flags.sourceusername && !runProcess.m_flags.targetusername) {
-                if (!runProcess.m_flags.targetusername) {
-                  throw new CommandInitializationError(runProcess.commandMessages.getMessage('errorMissingRequiredFlag', ['--targetusername']));
-                }
-                if (!runProcess.m_flags.sourceusername) {
-                  throw new CommandInitializationError(runProcess.commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername']));
-                }
+                throw new CommandInitializationError(runProcess.commandMessages.getMessage('errorMissingRequiredFlag', ['--sourceusername, --targetusername']));
             }
 
             if (!runProcess.m_flags.sourceusername) {
-                runProcess.m_flags.sourceusername = CONSTANTS.DEFAULT_ORG_MEDIA_TYPE;
+                runProcess.m_flags.sourceusername = runProcess.m_flags.targetusername;
             }
 
             if (!runProcess.m_flags.targetusername) {
-                runProcess.m_flags.targetusername = CONSTANTS.DEFAULT_ORG_MEDIA_TYPE;
+                runProcess.m_flags.targetusername = runProcess.m_flags.sourceusername;
             }
 
             let commandResult: any;

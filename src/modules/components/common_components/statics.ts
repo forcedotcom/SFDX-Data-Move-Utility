@@ -92,8 +92,10 @@ export const CONSTANTS = {
   MOCK_PATTERN_ENTIRE_ROW_FLAG: '--row',
   SPECIAL_MOCK_COMMANDS: [
     "c_seq_number",
-    "c_seq_date"
+    "c_seq_date",
+    "c_set_value"
   ],
+  MOCK_ALL_FIELDS_PATTERN: 'all',
 
   SPECIAL_MOCK_PATTERNS: new Map<SPECIAL_MOCK_PATTERN_TYPES, string>(
     [
@@ -191,7 +193,8 @@ export const CONSTANTS = {
     "lookup_true",
     "lookup_false",
     "person_true",
-    "person_false"
+    "person_false",
+    "type_*"
   ],
 
   SPECIAL_OBJECT_LOOKUP_MASTER_DETAIL_ORDER: new Map<string, Array<string>>([

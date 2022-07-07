@@ -1548,19 +1548,22 @@ export default class MigrationJobTask {
         return updatedRecords;
       }
       let recordIds = records.map(x => x["Id"]);
-      let recordProperties = Object.keys(records[0]);
+      let recordFields = Object.keys(records[0]);
       if (self.scriptObject.updateWithMockData && self.scriptObject.mockFields.length > 0) {
         let fieldNameToMockFieldMap: Map<string, IMockField> = new Map<string, IMockField>();
         self.data.sFieldsToUpdate.forEach(fieldDescribe => {
           let mockField = ___getMockPatternByFieldName(fieldDescribe.name);
-          if (recordProperties.indexOf(mockField.name) >= 0 && mockField.pattern) {
+          if ((recordFields.indexOf(mockField.name) >= 0
+            || mockField.name == CONSTANTS.MOCK_ALL_FIELDS_PATTERN && recordFields.indexOf(fieldDescribe.name))
+            && mockField.pattern) {
             let fn = mockField.pattern;
+            let mockFieldNameToUse = mockField.name == CONSTANTS.MOCK_ALL_FIELDS_PATTERN ? fieldDescribe.name : mockField.name;
             if (CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
-              fn = fn.replace(/\(/, `('${mockField.name}',`);
+              fn = fn.replace(/\(/, `('${mockFieldNameToUse}',`);
             }
             mockField.excludedRegex = mockField.excludedRegex || '';
             mockField.includedRegex = mockField.includedRegex || '';
-            fieldNameToMockFieldMap.set(mockField.name, <IMockField>{
+            fieldNameToMockFieldMap.set(mockFieldNameToUse, <IMockField>{
               fn,
               regExcl: mockField.excludedRegex.split(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
               regIncl: mockField.includedRegex.split(CONSTANTS.MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
@@ -1631,7 +1634,10 @@ export default class MigrationJobTask {
     }
 
     function ___getMockPatternByFieldName(fieldName: string): ScriptMockField {
-      return self.scriptObject.mockFields.filter(field => field.name == fieldName)[0] || new ScriptMockField();
+      return self.scriptObject.mockFields.filter(field =>
+        (field.name == fieldName
+          || field.name == CONSTANTS.MOCK_ALL_FIELDS_PATTERN)
+        && !field.excludeNames.includes(fieldName))[0] || new ScriptMockField();
     }
 
     /**

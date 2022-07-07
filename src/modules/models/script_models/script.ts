@@ -238,8 +238,9 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     this.targetOrg = this.orgs.filter(x => x.name == this.runInfo.targetUsername)[0] || new ScriptOrg();
     this.apiVersion = this.runInfo.apiVersion || this.apiVersion;
 
-    if (this.runInfo.sourceUsername.toLowerCase() == this.runInfo.targetUsername.toLowerCase()) {
-      throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.sourceTargetCouldNotBeTheSame));
+    if (this.runInfo.sourceUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME
+      && this.runInfo.targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME) {
+      throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.youCantImportAndExportIntoCSVFile));
     }
 
     if (this.simulationMode) {

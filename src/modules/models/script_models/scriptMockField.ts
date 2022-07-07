@@ -7,9 +7,9 @@
 
 import { ISfdmuRunCustomAddonScriptMockField } from "../../../addons/modules/sfdmu-run/custom-addons/package";
 
- 
+
 /**
- * Parsed MockField object 
+ * Parsed MockField object
  * from the script file
  *
  * @export
@@ -21,4 +21,5 @@ export default class ScriptMockField implements ISfdmuRunCustomAddonScriptMockFi
     pattern: string = "";
     excludedRegex: string = "";
     includedRegex: string = "";
+    excludeNames: string[] = [];
 }
