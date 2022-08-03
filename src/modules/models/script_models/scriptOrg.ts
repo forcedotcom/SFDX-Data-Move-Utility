@@ -145,7 +145,7 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
   private _parseForceOrgDisplayResult(commandResult: string): OrgInfo {
     if (!commandResult) return null;
 
-    const jsonObj = JSON.parse(commandResult);
+    const jsonObj = JSON.parse(commandResult.replace(/\n/g, ' '));
     if (jsonObj.status || !jsonObj.result) {
       return null;
     }
@@ -201,7 +201,7 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
         this.script.logger.infoNormal(RESOURCES.tryingToConnectCLI, this.name);
         let processResult = Common.execSfdx("force:org:display --json", this.name);
         let orgInfo = this._parseForceOrgDisplayResult(processResult);
-        if (!orgInfo.isConnected) {
+        if (!orgInfo || !orgInfo.isConnected) {
           throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.tryingToConnectCLIFailed, this.name));
         } else {
           Object.assign(this, {
