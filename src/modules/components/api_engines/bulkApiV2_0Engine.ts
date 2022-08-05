@@ -62,6 +62,9 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
         return BulkApiV2_0Engine;
     }
 
+    getStrOperation(): string {
+        return this.strOperation.toLowerCase() === "harddelete" ? "hardDelete" : this.strOperation.toLowerCase();
+    }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
         let chunks = Common.createCsvStringsFromArray(allRecords,
@@ -71,7 +74,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
             chunks,
             apiInfo: new ApiInfo({
                 jobState: "Undefined",
-                strOperation: this.strOperation,
+                strOperation: this.getStrOperation(),
                 sObjectName: this.sObjectName,
             }),
             allRecords
@@ -92,7 +95,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
 
 
         // Create bulk job ******************************************
-        let jobResult = await this.createBulkJobAsync(this.sObjectName, this.strOperation.toLowerCase());
+        let jobResult = await this.createBulkJobAsync(this.sObjectName, this.getStrOperation());
         if (progressCallback) {
             // Progress message: job was created
             progressCallback(jobResult);
@@ -231,7 +234,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                         jobId: info.id,
                         contentUrl: info.contentUrl,
                         sObjectName: self.sObjectName,
-                        strOperation: self.strOperation,
+                        strOperation: self.getStrOperation(),
                         jobState: info.state,
                         errorMessage: info.errorMessage
                     }));
@@ -277,7 +280,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                     resolve(new ApiInfo({
                         jobState: "UploadStart",
                         sObjectName: self.sObjectName,
-                        strOperation: self.strOperation,
+                        strOperation: self.getStrOperation(),
                     }));
                 }
                 else {
@@ -315,7 +318,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                     resolve(new ApiInfo({
                         jobState: info.state,
                         sObjectName: self.sObjectName,
-                        strOperation: self.strOperation,
+                        strOperation: self.getStrOperation(),
                     }));
                 }
                 else {
@@ -353,7 +356,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                         numberRecordsFailed: info.numberRecordsFailed,
                         numberRecordsProcessed: info.numberRecordsProcessed,
                         sObjectName: self.sObjectName,
-                        strOperation: self.strOperation,
+                        strOperation: self.getStrOperation(),
                     }));
                 }
                 else {
@@ -450,7 +453,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                         resolve(new ApiInfo({
                             jobState: "InProgress",
                             sObjectName: self.sObjectName,
-                            strOperation: self.strOperation,
+                            strOperation: self.getStrOperation(),
                         }));
                         return;
                     }
@@ -503,7 +506,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                             resultRecords,
                             jobState: "JobComplete",
                             sObjectName: self.sObjectName,
-                            strOperation: self.strOperation
+                            strOperation: self.getStrOperation()
                         }));
                     } catch (e : any) {
                         if (typeof e.message == "string") {
@@ -605,7 +608,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
                 errorMessage: error.message,
                 errorStack: error.stack,
                 sObjectName: this.sObjectName,
-                strOperation: this.strOperation,
+                strOperation: this.getStrOperation(),
             }));
         } else {
             // API error
@@ -615,7 +618,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
             resolve(new ApiInfo({
                 errorMessage: info.message,
                 sObjectName: this.sObjectName,
-                strOperation: this.strOperation,
+                strOperation: this.getStrOperation(),
             }));
         }
     }

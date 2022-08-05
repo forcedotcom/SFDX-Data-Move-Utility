@@ -40,6 +40,10 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
 
     getEngineClassType(): typeof ApiEngineBase {
         return BulkApiV1_0Engine;
+    }  
+
+    getStrOperation(): string {
+        return this.strOperation.toLowerCase() === "harddelete" ? "hardDelete" : this.strOperation.toLowerCase();
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
@@ -47,7 +51,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
         connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
         let job = connection.bulk.createJob(
             this.sObjectName,
-            this.strOperation.toLowerCase(),
+            this.getStrOperation(),
             {
                 concurrencyMode: this.concurrencyMode
             }
@@ -58,7 +62,7 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
             chunks,
             apiInfo: new ApiInfo({
                 jobState: "Undefined",
-                strOperation: this.strOperation,
+                strOperation: this.getStrOperation(),
                 sObjectName: this.sObjectName,
                 job,
                 jobId: job.id,

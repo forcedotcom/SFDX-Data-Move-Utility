@@ -56,6 +56,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   @Type(() => ScriptMappingItem)
   fieldMapping: ScriptMappingItem[] = new Array<ScriptMappingItem>();
 
+  hardDelete: boolean = false;
   query: string = "";
   deleteQuery: string = "";
   operation: OPERATION = OPERATION.Readonly;

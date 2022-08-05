@@ -18,6 +18,7 @@ import { ISfdmuRunCustomAddonScriptAddonManifestDefinition, ISfdmuRunCustomAddon
  */
 export default interface ISfdmuRunCustomAddonScriptObject {
 
+    hardDelete?: boolean;
     mockFields?: ISfdmuRunCustomAddonScriptMockField[];
     fieldMapping?: ISfdmuRunCustomAddonScriptMappingItem[];
     query?: string;
