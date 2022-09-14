@@ -115,7 +115,7 @@ export const CONSTANTS = {
     'User',
     'Group',
     'DandBCompany',
-    //'ContentVersion'// Content version has deprecated using the SFDMU core in favor to the ExportFiles Add-On Module
+    'ContentVersion'// Content version has deprecated using the SFDMU core in favor to the ExportFiles Add-On Module
   ],
 
   SUPPORTED_OBJECTS_FOR_OPERATION: new Map<string, Array<string>>([
