@@ -956,7 +956,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       else if (fieldName != "id") {
         fieldName = field["rawValue"] || (<SOQLField>field).field;
         let parts = fieldName.split(CONSTANTS.REFERENCE_FIELD_OBJECT_SEPARATOR);
-        if (parts.length > 1) {
+        if (parts.length > 1 && !fieldName.includes(".")) {
           self.referenceFieldToObjectMap.set(parts[0], parts[1]);
           fieldName = parts[0];
         }

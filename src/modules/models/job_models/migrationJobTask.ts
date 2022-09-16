@@ -111,18 +111,23 @@ export default class MigrationJobTask {
 
     // Check csv file --------------------------------------
     if (!fs.existsSync(this.data.sourceCsvFilename)) {
+
       // Missing or empty file
-      csvIssues.push({
-        "Date update": Common.formatDateTime(new Date()),
-        "Child sObject": this.sObjectName,
-        "Child field": null,
-        "Child value": null,
-        "Parent sObject": null,
-        "Parent field": null,
-        "Parent value": null,
-        "Error": this.logger.getResourceString(RESOURCES.csvFileIsEmpty)
-      });
-      return csvIssues;
+      if (!this.script.excludeIdsFromCSVFiles) {
+        csvIssues.push({
+          "Date update": Common.formatDateTime(new Date()),
+          "Child sObject": this.sObjectName,
+          "Child field": null,
+          "Child value": null,
+          "Parent sObject": null,
+          "Parent field": null,
+          "Parent value": null,
+          "Error": this.logger.getResourceString(RESOURCES.csvFileIsEmpty)
+        });
+      }
+
+      // Create a new empty file anyway
+      await Common.writeCsvFileAsync(this.data.sourceCsvFilename, [], true);
     }
 
     // Read the csv header row
@@ -371,7 +376,6 @@ export default class MigrationJobTask {
             parentCSVRowsMap.set(key, parentCsvRow);
           }
         });
-        let isFileChanged = false;
         [...currentFileMap.keys()].forEach(id => {
           let csvRow = currentFileMap.get(id);
           if (!csvRow.hasOwnProperty(columnNameId)) {
@@ -379,28 +383,46 @@ export default class MigrationJobTask {
               // Missing both id and __r columns
               //        => fill them with next incremental numbers
               // Since the missing columns were already reported no additional report provided.
-              isFileChanged = true;
+              cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
               csvRow[columnNameId] = cachedCSVContent.nextId;
               csvRow[columnName__r] = cachedCSVContent.nextId;
               return;
             }
+
             // Missing id column but __r column provided.
             let desiredExternalIdValue = parentTask.getRecordValue(csvRow, columnName__r);
             if (desiredExternalIdValue) {
-              isFileChanged = true;
+
+              cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
               let parentCsvRow = parentCSVRowsMap.get(desiredExternalIdValue);
               if (!parentCsvRow) {
-                csvIssues.push({
-                  "Date update": Common.formatDateTime(new Date()),
-                  "Child sObject": self.sObjectName,
-                  "Child field": columnName__r,
-                  "Child value": desiredExternalIdValue,
-                  "Parent sObject": sField.parentLookupObject.name,
-                  "Parent field": parentExternalId,
-                  "Parent value": null,
-                  "Error": self.logger.getResourceString(RESOURCES.missingParentRecordForGivenLookupValue)
-                });
+
+                if (!self.script.excludeIdsFromCSVFiles) {
+                  csvIssues.push({
+                    "Date update": Common.formatDateTime(new Date()),
+                    "Child sObject": self.sObjectName,
+                    "Child field": columnName__r,
+                    "Child value": desiredExternalIdValue,
+                    "Parent sObject": sField.parentLookupObject.name,
+                    "Parent field": parentExternalId,
+                    "Parent value": null,
+                    "Error": self.logger.getResourceString(RESOURCES.missingParentRecordForGivenLookupValue)
+                  });
+                }
+
                 csvRow[columnNameId] = cachedCSVContent.nextId;
+
+                // Create a new parent row to fix the parent file anyway
+                parentCsvRow = {
+                  "Id": csvRow[columnNameId],
+                  [parentExternalId]: desiredExternalIdValue
+                };
+
+                parentFileMap.set(csvRow[columnNameId], parentCsvRow);
+                parentCSVRowsMap.set(desiredExternalIdValue, parentCsvRow);
+
+                cachedCSVContent.updatedFilenames.add(parentTask.data.sourceCsvFilename);
+
               } else {
                 csvRow[columnNameId] = parentCsvRow["Id"];
               }
@@ -408,35 +430,51 @@ export default class MigrationJobTask {
               csvRow[columnNameId] = null;
             }
           } else if (!csvRow.hasOwnProperty(columnName__r)) {
+
             if (!csvRow.hasOwnProperty(columnNameId)) {
               // Missing both id and __r columns
               //        => fill them with next incremental numbers
               // Since the missing columns were already reported no additional report provided.
-              isFileChanged = true;
+              cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
               csvRow[columnNameId] = cachedCSVContent.nextId;
               csvRow[columnName__r] = cachedCSVContent.nextId;
               return;
             }
+
             // Missing __r column but id column provided.
             // Create __r column.
             let idValue = csvRow[columnNameId];
             if (idValue) {
-              isFileChanged = true;
+              cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
               let parentCsvRow = parentFileMap.get(idValue);
               if (!parentCsvRow) {
-                csvIssues.push({
-                  "Date update": Common.formatDateTime(new Date()),
-                  "Child sObject": self.sObjectName,
-                  "Child field": columnNameId,
-                  "Child value": idValue,
-                  "Parent sObject": sField.parentLookupObject.name,
-                  "Parent field": "Id",
-                  "Parent value": null,
-                  "Error": self.logger.getResourceString(RESOURCES.missingParentRecordForGivenLookupValue)
-                });
+
+                if (!self.script.excludeIdsFromCSVFiles) {
+                  csvIssues.push({
+                    "Date update": Common.formatDateTime(new Date()),
+                    "Child sObject": self.sObjectName,
+                    "Child field": columnNameId,
+                    "Child value": idValue,
+                    "Parent sObject": sField.parentLookupObject.name,
+                    "Parent field": "Id",
+                    "Parent value": null,
+                    "Error": self.logger.getResourceString(RESOURCES.missingParentRecordForGivenLookupValue)
+                  });
+                }
                 csvRow[columnName__r] = cachedCSVContent.nextId;
+
+                // Create a new parent row to fix the parent file anyway
+                parentCsvRow = {
+                  "Id": idValue,
+                  [parentExternalId]: csvRow[columnName__r]
+                };
+
+                parentFileMap.set(idValue, parentCsvRow);
+                parentCSVRowsMap.set(csvRow[columnName__r], parentCsvRow);
+
+                cachedCSVContent.updatedFilenames.add(parentTask.data.sourceCsvFilename);
               } else {
-                isFileChanged = true;
+                cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
                 csvRow[columnName__r] = parentCsvRow[parentExternalId];
               }
             } else {
@@ -444,9 +482,6 @@ export default class MigrationJobTask {
             }
           }
         });
-        if (isFileChanged) {
-          cachedCSVContent.updatedFilenames.add(self.data.sourceCsvFilename);
-        }
       }
     }
 
@@ -469,7 +504,6 @@ export default class MigrationJobTask {
         let childTask = self.job.getTaskBySObjectName(childIdSField.scriptObject.name);
         if (childTask) {
           let childFileMap: Map<string, any> = await Common.readCsvFileOnceAsync(cachedCSVContent.csvDataCacheMap, childTask.data.sourceCsvFilename);
-          let isFileChanged = false;
           if (childFileMap.size > 0) {
             let childCSVFirstRow = childFileMap.values().next().value;
             if (childCSVFirstRow.hasOwnProperty(columnChildOriginalName__r)) {
@@ -485,7 +519,7 @@ export default class MigrationJobTask {
                 if (extIdValue && parentCSVExtIdMap.has(extIdValue)) {
                   csvRow[columnChildNameId] = parentCSVExtIdMap.get(extIdValue)["Id"];
                   csvRow[columnChildIdName__r] = csvRow[columnChildNameId];
-                  isFileChanged = true;
+                  cachedCSVContent.updatedFilenames.add(childTask.data.sourceCsvFilename);
                 }
               });
             } else {
@@ -500,9 +534,6 @@ export default class MigrationJobTask {
                 "Error": self.logger.getResourceString(RESOURCES.cantUpdateChildLookupCSVColumn)
               });
             }
-          }
-          if (isFileChanged) {
-            cachedCSVContent.updatedFilenames.add(childTask.data.sourceCsvFilename);
           }
         }
       }
