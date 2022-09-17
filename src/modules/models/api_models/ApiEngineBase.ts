@@ -82,6 +82,10 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
     return ScriptObject.getStrOperation(this.operation);
   }
 
+  getBulkApiStrOperation(): string {
+    return this.operation == OPERATION.HardDelete ? "hardDelete" : this.strOperation.toLowerCase();
+  }
+
   constructor(init: IApiEngineInitParameters) {
 
     this.isChildJob = init.isChildJob;
@@ -137,6 +141,18 @@ export default class ApiEngineBase implements IApiEngine, IFieldMapping, IApiEng
     // Map source records
     this.oldSObjectName = this.sObjectName;
     let mappedRecords = this.sourceRecordsToTarget(allRecords, this.sObjectName);
+    if (this.operation == OPERATION.Delete || this.operation == OPERATION.HardDelete) {
+      mappedRecords.records = mappedRecords.records.map(record => {
+        return {
+          Id: record["Id"]
+        };
+      });
+    } else if (this.operation == OPERATION.Insert) {
+      mappedRecords.records = mappedRecords.records.map(record => {
+        delete record["Id"];
+        return record;
+      });
+    }
     this.sObjectName = mappedRecords.targetSObjectName;
     allRecords = mappedRecords.records;
     this.numberJobTotalRecordsToProcess = allRecords.length;

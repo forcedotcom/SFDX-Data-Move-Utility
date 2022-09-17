@@ -368,7 +368,16 @@ export const CONSTANTS = {
 
 
   // ------ AddOns -------------------- //
-  MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE: 50000000
+  MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE: 50000000,
+
+
+  // ------- Headers ------------------ //
+  SFORCE_API_CALL_HEADERS: {
+    "Sforce-Call-Options": "client=SFDMU"
+  },
+
+
+
 
 }
 
