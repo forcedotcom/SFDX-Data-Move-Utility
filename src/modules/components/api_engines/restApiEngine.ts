@@ -69,7 +69,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
         return new Promise<Array<any>>((resolve, reject) => {
 
             self.loadBinaryDataFromCache(csvChunk.records);
-           
+
             if (progressCallback) {
                 // Progress message: operation started
                 progressCallback(new ApiInfo({
@@ -106,7 +106,8 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
             }));
             connection.sobject(this.sObjectName)[apiFunctionName](records, {
                 allOrNone: this.allOrNone,
-                allowRecursive: true
+                allowRecursive: true,
+                headers: CONSTANTS.SFORCE_API_CALL_HEADERS
             }, async function (error: any, resultRecords: any) {
                 if (error) {
                     if (progressCallback) {
@@ -173,10 +174,10 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
     getEngineClassType(): typeof ApiEngineBase {
         return RestApiEngine;
     }
-    // ----------------------- ---------------- -------------------------------------------    
+    // ----------------------- ---------------- -------------------------------------------
 
 
 
-   
+
 
 }

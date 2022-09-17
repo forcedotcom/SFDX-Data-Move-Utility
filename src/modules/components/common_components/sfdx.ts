@@ -94,7 +94,7 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
         let records = [];
 
         if (useBulkQueryApi) {
-          conn.bulk.query(soql).on("record", function (record: any) {
+          conn.bulk.query(soql, { headers: CONSTANTS.SFORCE_API_CALL_HEADERS }).on("record", function (record: any) {
             if (records.length >= nextProgressInfoAtRecord) {
               nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
               lastProgressMessageAt = records.length + 1;
@@ -113,27 +113,29 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
             reject(error);
           });
         } else {
-          let query = (useQueryAll ? conn.queryAll(soql) : conn.query(soql)).on("record", function (record: any) {
-            if (records.length >= nextProgressInfoAtRecord) {
-              nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
-              lastProgressMessageAt = records.length + 1;
-              self.logger.infoNormal(RESOURCES.apiCallProgress, String(lastProgressMessageAt));
-            }
-            records.push(record);
-          }).on("end", function () {
-            ___fixRecords(records);
-            ___outputProgress();
-            resolve(<QueryResult<object>>{
-              done: true,
-              records: records,
-              totalSize: query.totalSize
+          let query = (useQueryAll ? conn.queryAll(soql, { headers: CONSTANTS.SFORCE_API_CALL_HEADERS })
+            : conn.query(soql, { headers: CONSTANTS.SFORCE_API_CALL_HEADERS }))
+            .on("record", function (record: any) {
+              if (records.length >= nextProgressInfoAtRecord) {
+                nextProgressInfoAtRecord += CONSTANTS.QUERY_PROGRESS_MESSAGE_PER_RECORDS;
+                lastProgressMessageAt = records.length + 1;
+                self.logger.infoNormal(RESOURCES.apiCallProgress, String(lastProgressMessageAt));
+              }
+              records.push(record);
+            }).on("end", function () {
+              ___fixRecords(records);
+              ___outputProgress();
+              resolve(<QueryResult<object>>{
+                done: true,
+                records: records,
+                totalSize: query.totalSize
+              });
+            }).on("error", function (error: any) {
+              reject(error);
+            }).run({
+              autoFetch: true,
+              maxFetch: CONSTANTS.MAX_FETCH_SIZE
             });
-          }).on("error", function (error: any) {
-            reject(error);
-          }).run({
-            autoFetch: true,
-            maxFetch: CONSTANTS.MAX_FETCH_SIZE
-          });
         }
 
         function ___outputProgress() {

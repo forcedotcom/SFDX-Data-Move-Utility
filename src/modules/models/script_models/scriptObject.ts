@@ -56,7 +56,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   @Type(() => ScriptMappingItem)
   fieldMapping: ScriptMappingItem[] = new Array<ScriptMappingItem>();
 
-  hardDelete: boolean = false;
+
   query: string = "";
   deleteQuery: string = "";
   operation: OPERATION = OPERATION.Readonly;
@@ -64,6 +64,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   deleteOldData: boolean = false;
   deleteFromSource: boolean = false;
   deleteByHierarchy: boolean = false;
+  hardDelete: boolean = false;
   updateWithMockData: boolean = false;
   mockCSVData: boolean = false;
   targetRecordsFilter: string = "";
@@ -444,6 +445,10 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       this.deleteByHierarchy = true;
       this.operation = OPERATION.Delete;
     }
+    if (this.operation == OPERATION.HardDelete) {
+      this.hardDelete = true;
+      this.operation = OPERATION.Delete;
+    }
 
     // Fix script object parameters
     // Always set explicit externalId to 'Id' on Insert operation
@@ -674,35 +679,35 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
           // 1. if "all" query multiselect keyword is used
           (Common.isDescriptionPropertyMatching(pattern.all != "undefined", pattern.all == true)
 
-          // 2. OR no one of the query multiselect keywords is not matching the given field description
-          //            ==>  all leywords ARE MATCHING
-          || !Object.keys(pattern).some(prop => Common.isDescriptionPropertyMatching(fieldDescribe[prop], pattern[prop], true)))
+            // 2. OR no one of the query multiselect keywords is not matching the given field description
+            //            ==>  all leywords ARE MATCHING
+            || !Object.keys(pattern).some(prop => Common.isDescriptionPropertyMatching(fieldDescribe[prop], pattern[prop], true)))
         ) {
           if (
             // *** Rules when we should OMIT THIS FIELD,
             //     even it is matching the multiselect keyword (has passed the above rule check):
             !(
 
-            // 1. If this is LOOKUP field + one of the following conditions are met:
-            fieldDescribe.lookup &&
-            (
-              // THIS FIELD is restricted for use in multiselect within the PARENT OBJECT
-              CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
-              // ...OR THIS FIELD is restricted for use in multiselect within ALL OBJECTS
-              || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT['*'].indexOf(fieldDescribe.name) >= 0
+              // 1. If this is LOOKUP field + one of the following conditions are met:
+              fieldDescribe.lookup &&
+              (
+                // THIS FIELD is restricted for use in multiselect within the PARENT OBJECT
+                CONSTANTS.OBJECTS_NOT_TO_USE_IN_QUERY_MULTISELECT.indexOf(fieldDescribe.referencedObjectType) >= 0
+                // ...OR THIS FIELD is restricted for use in multiselect within ALL OBJECTS
+                || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT['*'].indexOf(fieldDescribe.name) >= 0
 
-              // ...OR ALL FIELDS for the current object ARE RESTRICTED for use in multiselect
-              || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name] // this object is restricted
-                                && CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name].indexOf(fieldDescribe.name) >= 0 // + this field is restricted for this object
+                // ...OR ALL FIELDS for the current object ARE RESTRICTED for use in multiselect
+                || CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name] // this object is restricted
+                && CONSTANTS.FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT[this.name].indexOf(fieldDescribe.name) >= 0 // + this field is restricted for this object
+              )
+
+
+              // 2. OR if this is NOT LOOKUP field,
+              //        but still again it's not a simple field (like 'Name' or 'Test__c'), but it's something other complex field type
+              //        like a "Account__r.ParentId"
+              || !fieldDescribe.isSimple
+
             )
-
-
-            // 2. OR if this is NOT LOOKUP field,
-            //        but still again it's not a simple field (like 'Name' or 'Test__c'), but it's something other complex field type
-            //        like a "Account__r.ParentId"
-            || !fieldDescribe.isSimple
-
-          )
           ) {
             this.parsedQuery.fields.push(getComposedField(fieldDescribe.name));
             this.excludedFieldsFromUpdate = this.excludedFieldsFromUpdate.filter(fieldName => fieldName != fieldDescribe.name);
@@ -944,7 +949,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     fields.forEach(field => {
       let fieldName = ((<SOQLField>field).field).toLowerCase();
       let parts = fieldName.split('_');
-      let multiselectAllPatternFieldName =  parts.length == 2 ? (parts[0] + '_*') : null;
+      let multiselectAllPatternFieldName = parts.length == 2 ? (parts[0] + '_*') : null;
       if (fieldName == "all") {
         ___set("all_true");
       } else if (CONSTANTS.MULTISELECT_SOQL_KEYWORDS.indexOf(fieldName) >= 0) {

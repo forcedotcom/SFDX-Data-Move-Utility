@@ -18,8 +18,8 @@ export enum OPERATION {
     Delete,
     DeleteSource,
     DeleteHierarchy,
-    Unknown,
-    HardDelete
+    HardDelete,
+    Unknown
 }
 
 export enum API_ENGINE {

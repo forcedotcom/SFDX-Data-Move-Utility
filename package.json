@@ -1,94 +1,94 @@
 {
-    "name": "sfdmu",
-    "description": "The Salesforce Data Loader SFDX Plugin (SFDMU) will help you to populate your org (scratch / dev / sandbox / production) with data imported from another org or CSV files. It supports all important CRUD operations (Insert/Update/Upsert/Delete) also for multiple related sObjects.",
-    "version": "4.15.5",
-    "author": "Haim Knokh",
-    "bugs": "https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues",
-    "dependencies": {
-        "@oclif/command": "^1.8.0",
-        "@oclif/config": "^1.17.0",
-        "@oclif/errors": "^1",
-        "@salesforce/command": "^3.0.3",
-        "@salesforce/core": "^2.11.0",
-        "@salesforce/dev-config": "^1.5.0",
-        "@types/bunyan": "^1.8.6",
-        "alasql": "^0.6.4",
-        "casual": "^1.6.2",
-        "class-transformer": "^0.2.3",
-        "csv-parse": "^4.12.0",
-        "csv-writer": "^1.5.0",
-        "deep.clone": "^2.1.2",
-        "es6-shim": "^0.35.5",
-        "fastest-levenshtein": "^1.0.12",
-        "glob": "^7.1.4",
-        "jsforce": "^1.9.3",
-        "madge": "^3.8.0",
-        "promise-parallel-throttle": "^3.3.0",
-        "reflect-metadata": "^0.1.13",
-        "soql-parser-js": "^1.2.1",
-        "tslib": "^1"
+  "name": "sfdmu",
+  "description": "The Salesforce Data Loader SFDX Plugin (SFDMU) will help you to populate your org (scratch / dev / sandbox / production) with data imported from another org or CSV files. It supports all important CRUD operations (Insert/Update/Upsert/Delete) also for multiple related sObjects.",
+  "version": "4.16.0",
+  "author": "Haim Knokh",
+  "bugs": "https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues",
+  "dependencies": {
+    "@oclif/command": "^1.8.0",
+    "@oclif/config": "^1.17.0",
+    "@oclif/errors": "^1",
+    "@salesforce/command": "^3.0.3",
+    "@salesforce/core": "^2.11.0",
+    "@salesforce/dev-config": "^1.5.0",
+    "@types/bunyan": "^1.8.6",
+    "alasql": "^0.6.4",
+    "casual": "^1.6.2",
+    "class-transformer": "^0.2.3",
+    "csv-parse": "^4.12.0",
+    "csv-writer": "^1.5.0",
+    "deep.clone": "^2.1.2",
+    "es6-shim": "^0.35.5",
+    "fastest-levenshtein": "^1.0.12",
+    "glob": "^7.1.4",
+    "jsforce": "^1.9.3",
+    "madge": "^3.8.0",
+    "promise-parallel-throttle": "^3.3.0",
+    "reflect-metadata": "^0.1.13",
+    "soql-parser-js": "^1.2.1",
+    "tslib": "^1"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.22.2",
+    "@oclif/plugin-help": "^2",
+    "@oclif/test": "^1.2.7",
+    "@types/chai": "^4.2.12",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^10.17.32",
+    "chai": "^4",
+    "globby": "^8",
+    "mocha": "^8.1.3",
+    "nyc": "^14.1.1",
+    "ts-node": "^8",
+    "tslint": "^5",
+    "typescript": "^4.4.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/lib",
+    "/messages",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://help.sfdmu.com",
+  "keywords": [
+    "sfdx plugin",
+    "data migration",
+    "data loader",
+    "salesforce data migration",
+    "migrating salesforce data",
+    "salesforce data migration tool",
+    "salesforce data loader",
+    "sfdx data loader"
+  ],
+  "license": "BSD-3-Clause",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "sfdx",
+    "topics": {
+      "sfdm": {
+        "description": "The Salesforce Data Loader SFDX Plugin (SFDMU) will help you to populate your org (scratch / dev / sandbox / production) with data imported from another org or CSV files. It supports all important CRUD operations (Insert/Update/Upsert/Delete) also for multiple related sObjects."
+      }
     },
-    "devDependencies": {
-        "@oclif/dev-cli": "^1.22.2",
-        "@oclif/plugin-help": "^2",
-        "@oclif/test": "^1.2.7",
-        "@types/chai": "^4.2.12",
-        "@types/mocha": "^8.0.3",
-        "@types/node": "^10.17.32",
-        "chai": "^4",
-        "globby": "^8",
-        "mocha": "^8.1.3",
-        "nyc": "^14.1.1",
-        "ts-node": "^8",
-        "tslint": "^5",
-        "typescript": "^4.4.3"
-    },
-    "engines": {
-        "node": ">=8.0.0"
-    },
-    "files": [
-        "/lib",
-        "/messages",
-        "/npm-shrinkwrap.json",
-        "/oclif.manifest.json"
-    ],
-    "homepage": "https://help.sfdmu.com",
-    "keywords": [
-        "sfdx plugin",
-        "data migration",
-        "data loader",
-        "salesforce data migration",
-        "migrating salesforce data",
-        "salesforce data migration tool",
-        "salesforce data loader",
-        "sfdx data loader"
-    ],
-    "license": "BSD-3-Clause",
-    "oclif": {
-        "commands": "./lib/commands",
-        "bin": "sfdx",
-        "topics": {
-            "sfdm": {
-                "description": "The Salesforce Data Loader SFDX Plugin (SFDMU) will help you to populate your org (scratch / dev / sandbox / production) with data imported from another org or CSV files. It supports all important CRUD operations (Insert/Update/Upsert/Delete) also for multiple related sObjects."
-            }
-        },
-        "devPlugins": [
-            "@oclif/plugin-help"
-        ]
-    },
-    "repository": "forcedotcom/SFDX-Data-Move-Utility",
-    "addons": {
-        "run": {
-            "version": "1.3.0"
-        }
-    },
-    "scripts": {
-        "postpack": "rm -f oclif.manifest.json",
-        "posttest": "tslint -p test -t stylish",
-        "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
-        "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-        "version": "oclif-dev readme && git add README.md",
-        "build": "tsc -b",
-        "typedoc-sfdmu-run-addons": "typedoc --options typedoc-sfdmu-run-addons.json"
+    "devPlugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "forcedotcom/SFDX-Data-Move-Utility",
+  "addons": {
+    "run": {
+      "version": "1.3.0"
     }
+  },
+  "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "tslint -p test -t stylish",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md",
+    "build": "tsc -b",
+    "typedoc-sfdmu-run-addons": "typedoc --options typedoc-sfdmu-run-addons.json"
+  }
 }
