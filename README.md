@@ -1,27 +1,23 @@
 # ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
 
-- **For the documentation, visit the [SFDMU Help Center](https://help.sfdmu.com/)**
 
-```bash
-> **     THIS TOOL HAS LIMITED SUPPORT
-> **     AND NO SLA ENFORCED AS SUPPORT TO ISSUES RAISED.
-> **
-> ** !!! IMORTANT NOTE! AT THIS MOMENT WE DO NOT OFFER ANY SUPPORT !!!
-> ** !!! FOR CONFIGURATION/MIGRATION-RELATED QUESTIONS OR ISSUES,  !!!
-> ** !!! ONLY FOR SFDMU SCRIPT RUNTIME ERRORS.                     !!!
+
+> >  **THE DOCUMENTATION CAN BE FOUND HERE:   [SFDMU Help Center](https://help.sfdmu.com/)**
 >
-> ** !!! FOR CONFIGURATION/MIGRATION TROUBLESHOOTING, REFER OUR DOCUMENTATION WEBSITE !!!
-> ** !!! OR DEBUG THE SOURCE CODE LOCALLY                          !!!
-```
-
-> **FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
-> - **Use one of our issue tracker templates.**
+> > **FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
+>
+> - **We provide only a <u>limited support</u> on an free-time basis**
+>
+> - **We provide support <u>only for critical plugin runtime errors</u>**. 
+>   **For all configuration-related questions/issues - please carefully read our Documentation.**
+>
+> - **To submit your tickets, please, use one of our issue tracker templates.**
 > - **Always attach:**
 >   - **The FULL latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
 >   - **The FULL [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
->   - **The latest [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant full rows).**
+>   - **The FULL [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant FULL rows).**
 
-> **WHO WANTS TO CONTRIBUTE TO THIS PROJECT, PLEASE, CAREFULLY READ OUR [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
+> > **WHO WANTS TO CONTRIBUTE TO THIS PROJECT, PLEASE, CAREFULLY READ OUR [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
 
 
 
