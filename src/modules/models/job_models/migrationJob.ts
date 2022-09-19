@@ -218,7 +218,7 @@ export default class MigrationJob {
           let rightIsParentMasterDetailOfLeft = leftTask.scriptObject.parentMasterDetailObjects.some(object => object.name == rightTask.sObjectName);
           let leftTaskIndex = self.tasks.indexOf(leftTask);
           let rightTaskIndex = self.tasks.indexOf(rightTask);
-          if (rightIsParentMasterDetailOfLeft) {
+          if (rightIsParentMasterDetailOfLeft && rightTaskIndex > leftTaskIndex) {
             // Swape places and put right before left
             self.tasks.splice(rightTaskIndex, 1);
             self.tasks.splice(leftTaskIndex, 0, rightTask);
