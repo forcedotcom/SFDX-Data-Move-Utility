@@ -6,7 +6,7 @@
 >
 > > **FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
 >
-> - **We provide only a <u>limited support</u> on an free-time basis**
+> - **We provide only a <u>LIMITED support</u> on an free-time basis**
 >
 > - **We provide support <u>only for critical plugin runtime errors</u>**. 
 >   **For all configuration-related questions/issues - please carefully read our Documentation.**
