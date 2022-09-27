@@ -14,7 +14,6 @@ jobs:
   npm:
     uses: salesforcecli/github-workflows/.github/workflows/npmPublish.yml@main
     with:
-      ctc: true
       sign: true
       tag: latest
       githubTag: ${{ github.event.release.tag_name || inputs.tag }}
