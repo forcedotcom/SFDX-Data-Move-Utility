@@ -35,6 +35,7 @@ const requestHeaderJson = Object.assign({}, {
   'Accept': 'application/json'
 }, CONSTANTS.SFORCE_API_CALL_HEADERS);
 
+type OperationType = string | "insert" | "update" | "delete" | "hardDelete";
 
 /**
  * Implementation of the Salesforce Bulk API v2.0
@@ -45,7 +46,7 @@ const requestHeaderJson = Object.assign({}, {
 // tslint:disable-next-line: class-name
 export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
 
-  operationType: string | "insert" | "update" | "delete";
+  operationType: OperationType;
   sourceRecords: Array<object> = new Array<object>();
   sourceRecordsHashmap: Map<string, object> = new Map<string, object>();
 
@@ -205,7 +206,7 @@ export class BulkApiV2_0Engine extends ApiEngineBase implements IApiEngine {
    * @returns {Promise<ApiInfo>}
    * @memberof BulkAPI2sf
    */
-  async createBulkJobAsync(objectAPIName: string, operationType: string | "insert" | "update" | "delete" | "hardDelete"): Promise<ApiInfo> {
+  async createBulkJobAsync(objectAPIName: string, operationType: OperationType): Promise<ApiInfo> {
 
     let self = this;
     this.operationType = operationType;
