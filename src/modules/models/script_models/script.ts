@@ -57,6 +57,8 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   @Type(() => ScriptObject)
   objects: ScriptObject[] = new Array<ScriptObject>();
 
+  excludedObjects: string[] = new Array<string>();
+
   @Type(() => ScriptObjectSet)
   objectSets: ScriptObjectSet[] = new Array<ScriptObjectSet>();
 
@@ -116,6 +118,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   addonManager: SfdmuRunAddonManager;
   runInfo: ICommandRunInfo;
   canModify: string;
+
 
   // Additional sobject descriptions for sobject which were nbot included into the export.json
   // but necessary for the job
@@ -265,8 +268,11 @@ export default class Script implements IAppScript, ISfdmuRunScript {
       let rule = object.operation != OPERATION.Readonly
         && CONSTANTS.NOT_SUPPORTED_OBJECTS.indexOf(object.name) < 0
         && isSupportedForOperation;
-      let included = !object.excluded && (object.operation == OPERATION.Readonly || rule);
+      let included = !object.excluded && (object.operation == OPERATION.Readonly || rule) && this.excludedObjects.indexOf(object.name) < 0;
       if (!included) {
+        if (this.excludedObjects.indexOf(object.name) < 0) {
+          this.excludedObjects.push(object.name);
+        }
         this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
       }
       return included;
