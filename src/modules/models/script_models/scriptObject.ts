@@ -669,10 +669,12 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   // ----------------------- Private members -------------------------------------------
   private _addOrRemoveFields(describe: SObjectDescribe) {
 
+    let fieldDescribes = [...describe.fieldsMap.values()];
+
     // Add multiselect fields
     if (this.multiselectPattern) {
       let pattern = this.multiselectPattern;
-      [...describe.fieldsMap.values()].forEach(fieldDescribe => {
+      fieldDescribes.forEach(fieldDescribe => {
 
         // *** Rules when to add this field to the query:
         if (
@@ -732,8 +734,8 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     });
 
     // Filter excluded fields
-    this.parsedQuery.fields = this.parsedQuery.fields.filter((f: FieldType) => {
-      let field = f as SOQLField;
+    this.parsedQuery.fields = this.parsedQuery.fields.filter((fieldType: FieldType) => {
+      let field = fieldType as SOQLField;
       return this.excludedFields.indexOf(field.field) < 0
     });
 
@@ -747,8 +749,8 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
     // Verify external id value when the original one was not supplied with the script
     if (this.originalExternalIdIsEmpty
       && !describe.fieldsMap.get(this.externalId)) {
-      this.parsedQuery.fields = this.parsedQuery.fields.filter((f: FieldType) => {
-        let field = f as SOQLField;
+      this.parsedQuery.fields = this.parsedQuery.fields.filter((fieldType: FieldType) => {
+        let field = fieldType as SOQLField;
         return field.field != this.externalId
       });
       this.externalId = this.defaultExternalId;
@@ -761,6 +763,13 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       let field = f as SOQLField;
       let isComplexField = Common.isComplexField(field.field) || field.field.indexOf('.') >= 0;
       return isComplexField || !isComplexField && describedFields.indexOf(field.field.toLowerCase()) >= 0;
+    });
+
+    // Filter lookup fields referenced to excluded objects
+    this.parsedQuery.fields = this.parsedQuery.fields.filter((fieldType: FieldType) => {
+      let field = fieldType as SOQLField;
+      let fieldDescribe = fieldDescribes.find(describe => describe.name.toLowerCase() == field.field.toLowerCase() && describe.lookup);
+      return !fieldDescribe || !this.script.excludedObjects.some(object => object == fieldDescribe.referencedObjectType);
     });
 
     // Make each field appear only once
