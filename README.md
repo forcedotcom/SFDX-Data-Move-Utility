@@ -3,8 +3,12 @@
 
 
 > >  **THE DOCUMENTATION CAN BE FOUND HERE:   [SFDMU Help Center](https://help.sfdmu.com/)**
+> >
+> >  **REVIEW OUR SPECIAL GUI DESKTOP APP, WHICH CAN HELP YOU TO CONFIGURE THE DATA MIGRATION JOB:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
+> >
+> >  
 >
-> > **FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
+> > **PLEASE, FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
 >
 > - **We provide only a <u>LIMITED support</u> on an free-time basis**
 >
@@ -17,6 +21,8 @@
 >   - **The FULL [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
 >   - **The FULL [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant FULL rows).**
 
+> > 
+> >
 > > **WHO WANTS TO CONTRIBUTE TO THIS PROJECT, PLEASE, CAREFULLY READ OUR [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
 
 
