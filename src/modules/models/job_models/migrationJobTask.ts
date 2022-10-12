@@ -1860,6 +1860,15 @@ export default class MigrationJobTask {
           newValue = newValue == 'TRUE' || newValue == 'true' ? true :
             newValue == 'FALSE' || newValue == 'false' ? false :
               newValue == 'null' || newValue == 'NULL' || newValue == 'undefined' || newValue == '#N/A' || newValue == undefined ? null : newValue;
+
+          // Eval
+          if (new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN).test(newValue)) {
+            let expr = newValue.replace(new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN), '$1');
+            try {
+              newValue = eval(expr);
+            } catch (ex) { }
+          }
+
           if (typeof newValue != 'undefined') {
             record[field] = newValue;
           }
