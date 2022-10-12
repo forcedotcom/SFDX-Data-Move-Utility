@@ -39,6 +39,7 @@ export const CONSTANTS = {
   COMPLEX_FIELDS_SEPARATOR: ';',
   REFERENCE_FIELD_OBJECT_SEPARATOR: '$',
   FIELDS_MAPPING_REGEX_PATTERN: '^\/(.*)\/$',
+  FIELDS_MAPPING_EVAL_PATTERN: '^eval(\(.*\))$',
 
   SCRIPT_FILE_NAME: 'export.json',
 
