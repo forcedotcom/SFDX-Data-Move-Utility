@@ -1862,8 +1862,9 @@ export default class MigrationJobTask {
               newValue == 'null' || newValue == 'NULL' || newValue == 'undefined' || newValue == '#N/A' || newValue == undefined ? null : newValue;
 
           // Eval
-          if (new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN).test(newValue)) {
-            let expr = newValue.replace(new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN), '$1');
+          if (new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN, 'i').test(newValue)) {
+            let expr = newValue.replace(new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN, 'i'), '$1');
+            expr = expr.replace(new RegExp(CONSTANTS.FIELD_MAPPING_EVAL_PATTERN_ORIGINAL_VALUE, 'gi'), rawValue);
             try {
               newValue = eval(expr);
             } catch (ex) { }
