@@ -4,7 +4,7 @@
 
 > >  **THE DOCUMENTATION CAN BE FOUND HERE:   [SFDMU Help Center](https://help.sfdmu.com/)**
 > >
-> >  **REVIEW OUR SPECIAL GUI DESKTOP APP, WHICH CAN HELP YOU TO CONFIGURE THE DATA MIGRATION JOB:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
+> >  **THE GUI DESKTOP APPLICATION:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
 > >
 > >  
 >
