@@ -1849,11 +1849,14 @@ export default class MigrationJobTask {
             // Use regex
             try {
               if (regexp.test(rawValue)) {
+                // Eval (& Regex)
+                regexpReplaceValue = __eval(rawValue, regexpReplaceValue);
+                // Regex
                 newValue = rawValue.replace(regexp, regexpReplaceValue);
               }
             } catch (ex) { }
           }
-          // Use regular replace
+          // Regular replace
           newValue = newValue ? valuesMap.get(String(newValue)) || newValue : valuesMap.get(rawValue) || rawValue;
 
           // Correct values
@@ -1862,6 +1865,8 @@ export default class MigrationJobTask {
               newValue == 'null' || newValue == 'NULL' || newValue == 'undefined' || newValue == '#N/A' || newValue == undefined ? null : newValue;
 
           // Eval
+          newValue = __eval(rawValue, newValue);
+
           if (new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN, 'i').test(newValue)) {
             let expr = newValue.replace(new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN, 'i'), '$1');
             expr = expr.replace(new RegExp(CONSTANTS.FIELD_MAPPING_EVAL_PATTERN_ORIGINAL_VALUE, 'gi'), rawValue);
@@ -1884,6 +1889,19 @@ export default class MigrationJobTask {
         });
       }
     });
+
+    // ------------------ Internal functions ------------------------- //
+    function __eval(rawValue: any, newValue: any) {
+      if (new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN, 'i').test(newValue)) {
+        let expr = newValue.replace(new RegExp(CONSTANTS.FIELDS_MAPPING_EVAL_PATTERN, 'i'), '$1');
+        expr = expr.replace(new RegExp(CONSTANTS.FIELD_MAPPING_EVAL_PATTERN_ORIGINAL_VALUE, 'gi'), rawValue);
+        try {
+          newValue = eval(expr);
+        } catch (ex) { }
+      }
+      return newValue;
+    }
+
   }
 
   // ----------------------- Private members -------------------------------------------
