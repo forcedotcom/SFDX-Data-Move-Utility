@@ -33,18 +33,28 @@ interface IOnExecuteArguments {
     externalId: string;
 
     /**
-     * Additional WHERE on the ContentVersion for the source records to define detaily, which files 
+     * Additional WHERE on the ContentVersion for the source records to define detaily, which files
      * we want to export
      * WHERE IsLatest = true AND [selectWhere].
      */
     sourceWhere: string;
 
     /**
-     * Additional WHERE on the ContentVersion for the target records to compare against 
+     * Additional WHERE on the ContentVersion for the target records to compare against
      * the source records to find updates.
      * WHERE IsLatest = true AND [selectWhere].
      */
     targetWhere: string;
+
+
+    /**
+     *
+     * For safe uploading binary data, the data is splitted into multiple chunks
+     * to be uploaded sequentially.
+     * This parameter defines the maximum size of each chunk (in bytes).
+     * Default to 15M.
+     */
+    maxChunkSize: number;
 }
 
 interface IDataToImport {
@@ -141,7 +151,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
             this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(data.length));
         }
 
-        // Delete all old target files (if no targetWhere was defined)  
+        // Delete all old target files (if no targetWhere was defined)
         let isDeleted = false;
 
         if (!args.targetWhere) {
@@ -150,7 +160,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
             }
         }
 
-        // Read target ContentVersions 
+        // Read target ContentVersions
         if (args.operation != OPERATION.Insert && target.docIds.length > 0) {
 
             this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadTargetContentVersions);
@@ -177,7 +187,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
         }
 
-        // Delete selective old target files (if targetWhere was defined)    
+        // Delete selective old target files (if targetWhere was defined)
         if (args.targetWhere) {
             if (await ___deleteTargetFiles([...target.docIdToDocVersion.keys()])) {
                 return;
@@ -225,7 +235,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         }
 
 
-        // Read source ContentVersions 
+        // Read source ContentVersions
         if (source.docIds.length > 0) {
             this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadSourceContentVersions);
             let fields = Common.distinctStringArray([
@@ -320,7 +330,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
             this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ExportingContentVersions);
             this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RecordsToBeProcessed, String(versionsToProcess.length));
 
-            await this.runtime.transferContentVersions(this, versionsToProcess);
+            await this.runtime.transferContentVersions(this, versionsToProcess, args.maxChunkSize);
 
             this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ProcessedRecords,
                 String(versionsToProcess.length),

@@ -370,7 +370,7 @@ export const CONSTANTS = {
 
 
   // ------ AddOns -------------------- //
-  MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE: 40000000,
+  MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE: 15000000,
 
 
   // ------- Headers ------------------ //
