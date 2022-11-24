@@ -1612,9 +1612,9 @@ export default class MigrationJobTask {
           [...fieldNameToMockFieldMap.keys()].forEach(fieldName => {
             if (!doNotMock) {
               let mockField = fieldNameToMockFieldMap.get(fieldName);
-              let value = String(updatedRecord[fieldName]);
-              let excluded = mockField.regExcl && ___testRegex(mockField.regExcl, value);
-              let included = mockField.regIncl && ___testRegex(mockField.regIncl, value);
+              let value = updatedRecord[fieldName];
+              let excluded = !!mockField.regExcl && ___testRegex(mockField.regExcl, value);
+              let included = !!mockField.regIncl && ___testRegex(mockField.regIncl, value);
               if (included && mockField.allowMockAllRecord) {
                 mockAllRecord = true;
               }
@@ -1648,7 +1648,7 @@ export default class MigrationJobTask {
       return updatedRecords;
     }
 
-    function ___testRegex(expr: string, value: string): boolean {
+    function ___testRegex(expr: string, value: any): boolean {
       switch (expr) {
         case CONSTANTS.SPECIAL_MOCK_PATTERNS.get(SPECIAL_MOCK_PATTERN_TYPES.haveAnyValue):
           // *
@@ -1660,7 +1660,7 @@ export default class MigrationJobTask {
 
         default:
           // regex
-          return new RegExp(expr, 'ig').test(value);
+          return new RegExp(expr, 'ig').test(String(value));
       }
     }
 
