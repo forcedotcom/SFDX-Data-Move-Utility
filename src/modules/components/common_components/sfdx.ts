@@ -517,7 +517,7 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
       }));
 
     let targetObjectName = objectFieldMapping ? objectFieldMapping.targetSObjectName : objectName;
-    let isTheSameMappedObject = objectFieldMapping && targetObjectName == objectName;
+    //let isTheSameMappedObject = objectFieldMapping && targetObjectName == objectName;
 
     // Using the target object name...
     let describeResult: DescribeSObjectResult = <DescribeSObjectResult>(await describeAsync(targetObjectName));
