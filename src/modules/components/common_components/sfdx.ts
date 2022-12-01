@@ -529,17 +529,17 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
       label: describeResult.label,
       updateable: describeResult.createable && describeResult.updateable
     });
-    let mapItems: Array<[string, string]> = objectFieldMapping && objectFieldMapping.fieldMapping && [...objectFieldMapping.fieldMapping.entries()] || [];
+    //let mapItems: Array<[string, string]> = objectFieldMapping && objectFieldMapping.fieldMapping && [...objectFieldMapping.fieldMapping.entries()] || [];
     describeResult.fields.forEach(field => {
       let f = new SFieldDescribe();
       // ------
       f.objectName = objectName;
-      let fn = mapItems.filter(sourceToTargetItem => sourceToTargetItem[1] == field.name)[0];
-      if (fn && !isTheSameMappedObject) {
-        f.name = fn[0];
-      } else {
-        f.name = field.name;
-      }
+      //let fn = mapItems.filter(sourceToTargetItem => sourceToTargetItem[1] == field.name)[0];
+      //if (fn && !isTheSameMappedObject) {
+      //  f.name = fn[1];
+      //} else {
+      f.name = field.name;
+      //}
       // ------
       f.nameField = field.nameField;
       f.unique = field.unique;
