@@ -12,7 +12,7 @@
 >
 > - **We currently can provide only a <u>LIMITED support</u> on an free-time basis. Thanks for your understanding )**
 > - **We provide support <u>ONLY FOR CRITICAL RUNTIME ERRORS</u>**. 
->   **For all other inquiries - please read our Documentation.**
+>   **For all other inquiries - read our Documentation.**
 > - **All tickets will be automatically marked as stale after 3 days of inactivity and closed in another 3 days.**
 > - **To submit your tickets, please, use only one of our issue tracker templates.**
 > - **For better understanding your issue, please attach:**
