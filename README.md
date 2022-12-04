@@ -10,7 +10,7 @@
 >
 > > **PLEASE, FOLLOW THE BELOW GUIDELINES WHEN OPENING ISSUES:**
 >
-> - **We provide only a <u>LIMITED support</u> on an free-time basis**
+> - **We currently can provide only a <u>LIMITED support</u> on an free-time basis. Thanks for your understanding )**
 >
 > - **We provide support <u>only for CRITICAL RUNTIME ERRORS</u>**. 
 >   **For all other inquiries - please CAREFULLY read our Documentation.**
