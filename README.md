@@ -25,7 +25,7 @@
 
 > > 
 > >
-> > **WHO WANTS TO CONTRIBUTE TO THIS PROJECT, PLEASE, CAREFULLY READ OUR [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
+> > **Welcome to contribute to the project. Please, first take a time to read our [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
 
 
 
