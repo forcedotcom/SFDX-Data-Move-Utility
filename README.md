@@ -12,7 +12,7 @@
 >
 > - **We provide only a <u>LIMITED support</u> on an free-time basis**
 >
-> - **We provide support <u>only for critical plugin runtime errors</u>**. 
+> - **We provide support <u>only for CRITICAL RUNTIME ERRORS</u>**. 
 >   **For all other inquiries - please CAREFULLY read our Documentation.**
 >
 > - **All tickets will be automatically marked as stale after 3 days of inactivity and closed in another 3 days.**
