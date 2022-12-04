@@ -13,7 +13,9 @@
 > - **We provide only a <u>LIMITED support</u> on an free-time basis**
 >
 > - **We provide support <u>only for critical plugin runtime errors</u>**. 
->   **For all configuration-related questions/issues - please carefully read our Documentation.**
+>   **For all other inquiries - please CAREFULLY read our Documentation.**
+>
+> - **All tickets will be automatically marked as stale after 3 days of inactivity and closed in another 3 days.**
 >
 > - **To submit your tickets, please, use one of our issue tracker templates.**
 > - **Always attach:**
