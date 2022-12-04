@@ -17,7 +17,7 @@
 >
 > - **All tickets will be automatically marked as stale after 3 days of inactivity and closed in another 3 days.**
 >
-> - **To submit your tickets, please, use one of our issue tracker templates.**
+> - **To submit your tickets, please, use only one of our issue tracker templates.**
 > - **Always attach:**
 >   - **The FULL latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
 >   - **The FULL [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
