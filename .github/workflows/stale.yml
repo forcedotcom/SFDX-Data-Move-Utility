@@ -15,6 +15,8 @@ jobs:
           days-before-issue-stale: 3
           days-before-issue-close: 3
           stale-issue-label: "stale"
+          close-issue-label: "closed-inactive"
+          any-of-labels: "bug,help-wanted,gui"
           exempt-issue-labels: "in-progress"
           stale-issue-message: "-> This issue is marked as *stale* because it has been open for 3 days with no activity. <br /> It will be closed after another 3 days of inactivity."
           close-issue-message: "-> This issue was closed because it has been inactive for 3 days since being marked as stale."
