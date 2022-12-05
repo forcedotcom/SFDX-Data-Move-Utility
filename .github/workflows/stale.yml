@@ -1,10 +1,10 @@
-name: Close Stale Issues
+name: Treat Stale Issues
 on:
   schedule:
     - cron: "30 1 * * *"
 
 jobs:
-  close-issues:
+  close-stale-issues:
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -23,3 +23,60 @@ jobs:
           days-before-pr-stale: -1
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  close-completed-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v6.0.1
+        with:
+          days-before-issue-stale: -1
+          days-before-issue-close: 3
+          stale-issue-label: "completed"
+          close-issue-label: "closed"
+          any-of-labels: "completed"
+          close-issue-message: "-> This issue is closed because it has been already completed/fixed, but it has no activity for 3 days."
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
+  close-wontfix-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v6.0.1
+        with:
+          days-before-issue-stale: -1
+          days-before-issue-close: 3
+          stale-issue-label: "wontfix"
+          close-issue-label: "closed"
+          any-of-labels: "wontfix"
+          close-issue-message: "-> We have examined the situation and evaluated possible approaches to fix the problem or(and) to add the requested feature.<br />But the conclusion of that process is, that we do not plan to fix/release this bug/feature in nearest future.<br />However, it's still possible that we will review this again later and will change the desicion.<br />For the current moment, the issue has been closed."
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          
+  close-roadmap-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v6.0.1
+        with:
+          days-before-issue-stale: -1
+          days-before-issue-close: 3
+          stale-issue-label: "roadmap"
+          close-issue-label: "closed"
+          any-of-labels: "roadmap"
+          close-issue-message: "-> This issue/feature request is included in our Roadmap and will be scheduled for one of our future releases.<br />For the current moment, the issue has been closed."
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+          
+
