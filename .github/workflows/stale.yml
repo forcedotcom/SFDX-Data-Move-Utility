@@ -37,7 +37,7 @@ jobs:
           stale-issue-label: "completed"
           close-issue-label: "closed"
           any-of-labels: "completed"
-          close-issue-message: "-> This issue is closed because it has been already completed/fixed, but it has no activity for 3 days."
+          close-issue-message: "-> This issue is closed because it has been already marked as completed/fixed, but had no activity for 3 days."
           days-before-pr-stale: -1
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +55,7 @@ jobs:
           stale-issue-label: "wontfix"
           close-issue-label: "closed"
           any-of-labels: "wontfix"
-          close-issue-message: "-> We have examined the situation and evaluated possible approaches to fix the problem or(and) to add the requested feature.<br />The conclusion was, that we have no plans to fix/release this bug/feature in the nearest future.<br />However, it's possible, that we will review our desicion again later.<br />For the current moment, the issue has been closed."
+          close-issue-message: "-> We have examined the situation and evaluated possible approaches to fix the problem or/and to add the requested feature.<br />The conclusion was, that currently we do not plan to fix/release this bug/new feature.<br />However, it's still possible, that we will review our desicion again later.<br />For now, the issue has been closed."
           days-before-pr-stale: -1
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -73,7 +73,7 @@ jobs:
           stale-issue-label: "roadmap"
           close-issue-label: "closed"
           any-of-labels: "roadmap"
-          close-issue-message: "-> This issue/feature request is included in our Roadmap and will be scheduled for one of our future releases.<br />For the current moment, the issue has been closed."
+          close-issue-message: "-> This issue/feature request is included in our Roadmap and will be scheduled for one of our future releases.<br />For now, the issue has been closed."
           days-before-pr-stale: -1
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
