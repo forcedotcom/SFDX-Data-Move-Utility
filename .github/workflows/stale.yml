@@ -51,11 +51,11 @@ jobs:
       - uses: actions/stale@v6.0.1
         with:
           days-before-issue-stale: -1
-          days-before-issue-close: 3
+          days-before-issue-close: 0
           stale-issue-label: "wontfix"
           close-issue-label: "closed"
           any-of-labels: "wontfix"
-          close-issue-message: "-> We have examined the situation and evaluated possible approaches to fix the problem or(and) to add the requested feature.<br />But the conclusion of that process is, that we do not plan to fix/release this bug/feature in nearest future.<br />However, it's still possible that we will review this again later and will change the desicion.<br />For the current moment, the issue has been closed."
+          close-issue-message: "-> We have examined the situation and evaluated possible approaches to fix the problem or(and) to add the requested feature.<br />The conclusion was, that we have no plans to fix/release this bug/feature in the nearest future.<br />However, it's possible, that we will review our desicion again later.<br />For the current moment, the issue has been closed."
           days-before-pr-stale: -1
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
       - uses: actions/stale@v6.0.1
         with:
           days-before-issue-stale: -1
-          days-before-issue-close: 3
+          days-before-issue-close: 0
           stale-issue-label: "roadmap"
           close-issue-label: "closed"
           any-of-labels: "roadmap"
@@ -78,5 +78,22 @@ jobs:
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
+  close-non-reproducable-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v6.0.1
+        with:
+          days-before-issue-stale: -1
+          days-before-issue-close: 0
+          stale-issue-label: "non-reproducable"
+          close-issue-label: "closed"
+          any-of-labels: "non-reproducable"
+          close-issue-message: "-> Unfortunately, we could not reproduce this issue on our end. It's possible that need to debug directly on your local machine.<br />Please, take a look on the [Local SFDMU Debugging](https://help.sfdmu.com/plugin-basics/basic-usage/debugging).<br />The issue has been closed."
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           
 
