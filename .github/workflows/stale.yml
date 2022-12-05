@@ -91,7 +91,7 @@ jobs:
           stale-issue-label: "non-reproducable"
           close-issue-label: "closed"
           any-of-labels: "non-reproducable"
-          close-issue-message: "-> Unfortunately, we could not reproduce this issue on our end. It's possible that need to debug directly on your local machine.<br />Please, take a look on the [Local SFDMU Debugging](https://help.sfdmu.com/plugin-basics/basic-usage/debugging).<br />The issue has been closed."
+          close-issue-message: "-> Unfortunately, we could not reproduce this issue on our end. It's possible that need to debug directly on your local machine.<br />Please, take a look on the [How to Debug the SFDMU locally](https://help.sfdmu.com/plugin-basics/basic-usage/debugging).<br />The issue has been closed."
           days-before-pr-stale: -1
           days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
