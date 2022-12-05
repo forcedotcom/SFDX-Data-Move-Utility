@@ -13,9 +13,8 @@
 > - **We currently can provide only a <u>LIMITED support</u> on an free-time basis. Thanks for your understanding )**
 > - **We provide support <u>ONLY FOR CRITICAL RUNTIME ERRORS</u>**. 
 >   **For all other inquiries - read our Documentation.**
-> - **All tickets will be automatically marked as stale after 3 days of inactivity and closed in another 3 days.**
 > - **To submit your tickets, please, use only one of our issue tracker templates.**
-> - **For better understanding your issue, attach:**
+> - **For better understanding your case, attach:**
 >   - **The FULL latest [.log](https://help.sfdmu.com/full-documentation/reports/the-execution-log) file.**
 >   - **The FULL [export.json](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration) file.**
 >   - **The FULL [\_target.csv](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) file containing the error messages (at least 1-2 relevant FULL rows).**
