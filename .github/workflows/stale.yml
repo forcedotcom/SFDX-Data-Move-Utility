@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/stale@v6.0.1
         with:
-          days-before-issue-stale: -1
+          days-before-issue-stale: 0
           days-before-issue-close: 3
           stale-issue-label: "completed"
           close-issue-label: "closed"
@@ -50,7 +50,7 @@ jobs:
     steps:
       - uses: actions/stale@v6.0.1
         with:
-          days-before-issue-stale: -1
+          days-before-issue-stale: 0
           days-before-issue-close: 0
           stale-issue-label: "wontfix"
           close-issue-label: "closed"
@@ -68,7 +68,7 @@ jobs:
     steps:
       - uses: actions/stale@v6.0.1
         with:
-          days-before-issue-stale: -1
+          days-before-issue-stale: 0
           days-before-issue-close: 0
           stale-issue-label: "roadmap"
           close-issue-label: "closed"
@@ -86,7 +86,7 @@ jobs:
     steps:
       - uses: actions/stale@v6.0.1
         with:
-          days-before-issue-stale: -1
+          days-before-issue-stale: 0
           days-before-issue-close: 0
           stale-issue-label: "non-reproducable"
           close-issue-label: "closed"
