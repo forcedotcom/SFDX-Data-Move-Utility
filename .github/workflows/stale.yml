@@ -18,7 +18,7 @@ jobs:
           close-issue-label: "closed-inactive"
           any-of-labels: "bug,help-wanted,gui"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> This issue is marked as *stale* because it has been open for 3 days with no activity. <br /> It will be closed after another 3 days of inactivity."
+          stale-issue-message: "-> This issue is marked as *stale* because it had any activity for the last 3 days. <br /> It will be closed after another 3 days of inactivity."
           close-issue-message: "-> This issue was closed because it has been inactive for 3 days since being marked as stale."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -30,12 +30,12 @@ jobs:
     steps:
       - uses: actions/stale@v6.0.1
         with:
-          days-before-issue-stale: 3
+          days-before-issue-stale: 0
           days-before-issue-close: 0
           stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "completed"
-          stale-issue-message: "-> This issue is closed because it has been already marked as completed/fixed, but had no activity for 3 days."
+          stale-issue-message: "-> This issue is closed because it has been already marked as completed(fixed), but had no activity for the last 3 days."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
   close-wontfix-issues:
@@ -51,7 +51,7 @@ jobs:
           stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "wontfix"
-          stale-issue-message: "-> We have examined the situation and evaluated possible approaches to fix the problem or/and to add the requested feature.<br />The conclusion was, that currently we do not plan to fix/release this bug/new feature.<br />However, it's still possible, that we will review our desicion again later.<br />For now, the issue has been closed."
+          stale-issue-message: "-> After the deep investigation of this issue, we have decided that we will not release this fix/feature in the nearest feature.<br />It's still possible, that we will re-evaluate our desicion again later.<br />For now, the issue has been closed."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
   close-roadmap-issues:
