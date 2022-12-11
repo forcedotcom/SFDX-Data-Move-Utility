@@ -1,4 +1,4 @@
-name: Treat Stale Issues
+name: Stale Issues
 on:
   schedule:
     - cron: "30 1 * * *"
@@ -30,11 +30,12 @@ jobs:
     steps:
       - uses: actions/stale@v6.0.1
         with:
-          days-before-issue-stale: 0
+          days-before-issue-stale: 3
           days-before-issue-close: 0
           stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "completed"
+          exempt-issue-labels: "in-progress"
           stale-issue-message: "-> This issue is closed because it has been already marked as completed(fixed), but had no activity for the last 3 days."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
@@ -51,6 +52,7 @@ jobs:
           stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "wontfix"
+          exempt-issue-labels: "in-progress"
           stale-issue-message: "-> After the deep investigation of this issue, we have decided that we will not release this fix/feature in the nearest feature.<br />It's still possible, that we will re-evaluate our desicion again later.<br />For now, the issue has been closed."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
@@ -67,6 +69,7 @@ jobs:
           stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "roadmap"
+          exempt-issue-labels: "in-progress"
           stale-issue-message: "-> This issue/feature request is included in our Roadmap and will be scheduled for one of our future releases.<br />For now, the issue has been closed."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -83,6 +86,7 @@ jobs:
           stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "non-reproducable"
+          exempt-issue-labels: "in-progress"
           stale-issue-message: "-> Unfortunately, we could not reproduce this issue on our end. It's possible that need to debug directly on your local machine.<br />Please, take a look on the [How to Debug the SFDMU locally](https://help.sfdmu.com/plugin-basics/basic-usage/debugging).<br />The issue has been closed."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
