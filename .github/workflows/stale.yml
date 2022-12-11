@@ -20,8 +20,6 @@ jobs:
           exempt-issue-labels: "in-progress"
           stale-issue-message: "-> This issue is marked as *stale* because it has been open for 3 days with no activity. <br /> It will be closed after another 3 days of inactivity."
           close-issue-message: "-> This issue was closed because it has been inactive for 3 days since being marked as stale."
-          days-before-pr-stale: -1
-          days-before-pr-close: -1
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   close-completed-issues:
@@ -32,14 +30,12 @@ jobs:
     steps:
       - uses: actions/stale@v6.0.1
         with:
-          days-before-issue-stale: 0
-          days-before-issue-close: 3
-          stale-issue-label: "completed"
+          days-before-issue-stale: 3
+          days-before-issue-close: 0
+          stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "completed"
-          close-issue-message: "-> This issue is closed because it has been already marked as completed/fixed, but had no activity for 3 days."
-          days-before-pr-stale: -1
-          days-before-pr-close: -1
+          stale-issue-message: "-> This issue is closed because it has been already marked as completed/fixed, but had no activity for 3 days."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
   close-wontfix-issues:
@@ -52,12 +48,10 @@ jobs:
         with:
           days-before-issue-stale: 0
           days-before-issue-close: 0
-          stale-issue-label: "wontfix"
+          stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "wontfix"
-          close-issue-message: "-> We have examined the situation and evaluated possible approaches to fix the problem or/and to add the requested feature.<br />The conclusion was, that currently we do not plan to fix/release this bug/new feature.<br />However, it's still possible, that we will review our desicion again later.<br />For now, the issue has been closed."
-          days-before-pr-stale: -1
-          days-before-pr-close: -1
+          stale-issue-message: "-> We have examined the situation and evaluated possible approaches to fix the problem or/and to add the requested feature.<br />The conclusion was, that currently we do not plan to fix/release this bug/new feature.<br />However, it's still possible, that we will review our desicion again later.<br />For now, the issue has been closed."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
   close-roadmap-issues:
@@ -70,12 +64,10 @@ jobs:
         with:
           days-before-issue-stale: 0
           days-before-issue-close: 0
-          stale-issue-label: "roadmap"
+          stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "roadmap"
-          close-issue-message: "-> This issue/feature request is included in our Roadmap and will be scheduled for one of our future releases.<br />For now, the issue has been closed."
-          days-before-pr-stale: -1
-          days-before-pr-close: -1
+          stale-issue-message: "-> This issue/feature request is included in our Roadmap and will be scheduled for one of our future releases.<br />For now, the issue has been closed."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   close-non-reproducable-issues:
@@ -88,12 +80,10 @@ jobs:
         with:
           days-before-issue-stale: 0
           days-before-issue-close: 0
-          stale-issue-label: "non-reproducable"
+          stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "non-reproducable"
-          close-issue-message: "-> Unfortunately, we could not reproduce this issue on our end. It's possible that need to debug directly on your local machine.<br />Please, take a look on the [How to Debug the SFDMU locally](https://help.sfdmu.com/plugin-basics/basic-usage/debugging).<br />The issue has been closed."
-          days-before-pr-stale: -1
-          days-before-pr-close: -1
+          stale-issue-message: "-> Unfortunately, we could not reproduce this issue on our end. It's possible that need to debug directly on your local machine.<br />Please, take a look on the [How to Debug the SFDMU locally](https://help.sfdmu.com/plugin-basics/basic-usage/debugging).<br />The issue has been closed."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
 
