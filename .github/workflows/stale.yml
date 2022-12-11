@@ -18,7 +18,7 @@ jobs:
           close-issue-label: "closed-inactive"
           any-of-labels: "bug,help-wanted,gui"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> This issue is marked as *stale* because it had any activity for the last 3 days. <br /> It will be closed after another 3 days of inactivity."
+          stale-issue-message: "-> This issue is marked as **stale** because it had any activity for the last 3 days. <br /> It will be closed after another 3 days of inactivity."
           close-issue-message: "-> This issue was closed because it has been inactive for 3 days since being marked as stale."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
