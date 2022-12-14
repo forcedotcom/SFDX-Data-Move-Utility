@@ -13,13 +13,12 @@ jobs:
       - uses: actions/stale@v6.0.1
         with:
           days-before-issue-stale: 3
-          days-before-issue-close: 3
-          stale-issue-label: "stale"
+          days-before-issue-close: 0
+          stale-issue-label: "to-close"
           close-issue-label: "closed-inactive"
           any-of-labels: "bug,help-wanted,gui"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> This issue is marked as **stale** because it had any activity for the last 3 days. <br /> It will be closed after another 3 days of inactivity."
-          close-issue-message: "-> This issue was closed because it has been inactive for 3 days since being marked as stale."
+          stale-issue-message: "-> This issue was closed because it has been inactive for the last 3 days. Feel free to reopen it, if you still need a help."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   close-completed-issues:
@@ -30,13 +29,13 @@ jobs:
     steps:
       - uses: actions/stale@v6.0.1
         with:
-          days-before-issue-stale: 3
+          days-before-issue-stale: 1
           days-before-issue-close: 0
           stale-issue-label: "to-close"
           close-issue-label: "closed"
           any-of-labels: "completed"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> This issue is closed because it has been already marked as completed(fixed), but had no activity for the last 3 days."
+          stale-issue-message: "-> This issue was closed because it has been already marked as completed(fixed) and had no activity for the last 24 hours.<br />Feel free to reopen it, if you still need a help.<br />Thanks."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
   close-wontfix-issues:
@@ -53,7 +52,7 @@ jobs:
           close-issue-label: "closed"
           any-of-labels: "wontfix"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> After the deep investigation of this issue, we have decided that we will not release this fix/feature in the nearest feature.<br />It's still possible, that we will re-evaluate our desicion again later.<br />For now, the issue has been closed."
+          stale-issue-message: "-> After the investigation, we have decided, that we will not fix this bug (add this feature) in our nearest releases.<br />It's still possible, that we will re-evaluate our desicion again later.<br />In that case, we will update this ticket accordingly.<br />Thank you for using the SFDMU."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
   close-roadmap-issues:
@@ -70,7 +69,7 @@ jobs:
           close-issue-label: "closed"
           any-of-labels: "roadmap"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> This issue/feature request is included in our Roadmap and will be scheduled for one of our future releases.<br />For now, the issue has been closed."
+          stale-issue-message: "-> This feature will not be done right now, but it is included in our Roadmap for one of our future releases. <br /> Thank you for the contribution to the SFDMU."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   close-non-reproducable-issues:
@@ -87,7 +86,7 @@ jobs:
           close-issue-label: "closed"
           any-of-labels: "non-reproducable"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> Unfortunately, we could not reproduce this issue on our end. It's possible that need to debug directly on your local machine.<br />Please, take a look on the [How to Debug the SFDMU locally](https://help.sfdmu.com/plugin-basics/basic-usage/debugging).<br />The issue has been closed."
+          stale-issue-message: "-> Unfortunately, we could not reproduce this issue on our end. It's possible that need to debug it directly in your environment.<br />Please, have a look on the [How to Debug the SFDMU locally](https://help.sfdmu.com/plugin-basics/basic-usage/debugging).<br />Thanks."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
 
