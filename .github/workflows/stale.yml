@@ -52,7 +52,7 @@ jobs:
           close-issue-label: "closed"
           any-of-labels: "wontfix"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> After the investigation, we have decided, that we will not fix this bug (add this feature) in our nearest releases.<br />It's still possible, that we will re-evaluate our desicion again later.<br />In that case, we will update this ticket accordingly.<br />Thank you for using the SFDMU."
+          stale-issue-message: "-> After the investigation, we have decided, that we will not fix this bug/add this feature in our nearest releases.<br />It's still possible, that we will re-evaluate our desicion again later.<br />Thanks for using the SFDMU."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
   close-roadmap-issues:
@@ -69,7 +69,7 @@ jobs:
           close-issue-label: "closed"
           any-of-labels: "roadmap"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> This feature will not be done right now, but it is included in our Roadmap for one of our future releases. <br /> Thank you for the contribution to the SFDMU."
+          stale-issue-message: "-> This feature was included in our Roadmap for one of our future releases.<br /> Thanks for your contribution to the SFDMU"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   close-non-reproducable-issues:
