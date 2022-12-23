@@ -223,6 +223,7 @@ export enum RESOURCES {
 
   updatingTarget = "updatingTarget",
   deletingTarget = "deletingTarget",
+  updatePersonAccounts = "updatePersonAccounts",
   updatingTargetNRecordsWillBeUpdated = "updatingTargetNRecordsWillBeUpdated",
   updatingTargetObjectCompleted = "updatingTargetObjectCompleted",
   updatingTargetCompleted = "updatingTargetCompleted",

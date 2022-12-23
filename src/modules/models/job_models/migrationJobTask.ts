@@ -1043,6 +1043,7 @@ export default class MigrationJobTask {
       // Person Accounts/Contacts only /////////////
       if (this.data.isPersonAccountOrContact) {
         // Create data ****
+        this.logger.infoVerbose(RESOURCES.updatePersonAccounts, this.sObjectName);
         data = await ___createUpdateData(true);
         if (data.missingParentLookups.length > 0) {
           // Warn user

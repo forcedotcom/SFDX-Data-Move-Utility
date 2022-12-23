@@ -51,6 +51,7 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
 
  RecordsTransform_CreatingMappingScheme = "Creating the transformation map ...",
  RecordsTransform_Tranforming = "Transforming records ...",
+ RecordsTransform_TotallyTranformed = "Totally transformed %s records",
  RecordsTransform_AppliedValueMapping = "Applying the Values Mapping",
 
 
@@ -59,7 +60,7 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
  FilteringEnd= "%s records has been filtered (%s remaining)",
  FilterOperationError = "Error in the target RecordsFilter module %s: %s",
 
- // Badword filter *** 
+ // Badword filter ***
  BadwordFilter_badwordsDetectStart= "Filtering results on badwords from file %s on %s...",
  BadwordFilter_badwordsDetectFileError= "Badwords file not found at location %s",
  BadwordFilter_badwordsDetectFileEmptyList= "Badwords file %s must contain a property \"badwords\" with at least one word",

@@ -194,9 +194,9 @@
     "fetchingSummary": "Data retrieving summary",
     "apiCallProgress": "In progress... Completed %s records.",
 
-
     "updatingTarget": "Updating the Target %s ...",
     "deletingTarget": "Deleting the Target %s ...",
+    "updatePersonAccounts": "Updating Person Accounts.",
     "updatingTargetNRecordsWillBeUpdated": "{%s} Number of records to %s: %s.",
     "updatingTargetObjectCompleted": "{%s} Updating the Target has been completed. Processed %s records.",
     "updatingTargetCompleted": "Updating the Target (%s) has been completed. Total processed %s records.",
