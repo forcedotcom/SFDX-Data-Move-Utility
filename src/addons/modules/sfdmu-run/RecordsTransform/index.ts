@@ -261,6 +261,7 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
       sourceRecords: any[],
       targetRecords: any[]) {
       source = source || {};
+      target = target || {};
       if (field.isConstant && field.constantValue) {
         formula[field.alias] = field.constantValue;
         return;
