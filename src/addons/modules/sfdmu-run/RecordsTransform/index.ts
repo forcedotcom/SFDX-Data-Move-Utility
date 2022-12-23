@@ -269,7 +269,7 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
       if (!field.lookupExpression) {
         value = source[field.sourceField];
       } else {
-        const updateWithRecord = field.lookupSource == 'target'
+        const updateWithRecord = field.lookupSource != 'target'
           ? sourceRecords.find(source => eval(field.lookupExpression))
           : targetRecords.find(target => eval(field.lookupExpression));
         value = updateWithRecord && updateWithRecord[field.sourceField];
