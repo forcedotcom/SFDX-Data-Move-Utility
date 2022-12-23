@@ -1,3 +1,12 @@
+## [4.19.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.0...4.19.1) (2022-12-23)
+
+
+### Bug Fixes
+
+* fixes in TransformRecords Add-On ([487e963](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/487e963cdbda77223f89c489bfac67e6a75b2a7e))
+
+
+
 # [4.19.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.18.2...4.19.0) (2022-12-23)
 
 
