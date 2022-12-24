@@ -31,8 +31,9 @@ jobs:
         with:
           days-before-issue-stale: 3
           days-before-issue-close: 0
-          any-of-labels: "completed"
           stale-issue-label: "to-close"
+          any-of-labels: "completed"
+          exempt-issue-labels: "in-progress"
           close-issue-reason: "completed"
           stale-issue-message: "-> This case has been closed, since it has been marked as completed and had no activity for the last 3 days."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
