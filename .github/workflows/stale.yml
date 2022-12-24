@@ -17,7 +17,7 @@ jobs:
           stale-issue-label: "to-close"
           any-of-labels: "bug,help-wanted,gui,wontfix,roadmap,non-reproducable"
           exempt-issue-labels: "in-progress"
-          stale-issue-message: "-> Hello!<br />Thank you for using the SFDMU.<br />This case is closed, since it had no activity for the last 3 days."
+          stale-issue-message: "-> Hello!<br />Thank you for using the SFDMU.<br />This case has been closed, since it had no activity for the last 3 days."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   close-completed-issues:
@@ -33,6 +33,6 @@ jobs:
           any-of-labels: "completed"
           stale-issue-label: "to-close"
           close-issue-reason: "completed"
-          stale-issue-message: "-> Hello!<br />Thank you for using the SFDMU.<br /> This case is closed, since it has been marked as completed and had no activity for the last 3 days."
+          stale-issue-message: "-> Hello!<br />Thank you for using the SFDMU.<br /> This case has been closed, since it has been marked as completed and had no activity for the last 3 days."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           
