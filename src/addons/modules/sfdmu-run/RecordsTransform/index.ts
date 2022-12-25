@@ -19,10 +19,6 @@ import ISfdmuRunScript from "../../../components/sfdmu-run/ISfdmuRunScript";
 import ISfdmuRunScriptObject from "../../../components/sfdmu-run/ISfdmuRunScriptObject";
 
 
-
-
-
-
 interface ITransformation {
 
   // Original -----
@@ -222,16 +218,6 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
       });
 
       this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.RecordsTransform_TotallyTranformed, String(totallyTransformed));
-
-      // Map values
-      // Since the value mapping has been already done after data retrieval, don't need to run it again here
-      // So the Add-On always runs AFTER the Value Mapping
-      //this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.RecordsTransform_AppliedValueMapping);
-      // transformsMap.forEach((transformation: ITransformation) => {
-      //   let targetRecords = transformation.targetTask.sourceTaskData.records;
-      //   transformation.targetTask.mapRecords(targetRecords);
-      // });
-
 
     } catch (e) {
       this.runtime.logFormattedWarning(this,

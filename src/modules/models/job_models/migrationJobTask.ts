@@ -885,8 +885,6 @@ export default class MigrationJobTask {
         }
       }
       if (hasRecords) {
-        // Map records  --------
-        this.mapRecords(records);
         // Set external id map ---------
         let newRecordsCount = this._setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
         // Completed message ------
@@ -927,8 +925,6 @@ export default class MigrationJobTask {
             records = records.concat(await sfdx.queryOrgOrCsvAsync(query, undefined, undefined, undefined, this.scriptObject.useQueryAll));
           }
           if (queries.length > 0) {
-            // Map records  --------
-            this.mapRecords(records);
             // Set external id map ---------
             let newRecordsCount = this._setExternalIdMap(records, this.sourceData.extIdRecordsMap, this.sourceData.idRecordsMap);
             // Completed message ------
@@ -1309,6 +1305,9 @@ export default class MigrationJobTask {
           self.logger.getResourceString(RESOURCES.insert),
           String((data.recordsToInsert.length)));
 
+        // Value mapping
+        self.mapRecords(data.recordsToInsert);
+
         self.createApiEngine(self.targetData.org, OPERATION.Insert, data.recordsToInsert.length, true, targetFilenameSuffix);
         let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToInsert, self.apiProgressCallback, self.getParallelThreadCount());
 
@@ -1336,6 +1335,9 @@ export default class MigrationJobTask {
           self.sObjectName,
           self.logger.getResourceString(RESOURCES.update),
           String((data.recordsToUpdate.length)));
+
+        // Value mapping
+        self.mapRecords(data.recordsToUpdate);
 
         self.createApiEngine(self.targetData.org, OPERATION.Update, data.recordsToUpdate.length, false, targetFilenameSuffix);
         let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToUpdate, self.apiProgressCallback, self.getParallelThreadCount());
@@ -1845,7 +1847,7 @@ export default class MigrationJobTask {
 
         records.forEach((record: any) => {
           let newValue: any;
-          let rawValue = (String(record[field]) || "").trim();
+          let rawValue = (String(record[field] || "")).trim();
           if (regexp) {
             // Use regex
             try {
