@@ -129,8 +129,11 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     let dataToExportMap = new Map<any, IDataToExport>();
     let isDeleted = false;
 
-    // #########  PROCESSING ###################//
-    // ---------- EXPORT FILES --------------------- //
+
+    // ############################################## //
+    // #########  PROCESSING ######################## //
+    //----------------------------------------------- //
+    // ---------- EXPORT FILES ---------------------  //
     async function ___exportFiles() {
 
       // ------------------ Read Target ------------------------------
@@ -314,18 +317,23 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       });
 
     }
+    //----------------------------------------------- //
 
-    // ---------- EXPORT FEED ATTACHMENTS ---------- //
+
+    //----------------------------------------------- //
+    // ---------- EXPORT FEED ATTACHMENTS ----------  //
     async function ___exportFeedAttachments() {
     }
-    // #########################################//
+    //----------------------------------------------- //
+    // ############################################## //
+    // ############################################## //
 
 
-    // ---------- Standard Files -----------------------------------------------
+    // ---------- Process Records --------------------------------------
     // -----------------------------------------------------------------
     await ___exportFiles();
 
-    // ---------- Upload -----------------------------------------------
+    // ---------- Upload Binary Data -----------------------------------
     // -----------------------------------------------------------------
     let versionsToProcess = [...dataToExportMap.values()].filter(exportItem => exportItem.isVersionChanged).map(exportItem => exportItem.version);
 
@@ -340,7 +348,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         String(versionsToProcess.filter(item => item.isError).length));
     }
 
-    // -----------Create missing ContentDocumentLinks ------------------
+    // -----------Create ContentDocumentLinks --------------------------
     // -----------------------------------------------------------------
     let dataToProcess = [...dataToExportMap.values()].filter(exportItem => exportItem.recordsToBeLinked.length > 0);
 
