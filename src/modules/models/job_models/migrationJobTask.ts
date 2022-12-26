@@ -1211,7 +1211,9 @@ export default class MigrationJobTask {
           source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = typeof source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] == "undefined" ? false : source[CONSTANTS.__IS_PROCESSED_FIELD_NAME];
           delete cloned[CONSTANTS.__ID_FIELD_NAME];
           let target = self.data.sourceToTargetRecordMap.get(source);
-          if (target && updateMode == "backwards") {
+          if (target && self.data.task.scriptObject.skipExistingRecords) {
+            source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
+          } else if (target && updateMode == "backwards") {
             // ???
             if (target["Id"] && ___compareRecords(target, cloned, fieldsToCompareRecords)) {
               cloned["Id"] = target["Id"];

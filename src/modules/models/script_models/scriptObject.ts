@@ -72,10 +72,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   useCSVValuesMapping: boolean = false;
   useFieldMapping: boolean = false;
   useValuesMapping: boolean = false;
-  /**
-   * [Obsolete] Replaced with "master".
-   * Preserved for backwards compability
-   */
+  // Obsolete
   allRecords: boolean;
   master: boolean = true;
   excludedFields: Array<string> = new Array<string>();
@@ -84,6 +81,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   restApiBatchSize: number;
   useQueryAll: boolean;
   queryAllTarget: boolean;
+  skipExistingRecords: boolean;
 
   parallelBulkJobs: number = 1;
   parallelRestJobs: number = 1;
