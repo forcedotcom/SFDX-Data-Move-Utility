@@ -1206,6 +1206,7 @@ export default class MigrationJobTask {
           processedData.clonedToSourceMap.set(cloned, source);
         });
 
+
         // Create separated record sets to Update/Insert /////////////
         processedData.clonedToSourceMap.forEach((source, cloned) => {
           source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = typeof source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] == "undefined" ? false : source[CONSTANTS.__IS_PROCESSED_FIELD_NAME];
