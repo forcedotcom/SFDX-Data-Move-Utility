@@ -1,3 +1,12 @@
+# [4.20.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.6...4.20.0) (2022-12-26)
+
+
+### Features
+
+* Added Object.skipExistingRecords property ([19a6dd5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/19a6dd51e4b357247d45df402ee6a9e4c360359c))
+
+
+
 ## [4.19.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.5...4.19.6) (2022-12-25)
 
 
