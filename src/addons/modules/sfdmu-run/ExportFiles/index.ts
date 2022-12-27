@@ -132,7 +132,18 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
     // ---------- Process Records --------------------------------------
     // -----------------------------------------------------------------
-    await ___exportFiles();
+    switch (task.sObjectName) {
+
+      case 'FeedItem':
+        await ___exportFeedAttachments();
+        break;
+
+      default:
+        await ___exportSObjectFiles();
+        break;
+
+    }
+
 
     // ---------- Upload Binary Data -----------------------------------
     // -----------------------------------------------------------------
@@ -186,7 +197,12 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     this.runtime.logAddonExecutionFinished(this);
 
 
-    // ---------------- Helper Functions -------------------------------
+
+
+
+    // **************** Helper Functions *******************************
+    // -----------------------------------------------------------------
+    // -----------------------------------------------------------------
     // -----------------------------------------------------------------
     async function ___deleteTargetFiles(docIdsToDelete: Array<string>): Promise<boolean> {
 
@@ -217,7 +233,35 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       return false;
     }
 
-    async function ___exportFiles() {
+    async function ___exportFeedAttachments() {
+
+      // ------------------ Read Source ------------------------------
+      // -------------------------------------------------------------
+      // ====== Read  source FeedAttachments =====
+      if (args.operation != OPERATION.Insert && sourceFiles.recordIds.length > 0) {
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadSourceFeedAttachments);
+        let queries = _self.runtime.createFieldInQueries(
+          ['Id', 'RecordId', 'FeedEntityId'],
+          'FeedEntityId',
+          'FeedAttachment',
+          sourceFiles.recordIds,
+          "Type = 'Content'");
+
+        let feedAttachments = await _self.runtime.queryMultiAsync(false, queries);
+        targetFiles.recIdToDocLinks = Common.arrayToMapMulti(feedAttachments, ['FeedEntityId']);
+        targetFiles.docIds = Common.distinctStringArray(Common.arrayToPropsArray(feedAttachments, ['RecordId']));
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(feedAttachments.length));
+      }
+
+      // ===== Read source ContentVersions =========
+      await ___readSourceContentVersions('Id');
+
+
+
+
+    }
+
+    async function ___exportSObjectFiles() {
 
       // ------------------ Read Target ------------------------------
       // -------------------------------------------------------------
@@ -313,31 +357,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       }
 
       // ===== Read source ContentVersions =====
-      if (sourceFiles.docIds.length > 0) {
-        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadSourceContentVersions);
-        let fields = Common.distinctStringArray([
-          'Id', args.externalId, 'ContentDocumentId',
-          'Title', 'Description', 'PathOnClient', 'VersionData',
-          'ContentModifiedDate', 'ContentSize', 'Checksum',
-          'ContentUrl', 'ContentBodyId'
-        ]);
-
-        let queries = _self.runtime.createFieldInQueries(
-          fields,
-          'ContentDocumentId',
-          'ContentVersion',
-          sourceFiles.docIds,
-          'IsLatest = true');
-        if (args.sourceWhere) {
-          queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.sourceWhere + ') AND (') + ')')
-        }
-        let contentVersions = await _self.runtime.queryMultiAsync(true, queries);
-        sourceFiles.docIdToDocVersion = Common.arrayToMap(contentVersions, ['ContentDocumentId']);
-
-        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentVersions.length));
-
-      }
-
+      await ___readSourceContentVersions();
 
 
       // ---------- Compare versions to detect changes -------------------
@@ -401,8 +421,35 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
     }
 
-    async function ___exportFeedAttachments() {
+
+    async function ___readSourceContentVersions(filteredByDocIdsByField = "ContentDocumentId") {
+      if (sourceFiles.docIds.length > 0) {
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadSourceContentVersions);
+        let fields = Common.distinctStringArray([
+          'Id', args.externalId, 'ContentDocumentId',
+          'Title', 'Description', 'PathOnClient', 'VersionData',
+          'ContentModifiedDate', 'ContentSize', 'Checksum',
+          'ContentUrl', 'ContentBodyId'
+        ]);
+
+        let queries = _self.runtime.createFieldInQueries(
+          fields,
+          filteredByDocIdsByField,
+          'ContentVersion',
+          sourceFiles.docIds,
+          'IsLatest = true');
+        if (args.sourceWhere) {
+          queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.sourceWhere + ') AND (') + ')')
+        }
+        let contentVersions = await _self.runtime.queryMultiAsync(true, queries);
+        sourceFiles.docIdToDocVersion = Common.arrayToMap(contentVersions, ['ContentDocumentId']);
+
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentVersions.length));
+
+      }
     }
+
+
 
     return null;
 
