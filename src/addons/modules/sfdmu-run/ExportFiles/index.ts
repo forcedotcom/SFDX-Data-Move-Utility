@@ -110,7 +110,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       return;
     }
 
-    let source: IDataToImport = {
+    let sourceFiles: IDataToImport = {
       recIdToDocLinks: new Map<string, Array<any>>(),
       docIds: [],
       recordIds: [...task.sourceTaskData.idRecordsMap.keys()],
@@ -118,7 +118,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     };
 
 
-    let target: IDataToImport = {
+    let targetFiles: IDataToImport = {
       recIdToDocLinks: new Map<string, Array<any>>(),
       docIds: [],
       recordIds: [...task.targetTaskData.idRecordsMap.keys()],
@@ -126,7 +126,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     };
 
     // Map: [Source ContentVersion] => IDataToExport
-    let dataToExportMap = new Map<any, IDataToExport>();
+    let exportedFilesMap = new Map<any, IDataToExport>();
     let isDeleted = false;
 
 
@@ -136,7 +136,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
     // ---------- Upload Binary Data -----------------------------------
     // -----------------------------------------------------------------
-    let versionsToProcess = [...dataToExportMap.values()].filter(exportItem => exportItem.isVersionChanged).map(exportItem => exportItem.version);
+    let versionsToProcess = [...exportedFilesMap.values()].filter(exportItem => exportItem.isVersionChanged).map(exportItem => exportItem.version);
 
     if (versionsToProcess.length > 0) {
       this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ExportingContentVersions);
@@ -151,15 +151,15 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
     // -----------Create ContentDocumentLinks --------------------------
     // -----------------------------------------------------------------
-    let dataToProcess = [...dataToExportMap.values()].filter(exportItem => exportItem.recordsToBeLinked.length > 0);
+    let exportedFiles = [...exportedFilesMap.values()].filter(exportedFile => exportedFile.recordsToBeLinked.length > 0);
 
-    if (dataToProcess.length > 0) {
+    if (exportedFiles.length > 0) {
       this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ExportingContentDocumentLinks);
 
-      let docLinks = Common.flattenArrays(dataToProcess.map(data => data.recordsToBeLinked.map(record => {
+      let docLinks = Common.flattenArrays(exportedFiles.map(fileToExport => fileToExport.recordsToBeLinked.map(record => {
         return {
           LinkedEntityID: record.Id,
-          ContentDocumentID: data.version.targetContentDocumentId,
+          ContentDocumentID: fileToExport.version.targetContentDocumentId,
           ShareType: record.sourceDocLink.ShareType,
           Visibility: record.sourceDocLink.Visibility
         };
@@ -177,7 +177,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
     }
 
-    if (dataToProcess.length == 0 && versionsToProcess.length == 0) {
+    if (exportedFiles.length == 0 && versionsToProcess.length == 0) {
       this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_NothingToProcess);
     }
 
@@ -222,29 +222,29 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       // ------------------ Read Target ------------------------------
       // -------------------------------------------------------------
       // ====== Read  target ContentDocumentLinks =====
-      if (args.operation != OPERATION.Insert && target.recordIds.length > 0) {
+      if (args.operation != OPERATION.Insert && targetFiles.recordIds.length > 0) {
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadTargetContentDocumentLinks);
         let queries = _self.runtime.createFieldInQueries(
           ['Id', 'LinkedEntityId', 'ContentDocumentId', 'ShareType', 'Visibility'],
           'LinkedEntityId',
           'ContentDocumentLink',
-          target.recordIds);
+          targetFiles.recordIds);
 
-        let data = await _self.runtime.queryMultiAsync(false, queries);
-        target.recIdToDocLinks = Common.arrayToMapMulti(data, ['LinkedEntityId']);
-        target.docIds = Common.distinctStringArray(Common.arrayToPropsArray(data, ['ContentDocumentId']));
-        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(data.length));
+        let contentDocLinks = await _self.runtime.queryMultiAsync(false, queries);
+        targetFiles.recIdToDocLinks = Common.arrayToMapMulti(contentDocLinks, ['LinkedEntityId']);
+        targetFiles.docIds = Common.distinctStringArray(Common.arrayToPropsArray(contentDocLinks, ['ContentDocumentId']));
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentDocLinks.length));
       }
 
       // ===== Delete all old target files (if no targetWhere was defined) =====
       if (!args.targetWhere) {
-        if (await ___deleteTargetFiles(target.docIds)) {
+        if (await ___deleteTargetFiles(targetFiles.docIds)) {
           return;
         }
       }
 
       // ===== Read target ContentVersions =====
-      if (args.operation != OPERATION.Insert && target.docIds.length > 0) {
+      if (args.operation != OPERATION.Insert && targetFiles.docIds.length > 0) {
 
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadTargetContentVersions);
 
@@ -258,26 +258,26 @@ export default class ExportFiles extends SfdmuRunAddonModule {
           fields,
           'ContentDocumentId',
           'ContentVersion',
-          target.docIds,
+          targetFiles.docIds,
           'IsLatest = true');
         if (args.targetWhere) {
           queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.targetWhere + ') AND (') + ')')
         }
-        let data = await _self.runtime.queryMultiAsync(false, queries);
-        target.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
+        let contentVersions = await _self.runtime.queryMultiAsync(false, queries);
+        targetFiles.docIdToDocVersion = Common.arrayToMap(contentVersions, ['ContentDocumentId']);
 
-        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(data.length));
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentVersions.length));
 
       }
 
       // ===== Delete selective old target files (if targetWhere was defined) =====
       if (args.targetWhere) {
-        if (await ___deleteTargetFiles([...target.docIdToDocVersion.keys()])) {
+        if (await ___deleteTargetFiles([...targetFiles.docIdToDocVersion.keys()])) {
           return;
         }
       }
 
-      if (source.recordIds.length == 0) {
+      if (sourceFiles.recordIds.length == 0) {
         // No source records -> exit
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_NoSourceRecords);
         return;
@@ -305,15 +305,15 @@ export default class ExportFiles extends SfdmuRunAddonModule {
           'ContentDocumentLink',
           [...task.sourceTaskData.idRecordsMap.keys()]);
 
-        let data = await _self.runtime.queryMultiAsync(true, queries);
-        source.recIdToDocLinks = Common.arrayToMapMulti(data, ['LinkedEntityId']);
-        source.docIds = Common.distinctStringArray(Common.arrayToPropsArray(data, ['ContentDocumentId']));
+        let contentDocLinks = await _self.runtime.queryMultiAsync(true, queries);
+        sourceFiles.recIdToDocLinks = Common.arrayToMapMulti(contentDocLinks, ['LinkedEntityId']);
+        sourceFiles.docIds = Common.distinctStringArray(Common.arrayToPropsArray(contentDocLinks, ['ContentDocumentId']));
 
-        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(data.length));
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentDocLinks.length));
       }
 
       // ===== Read source ContentVersions =====
-      if (source.docIds.length > 0) {
+      if (sourceFiles.docIds.length > 0) {
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadSourceContentVersions);
         let fields = Common.distinctStringArray([
           'Id', args.externalId, 'ContentDocumentId',
@@ -326,15 +326,15 @@ export default class ExportFiles extends SfdmuRunAddonModule {
           fields,
           'ContentDocumentId',
           'ContentVersion',
-          source.docIds,
+          sourceFiles.docIds,
           'IsLatest = true');
         if (args.sourceWhere) {
           queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.sourceWhere + ') AND (') + ')')
         }
-        let data = await _self.runtime.queryMultiAsync(true, queries);
-        source.docIdToDocVersion = Common.arrayToMap(data, ['ContentDocumentId']);
+        let contentVersions = await _self.runtime.queryMultiAsync(true, queries);
+        sourceFiles.docIdToDocVersion = Common.arrayToMap(contentVersions, ['ContentDocumentId']);
 
-        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(data.length));
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentVersions.length));
 
       }
 
@@ -345,44 +345,44 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       // -----------------------------------------------------------------
       _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Analysing);
 
-      source.recIdToDocLinks.forEach((sourceDocLinks, recordId) => {
+      sourceFiles.recIdToDocLinks.forEach((sourceDocLinks, recordId) => {
         sourceDocLinks.forEach(sourceDocLink => {
-          let sourceContentVersion = source.docIdToDocVersion.get(sourceDocLink["ContentDocumentId"]);
+          let sourceContentVersion = sourceFiles.docIdToDocVersion.get(sourceDocLink["ContentDocumentId"]);
           if (sourceContentVersion) {
             let targetRecord = task.sourceToTargetRecordMap.get(task.sourceTaskData.idRecordsMap.get(recordId));
-            if (!dataToExportMap.has(sourceContentVersion)) {
-              dataToExportMap.set(sourceContentVersion, {
+            if (!exportedFilesMap.has(sourceContentVersion)) {
+              exportedFilesMap.set(sourceContentVersion, {
                 version: new ContentVersion(sourceContentVersion),
                 recordsToBeLinked: new Array<ILinkedRecord>(),
                 isVersionChanged: false,
                 targetVersion: null
               });
             }
-            let dataToExport = dataToExportMap.get(sourceContentVersion);
+            let exportedFiles = exportedFilesMap.get(sourceContentVersion);
             if (targetRecord) {
-              let targetDocLinks = target.recIdToDocLinks.get(targetRecord["Id"]);
+              let targetDocLinks = targetFiles.recIdToDocLinks.get(targetRecord["Id"]);
               let found = false;
               // File exists => check for the modification ******
               (targetDocLinks || []).forEach(targetDocLink => {
-                let targetContentVersion = dataToExport.targetVersion || new ContentVersion(target.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]));
-                if (dataToExport.version[args.externalId] == targetContentVersion[args.externalId]) {
+                let targetContentVersion = exportedFiles.targetVersion || new ContentVersion(targetFiles.docIdToDocVersion.get(targetDocLink["ContentDocumentId"]));
+                if (exportedFiles.version[args.externalId] == targetContentVersion[args.externalId]) {
                   // The same version found in the Target
                   found = true;
-                  dataToExport.targetVersion = targetContentVersion;
-                  if (!dataToExport.version.targetContentDocumentId) {
-                    dataToExport.version.targetContentDocumentId = String(targetContentVersion['ContentDocumentId']);
+                  exportedFiles.targetVersion = targetContentVersion;
+                  if (!exportedFiles.version.targetContentDocumentId) {
+                    exportedFiles.version.targetContentDocumentId = String(targetContentVersion['ContentDocumentId']);
                   }
-                  if (dataToExport.version.isNewer(targetContentVersion)) {
+                  if (exportedFiles.version.isNewer(targetContentVersion)) {
                     // The file was modified ****************
                     // Add _self item to the export array ///////////
-                    dataToExport.isVersionChanged = true;
+                    exportedFiles.isVersionChanged = true;
                   }
                 }
               });
               if (!found && args.operation != OPERATION.Update) {
                 // File was not found in the Target => Create new file and attach it to the target
                 // Only for upsert / insert, excluded update
-                dataToExport.recordsToBeLinked.push({
+                exportedFiles.recordsToBeLinked.push({
                   Id: targetRecord["Id"],
                   sourceDocLink
                 });
@@ -393,9 +393,9 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
       });
 
-      dataToExportMap.forEach((dataToExport) => {
-        if (!dataToExport.targetVersion) {
-          dataToExport.isVersionChanged = true;
+      exportedFilesMap.forEach((exportedFile) => {
+        if (!exportedFile.targetVersion) {
+          exportedFile.isVersionChanged = true;
         }
       });
 
