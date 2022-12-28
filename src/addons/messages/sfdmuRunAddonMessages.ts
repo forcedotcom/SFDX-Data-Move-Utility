@@ -33,6 +33,7 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
 
  ExportFiles_ReadTargetContentDocumentLinks = 'Retrieving target ContentDocumentLink records ...',
  ExportFiles_ReadSourceFeedAttachments = 'Retrieving source FeedAttachment records ...',
+ ExportFiles_ReadTargetFeedAttachments = 'Retrieving target FeedAttachment records ...',
  ExportFiles_DeleteTargetContentDocuments = 'Deleting target ContentDocument records ...',
  ExportFiles_NoSourceRecords = 'There are no linked source records found to process.',
  ExportFiles_ReadTargetContentVersions = 'Retrieving target ContentVersion records ...',

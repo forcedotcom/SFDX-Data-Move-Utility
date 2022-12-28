@@ -235,6 +235,50 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
     async function ___exportFeedAttachments() {
 
+      // ------------------ Read Target ------------------------------
+      // -------------------------------------------------------------
+      // ====== Read  target FeedAttachments =====
+      if (args.operation != OPERATION.Insert && targetFiles.recordIds.length > 0) {
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadTargetFeedAttachments);
+        let queries = _self.runtime.createFieldInQueries(
+          ['Id', 'RecordId', 'FeedEntityId'],
+          'FeedEntityId',
+          'FeedAttachment',
+          targetFiles.recordIds,
+          "Type = 'Content'");
+
+        let contentDocLinks = await _self.runtime.queryMultiAsync(false, queries);
+        targetFiles.recIdToDocLinks = Common.arrayToMapMulti(contentDocLinks, ['FeedEntityId']);
+        targetFiles.docIds = Common.distinctStringArray(Common.arrayToPropsArray(contentDocLinks, ['RecordId']));
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentDocLinks.length));
+      }
+
+      // ===== Read target ContentVersions =========
+      await __readTargetContentVersions('Id');
+
+      // ===== Delete target ContentDocuments =====
+      if (await ___deleteTargetFiles(targetFiles.docIds)) {
+        return;
+      }
+
+      if (sourceFiles.recordIds.length == 0) {
+        // No source records -> exit
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_NoSourceRecords);
+        return;
+      }
+
+      if (args.operation == OPERATION.Update && isDeleted) {
+        // Update + Delete => exit
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_NothingToUpdate);
+        return;
+      }
+
+      if (args.operation == OPERATION.Upsert && isDeleted) {
+        args.operation = OPERATION.Insert;
+      }
+
+
+
       // ------------------ Read Source ------------------------------
       // -------------------------------------------------------------
       // ====== Read  source FeedAttachments =====
@@ -248,8 +292,8 @@ export default class ExportFiles extends SfdmuRunAddonModule {
           "Type = 'Content'");
 
         let feedAttachments = await _self.runtime.queryMultiAsync(false, queries);
-        targetFiles.recIdToDocLinks = Common.arrayToMapMulti(feedAttachments, ['FeedEntityId']);
-        targetFiles.docIds = Common.distinctStringArray(Common.arrayToPropsArray(feedAttachments, ['RecordId']));
+        sourceFiles.recIdToDocLinks = Common.arrayToMapMulti(feedAttachments, ['FeedEntityId']);
+        sourceFiles.docIds = Common.distinctStringArray(Common.arrayToPropsArray(feedAttachments, ['RecordId']));
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(feedAttachments.length));
       }
 
@@ -280,45 +324,12 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentDocLinks.length));
       }
 
-      // ===== Delete all old target files (if no targetWhere was defined) =====
-      if (!args.targetWhere) {
-        if (await ___deleteTargetFiles(targetFiles.docIds)) {
-          return;
-        }
-      }
-
       // ===== Read target ContentVersions =====
-      if (args.operation != OPERATION.Insert && targetFiles.docIds.length > 0) {
+      await __readTargetContentVersions();
 
-        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadTargetContentVersions);
-
-        let fields = Common.distinctStringArray([
-          'Id', args.externalId, 'ContentDocumentId',
-          'ContentModifiedDate', 'Title',
-          'Checksum', 'ContentUrl'
-        ]);
-
-        let queries = _self.runtime.createFieldInQueries(
-          fields,
-          'ContentDocumentId',
-          'ContentVersion',
-          targetFiles.docIds,
-          'IsLatest = true');
-        if (args.targetWhere) {
-          queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.targetWhere + ') AND (') + ')')
-        }
-        let contentVersions = await _self.runtime.queryMultiAsync(false, queries);
-        targetFiles.docIdToDocVersion = Common.arrayToMap(contentVersions, ['ContentDocumentId']);
-
-        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentVersions.length));
-
-      }
-
-      // ===== Delete selective old target files (if targetWhere was defined) =====
-      if (args.targetWhere) {
-        if (await ___deleteTargetFiles([...targetFiles.docIdToDocVersion.keys()])) {
-          return;
-        }
+      // ===== Delete target ContentDocuments =====
+      if (await ___deleteTargetFiles(targetFiles.docIds)) {
+        return;
       }
 
       if (sourceFiles.recordIds.length == 0) {
@@ -443,6 +454,37 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         }
         let contentVersions = await _self.runtime.queryMultiAsync(true, queries);
         sourceFiles.docIdToDocVersion = Common.arrayToMap(contentVersions, ['ContentDocumentId']);
+        sourceFiles.docIds = [...sourceFiles.docIdToDocVersion.keys()];
+
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentVersions.length));
+
+      }
+    }
+
+
+    async function __readTargetContentVersions(filteredByDocIdsByField = "ContentDocumentId") {
+      if (args.operation != OPERATION.Insert && targetFiles.docIds.length > 0) {
+
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadTargetContentVersions);
+
+        let fields = Common.distinctStringArray([
+          'Id', args.externalId, 'ContentDocumentId',
+          'ContentModifiedDate', 'Title',
+          'Checksum', 'ContentUrl'
+        ]);
+
+        let queries = _self.runtime.createFieldInQueries(
+          fields,
+          filteredByDocIdsByField,
+          'ContentVersion',
+          targetFiles.docIds,
+          'IsLatest = true');
+        if (args.targetWhere) {
+          queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.targetWhere + ') AND (') + ')')
+        }
+        let contentVersions = await _self.runtime.queryMultiAsync(false, queries);
+        targetFiles.docIdToDocVersion = Common.arrayToMap(contentVersions, ['ContentDocumentId']);
+        targetFiles.docIds = [...targetFiles.docIdToDocVersion.keys()];
 
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RetrievedRecords, String(contentVersions.length));
 
