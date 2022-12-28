@@ -15,8 +15,7 @@ jobs:
           days-before-issue-stale: 7
           days-before-issue-close: 3
           stale-issue-label: "stale"
-          any-of-labels: "bug,help-wanted,gui,wontfix,non-reproducible"
-          exempt-issue-labels: "in-progress"
+          exempt-issue-labels: "in-progress,completed"
           close-issue-reason: "completed"
           stale-issue-message: "This case has been marked as a 'stale', since it has no activity for the last week. The case will be automatically closed in another 3 days of inactivity."
           close-issue-message: "This case has been closed, since it has no activity for the 3 days after was marked as a 'stale'. Feel free to reopen it at any time, if you need more help."
