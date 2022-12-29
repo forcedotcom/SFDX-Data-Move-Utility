@@ -1079,6 +1079,20 @@ export class Common {
     return temp.map(el => el.trim()).filter(el => el.length > 0);
   }
 
+/**
+ * Extracts QHERE clause from the query string
+ *
+ * @static
+ * @param {string} query The query to process (SELECT Name, a__c FROM Account WHERE b__c = 'test')
+ * @return {*}  {string} Dry WHERE clause string (b__c = 'test')
+ * @memberof Common
+ */
+public static extractWhereClause(query: string): string {
+    if ((query || '').match(/WHERE/i)) {
+      return query.match(/^.*?WHERE.*?(.+?(?=LIMIT|OFFSET|GROUP|ORDER|$))/i)[1].trim();
+    }
+    return null;
+  }
 
   /**
      * Creates array of SOQLs that each of them contains "WHERE Field__c IN (values)"  clauses
@@ -1106,6 +1120,8 @@ export class Common {
       return new Array<string>();
     }
 
+    const whereClauseLength = (whereClause || '').length;
+
     let tempQuery = <Query>{
       fields: selectFields.map(field => getComposedField(field)),
       where: <WhereClause>{},
@@ -1124,7 +1140,7 @@ export class Common {
 
     function* queryGen() {
       while (true) {
-        for (let whereClausLength = 0; whereClausLength < CONSTANTS.MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH;) {
+        for (let whereClausLength = whereClauseLength; whereClausLength < CONSTANTS.MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH;) {
           let value = String(valuesIN[whereValuesCounter] || "").replace(/(['\\])/g, "\\$1");
           whereValues.push(value);
           whereClausLength += value.length + 4;

@@ -2011,36 +2011,39 @@ export default class MigrationJobTask {
 
             // *** The previous logic:
             // -----------------------
-            if (!field.parentLookupObject.task.sourceData.allRecords
-              || field.parentLookupObject.isLimitedQuery
+            // if (!field.parentLookupObject.task.sourceData.allRecords
+            //   || field.parentLookupObject.isLimitedQuery
 
-              // *** The new (fixed) logic:
-              //-------------------
-              // Fixed the issue of incorrect fetching releated records when
-              // the parent object is master and the child object is slave:
-              // - field.parentLookupObject.task.sourceData.allRecords = true -> Fetch all records mode for the parent sObject
-              // - this.scriptObject.allRecords = false -> The current sObject is NOT master
-              //   === > also need to create the filtered queries.
-              // (TODO: need to check if it's working properly)
-              || field.parentLookupObject.task.sourceData.allRecords && !this.scriptObject.allRecords
-            ) {
+            //   // *** The new (fixed) logic:
+            //   //-------------------
+            //   // Fixed the issue of incorrect fetching releated records when
+            //   // the parent object is master and the child object is slave:
+            //   // - field.parentLookupObject.task.sourceData.allRecords = true -> Fetch all records mode for the parent sObject
+            //   // - this.scriptObject.allRecords = false -> The current sObject is NOT master
+            //   //   === > also need to create the filtered queries.
+            //   // (TODO: need to check if it's working properly)
+            //   || field.parentLookupObject.task.sourceData.allRecords && !this.scriptObject.allRecords
+            // ) {
 
-              if (queryMode != "forwards") {
-                // FORWARDS
-                // For forwards => build the query using all the PREVIOUS related tasks by the tasks order
-                if (this.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0) {
-                  // The parent task is before => create child lookup query for all Id values of the parent lookup object
-                  fieldsToQueryMap.set(field, [...field.parentLookupObject.task.sourceData.idRecordsMap.keys()]);
-                }
-              } else {
-                // BACKWARDS
-                // For backwards => build the query using all the NEXT related tasks by the tasks order
-                if (this.data.nextTasks.indexOf(field.parentLookupObject.task) >= 0) {
-                  // The parent task is before => create child lookup query for all Id values of the parent lookup object
-                  fieldsToQueryMap.set(field, [...field.parentLookupObject.task.sourceData.idRecordsMap.keys()]);
-                }
+           // Caution! Important change!
+           // Now limited queries are constructed for the SOURCE object regardless the retrieve mode (master/slave)
+           //   of the parent object
+            if (queryMode != "forwards") {
+              //BACKWARDS
+              // For backwards => build the query using all the PREVIOUS related tasks by the tasks order
+              if (this.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0) {
+                // The parent task is before => create child lookup query for all Id values of the parent lookup object
+                fieldsToQueryMap.set(field, [...field.parentLookupObject.task.sourceData.idRecordsMap.keys()]);
+              }
+            } else {
+              // FORWARDS
+              // For forwards => build the query using all the NEXT related tasks by the tasks order
+              if (this.data.nextTasks.indexOf(field.parentLookupObject.task) >= 0) {
+                // The parent task is after => create child lookup query for all Id values of the parent lookup object
+                fieldsToQueryMap.set(field, [...field.parentLookupObject.task.sourceData.idRecordsMap.keys()]);
               }
             }
+            //}
           }
         } else {
           // TARGET
@@ -2052,9 +2055,15 @@ export default class MigrationJobTask {
         }
       });
     }
+    let where: string;
 
+    // Caution! Important change!
+    // Now we DO NOT add the original query string into the list of queries for the SOURCE object.
+    //   Instead we extract the WHERE clause from the original query string
+    //   and add it to EACH of filtered query with AND logic.
     if (isSource && this.scriptObject.isLimitedQuery && !reversed) {
-      queries.push(this.createQuery(fieldNames));
+      //queries.push(this.createQuery(fieldNames));
+      where = Common.extractWhereClause(this.scriptObject.query);
     }
     fieldsToQueryMap.forEach((inValues, field) => {
       // Filter by cached values => get out all duplicated IN values thet
@@ -2070,7 +2079,7 @@ export default class MigrationJobTask {
           valueCache.add(inValue);
         });
         // Create and add query
-        Common.createFieldInQueries(fieldNames || this.data.fieldsInQuery, field.name, this.sObjectName, inValues).forEach(query => {
+        Common.createFieldInQueries(fieldNames || this.data.fieldsInQuery, field.name, this.sObjectName, inValues, where).forEach(query => {
           queries.push(query);
         });
       }
