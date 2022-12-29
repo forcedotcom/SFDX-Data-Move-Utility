@@ -1,3 +1,12 @@
+# [4.22.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.20.0...4.22.0) (2022-12-29)
+
+
+### Features
+
+* Improvment in handling of 'slave' objects ([bbdacc0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/bbdacc088e63bb02fb3ff5836d4004107a73ac7b))
+
+
+
 # [4.20.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.6...4.20.0) (2022-12-26)
 
 
