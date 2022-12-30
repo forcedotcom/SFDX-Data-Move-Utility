@@ -1,3 +1,4 @@
+import { composeQuery, parseQuery } from 'soql-parser-js';
 /*
  * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
@@ -73,9 +74,30 @@ interface IDataToExport {
 
 export default class ExportFiles extends SfdmuRunAddonModule {
 
+
+  async onInit(context: IAddonContext, args: IOnExecuteArguments): Promise<AddonResult> {
+
+    // Add required fields into the query string
+    let script = this.runtime.getScript();
+    let object = script.objects.find(ob => ob.name == context.objectName);
+
+    switch (context.objectName) {
+      case 'FeedItem':
+        const parsedQuery = parseQuery(object.query);
+        Common.addOrRemoveQueryFields(parsedQuery, ['Type']);
+        object.query = composeQuery(parsedQuery);
+        break;
+
+      default:
+        break;
+    }
+
+    return null;
+  }
+
   async onExecute(context: IAddonContext, args: IOnExecuteArguments): Promise<AddonResult> {
 
-    let _self = this;
+    const _self = this;
 
     // ---------- Preprocessing --------------------------------------
     // -----------------------------------------------------------------
@@ -493,7 +515,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     async function __createFileTargetRecordsAsync() {
 
       if (exportedFiles.length > 0) {
-        this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ExportingContentDocumentLinks);
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ExportingContentDocumentLinks);
 
         let docLinks = Common.flattenArrays(exportedFiles.map(fileToExport => fileToExport.recordsToBeLinked.map(record => {
           return {
@@ -504,14 +526,14 @@ export default class ExportFiles extends SfdmuRunAddonModule {
           };
         })));
 
-        this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RecordsToBeProcessed, String(docLinks.length));
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RecordsToBeProcessed, String(docLinks.length));
 
-        let data = await this.runtime.updateTargetRecordsAsync('ContentDocumentLink',
+        let data = await _self.runtime.updateTargetRecordsAsync('ContentDocumentLink',
           OPERATION.Insert,
           docLinks,
           API_ENGINE.DEFAULT_ENGINE, true);
 
-        this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ProcessedRecords,
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ProcessedRecords,
           String(data.length),
           String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
       }
