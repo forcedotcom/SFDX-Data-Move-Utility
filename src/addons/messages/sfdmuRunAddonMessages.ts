@@ -41,6 +41,7 @@ export enum SFDMU_RUN_ADDON_MESSAGES {
  ExportFiles_ReadSourceContentVersions = 'Retrieving source ContentVersion records ...',
  ExportFiles_ExportingContentVersions = 'Transferring ContentVersion binary data ...',
  ExportFiles_ExportingContentDocumentLinks = 'Creating target ContentDocumentLink records ...',
+ ExportFiles_ExportingFeedAttachments = 'Create target FeedAttachment records ...',
  ExportFiles_NothingToProcess = "There is no data to export.",
  ExportFiles_NothingToUpdate = "The target Files were deleted. There is no data to Update. Define another operation.",
 

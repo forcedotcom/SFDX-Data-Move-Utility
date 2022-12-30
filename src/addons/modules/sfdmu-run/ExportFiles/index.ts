@@ -512,6 +512,30 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
     async function __writeFeedAttachmentTargetRecordsAsync() {
 
+      if (exportedFiles.length > 0) {
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ExportingFeedAttachments);
+
+        let docLinks = Common.flattenArrays(exportedFiles.map(fileToExport => fileToExport.recordsToBeLinked.map(record => {
+          return {
+            FeedEntityId: record.Id,
+            RecordId: fileToExport.version.targetId,
+            Type: 'Content',
+            Title: fileToExport.version.Title
+          };
+        })));
+
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RecordsToBeProcessed, String(docLinks.length));
+
+        let data = await _self.runtime.updateTargetRecordsAsync('FeedAttachment',
+          OPERATION.Insert,
+          docLinks,
+          API_ENGINE.DEFAULT_ENGINE, true);
+
+        _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ProcessedRecords,
+          String(data.length),
+          String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
+      }
+
     }
 
     async function ___deleteTargetFilesAsync(docIdsToDelete: Array<string>): Promise<boolean> {
