@@ -135,7 +135,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     let sourceFiles: IDataToImport = {
       recIdToDocLinks: new Map<string, Array<any>>(),
       docIds: [],
-      recordIds: [...task.sourceTaskData.idRecordsMap.keys()],
+      recordIds: ___filterRecords(task.sourceTaskData.idRecordsMap),
       docIdToDocVersion: new Map<string, any>()
     };
 
@@ -143,7 +143,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     let targetFiles: IDataToImport = {
       recIdToDocLinks: new Map<string, Array<any>>(),
       docIds: [],
-      recordIds: [...task.targetTaskData.idRecordsMap.keys()],
+      recordIds: ___filterRecords(task.targetTaskData.idRecordsMap),
       docIdToDocVersion: new Map<string, any>()
     };
 
@@ -565,6 +565,18 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         }
       }
       return false;
+    }
+
+    function ___filterRecords(idRecordsMap: Map<string, any>): Array<string> {
+      switch (_self.context.objectName) {
+        case 'FeedItem':
+          return [...idRecordsMap]
+            .filter(idToRecord => idToRecord[1].Type == 'ContentPost')
+            .map(idToRecord => idToRecord[0]);
+
+        default:
+          return [...idRecordsMap.keys()];
+      }
     }
 
 
