@@ -1,3 +1,12 @@
+# [4.23.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.22.0...4.23.0) (2022-12-30)
+
+
+### Features
+
+* Option to export FeedAttachments ([b69803c](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/b69803c24d189dcf7acf7708eb9ae138c24a02f4))
+
+
+
 # [4.22.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.20.0...4.22.0) (2022-12-29)
 
 
