@@ -77,6 +77,8 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
     let _self = this;
 
+    // ---------- Preprocessing --------------------------------------
+    // -----------------------------------------------------------------
     this.runtime.logAddonExecutionStarted(this);
 
     this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Preparing);
@@ -87,7 +89,6 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       this.runtime.logAddonExecutionFinished(this);
       return;
     }
-
 
     // Get the relevant parent task
     let task = this.runtime.pluginJob.tasks.find(task => task.sObjectName == context.objectName);
@@ -130,16 +131,16 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     let isDeleted = false;
 
 
-    // ---------- Process Records --------------------------------------
+    // ---------- Read Source Records --------------------------------------
     // -----------------------------------------------------------------
     switch (task.sObjectName) {
 
       case 'FeedItem':
-        await ___processFeedAttachmentRecords();
+        await ___readFeedAttachmentSourceRecordsAsync();
         break;
 
       default:
-        await ___processFileRecords();
+        await ___readFileSourceRecordsAsync();
         break;
 
     }
@@ -160,42 +161,32 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         String(versionsToProcess.filter(item => item.isError).length));
     }
 
-    // -----------Create ContentDocumentLinks --------------------------
+
+
+    // -----------Create Target Records --------------------------
     // -----------------------------------------------------------------
     let exportedFiles = [...exportedFilesMap.values()].filter(exportedFile => exportedFile.recordsToBeLinked.length > 0);
 
-    if (exportedFiles.length > 0) {
-      this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ExportingContentDocumentLinks);
+    switch (task.sObjectName) {
 
-      let docLinks = Common.flattenArrays(exportedFiles.map(fileToExport => fileToExport.recordsToBeLinked.map(record => {
-        return {
-          LinkedEntityID: record.Id,
-          ContentDocumentID: fileToExport.version.targetContentDocumentId,
-          ShareType: record.sourceDocLink.ShareType,
-          Visibility: record.sourceDocLink.Visibility
-        };
-      })));
+      case 'FeedItem':
+        await __createFeedAttachmentTargetRecordsAsync();
+        break;
 
-      this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RecordsToBeProcessed, String(docLinks.length));
+      default:
+        await __createFileTargetRecordsAsync();
+        break;
 
-      let data = await this.runtime.updateTargetRecordsAsync('ContentDocumentLink',
-        OPERATION.Insert,
-        docLinks,
-        API_ENGINE.DEFAULT_ENGINE, true);
-
-      this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ProcessedRecords,
-        String(data.length),
-        String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
     }
 
+
+    // ----------------Finishing ----------------------------
+    // -------------------------------------------------------
     if (exportedFiles.length == 0 && versionsToProcess.length == 0) {
       this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_NothingToProcess);
     }
 
-    // ----------------Finishing ----------------------------
-    // -------------------------------------------------------
     this.runtime.logAddonExecutionFinished(this);
-
 
 
 
@@ -204,7 +195,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     // -----------------------------------------------------------------
     // -----------------------------------------------------------------
     // -----------------------------------------------------------------
-    async function ___deleteTargetFiles(docIdsToDelete: Array<string>): Promise<boolean> {
+    async function ___deleteTargetFilesAsync(docIdsToDelete: Array<string>): Promise<boolean> {
 
       if (args.deleteOldData || args.operation == OPERATION.Delete) {
 
@@ -233,7 +224,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       return false;
     }
 
-    async function ___processFeedAttachmentRecords() {
+    async function ___readFeedAttachmentSourceRecordsAsync() {
 
       // ------------------ Read Target ------------------------------
       // -------------------------------------------------------------
@@ -254,10 +245,10 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       }
 
       // ===== Read target ContentVersions =========
-      await __readTargetContentVersions('Id');
+      await __readTargetContentVersionsAsync('Id');
 
       // ===== Delete target ContentDocuments =====
-      if (await ___deleteTargetFiles(targetFiles.docIds)) {
+      if (await ___deleteTargetFilesAsync(targetFiles.docIds)) {
         return;
       }
 
@@ -297,7 +288,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       }
 
       // ===== Read source ContentVersions =========
-      await ___readSourceContentVersions('Id');
+      await ___readSourceContentVersionsAsync('Id');
 
 
 
@@ -306,12 +297,12 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       // -----------------------------------------------------------------
       _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Analysing);
 
-      await __compareContentVersions('RecordId');
+      await __compareContentVersionsAsync('RecordId');
 
 
     }
 
-    async function ___processFileRecords() {
+    async function ___readFileSourceRecordsAsync() {
 
       // ------------------ Read Target ------------------------------
       // -------------------------------------------------------------
@@ -331,10 +322,10 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       }
 
       // ===== Read target ContentVersions =====
-      await __readTargetContentVersions();
+      await __readTargetContentVersionsAsync();
 
       // ===== Delete target ContentDocuments =====
-      if (await ___deleteTargetFiles(targetFiles.docIds)) {
+      if (await ___deleteTargetFilesAsync(targetFiles.docIds)) {
         return;
       }
 
@@ -374,7 +365,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       }
 
       // ===== Read source ContentVersions =====
-      await ___readSourceContentVersions();
+      await ___readSourceContentVersionsAsync();
 
 
       // ---------- Compare versions to detect changes -------------------
@@ -382,11 +373,11 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       // -----------------------------------------------------------------
       _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Analysing);
 
-      await __compareContentVersions();
+      await __compareContentVersionsAsync();
 
     }
 
-    async function ___readSourceContentVersions(filteredByDocIdsByField = "ContentDocumentId") {
+    async function ___readSourceContentVersionsAsync(filteredByDocIdsByField = "ContentDocumentId") {
       if (sourceFiles.docIds.length > 0) {
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadSourceContentVersions);
         let fields = Common.distinctStringArray([
@@ -414,7 +405,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       }
     }
 
-    async function __readTargetContentVersions(filteredByDocIdsByField = "ContentDocumentId") {
+    async function __readTargetContentVersionsAsync(filteredByDocIdsByField = "ContentDocumentId") {
       if (args.operation != OPERATION.Insert && targetFiles.docIds.length > 0) {
 
         _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ReadTargetContentVersions);
@@ -443,7 +434,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       }
     }
 
-    async function __compareContentVersions(compareByDocIdsByField = "ContentDocumentId") {
+    async function __compareContentVersionsAsync(compareByDocIdsByField = "ContentDocumentId") {
       sourceFiles.recIdToDocLinks.forEach((sourceDocLinks, recordId) => {
         sourceDocLinks.forEach(sourceDocLink => {
           let sourceContentVersion = sourceFiles.docIdToDocVersion.get(sourceDocLink[compareByDocIdsByField]);
@@ -497,6 +488,38 @@ export default class ExportFiles extends SfdmuRunAddonModule {
           exportedFile.isVersionChanged = true;
         }
       });
+    }
+
+    async function __createFileTargetRecordsAsync() {
+
+      if (exportedFiles.length > 0) {
+        this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ExportingContentDocumentLinks);
+
+        let docLinks = Common.flattenArrays(exportedFiles.map(fileToExport => fileToExport.recordsToBeLinked.map(record => {
+          return {
+            LinkedEntityID: record.Id,
+            ContentDocumentID: fileToExport.version.targetContentDocumentId,
+            ShareType: record.sourceDocLink.ShareType,
+            Visibility: record.sourceDocLink.Visibility
+          };
+        })));
+
+        this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_RecordsToBeProcessed, String(docLinks.length));
+
+        let data = await this.runtime.updateTargetRecordsAsync('ContentDocumentLink',
+          OPERATION.Insert,
+          docLinks,
+          API_ENGINE.DEFAULT_ENGINE, true);
+
+        this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ProcessedRecords,
+          String(data.length),
+          String(data.filter(item => !!item[CONSTANTS.ERRORS_FIELD_NAME]).length));
+      }
+
+    }
+
+    async function __createFeedAttachmentTargetRecordsAsync() {
+
     }
 
 
