@@ -2,7 +2,9 @@ name: Stale Issues
 on:
   schedule:
     - cron: "30 1 * * *"
-
+    
+  workflow_dispatch:
+      
 jobs:
   close-stale-issues:
     runs-on: ubuntu-latest
@@ -12,12 +14,12 @@ jobs:
     steps:
       - uses: actions/stale@v7.0.0
         with:
-          days-before-issue-stale: 7
+          days-before-issue-stale: 3
           days-before-issue-close: 3
           stale-issue-label: "to-be-closed"
           exempt-issue-labels: "in-progress"
           close-issue-reason: "completed"
-          stale-issue-message: "This case has been marked as 'to-be-closed', since it has no activity for the last week.<br />It will be automatically closed in another 3 days of inactivity."
+          stale-issue-message: "This case has been marked as 'to-be-closed', since it has no activity for the 3 days.<br />It will be automatically closed in another 3 days of inactivity."
           close-issue-message: "This case has been closed, since it has no activity for the 3 days after was marked as a 'to-be-closed'. Feel free to reopen it at any time, if you need more help."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
