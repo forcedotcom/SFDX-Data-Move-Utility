@@ -6,7 +6,7 @@
 
 **The GUI Desktop Application is here:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
 
-**Please, learn our [Support Policy](https://help.sfdmu.com/full-documentation/additional-information/support_policy) before opening cases**
+**Please, see our [Support Policy](https://help.sfdmu.com/full-documentation/additional-information/support_policy) before opening cases**
 
 **Aways welcome to contribute to the SFDMU! Please, take some time to read our [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
 
