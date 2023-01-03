@@ -19,7 +19,8 @@
 ✔ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox / production)** with data imported from another org or CSV files.<br /> 
 ✔ It supports all important CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**)  **also for multiple related sObjects**.<br />
 ✔ It includes a huge amount of advanced features never were before in any of the existing tools, which make your data migration very quick and easy.
-
+✔ It's a SFDX-CLI digitally signed Plugin.
+<br />
 ## The Advantages of the SFDMU:
 
 *   Supports **direct Org-to-Org data migration** without having to deal with annoying intermediate CSV files.
