@@ -12,7 +12,7 @@
 ---
 ## Table of contents
 - [Introduction.](#introduction)
-- [The Advantages of the SFDMU.](#the-advantages-of-the-sfdmu)
+- [The benefits of using the SFDMU.](#the-benefits-of-using-the-sfdmu)
 - [Use case.](#use-case)
 - [Watch the demo. The Plugin in action.](#watch-the-demo-the-plugin-in-action)
 - [Installation of the Plugin.](#installation-of-the-plugin)
@@ -27,7 +27,7 @@
 ✔ It includes a huge amount of advanced features never were before in any of the existing tools, which make your data migration very quick and easy.<br />
 ✔ It's a SFDX-CLI digitally signed Plugin.
 <br />
-## The Advantages of the SFDMU.
+## The benefits of using the SFDMU.
 
 *   Supports **direct Org-to-Org data migration** without having to deal with annoying intermediate CSV files.
 *   Full support of CRUD operations: **Insert** / **Update** / **Upsert** / **Delete.**
