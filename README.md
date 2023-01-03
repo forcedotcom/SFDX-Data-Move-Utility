@@ -28,8 +28,9 @@
 ✔ It's a SFDX-CLI digitally signed Plugin.
 <br />
 ## The benefits of using the SFDMU.
-
-*   Supports **direct Org-to-Org data migration** without having to deal with annoying intermediate CSV files.
+<br />
+**This Tool was especially designed to give you the most convenient and fastest way to transfer complex data models between multiple salesforce orgs, i.e.:**<br /> 
+*   It supports **direct Org-to-Org data migration** without having to deal with annoying intermediate CSV files.
 *   Full support of CRUD operations: **Insert** / **Update** / **Upsert** / **Delete.**
 *   Supports **import and export of CSV files**.
 *   Supports **multiple object sets** allowing you to execute **multiple migration jobs in one run**.
