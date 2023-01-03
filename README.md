@@ -26,33 +26,31 @@
 ✔ It supports all important CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**)  **also for multiple related sObjects**.<br />
 ✔ It includes a huge amount of advanced features never were before in any of the existing tools, which make your data migration very quick and easy.<br />
 ✔ It's a SFDX-CLI digitally signed Plugin.
-<br />
+
 ## The benefits of using the SFDMU.
-<br />
-**This Tool was especially designed to give you the most convenient and fastest way to transfer complex data models between multiple salesforce orgs, i.e.:**
-<br /> 
-*   It supports **direct Org-to-Org data migration** without having to deal with annoying intermediate CSV files.
-*   Full support of CRUD operations: **Insert** / **Update** / **Upsert** / **Delete.**
-*   Supports **import and export of CSV files**.
-*   Supports **multiple object sets** allowing you to execute **multiple migration jobs in one run**.
-*   Supports **simultaneous migration** **of multiple SObjects in one run.**.
-*   Handles **complex circular references between multiple SObjects.**
-*   **Simple and user-friendly configuration** just with a [single export.json file](https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format)
-*   **Can be run from a command line, can be easly integrated into any DevOps pipeline.**
-*   Handles **self-referenced fields**, e.g. Account.ParentId.
-*   Supports **External Id field of any type** even formula and auto-name fields, a field does not need to be defined as External Id.
-*   Supports [**composite external Id keys.**](https://help.sfdmu.com/full-documentation/advanced-features/composite-external-id-keys)
-*   Supports data [**migration preserving Record Type**](https://help.sfdmu.com/full-documentation/advanced-features/handling-record-type) for each record.
-*   Supports [**fully** **customized Fields and Object Mapping**](https://help.sfdmu.com/full-documentation/advanced-features/fields-mapping).
-*   Has the **built-in ETL features,** including [**customized Value Mapping**](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping), [**expression-based records transformation**](https://help.sfdmu.com/full-documentation/add-on-api/records-transform-core-add-on-module).
-*   Supports migration of **Person Accounts,** including **mixed account records of Busines and Person type**.
-*   Supports **migration of** [**Salesforce Files**](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) as well as old-fashioned [**Notes** , **Attachments**](https://help.sfdmu.com/full-documentation/advanced-features/export-attachments-and-files), **including file binary data**.
-*   Supports **record owner assignment,** including **option for a default owner assignment.**
-*   Has the [**built-in** **data anonymization feature**](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization) to anonymize a  sensitive source data (e.g. coming from Production org).
-*   Supports binding of [**polymorphic lookup fields**](https://help.sfdmu.com/full-documentation/advanced-features/polymorphic-lookup-fields) (e.g. FeedItem.ParentId).
-*   **Secured and safe**. All operations are performed on the client's machine, there is no cloud interaction, so all is completely safe.
-*   **Fast performance.** Processes only a selected subset of records and fields that need to be inserted or updated and does not touch others.
-*   **The core functionality can be extended by using the [Custom Add-On Api](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api)**. You can create your own Add-On for your special purposes.
+ 
+- It supports **direct Org-to-Org data migration** without having to deal with annoying intermediate CSV files.
+- Full support of CRUD operations: **Insert** / **Update** / **Upsert** / **Delete.**
+- Supports **import and export of CSV files**.
+- Supports **multiple object sets** allowing you to execute **multiple migration jobs in one run**.
+- Supports **simultaneous migration** **of multiple SObjects in one run.**.
+- Handles **complex circular references between multiple SObjects.**
+- **Simple and user-friendly configuration** just with a [single export.json file](https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format)
+- **Can be run from a command line, can be easly integrated into any DevOps pipeline.**
+- Handles **self-referenced fields**, e.g. Account.ParentId.
+- Supports **External Id field of any type** even formula and auto-name fields, a field does not need to be defined as External Id.
+- Supports [**composite external Id keys.**](https://help.sfdmu.com/full-documentation/advanced-features/composite-external-id-keys)
+- Supports data [**migration preserving Record Type**](https://help.sfdmu.com/full-documentation/advanced-features/handling-record-type) for each record.
+- Supports [**fully** **customized Fields and Object Mapping**](https://help.sfdmu.com/full-documentation/advanced-features/fields-mapping).
+- Has the **built-in ETL features,** including [**customized Value Mapping**](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping), [**expression-based records transformation**](https://help.sfdmu.com/full-documentation/add-on-api/records-transform-core-add-on-module).
+- Supports migration of **Person Accounts,** including **mixed account records of Busines and Person type**.
+- Supports **migration of** [**Salesforce Files**](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) as well as old-fashioned [**Notes** , **Attachments**](https://help.sfdmu.com/full-documentation/advanced-features/export-attachments-and-files), **including file binary data**.
+- Supports **record owner assignment,** including **option for a default owner assignment.**
+- Has the [**built-in** **data anonymization feature**](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization) to anonymize a  sensitive source data (e.g. coming from Production org).
+- Supports binding of [**polymorphic lookup fields**](https://help.sfdmu.com/full-documentation/advanced-features/polymorphic-lookup-fields) (e.g. FeedItem.ParentId).
+- **Secured and safe**. All operations are performed on the client's machine, there is no cloud interaction, so all is completely safe.
+- **Fast performance.** Processes only a selected subset of records and fields that need to be inserted or updated and does not touch others.
+- **The core functionality can be extended by using the [Custom Add-On Api](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api)**. You can create your own Add-On for your special purposes.
 
 ## Use case.
 
