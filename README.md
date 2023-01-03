@@ -14,7 +14,7 @@
 - [Introduction:](#introduction)
 - [The Advantages of the SFDMU:](#the-advantages-of-the-sfdmu)
 - [Use case.](#use-case)
-- [Watch the demo. The Plugin in action:](#watch-the-demo-the-plugin-in-action)
+- [Watch the demo. The Plugin in action.](#watch-the-demo-the-plugin-in-action)
 - [Installation of the Plugin.](#installation-of-the-plugin)
 - [Configuring the migration job.](#configuring-the-migration-job)
 - [Running the migration job.](#running-the-migration-job)
@@ -64,7 +64,7 @@ Population of the RecordtypeId field is another quite difficult task, when ids a
 
 At current moment, there is no effective tool for both inserting and updating dependent objects based on any unique field used as External Id.  In most cases people use Excel spreadsheets to build source tables and try to mix between them to get proper values for the lookup or master-detail fields. So filling out even a small number of objects turns into a huge pain...
 
-## Watch the demo. The Plugin in action:
+## Watch the demo. The Plugin in action.
 
 Running the Plugin from the command console / terminal:
 
