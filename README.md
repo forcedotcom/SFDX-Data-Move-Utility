@@ -11,7 +11,14 @@
 **Aways welcome to contribute to the SFDMU! Please, take some time to read our [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
 
 ---
-
+## Table of contents
+- [Introduction:](#introduction)
+- [The Advantages of the SFDMU:](#the-advantages-of-the-sfdmu)
+- [Use case.](#use-case)
+- [Watch the demo. The Plugin in action:](#watch-the-demo-the-plugin-in-action)
+- [Installation of the Plugin.](#installation-of-the-plugin)
+- [Configuring the migration job.](#configuring-the-migration-job)
+- [Running the migration job.](#running-the-migration-job)
 ## Introduction:
 
 **The SFDMU Plugin (SFDX Data Move Utility) is the powerful salesforce data migration tool and it is the innovative and very handy alternative to the traditional Salesforce Data Loader application as well as to the set of the force:data:tree commands.** 
