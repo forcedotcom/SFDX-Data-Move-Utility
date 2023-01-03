@@ -71,12 +71,7 @@ Implemented a huge amount of advanced features never were before in any of the e
 
 Running the Plugin from the command console / terminal:
 
-![SFDMU DEMO](https://img.youtube.com/vi/KI_1vD93prA/hqdefault.jpg)
-
-( https://www.youtube.com/watch?v=KI_1vD93prA )
-
-
-
+![[SFDMU DEMO](https://img.youtube.com/vi/KI_1vD93prA/hqdefault.jpg)](https://www.youtube.com/watch?v=KI_1vD93prA)
 
 
 ## Installation:
