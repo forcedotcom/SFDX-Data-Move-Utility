@@ -1,4 +1,4 @@
-# ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDMU)
+# ![SFDMU](src/images/logo.png)Salesforce Data Loader SFDX Plugin (SFDX Data Move Utility, SFDMU)
 
 
 
