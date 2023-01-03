@@ -28,7 +28,7 @@
 *   Supports **multiple object sets** allowing you to execute **multiple migration jobs in one run**.
 *   Supports **simultaneous migration** **of multiple SObjects in one run.**.
 *   Handles **complex circular references between multiple SObjects.**
-*   **Simple and user-friendly configuration** just with a [single .json file](https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format)
+*   **Simple and user-friendly configuration** just with a [single export.json file](https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format)
 *   **Can be run from a command line, can be easly integrated into any DevOps pipeline.**
 *   Handles **self-referenced fields**, e.g. Account.ParentId.
 *   Supports **External Id field of any type** even formula and auto-name fields, a field does not need to be defined as External Id.
