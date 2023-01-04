@@ -1,4 +1,4 @@
-# ![SFDMU](src/images/logo.png)The Advanced Salesforce Data Loader (SFDX Data Move Utility)
+# ![SFDMU](src/images/logo.png)The Advanced Salesforce Data Loader (SFDMU)
 
 
 **The documentation can be found here:   [SFDMU Help Center](https://help.sfdmu.com/)**
