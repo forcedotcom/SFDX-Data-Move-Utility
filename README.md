@@ -196,7 +196,7 @@ $ sfdx sfdmu:run --sourceusername source@name.com --targetusername csvfile
 
 ----
 
-See the documentation articles:
+Documentation articles:
 
 - [Get Started with the SFDMU](https://help.sfdmu.com/quick-start)
 - [Installation](https://help.sfdmu.com/plugin-basics/basic-usage/installation)
