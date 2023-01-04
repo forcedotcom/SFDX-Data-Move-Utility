@@ -3,7 +3,7 @@
 
 **The documentation can be found here:   [SFDMU Help Center](https://help.sfdmu.com/)**
 
-**The GUI Desktop Application is here:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
+**The SFDMU GUI Desktop Application is here:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
 
 **Please, see [User Support Policy](https://help.sfdmu.com/full-documentation/additional-information/support_policy) before opening cases**
 
