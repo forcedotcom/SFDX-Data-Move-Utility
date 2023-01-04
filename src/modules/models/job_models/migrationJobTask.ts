@@ -1361,6 +1361,9 @@ export default class MigrationJobTask {
         });
       }
 
+      // Call addon onAfterUpdate event
+      await self.runAddonEventAsync(ADDON_EVENTS.onAfterUpdate)
+
       return totalProcessedAmount;
     }
 

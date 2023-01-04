@@ -69,7 +69,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   bulkApiV1BatchSize: number;
   restApiBatchSize: number;
   allOrNone: boolean = false;
-  promptOnUpdateError: boolean = true;
+  //promptOnUpdateError: boolean = true;
   promptOnMissingParentObjects: boolean = true;
   promptOnIssuesInCSVFiles: boolean = true;
   validateCSVFilesOnly: boolean = false;

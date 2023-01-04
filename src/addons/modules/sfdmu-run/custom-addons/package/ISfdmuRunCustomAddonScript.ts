@@ -12,7 +12,7 @@ import { DATA_CACHE_TYPES, ISfdmuRunCustomAddonScriptAddonManifestDefinition, IS
 /**
  * Provides an access to the currently running export.json script.
  * @see {@link https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format | Full export.json format} for the detailed information about the fields.
- * 
+ *
  * @export
  * @interface ISfdmuRunCustomAddonScript
  */
@@ -28,7 +28,7 @@ export default interface ISfdmuRunCustomAddonScript {
     bulkApiV1BatchSize: number;
     restApiBatchSize: number;
     allOrNone: boolean;
-    promptOnUpdateError: boolean;
+    //promptOnUpdateError: boolean;
     promptOnMissingParentObjects: boolean;
     promptOnIssuesInCSVFiles: boolean;
     validateCSVFilesOnly: boolean;

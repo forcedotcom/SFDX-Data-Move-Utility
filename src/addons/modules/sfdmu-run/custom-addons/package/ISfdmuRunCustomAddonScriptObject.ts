@@ -29,7 +29,7 @@ export default interface ISfdmuRunCustomAddonScriptObject {
   deleteByHierarchy?: boolean;
   hardDelete?: boolean;
   updateWithMockData?: boolean;
-  mockCSVData?: boolean;
+  //mockCSVData?: boolean;
   targetRecordsFilter?: string;
   excluded?: boolean;
   useCSVValuesMapping?: boolean;
