@@ -20,6 +20,6 @@ jobs:
           exempt-issue-labels: "in-progress"
           close-issue-reason: "completed"
           stale-issue-message: "This case has been marked as 'to-be-closed', since it has no activity for the 3 days.<br />It will be automatically closed in another 3 days of inactivity."
-          close-issue-message: "This case has been closed, since it has no activity for the 3 days after was marked as a 'to-be-closed'. Feel free to reopen it at any time, if you need more help."
+          close-issue-message: "This case has been closed, since it has no activity for the last 6 days. Feel free to reopen it, if you need more help."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
