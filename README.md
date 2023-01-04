@@ -20,7 +20,7 @@
 - [Running the migration job.](#running-the-migration-job)
 ## Introduction.
 
-**The SFDMU, Salesforce Data Loader SFDX Plugin (SFDX Data Move Utility) is the most modern and powerful open-source salesforce data loader and it is the innovative and very handy alternative to the traditional salesforce data loader application as well as to the set of the force:data:tree commands.** 
+**The SFDMU (SFDX Data Move Utility) is the advanced Salesforce Data Loader SFDX plugin, the most modern and powerful open-source salesforce data loader and it is the innovative and very handy alternative to the traditional salesforce data loader application as well as to the set of the force:data:tree commands.** 
 
 ✔ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox / production)** with data imported from another org or CSV files.<br /> 
 ✔ It supports all important CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**)  **also for multiple related sObjects**.<br />
