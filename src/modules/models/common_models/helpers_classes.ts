@@ -5,21 +5,34 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { MigrationJobTask, SFieldDescribe, ScriptObject, ScriptOrg } from "..";
-import { CONSTANTS } from "../../components/common_components/statics";
-import { RESOURCES } from "../../components/common_components/logger";
-import { Common } from "../../components/common_components/common";
-import { IMissingParentLookupRecordCsvRow, IOrgConnectionData } from "./helper_interfaces";
-import { ICsvChunk } from "../api_models";
-import "reflect-metadata";
-import "es6-shim";
-import { Type } from "class-transformer";
+import 'reflect-metadata';
+import 'es6-shim';
 
-import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
+import { Type } from 'class-transformer';
 
-import ScriptAddonManifestDefinition from "../script_models/scriptAddonManifestDefinition";
-import { ISfdmuRunCustomAddonProcessedData } from "../../../addons/modules/sfdmu-run/custom-addons/package";
-
+import {
+  MigrationJobTask,
+  ScriptObject,
+  ScriptOrg,
+  SFieldDescribe,
+} from '../';
+import {
+  ISfdmuRunCustomAddonProcessedData,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package';
+import { Common } from '../../components/common_components/common';
+import {
+  DATA_MEDIA_TYPE,
+  OPERATION,
+} from '../../components/common_components/enumerations';
+import { RESOURCES } from '../../components/common_components/logger';
+import { CONSTANTS } from '../../components/common_components/statics';
+import { ICsvChunk } from '../api_models';
+import ScriptAddonManifestDefinition
+  from '../script_models/scriptAddonManifestDefinition';
+import {
+  IMissingParentLookupRecordCsvRow,
+  IOrgConnectionData,
+} from './helper_interfaces';
 
 type IProcessedData = ISfdmuRunCustomAddonProcessedData;
 
@@ -39,10 +52,10 @@ export class TaskData {
 
     /**
      * [Source Record] => [Target Record]
-     *(The full map for all records between the Source record 
+     *(The full map for all records between the Source record
         and the associated Target record, mapped by the defined ExternalId key)
         Note! This Map will contain ONLY the pairs between existing Source and Target records.
-     * 
+     *
      * @type {Map<any, any>}
      * @memberof TaskData
      */
@@ -108,7 +121,7 @@ export class TaskData {
     }
 
     /**
-     *  List of all Field Api Names to qury. 
+     *  List of all Field Api Names to qury.
      *
      * @readonly
      * @type {string[]}
@@ -143,11 +156,11 @@ export class TaskData {
 
     /**
      * Returns the full path to the target filename (Case_insert_target.csv)
-     * 
+     *
      *
      * @param {OPERATION} operation The operation (_insert)
      * @param {string} [fileNameSuffix] The filename suffix (_person)
-     * @returns {string} 
+     * @returns {string}
      * @memberof TaskData
      */
     getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
@@ -186,12 +199,12 @@ export class TaskData {
      * @memberof TaskData
      */
     getResourceString_Step(mode: "forwards" | "backwards" | "target"): string {
-        return mode == "forwards" ? this.task.logger.getResourceString(RESOURCES.Step1)
-            : this.task.logger.getResourceString(RESOURCES.Step2);
+        return mode == "forwards" ? this.task.logger.getResourceString(RESOURCES.step1)
+            : this.task.logger.getResourceString(RESOURCES.step2);
     }
 
     /**
-     * The all previous tasks by the job execution order 
+     * The all previous tasks by the job execution order
      *
      * @readonly
      * @type {MigrationJobTask[]}
@@ -297,7 +310,7 @@ export class TaskOrgData {
     isSource: boolean;
 
     /**
-     * Complex ExternalId value => Id 
+     * Complex ExternalId value => Id
      * (Account.Name => Account.Id)
      *
      * @type {Map<string, string>}

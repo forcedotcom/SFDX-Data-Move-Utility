@@ -5,18 +5,34 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-import { Common } from "../../components/common_components/common";
-import { CONSTANTS } from "../../components/common_components/statics";
-import { Logger, RESOURCES } from "../../components/common_components/logger";
-import { Script, ScriptObject, MigrationJobTask as Task, SuccessExit, CachedCSVContent, ProcessedData, ObjectFieldMapping, SFieldDescribe } from "..";
-import * as path from 'path';
 import * as fs from 'fs';
-import MigrationJobTask from "./migrationJobTask";
-import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow } from "../common_models/helper_interfaces";
-import { ADDON_EVENTS, DATA_MEDIA_TYPE } from "../../components/common_components/enumerations";
+import * as path from 'path';
 
-
+import {
+  CachedCSVContent,
+  MigrationJobTask as Task,
+  ObjectFieldMapping,
+  ProcessedData,
+  Script,
+  ScriptObject,
+  SFieldDescribe,
+  SuccessExit,
+} from '../';
+import { Common } from '../../components/common_components/common';
+import {
+  ADDON_EVENTS,
+  DATA_MEDIA_TYPE,
+} from '../../components/common_components/enumerations';
+import {
+  Logger,
+  RESOURCES,
+} from '../../components/common_components/logger';
+import { CONSTANTS } from '../../components/common_components/statics';
+import {
+  ICSVIssueCsvRow,
+  IMissingParentLookupRecordCsvRow,
+} from '../common_models/helper_interfaces';
+import MigrationJobTask from './migrationJobTask';
 
 export default class MigrationJob {
 
@@ -259,11 +275,11 @@ export default class MigrationJob {
       if (!this.script.importCSVFilesAsIs) {
 
         // Validate and repair source csv files
-        this.logger.infoMinimal(RESOURCES.validatingAndFixingSourceCSVFiles);
+        this.logger.infoMinimal(RESOURCES.processingCsvFiles);
 
         await this._validateAndRepairSourceCSVFiles();
 
-        this.logger.infoVerbose(RESOURCES.validationAndFixingsourceCSVFilesCompleted);
+        this.logger.infoVerbose(RESOURCES.validationCsvFileCompleted);
 
         if (this.script.validateCSVFilesOnly) {
           // Succeeded exit
@@ -274,7 +290,7 @@ export default class MigrationJob {
         this.clearCachedCSVData();
 
       } else {
-        this.logger.infoMinimal(RESOURCES.validatingSourceCSVFilesSkipped);
+        this.logger.infoMinimal(RESOURCES.processingCsvFilesSkipped);
       }
     }
   }
@@ -287,8 +303,8 @@ export default class MigrationJob {
   */
   async getTotalRecordsCountAsync(): Promise<void> {
 
-    this.logger.infoMinimal(RESOURCES.newLine);
-    this.logger.headerMinimal(RESOURCES.gettingRecordsCount);
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.headerMinimal(RESOURCES.analysingData);
 
     for (let index = 0; index < this.tasks.length; index++) {
       const task = this.tasks[index];
@@ -304,7 +320,7 @@ export default class MigrationJob {
   */
   async deleteOldRecordsAsync(): Promise<void> {
 
-    this.logger.infoMinimal(RESOURCES.newLine);
+    this.logger.infoVerbose(RESOURCES.newLine);
     this.logger.headerMinimal(RESOURCES.deletingTargetData);
 
     let deleted = false;
@@ -330,9 +346,14 @@ export default class MigrationJob {
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 1 SOURCE FORWARDS  :::::::::::::::::::::::::::::::::::::::::::::::::
+
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.headerMinimal(this.logger.getResourceString(RESOURCES.source) + ':');
+    this.logger.headerVerbose(RESOURCES.separator);
+
     let retrieved: boolean = false;
-    this.logger.infoMinimal(RESOURCES.newLine);
-    this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step1));
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.step1));
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
       retrieved = await task.retrieveRecords("forwards", false) || retrieved;
@@ -340,18 +361,19 @@ export default class MigrationJob {
     if (!retrieved) {
       this.logger.infoNormal(RESOURCES.noRecords);
     }
-    this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step1));
+    this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.step1));
 
 
     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 2 SOURCE BACKWARDS ::::::::::::::::::::::::::::::::::::::::::::::::
     // PASS 1 ---
     retrieved = false;
-    this.logger.infoMinimal(RESOURCES.newLine);
-    this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.Step2));
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.headerMinimal(RESOURCES.retrievingData, this.logger.getResourceString(RESOURCES.step2));
 
-    this.logger.infoNormal(RESOURCES.Pass1);
-    this.logger.infoNormal(RESOURCES.separator);
+    this.logger.infoNormal(RESOURCES.pass1);
+    this.logger.headerVerbose(RESOURCES.separator);
+
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
       retrieved = await task.retrieveRecords("backwards", false) || retrieved;
@@ -362,9 +384,10 @@ export default class MigrationJob {
 
     // PASS 2 ---
     retrieved = false;
-    this.logger.infoNormal(RESOURCES.newLine);
-    this.logger.infoNormal(RESOURCES.Pass2);
-    this.logger.infoNormal(RESOURCES.separator);
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.infoNormal(RESOURCES.pass2);
+    this.logger.headerVerbose(RESOURCES.separator);
+
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
       retrieved = await task.retrieveRecords("backwards", false) || retrieved;
@@ -375,9 +398,10 @@ export default class MigrationJob {
 
     // PASS 3 --- SOURCE FORWARDS (REVERSE A)
     retrieved = false;
-    this.logger.infoNormal(RESOURCES.newLine);
-    this.logger.infoNormal(RESOURCES.Pass3);
-    this.logger.infoNormal(RESOURCES.separator);
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.infoNormal(RESOURCES.pass3);
+    this.logger.headerVerbose(RESOURCES.separator);
+
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
       retrieved = await task.retrieveRecords("forwards", true) || retrieved;
@@ -388,9 +412,10 @@ export default class MigrationJob {
 
     // PASS 4 --- SOURCE FORWARDS (REVERSE B)
     retrieved = false;
-    this.logger.infoNormal(RESOURCES.newLine);
-    this.logger.infoNormal(RESOURCES.Pass4);
-    this.logger.infoNormal(RESOURCES.separator);
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.infoNormal(RESOURCES.pass4);
+    this.logger.headerVerbose(RESOURCES.separator);
+
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
       retrieved = await task.retrieveRecords("forwards", true) || retrieved;
@@ -403,9 +428,10 @@ export default class MigrationJob {
     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 3 TARGET ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     retrieved = false;
-    this.logger.infoMinimal(RESOURCES.newLine);
-    this.logger.infoMinimal(RESOURCES.target);
-    this.logger.infoMinimal(RESOURCES.separator);
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.headerMinimal(this.logger.getResourceString(RESOURCES.target) + ':');
+    this.logger.headerVerbose(RESOURCES.separator);
+
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
       retrieved = await task.retrieveRecords("target", false) || retrieved;
@@ -413,13 +439,13 @@ export default class MigrationJob {
     if (!retrieved) {
       this.logger.infoNormal(RESOURCES.noRecords);
     }
-    this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.Step2));
+    this.logger.infoNormal(RESOURCES.retrievingDataCompleted, this.logger.getResourceString(RESOURCES.step2));
 
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // RUN ON-BEFORE ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
     let processed = false;
-    this.logger.infoNormal(RESOURCES.newLine);
+    this.logger.infoVerbose(RESOURCES.newLine);
     this.logger.headerNormal(RESOURCES.processingAddon);
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
@@ -428,16 +454,16 @@ export default class MigrationJob {
     if (!processed) {
       this.logger.infoNormal(RESOURCES.nothingToProcess);
     }
-    this.logger.infoNormal(RESOURCES.newLine);
+    this.logger.infoVerbose(RESOURCES.newLine);
 
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // TOTAL FETCHED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
-    this.logger.infoNormal(RESOURCES.newLine);
+    this.logger.infoVerbose(RESOURCES.newLine);
     this.logger.headerNormal(RESOURCES.fetchingSummary);
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
-      this.logger.infoNormal(RESOURCES.queryingTotallyFetched,
+      this.logger.infoNormal(RESOURCES.amuntOfRetrievedRecords,
         task.sObjectName,
         String(task.sourceData.idRecordsMap.size + "/" + task.targetData.idRecordsMap.size));
     }
@@ -466,8 +492,8 @@ export default class MigrationJob {
 
     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 1 FORWARDS ::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    this.logger.infoMinimal(RESOURCES.newLine);
-    this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step1));
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.step1));
 
     for (let index = 0; index < tasksToProcess.length; index++) {
       const task = tasksToProcess[index];
@@ -487,15 +513,15 @@ export default class MigrationJob {
       totalProcessedRecordsByObjectsMap.set(task.sObjectName, processedRecordsAmount);
     }
     if (totalProcessedRecordsAmount > 0)
-      this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
+      this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.step1), String(totalProcessedRecordsAmount));
     else
       this.logger.infoNormal(RESOURCES.nothingUpdated);
 
 
     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // STEP 2 BACKWARDS :::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    this.logger.infoMinimal(RESOURCES.newLine);
-    this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.Step2));
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.headerMinimal(RESOURCES.updatingTarget, this.logger.getResourceString(RESOURCES.step2));
 
     totalProcessedRecordsAmount = 0;
 
@@ -519,7 +545,7 @@ export default class MigrationJob {
       }
     }
     if (totalProcessedRecordsAmount > 0)
-      this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.Step2), String(totalProcessedRecordsAmount));
+      this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.step2), String(totalProcessedRecordsAmount));
     else
       this.logger.infoNormal(RESOURCES.nothingUpdated);
 
@@ -527,8 +553,8 @@ export default class MigrationJob {
     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // DELETE BY HIERARCHY ::::::::::::::::::::::::::::::::::::::::::::::::::::
     if (this.script.hasDeleteByHierarchyOperation) {
-      this.logger.infoMinimal(RESOURCES.newLine);
-      this.logger.headerMinimal(RESOURCES.deletingTarget, this.logger.getResourceString(RESOURCES.Step1));
+      this.logger.infoVerbose(RESOURCES.newLine);
+      this.logger.headerMinimal(RESOURCES.deletingTarget, this.logger.getResourceString(RESOURCES.step1));
 
       for (let index = 0; index < this.deleteTasks.length; index++) {
         const task = this.deleteTasks[index];
@@ -543,18 +569,18 @@ export default class MigrationJob {
       }
 
       if (totalProcessedRecordsAmount > 0)
-        this.logger.infoNormal(RESOURCES.deletingDataCompleted, this.logger.getResourceString(RESOURCES.Step1), String(totalProcessedRecordsAmount));
+        this.logger.infoNormal(RESOURCES.deletingDataCompleted, this.logger.getResourceString(RESOURCES.step1), String(totalProcessedRecordsAmount));
       else
         this.logger.infoNormal(RESOURCES.nothingToDelete2);
 
-      this.logger.infoNormal(RESOURCES.newLine);
+      this.logger.infoVerbose(RESOURCES.newLine);
     }
 
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // RUN ON-AFTER ADDONS :::::::::::::::::::::::::::::::::::::::::::::::::::
     let processed = false;
-    this.logger.infoNormal(RESOURCES.newLine);
+    this.logger.infoVerbose(RESOURCES.newLine);
     this.logger.headerNormal(RESOURCES.processingAddon);
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
@@ -563,12 +589,12 @@ export default class MigrationJob {
     if (!processed) {
       this.logger.infoNormal(RESOURCES.nothingToProcess);
     }
-    this.logger.infoNormal(RESOURCES.newLine);
+    this.logger.infoVerbose(RESOURCES.newLine);
 
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // TOTAL PROCESSED SUMMARY :::::::::::::::::::::::::::::::::::::::::::::::::::
-    this.logger.infoNormal(RESOURCES.newLine);
+    this.logger.infoVerbose(RESOURCES.newLine);
     this.logger.headerNormal(RESOURCES.updatingSummary);
     for (let index = 0; index < this.queryTasks.length; index++) {
       const task = this.queryTasks[index];
@@ -587,7 +613,7 @@ export default class MigrationJob {
       await Common.abortWithPrompt(
         RESOURCES.missingParentLookupsPrompt,
         self.script.promptOnMissingParentObjects,
-        RESOURCES.continueTheJobPrompt,
+        RESOURCES.continueTheJob,
         "",
         async () => {
           await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups, false);
@@ -685,7 +711,7 @@ export default class MigrationJob {
    */
   async saveCSVFileAsync(fileName: string, data: Array<any>, alwaysCreateFile: boolean = true): Promise<void> {
     let filePath = path.join(this.script.basePath, fileName);
-    this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
+    this.logger.infoVerbose(RESOURCES.writingCsvFile, filePath);
     await Common.writeCsvFileAsync(filePath, data, alwaysCreateFile);
   }
 
@@ -701,7 +727,7 @@ export default class MigrationJob {
       const filePath = filePaths[i];
       if (this.cachedCSVContent.updatedFilenames.has(filePath)) {
         let csvData = this.cachedCSVContent.csvDataCacheMap.get(filePath);
-        this.logger.infoVerbose(RESOURCES.writingToCSV, filePath);
+        this.logger.infoVerbose(RESOURCES.writingCsvFile, filePath);
         await Common.writeCsvFileAsync(filePath, [...csvData.values()], true);
       }
     }
@@ -956,17 +982,17 @@ export default class MigrationJob {
         await ___promptToAbort();
       } else {
         await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
-        this.logger.warn(RESOURCES.issuesFoundDuringCSVValidation, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+        this.logger.warn(RESOURCES.incorrectCsvFiles, String(this.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
       }
     } else {
-      this.logger.infoVerbose(RESOURCES.noIssuesFoundDuringCSVValidation);
+      this.logger.infoVerbose(RESOURCES.correctCsvFiles);
     }
 
     async function ___promptToAbort(): Promise<void> {
       await Common.abortWithPrompt(
-        RESOURCES.issuesFoundDuringCSVValidation,
+        RESOURCES.incorrectCsvFiles,
         self.script.promptOnIssuesInCSVFiles,
-        RESOURCES.continueTheJobPrompt,
+        RESOURCES.continueTheJob,
         "",
         async () => {
           // Report csv issues

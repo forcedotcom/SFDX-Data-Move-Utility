@@ -5,10 +5,12 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-import { IResourceBundle, IUxLogger } from "../components/common_components/logger";
-import ISfdmuCommand from "../models/common_models/ISfdxCommand";
-import { RunCommand } from "./runCommand";
+import {
+  IResourceBundle,
+  IUxLogger,
+} from '../components/common_components/logger';
+import ISfdmuCommand from '../models/common_models/ISfdxCommand';
+import { RunCommand } from './runCommand';
 
 export interface IRunProcess {
     argv: Array<string>;
@@ -19,6 +21,6 @@ export interface IRunProcess {
     exportJson: string;
     commandMessages: IResourceBundle;
     resources: IResourceBundle;
-    exitProcess: boolean;   
+    exitProcess: boolean;
     runCommand(): Promise<any>;
 }

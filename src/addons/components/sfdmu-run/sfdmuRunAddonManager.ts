@@ -137,7 +137,7 @@ export default class SfdmuRunAddonManager {
       manifest.addons = manifest.addons.filter(addon => !addon.excluded);
       return manifest;
     } catch (ex: any) {
-      throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.scriptJSONReadError, ex.message));
+      throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.exportJsonFileLoadError, ex.message));
     }
   }
 
@@ -216,7 +216,7 @@ export default class SfdmuRunAddonManager {
 
     // Setup -------------------
     manifest.addons.forEach(addon => {
-      this.logger.infoNormal(RESOURCES.loadingAddon,
+      this.logger.infoNormal(RESOURCES.loadingAddonModule,
         addon.moduleDisplayName);
       this._setupAddonDefinition(addon);
     });
@@ -253,7 +253,7 @@ export default class SfdmuRunAddonManager {
             ]);
           }
         } catch (ex) {
-          this.logger.warn(RESOURCES.canNotLoadModule, addon.moduleRequirePath);
+          this.logger.warn(RESOURCES.cantLoadModule, addon.moduleRequirePath);
         }
       })
     });

@@ -5,8 +5,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ISfdmuRunCustomAddonPluginInfo } from "../../../addons/modules/sfdmu-run/custom-addons/package";
-
+import {
+  ISfdmuRunCustomAddonPluginInfo,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package';
 
 type IPlugInfoBase = ISfdmuRunCustomAddonPluginInfo;
 
@@ -15,5 +16,5 @@ type IPlugInfoBase = ISfdmuRunCustomAddonPluginInfo;
  */
 export default interface IPluginInfo extends IPlugInfoBase {
 
-    
+
 }

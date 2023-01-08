@@ -5,41 +5,48 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { Buffer } from 'buffer';
 import { execSync } from 'child_process';
-import * as path from 'path';
+import * as parse2 from 'csv-parse/lib/sync';
 import * as fs from 'fs';
-
+import * as glob2 from 'glob';
+import * as path from 'path';
+import * as Throttle from 'promise-parallel-throttle';
+import * as readline from 'readline';
 import {
+  composeQuery,
   Condition,
+  Field as SOQLField,
+  FieldType,
+  getComposedField,
   LiteralType,
   LogicalOperator,
-  WhereClause,
   Operator,
-  Query,
-  getComposedField,
-  composeQuery,
   parseQuery,
-  FieldType,
-  Field as SOQLField
+  Query,
+  WhereClause,
 } from 'soql-parser-js';
 
+import {
+  ISfdmuAddonInfo,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package/common';
+import {
+  CommandAbortedByUserError,
+  CommandExecutionError,
+  CsvChunks,
+  SFieldDescribe,
+} from '../../models';
+import IPluginInfo from '../../models/common_models/IPluginInfo';
+import ISfdmuCommand from '../../models/common_models/ISfdxCommand';
+import {
+  Logger,
+  RESOURCES,
+} from './logger';
 import { CONSTANTS } from './statics';
 
-import * as parse2 from 'csv-parse/lib/sync';
 const parse = (parse2 as any).parse || parse2;
 
-import * as glob2 from "glob";
 const glob = (glob2 as any).glob || glob2;
-
-import { Logger, RESOURCES } from './logger';
-import { CommandAbortedByUserError, CsvChunks, SFieldDescribe, CommandExecutionError } from '../../models';
-import * as readline from 'readline';
-import * as Throttle from 'promise-parallel-throttle';
-import IPluginInfo from '../../models/common_models/IPluginInfo';
-import { ISfdmuAddonInfo } from '../../../addons/modules/sfdmu-run/custom-addons/package/common';
-import { Buffer } from 'buffer';
-import ISfdmuCommand from '../../models/common_models/ISfdxCommand';
-
 
 const { closest } = require('fastest-levenshtein')
 
@@ -1750,6 +1757,18 @@ public static extractWhereClause(query: string): string {
     const entryNames = Object.keys(enumType).filter(key => !/[0-9]+/.test(key[0]));
     return entryNames.map(name => enumType[name] as ValType);
   }
+
+   /**
+     * Creates a time delay
+     *
+     * @static
+     * @param {number} time The delay length in ms
+     * @return {*}  {Promise<void>}
+     * @memberof Utils
+     */
+    static async delayAsync(time: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, time));
+    }
 
 
 }

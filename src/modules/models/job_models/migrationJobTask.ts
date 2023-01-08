@@ -5,39 +5,71 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-
-
-import { Common } from "../../components/common_components/common";
-import { CONSTANTS } from "../../components/common_components/statics";
-import { Logger, RESOURCES, LOG_MESSAGE_VERBOSITY, LOG_MESSAGE_TYPE } from "../../components/common_components/logger";
-import { Sfdx } from "../../components/common_components/sfdx";
-import {
-  Query,
-  parseQuery,
-  Condition,
-  WhereClause,
-  composeQuery,
-  getComposedField,
-  Field as SOQLField,
-  FieldType
-} from 'soql-parser-js';
-import { ScriptObject, MigrationJob as Job, CommandExecutionError, ScriptOrg, Script, ScriptMockField, TaskData, TaskOrgData, CachedCSVContent, ProcessedData } from "..";
-import SFieldDescribe from "../sf_models/sfieldDescribe";
-import * as fs from 'fs';
+import * as casual from 'casual';
 import * as deepClone from 'deep.clone';
-import { BulkApiV2_0Engine } from "../../components/api_engines/bulkApiV2_0Engine";
-import { IApiEngine } from "../api_models/helper_interfaces";
-import { BulkApiV1_0Engine } from "../../components/api_engines/bulkApiV1_0Engine";
-import { RestApiEngine } from "../../components/api_engines/restApiEngine";
-const alasql = require("alasql");
-import * as casual from "casual";
-import { MockGenerator } from '../../components/common_components/mockGenerator';
-import { ICSVIssueCsvRow, IMissingParentLookupRecordCsvRow, IMockField, IFieldMapping, IFieldMappingResult } from '../common_models/helper_interfaces';
-import { ADDON_EVENTS, DATA_MEDIA_TYPE, MESSAGE_IMPORTANCE, OPERATION, RESULT_STATUSES, SPECIAL_MOCK_PATTERN_TYPES } from '../../components/common_components/enumerations';
+import * as fs from 'fs';
+import {
+  composeQuery,
+  Condition,
+  Field as SOQLField,
+  FieldType,
+  getComposedField,
+  parseQuery,
+  Query,
+  WhereClause,
+} from 'soql-parser-js';
+
+import {
+  CachedCSVContent,
+  CommandExecutionError,
+  MigrationJob as Job,
+  ProcessedData,
+  Script,
+  ScriptMockField,
+  ScriptObject,
+  ScriptOrg,
+  TaskData,
+  TaskOrgData,
+} from '../';
+import {
+  BulkApiV1_0Engine,
+} from '../../components/api_engines/bulkApiV1_0Engine';
+import {
+  BulkApiV2_0Engine,
+} from '../../components/api_engines/bulkApiV2_0Engine';
+import { RestApiEngine } from '../../components/api_engines/restApiEngine';
+import { Common } from '../../components/common_components/common';
+import {
+  ADDON_EVENTS,
+  DATA_MEDIA_TYPE,
+  MESSAGE_IMPORTANCE,
+  OPERATION,
+  RESULT_STATUSES,
+  SPECIAL_MOCK_PATTERN_TYPES,
+} from '../../components/common_components/enumerations';
+import {
+  LOG_MESSAGE_TYPE,
+  LOG_MESSAGE_VERBOSITY,
+  Logger,
+  RESOURCES,
+} from '../../components/common_components/logger';
+import {
+  MockGenerator,
+} from '../../components/common_components/mockGenerator';
+import { Sfdx } from '../../components/common_components/sfdx';
+import { CONSTANTS } from '../../components/common_components/statics';
 import { ApiInfo } from '../api_models';
+import { IApiEngine } from '../api_models/helper_interfaces';
+import {
+  ICSVIssueCsvRow,
+  IFieldMapping,
+  IFieldMappingResult,
+  IMissingParentLookupRecordCsvRow,
+  IMockField,
+} from '../common_models/helper_interfaces';
+import SFieldDescribe from '../sf_models/sfieldDescribe';
 
-
+const alasql = require("alasql");
 
 MockGenerator.createCustomGenerators(casual);
 
@@ -122,7 +154,7 @@ export default class MigrationJobTask {
           "Parent sObject": null,
           "Parent field": null,
           "Parent value": null,
-          "Error": this.logger.getResourceString(RESOURCES.csvFileIsEmpty)
+          "Error": this.logger.getResourceString(RESOURCES.missingCsvFile)
         });
       }
 
@@ -161,7 +193,7 @@ export default class MigrationJobTask {
             "Parent sObject": null,
             "Parent field": null,
             "Parent value": null,
-            "Error": this.logger.getResourceString(RESOURCES.columnsMissingInCSV)
+            "Error": this.logger.getResourceString(RESOURCES.missingColumnsInCsvFile)
           });
         }
       }
@@ -249,7 +281,7 @@ export default class MigrationJobTask {
      * @param {*} firstRow
      */
     function ___mapCSVValues(firstRow: any) {
-      self.logger.infoNormal(RESOURCES.mappingRawCsvValues, self.sObjectName);
+      self.logger.infoNormal(RESOURCES.mappingCsvValues, self.sObjectName);
       let fields = Object.keys(firstRow);
       let csvRows = [...currentFileMap.values()];
       fields.forEach(field => {
@@ -406,7 +438,7 @@ export default class MigrationJobTask {
                     "Parent sObject": sField.parentLookupObject.name,
                     "Parent field": parentExternalId,
                     "Parent value": null,
-                    "Error": self.logger.getResourceString(RESOURCES.missingParentRecordForGivenLookupValue)
+                    "Error": self.logger.getResourceString(RESOURCES.missingParentLookupRecords)
                   });
                 }
 
@@ -458,7 +490,7 @@ export default class MigrationJobTask {
                     "Parent sObject": sField.parentLookupObject.name,
                     "Parent field": "Id",
                     "Parent value": null,
-                    "Error": self.logger.getResourceString(RESOURCES.missingParentRecordForGivenLookupValue)
+                    "Error": self.logger.getResourceString(RESOURCES.missingParentLookupRecords)
                   });
                 }
                 csvRow[columnName__r] = cachedCSVContent.nextId;
@@ -710,8 +742,9 @@ export default class MigrationJobTask {
         if (this.scriptObject.parsedQuery.limit) {
           this.sourceTotalRecorsCount = Math.min(this.sourceTotalRecorsCount, this.scriptObject.parsedQuery.limit);
         }
-        this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
-          this.sourceData.resourceString_Source_Target, String(this.sourceTotalRecorsCount));
+        this.logger.infoNormal(RESOURCES.totalRecordsAmountByQueryString, this.sObjectName,
+          String(this.sourceTotalRecorsCount),
+          this.sourceData.resourceString_Source_Target);
       } catch (ex) {
         // Aggregate queries does not suppoted
         this.sourceTotalRecorsCount = this.scriptObject.parsedQuery.limit || 0;
@@ -727,8 +760,9 @@ export default class MigrationJobTask {
         if (this.scriptObject.parsedQuery.limit) {
           this.targetTotalRecorsCount = Math.min(this.targetTotalRecorsCount, this.scriptObject.parsedQuery.limit);
         }
-        this.logger.infoNormal(RESOURCES.totalRecordsAmount, this.sObjectName,
-          this.targetData.resourceString_Source_Target, String(this.targetTotalRecorsCount));
+        this.logger.infoNormal(RESOURCES.totalRecordsAmountByQueryString, this.sObjectName,
+          String(this.targetTotalRecorsCount),
+          this.targetData.resourceString_Source_Target);
       } catch (ex) {
         // Aggregate queries does not suppoted
         this.targetTotalRecorsCount = this.scriptObject.parsedQuery.limit || 0;
@@ -760,7 +794,7 @@ export default class MigrationJobTask {
       return false;
     }
     // Deleting
-    this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(queryResult.length));
+    this.logger.infoVerbose(RESOURCES.amountOfRecordsToDelete, this.sObjectName, String(queryResult.length));
     let recordsToDelete = queryResult.map(x => {
       return {
         Id: x["Id"]
@@ -798,7 +832,7 @@ export default class MigrationJobTask {
       }
     }).filter(record => !!record);
 
-    this.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, this.sObjectName, String(recordsToDelete.length));
+    this.logger.infoVerbose(RESOURCES.amountOfRecordsToDelete, this.sObjectName, String(recordsToDelete.length));
 
     // Delete records
     if (recordsToDelete.length == 0) {
@@ -1039,7 +1073,7 @@ export default class MigrationJobTask {
       // Person Accounts/Contacts only /////////////
       if (this.data.isPersonAccountOrContact) {
         // Create data ****
-        this.logger.infoVerbose(RESOURCES.updatePersonAccounts, this.sObjectName);
+        this.logger.infoVerbose(RESOURCES.updatePersonAccountsAndContacts, this.sObjectName);
         data = await ___createUpdateData(true);
         if (data.missingParentLookups.length > 0) {
           // Warn user
@@ -1265,7 +1299,7 @@ export default class MigrationJobTask {
       }
 
       // Deleting ////////
-      self.logger.infoVerbose(RESOURCES.deletingNRecordsWillBeDeleted, self.sObjectName, String(self.sourceData.records.length));
+      self.logger.infoVerbose(RESOURCES.amountOfRecordsToDelete, self.sObjectName, String(self.sourceData.records.length));
 
       let recordsToDelete = self.sourceData.records.map(record => {
         return {
@@ -1303,7 +1337,7 @@ export default class MigrationJobTask {
 
       // Inserting ////////
       if (data.recordsToInsert.length > 0) {
-        self.logger.infoVerbose(RESOURCES.updatingTargetNRecordsWillBeUpdated,
+        self.logger.infoVerbose(RESOURCES.amountOfRecordsTo,
           self.sObjectName,
           self.logger.getResourceString(RESOURCES.insert),
           String((data.recordsToInsert.length)));
@@ -1334,7 +1368,7 @@ export default class MigrationJobTask {
 
       // Updating ///////
       if (data.recordsToUpdate.length > 0) {
-        self.logger.infoVerbose(RESOURCES.updatingTargetNRecordsWillBeUpdated,
+        self.logger.infoVerbose(RESOURCES.amountOfRecordsTo,
           self.sObjectName,
           self.logger.getResourceString(RESOURCES.update),
           String((data.recordsToUpdate.length)));
@@ -1819,7 +1853,7 @@ export default class MigrationJobTask {
     if (records.length == 0 || !this.scriptObject.useValuesMapping) {
       return;
     }
-    this.logger.infoNormal(RESOURCES.mappingRawValues, this.sObjectName);
+    this.logger.infoNormal(RESOURCES.mappingValues, this.sObjectName);
     let fields = Object.keys(records[0]);
     fields.forEach(field => {
       let key = this.sObjectName + field;
@@ -1916,22 +1950,33 @@ export default class MigrationJobTask {
   // ----------------------- Private members -------------------------------------------
   private _apiProgressCallback(apiResult: ApiInfo): void {
 
-    let verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+    let verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
     let logMessageType = LOG_MESSAGE_TYPE.STRING;
 
     switch (apiResult.messageImportance) {
-      case MESSAGE_IMPORTANCE.Low:
-        verbosity = LOG_MESSAGE_VERBOSITY.VERBOSE;
+
+      case MESSAGE_IMPORTANCE.Silent:
+        verbosity = LOG_MESSAGE_VERBOSITY.NONE;
         break;
+
       case MESSAGE_IMPORTANCE.Normal:
         verbosity = LOG_MESSAGE_VERBOSITY.NORMAL;
         break;
+
+      case MESSAGE_IMPORTANCE.High:
+        verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
+        break;
+
       case MESSAGE_IMPORTANCE.Warn:
+        verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
         logMessageType = LOG_MESSAGE_TYPE.WARN;
         break;
+
       case MESSAGE_IMPORTANCE.Error:
+        verbosity = LOG_MESSAGE_VERBOSITY.MINIMAL;
         logMessageType = LOG_MESSAGE_TYPE.ERROR;
         break;
+
     }
     switch (apiResult.resultStatus) {
       case RESULT_STATUSES.Information:
@@ -1967,7 +2012,7 @@ export default class MigrationJobTask {
       case RESULT_STATUSES.ProcessError:
       case RESULT_STATUSES.FailedOrAborted:
         if (apiResult.errorMessage)
-          this.logger.log(RESOURCES.apiOperationProcessError, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation(), apiResult.errorMessage);
+          this.logger.log(RESOURCES.apiOperationFailedWithMessage, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation(), apiResult.errorMessage);
         else
           this.logger.log(RESOURCES.apiOperationFailed, logMessageType, verbosity, this.sObjectName, this.apiEngine.getStrOperation());
         break;
@@ -1975,7 +2020,7 @@ export default class MigrationJobTask {
   }
 
   private _apiOperationError(operation: OPERATION) {
-    throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, this.apiEngine.getStrOperation()));
+    throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.apiOperationFailed, this.sObjectName, OPERATION[operation] || this.apiEngine.getStrOperation()));
   }
 
   private _createFilteredQueries(queryMode: "forwards" | "backwards" | "target", reversed: boolean, fieldNames?: string[]): Array<string> {
@@ -2028,9 +2073,9 @@ export default class MigrationJobTask {
             //   || field.parentLookupObject.task.sourceData.allRecords && !this.scriptObject.allRecords
             // ) {
 
-           // Caution! Important change!
-           // Now limited queries are constructed for the SOURCE object regardless the retrieve mode (master/slave)
-           //   of the parent object
+            // Caution! Important change!
+            // Now limited queries are constructed for the SOURCE object regardless the retrieve mode (master/slave)
+            //   of the parent object
             if (queryMode != "forwards") {
               //BACKWARDS
               // For backwards => build the query using all the PREVIOUS related tasks by the tasks order

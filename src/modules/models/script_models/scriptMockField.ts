@@ -5,8 +5,9 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ISfdmuRunCustomAddonScriptMockField } from "../../../addons/modules/sfdmu-run/custom-addons/package";
-
+import {
+  ISfdmuRunCustomAddonScriptMockField,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package';
 
 /**
  * Parsed MockField object

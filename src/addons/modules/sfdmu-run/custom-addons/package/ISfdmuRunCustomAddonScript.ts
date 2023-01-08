@@ -37,7 +37,7 @@ export default interface ISfdmuRunCustomAddonScript {
     importCSVFilesAsIs: boolean;
     alwaysUseRestApiToUpdateRecords: boolean;
     excludeIdsFromCSVFiles: boolean;
-    fileLog: boolean;
+    //fileLog: boolean;
     keepObjectOrderWhileExecute: boolean;
     allowFieldTruncation: boolean;
     simulationMode: boolean;

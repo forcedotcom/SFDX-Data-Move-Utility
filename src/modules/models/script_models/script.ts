@@ -1,4 +1,3 @@
-import { Sfdx } from './../../components/common_components/sfdx';
 /*
  * Copyright (c) 2020, salesforce.com, inc.
  * All rights reserved.
@@ -6,41 +5,54 @@ import { Sfdx } from './../../components/common_components/sfdx';
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import 'reflect-metadata';
+import 'es6-shim';
 
-
-import "reflect-metadata";
-import "es6-shim";
-import { Type } from "class-transformer";
-import { Common } from "../../components/common_components/common";
-import { CONSTANTS } from "../../components/common_components/statics";
-import { Logger, RESOURCES } from "../../components/common_components/logger";
+import { Type } from 'class-transformer';
+import * as fs from 'fs';
+import * as path from 'path';
 import {
   composeQuery,
+  Field as SOQLField,
   getComposedField,
-  Field as SOQLField
 } from 'soql-parser-js';
-import { ScriptOrg, ScriptObject, ObjectFieldMapping, SObjectDescribe, ScriptObjectSet } from "..";
-import { CommandInitializationError, CommandExecutionError } from "../common_models/errors";
-import MigrationJob from "../job_models/migrationJob";
-import * as path from 'path';
-import * as fs from 'fs';
 
-import { DATA_CACHE_TYPES, DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
-
-import ICommandRunInfo from "../common_models/ICommandRunInfo";
-import IPluginInfo from "../common_models/IPluginInfo";
-import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
-
-import SfdmuRunAddonRuntime from "../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime";
-import SfdmuRunAddonManager from "../../../addons/components/sfdmu-run/sfdmuRunAddonManager";
-import ISfdmuRunScript from "../../../addons/components/sfdmu-run/ISfdmuRunScript";
-import ISfdmuRunScriptObject from "../../../addons/components/sfdmu-run/ISfdmuRunScriptObject";
-import { IAppScript } from "../../app/appModels";
-
-
-
-
-
+import {
+  ObjectFieldMapping,
+  ScriptObject,
+  ScriptObjectSet,
+  ScriptOrg,
+  SObjectDescribe,
+} from '../';
+import ISfdmuRunScript
+  from '../../../addons/components/sfdmu-run/ISfdmuRunScript';
+import ISfdmuRunScriptObject
+  from '../../../addons/components/sfdmu-run/ISfdmuRunScriptObject';
+import SfdmuRunAddonManager
+  from '../../../addons/components/sfdmu-run/sfdmuRunAddonManager';
+import SfdmuRunAddonRuntime
+  from '../../../addons/components/sfdmu-run/sfdmuRunAddonRuntime';
+import { IAppScript } from '../../app/appModels';
+import { Common } from '../../components/common_components/common';
+import {
+  DATA_CACHE_TYPES,
+  DATA_MEDIA_TYPE,
+  OPERATION,
+} from '../../components/common_components/enumerations';
+import {
+  Logger,
+  RESOURCES,
+} from '../../components/common_components/logger';
+import { Sfdx } from '../../components/common_components/sfdx';
+import { CONSTANTS } from '../../components/common_components/statics';
+import {
+  CommandExecutionError,
+  CommandInitializationError,
+} from '../common_models/errors';
+import ICommandRunInfo from '../common_models/ICommandRunInfo';
+import IPluginInfo from '../common_models/IPluginInfo';
+import MigrationJob from '../job_models/migrationJob';
+import ScriptAddonManifestDefinition from './scriptAddonManifestDefinition';
 
 /**
  * The script object which is parsed from the script file
@@ -78,7 +90,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   importCSVFilesAsIs: boolean = false;
   alwaysUseRestApiToUpdateRecords: boolean = false;
   excludeIdsFromCSVFiles: boolean = false;
-  fileLog: boolean = true;
+  //fileLog: boolean = true;
   keepObjectOrderWhileExecute: boolean = false;
   allowFieldTruncation: boolean = false;
   simulationMode: boolean = false;
@@ -219,14 +231,13 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     // Initialize script
     this.logger = logger;
     this.basePath = basePath;
-    this.logger.fileLogger.enabled = this.logger.fileLogger.enabled || this.fileLog;
     this.canModify = canModify || "";
     this.simulationMode = this.simulationMode || simulation;
 
     // Message about the running version
     this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
-    this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningSfdmuRunAddOnVersion)]: pinfo.runAddOnApiInfo.version });
-    this.logger.infoMinimal(RESOURCES.newLine);
+    this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningAddOnApiVersion)]: pinfo.runAddOnApiInfo.version });
+    this.logger.infoVerbose(RESOURCES.newLine);
 
     // Create add on manager
     this.runInfo = {
@@ -244,11 +255,11 @@ export default class Script implements IAppScript, ISfdmuRunScript {
 
     if (this.runInfo.sourceUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME
       && this.runInfo.targetUsername.toLowerCase() == CONSTANTS.CSV_FILES_SOURCENAME) {
-      throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.youCantImportAndExportIntoCSVFile));
+      throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.cannotMigrateFile2File));
     }
 
     if (this.simulationMode) {
-      this.logger.infoMinimal(RESOURCES.scriptRunInSimulationMode);
+      this.logger.infoMinimal(RESOURCES.runningInSimulationMode);
     }
 
     // Fix object values
@@ -273,14 +284,14 @@ export default class Script implements IAppScript, ISfdmuRunScript {
         if (this.excludedObjects.indexOf(object.name) < 0) {
           this.excludedObjects.push(object.name);
         }
-        this.logger.infoVerbose(RESOURCES.objectWillBeExcluded, object.name);
+        this.logger.infoVerbose(RESOURCES.objectIsExcluded, object.name);
       }
       return included;
     });
 
     // Check objects length
     if (this.objects.length == 0) {
-      throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.noObjectsDefinedInPackageFile));
+      throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.noObjectsToProcess));
     }
 
     // Make each object appear only once in the script
@@ -289,7 +300,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     // Check object operations spelling
     this.objects.forEach(object => {
       if (ScriptObject.getOperation(object.operation) == OPERATION.Unknown) {
-        throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.invalidObjectOperation,
+        throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.invalidOperation,
           (object.operation || '').toString(), object.name));
       }
     });
@@ -378,15 +389,15 @@ export default class Script implements IAppScript, ISfdmuRunScript {
    */
   async processObjectsMetadataAsync(): Promise<void> {
 
-    this.logger.infoMinimal(RESOURCES.newLine);
-    this.logger.headerMinimal(RESOURCES.gettingOrgMetadata);
+    this.logger.infoVerbose(RESOURCES.newLine);
+    this.logger.headerMinimal(RESOURCES.retrievingOrgMatadata);
 
     // Describe all objects
     for (let objectIndex = 0; objectIndex < this.objects.length; objectIndex++) {
 
       const thisObject = this.objects[objectIndex];
 
-      this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
+      this.logger.infoVerbose(RESOURCES.processingObject, thisObject.name);
 
       await thisObject.describeAsync();
     }
@@ -400,7 +411,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     for (let objectIndex = this.objects.length - 1; objectIndex >= 0; objectIndex--) {
 
       const thisObject = this.objects[objectIndex];
-      this.logger.infoVerbose(RESOURCES.processingSObject, thisObject.name);
+      this.logger.infoVerbose(RESOURCES.processingObject, thisObject.name);
 
       const fieldsInQuery = [...thisObject.fieldsInQuery];
       for (let fieldIndex = 0; fieldIndex < fieldsInQuery.length; fieldIndex++) {
@@ -554,7 +565,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
       // Warn user if there are no any fields to update
       if (object.hasToBeUpdated && object.fieldsToUpdate.length == 0
         && !(object.fieldsInQuery.length == 1 && object.fieldsInQuery[0] == "Id")) {
-        this.logger.warn(RESOURCES.noUpdateableFieldsInTheSObject, object.name);
+        this.logger.warn(RESOURCES.noFieldsToUpdate, object.name);
       }
     });
 
@@ -567,7 +578,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   async describeExtraObjectAsync(objectName: string): Promise<void> {
     const org = this.sourceOrg.media == DATA_MEDIA_TYPE.Org ? this.sourceOrg : this.targetOrg;
     const messageSource = this.sourceOrg.media == DATA_MEDIA_TYPE.Org ? RESOURCES.source : RESOURCES.target;
-    this.logger.infoNormal(RESOURCES.gettingMetadataForSObject, objectName, this.logger.getResourceString(messageSource));
+    this.logger.infoNormal(RESOURCES.retrievingObjectMetadata, objectName, this.logger.getResourceString(messageSource));
     let apisf = new Sfdx(org);
     const description = await apisf.describeSObjectAsync(objectName);
     this.extraSObjectDescriptions.set(objectName, description);
@@ -586,14 +597,14 @@ export default class Script implements IAppScript, ISfdmuRunScript {
       if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled
         && this.targetOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled) {
         // Missing Person Account support in the Target
-        throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts,
-          this.logger.getResourceString(RESOURCES.source)));
+        throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.personAccountSupportWarning,
+          this.logger.getResourceString(RESOURCES.sourceOrg)));
       }
       // Verify source org
       if (this.sourceOrg.media == DATA_MEDIA_TYPE.Org && !this.sourceOrg.isPersonAccountEnabled
         && this.targetOrg.media == DATA_MEDIA_TYPE.Org && this.sourceOrg.isPersonAccountEnabled) {
         // Missing Person Account support in the Source
-        throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.needBothOrgsToSupportPersonAccounts,
+        throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.personAccountSupportWarning,
           this.logger.getResourceString(RESOURCES.target)));
       }
     }

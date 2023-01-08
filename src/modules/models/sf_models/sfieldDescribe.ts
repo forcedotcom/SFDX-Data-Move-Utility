@@ -5,13 +5,14 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-import { Common } from "../../components/common_components/common";
-import { ScriptObject } from "..";
-import { CONSTANTS } from "../../components/common_components/statics";
 import { FieldType } from 'jsforce';
-import { ISfdmuRunCustomAddonSFieldDescribe } from "../../../addons/modules/sfdmu-run/custom-addons/package";
 
+import { ScriptObject } from '../';
+import {
+  ISfdmuRunCustomAddonSFieldDescribe,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package';
+import { Common } from '../../components/common_components/common';
+import { CONSTANTS } from '../../components/common_components/statics';
 
 // Construct the end interface in case we need
 //  multiple interface implementation for the single class

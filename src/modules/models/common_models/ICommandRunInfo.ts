@@ -5,10 +5,10 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ISfdmuRunCustomAddonCommandRunInfo } from "../../../addons/modules/sfdmu-run/custom-addons/package";
-import IPluginInfo from "./IPluginInfo";
-
-
+import {
+  ISfdmuRunCustomAddonCommandRunInfo,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package';
+import IPluginInfo from './IPluginInfo';
 
 type ICommandRunInfoBase = ISfdmuRunCustomAddonCommandRunInfo;
 
@@ -17,7 +17,7 @@ type ICommandRunInfoBase = ISfdmuRunCustomAddonCommandRunInfo;
  * The information about currently running SFDMU command
  */
 export default interface ICommandRunInfo extends ICommandRunInfoBase {
-   
+
     /**
      * the information about the Plugin and the framework
      */

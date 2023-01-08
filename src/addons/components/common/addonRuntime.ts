@@ -113,7 +113,7 @@ export default class AddonRuntime {
 
 
   logAddonExecutionStarted(module: AddonModule): void {
-    this.log(RESOURCES.startAddonExecute.toString(), "INFO", module.context.moduleDisplayName, module.context.objectDisplayName);
+    this.log(RESOURCES.startAddonExecution.toString(), "INFO", module.context.moduleDisplayName, module.context.objectDisplayName);
   }
 
   validateSupportedEvents(module: AddonModule, supportedEvents: ADDON_EVENTS[]) {
@@ -122,7 +122,7 @@ export default class AddonRuntime {
   }
 
   logAddonExecutionFinished(module: AddonModule) {
-    this.log(RESOURCES.finishAddonExecute.toString(), "INFO", module.context.moduleDisplayName, module.context.objectDisplayName);
+    this.log(RESOURCES.stopAddonExecution.toString(), "INFO", module.context.moduleDisplayName, module.context.objectDisplayName);
   }
 
 

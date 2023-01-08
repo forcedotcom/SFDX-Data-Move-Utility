@@ -5,10 +5,11 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { ISfdmuRunCustomAddonScriptMappingItem } from "../../../addons/modules/sfdmu-run/custom-addons/package";
+import {
+  ISfdmuRunCustomAddonScriptMappingItem,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package';
 
-
- /**
+/**
  * Parsed FieldMapping object of the script.
  * Represents field mapping
  *

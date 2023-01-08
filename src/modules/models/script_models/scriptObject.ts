@@ -5,33 +5,44 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import 'reflect-metadata';
+import 'es6-shim';
 
-
-import "reflect-metadata";
-import "es6-shim";
-import { Type } from "class-transformer";
-import { Common } from "../../components/common_components/common";
-import { CONSTANTS } from "../../components/common_components/statics";
-import { RESOURCES } from "../../components/common_components/logger";
-import { Sfdx } from "../../components/common_components/sfdx";
+import { Type } from 'class-transformer';
+import * as deepClone from 'deep.clone';
 import {
-  FieldType,
-  Query,
-  parseQuery,
   composeQuery,
   Field as SOQLField,
-  getComposedField
+  FieldType,
+  getComposedField,
+  parseQuery,
+  Query,
 } from 'soql-parser-js';
-import { ScriptMockField, Script, SObjectDescribe, MigrationJobTask, ScriptMappingItem, ObjectFieldMapping } from "..";
-import SFieldDescribe from "../sf_models/sfieldDescribe";
-import { CommandInitializationError, OrgMetadataError } from "../common_models/errors";
-import * as deepClone from 'deep.clone';
 
-import { DATA_MEDIA_TYPE, OPERATION } from "../../components/common_components/enumerations";
-import ScriptAddonManifestDefinition from "./scriptAddonManifestDefinition";
-import ISfdmuRunScriptObject from "../../../addons/components/sfdmu-run/ISfdmuRunScriptObject";
-
-
+import {
+  MigrationJobTask,
+  ObjectFieldMapping,
+  Script,
+  ScriptMappingItem,
+  ScriptMockField,
+  SObjectDescribe,
+} from '../';
+import ISfdmuRunScriptObject
+  from '../../../addons/components/sfdmu-run/ISfdmuRunScriptObject';
+import { Common } from '../../components/common_components/common';
+import {
+  DATA_MEDIA_TYPE,
+  OPERATION,
+} from '../../components/common_components/enumerations';
+import { RESOURCES } from '../../components/common_components/logger';
+import { Sfdx } from '../../components/common_components/sfdx';
+import { CONSTANTS } from '../../components/common_components/statics';
+import {
+  CommandInitializationError,
+  OrgMetadataError,
+} from '../common_models/errors';
+import SFieldDescribe from '../sf_models/sfieldDescribe';
+import ScriptAddonManifestDefinition from './scriptAddonManifestDefinition';
 
 /**
  * Parsed object
@@ -458,7 +469,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       // Parse query string
       this.parsedQuery = this._parseQuery(this.query);
     } catch (ex: any) {
-      throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedQuery, this.name, this.query, ex));
+      throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.malformedQuery, this.name, this.query, ex));
     }
 
     if (this.operation == OPERATION.Delete && !this.isDeletedFromSourceOperation && !this.deleteByHierarchy) {
@@ -522,7 +533,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
         }
         this.deleteQuery = composeQuery(this.parsedDeleteQuery);
       } catch (ex: any) {
-        throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.MalformedDeleteQuery, this.name, this.deleteQuery, ex));
+        throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.malformedDeleteQuery, this.name, this.deleteQuery, ex));
       }
     }
   }
@@ -548,7 +559,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
           // Retrieve sobject metadata
           let apisf = new Sfdx(this.script.sourceOrg);
-          this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.source));
+          this.script.logger.infoNormal(RESOURCES.retrievingObjectMetadata, this.name, this.script.logger.getResourceString(RESOURCES.source));
 
           this.sourceSObjectDescribe = await apisf.describeSObjectAsync(this.name);
           this._updateSObjectDescribe(this.sourceSObjectDescribe);
@@ -570,7 +581,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
           if (ex instanceof CommandInitializationError) {
             throw ex;
           }
-          throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectSourceDoesNotExist, this.name));
+          throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.missingObjectInSource, this.name));
         }
 
       }
@@ -582,7 +593,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
           // Retrieve sobject metadata
           let apisf = new Sfdx(this.script.targetOrg);
-          this.script.logger.infoNormal(RESOURCES.gettingMetadataForSObject, this.name, this.script.logger.getResourceString(RESOURCES.target));
+          this.script.logger.infoNormal(RESOURCES.retrievingObjectMetadata, this.name, this.script.logger.getResourceString(RESOURCES.target));
 
           this.targetSObjectDescribe = await apisf.describeSObjectAsync(this.name, this.sourceTargetFieldMapping);
           this._updateSObjectDescribe(this.targetSObjectDescribe);
@@ -604,7 +615,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
           if (ex instanceof CommandInitializationError) {
             throw ex;
           }
-          throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.objectTargetDoesNotExist, this.name));
+          throw new OrgMetadataError(this.script.logger.getResourceString(RESOURCES.missingObjectInTarget, this.name));
         }
       }
 
@@ -935,9 +946,9 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
 
           // Field in the query is missing in the org metadata. Warn user.
           if (isSource)
-            this.script.logger.warn(RESOURCES.fieldSourceDoesNtoExist, this.name, sourceFieldName);
+            this.script.logger.warn(RESOURCES.missingFieldInSource, this.name, sourceFieldName);
           else
-            this.script.logger.warn(RESOURCES.fieldTargetDoesNtoExist, this.name, sourceFieldName);
+            this.script.logger.warn(RESOURCES.missingFieldInTarget, this.name, sourceFieldName);
 
           // Remove missing field from the query
           Common.removeBy(this.parsedQuery.fields, "field", sourceFieldName);

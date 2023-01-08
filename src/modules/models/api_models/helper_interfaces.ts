@@ -4,17 +4,21 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+import { CsvChunks } from '../';
+import {
+  DATA_CACHE_TYPES,
+  OPERATION,
+} from '../../components/common_components/enumerations';
 import { Logger } from '../../components/common_components/logger';
-import { IOrgConnectionData, IFieldMapping } from '../common_models/helper_interfaces';
-import { CsvChunks } from '..';
-import { DATA_CACHE_TYPES, OPERATION } from '../../components/common_components/enumerations';
-import { ApiEngineBase, ApiInfo } from '.';
-
-
-
-
-
-
+import {
+  IFieldMapping,
+  IOrgConnectionData,
+} from '../common_models/helper_interfaces';
+import {
+  ApiEngineBase,
+  ApiInfo,
+} from './';
 
 /**
  * The Api process engine reference
@@ -25,7 +29,7 @@ import { ApiEngineBase, ApiInfo } from '.';
 export interface IApiEngine {
 
     /**
-     * Executes complete api operation 
+     * Executes complete api operation
      * including api job create and api job execute
      *
      * @param {Array<any>} allRecords The all source records to process
@@ -37,7 +41,7 @@ export interface IApiEngine {
 
     /**
      * Executes complete api operation in several threads in parallel
-     * including api job create and api job execute 
+     * including api job create and api job execute
      *
      * @param {Array<any>} allRecords
      * @param {(progress: ApiInfo) => void} progressCallback
@@ -51,7 +55,7 @@ export interface IApiEngine {
     /**
      * Creates api job
      * @param {Array<any>} allRecords The all source records to process
-     * @returns {Promise<IApiJobCreateResult>} 
+     * @returns {Promise<IApiJobCreateResult>}
      * @memberof IApiProcess
      */
     createCRUDApiJobAsync: (allrecords: Array<any>) => Promise<IApiJobCreateResult>;
@@ -59,7 +63,7 @@ export interface IApiEngine {
     /**
     * Creates api job in simulation mode
     * @param {Array<any>} allRecords The all source records to process
-    * @returns {Promise<IApiJobCreateResult>} 
+    * @returns {Promise<IApiJobCreateResult>}
     * @memberof IApiProcess
     */
     createCRUDSimulationJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult>;
@@ -67,7 +71,7 @@ export interface IApiEngine {
 
     /**
      * Executes previously created api job.
-     * Returns the same records as the input. 
+     * Returns the same records as the input.
      * On Insert operation will add a new Record Id value to each returned record.
      *
      * @param {Function} progressCallback The progress callback function
@@ -80,7 +84,7 @@ export interface IApiEngine {
      * Creates and executes api batch on the given chunk of the input records.
      * The function is a part of the api job execution.
      *
-     * @param {ICsvChunk} csvChunk The part of the input 
+     * @param {ICsvChunk} csvChunk The part of the input
      *                                  records to process with the batch
      * @param {Function} progressCallback The progress callback function
      * @returns {Promise<Array<any>>} Returns null when unresolvable error occured
@@ -90,8 +94,8 @@ export interface IApiEngine {
 
     /**
      * Executes batch in a simulation mode
-     * Returns the same records as the input. 
-     * On Insert operation will create a new 
+     * Returns the same records as the input.
+     * On Insert operation will create a new
      * random Record Id value to each returned record.
      *
      * @param {Function} progressCallback The progress callback function

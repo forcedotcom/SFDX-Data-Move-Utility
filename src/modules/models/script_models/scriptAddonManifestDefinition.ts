@@ -5,11 +5,13 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-
-import { CONSTANTS } from "../../components/common_components/statics";
 import * as path from 'path';
-import { ADDON_EVENTS } from "../../components/common_components/enumerations";
-import { ISfdmuRunCustomAddonScriptAddonManifestDefinition } from "../../../addons/modules/sfdmu-run/custom-addons/package";
+
+import {
+  ISfdmuRunCustomAddonScriptAddonManifestDefinition,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package';
+import { ADDON_EVENTS } from '../../components/common_components/enumerations';
+import { CONSTANTS } from '../../components/common_components/statics';
 
 /**
  * Represent an item of the addons section of the ScriptObject / Script  classes

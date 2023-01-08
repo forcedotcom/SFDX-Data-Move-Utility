@@ -5,17 +5,26 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import { Common } from "../../components/common_components/common";
-import { RESOURCES } from "../../components/common_components/logger";
-import { Sfdx } from "../../components/common_components/sfdx";
-import { Script, OrgInfo, SObjectDescribe } from "..";
-import { CommandAbortedByUserError, CommandInitializationError } from "../common_models/errors";
-import { IOrgConnectionData } from "../common_models/helper_interfaces";
-import { DATA_MEDIA_TYPE } from "../../components/common_components/enumerations";
-import { ISfdmuRunCustomAddonScriptOrg } from "../../../addons/modules/sfdmu-run/custom-addons/package";
-import { IAppScriptOrg } from "../../app/appModels";
-
-
+import {
+  OrgInfo,
+  Script,
+  SObjectDescribe,
+} from '../';
+import {
+  ISfdmuRunCustomAddonScriptOrg,
+} from '../../../addons/modules/sfdmu-run/custom-addons/package';
+import { IAppScriptOrg } from '../../app/appModels';
+import { Common } from '../../components/common_components/common';
+import {
+  DATA_MEDIA_TYPE,
+} from '../../components/common_components/enumerations';
+import { RESOURCES } from '../../components/common_components/logger';
+import { Sfdx } from '../../components/common_components/sfdx';
+import {
+  CommandAbortedByUserError,
+  CommandInitializationError,
+} from '../common_models/errors';
+import { IOrgConnectionData } from '../common_models/helper_interfaces';
 
 /**
  * Parsed org object
@@ -127,11 +136,11 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
       )
     ) {
       // Prompt the user to allow production modifications
-      let promptMessage = this.script.logger.getResourceString(RESOURCES.productionModificationApprovalPrompt, domain);
-      let response = (await this.script.logger.textPromptAsync(promptMessage, null, '')).toLowerCase();
+      let promptMessage = this.script.logger.getResourceString(RESOURCES.canModifyPrompt, domain);
+      let response = (await this.script.logger.textPromptAsync(promptMessage)).toLowerCase();
       if (response != domain) {
         // Abort the job
-        throw new CommandAbortedByUserError(this.script.logger.getResourceString(RESOURCES.actionIsNotPermitted));
+        throw new CommandAbortedByUserError(this.script.logger.getResourceString(RESOURCES.actionNotPermitted));
       }
     }
   }
@@ -172,7 +181,7 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
       try {
         await apiSf.identityAsync();
       } catch (ex) {
-        throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessToOrgExpired, this.name));
+        throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessTokenExpired, this.name));
       }
 
       // Get org info
@@ -198,11 +207,11 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
 
       if (!this.isConnected) {
         // Connect with SFDX
-        this.script.logger.infoNormal(RESOURCES.tryingToConnectCLI, this.name);
+        this.script.logger.infoNormal(RESOURCES.connectingToOrg, this.name);
         let processResult = Common.execSfdx("force:org:display --json", this.name);
         let orgInfo = this._parseForceOrgDisplayResult(processResult);
         if (!orgInfo || !orgInfo.isConnected) {
-          throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.tryingToConnectCLIFailed, this.name));
+          throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.connectingFailed, this.name));
         } else {
           Object.assign(this, {
             accessToken: orgInfo.AccessToken,

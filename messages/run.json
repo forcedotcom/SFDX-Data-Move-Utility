@@ -1,48 +1,51 @@
 {
-    "commandDescription": "The Salesforce DX data migration tool.\nPopulate your org (scratch/development/sandbox/production) with data imported from another org or CSV file.\nRefer https://github.com/forcedotcom/SFDX-Data-Move-Utility for the detailed help information.",
-    "commandLongDescription": "Populate your org (scratch/development/sandbox/production) with data imported from another org or CSV file.\nRefer https://github.com/forcedotcom/SFDX-Data-Move-Utility for the detailed help information.",
+    "commandDescription": "Starts execution of the migration job using the SFDX Data Move Utility Plugin (SFDMU).\nRefer https://help.sfdmu.com for the detailed help information.",
+    "commandLongDescription": "Starts execution of the migration job using the SFDX Data Move Utility Plugin (SFDMU).\nRefer https://help.sfdmu.com for the detailed help information.",
 
     "sourceusernameFlagDescription": "Source org username/alias or 'csvfile' for csv load",
-    "sourceusernameFlagLongDescription": "Provide username or alias for the source org or 'csvfile' if CSV files are used as data source.",
+    "sourceusernameFlagLongDescription": "Provide username or alias for the Source org or 'csvfile' if CSV files are used as data source.",
 
-    "pathFlagDescription": "[Optional] Absolute/Relative path to package directory",
-    "pathFlagLongDescription": "[Optional] Absolute or relative path to the directory that contains working export.json file. If not provided, the plugin will try to search for the file in the current directory.",
+    "pathFlagDescription": "[Optional] Absolute/relative path to the directory containing export.json file",
+    "pathFlagLongDescription": "[Optional] Absolute or relative path to the directory that contains working export.json file.\nIf not provided, the command will try to search for the file in the current directory.",
 
-    "quietFlagDescription": "[Optional] Disable logging - show only success/errors",
-    "quietFlagLongDescription": "[Optional] Disable logging - show only success/errors. Suppress stdout output. if --filelog is specified the plugin will still log into file.",
+    "quietFlagDescription": "[Optional] Suppresses stdout logging",
+    "quietFlagLongDescription": "[Optional] This flag suppresses output to the stdout.\nIf file logging is enabled the command will still log into file.",
 
-    "silentFlagDescription": "[Optional] Disable logging; same as --quiet flag",
-    "silentFlagLongDescription": "[Optional] The same as --quiet flag. Disable logging - show only success/errors. Suppress stdout output. if --filelog is specified the plugin will still log into file.",
+    "silentFlagDescription": "[Optional] Same as --quiet",
+    "silentFlagLongDescription": "[Optional] The same as the --quiet flag.",
 
-    "conciseFlagDescription": "[Optional] Emit brief command output to stdout",
-    "conciseFlagLongDescription": "[Optional] Display only short messages, that are highly important for understanding the progress of the execution.",
+    "conciseFlagDescription": "[Optional] Emits brief command output to stdout",
+    "conciseFlagLongDescription": "[Optional] Outputs only important messages to the stdout, that are required for understanding the command progress.",
 
-    "verboseFlagDescription": "[Optional] Emit additional command output to stdout",
-    "verboseFlagLongDescription": "[Optional] Display all command messages and errors.",
+    "verboseFlagDescription": "[Optional] Emits full command output to stdout",
+    "verboseFlagLongDescription": "[Optional] Ouputs all messages to the stdout.",
 
-    "versionFlagDescription": "[Optional] Output the current version of the plugin",
-    "versionFlagLongDescription": "[Optional] Display the current installed version of the plugin.",
+    "versionFlagDescription": "[Optional] Prints the current version of the command",
+    "versionFlagLongDescription": "[Optional] Prints the currently installed/linked version of the command.",
 
-    "apiversionFlagDescription": "[Optional] Override the api version set in the package definition",
-    "apiversionFlagLongDescription": "[Optional] If specified overrides apiVersion parameter of the export.json file. Used for all api requests made by this command.",
+    "apiversionFlagDescription": "[Optional] Overrides the api version set in the export.json definition",
+    "apiversionFlagLongDescription": "[Optional] If specified overrides apiVersion parameter of the export.json file.\nUsed for all api requests made by this command.",
 
-    "filelogFlagDescription": "[Optional] Enable additional logging into log file",
-    "filelogFlagLongDescription": "[Optional] In addition stdout/stderr this flag will turn on logging into .log file. Each command run will create separated log file inside /log subdirectory related to the working export.json file. A verbosity control is disabled for log files: all messages will be logged, even --quite flag was specified.",
+    "filelogFlagDescription": "[Optional] Turns onn/off file logging",
+    "filelogFlagLongDescription": "[Optional] In addition to logging to the stdout this flag will turn on/of logging to file.\nSet this flag to 1 (or omit this flag) to enable file logging or set it to 0 to disable file logging.",
 
-    "nopromptFlagDescription": "[Optional] Skip prompt inputs or confirmation",
-    "nopromptLongFlagDescription": "[Optional] Flag to skip prompting for more inputs or confirmation. Command will continue using the default options.",
+    "nopromptFlagDescription": "[Optional] Suppresses prompting the user for input or confirmation",
+    "nopromptLongFlagDescription": "[Optional] Flag to suppress prompting user for inputs or confirmation.\nCommand will continue using the default options.",
 
-    "nowarningsFlagDescription": "[Optional] Suppress all warning messages",
+    "nowarningsFlagDescription": "[Optional] Suppresses all warning messages",
     "nowarningsLongFlagDescription": "[Optional] Flag to suppress output of all warning messages to stdout.",
 
     "jsonFlagDescription": "[Optional] Format the command output as json",
-    "jsonLongFlagDescription": "[Optional] Return formatted json instead of text to stdout as a result of the command execution. Json result will also contain extended information as start time, end time, time elapsed etc.",
+    "jsonLongFlagDescription": "[Optional] If true, the command will return a result as a formatted json instead of a text to stdout.\nThe json emitted both to log file and to stdout after the command is fully completed.\nThis json includes all messages logged out during the command execution as well as extended information, like execution start time, end time, time elapsed etc.",
 
-    "errorMissingRequiredFlag": "Missing required flag(s): %s",
+    "loglevelFlagDescription": "[Optional] File logging level for this command invocation",
+    "loglevelLongFlagDescription": "[Optional] Specified the type of messages to be logged to file.\nLog file always contains all messages emitted during execution of the command.",
 
     "canModifyFlagDescription": "[Optional] Allows modification of target production environment without preliminary prompting the user about it.",
-    "canModifyFlagLongDescription": "[Optional] When production environment is set as the Target and this flag is set to the target DOMAIN NAME (for example prod-instance.my.salesforce.com), the Plugin will not ask the user for the approval to make modifications, otherwise the user will be prompted to prevent the critical data from destroying by accident.",
+    "canModifyFlagLongDescription": "[Optional] When Production is set as the Target org and this flag is set to the target DOMAIN NAME (for example prod-instance.my.salesforce.com), the command will not ask the user for the approval to make modifications, otherwise the user will be prompted to prevent the critical data from destroying by accident.",
 
-    "simulationFlagDescription": "[Optional] Turn on the simulation mode",
-    "simulationLongFlagDescription": "[Optional] The simulation mode allows to check which records will be affected by the export.json configuration without actual update, delete or insert them. It produces the similar output (target.csv, .log files) as the live mode, but there are no actual records will be affected."
+    "simulationFlagDescription": "[Optional] Turn on simulation mode",
+    "simulationLongFlagDescription": "[Optional] The simulation mode allows to check which records will be affected by the export.json configuration without actual update, delete or insert them.",
+
+    "errorMissingRequiredFlag": "Missing required flag(s): %s"
   }

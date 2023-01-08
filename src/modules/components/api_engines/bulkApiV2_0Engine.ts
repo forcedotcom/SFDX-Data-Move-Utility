@@ -4,20 +4,27 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+import * as parse2 from 'csv-parse/lib/sync';
+
 import {
   ApiEngineBase,
   ApiInfo,
-  IApiEngineInitParameters
+  IApiEngineInitParameters,
 } from '../../models/api_models';
-import { Common } from '../common_components/common';
-import { CONSTANTS } from '../common_components/statics';
-import { IApiEngine, IApiJobCreateResult, ICsvChunk } from '../../models/api_models/helper_interfaces';
-import { RESOURCES } from '../common_components/logger';
-import * as parse2 from 'csv-parse/lib/sync';
-
-
-import { OPERATION, RESULT_STATUSES } from '../common_components/enumerations';
 import ApiResultRecord from '../../models/api_models/ApiResultRecord';
+import {
+  IApiEngine,
+  IApiJobCreateResult,
+  ICsvChunk,
+} from '../../models/api_models/helper_interfaces';
+import { Common } from '../common_components/common';
+import {
+  OPERATION,
+  RESULT_STATUSES,
+} from '../common_components/enumerations';
+import { RESOURCES } from '../common_components/logger';
+import { CONSTANTS } from '../common_components/statics';
 
 const parse = (parse2 as any).parse || parse2;
 const request = require('request');
