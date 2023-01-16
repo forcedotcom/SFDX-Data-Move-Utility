@@ -1233,6 +1233,9 @@ export default class MigrationJobTask {
         // Truncate records
         clonedRecords = ___truncateRecords(clonedRecords);
 
+        // Map records
+        self.mapRecords(clonedRecords);
+
         // Create records map: cloned => source
         clonedRecords.forEach(cloned => {
           let initialCloned = ___IdToClonedMap.get(cloned[CONSTANTS.__ID_FIELD_NAME]);
@@ -1343,7 +1346,7 @@ export default class MigrationJobTask {
           String((data.recordsToInsert.length)));
 
         // Value mapping
-        self.mapRecords(data.recordsToInsert);
+        //self.mapRecords(data.recordsToInsert);
 
         self.createApiEngine(self.targetData.org, OPERATION.Insert, data.recordsToInsert.length, true, targetFilenameSuffix);
         let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToInsert, self.apiProgressCallback, self.getParallelThreadCount());
@@ -1374,7 +1377,7 @@ export default class MigrationJobTask {
           String((data.recordsToUpdate.length)));
 
         // Value mapping
-        self.mapRecords(data.recordsToUpdate);
+        //self.mapRecords(data.recordsToUpdate);
 
         self.createApiEngine(self.targetData.org, OPERATION.Update, data.recordsToUpdate.length, false, targetFilenameSuffix);
         let targetRecords = await self.apiEngine.executeCRUDMultithreaded(data.recordsToUpdate, self.apiProgressCallback, self.getParallelThreadCount());
