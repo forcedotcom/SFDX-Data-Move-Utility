@@ -1,3 +1,12 @@
+## [4.23.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.4...4.23.5) (2023-01-16)
+
+
+### Bug Fixes
+
+* Fixed ValuesMapping ([#548](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/548)) ([a810952](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/a8109529fa989fd1c08d7028587577b7d9704ed1))
+
+
+
 ## [4.23.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.3...4.23.4) (2023-01-16)
 
 
