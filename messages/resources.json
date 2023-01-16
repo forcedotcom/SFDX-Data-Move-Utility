@@ -112,7 +112,7 @@
     "writingCsvFile": "Writing to %s ...",
     "correctCsvFiles": "No issues were found in the source CSV files.",
     "incorrectCsvFiles": "%s issues were found in source CSV file. See %s file for the details.",
-    "continueTheJobPrompt": "Continue the job",
+    "continueTheJob": "Continue the job",
     "missingCsvFile": "MISSING CSV FILE",
     "missingColumnsInCsvFile": "MISSING COLUMN IN THE CSV FILE",
     "missingParentLookupRecords": "MISSING PARENT LOOKUP RECORD",

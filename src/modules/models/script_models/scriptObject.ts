@@ -391,9 +391,9 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   }
 
   get defaultExternalId(): string {
-    if (this.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
-      return CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
-    }
+    // if (this.name == CONSTANTS.RECORD_TYPE_SOBJECT_NAME) {
+    //   return CONSTANTS.DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME;
+    // }
     if (!this.isDescribed) {
       return "Id";
     }

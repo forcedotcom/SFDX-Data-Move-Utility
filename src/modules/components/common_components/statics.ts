@@ -28,7 +28,7 @@ export const CONSTANTS = {
   __IS_PROCESSED_FIELD_NAME: "___IsProcessed",
 
   ERRORS_FIELD_NAME: "Errors",
-  DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName;NamespacePrefix;SobjectType",
+  //DEFAULT_RECORD_TYPE_ID_EXTERNAL_ID_FIELD_NAME: "DeveloperName;NamespacePrefix;SobjectType",
   OLD_DEFAULT_RECORD_TYPE_ID_FIELD_R_NAME: "RecordType.DeveloperName",
   COMPLEX_FIELDS_QUERY_SEPARATOR: '$',
   COMPLEX_FIELDS_QUERY_PREFIX: '$$',
@@ -105,7 +105,8 @@ export const CONSTANTS = {
   RECORD_TYPE_SOBJECT_NAME: "RecordType",
 
   DEFAULT_EXTERNAL_IDS: {
-    'EmailMessage': 'Subject'
+    'EmailMessage': 'Subject',
+    'RecordType': 'DeveloperName;NamespacePrefix;SobjectType'
   },
 
   NOT_SUPPORTED_OBJECTS: [
