@@ -1,18 +1,17 @@
 # ![SFDMU](src/images/logo-black.png)&nbsp;The Advanced Salesforce Data Loader (SFDMU)
 
-
 **The documentation can be found here:   [SFDMU Help Center](https://help.sfdmu.com/)**
 
-**The SFDMU GUI Desktop Application is here:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
+**The SFDMU GUI Desktop Application:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
 
-**Please, see [User Support Policy](https://help.sfdmu.com/full-documentation/additional-information/support_policy) before opening cases**
+**Please, see the [User Support Policy](https://help.sfdmu.com/full-documentation/additional-information/support_policy) before opening cases**
 
-**Aways welcome to contribute to the SFDMU! Please, take some time to read our [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
+**Welcome to contribute to the SFDMU! Please, take some time to read our [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
 
 ---
 ## Table of contents
 - [Introduction.](#introduction)
-- [The benefits of using the SFDMU.](#the-benefits-of-using-the-sfdmu)
+- [Why should you use the SFDMU ?](#why-should-you-use-the-sfdmu)
 - [Use case.](#use-case)
 - [Watch the demo. The Plugin in action.](#watch-the-demo-the-plugin-in-action)
 - [Installation of the Plugin.](#installation-of-the-plugin)
@@ -20,15 +19,19 @@
 - [Running the migration job.](#running-the-migration-job)
 ## Introduction.
 
-**The SFDMU (SFDX Data Move Utility) is the advanced Salesforce Data Loader SFDX plugin, the most modern and powerful open-source salesforce data migration tool and it is the innovative and very handy alternative to the traditional salesforce data loader application as well as to the set of the force:data:tree commands.** 
+**The SFDX Data Move Utility (SFDMU) is a modern and powerful open-source salesforce data loader based on the famous SFDX CLI. It will make salesforce data seeding process extremely easy and fast. **
 
-✔ This SFDX Plugin will help you to populate your org **(scratch / dev / sandbox / production)** with data imported from another org or CSV files.<br /> 
+**This Tool is the innovative and very handy alternative to the traditional salesforce data loader application as well as to the set of the force:data:tree commands.** 
+
+✔ The SFDMU will help you to populate your org **(scratch / dev / sandbox / production)** with data imported from another org or CSV files.<br />
 ✔ It supports all important CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**)  **also for multiple related sObjects**.<br />
-✔ It includes a huge amount of advanced features never were before in any of the existing tools, which make your data migration very quick and easy.<br />
-✔ It's a SFDX-CLI digitally signed Plugin.
+✔ It provides you the **All-In-One data migration solution** with a large amount of unique OOTB features have never provided before by the existing tools.<br />
+✔ This Plugin is **approved and digitally signed** by the Salesforce.
 
-## The benefits of using the SFDMU.
-**It was especially designed to give you most convenient and fastest way to transfer complex related data models between salesforce orgs:** 
+### Why should you use the SFDMU ?
+
+**The SFDMU is equipped with special capabilities making migration of complex related data significantly easy:**
+
 - It supports **direct Org-to-Org data migration** without having to deal with annoying intermediate CSV files.
 - Full support of CRUD operations: **Insert** / **Update** / **Upsert** / **Delete.**
 - Supports **import and export of CSV files**.
