@@ -1344,6 +1344,7 @@ export default class MigrationJobTask {
           self.sObjectName,
           self.logger.getResourceString(RESOURCES.insert),
           String((data.recordsToInsert.length)));
+          
 
         // Value mapping
         //self.mapRecords(data.recordsToInsert);
