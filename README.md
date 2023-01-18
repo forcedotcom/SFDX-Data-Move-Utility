@@ -201,11 +201,17 @@ $ sfdx sfdmu:run --sourceusername source@name.com --targetusername csvfile
 
 Documentation articles:
 
-- [Get Started with the SFDMU](https://help.sfdmu.com/quick-start)
-- [Installation](https://help.sfdmu.com/plugin-basics/basic-usage/installation)
-- [Minimal configuration](https://help.sfdmu.com/plugin-basics/basic-usage/minimal-configuration)
-- [Running](https://help.sfdmu.com/plugin-basics/basic-usage/running)
-- [Complete guide to running the SFDMU](https://help.sfdmu.com/full-documentation/configuration-and-running/run-the-migration-job.md)
-- [Full export.json format](https://help.sfdmu.com/full-documentation/configuration-and-running/full-exportjson-format)
-- [How to debug the SFDMU](https://help.sfdmu.com/plugin-basics/basic-usage/debugging)
+- [Get Started with the SFDMU](https://help.sfdmu.com/get-started)
+
+- [Installation](https://help.sfdmu.com/installation)
+
+- [Configuration](https://help.sfdmu.com/configuration)
+
+- [Running](https://help.sfdmu.com/running)
+
+- [Debugging](https://help.sfdmu.com/debugging)
+
+- [Full export.json format](https://help.sfdmu.com/full-configuration)
+
+  
 
