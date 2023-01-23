@@ -9,8 +9,9 @@
 **Welcome to contribute to the SFDMU! Please, take some time to read our [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
 
 ---
-## Table of contents
-- [Introduction.](#introduction)
+**Table of contents**
+
+- [Introduction to the SFDMU.](#introduction)
 - [Why should you use the SFDMU ?](#why-should-you-use-the-sfdmu)
 - [Use case.](#use-case)
 - [Watch the demo. The Plugin in action.](#watch-the-demo-the-plugin-in-action)
@@ -19,18 +20,19 @@
 - [Running the migration job.](#running-the-migration-job)
 ## Introduction.
 
-**The SFDX Data Move Utility (SFDMU) is a modern and powerful open-source salesforce data loader based on the famous SFDX CLI. It will make salesforce data seeding process extremely easy and fast.**
+### The SFDX Data Move Utility (SFDMU) is the most modern and powerful **salesforce data loader**.
+### Makes data seeding extremely easy and fast.
 
-**This Tool is the innovative and very handy alternative to the traditional salesforce data loader application as well as to the set of the force:data:tree commands.** 
+#### This Tool is the innovative and very handy alternative to the traditional salesforce data loader application as well as to the set of the force:data:tree commands.
 
-✔ The SFDMU will help you to populate your org **(scratch / dev / sandbox / production)** with data imported from another org or CSV files.<br />
-✔ It supports all important CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**)  **also for multiple related sObjects**.<br />
-✔ It provides you the **All-In-One data migration solution** with a large amount of unique OOTB features have never provided before by the existing tools.<br />
-✔ This Plugin is **approved and digitally signed** by the Salesforce.
+✔ The SFDMU will help you to populate your **Scratch / Dev / Sandbox / Prod** org with records imported from another org or CSV files.<br />
+✔ It can perform all CRUD operations (**Insert** / **Update** / **Upsert** / **Delete**) also for **multiple related sObjects**.<br />
+✔It's the comprehensive **All-In-One data migration solution** having a bulk of unique features have never provided before by any of the existing tools.<br />
+✔  This Plugin is **approved and digitally signed** by Salesforce.
 
 ### Why should you use the SFDMU ?
 
-**The SFDMU is equipped with special capabilities making migration of complex related data significantly easy:**
+#### The Plugin is equipped with an extended built-in functionality making migration of multiple related objects very handy:
 
 - It supports **direct Org-to-Org data migration** without having to deal with annoying intermediate CSV files.
 - Full support of CRUD operations: **Insert** / **Update** / **Upsert** / **Delete.**
