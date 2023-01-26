@@ -206,6 +206,14 @@ export const CONSTANTS = {
     ['AccountContactRelation', ['Account', 'Contact', 'Case']]
   ]),
 
+  SPECIAL_OBJECT_DELETE_ORDER: new Map<string, Array<string>>([
+    ['ProductAttribute', ['ProductAttributeSetProduct']]
+  ]),
+
+  SPECIAL_OBJECT_UPDATE_ORDER: new Map<string, Array<string>>([
+    ['ProductAttributeSetProduct', ['ProductAttribute']]
+  ]),
+
   OBJECTS_TO_FERIFY_IN_QUERY_TRANSFORM: ['Group'],
   EXTRA_OBJECTS_TO_DESCRIBE: ['Group'],
 

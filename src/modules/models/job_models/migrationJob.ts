@@ -178,6 +178,14 @@ export default class MigrationJob {
 
       // Create delete task order
       this.deleteTasks = this.tasks.slice().reverse();
+
+      // Fix delete order
+      ___applySpecialTaskOrder(this.deleteTasks, CONSTANTS.SPECIAL_OBJECT_DELETE_ORDER);
+
+      // Fix update order
+      ___applySpecialTaskOrder(this.tasks, CONSTANTS.SPECIAL_OBJECT_UPDATE_ORDER);
+
+
     }
 
     // Output execution orders
@@ -195,6 +203,20 @@ export default class MigrationJob {
     this.script.addonRuntime.createSfdmuPluginJob();
 
     // ------------------------------- Internal functions --------------------------------------- //
+    function  ___applySpecialTaskOrder(tasks: Task[], specialOrderToApply: Map<string, string[]>) {
+      for (let leftIndex = 0; leftIndex < tasks.length - 1; leftIndex++) {
+        const leftTask = tasks[leftIndex];
+        for (let rightIndex = leftIndex + 1; rightIndex < tasks.length; rightIndex++) {
+          const rightTask = tasks[rightIndex];
+          const childObjects =  specialOrderToApply.get(rightTask.sObjectName);
+          if (childObjects && childObjects.includes(leftTask.sObjectName)) {
+             tasks.splice(rightIndex, 1);
+             tasks.splice(leftIndex, 0, rightTask);
+          }
+        }      
+      }
+    }
+
     function ___updateQueryTaskOrder() {
       let swapped = false;
       let tempTasks: Array<MigrationJobTask> = [].concat(self.queryTasks);
