@@ -1,3 +1,13 @@
+## [4.23.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.10...4.23.11) (2023-01-26)
+
+
+### Bug Fixes
+
+* Fixed smart order ([14a49bf](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/14a49bffae6f9bc2bc3fafb328066fefff6fa52f))
+* Fixes smart order ([607956b](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/607956b304c2c8cfb728f365087ef38e9e4706a8))
+
+
+
 ## [4.23.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.9...4.23.10) (2023-01-23)
 
 
