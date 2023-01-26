@@ -202,6 +202,7 @@ export const CONSTANTS = {
     ['Account', ['Case']]
   ]),
 
+  
   SPECIAL_OBJECT_QUERY_ORDER: new Map<string, Array<string>>([
     ['AccountContactRelation', ['Account', 'Contact', 'Case']]
   ]),
