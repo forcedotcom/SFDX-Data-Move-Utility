@@ -52,6 +52,7 @@ export const CONSTANTS = {
 
   CSV_SOURCE_SUB_DIRECTORY: "source",
   CSV_TARGET_SUB_DIRECTORY: "target",
+  OBJECT_SET_SUBDIRECTORY_PREFIX : '/object-set-',
   BINARY_CACHE_SUB_DIRECTORY: "binary_cache",
   SOURCE_RECORDS_CACHE_SUB_DIRECTORY: "source_records_cache",
   CSV_SOURCE_FILE_SUFFIX: "_source",

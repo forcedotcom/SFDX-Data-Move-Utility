@@ -1269,13 +1269,13 @@ export class Common {
    * Remove folder with all files
    *
    * @static
-   * @param {string} path Path to the folder to remove
+   * @param {string} pth Path to the folder to remove
    * @memberof Common
    */
-  public static deleteFolderRecursive(path: string, throwIOErrors?: boolean, removeSelfDirectory: boolean = true) {
-    if (fs.existsSync(path)) {
-      fs.readdirSync(path).forEach(file => {
-        var curPath = path + "/" + file;
+  public static deleteFolderRecursive(pth: string, throwIOErrors?: boolean, removeSelfDirectory: boolean = true) {
+    if (fs.existsSync(pth)) {
+      fs.readdirSync(pth).forEach(file => {
+        var curPath = path.join(pth, file);
         if (fs.lstatSync(curPath).isDirectory()) {
           // Recursive call
           this.deleteFolderRecursive(curPath, throwIOErrors);
@@ -1292,7 +1292,7 @@ export class Common {
       });
       try {
         if (removeSelfDirectory) {
-          fs.rmdirSync(path);
+          fs.rmdirSync(pth);
         }
       } catch (ex) {
         if (throwIOErrors) {
