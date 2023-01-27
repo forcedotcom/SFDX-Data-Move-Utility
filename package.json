@@ -1,7 +1,7 @@
 {
   "name": "sfdmu",
   "description": "The SFDX Data Move Utility (SFDMU) is the most modern and powerful salesforce data loader. Makes data seeding extremely easy and fast.",
-  "version": "4.23.11",
+  "version": "4.24.0",
   "author": "Haim Knokh",
   "bugs": "https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues",
   "dependencies": {

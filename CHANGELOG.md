@@ -1,3 +1,12 @@
+# [4.24.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.11...4.24.0) (2023-01-27)
+
+
+### Features
+
+* Added the new useSourceCSVFile property ([c546b9d](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/c546b9d90975e8d381f86a1c8891cd9521a112af))
+
+
+
 ## [4.23.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.10...4.23.11) (2023-01-26)
 
 
