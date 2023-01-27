@@ -203,17 +203,17 @@ export default class MigrationJob {
     this.script.addonRuntime.createSfdmuPluginJob();
 
     // ------------------------------- Internal functions --------------------------------------- //
-    function  ___applySpecialTaskOrder(tasks: Task[], specialOrderToApply: Map<string, string[]>) {
+    function ___applySpecialTaskOrder(tasks: Task[], specialOrderToApply: Map<string, string[]>) {
       for (let leftIndex = 0; leftIndex < tasks.length - 1; leftIndex++) {
         const leftTask = tasks[leftIndex];
         for (let rightIndex = leftIndex + 1; rightIndex < tasks.length; rightIndex++) {
           const rightTask = tasks[rightIndex];
-          const childObjects =  specialOrderToApply.get(rightTask.sObjectName);
+          const childObjects = specialOrderToApply.get(rightTask.sObjectName);
           if (childObjects && childObjects.includes(leftTask.sObjectName)) {
-             tasks.splice(rightIndex, 1);
-             tasks.splice(leftIndex, 0, rightTask);
+            tasks.splice(rightIndex, 1);
+            tasks.splice(leftIndex, 0, rightTask);
           }
-        }      
+        }
       }
     }
 
@@ -288,7 +288,7 @@ export default class MigrationJob {
     // Load mapping files
     await this._loadValueMappingFileAsync();
 
-    if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+    if (this.script.sourceOrg.media == DATA_MEDIA_TYPE.File || this.script.hasUseSourceCSVFile) {
 
       // Prepare source CSV files
       await this._mergeUserGroupCSVfiles();
@@ -958,20 +958,22 @@ export default class MigrationJob {
   }
 
   private _copyCSVFilesToSourceSubDir() {
-    this.tasks.forEach(task => {
-      if (fs.existsSync(task.data.csvFilename)) {
-        fs.copyFileSync(task.data.csvFilename, task.data.sourceCsvFilename);
-      }
-    });
+    this.tasks.filter(task => this.script.sourceOrg.isFileMedia || task.scriptObject.useSourceCSVFile)
+      .forEach(task => {
+        if (fs.existsSync(task.data.csvFilename)) {
+          fs.copyFileSync(task.data.csvFilename, task.data.sourceCsvFilename);
+        }
+      });
   }
 
   private async _validateAndRepairSourceCSVFiles(): Promise<void> {
 
     let self = this;
+    let thisTasks = this.tasks.filter(task => this.script.sourceOrg.isFileMedia || task.scriptObject.useSourceCSVFile);
 
     // Analyse csv structure
-    for (let index = 0; index < this.tasks.length; index++) {
-      const task = this.tasks[index];
+    for (let index = 0; index < thisTasks.length; index++) {
+      const task = thisTasks[index];
       this.csvIssues = this.csvIssues.concat(await task.validateCSV());
     }
 
@@ -983,13 +985,13 @@ export default class MigrationJob {
     }
 
     // Check and repair the source csvs
-    for (let index = 0; index < this.tasks.length; index++) {
-      const task = this.tasks[index];
+    for (let index = 0; index < thisTasks.length; index++) {
+      const task = thisTasks[index];
       this.csvIssues = this.csvIssues.concat(await task.repairCSV(this.cachedCSVContent, true));
     }
 
-    for (let index = 0; index < this.tasks.length; index++) {
-      const task = this.tasks[index];
+    for (let index = 0; index < thisTasks.length; index++) {
+      const task = thisTasks[index];
       this.csvIssues = this.csvIssues.concat(await task.repairCSV(this.cachedCSVContent, false));
     }
 

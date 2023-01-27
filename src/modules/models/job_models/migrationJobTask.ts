@@ -882,7 +882,7 @@ export default class MigrationJobTask {
     if (queryMode != "target") {
       // Read main data *************************************
       // ****************************************************
-      if (this.sourceData.media == DATA_MEDIA_TYPE.File && queryMode == "forwards") {
+      if ((this.sourceData.media == DATA_MEDIA_TYPE.File || this.scriptObject.useSourceCSVFile) && queryMode == "forwards") {
         // Read from the SOURCE CSV FILE ***********************************
         if (!reversed) {
           let query = this.createQuery();
