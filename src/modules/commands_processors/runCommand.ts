@@ -137,6 +137,7 @@ export class RunCommand {
 
   }
 
+  
   setupGlobalParameters() {
     Common.csvReadFileDelimiter = this.script.csvReadFileDelimiter;
     Common.csvWriteFileDelimiter = this.script.csvWriteFileDelimiter;
