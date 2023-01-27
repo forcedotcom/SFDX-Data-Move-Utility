@@ -146,7 +146,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
 
   get isPersonAccountEnabled(): boolean {
     return (this.sourceOrg.isPersonAccountEnabled || this.sourceOrg.isFileMedia)
-          && (this.targetOrg.isPersonAccountEnabled || this.targetOrg.isFileMedia);
+      && (this.targetOrg.isPersonAccountEnabled || this.targetOrg.isFileMedia);
   }
 
   get bulkApiVersionNumber(): number {
@@ -203,6 +203,10 @@ export default class Script implements IAppScript, ISfdmuRunScript {
 
   get hasDeleteByHierarchyOperation(): boolean {
     return this.objects.some(object => object.isHierarchicalDeleteOperation);
+  }
+
+  get hasUseSourceCSVFile() {
+    return !this.sourceOrg.isFileMedia && this.objects.some(object => object.useSourceCSVFile);
   }
 
 
@@ -346,7 +350,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   async cleanupDirectories(): Promise<void> {
 
     // Perform clean-up the source directory if need --------------
-    if (this.sourceOrg.media == DATA_MEDIA_TYPE.File) {
+    if (this.sourceOrg.media == DATA_MEDIA_TYPE.File || this.hasUseSourceCSVFile) {
       try {
         Common.deleteFolderRecursive(this.sourceDirectoryPath, true);
       } catch (ex) {

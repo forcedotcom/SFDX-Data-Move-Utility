@@ -97,6 +97,8 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   parallelBulkJobs: number = 1;
   parallelRestJobs: number = 1;
 
+  useSourceCSVFile: boolean;
+
   @Type(() => ScriptAddonManifestDefinition)
   beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
 
