@@ -132,6 +132,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   addonManager: SfdmuRunAddonManager;
   runInfo: ICommandRunInfo;
   canModify: string;
+  objectSetIndex: number;
 
 
   // Additional sobject descriptions for sobject which were nbot included into the export.json
@@ -156,7 +157,11 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   }
 
   get targetDirectoryPath(): string {
-    return path.join(this.basePath, CONSTANTS.CSV_TARGET_SUB_DIRECTORY);
+    return path.join(
+      this.basePath,
+      CONSTANTS.CSV_TARGET_SUB_DIRECTORY +
+      (!this.objectSetIndex ? '' : `${CONSTANTS.OBJECT_SET_SUBDIRECTORY_PREFIX}${this.objectSetIndex}`)
+    );
   }
 
   get targetDirectory(): string {
@@ -167,7 +172,11 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   }
 
   get sourceDirectoryPath(): string {
-    return path.join(this.basePath, CONSTANTS.CSV_SOURCE_SUB_DIRECTORY);
+    return path.join(
+      this.basePath,
+      CONSTANTS.CSV_SOURCE_SUB_DIRECTORY +
+      (!this.objectSetIndex ? '' : `${CONSTANTS.OBJECT_SET_SUBDIRECTORY_PREFIX}${this.objectSetIndex}`)
+    );
   }
 
   get sourceDirectory(): string {

@@ -118,16 +118,21 @@ export class RunCommand {
     }
 
     try {
+      
       let jsonObject = JSON.parse(json);
+      
       jsonObject.objects = jsonObject.objects || [];
       jsonObject.objectSets = jsonObject.objectSets || [];
+      
       if (jsonObject.objects.length) {
         jsonObject.objectSets.unshift(new ScriptObjectSet(jsonObject.objects));
       }
+
       this.workingJson = JSON.stringify(jsonObject);
       jsonObject.objects = [];
       this.script = plainToClass(models.Script, jsonObject);
-      this.setupGlobalParameters();
+
+      this._setupGlobalScriptParameters();
 
     } catch (ex: any) {
       throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.incorrectExportJsonFormat, ex.message));
@@ -135,12 +140,6 @@ export class RunCommand {
 
     return this.script.objectSets.length;
 
-  }
-
-  
-  setupGlobalParameters() {
-    Common.csvReadFileDelimiter = this.script.csvReadFileDelimiter;
-    Common.csvWriteFileDelimiter = this.script.csvWriteFileDelimiter;
   }
 
 
@@ -269,6 +268,13 @@ export class RunCommand {
     this.script = plainToClass(models.Script, JSON.parse(this.workingJson));
     this.job = undefined;
     this.script.objects = this.script.objectSets[objectSetIndex].objects || this.script.objects;
+    this.script.objectSetIndex = objectSetIndex;
+  }
+
+  
+  private _setupGlobalScriptParameters() {
+    Common.csvReadFileDelimiter = this.script.csvReadFileDelimiter;
+    Common.csvWriteFileDelimiter = this.script.csvWriteFileDelimiter;
   }
 
 }

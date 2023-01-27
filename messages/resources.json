@@ -120,7 +120,7 @@
     "csvFilesWereUpdated": "Amount of updated source CSV files: %s.",
     "validationCsvFileCompleted": "Processing the source CSV files has been completed.",
     "unableToDeleteTargetDirectory" : "Unable to clean-up the target directory: '%s'. It's probably locked by another application.",
-    "unableToDeleteSourceDirectory": "Unable to clean-up the souce directory: '%s'. It's probably locked by another application.",
+    "unableToDeleteSourceDirectory": "Unable to clean-up the source directory: '%s'. It's probably locked by another application.",
     "unableToDeleteCacheDirectory": "Unable to clean-up the cache directory: '%s'. It's probably locked by another application.",
     "canModifyPrompt": "NOTE! The Plugin has detected that you are about to modify the Production org.\nTo confirm that you really want to modify this org, please type: ",
 
