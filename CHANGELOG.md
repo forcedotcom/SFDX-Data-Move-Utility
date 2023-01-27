@@ -1,3 +1,12 @@
+# [4.26.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.25.0...4.26.0) (2023-01-27)
+
+
+### Features
+
+* Different target dirs for each ObjectSet ([6aabbc5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/6aabbc575a597bd20c3a22a12136315307457e07))
+
+
+
 # [4.25.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.24.0...4.25.0) (2023-01-27)
 
 
