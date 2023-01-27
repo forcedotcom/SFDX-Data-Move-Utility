@@ -96,6 +96,8 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   simulationMode: boolean = false;
 
   proxyUrl: string;
+  csvReadFileDelimiter: ',' | ';' = ",";
+  csvWriteFileDelimiter: ',' | ';' = ",";
 
   binaryDataCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
   sourceRecordsCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;

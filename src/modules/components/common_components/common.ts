@@ -61,6 +61,8 @@ const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 export class Common {
 
   static logger: Logger;
+  static csvReadFileDelimiter: ',' | ';' = ",";
+  static csvWriteFileDelimiter: ',' | ';' = ",";
 
   /**
   * @static Splits array to multiple chunks by max chunk size
@@ -716,6 +718,7 @@ export class Common {
           input = input.replace(/^\uFEFF/, '');
           const records = parse(input, {
             columns: ___columns,
+            delimiter: Common.csvReadFileDelimiter,
             skip_empty_lines: true,
             skip_lines_with_error: true,
             cast: ___csvCast
@@ -819,6 +822,7 @@ export class Common {
         return;
       }
       const csvWriter = createCsvWriter({
+        fieldDelimiter: Common.csvWriteFileDelimiter,
         header: (columns || Object.keys(array[0])).map(x => {
           return {
             id: x,
@@ -1086,15 +1090,15 @@ export class Common {
     return temp.map(el => el.trim()).filter(el => el.length > 0);
   }
 
-/**
- * Extracts QHERE clause from the query string
- *
- * @static
- * @param {string} query The query to process (SELECT Name, a__c FROM Account WHERE b__c = 'test')
- * @return {*}  {string} Dry WHERE clause string (b__c = 'test')
- * @memberof Common
- */
-public static extractWhereClause(query: string): string {
+  /**
+   * Extracts QHERE clause from the query string
+   *
+   * @static
+   * @param {string} query The query to process (SELECT Name, a__c FROM Account WHERE b__c = 'test')
+   * @return {*}  {string} Dry WHERE clause string (b__c = 'test')
+   * @memberof Common
+   */
+  public static extractWhereClause(query: string): string {
     if ((query || '').match(/WHERE/i)) {
       return query.match(/^.*?WHERE.*?(.+?(?=LIMIT|OFFSET|GROUP|ORDER|$))/i)[1].trim();
     }
@@ -1758,17 +1762,17 @@ public static extractWhereClause(query: string): string {
     return entryNames.map(name => enumType[name] as ValType);
   }
 
-   /**
-     * Creates a time delay
-     *
-     * @static
-     * @param {number} time The delay length in ms
-     * @return {*}  {Promise<void>}
-     * @memberof Utils
-     */
-    static async delayAsync(time: number): Promise<void> {
-        return new Promise(resolve => setTimeout(resolve, time));
-    }
+  /**
+    * Creates a time delay
+    *
+    * @static
+    * @param {number} time The delay length in ms
+    * @return {*}  {Promise<void>}
+    * @memberof Utils
+    */
+  static async delayAsync(time: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
 
 
 }
