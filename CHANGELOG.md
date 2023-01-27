@@ -1,3 +1,12 @@
+# [4.25.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.24.0...4.25.0) (2023-01-27)
+
+
+### Features
+
+* csvReadFileDelimiter+csvWriteFileDelimiter ([5249c7e](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/5249c7e4e644f9fe5d8f7f0edf21fe16e789b971))
+
+
+
 # [4.24.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.11...4.24.0) (2023-01-27)
 
 
