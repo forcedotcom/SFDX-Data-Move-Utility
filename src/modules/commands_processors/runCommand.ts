@@ -5,26 +5,26 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+
+import * as fs from 'fs';
+import * as models from '../models';
+import * as path from 'path';
+import IPluginInfo from '../models/common_models/IPluginInfo';
+import { ADDON_EVENTS } from '../components/common_components/enumerations';
+import { CommandInitializationError } from '../models/common_models/errors';
+import { Common } from '../components/common_components/common';
+import { CONSTANTS } from '../components/common_components/statics';
+import { plainToClass } from 'class-transformer';
 import 'reflect-metadata';
 import 'es6-shim';
-
-import { plainToClass } from 'class-transformer';
-import * as fs from 'fs';
-import * as path from 'path';
-
-import { ADDON_EVENTS } from '../components/common_components/enumerations';
 import {
   Logger,
   RESOURCES,
 } from '../components/common_components/logger';
-import { CONSTANTS } from '../components/common_components/statics';
-import * as models from '../models';
 import {
   MigrationJob as Job,
   ScriptObjectSet,
 } from '../models';
-import { CommandInitializationError } from '../models/common_models/errors';
-import IPluginInfo from '../models/common_models/IPluginInfo';
 
 /**
  * SFDMU:RUN CLI command
@@ -127,12 +127,19 @@ export class RunCommand {
       this.workingJson = JSON.stringify(jsonObject);
       jsonObject.objects = [];
       this.script = plainToClass(models.Script, jsonObject);
+      this.setupGlobalParameters();
+
     } catch (ex: any) {
       throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.incorrectExportJsonFormat, ex.message));
     }
 
     return this.script.objectSets.length;
 
+  }
+
+  setupGlobalParameters() {
+    Common.csvReadFileDelimiter = this.script.csvReadFileDelimiter;
+    Common.csvWriteFileDelimiter = this.script.csvWriteFileDelimiter;
   }
 
 
