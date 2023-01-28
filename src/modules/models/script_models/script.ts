@@ -98,7 +98,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   proxyUrl: string;
   csvReadFileDelimiter: ',' | ';' = ",";
   csvWriteFileDelimiter: ',' | ';' = ",";
-  useSeparatedCSVFiles: false;
+  useSeparatedCSVFiles: boolean = false;
 
   binaryDataCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
   sourceRecordsCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
