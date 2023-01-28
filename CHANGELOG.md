@@ -1,3 +1,12 @@
+## [4.26.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.1...4.26.2) (2023-01-28)
+
+
+### Bug Fixes
+
+* Small fix ([b42b0f8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/b42b0f87dbff3309a56fdb0b84e21424189110e8))
+
+
+
 ## [4.26.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.0...4.26.1) (2023-01-28)
 
 
