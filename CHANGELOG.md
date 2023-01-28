@@ -1,3 +1,12 @@
+## [4.26.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.0...4.26.1) (2023-01-28)
+
+
+### Bug Fixes
+
+* Separated source/target dirs for ObjectSets ([0d54231](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/0d54231221221e569901a467e3fffc3f50b79926))
+
+
+
 # [4.26.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.25.0...4.26.0) (2023-01-27)
 
 
