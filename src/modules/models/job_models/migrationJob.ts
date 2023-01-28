@@ -732,7 +732,7 @@ export default class MigrationJob {
    * @memberof MigrationJob
    */
   async saveCSVFileAsync(fileName: string, data: Array<any>, alwaysCreateFile: boolean = true): Promise<void> {
-    let filePath = path.join(this.script.basePath, fileName);
+    let filePath = path.join(this.script.reportsDirectory, fileName);
     this.logger.infoVerbose(RESOURCES.writingCsvFile, filePath);
     await Common.writeCsvFileAsync(filePath, data, alwaysCreateFile);
   }
@@ -1022,7 +1022,8 @@ export default class MigrationJob {
           // Report csv issues
           await self.saveCSVFileAsync(CONSTANTS.CSV_ISSUES_ERRORS_FILENAME, self.csvIssues);
         },
-        String(self.csvIssues.length), CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
+        String(self.csvIssues.length),
+        CONSTANTS.CSV_ISSUES_ERRORS_FILENAME);
     }
   }
 }

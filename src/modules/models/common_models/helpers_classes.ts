@@ -11,27 +11,27 @@ import 'es6-shim';
 import { Type } from 'class-transformer';
 
 import {
-  MigrationJobTask,
-  ScriptObject,
-  ScriptOrg,
-  SFieldDescribe,
+    MigrationJobTask,
+    ScriptObject,
+    ScriptOrg,
+    SFieldDescribe,
 } from '../';
 import {
-  ISfdmuRunCustomAddonProcessedData,
+    ISfdmuRunCustomAddonProcessedData,
 } from '../../../addons/modules/sfdmu-run/custom-addons/package';
 import { Common } from '../../components/common_components/common';
 import {
-  DATA_MEDIA_TYPE,
-  OPERATION,
+    DATA_MEDIA_TYPE,
+    OPERATION,
 } from '../../components/common_components/enumerations';
 import { RESOURCES } from '../../components/common_components/logger';
 import { CONSTANTS } from '../../components/common_components/statics';
 import { ICsvChunk } from '../api_models';
 import ScriptAddonManifestDefinition
-  from '../script_models/scriptAddonManifestDefinition';
+    from '../script_models/scriptAddonManifestDefinition';
 import {
-  IMissingParentLookupRecordCsvRow,
-  IOrgConnectionData,
+    IMissingParentLookupRecordCsvRow,
+    IOrgConnectionData,
 } from './helper_interfaces';
 
 type IProcessedData = ISfdmuRunCustomAddonProcessedData;
@@ -139,7 +139,7 @@ export class TaskData {
      * @memberof TaskData
      */
     get csvFilename(): string {
-        return this.task.getCSVFilename(this.task.script.basePath);
+        return this.task.getCSVFilename(this.task.script.rawSourceDirectory);
     }
 
     /**
@@ -150,8 +150,7 @@ export class TaskData {
      * @memberof TaskData
      */
     get sourceCsvFilename(): string {
-        return this.task.getCSVFilename(this.task.script.sourceDirectory,
-            CONSTANTS.CSV_SOURCE_FILE_SUFFIX);
+        return this.task.getCSVFilename(this.task.script.sourceDirectory, CONSTANTS.CSV_SOURCE_FILE_SUFFIX);
     }
 
     /**
@@ -165,8 +164,6 @@ export class TaskData {
      */
     getTargetCSVFilename(operation: OPERATION, fileNameSuffix?: string): string {
         return TaskData.getTargetCSVFilename(this.task.script.targetDirectory, this.task.sObjectName, operation, fileNameSuffix);
-        // return this.task.getCSVFilename(this.task.script.targetDirectory,
-        //     `_${ScriptObject.getStrOperation(operation).toLowerCase()}${fileNameSuffix || ""}${CONSTANTS.CSV_TARGET_FILE_SUFFIX}`);
     }
 
     /**

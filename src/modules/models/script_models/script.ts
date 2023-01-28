@@ -98,6 +98,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   proxyUrl: string;
   csvReadFileDelimiter: ',' | ';' = ",";
   csvWriteFileDelimiter: ',' | ';' = ",";
+  useSeparatedCSVFiles: false;
 
   binaryDataCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
   sourceRecordsCache: DATA_CACHE_TYPES = DATA_CACHE_TYPES.InMemory;
@@ -160,7 +161,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     return path.join(
       this.basePath,
       CONSTANTS.CSV_TARGET_SUB_DIRECTORY +
-      (!this.objectSetIndex ? '' : `${CONSTANTS.OBJECT_SET_SUBDIRECTORY_PREFIX}${this.objectSetIndex}`)
+      (!this.objectSetIndex ? '' : `${CONSTANTS.OBJECT_SET_SUBDIRECTORY_PREFIX}${this.objectSetIndex + 1}`)
     );
   }
 
@@ -175,7 +176,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     return path.join(
       this.basePath,
       CONSTANTS.CSV_SOURCE_SUB_DIRECTORY +
-      (!this.objectSetIndex ? '' : `${CONSTANTS.OBJECT_SET_SUBDIRECTORY_PREFIX}${this.objectSetIndex}`)
+      (!this.objectSetIndex ? '' : `${CONSTANTS.OBJECT_SET_SUBDIRECTORY_PREFIX}${this.objectSetIndex + 1}`)
     );
   }
 
@@ -184,6 +185,34 @@ export default class Script implements IAppScript, ISfdmuRunScript {
       fs.mkdirSync(this.sourceDirectoryPath, { recursive: true });
     }
     return this.sourceDirectoryPath;
+  }
+
+  get rawSourceDirectory(): string {
+    if (!fs.existsSync(this.rawSourceDirectoryPath)) {
+      fs.mkdirSync(this.rawSourceDirectoryPath, { recursive: true });
+    }
+    return this.rawSourceDirectoryPath;
+  }
+
+  get rawSourceDirectoryPath(): string {
+    return path.join(
+      this.basePath,
+      (!this.objectSetIndex || !this.useSeparatedCSVFiles ? '' : `${CONSTANTS.RAW_SOURCE_SUB_DIRECTORY}/${CONSTANTS.OBJECT_SET_SUBDIRECTORY_PREFIX}${this.objectSetIndex + 1}`)
+    );
+  }
+
+  get reportsDirectoryPath(): string {
+    return path.join(
+      this.basePath,
+      (!this.objectSetIndex ? '' : `${CONSTANTS.REPORTS_SUB_DIRECTORY}/${CONSTANTS.OBJECT_SET_SUBDIRECTORY_PREFIX}${this.objectSetIndex + 1}`)
+    );
+  }
+
+  get reportsDirectory(): string {
+    if (!fs.existsSync(this.reportsDirectoryPath)) {
+      fs.mkdirSync(this.reportsDirectoryPath, { recursive: true });
+    }
+    return this.reportsDirectoryPath;
   }
 
   get binaryCacheDirectoryPath(): string {
