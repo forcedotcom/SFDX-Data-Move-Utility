@@ -20,7 +20,7 @@
 - [Running the migration job.](#running-the-migration-job)
 ## Introduction.
 
-### The SFDX Data Move Utility (SFDMU) is the most modern and powerful **salesforce data loader**.
+### The SFDX Data Move Utility (SFDMU) is the most modern and powerful plugin for **salesforce data migration**.
 ### Makes data seeding extremely easy and fast.
 
 #### This Tool is the innovative and very handy alternative to the traditional salesforce data loader application as well as to the set of the force:data:tree commands.
