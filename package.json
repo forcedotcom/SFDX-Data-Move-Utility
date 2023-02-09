@@ -1,7 +1,7 @@
 {
   "name": "sfdmu",
-  "description": "The SFDX Data Move Utility (SFDMU) is the most modern and powerful salesforce data loader. Makes data seeding extremely easy and fast.",
-  "version": "4.26.1",
+  "description": "The SFDX Data Move Utility (SFDMU) is the most modern and powerful salesforce data migration tool. It will help you to populate your org with data in minutes.",
+  "version": "4.26.5",
   "author": "Haim Knokh",
   "bugs": "https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues",
   "dependencies": {
@@ -73,7 +73,7 @@
     "bin": "sfdx",
     "topics": {
       "sfdmu": {
-        "description": "The SFDX Data Move Utility (SFDMU) is the most modern and powerful salesforce data loader. Makes data seeding extremely easy and fast.\n• The SFDMU will help you to populate your Scratch / Dev / Sandbox / Prod org with records imported from another org or CSV files.\n• It can perform all CRUD operations (Insert / Update / Upsert / Delete) also for multiple related sObjects."
+        "description": "The SFDX Data Move Utility (SFDMU) is the most modern and powerful salesforce data migration tool.\n• The SFDMU will help you to quickly populate your Scratch / Dev / Sandbox / Prod org with records imported from another org or CSV files."
       }
     },
     "devPlugins": [

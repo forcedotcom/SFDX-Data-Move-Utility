@@ -1,3 +1,39 @@
+## [4.26.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.4...4.26.5) (2023-02-08)
+
+
+### Bug Fixes
+
+* Readme changed ([8fe89d6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/8fe89d6e5b7bef8fd1ef15b49886b40d9c8b2426))
+
+
+
+## [4.26.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.3...4.26.4) (2023-02-08)
+
+
+### Bug Fixes
+
+* Readme changed ([c89a78e](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/c89a78e26a0b063994a722b76504bffb274c0934))
+
+
+
+## [4.26.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.2...4.26.3) (2023-02-08)
+
+
+### Bug Fixes
+
+* readme changed ([be4decd](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/be4decdc9071596fcbc46c7417109f555d2553ff))
+
+
+
+## [4.26.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.1...4.26.2) (2023-01-28)
+
+
+### Bug Fixes
+
+* Small fix ([b42b0f8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/b42b0f87dbff3309a56fdb0b84e21424189110e8))
+
+
+
 ## [4.26.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.0...4.26.1) (2023-01-28)
 
 

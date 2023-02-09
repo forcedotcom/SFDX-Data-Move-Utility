@@ -1,4 +1,4 @@
-# ![SFDMU](src/images/logo-black.png)&nbsp;The Advanced Salesforce Data Loader (SFDMU)
+# ![SFDMU](src/images/logo-black.png)&nbsp;SFDX Data Move Utility (SFDMU)
 
 **The documentation can be found here:   [SFDMU Help Center](https://help.sfdmu.com/)**
 
@@ -7,6 +7,7 @@
 **Please, see the [User Support Policy](https://help.sfdmu.com/full-documentation/additional-information/support_policy) before opening cases**
 
 **Welcome to contribute to the SFDMU! Please, take some time to read our [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
+
 
 ---
 **Table of contents**
@@ -20,7 +21,7 @@
 - [Running the migration job.](#running-the-migration-job)
 ## Introduction.
 
-### The SFDX Data Move Utility (SFDMU) is the most modern and powerful **salesforce data loader**.
+### The SFDX Data Move Utility (SFDMU) is the most modern and powerful plugin for **salesforce data migration**.
 ### Makes data seeding extremely easy and fast.
 
 #### This Tool is the innovative and very handy alternative to the traditional salesforce data loader application as well as to the set of the force:data:tree commands.
