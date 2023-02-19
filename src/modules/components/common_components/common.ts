@@ -1171,9 +1171,7 @@ export class Common {
         if (parsedWhere) {
           tempQuery.where.left.openParen = 1;
           tempQuery.where.left.closeParen = 1;
-          tempQuery.where.right = <WhereClause>{
-            left: parsedWhere.where.left
-          };
+          tempQuery.where.right = parsedWhere.where;
           tempQuery.where.operator = "AND";
         }
         yield composeQuery(tempQuery);
