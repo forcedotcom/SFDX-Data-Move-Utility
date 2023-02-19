@@ -32,6 +32,7 @@ import AddonModule from '../common/addonModule';
 import { ISfdmuRunCustomAddonRuntime } from '../../modules/sfdmu-run/custom-addons/package';
 import { SfdmuRunCustomAddonService } from './custom';
 import ISfdmuRunScript from './ISfdmuRunScript';
+import { BulkApiV2_0Engine } from '../../../modules/components/api_engines/bulkApiV2_0Engine';
 
 
 
@@ -206,7 +207,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
           break;
 
         case API_ENGINE.BULK_API_V2:
-          apiEngine = new BulkApiV1_0Engine({
+          apiEngine = new BulkApiV2_0Engine({
             logger: this.#logger,
             connectionData: this.#script.targetOrg.connectionData,
             sObjectName,
@@ -277,7 +278,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
   async transferContentVersions(module: AddonModule, sourceVersions: ContentVersion[], maxChunkSize?: number): Promise<ContentVersion[]> {
 
     let _self = this;
-    maxChunkSize = maxChunkSize || CONSTANTS.MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE;
+    maxChunkSize = maxChunkSize || CONSTANTS.DEFAULT_MAX_CHUNK_SIZE;
 
     // All Files of url types to upload ///
     let urlUploadJobs = new Array<ContentVersion>();

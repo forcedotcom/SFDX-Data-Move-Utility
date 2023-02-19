@@ -380,7 +380,12 @@ export const CONSTANTS = {
 
 
   // ------ AddOns -------------------- //
-  MAX_CONTENT_VERSION_PROCESSING_MEMORY_SIZE: 15000000,
+  DEFAULT_MAX_CHUNK_SIZE: 15728640,
+  MAX_CHUNK_SIZE: 38797312,
+
+  DEFAULT_MAX_FILE_SIZE: 38797312,
+  MAX_FILE_SIZE: 38797312,
+  
 
 
   // ------- Headers ------------------ //

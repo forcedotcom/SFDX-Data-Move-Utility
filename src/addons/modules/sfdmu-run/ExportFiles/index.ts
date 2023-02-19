@@ -42,13 +42,22 @@ interface IOnExecuteArguments {
 
 
   /**
-   *
-   * For safe uploading binary data, the data is splitted into multiple chunks
-   * to be uploaded sequentially.
+   * For optimized porocessing, files are grouped into multiple chunks and uploaded sequentially.
    * This parameter defines the maximum size of each chunk (in bytes).
-   * Default to 15M.
+   * A size of a single file can exceed this value, but should be up to maxFileSize;
+   * Default: 15Mb.
+   * Maximum: 37Mb.
    */
   maxChunkSize: number;
+
+  /**
+   * Limits the maximal allowed size of a single file (in bytes) (ContentDocument.ContentSize field)
+   * Commonly, the SF API is limiting the max size of the API request to 52428800 bytes.
+   * So, the maximal file size can't be greater then 37Mb. Larger files are ignored and not uploaded.
+   * Default: 37Mb.
+   * Maximum: 37Mb
+   */
+  maxFileSize: number;
 }
 
 interface IDataToImport {
@@ -87,7 +96,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
         break;
 
       default:
-        // TODO: Something to do whe is a regular sObject type
+        // TODO: Something to do when it's a regular sObject type
         break;
     }
 
@@ -109,6 +118,17 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       this.runtime.logFormattedWarning(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_TargetIsFileWarning);
       this.runtime.logAddonExecutionFinished(this);
       return;
+    }
+
+    // Default values
+    args.maxFileSize = args.maxFileSize || CONSTANTS.DEFAULT_MAX_FILE_SIZE;
+    if (args.maxFileSize > CONSTANTS.MAX_FILE_SIZE) {
+      args.maxFileSize = CONSTANTS.MAX_FILE_SIZE;
+    }
+
+    args.maxChunkSize = args.maxChunkSize || CONSTANTS.DEFAULT_MAX_CHUNK_SIZE;
+    if (args.maxChunkSize > CONSTANTS.MAX_CHUNK_SIZE) {
+      args.maxChunkSize = CONSTANTS.MAX_CHUNK_SIZE;
     }
 
     // Get the relevant parent task
@@ -177,9 +197,17 @@ export default class ExportFiles extends SfdmuRunAddonModule {
 
       await this.runtime.transferContentVersions(this, versionsToProcess, args.maxChunkSize);
 
+      const failedRecordsCount = versionsToProcess.filter(item => item.isError).length;
+
       this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_ProcessedRecords,
         String(versionsToProcess.length),
-        String(versionsToProcess.filter(item => item.isError).length));
+        String(failedRecordsCount));
+
+      if (failedRecordsCount == versionsToProcess.length) {
+        // All content versions are failed => Nothing to process
+        exportedFilesMap.clear();
+        versionsToProcess = [];
+      }
     }
 
 
@@ -384,7 +412,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
           filteredByDocIdsByField,
           'ContentVersion',
           sourceFiles.docIds,
-          'IsLatest = true');
+          `(IsLatest = true) AND (ContentDocument.ContentSize <= ${args.maxFileSize})`);
         if (args.sourceWhere) {
           queries = queries.map(query => query.replace('WHERE', 'WHERE (' + args.sourceWhere + ') AND (') + ')')
         }

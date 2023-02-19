@@ -108,6 +108,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   parallelBulkJobs: number = 1;
   parallelRestJobs: number = 1;
 
+  
 
 
   @Type(() => ScriptAddonManifestDefinition)

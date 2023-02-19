@@ -83,7 +83,7 @@
   "repository": "forcedotcom/SFDX-Data-Move-Utility",
   "addons": {
     "run": {
-      "version": "1.4.0"
+      "version": "1.5.0"
     }
   },
   "scripts": {
