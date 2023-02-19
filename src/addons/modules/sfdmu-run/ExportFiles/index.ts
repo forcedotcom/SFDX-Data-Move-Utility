@@ -111,7 +111,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     // -----------------------------------------------------------------
     this.runtime.logAddonExecutionStarted(this);
 
-    this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Preparing);
+    this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Initializing);
 
     if (this.runtime.getOrgInfo(false).isFile || this.runtime.getOrgInfo(true).isFile) {
       // File target -> error
@@ -232,7 +232,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
     // ----------------Finishing ----------------------------
     // -------------------------------------------------------
     if (exportedFiles.length == 0 && versionsToProcess.length == 0) {
-      this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_NothingToProcess);
+      this.runtime.logFormattedInfo(this, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_NothingToProceed);
     }
 
     this.runtime.logAddonExecutionFinished(this);
@@ -313,7 +313,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       // ---------- Compare versions to detect changes -------------------
       // -----------which files need to download and upload---------------
       // -----------------------------------------------------------------
-      _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Analysing);
+      _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Comparing);
 
       await __compareContentVersionsAsync();
 
@@ -390,7 +390,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
       // ---------- Compare versions to detect changes -------------------
       // -----------which files need to download and upload---------------
       // -----------------------------------------------------------------
-      _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Analysing);
+      _self.runtime.logFormattedInfo(_self, SFDMU_RUN_ADDON_MESSAGES.ExportFiles_Comparing);
 
       await __compareContentVersionsAsync('RecordId');
 
