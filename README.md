@@ -176,6 +176,8 @@ You can Upsert all records preserving relationships between SObjects by creating
 }
 ```
 
+**Note!** Object API names in **export.json** query expressions are **case-sensitive**, make sure they are spelled correctly if you want them to be imported.
+
 ## Running the migration job.
 
 - Go to the directory where your **export.json** is located.
