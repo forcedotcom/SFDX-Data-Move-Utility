@@ -1897,9 +1897,9 @@ export default class MigrationJobTask {
             try {
               if (regexp.test(rawValue)) {
                 // Eval (& Regex)
-                regexpReplaceValue = __eval(rawValue, regexpReplaceValue);
+                const replaceValue = __eval(rawValue, regexpReplaceValue);
                 // Regex
-                newValue = rawValue.replace(regexp, regexpReplaceValue);
+                newValue = rawValue.replace(regexp, replaceValue);
               }
             } catch (ex) { }
           }
