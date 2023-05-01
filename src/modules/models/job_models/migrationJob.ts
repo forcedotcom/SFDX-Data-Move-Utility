@@ -530,10 +530,14 @@ export default class MigrationJob {
       }));
       if (processedRecordsAmount > 0) {
         this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+        this.logger.infoVerbose(RESOURCES.newLine);
       }
       totalProcessedRecordsAmount += processedRecordsAmount;
       totalProcessedRecordsByObjectsMap.set(task.sObjectName, processedRecordsAmount);
     }
+
+    this.logger.infoVerbose(RESOURCES.newLine);
+
     if (totalProcessedRecordsAmount > 0)
       this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.step1), String(totalProcessedRecordsAmount));
     else
@@ -548,6 +552,11 @@ export default class MigrationJob {
     totalProcessedRecordsAmount = 0;
 
     if (this.script.targetOrg.media == DATA_MEDIA_TYPE.Org) {
+
+      this.logger.infoVerbose(RESOURCES.newLine);
+      this.logger.infoNormal(RESOURCES.pass1);
+      this.logger.headerVerbose(RESOURCES.separator);
+
       for (let index = 0; index < this.tasks.length; index++) {
         const task = this.tasks[index];
         let processedRecordsAmount = (await task.updateRecords("backwards", async (data: ProcessedData) => {
@@ -561,11 +570,39 @@ export default class MigrationJob {
         }));
         if (processedRecordsAmount > 0) {
           this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+          this.logger.infoVerbose(RESOURCES.newLine);
+        }
+        totalProcessedRecordsAmount += processedRecordsAmount;
+        totalProcessedRecordsByObjectsMap.set(task.sObjectName, totalProcessedRecordsByObjectsMap.get(task.sObjectName) + processedRecordsAmount);
+      }
+   
+      // To properly handle circular refernces, we have perform the backwards update twice
+      this.logger.infoVerbose(RESOURCES.newLine);
+      this.logger.infoNormal(RESOURCES.pass2);
+      this.logger.headerVerbose(RESOURCES.separator);
+
+      for (let index = 0; index < this.tasks.length; index++) {
+        const task = this.tasks[index];
+        let processedRecordsAmount = (await task.updateRecords("backwards", async (data: ProcessedData) => {
+          allMissingParentLookups = allMissingParentLookups.concat(data.missingParentLookups);
+          if (noAbortPrompt) {
+            ___warn(data, task.sObjectName);
+            return;
+          }
+          await ___promptToAbort(data, task.sObjectName);
+          noAbortPrompt = true;
+        }));
+        if (processedRecordsAmount > 0) {
+          this.logger.infoNormal(RESOURCES.updatingTargetObjectCompleted, task.sObjectName, String(processedRecordsAmount));
+          this.logger.infoVerbose(RESOURCES.newLine);
         }
         totalProcessedRecordsAmount += processedRecordsAmount;
         totalProcessedRecordsByObjectsMap.set(task.sObjectName, totalProcessedRecordsByObjectsMap.get(task.sObjectName) + processedRecordsAmount);
       }
     }
+
+    this.logger.infoVerbose(RESOURCES.newLine);
+
     if (totalProcessedRecordsAmount > 0)
       this.logger.infoNormal(RESOURCES.updatingTargetCompleted, this.logger.getResourceString(RESOURCES.step2), String(totalProcessedRecordsAmount));
     else
@@ -579,6 +616,7 @@ export default class MigrationJob {
       this.logger.headerMinimal(RESOURCES.deletingTarget, this.logger.getResourceString(RESOURCES.step1));
 
       for (let index = 0; index < this.deleteTasks.length; index++) {
+        this.logger.infoVerbose(RESOURCES.newLine);
         const task = this.deleteTasks[index];
         if (task.scriptObject.isHierarchicalDeleteOperation) {
           let processedRecordsAmount = await task.deleteRecords();
@@ -589,6 +627,8 @@ export default class MigrationJob {
           totalProcessedRecordsByObjectsMap.set(task.sObjectName, processedRecordsAmount);
         }
       }
+
+      this.logger.infoVerbose(RESOURCES.newLine);
 
       if (totalProcessedRecordsAmount > 0)
         this.logger.infoNormal(RESOURCES.deletingDataCompleted, this.logger.getResourceString(RESOURCES.step1), String(totalProcessedRecordsAmount));

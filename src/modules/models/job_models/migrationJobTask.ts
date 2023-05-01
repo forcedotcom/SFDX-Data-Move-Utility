@@ -1110,8 +1110,8 @@ export default class MigrationJobTask {
           // For Step 1 : Simple sFields or reference fields with the parent lookup BEFORE
           return field.isSimpleNotLookup || field.isSimpleReference && self.data.prevTasks.indexOf(field.parentLookupObject.task) >= 0;
         else
-          // For Step 2 : Reference sFields with the parent lookup AFTER + self
-          return field.isSimpleReference && self.data.nextTasks.concat(self).indexOf(field.parentLookupObject.task) >= 0;
+          // For Step 2 : Reference sFields. Removed to fix circular reference handling: with the parent lookup AFTER + self
+          return field.isSimpleReference;// && self.data.nextTasks.concat(self).indexOf(field.parentLookupObject.task) >= 0;
       }).concat(new SFieldDescribe({
         name: CONSTANTS.__ID_FIELD_NAME
       }), updateMode == "forwards" ? self.scriptObject.getExtraFieldsToUpdate().map(name => {
