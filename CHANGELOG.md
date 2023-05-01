@@ -1,3 +1,12 @@
+## [4.26.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.10...4.26.11) (2023-05-01)
+
+
+### Bug Fixes
+
+* Fixed circular references handling ([#576](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/576)) ([86b2968](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/86b29689fb22e54622acc91b33ff0416cadd752f))
+
+
+
 ## [4.26.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.9...4.26.10) (2023-03-20)
 
 
