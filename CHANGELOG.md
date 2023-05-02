@@ -1,3 +1,12 @@
+## [4.26.13](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.12...4.26.13) (2023-05-02)
+
+
+### Bug Fixes
+
+* Fixed MissingParentRecordsReport.csv generate ([9ade116](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/9ade116dc8b07def6694acc675926d66ce2ae54e))
+
+
+
 ## [4.26.12](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.11...4.26.12) (2023-05-02)
 
 
