@@ -521,7 +521,7 @@ export class Logger implements IAppLogger {
 
       case LOG_MESSAGE_TYPE.WARN:
         logMessage = this.getResourceString(RESOURCES.warnLogTemplate, date, message as string);
-        allowWriteLogsToSTdOut && this._uxLogger.warn(foreColor + logMessage);
+        allowWriteLogsToSTdOut && !this._noWarningsFlag && this._uxLogger.warn(foreColor + logMessage);
         allowWriteLogsToMessageCache = !this._noWarningsFlag;
         break;
 
