@@ -667,7 +667,7 @@ export default class MigrationJob {
 
     // Done message
     this.logger.infoVerbose(RESOURCES.newLine);
-    await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups, false);
+    await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups, true);
 
 
     // ---------------------- Internal functions -------------------------------------- //
@@ -678,7 +678,7 @@ export default class MigrationJob {
         RESOURCES.continueTheJob,
         "",
         async () => {
-          await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups, false);
+          await self.saveCSVFileAsync(CONSTANTS.MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME, allMissingParentLookups, true);
         },
         sObjectName,
         String(data.missingParentLookups.length),
