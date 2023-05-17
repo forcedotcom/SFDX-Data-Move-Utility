@@ -125,6 +125,10 @@ export default class Run extends SfdxCommand implements IRunProcess {
       default: 'trace',
       options: ['info', 'debug', 'warn', 'error', 'fatal', 'trace', 'INFO', 'DEBUG', 'WARN', 'ERROR', 'FATAL', 'TRACE']
     }),
+    usesf: flags.boolean({
+      description: commandMessages.getMessage("useSfFlagDescription"),
+      longDescription: commandMessages.getMessage("useSfLongFlagDescription")
+    }),
   };
 
 

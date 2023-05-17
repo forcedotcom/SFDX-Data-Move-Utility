@@ -135,6 +135,8 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   runInfo: ICommandRunInfo;
   canModify: string;
   objectSetIndex: number;
+  useSf: boolean = false;
+  
 
 
   // Additional sobject descriptions for sobject which were nbot included into the export.json
@@ -271,13 +273,15 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     basePath: string,
     apiVersion: string,
     canModify: string,
-    simulation: boolean): Promise<void> {
+    simulation: boolean,
+    useSf: boolean): Promise<void> {
 
     // Initialize script
     this.logger = logger;
     this.basePath = basePath;
     this.canModify = canModify || "";
     this.simulationMode = this.simulationMode || simulation;
+    this.useSf = useSf;
 
     // Message about the running version
     this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });

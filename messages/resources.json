@@ -75,6 +75,7 @@
     "runningInSimulationMode": "\n\n### The job is running in the SIMULATION MODE ###\n\n",
 
     "connectingToOrg": "Connecting to the %s using SFDX force:org:display ...",
+    "connectingToOrgSf": "Connecting to the %s using SFDX sf org display ...",
     "successfullyConnected": "Successfully connected to the %s.",
     "connectingFailed": "Attempt to connect to the %s has been failed. Try to refresh the local sfdx CLI connection.",
     "cannotMigrateFile2File": "You cannot migrate data between CSV files. Either a data Source or a data Target must be a salesforce org.",

@@ -47,6 +47,7 @@ export class RunCommand {
   simulation: boolean;
   filePath: string;
   workingJson: any;
+  useSf: boolean;
 
   /**
    * New instance of RunCommand.
@@ -66,8 +67,10 @@ export class RunCommand {
     apiVersion: string,
     canModify: string,
     simulation: boolean,
-    exportJson: string) {
+    exportJson: string,
+    useSf: boolean) {
 
+    this.useSf = useSf;
     this.pinfo = pinfo;
     this.logger = logger;
     this.basePath = (path.isAbsolute(basePath) ? basePath : path.join(process.cwd(), basePath.toString())).replace(/([^"]+)(.*)/, "$1");
@@ -88,7 +91,7 @@ export class RunCommand {
    * @returns {Promise<void>}
    * @memberof RunCommand
    */
-  async loadAsync(): Promise<Number> {
+  async loadAsync(): Promise<number> {
 
     // By default the explicitely provided export.json text is used
     let json: string = this.exportJson;
@@ -165,7 +168,8 @@ export class RunCommand {
       this.basePath,
       this.apiVersion,
       this.canModify,
-      this.simulation);
+      this.simulation,
+      this.useSf);
 
     if (objectSetIndex == 0) {
       this.logger.objectMinimal({
