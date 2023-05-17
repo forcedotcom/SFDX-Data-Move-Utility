@@ -93,6 +93,7 @@ export enum RESOURCES {
   runningInSimulationMode = "runningInSimulationMode",
 
   connectingToOrg = "connectingToOrg",
+  connectingToOrgSf = "connectingToOrgSf",
   successfullyConnected = "successfullyConnected",
   connectingFailed = "connectingFailed",
   cannotMigrateFile2File = "cannotMigrateFile2File",

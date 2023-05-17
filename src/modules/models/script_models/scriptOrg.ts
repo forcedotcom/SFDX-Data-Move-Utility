@@ -206,9 +206,15 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
       this.orgUserName = this.name;
 
       if (!this.isConnected) {
-        // Connect with SFDX
+        // Connect with SFDX/SF
+        let processResult = "";
+        if (this.script.useSf) {
+          this.script.logger.infoNormal(RESOURCES.connectingToOrgSf, this.name);
+          processResult = Common.execSf("org display --json", this.name)
+        } else {
         this.script.logger.infoNormal(RESOURCES.connectingToOrg, this.name);
-        let processResult = Common.execSfdx("force:org:display --json", this.name);
+          processResult = Common.execSfdx("force:org:display --json", this.name);
+        }
         let orgInfo = this._parseForceOrgDisplayResult(processResult);
         if (!orgInfo || !orgInfo.isConnected) {
           throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.connectingFailed, this.name));

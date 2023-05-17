@@ -438,6 +438,21 @@ export class Common {
   };
 
   /**
+  * @static Executes Sf command synchronously
+  *
+  * @param  {String} command Sf command to execute ex. force:org:display without previous sfdx
+  * @param  {String} targetusername --targetusername flag (if applied)
+  * @returns string Returns command output
+  */
+  public static execSf(command: String, targetusername: String): string {
+    
+    if (typeof targetusername != "undefined")
+      return execSync(`sf ${command} --target-org ${targetusername}`).toString();
+    else
+      return execSync(`sf ${command}`).toString();
+  };
+
+  /**
   * @static Modifies existing WHERE clause by adding extra rule.
   *
   * Example:
@@ -1055,7 +1070,7 @@ export class Common {
    * @returns {string}
    * @memberof CommonUtils
    */
-  public static makeId(length: Number = 10): string {
+  public static makeId(length: number = 10): string {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;

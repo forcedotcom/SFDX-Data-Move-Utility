@@ -1,51 +1,54 @@
 {
-    "commandDescription": "Starts execution of the migration job using the SFDX Data Move Utility Plugin (SFDMU).\nRefer https://help.sfdmu.com for the detailed help information.",
+    "commandDescription": "Starts the execution of the migration job using the SFDX Data Move Utility Plugin (SFDMU).",
     "commandLongDescription": "Starts execution of the migration job using the SFDX Data Move Utility Plugin (SFDMU).\nRefer https://help.sfdmu.com for the detailed help information.",
 
     "sourceusernameFlagDescription": "Source org username/alias or 'csvfile' for csv load",
-    "sourceusernameFlagLongDescription": "Provide username or alias for the Source org or 'csvfile' if CSV files are used as data source.",
+    "sourceusernameFlagLongDescription": "Provide a username or alias for the source organization, or use 'csvfile' if CSV files are being used as the data source.",
 
     "pathFlagDescription": "[Optional] Absolute/relative path to the directory containing export.json file",
-    "pathFlagLongDescription": "[Optional] Absolute or relative path to the directory that contains working export.json file.\nIf not provided, the command will try to search for the file in the current directory.",
+    "pathFlagLongDescription": "[Optional] The absolute or relative path to the directory that contains the working export.json file. If not provided, the command will search for the file in the current directory.",
 
     "quietFlagDescription": "[Optional] Suppresses stdout logging",
-    "quietFlagLongDescription": "[Optional] This flag suppresses output to the stdout.\nIf file logging is enabled the command will still log into file.",
+    "quietFlagLongDescription": "[Optional] This flag suppresses the output to the standard output (stdout). If file logging is enabled, the command will still log to the file.",
 
     "silentFlagDescription": "[Optional] Same as --quiet",
     "silentFlagLongDescription": "[Optional] The same as the --quiet flag.",
 
     "conciseFlagDescription": "[Optional] Emits brief command output to stdout",
-    "conciseFlagLongDescription": "[Optional] Outputs only important messages to the stdout, that are required for understanding the command progress.",
+    "conciseFlagLongDescription": "[Optional] This flag enables the output of only important messages to the standard output (stdout), which are necessary for understanding the command progress.",
 
     "verboseFlagDescription": "[Optional] Emits full command output to stdout",
-    "verboseFlagLongDescription": "[Optional] Ouputs all messages to the stdout.",
+    "verboseFlagLongDescription": "[Optional] This flag enables the output of all messages to the standard output (stdout).",
 
     "versionFlagDescription": "[Optional] Prints the current version of the command",
-    "versionFlagLongDescription": "[Optional] Prints the currently installed/linked version of the command.",
+    "versionFlagLongDescription": "[Optional] Prints the currently installed or linked version of the command.",
 
     "apiversionFlagDescription": "[Optional] Overrides the api version set in the export.json definition",
-    "apiversionFlagLongDescription": "[Optional] If specified overrides apiVersion parameter of the export.json file.\nUsed for all api requests made by this command.",
+    "apiversionFlagLongDescription": "[Optional] If specified, it overrides the apiVersion parameter of the export.json file. This value is used for all API requests made by this command.",
 
     "filelogFlagDescription": "[Optional] Turns onn/off file logging",
-    "filelogFlagLongDescription": "[Optional] In addition to logging to the stdout this flag will turn on/of logging to file.\nSet this flag to 1 (or omit this flag) to enable file logging or set it to 0 to disable file logging.",
+    "filelogFlagLongDescription": "[Optional] In addition to logging to the standard output (stdout), this flag controls logging to a file. Set this flag to 1 (or omit this flag) to enable file logging, or set it to 0 to disable file logging.",
 
     "nopromptFlagDescription": "[Optional] Suppresses prompting the user for input or confirmation",
-    "nopromptLongFlagDescription": "[Optional] Flag to suppress prompting user for inputs or confirmation.\nCommand will continue using the default options.",
+    "nopromptLongFlagDescription": "[Optional] Flag to suppress prompting the user for inputs or confirmation. The command will continue using the default options.",
 
     "nowarningsFlagDescription": "[Optional] Suppresses all warning messages",
-    "nowarningsLongFlagDescription": "[Optional] Flag to suppress output of all warning messages to stdout.",
+    "nowarningsLongFlagDescription": "[Optional] Flag to suppress the output of all warning messages to the standard output (stdout).",
 
     "jsonFlagDescription": "[Optional] Format the command output as json",
-    "jsonLongFlagDescription": "[Optional] If true, the command will return a result as a formatted json instead of a text to stdout.\nThe json emitted both to log file and to stdout after the command is fully completed.\nThis json includes all messages logged out during the command execution as well as extended information, like execution start time, end time, time elapsed etc.",
+    "jsonLongFlagDescription": "[Optional] [Optional] If set to true, the command will return the result as a formatted JSON instead of text to the standard output (stdout). The JSON will be emitted to both the log file and stdout after the command is fully completed. The JSON includes all logged messages during the command execution, along with extended information such as execution start time, end time, and elapsed time.",
 
     "loglevelFlagDescription": "[Optional] File logging level for this command invocation",
     "loglevelLongFlagDescription": "[Optional] Specified the type of messages to be logged to file.\nLog file always contains all messages emitted during execution of the command.",
 
     "canModifyFlagDescription": "[Optional] Allows modification of target production environment without preliminary prompting the user about it.",
-    "canModifyFlagLongDescription": "[Optional] When Production is set as the Target org and this flag is set to the target DOMAIN NAME (for example prod-instance.my.salesforce.com), the command will not ask the user for the approval to make modifications, otherwise the user will be prompted to prevent the critical data from destroying by accident.",
+    "canModifyFlagLongDescription": "[Optional] When the target org is set to Production and this flag is set to the target domain name (e.g., prod-instance.my.salesforce.com), the command will not prompt the user for approval to make modifications. Otherwise, the user will be prompted to prevent accidental destruction of critical data.",
 
     "simulationFlagDescription": "[Optional] Turn on simulation mode",
-    "simulationLongFlagDescription": "[Optional] The simulation mode allows to check which records will be affected by the export.json configuration without actual update, delete or insert them.",
+    "simulationLongFlagDescription": "[Optional] The simulation mode allows you to check which records will be affected by the export.json configuration without actually updating, deleting, or inserting them.",
 
-    "errorMissingRequiredFlag": "Missing required flag(s): %s"
+    "errorMissingRequiredFlag": "Missing required flag(s): %s",
+
+    "useSfFlagDescription": "[Optional] Enables the usage of modern Salesforce CLI (sf-cli) commands instead of deprecated Salesforce DX CLI (sfdx-cli) commands.",
+    "useSfLongFlagDescription": "[Optional] If provided, forces the Plugin to use the latest Salesforce CLI (sf-cli) commands instead of Salesforce DX CLI (sfdx-cli) commands for deprecated commands. For example, it will use sf org display instead of sfdx force:org:display."
   }
