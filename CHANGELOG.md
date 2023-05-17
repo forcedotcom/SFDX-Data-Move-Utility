@@ -1,3 +1,12 @@
+# [4.27.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.13...4.27.0) (2023-05-17)
+
+
+### Features
+
+* Added the support to sf org display ([e282469](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/e282469f3675c59222b5b7a7555d97c059d0ab03))
+
+
+
 ## [4.26.13](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.12...4.26.13) (2023-05-02)
 
 
@@ -25,20 +34,12 @@
 
 
 
-## [4.26.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.9...4.26.10) (2023-03-20)
+## [4.26.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.8...4.26.10) (2023-03-20)
 
 
 ### Bug Fixes
 
 * [#570](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/570) ([70ec4b1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/70ec4b1cefead53a8f5c0726285fd26f496be3bf))
-
-
-
-## [4.26.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.8...4.26.9) (2023-03-20)
-
-
-### Bug Fixes
-
 * publish ([13a4dfe](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/13a4dfeab17133cb85ba617645f1729d0abbd8f0))
 
 
@@ -142,21 +143,13 @@
 
 
 
-## [4.23.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.10...4.23.11) (2023-01-26)
+## [4.23.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.9...4.23.11) (2023-01-26)
 
 
 ### Bug Fixes
 
 * Fixed smart order ([14a49bf](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/14a49bffae6f9bc2bc3fafb328066fefff6fa52f))
 * Fixes smart order ([607956b](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/607956b304c2c8cfb728f365087ef38e9e4706a8))
-
-
-
-## [4.23.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.9...4.23.10) (2023-01-23)
-
-
-### Bug Fixes
-
 * Readme changed ([6fe2d25](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/6fe2d2544c042e58f0463ebe42cd631edb8811e6))
 
 
