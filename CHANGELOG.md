@@ -1,3 +1,12 @@
+# [4.28.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.27.0...4.28.0) (2023-06-05)
+
+
+### Features
+
+* Added log warning in  case 'targetRecordFilter' SQL failed ([e80d1e5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/e80d1e5b7f7c3bff967f405d5c5f98697c7dfa80))
+
+
+
 # [4.27.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.13...4.27.0) (2023-05-17)
 
 
