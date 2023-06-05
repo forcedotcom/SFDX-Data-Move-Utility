@@ -1536,6 +1536,7 @@ export default class MigrationJobTask {
             resolve(selectedRecords);
           });
         } catch (ex) {
+          self.logger.warn(RESOURCES.skippedTargetRecordsFilterWarning, ex.message);
           resolve(records);
         }
       });
