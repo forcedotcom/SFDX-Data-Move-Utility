@@ -48,7 +48,6 @@ import {
   SPECIAL_MOCK_PATTERN_TYPES,
 } from '../../components/common_components/enumerations';
 import {
-  LOG_LEVEL,
   LOG_MESSAGE_TYPE,
   LOG_MESSAGE_VERBOSITY,
   Logger,
@@ -704,12 +703,9 @@ export default class MigrationJobTask {
    * @memberof MigrationJobTask
    */
   createShortQueryString(longString: string): string {
-    if (this.logger.getLogLevel() == LOG_LEVEL.TRACE) {
-      return longString;
-    }
     let parts = longString.split("FROM");
-    return parts[0].substr(0, CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH) +
-      (parts[0].length > CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH ? "..." : "") +
+    return (this.script.logfullquery ? parts[0] : (parts[0].substr(0, CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH) +
+      (parts[0].length > CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH ? "..." : ""))) +
       " FROM "
       + parts[1].substr(0, CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH) +
       (parts[1].length > CONSTANTS.SHORT_QUERY_STRING_MAXLENGTH ? "..." : "");
@@ -1348,7 +1344,7 @@ export default class MigrationJobTask {
           self.sObjectName,
           self.logger.getResourceString(RESOURCES.insert),
           String((data.recordsToInsert.length)));
-          
+
 
         // Value mapping
         //self.mapRecords(data.recordsToInsert);
