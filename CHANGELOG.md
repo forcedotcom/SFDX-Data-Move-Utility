@@ -1,3 +1,12 @@
+## [4.29.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.1...4.29.2) (2023-06-25)
+
+
+### Bug Fixes
+
+* Fixed issue of wrong query constructing [#598](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/598) ([4effa7d](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/4effa7d4149b99ff2a018d5e91f149e5e0231fda))
+
+
+
 ## [4.29.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.0...4.29.1) (2023-06-25)
 
 
