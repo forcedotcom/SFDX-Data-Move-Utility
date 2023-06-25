@@ -1,3 +1,12 @@
+## [4.28.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.28.0...4.28.1) (2023-06-25)
+
+
+### Bug Fixes
+
+* [#591](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/591) Log full query string when loglevel TRACE is set ([464020c](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/464020cd2a12df5070095915589db763ada5ca18))
+
+
+
 # [4.28.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.27.0...4.28.0) (2023-06-05)
 
 
