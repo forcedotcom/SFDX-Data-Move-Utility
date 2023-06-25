@@ -1,3 +1,12 @@
+# [4.29.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.28.1...4.29.0) (2023-06-25)
+
+
+### Features
+
+*  Added a new logfullquery flag, which enables ([3995f4b](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/3995f4bfebcfe2c2c67a01bf0bf1ba967ff98e9a))
+
+
+
 ## [4.28.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.28.0...4.28.1) (2023-06-25)
 
 
