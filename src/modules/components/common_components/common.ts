@@ -1157,10 +1157,9 @@ export class Common {
     let whereValues = new Array<string>();
     let parsedWhere: Query;
     if (whereClause) {
-      parsedWhere = whereClause && parseQuery('SELECT Id FROM Account WHERE ' + whereClause);
-      parsedWhere.where.left.openParen = 1;
-      parsedWhere.where.left.closeParen = 1;
-
+      parsedWhere = whereClause && parseQuery('SELECT Id FROM Account WHERE (' + whereClause + ')');
+      //parsedWhere.where.left.openParen = 1;
+      //parsedWhere.where.left.closeParen = 1;
     }
 
 
