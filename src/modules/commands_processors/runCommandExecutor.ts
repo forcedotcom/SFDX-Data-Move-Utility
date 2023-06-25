@@ -100,7 +100,9 @@ export default class RunCommandExecutor {
         runProcess.m_flags.canmodify,
         runProcess.m_flags.simulation,
         runProcess.exportJson,
-        runProcess.m_flags.usesf);
+        runProcess.m_flags.usesf,
+        runProcess.m_flags.logfullquery
+        );
 
       const objectSetsAmount = await runProcess.command.loadAsync();
 

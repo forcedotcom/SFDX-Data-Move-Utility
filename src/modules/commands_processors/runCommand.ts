@@ -48,6 +48,7 @@ export class RunCommand {
   filePath: string;
   workingJson: any;
   useSf: boolean;
+  logfullquery: boolean;
 
   /**
    * New instance of RunCommand.
@@ -68,8 +69,10 @@ export class RunCommand {
     canModify: string,
     simulation: boolean,
     exportJson: string,
-    useSf: boolean) {
-
+    useSf: boolean,
+    logfullquery: boolean) {
+    
+    this.logfullquery = logfullquery;
     this.useSf = useSf;
     this.pinfo = pinfo;
     this.logger = logger;
@@ -169,7 +172,8 @@ export class RunCommand {
       this.apiVersion,
       this.canModify,
       this.simulation,
-      this.useSf);
+      this.useSf,
+      this.logfullquery);
 
     if (objectSetIndex == 0) {
       this.logger.objectMinimal({

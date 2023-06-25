@@ -136,6 +136,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   canModify: string;
   objectSetIndex: number;
   useSf: boolean = false;
+  logfullquery: boolean = false;
   
 
 
@@ -274,7 +275,8 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     apiVersion: string,
     canModify: string,
     simulation: boolean,
-    useSf: boolean): Promise<void> {
+    useSf: boolean,
+    logfullquery:boolean): Promise<void> {
 
     // Initialize script
     this.logger = logger;
@@ -282,6 +284,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
     this.canModify = canModify || "";
     this.simulationMode = this.simulationMode || simulation;
     this.useSf = useSf;
+    this.logfullquery = logfullquery;
 
     // Message about the running version
     this.logger.objectMinimal({ [this.logger.getResourceString(RESOURCES.runningVersion)]: pinfo.version });
