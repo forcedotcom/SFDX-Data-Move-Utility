@@ -379,6 +379,7 @@ export class Logger implements IAppLogger {
 
   private _uxLogger: IUxLogger;
   private _uxLogLevel: LOG_LEVEL;
+  private _originalUxLogLevel: LOG_LEVEL;
   private _uxLogVerbosity: LOG_MESSAGE_VERBOSITY
 
   private _noPromptFlag: boolean;
@@ -427,6 +428,7 @@ export class Logger implements IAppLogger {
     }
 
     this._uxLogLevel = (<any>LOG_LEVEL)[String(logLevelFlag).toUpperCase()];
+    this._originalUxLogLevel = this._uxLogLevel;
 
     if (this._uxLogLevel == LOG_LEVEL.DEBUG
       || this._uxLogLevel == LOG_LEVEL.TRACE) {
@@ -811,6 +813,10 @@ export class Logger implements IAppLogger {
   // ----------------------//
   getStartTime(): Date {
     return this._startTime;
+  }
+
+  getLogLevel(): LOG_LEVEL {
+    return this._originalUxLogLevel;
   }
 
 }
