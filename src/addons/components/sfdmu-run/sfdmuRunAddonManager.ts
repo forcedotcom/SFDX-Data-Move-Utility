@@ -249,7 +249,7 @@ export default class SfdmuRunAddonManager {
             this.addonsMap.get(addon.event).push([
               moduleInstance.onExecute.bind(moduleInstance, moduleInstance.context, addon.args),
               addon,
-              moduleInstance.onInit.bind(moduleInstance, moduleInstance.context, addon.args),
+              moduleInstance.onInit ? moduleInstance.onInit.bind(moduleInstance, moduleInstance.context, addon.args) : () => void 0,
             ]);
           }
         } catch (ex) {

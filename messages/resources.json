@@ -22,7 +22,7 @@
     "customAddon": "Custom Add-On",
     "cantLoad": "%s is not found or could not be loaded.",
     "global": "Global",
-    "cantLoadModule": "Can not load module %s.",
+    "cantLoadModule": "Cannot load module '%s'. Please ensure that the module exists in the desired location, it is properly configured, and it has an 'onExecute' entry point function.",
     "actionNotPermitted": "The action is not permitted.",
 
     "defaultPromptOptions": "y/n",
