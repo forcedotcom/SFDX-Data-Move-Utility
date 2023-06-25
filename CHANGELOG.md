@@ -1,3 +1,12 @@
+## [4.29.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.0...4.29.1) (2023-06-25)
+
+
+### Bug Fixes
+
+* Fixed custom Add-On module loading issue [#600](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/600) ([76dfbba](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/76dfbba88b4945f40c3035a88788591528bc09cb))
+
+
+
 # [4.29.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.28.1...4.29.0) (2023-06-25)
 
 
