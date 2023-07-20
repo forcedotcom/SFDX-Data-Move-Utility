@@ -420,7 +420,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
           }
         });
       } else {
-        sourceVersions.forEach(sourceVersion => sourceVersion.isError = true);
+        versionsToUpload.forEach(uploadVersion => newToSourceVersionMap.get(uploadVersion).isError = true);
       }
     };
     // -------------------------------------------------------
