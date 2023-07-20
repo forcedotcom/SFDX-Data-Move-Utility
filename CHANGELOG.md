@@ -1,3 +1,12 @@
+## [4.29.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.2...4.29.3) (2023-07-20)
+
+
+### Bug Fixes
+
+* Fixed ExportFiles Add-On - Publish ([3446bbb](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/3446bbba8f200e2c3f63ef2d72201175b03b831c))
+
+
+
 ## [4.29.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.1...4.29.2) (2023-06-25)
 
 
