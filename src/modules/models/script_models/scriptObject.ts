@@ -87,7 +87,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   allRecords: boolean;
   master: boolean = true;
   excludedFields: Array<string> = new Array<string>();
-  excudedFromUpdateFields: Array<string> = new Array<string>();
+  excludedFromUpdateFields: Array<string> = new Array<string>();
   bulkApiV1BatchSize: number;
   restApiBatchSize: number;
   useQueryAll: boolean;
@@ -214,7 +214,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       if (!describe
         || describe.readonly && !isFieldMapped
         || this.excludedFieldsFromUpdate.indexOf(targetName) >= 0
-        || this.excudedFromUpdateFields.indexOf(name) >= 0) {
+        || this.excludedFromUpdateFields.indexOf(name) >= 0) {
         return null;
       }
       return (<SOQLField>x).field;
