@@ -1,3 +1,12 @@
+## [4.29.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.3...4.29.4) (2023-07-26)
+
+
+### Bug Fixes
+
+* Fix field name typo ([1f50465](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/1f504659b60c8be3dec106cc82d75690157ead1c))
+
+
+
 ## [4.29.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.2...4.29.3) (2023-07-20)
 
 
