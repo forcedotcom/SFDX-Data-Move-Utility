@@ -8,7 +8,6 @@
 
 **Welcome to contribute to the SFDMU! Please, take some time to read our [Contribution Policy](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy)** 
 
-
 ---
 **Table of contents**
 
