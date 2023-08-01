@@ -44,6 +44,7 @@ import {
   RESOURCES,
 } from './logger';
 import { CONSTANTS } from './statics';
+import { Transform } from 'stream';
 
 const parse = (parse2 as any).parse || parse2;
 
@@ -51,7 +52,6 @@ const glob = (glob2 as any).glob || glob2;
 
 const { closest } = require('fastest-levenshtein')
 
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 
@@ -837,18 +837,54 @@ export class Common {
         }
         return;
       }
-      const csvWriter = createCsvWriter({
-        fieldDelimiter: Common.csvWriteFileDelimiter,
-        header: (columns || Object.keys(array[0])).map(x => {
-          return {
-            id: x,
-            title: x
-          }
-        }),
-        path: filePath,
-        encoding: "utf8"
-      });
-      return csvWriter.writeRecords(array);
+
+      class CsvTransformStream extends Transform {
+        _first: boolean
+        _stringifier: any
+
+        constructor() {
+          super({objectMode: true});
+
+          this._first = true;
+          this._stringifier = createCsvStringifier({
+            fieldDelimiter: Common.csvWriteFileDelimiter,
+            header: (columns || Object.keys(array[0])).map(x => {
+              return {
+                id: x,
+                title: x
+              }
+            }),
+          })
+        }
+
+        _transform(record, encoding, callback) {
+            //passes records one by one
+            const line = this._stringifier.stringifyRecords([record])
+            if(this._first) {
+              this._first = false;
+              callback(null, this._stringifier.getHeaderString() + line)
+            } else {
+              callback(null, line)
+            }
+        }
+      }
+
+      const fileStream = fs.createWriteStream(filePath);
+      const csvTransformStream = new CsvTransformStream();
+
+      csvTransformStream.pipe(fileStream);
+
+      for(const record of array) {
+        csvTransformStream.write(record);
+      }
+
+      csvTransformStream.end();
+
+      // Wait for file to be fully written #618
+      return new Promise((resolve, reject) => {
+        fileStream.on('finish', resolve);
+        fileStream.on('error', reject);
+      })
     } catch (ex) {
       throw new CommandExecutionError(this.logger.getResourceString(RESOURCES.writingCsvFileError, filePath, ex.message));
     }
