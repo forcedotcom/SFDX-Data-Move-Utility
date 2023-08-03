@@ -40,8 +40,8 @@ export interface IAppScriptOrg {
 export interface IAppSfdxService {
   org: IAppScriptOrg;
   readonly logger: IAppLogger;
-  queryOrgOrCsvAsync(soql: string, useBulkQueryApi: boolean, csvFullFilename?: string, sFieldsDescribeMap?: Map<string, SFieldDescribe>, useQueryAll?: boolean): Promise<Array<any>>;
-  queryOrgAsync(soql: string, useBulkQueryApi: boolean, useQueryAll?: boolean): Promise<Array<any>>;
+  queryOrgOrCsvAsync(soql: string, useBulkQueryApi: boolean, csvFullFilename?: string, sFieldsDescribeMap?: Map<string, SFieldDescribe>, useQueryAll?: boolean, bulkQueryPollTimeout?: number): Promise<Array<any>>;
+  queryOrgAsync(soql: string, useBulkQueryApi: boolean, useQueryAll?: boolean, bulkQueryPollTimeout?: number): Promise<Array<any>>;
   describeOrgAsync(): Promise<Array<SObjectDescribe>>;
   getPolymorphicObjectFields(sObjectName: string): Promise<string[]>;
   identityAsync(): Promise<IIdentityInfo>;

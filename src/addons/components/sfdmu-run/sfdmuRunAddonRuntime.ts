@@ -96,7 +96,7 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
 
   async queryAsync(isSource: boolean, soql: string, useBulkQueryApi: boolean = false): Promise<any[]> {
     let apiSf = new Sfdx(isSource ? this.#script.sourceOrg : this.#script.targetOrg);
-    let ret = await apiSf.queryOrgAsync(soql, useBulkQueryApi);
+    let ret = await apiSf.queryOrgAsync(soql, useBulkQueryApi, undefined, this.#script.pollingQueryTimeoutMs);
     return ret;
   }
 
