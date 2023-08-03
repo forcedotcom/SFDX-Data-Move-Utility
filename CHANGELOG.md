@@ -1,3 +1,12 @@
+## [4.29.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.6...4.29.7) (2023-08-03)
+
+
+### Bug Fixes
+
+* Wait for CSV file stream ([4c1b984](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/4c1b98412952268a080e7cb3049110e5ef764b46)), closes [#617](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/617) [#618](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/618)
+
+
+
 ## [4.29.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.5...4.29.6) (2023-07-31)
 
 
