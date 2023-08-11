@@ -1,3 +1,13 @@
+## [4.29.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.7...4.29.8) (2023-08-11)
+
+
+### Bug Fixes
+
+* cover null & undefined ([a9979a9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/a9979a90e0120729be27d0ce9ec58afb1d3b6fe8))
+* value mapping fix when mapping false checkbox fields ([9de9fd4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/9de9fd401aec444214a6b31319f9609de29b0e61))
+
+
+
 ## [4.29.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.6...4.29.7) (2023-08-03)
 
 
