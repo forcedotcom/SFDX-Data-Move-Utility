@@ -1892,7 +1892,7 @@ export default class MigrationJobTask {
 
         records.forEach((record: any) => {
           let newValue: any;
-          let rawValue = ((typeof record[field] === 'undefined') ? "" : String(record[field])).trim();
+          let rawValue = (record[field] ==  undefined ? "" : String(record[field])).trim();
           if (regexp) {
             // Use regex
             try {
