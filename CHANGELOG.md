@@ -1,3 +1,12 @@
+# [4.30.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.8...4.30.0) (2023-08-14)
+
+
+### Features
+
+* Add parameter for query poll timeout ([5609d06](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/5609d06e0562e8983396459fd5f4984a4abd18a2))
+
+
+
 ## [4.29.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.7...4.29.8) (2023-08-11)
 
 
