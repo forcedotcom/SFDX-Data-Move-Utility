@@ -75,6 +75,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   objectSets: ScriptObjectSet[] = new Array<ScriptObjectSet>();
 
   pollingIntervalMs: number = CONSTANTS.DEFAULT_POLLING_INTERVAL_MS;
+  pollingQueryTimeoutMs: number = CONSTANTS.DEFAULT_POLLING_QUERY_TIMEOUT_MS;
   concurrencyMode: "Serial" | "Parallel" = "Parallel";
   bulkThreshold: number = CONSTANTS.DEFAULT_BULK_API_THRESHOLD_RECORDS;
   bulkApiVersion: string = CONSTANTS.DEFAULT_BULK_API_VERSION;
@@ -108,7 +109,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   parallelBulkJobs: number = 1;
   parallelRestJobs: number = 1;
 
-  
+
 
 
   @Type(() => ScriptAddonManifestDefinition)
@@ -137,7 +138,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   objectSetIndex: number;
   useSf: boolean = false;
   logfullquery: boolean = false;
-  
+
 
 
   // Additional sobject descriptions for sobject which were nbot included into the export.json

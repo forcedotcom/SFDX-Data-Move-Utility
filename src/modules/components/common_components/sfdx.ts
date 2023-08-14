@@ -72,10 +72,11 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
    *
    * @param {string} soql The SOQL query
    * @param {boolean} useBulkQueryApi true to use Bulk Query Api instead of the Collection Api
+   * @param {boolean} bulkQueryPollTimeout If set and useBuilkQueryApi is true, polling for the query results will timeout after this amount of milliseconds
    * @returns {Promise<QueryResult<object>>}
    * @memberof ApiSf
    */
-  async queryOrgAsync(soql: string, useBulkQueryApi: boolean, useQueryAll?: boolean): Promise<Array<any>> {
+  async queryOrgAsync(soql: string, useBulkQueryApi: boolean, useQueryAll?: boolean, bulkQueryPollTimeout?: number): Promise<Array<any>> {
 
     let self = this;
     useBulkQueryApi = useBulkQueryApi && !useQueryAll;
@@ -107,7 +108,7 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
       return new Promise((resolve, reject) => {
 
         let conn = self.org.getConnection();
-        conn.bulk.pollTimeout = CONSTANTS.BULK_QUERY_API_POLL_TIMEOUT;
+        conn.bulk.pollTimeout = bulkQueryPollTimeout;
 
         let records = [];
 
@@ -175,6 +176,7 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
    * @param {boolean} useBulkQueryApi true to use the Bulk Query Api instead of the REST Api
    * @param {string} [csvFullFilename]   The full csv filename including full path (Used to query csv file). Leave blank to retrieve records from org.
    * @param {Map<string, SFieldDescribe>} [sFieldsDescribeMap] The field description of the queried sObject (Used to query csv file). Leave blank to retrieve records from org.
+   * @param {boolean} bulkQueryPollTimeout If set and useBuilkQueryApi is true, polling for the query results will timeout after this amount of milliseconds
    * @returns {Promise<Array<any>>}
    * @memberof Sfdx
    */
@@ -182,7 +184,8 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
     useBulkQueryApi: boolean = false,
     csvFullFilename?: string,
     sFieldsDescribeMap?: Map<string, SFieldDescribe>,
-    useQueryAll?: boolean): Promise<Array<any>> {
+    useQueryAll?: boolean,
+    bulkQueryPollTimeout?: number): Promise<Array<any>> {
 
     let self = this;
 
@@ -198,7 +201,7 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
 
       // Query records /////
       let records = [].concat(await ___queryAsync(soql));
-      if (/FROM Group([\s]+|$)/i.test(soql)) {        
+      if (/FROM Group([\s]+|$)/i.test(soql)) {
         soql = soql.replace("FROM Group", "FROM User");
         records = records.concat(await ___queryAsync(soql));
       } else if (/FROM User([\s]+|$)/i.test(soql)) {
@@ -250,7 +253,7 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
       // Query the remote
       let soqlFormat = ___formatSoql(soql);
       soql = soqlFormat[0];
-      let records = (await self.queryOrgAsync(soql, useBulkQueryApi, useQueryAll));
+      let records = (await self.queryOrgAsync(soql, useBulkQueryApi, useQueryAll, bulkQueryPollTimeout));
       records = ___parseRecords(records, soql);
       records = ___formatRecords(records, soqlFormat);
       records = await ___retrieveBlobFieldData(records, soqlFormat[3]);
