@@ -1,5 +1,13 @@
 # ![SFDMU](src/images/logo-black.png)&nbsp;SFDX Data Move Utility (SFDMU)
 
+[![Version](https://img.shields.io/npm/v/sfdmu.svg)](https://npmjs.org/package/sfdmu)
+[![Downloads/week](https://img.shields.io/npm/dw/sfdmu.svg)](https://npmjs.org/package/sfdmu)
+[![Downloads/total](https://img.shields.io/npm/dt/sfdmu.svg)](https://npmjs.org/package/sfdmu)
+[![GitHub stars](https://img.shields.io/github/stars/forcedotcom/SFDX-Data-Move-Utility)](https://gitHub.com/forcedotcom/SFDX-Data-Move-Utility/stargazers/)
+[![GitHub contributors](https://img.shields.io/github/contributors/forcedotcom/SFDX-Data-Move-Utility.svg)](https://github.com/forcedotcom/SFDX-Data-Move-Utility/graphs/contributors/)
+[![License](https://img.shields.io/npm/l/sfdmu.svg)](https://github.com/forcedotcom/SFDX-Data-Move-Utility/blob/master/LICENSE.txt)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+
 **The documentation can be found here:   [SFDMU Help Center](https://help.sfdmu.com/)**
 
 **The SFDMU GUI Desktop Application:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
