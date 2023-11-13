@@ -78,6 +78,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
   pollingQueryTimeoutMs: number = CONSTANTS.DEFAULT_POLLING_QUERY_TIMEOUT_MS;
   concurrencyMode: "Serial" | "Parallel" = "Parallel";
   bulkThreshold: number = CONSTANTS.DEFAULT_BULK_API_THRESHOLD_RECORDS;
+  queryBulkApiThreshold: number = CONSTANTS.QUERY_BULK_API_THRESHOLD;
   bulkApiVersion: string = CONSTANTS.DEFAULT_BULK_API_VERSION;
   bulkApiV1BatchSize: number;
   restApiBatchSize: number;

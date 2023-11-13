@@ -168,6 +168,8 @@
     "mappingSourceRecords": "{%s} Outbound mapping of records to %s ...",
     "mappingTargetRecords": "{%s} Inbound mapping of records from %s ...",
     "retrievingData": "Fetching the data (%s) ...",
+    "usingRestApi": "{%s} Using REST API to retrieve the data ...",
+    "usingBulkAPIQuery": "{%s} Using Bulk API Query to retrieve the data ...",
     "retrievingDataCompleted": "Data retrieval (%s) has been completed.",
     "queryingAll": "{%s} Fetching the %s data from %s (%s: all records) ...",
     "queryingIn": "{%s} Fetching the %s data from %s (%s: filtered records) ...",

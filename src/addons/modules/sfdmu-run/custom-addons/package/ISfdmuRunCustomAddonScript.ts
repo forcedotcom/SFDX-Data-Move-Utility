@@ -25,6 +25,7 @@ export default interface ISfdmuRunCustomAddonScript {
     pollingQueryTimeoutMs: number;
     concurrencyMode: "Serial" | "Parallel";
     bulkThreshold: number;
+    queryBulkApiThreshold: number;
     bulkApiVersion: string;
     bulkApiV1BatchSize: number;
     restApiBatchSize: number;

@@ -190,6 +190,8 @@ export enum RESOURCES {
   mappingTargetRecords = "mappingTargetRecords",
   retrievingData = "retrievingData",
   retrievingDataCompleted = "retrievingDataCompleted",
+  usingRestApi = "usingRestApi",
+  usingBulkAPIQuery = "usingBulkAPIQuery",
   queryingAll = "queryingAll",
   queryingIn = "queryingIn",
   queryingIn2 = "queryingIn2",

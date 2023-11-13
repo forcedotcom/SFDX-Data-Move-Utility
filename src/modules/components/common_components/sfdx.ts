@@ -71,7 +71,7 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
    *  Handles composite fields.
    *
    * @param {string} soql The SOQL query
-   * @param {boolean} useBulkQueryApi true to use Bulk Query Api instead of the Collection Api
+   * @param {boolean} useBulkQueryApi true to use Bulk Query Api instead of the Rest Api
    * @param {boolean} bulkQueryPollTimeout If set and useBuilkQueryApi is true, polling for the query results will timeout after this amount of milliseconds
    * @returns {Promise<QueryResult<object>>}
    * @memberof ApiSf
@@ -198,6 +198,13 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
       // Map query /////
       let parsedQuery = parseQuery(soql);
       soql = this.sourceQueryToTarget(soql, parsedQuery.sObject).query;
+
+      if (!useBulkQueryApi) {
+        this.logger.infoVerbose(RESOURCES.usingRestApi, parsedQuery.sObject);
+      } else {
+        this.logger.infoVerbose(RESOURCES.usingBulkAPIQuery, parsedQuery.sObject);
+      }
+
 
       // Query records /////
       let records = [].concat(await ___queryAsync(soql));

@@ -341,8 +341,10 @@ export class TaskOrgData {
      * @memberof TaskOrgData
      */
     get useBulkQueryApi(): boolean {
-        return this.isSource ? this.task.sourceTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD :
-            this.task.targetTotalRecorsCount > CONSTANTS.QUERY_BULK_API_THRESHOLD;
+        const bulkThreshold = this.task.script.queryBulkApiThreshold || CONSTANTS.QUERY_BULK_API_THRESHOLD;
+        return this.isSource ? this.task.sourceTotalRecorsCount >= bulkThreshold :
+            this.task.targetTotalRecorsCount >= bulkThreshold;
+            
     }
 
     /**
