@@ -1,6 +1,11 @@
-# Not released yet
+# [4.31.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.30.0...4.31.0) (2023-11-13)
 
-* Add shields.io badges in README documentation
+
+### Features
+
+* Added  the queryBulkApiThreshold parameter ([12a6518](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/12a6518bfbcc4449f5f9e4648ce6c3e3b9fe98a3))
+
+
 
 # [4.30.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.8...4.30.0) (2023-08-14)
 
