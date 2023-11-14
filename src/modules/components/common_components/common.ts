@@ -446,7 +446,7 @@ export class Common {
   * @returns string Returns command output
   */
   public static execSf(command: String, targetusername: String): string {
-    
+
     if (typeof targetusername != "undefined")
       return execSync(`sf ${command} --target-org ${targetusername}`).toString();
     else
@@ -853,7 +853,7 @@ export class Common {
                 id: x,
                 title: x
               }
-            }),
+            }).sort((a, b) => { return a.id.localeCompare(b.id) }),
           })
         }
 
@@ -961,7 +961,7 @@ export class Common {
         id: key,
         title: key
       }
-    });
+    }).sort((a, b) => { return a.id.localeCompare(b.id) });
     const csvStringifier = createCsvStringifier({
       header: headerArray,
       alwaysQuote: true,
