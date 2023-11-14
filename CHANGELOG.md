@@ -1,3 +1,12 @@
+# [4.32.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.31.0...4.32.0) (2023-11-14)
+
+
+### Features
+
+* sort csv columns alphabetically ([01f1233](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/01f1233e7c1794e09c0996c7e524d3dcf7e09f92))
+
+
+
 # [4.31.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.30.0...4.31.0) (2023-11-13)
 
 
