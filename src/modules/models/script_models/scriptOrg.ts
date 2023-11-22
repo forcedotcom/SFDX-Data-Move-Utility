@@ -178,16 +178,14 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
     let apiSf = new Sfdx(this);
     if (!this.isFileMedia) {
 
+      // Get org info
       try {
-        await apiSf.identityAsync();
+        let ret = await apiSf.queryOrgAsync("SELECT OrganizationType, IsSandbox FROM Organization LIMIT 1", false);
+        this.isSandbox = ret[0]["IsSandbox"];
+        this.organizationType = ret[0]["OrganizationType"];
       } catch (ex) {
         throw new CommandInitializationError(this.script.logger.getResourceString(RESOURCES.accessTokenExpired, this.name));
       }
-
-      // Get org info
-      let ret = await apiSf.queryOrgAsync("SELECT OrganizationType, IsSandbox FROM Organization LIMIT 1", false);
-      this.isSandbox = ret[0]["IsSandbox"];
-      this.organizationType = ret[0]["OrganizationType"];
 
       // Check person account availability
       try {
@@ -212,7 +210,7 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
           this.script.logger.infoNormal(RESOURCES.connectingToOrgSf, this.name);
           processResult = Common.execSf("org display --json", this.name)
         } else {
-        this.script.logger.infoNormal(RESOURCES.connectingToOrg, this.name);
+          this.script.logger.infoNormal(RESOURCES.connectingToOrg, this.name);
           processResult = Common.execSfdx("force:org:display --json", this.name);
         }
         let orgInfo = this._parseForceOrgDisplayResult(processResult);
