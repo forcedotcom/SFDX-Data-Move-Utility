@@ -1723,7 +1723,7 @@ export default class MigrationJobTask {
      * @returns {boolean} true = > not equal
      */
     function ___compareRecords(target: any, cloned: any, fieldsToCompareRecords: Array<string>): boolean {
-      if (target && !cloned || cloned && !target) {
+      if (target && !cloned || cloned && !target || self.scriptObject.idFieldIsMapped) {
         return true;
       }
       return Object.keys(cloned)
