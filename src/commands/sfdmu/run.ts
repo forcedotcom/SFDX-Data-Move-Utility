@@ -133,7 +133,7 @@ export default class Run extends SfdxCommand implements IRunProcess {
     }),
     logfullquery: flags.boolean({
       description: commandMessages.getMessage("logfullqueryFlagDescription"),
-      longDescription: commandMessages.getMessage("logfullqueryLo0ngFlagDescription")
+      longDescription: commandMessages.getMessage("logfullqueryLongFlagDescription")
     }),
   };
 
