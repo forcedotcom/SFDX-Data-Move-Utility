@@ -127,7 +127,8 @@ export default class Run extends SfdxCommand implements IRunProcess {
     }),
     usesf: flags.boolean({
       description: commandMessages.getMessage("useSfFlagDescription"),
-      longDescription: commandMessages.getMessage("useSfLongFlagDescription")
+      longDescription: commandMessages.getMessage("useSfLongFlagDescription"),
+      default: true
     }),
     logfullquery: flags.boolean({
       description: commandMessages.getMessage("logfullqueryFlagDescription"),
