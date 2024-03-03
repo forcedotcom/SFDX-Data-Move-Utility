@@ -1,3 +1,12 @@
+## [4.32.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.4...4.32.5) (2024-03-03)
+
+
+### Bug Fixes
+
+* fix flag command definition ([b076aa8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/b076aa8415dfb1779d9c48291a9fc9ba41555150))
+
+
+
 ## [4.32.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.3...4.32.4) (2024-03-03)
 
 
