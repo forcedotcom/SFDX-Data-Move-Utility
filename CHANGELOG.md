@@ -1,3 +1,12 @@
+## [4.32.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.3...4.32.4) (2024-03-03)
+
+
+### Bug Fixes
+
+* usesf flag accepts 'true' and 'false' and 'true'  by default ([f311b21](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/f311b2127eefbc4893aad5107be31c006c740ad2))
+
+
+
 ## [4.32.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.2...4.32.3) (2024-03-03)
 
 
