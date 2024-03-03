@@ -1,3 +1,12 @@
+## [4.32.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.2...4.32.3) (2024-03-03)
+
+
+### Bug Fixes
+
+* usesf flag is set by default ([0135ade](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/0135adedd7efc8327214842ad6b8fda6153417bd))
+
+
+
 ## [4.32.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.1...4.32.2) (2023-11-30)
 
 
