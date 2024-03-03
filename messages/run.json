@@ -50,7 +50,7 @@
     "errorMissingRequiredFlag": "Missing required flag(s): %s",
 
     "useSfFlagDescription": "[Optional] Enables the usage of modern Salesforce CLI (sf-cli) commands instead of deprecated Salesforce DX CLI (sfdx-cli) commands.",
-    "useSfLongFlagDescription": "[Optional] If provided, forces the Plugin to use the latest Salesforce CLI (sf-cli) commands instead of Salesforce DX CLI (sfdx-cli) commands for deprecated commands. For example, it will use sf org display instead of sfdx force:org:display.",
+    "useSfLongFlagDescription": "[Optional] If set to 'true', forces the Plugin to use the latest Salesforce CLI (sf-cli) commands instead of Salesforce DX CLI (sfdx-cli) commands for deprecated commands. For example, it will use sf org display instead of sfdx force:org:display. Setting this flag to 'false' will force the Plugin to use the deprecated Salesforce DX CLI (sfdx-cli) commands. If not set, the Plugin will use the latest Salesforce CLI (sf-cli) commands by default. This flag is useful when you have both Salesforce CLI (sf-cli) and Salesforce DX CLI (sfdx-cli) installed and you want to force the Plugin to use a specific CLI.",
 
     "logfullqueryFlagDescription": "[Optional] Enables logging of full SOQL queries",
     "logfullqueryLongFlagDescription": "[Optional] If provided, the command will log full SOQL queries instead of short versions."
