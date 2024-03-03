@@ -88,7 +88,7 @@ Running the Plugin from the command console / terminal:
 
 ### Prerequisites.
 
-Before using the SFDMU you need to perform the usual procedure of installing SFDX CLI on your computer from here:
+Before using the SFDMU you need to perform the usual procedure of installing SF CLI on your computer from here:
 
 ```bash
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm
@@ -98,17 +98,17 @@ https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfd
 
 ```bash
 # If you have an old version of the Plugin, uninstall it:
-$ sfdx plugins:uninstall sfdmu
+$ sf plugins uninstall sfdmu
 
 # Install the latest version of the Plugin:
-$ sfdx plugins:install sfdmu
+$ sf plugins install sfdmu
 ```
 
 ### Installation with the SFDMU source code:
 
 ```bash
 # If you have outdated source code already cloned and linked, go to the directory containing old Plugin source code and unlink it from the SFDX by typing:
-$ sfdx plugins:unlink
+$ sf plugins unlink
 
 # Clone the source code:
 $ git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility
@@ -120,7 +120,7 @@ $ cd SFDX-Data-Move-Utility
 $ npm install
 
 # Link the Plugin to the SFDX:
-$ sfdx plugins:link
+$ sf plugins link
 ```
 
 
@@ -192,22 +192,31 @@ You can Upsert all records preserving relationships between SObjects by creating
 - Use the following command to run a direct migration between source and target salesforce orgs:
 
 ```bash
-$ sfdx sfdmu:run --sourceusername source@name.com --targetusername target@name.com
+$ sf sfdmu run --sourceusername source@name.com --targetusername target@name.com
 ```
 
 - For import data from CSV files:
 
 ```bash
-$ sfdx sfdmu:run --sourceusername csvfile --targetusername target@name.com
+$ sf sfdmu run --sourceusername csvfile --targetusername target@name.com
 ```
 
 - For export data into CSV files:
 
 ```bash
-$ sfdx sfdmu:run --sourceusername source@name.com --targetusername csvfile
+$ sf sfdmu run --sourceusername source@name.com --targetusername csvfile
 ```
 
 <br />
+
+##### Notes:
+
+- When installing and running the SFDMU on MacOS you can sometimes run into a permission issue.  If so, just prepend all above command with "**sudo**", e.g.:
+
+  *$ sudo sf plugins install sfdmu*
+
+- All examples are provided with the assumption that you are using the current **SF CLI** platform. However, if you are operating under the outdated **SFDX CLI** platform, you should replace ```sf``` by ```sfdx``` and ```:``` by a space, for example:
+  ```sfdx plugins:install sfdmu``` instead of ```sf plugins install sfdmu```
 
 
 ----
