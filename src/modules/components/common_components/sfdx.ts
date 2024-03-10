@@ -584,7 +584,8 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
       f.cascadeDelete = field.cascadeDelete;
       f.lookup = field.referenceTo != null && field.referenceTo.length > 0;
 
-      const referencedObjectType = (CONSTANTS.REFERENCED_SOBJECT_TYPE_MAP.get(objectName) || {})[f.name];
+      let referencedObjectType = (CONSTANTS.REFERENCED_SOBJECT_TYPE_MAP.get(objectName) || {})[f.name];
+      referencedObjectType = CONSTANTS.REFERENCED_FIELDS_MAP.get(f.name) || referencedObjectType;
       f.referencedObjectType = referencedObjectType || field.referenceTo[0];
       f.originalReferencedObjectType = referencedObjectType || f.referencedObjectType;
 

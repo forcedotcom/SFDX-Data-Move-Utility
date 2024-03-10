@@ -295,7 +295,7 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
                 // Target ==> Source: selecting the source record using the target lookup to the source record (Account.Country__c => Country Id)
                 sourceIdFields.forEach(sourceIdField => {
                   let sourceId = transformedRecord[sourceIdField];
-                  let sourceRecord = field.sourceTask.sourceTaskData.idRecordsMap.get(sourceId);
+                  let sourceRecord = field.lookupSource == 'source' ? field.sourceTask.sourceTaskData.idRecordsMap.get(sourceId) : field.sourceTask.targetTaskData.idRecordsMap.get(sourceId);
                   __setFormulaValue(formula, sourceRecord, transformedRecord, field, sourceRecords, targetRecords);
                 });
               } else {
@@ -374,8 +374,10 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
         value = source[field.sourceField];
       } else {
         const updateWithRecord = field.lookupSource != 'target'
-          ? sourceRecords.find(source => eval(field.lookupExpression))
-          : targetRecords.find(target => eval(field.lookupExpression));
+          ? sourceRecords.find(source => eval(field.lookupExpression)) 
+            // We override `source` variable to be the target record if looluupSource is 'target'            
+            // target variable is always the target record (of the object which we want to update)
+          : targetRecords.find(source => eval(field.lookupExpression));
         value = updateWithRecord && updateWithRecord[field.sourceField];
       }
       formula[field.alias] = field.constantValue = value;

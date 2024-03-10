@@ -1244,6 +1244,13 @@ export default class MigrationJobTask {
         });
 
 
+        processedData.recordsToInsert = [...processedData.clonedToSourceMap.keys()];
+        self.processedData = processedData;
+
+        // Call addon onBeforeUpdate event
+        await self.runAddonEventAsync(ADDON_EVENTS.onBeforeUpdate);
+        processedData.recordsToInsert = new Array<any>();
+
         // Create separated record sets to Update/Insert /////////////
         processedData.clonedToSourceMap.forEach((source, cloned) => {
           source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = typeof source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] == "undefined" ? false : source[CONSTANTS.__IS_PROCESSED_FIELD_NAME];
@@ -1331,12 +1338,6 @@ export default class MigrationJobTask {
       let totalProcessedAmount = 0;
       let targetFilenameSuffix = data.processPersonAccounts ? CONSTANTS.CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX : "";
 
-      // Temporary store the current processed data
-      // to allow access it from the Add-On engine
-      self.processedData = data;
-
-      // Call addon onBeforeUpdate event
-      await self.runAddonEventAsync(ADDON_EVENTS.onBeforeUpdate)
 
       // Inserting ////////
       if (data.recordsToInsert.length > 0) {
@@ -1892,7 +1893,7 @@ export default class MigrationJobTask {
 
         records.forEach((record: any) => {
           let newValue: any;
-          let rawValue = (record[field] ==  undefined ? "" : String(record[field])).trim();
+          let rawValue = (record[field] == undefined ? "" : String(record[field])).trim();
           if (regexp) {
             // Use regex
             try {
@@ -2145,35 +2146,35 @@ export default class MigrationJobTask {
    * @returns {number} New records count
    */
   private _setExternalIdMap(records: Array<any>,
-    sourceExtIdRecordsMap: Map<string, string>,
-    sourceIdRecordsMap: Map<string, string>,
+    extIdToRecordIdMap: Map<string, string>,
+    recordIdToRecordMap: Map<string, string>,
     isTarget: boolean = false): number {
 
     let newRecordsCount = 0;
 
-    records.forEach(targetRecord => {
-      if (targetRecord["Id"]) {
-        let value = this.getRecordValue(targetRecord, this.complexExternalId);
-        if (value) {
-          sourceExtIdRecordsMap.set(value, targetRecord["Id"]);
+    records.forEach(record => {
+      if (record["Id"]) {
+        let externalIdValue = this.getRecordValue(record, this.complexExternalId);
+        if (externalIdValue) {
+          extIdToRecordIdMap.set(externalIdValue, record["Id"]);
         }
-        if (!sourceIdRecordsMap.has(targetRecord["Id"])) {
-          sourceIdRecordsMap.set(targetRecord["Id"], targetRecord);
-          targetRecord[CONSTANTS.__ID_FIELD_NAME] = targetRecord["Id"];
+        if (!recordIdToRecordMap.has(record["Id"])) {
+          recordIdToRecordMap.set(record["Id"], record);
+          record[CONSTANTS.__ID_FIELD_NAME] = record["Id"];
           if (isTarget) {
-            let extIdValue = this.getRecordValue(targetRecord, this.complexExternalId);
+            let extIdValue = this.getRecordValue(record, this.complexExternalId);
             if (extIdValue) {
               let sourceId = this.sourceData.extIdRecordsMap.get(extIdValue);
               if (sourceId) {
                 let sourceRecord = this.sourceData.idRecordsMap.get(sourceId);
-                this.data.sourceToTargetRecordMap.set(sourceRecord, targetRecord);
+                this.data.sourceToTargetRecordMap.set(sourceRecord, record);
               }
             }
           }
           newRecordsCount++;
         }
       } else {
-        targetRecord[CONSTANTS.__ID_FIELD_NAME] = Common.makeId(18);
+        record[CONSTANTS.__ID_FIELD_NAME] = Common.makeId(18);
       }
     });
     return newRecordsCount;
