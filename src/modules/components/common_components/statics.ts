@@ -312,6 +312,7 @@ export const CONSTANTS = {
   REFERENCED_FIELDS_MAP:  new Map<string, String>([
     ["OwnerId", "User"],
   ]),
+  
 
   // Some fields like Attachment.Body can't be compared to detect similar records.
   // Fields below are the comparable fields for the specific objects.
