@@ -425,6 +425,27 @@ export class Common {
   }
 
   /**
+   *  Replaces the last occurence of the given substring in the original string
+   * @param original  The original string
+   * @param toReplace  The substring to replace
+   * @param replacement  The replacement string
+   * @returns  The modified string
+   */
+  public static replaceLast(original: string, toReplace: string, replacement: string): string {
+    // Check if the original string ends with the substring we want to replace
+    if (original.endsWith(toReplace)) {
+      // Calculate the start position of the substring to replace
+      const startPos = original.length - toReplace.length;
+      // Replace the substring by taking the part of the original string before the substring
+      // and concatenating it with the replacement string
+      return original.substring(0, startPos) + replacement;
+    }
+
+    // If the substring to replace is not at the end, return the original string
+    return original;
+  }
+
+  /**
   * @static Executes SFDX command synchronously
   *
   * @param  {String} command SFDX command to execute ex. force:org:display without previous sfdx
@@ -843,7 +864,7 @@ export class Common {
         _stringifier: any
 
         constructor() {
-          super({objectMode: true});
+          super({ objectMode: true });
 
           this._first = true;
           this._stringifier = createCsvStringifier({
@@ -858,14 +879,14 @@ export class Common {
         }
 
         _transform(record, encoding, callback) {
-            //passes records one by one
-            const line = this._stringifier.stringifyRecords([record])
-            if(this._first) {
-              this._first = false;
-              callback(null, this._stringifier.getHeaderString() + line)
-            } else {
-              callback(null, line)
-            }
+          //passes records one by one
+          const line = this._stringifier.stringifyRecords([record])
+          if (this._first) {
+            this._first = false;
+            callback(null, this._stringifier.getHeaderString() + line)
+          } else {
+            callback(null, line)
+          }
         }
       }
 
@@ -874,7 +895,7 @@ export class Common {
 
       csvTransformStream.pipe(fileStream);
 
-      for(const record of array) {
+      for (const record of array) {
         csvTransformStream.write(record);
       }
 
@@ -1367,14 +1388,18 @@ export class Common {
     if (fieldDescribe) {
       let name = fieldDescribe.name.split('.')[0];
       if (fieldDescribe.custom) {
-        return name.replace("__pc", "__pr").replace("__c", "__r");
+        name = Common.replaceLast(name, "__pc", "__pr");
+        name = Common.replaceLast(name, "__c", "__r");
+        return name;
       } else {
         return Common.trimEndStr(name, "Id");
       }
     } else if (fieldName) {
       let name = fieldName.split('.')[0];
-      if (!fieldName.endsWith("Id")) {
-        return name.replace("__pc", "__pr").replace("__c", "__r");
+      if (!name.endsWith("Id")) {
+        name = Common.replaceLast(name, "__pc", "__pr");
+        name = Common.replaceLast(name, "__c", "__r");
+        return name;
       } else {
         return Common.trimEndStr(name, "Id");
       }
@@ -1401,7 +1426,9 @@ export class Common {
         return fieldDescribe.name;
       }
       if (fieldDescribe.custom) {
-        return parts[0].replace("__pr", "__pc").replace("__r", "__c");
+        let name = Common.replaceLast(parts[0], "__pc", "__pr");
+        name = Common.replaceLast(name, "__c", "__r");
+        return name;
       } else {
         return parts[0] + "Id";
       }
@@ -1410,7 +1437,9 @@ export class Common {
       if (fieldName.endsWith("Id")) {
         return fieldName;
       } else if (fieldName.endsWith("__pr") || fieldName.endsWith("__r")) {
-        return fieldName.replace("__pr", "__pc").replace("__r", "__c");
+        fieldName = Common.replaceLast(fieldName, "__pc", "__pr");
+        fieldName = Common.replaceLast(fieldName, "__c", "__r");
+        return fieldName;
       } else if (!fieldName.endsWith("__pc") && !fieldName.endsWith("__c")
         && !fieldName.endsWith("__s")) {
         return fieldName + "Id";
