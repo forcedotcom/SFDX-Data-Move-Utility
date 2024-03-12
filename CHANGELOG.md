@@ -1,3 +1,12 @@
+# [4.33.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.8...4.33.0) (2024-03-12)
+
+
+### Features
+
+* New ScriptObject.skipRecordsComparison property [#672](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/672) ([826a07a](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/826a07aaf96727a294c16dccba11811500148cd9))
+
+
+
 ## [4.32.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.7...4.32.8) (2024-03-11)
 
 
