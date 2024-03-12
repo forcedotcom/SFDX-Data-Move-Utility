@@ -113,6 +113,10 @@ export const CONSTANTS = {
     'RecordType': 'DeveloperName;NamespacePrefix;SobjectType'
   },
 
+  EXCLUDED_OBJECTS: [
+    'Group'
+  ],
+
   NOT_SUPPORTED_OBJECTS: [
     'Profile',
     'User',

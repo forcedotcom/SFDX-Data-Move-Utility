@@ -205,20 +205,14 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
         this.logger.infoVerbose(RESOURCES.usingBulkAPIQuery, parsedQuery.sObject);
       }
 
-
       // Query records /////
       let records = [].concat(await ___queryAsync(soql));
-      if (!parsedQuery.where) {
-        if (/FROM Group([\s]+|$)/i.test(soql)) {
-          soql = soql.replace(/FROM\s+Group/i, "FROM User");
-          records = records.concat(await ___queryAsync(soql));
-        } else if (/FROM User([\s]+|$)/i.test(soql)) {
-          const parsedUserQuery = parseQuery(soql);
-          parsedUserQuery.sObject = 'Group';
-          parsedUserQuery.where = Common.composeWhereClause(parsedUserQuery.where, "Type", "Queue", "=", "STRING", "AND");
-          soql = composeQuery(parsedUserQuery);
-          records = records.concat(await ___queryAsync(soql));
-        }
+      if (parsedQuery.sObject == 'User') {
+        let parsedGroupQuery = parseQuery(soql);
+        parsedGroupQuery.sObject = 'Group';
+        parsedGroupQuery.where = Common.composeWhereClause(null, "Type", "Queue", "=", "STRING", "AND");
+        soql = composeQuery(parsedGroupQuery);
+        records = records.concat(await ___queryAsync(soql));
       }
 
       // Map records /////

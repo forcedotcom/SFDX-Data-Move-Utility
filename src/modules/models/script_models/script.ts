@@ -327,6 +327,9 @@ export default class Script implements IAppScript, ISfdmuRunScript {
 
     // Remove excluded objects and unsupported objects
     this.objects = this.objects.filter(object => {
+      if (CONSTANTS.EXCLUDED_OBJECTS.includes(object.name)) {
+        return false;
+      }
       let supportedObjectsForOpertation = CONSTANTS.SUPPORTED_OBJECTS_FOR_OPERATION.get(object.name) || [];
       let isSupportedForOperation = !supportedObjectsForOpertation.length
         || supportedObjectsForOpertation.length && supportedObjectsForOpertation.includes(object.strOperation);
