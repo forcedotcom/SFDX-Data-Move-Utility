@@ -1260,7 +1260,7 @@ export default class MigrationJobTask {
             source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
           } else if (target && updateMode == "backwards") {
             // ???
-            if (target["Id"] && ___compareRecords(target, cloned, fieldsToCompareRecords)) {
+            if (target["Id"] && (___compareRecords(target, cloned, fieldsToCompareRecords) || self.scriptObject.skipRecordsComparison)) {
               cloned["Id"] = target["Id"];
               ___removeRecordFields(cloned, notUpdateableFields);
               processedData.recordsToUpdate.push(cloned);
@@ -1276,7 +1276,7 @@ export default class MigrationJobTask {
             source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = true;
           } else if (target && (self.operation == OPERATION.Upsert || self.operation == OPERATION.Update)) {
             // Updating existing record on the target
-            if (target["Id"] && ___compareRecords(target, cloned, fieldsToCompareRecords)) {
+            if (target["Id"] && (___compareRecords(target, cloned, fieldsToCompareRecords) || self.scriptObject.skipRecordsComparison)) {
               cloned["Id"] = target["Id"];
               ___removeRecordFields(cloned, notUpdateableFields);
               processedData.recordsToUpdate.push(cloned);

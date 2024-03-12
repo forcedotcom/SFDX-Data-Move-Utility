@@ -44,12 +44,15 @@ export default interface ISfdmuRunCustomAddonScriptObject {
   parallelBulkJobs?: number;
   parallelRestJobs?: number;
 
+  useSourceCSVFile: boolean;
+  skipRecordsComparison: boolean;
+
 
   beforeAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
   afterAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
   beforeUpdateAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
   afterUpdateAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
-
+  filterRecordsAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
 
   // ---- Runtime -----
   /**

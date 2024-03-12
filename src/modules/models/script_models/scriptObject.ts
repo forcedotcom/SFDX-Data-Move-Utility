@@ -98,6 +98,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   parallelRestJobs: number = 1;
 
   useSourceCSVFile: boolean;
+  skipRecordsComparison: boolean = false;
 
   @Type(() => ScriptAddonManifestDefinition)
   beforeAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
@@ -144,8 +145,8 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   originalExternalIdIsEmpty: boolean = false;
   extraFieldsToUpdate: Array<string> = new Array<string>();
 
-
-
+  
+  
   get batchSizes(): {
     restBatchSize: number,
     bulkV1BatchSize: number
