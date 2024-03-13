@@ -1,3 +1,12 @@
+## [4.33.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.2...4.33.3) (2024-03-13)
+
+
+### Bug Fixes
+
+* Fixed custom add-on interface definitions ([64498ca](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/64498caf280eb8ceb03cde173e15602cb948d3bc))
+
+
+
 ## [4.33.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.1...4.33.2) (2024-03-12)
 
 
