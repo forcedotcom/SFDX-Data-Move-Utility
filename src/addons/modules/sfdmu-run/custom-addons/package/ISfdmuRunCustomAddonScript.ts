@@ -18,40 +18,40 @@ import { DATA_CACHE_TYPES, ISfdmuRunCustomAddonScriptAddonManifestDefinition, IS
  */
 export default interface ISfdmuRunCustomAddonScript {
 
-    orgs: ISfdmuRunCustomAddonScriptOrg[];
-    objects: ISfdmuRunCustomAddonScriptObject[];
+    orgs?: ISfdmuRunCustomAddonScriptOrg[];
+    objects?: ISfdmuRunCustomAddonScriptObject[];
 
-    pollingIntervalMs: number;
-    pollingQueryTimeoutMs: number;
-    concurrencyMode: "Serial" | "Parallel";
-    bulkThreshold: number;
-    queryBulkApiThreshold: number;
-    bulkApiVersion: string;
-    bulkApiV1BatchSize: number;
-    restApiBatchSize: number;
-    allOrNone: boolean;
+    pollingIntervalMs?: number;
+    pollingQueryTimeoutMs?: number;
+    concurrencyMode?: "Serial" | "Parallel";
+    bulkThreshold?: number;
+    queryBulkApiThreshold?: number;
+    bulkApiVersion?: string;
+    bulkApiV1BatchSize?: number;
+    restApiBatchSize?: number;
+    allOrNone?: boolean;
     //promptOnUpdateError: boolean;
-    promptOnMissingParentObjects: boolean;
-    promptOnIssuesInCSVFiles: boolean;
-    validateCSVFilesOnly: boolean;
-    apiVersion: string;
-    createTargetCSVFiles: boolean;
-    importCSVFilesAsIs: boolean;
-    alwaysUseRestApiToUpdateRecords: boolean;
-    excludeIdsFromCSVFiles: boolean;
+    promptOnMissingParentObjects?: boolean;
+    promptOnIssuesInCSVFiles?: boolean;
+    validateCSVFilesOnly?: boolean;
+    apiVersion?: string;
+    createTargetCSVFiles?: boolean;
+    importCSVFilesAsIs?: boolean;
+    alwaysUseRestApiToUpdateRecords?: boolean;
+    excludeIdsFromCSVFiles?: boolean;
     //fileLog: boolean;
-    keepObjectOrderWhileExecute: boolean;
-    allowFieldTruncation: boolean;
-    simulationMode: boolean;
-    proxyUrl: string;
-    binaryDataCache: DATA_CACHE_TYPES;
-    sourceRecordsCache: DATA_CACHE_TYPES;
-    parallelBinaryDownloads: number;
-    parallelBulkJobs: number;
-    parallelRestJobs: number;
+    keepObjectOrderWhileExecute?: boolean;
+    allowFieldTruncation?: boolean;
+    simulationMode?: boolean;
+    proxyUrl?: string;
+    binaryDataCache?: DATA_CACHE_TYPES;
+    sourceRecordsCache?: DATA_CACHE_TYPES;
+    parallelBinaryDownloads?: number;
+    parallelBulkJobs?: number;
+    parallelRestJobs?: number;
 
-    beforeAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
-    afterAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
-    dataRetrievedAddons: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
+    beforeAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
+    afterAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
+    dataRetrievedAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
 
 }
