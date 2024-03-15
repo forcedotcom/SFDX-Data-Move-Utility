@@ -2,6 +2,8 @@
 
 The Salesforce Data Move Utility (SFDMU) is a sophisticated SFDX Plugin designed to streamline the process of populating your Salesforce org (whether scratch, development, sandbox, or production) with data imported from another org or CSV files. It seamlessly supports Delete, Insert, Update, and Upsert operations across multiple related sObjects, enhancing the efficiency and accuracy of data migration tasks.
 
+**Use the [SFDMU GUI Application](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) to easily configure and run migration jobs**
+
 [![Version](https://img.shields.io/npm/v/sfdmu.svg)](https://npmjs.org/package/sfdmu)
 [![Downloads/week](https://img.shields.io/npm/dw/sfdmu.svg)](https://npmjs.org/package/sfdmu)
 [![Downloads/total](https://img.shields.io/npm/dt/sfdmu.svg)](https://npmjs.org/package/sfdmu)
@@ -11,8 +13,6 @@ The Salesforce Data Move Utility (SFDMU) is a sophisticated SFDX Plugin designed
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 **The documentation can be found here:   [SFDMU Help Center](https://help.sfdmu.com/)**
-
-**<u>Consider using our SFDMU GUI Application to easily configure and run migration jobs</u>, it can be found here:  [SFDMU GUI Desktop App](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)**
 
 **Please, see the [User Support Policy](https://help.sfdmu.com/full-documentation/additional-information/support_policy) before opening cases**
 
