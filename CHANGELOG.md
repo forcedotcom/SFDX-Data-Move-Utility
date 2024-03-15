@@ -1,3 +1,12 @@
+## [4.33.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.3...4.33.4) (2024-03-15)
+
+
+### Bug Fixes
+
+* Fixed AddOns event definition ([0e7db52](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/0e7db52caea4bbb7bd66a2e2194521469d6b65a9))
+
+
+
 ## [4.33.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.2...4.33.3) (2024-03-13)
 
 
