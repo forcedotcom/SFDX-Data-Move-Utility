@@ -125,7 +125,7 @@ export default interface ISFdmuRunCustomAddonTask {
   /**
    * Get or sets the temporary records data during the records transformation process.
    * For example you can use this property to access and to modify the live source records when
-   * firing the onTargetDataFiltering Add-On event.
+   * firing the filterRecordsAddons Add-On event.
    */
   tempRecords: any[];
 

@@ -21,7 +21,7 @@ export interface IOnExecuteArguments extends IRecordsFilterArgs { }
 // Supported events
 const CONST = {
   SUPPORTED_EVENTS: [
-    ADDON_EVENTS.onTargetDataFiltering
+    ADDON_EVENTS.filterRecordsAddons
   ]
 };
 

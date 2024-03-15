@@ -174,7 +174,7 @@ export default class SfdmuRunAddonManager {
       // BeforeUpdate
       object.filterRecordsAddons.forEach(addon => {
         if (!addon.excluded && addon.command == this.fullCommandName) {
-          addon.event = ADDON_EVENTS.onTargetDataFiltering;
+          addon.event = ADDON_EVENTS.filterRecordsAddons;
           addon.objectName = object.name;
           manifest.addons.push(addon);
         }

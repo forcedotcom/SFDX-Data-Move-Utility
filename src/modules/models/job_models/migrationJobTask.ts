@@ -1525,7 +1525,7 @@ export default class MigrationJobTask {
       return new Promise<Array<any>>(async resolve => {
 
         self.tempRecords = records;
-        await self.runAddonEventAsync(ADDON_EVENTS.onTargetDataFiltering);
+        await self.runAddonEventAsync(ADDON_EVENTS.filterRecordsAddons);
         records = self.tempRecords;
 
         if (!self.scriptObject.targetRecordsFilter) {

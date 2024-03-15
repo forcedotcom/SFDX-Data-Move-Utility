@@ -60,7 +60,7 @@ export enum ADDON_EVENTS {
     onAfterUpdate = "onAfterUpdate",
     onDataRetrieved = "onDataRetrieved",
 
-    onTargetDataFiltering = "onTargetDataFiltering"
+    filterRecordsAddons = "filterRecordsAddons"
 }
 
 export enum SPECIAL_MOCK_PATTERN_TYPES {
