@@ -1,3 +1,12 @@
+## [4.33.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.4...4.33.5) (2024-04-11)
+
+
+### Bug Fixes
+
+* Update default API version ([645bbb5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/645bbb56bb19f395be9be5cc06652530af095fc6))
+
+
+
 ## [4.33.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.3...4.33.4) (2024-03-15)
 
 
