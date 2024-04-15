@@ -23,24 +23,24 @@ export interface IMockField {
 
 export interface ICSVIssueCsvRow {
   "Date update": string,
-  "Child value": string,
-  "Child sObject": string,
-  "Child field": string,
-  "Parent value": string,
-  "Parent sObject": string,
-  "Parent field": string,
+  "Field value": string,
+  "sObject name": string,
+  "Field name": string,
+  "Parent field value": string,
+  "Parent SObject name": string,
+  "Parent field name": string,
   "Error": string
 }
 
 export interface IMissingParentLookupRecordCsvRow {
   "Date update": string,
-  "Child Id": string,
-  "Child SObject": string;
-  "Child Lookup Id Field": string;
-  "Child Lookup Reference Field": string;
-  "Parent SObject": string;
-  "Parent ExternalId Field": string;
-  "Missing expected parent ExternalID value": string;
+  "Record Id": string,
+  "sObject name": string;
+  "Lookup field name": string;
+  "Lookup reference field name": string;
+  "Parent SObject name": string;
+  "Parent ExternalId field name": string;
+  "Missing parent External Id value": string;
 }
 
 

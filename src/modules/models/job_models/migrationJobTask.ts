@@ -148,12 +148,12 @@ export default class MigrationJobTask {
       if (!this.script.excludeIdsFromCSVFiles) {
         csvIssues.push({
           "Date update": Common.formatDateTime(new Date()),
-          "Child sObject": this.sObjectName,
-          "Child field": null,
-          "Child value": null,
-          "Parent sObject": null,
-          "Parent field": null,
-          "Parent value": null,
+          "sObject name": this.sObjectName,
+          "Field name": null,
+          "Field value": null,
+          "Parent SObject name": null,
+          "Parent field name": null,
+          "Parent field value": null,
           "Error": this.logger.getResourceString(RESOURCES.missingCsvFile)
         });
       }
@@ -187,12 +187,12 @@ export default class MigrationJobTask {
           // Column is missing in the csv file
           csvIssues.push({
             "Date update": Common.formatDateTime(new Date()),
-            "Child sObject": this.sObjectName,
-            "Child field": fieldName,
-            "Child value": null,
-            "Parent sObject": null,
-            "Parent field": null,
-            "Parent value": null,
+            "sObject name": this.sObjectName,
+            "Field name": fieldName,
+            "Field value": null,
+            "Parent SObject name": null,
+            "Parent field name": null,
+            "Parent field value": null,
             "Error": this.logger.getResourceString(RESOURCES.missingColumnsInCsvFile)
           });
         }
@@ -432,12 +432,12 @@ export default class MigrationJobTask {
                 if (!self.script.excludeIdsFromCSVFiles) {
                   csvIssues.push({
                     "Date update": Common.formatDateTime(new Date()),
-                    "Child sObject": self.sObjectName,
-                    "Child field": columnName__r,
-                    "Child value": desiredExternalIdValue,
-                    "Parent sObject": sField.parentLookupObject.name,
-                    "Parent field": parentExternalId,
-                    "Parent value": null,
+                    "sObject name": self.sObjectName,
+                    "Field name": columnName__r,
+                    "Field value": desiredExternalIdValue,
+                    "Parent SObject name": sField.parentLookupObject.name,
+                    "Parent field name": parentExternalId,
+                    "Parent field value": null,
                     "Error": self.logger.getResourceString(RESOURCES.missingParentLookupRecords)
                   });
                 }
@@ -484,12 +484,12 @@ export default class MigrationJobTask {
                 if (!self.script.excludeIdsFromCSVFiles) {
                   csvIssues.push({
                     "Date update": Common.formatDateTime(new Date()),
-                    "Child sObject": self.sObjectName,
-                    "Child field": columnNameId,
-                    "Child value": idValue,
-                    "Parent sObject": sField.parentLookupObject.name,
-                    "Parent field": "Id",
-                    "Parent value": null,
+                    "sObject name": self.sObjectName,
+                    "Field name": columnNameId,
+                    "Field value": idValue,
+                    "Parent SObject name": sField.parentLookupObject.name,
+                    "Parent field name": "Id",
+                    "Parent field value": null,
                     "Error": self.logger.getResourceString(RESOURCES.missingParentLookupRecords)
                   });
                 }
@@ -554,18 +554,19 @@ export default class MigrationJobTask {
                   cachedCSVContent.updatedFilenames.add(childTask.data.sourceCsvFilename);
                 }
               });
-            } else {
-              csvIssues.push({
-                "Date update": Common.formatDateTime(new Date()),
-                "Child sObject": childTask.sObjectName,
-                "Child field": columnChildOriginalName__r,
-                "Child value": null,
-                "Parent sObject": self.sObjectName,
-                "Parent field": "Id",
-                "Parent value": null,
-                "Error": self.logger.getResourceString(RESOURCES.cantUpdateChildLookupCSVColumn)
-              });
-            }
+            } 
+            // else {
+            //   csvIssues.push({
+            //     "Date update": Common.formatDateTime(new Date()),
+            //     "sObject name": childTask.sObjectName,
+            //     "Field name": columnChildOriginalName__r,
+            //     "Field value": null,
+            //     "Parent SObject name": self.sObjectName,
+            //     "Parent field name": "Id",
+            //     "Parent field value": null,
+            //     "Error": self.logger.getResourceString(RESOURCES.cantUpdateChildLookupCSVColumn)
+            //   });
+            // }
           }
         }
       }
@@ -1508,13 +1509,13 @@ export default class MigrationJobTask {
         if (parentId && !found) {
           let csvRow: IMissingParentLookupRecordCsvRow = {
             "Date update": Common.formatDateTime(new Date()),
-            "Child Id": source["Id"],
-            "Child Lookup Id Field": idField.nameId,
-            "Child Lookup Reference Field": idField.fullName__r,
-            "Child SObject": idField.scriptObject.name,
-            "Parent SObject": idField.parentLookupObject.name,
-            "Parent ExternalId Field": idField.parentLookupObject.externalId,
-            "Missing expected parent ExternalID value": source[idField.fullName__r] || source[idField.nameId]
+            "Record Id": source["Id"],
+            "Lookup field name": idField.nameId,
+            "Lookup reference field name": idField.fullName__r,
+            "sObject name": idField.scriptObject.name,
+            "Parent SObject name": idField.parentLookupObject.name,
+            "Parent ExternalId field name": idField.parentLookupObject.externalId,
+            "Missing parent External Id value": source[idField.fullName__r] || source[idField.nameId]
           };
           processedData.missingParentLookups.push(csvRow);
         }
