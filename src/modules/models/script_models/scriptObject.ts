@@ -461,6 +461,9 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
       this.hardDelete = true;
       this.operation = OPERATION.Delete;
     }
+    if (this.script.targetOrg.media == DATA_MEDIA_TYPE.File) {
+      this.operation = OPERATION.Upsert;
+    }
 
     // Fix script object parameters
     // Always set explicit externalId to 'Id' on Insert operation
