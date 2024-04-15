@@ -1,3 +1,12 @@
+## [4.33.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.5...4.33.6) (2024-04-15)
+
+
+### Bug Fixes
+
+* Fixed CSV files creation when set ([836a526](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/836a526c920cc14fa54fcbad4bb07741b3ce2fec))
+
+
+
 ## [4.33.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.4...4.33.5) (2024-04-11)
 
 
