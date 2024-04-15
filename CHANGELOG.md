@@ -1,3 +1,12 @@
+## [4.33.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.6...4.33.7) (2024-04-15)
+
+
+### Bug Fixes
+
+* Fixed CSV source file reparing ([37bb13e](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/37bb13ee1eb9e6cfb73ff78f1de5f29407f6000d))
+
+
+
 ## [4.33.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.5...4.33.6) (2024-04-15)
 
 
