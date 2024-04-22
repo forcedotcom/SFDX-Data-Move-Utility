@@ -19,5 +19,7 @@ node_modules
 typedoc-sfdmu-run-addons.json
 /temp
 *-private*
+/.vscode
+/.images
 
 
