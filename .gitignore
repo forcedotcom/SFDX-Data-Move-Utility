@@ -14,8 +14,9 @@ node_modules
 /source
 /target
 /development
-/documentation/add-on-docs/custom-add-on-api/sfdmu-run
+/documentation
 /src/addons/modules/sfdmu-run/custom-addons/TestModule*
+typedoc-sfdmu-run-addons.json
 /temp
 *-private*
 
