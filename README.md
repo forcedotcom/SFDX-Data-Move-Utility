@@ -51,29 +51,42 @@ $ sf plugins link
 
 Set up a migration job by creating an `export.json` file with specific data models and operations, as detailed in the [Full export.json Format Guide](https://help.sfdmu.com/full-configuration).
 
-Here is a basic `export.json` example for upserting Accounts and their related Contacts, assuming unique Name for Accounts and unique LastName for Contacts across source and target orgs:
+Here is a basic `export.json` example for upserting Accounts and their related Contacts, assuming a unique Name for Accounts and a unique LastName for Contacts across source and target orgs:
 
 ```json
 {
     "objects": [
         {
-            "operation": "Upsert", // Specifies the type of operation: "Update", "Upsert", "Insert", "Delete", etc., as detailed in the full documentation.
-            "externalId": "LastName", // The unique identifier for Contacts, used for upsert operations.
-            "query": "SELECT FirstName, LastName, AccountId FROM Contact", // Defines the fields to transfer from the source to the target during the migration.
-            "master": false // Ensures that SFDMU only processes Contact records related to the specified Accounts.
+            "operation": "Upsert",
+            "externalId": "LastName",
+            "query": "SELECT FirstName, LastName, AccountId FROM Contact",
+            "master": false
         },
         {
-            "operation": "Upsert", // Specifies the type of operation for Accounts.
-            "externalId": "Name", // The unique identifier for Accounts, used for upsert operations.
-            "query": "SELECT Name, Phone FROM Account WHERE Name = 'John Smith'" // Selects specific Accounts by Name for the operation.
+            "operation": "Upsert",
+            "externalId": "Name",
+            "query": "SELECT Name, Phone FROM Account WHERE Name = 'John Smith'"
         }
     ]
 }
 ```
 
+### Description of JSON Content:
+
+1. **First Object (Contact)**:
+   - **Operation:** "Upsert" - Can be "Update", "Upsert", "Insert", "Delete", among others as specified in the documentation.
+   - **External ID:** "LastName" - Used as the unique identifier for Contacts to support upsert operations.
+   - **Query:** "SELECT FirstName, LastName, AccountId FROM Contact" - Defines the fields to be transferred from the source to the target during the migration. This ensures that only the specified fields are processed.
+   - **Master:** `false` - This setting ensures that SFDMU only processes Contact records that are related to the specified Accounts.
+
+2. **Second Object (Account)**:
+   - **Operation:** "Upsert" - Specifies the type of operation for Accounts.
+   - **External ID:** "Name" - The unique identifier for Accounts, used for upsert operations.
+   - **Query:** "SELECT Name, Phone FROM Account WHERE Name = 'John Smith'" - Selects specific Accounts by Name for the operation. This ensures that only Accounts with the name "John Smith" are targeted for the upsert.
+
 ## Migration Execution:
 
-Execute migrations using commands tailored to your source and target, whether they are Salesforce orgs or CSV files:
+Navigate to the directory where your `export.json` file is located and execute migrations using commands tailored to your source and target, whether they are Salesforce orgs or CSV files:
 
 ```bash
 # Migrate data from one Salesforce org to another
@@ -86,7 +99,7 @@ $ sf sfdmu run --sourceusername source.org.username@name.com --targetusername cs
 $ sf sfdmu run --sourceusername csvfile --targetusername target.org.username@name.com
 ```
 
-Note: When importing or exporting from/to CSV files, ensure the files are located in the directory containing the `export.json` file. The files should be named according to the API name of the respective sObject, such as `Account.csv`, `Contact.csv`.
+Note: When importing or exporting from/to CSV files, ensure that the files are located in the directory containing the `export.json` file. The files should be named according to the API name of the respective sObject, such as `Account.csv`, `Contact.csv`. This naming convention helps in accurately mapping the data to the correct sObjects during the import or export process.
 
 **Watch the Demo:**
 
