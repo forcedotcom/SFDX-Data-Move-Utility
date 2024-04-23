@@ -1,3 +1,12 @@
+## [4.33.13](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.12...4.33.13) (2024-04-23)
+
+
+### Bug Fixes
+
+* Update to the latest oclif ([dba1672](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/dba16726274d7934261be4eb7b2199a4172ebbaf))
+
+
+
 ## [4.33.12](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.11...4.33.12) (2024-04-22)
 
 
