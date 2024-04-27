@@ -4,6 +4,7 @@
   "version": "4.33.13",
   "author": "Salesforce",
   "license": "BSD-3-Clause",
+  "developedBy": "Haim Knokh",
   "bugs": "https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues",
   "dependencies": {
     "@oclif/command": "^1.8.36",
@@ -68,7 +69,6 @@
     "open-source data loader",
     "fast data seeding"
   ],
-  "developedBy": "Haim Knokh",
   "oclif": {
     "commands": "./lib/commands",
     "bin": "sfdx",
