@@ -116,6 +116,7 @@ Note: When importing or exporting from/to CSV files, ensure that the files are l
 
 - [**Debugging Steps**](https://help.sfdmu.com/debugging)
 - [**Detailed export.json Format**](https://help.sfdmu.com/full-configuration)
+- [**SFDMU GUI Application Detailed Documentation**](https://help.sfdmu.com/sfdmu-gui-app)
 
 **Notes:** 
 
