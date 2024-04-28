@@ -8,13 +8,19 @@
 [![License](https://img.shields.io/npm/l/sfdmu.svg)](https://github.com/forcedotcom/SFDX-Data-Move-Utility/blob/master/LICENSE.txt)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-The Salesforce Data Move Utility (SFDMU) is an advanced SFDX plugin designed to streamline data migration within various Salesforce environments, including scratch, development, sandbox, and production orgs. It supports migration from other orgs or CSV files, efficiently managing various data operations and enabling the migration of multiple related sObjects in a single run.
+The **SFDX Data Move Utility (SFDMU)** is an advanced SFDX plugin designed to streamline data migration within various Salesforce environments, including scratch, development, sandbox, and production orgs. 
+
+This powerful tool supports migration from other Salesforce orgs or CSV files and efficiently manages various data operations, enabling the migration of **multiple related sObjects in a single run**.
 
 **Useful Resources:**
-- [**SFDMU GUI Application:**](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App) Download and configure migration jobs easily.
-- [**SFDMU Help Center:**](https://help.sfdmu.com/) Access comprehensive documentation.
-- [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) Review support guidelines before opening cases.
-- [**Contribution Policy:**](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to the SFDMU project.
+
+- **[SFDMU GUI Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **Elevate your experience with the dedicated** **SFDMU GUI Application.** 
+  Designed for ease of use, this intuitive graphical interface allows you to download, configure, and manage migration jobs effortlessly. 
+  Perfect for users who prefer a visual setup, it complements the core functionality of the SFDMU Plugin seamlessly, enhancing your ability to handle data migrations with precision and ease. 
+  Download and get started today to simplify your data migration processes.
+- [**SFDMU Help Center:**](https://help.sfdmu.com/) Comprehensive documentation available.
+- [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) Review guidelines before opening support cases.
+- [**Contribution Policy:**](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
 
 ## Key Features:
 - **Comprehensive Migration Support:** Enables direct Org-to-Org data migration, eliminating the need for CSV intermediates, and supports CRUD operations: Insert, Upsert, Update, Delete.
