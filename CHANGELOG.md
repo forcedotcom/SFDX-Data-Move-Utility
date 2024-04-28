@@ -1,3 +1,12 @@
+## [4.33.15](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.14...4.33.15) (2024-04-28)
+
+
+### Bug Fixes
+
+* Fixed field mapping eval regex expression ([98b649e](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/98b649e873cb860cdb8a5d1bf8333694c7e00604))
+
+
+
 ## [4.33.14](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.13...4.33.14) (2024-04-28)
 
 
