@@ -14,16 +14,9 @@ This powerful tool supports migration from other Salesforce orgs or CSV files an
 
 **Useful Resources:**
 
-- **[SFDMU GUI Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **Elevate your experience with the dedicated** **SFDMU GUI Application.** 
-
-  Designed for ease of use, this intuitive graphical interface allows you to download, configure, and manage migration jobs effortlessly. Perfect for users who prefer a visual setup, it complements the core functionality of the SFDMU Plugin seamlessly, enhancing your ability to handle data migrations with precision and ease. 
-
-  Download and get started today to simplify your data migration processes.
-
+- **[SFDMU GUI Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **A simple and intuitive GUI for creating and managing the `export.json` configuration file used by the SFDMU Plugin.** 
 - [**SFDMU Help Center:**](https://help.sfdmu.com/) Comprehensive documentation available.
-
 - [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) Review guidelines before opening support cases.
-
 - [**Contribution Policy:**](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
 
 ## Key Features:
