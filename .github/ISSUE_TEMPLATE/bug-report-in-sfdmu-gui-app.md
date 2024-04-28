@@ -17,4 +17,5 @@ Describe steps to reproduce the behavior.
 A clear and concise description of what you expected to happen.
 
 **Log file**
-Attach your relevant log file (as described here: [Logging in the SFDMU GUI App](https://help.sfdmu.com/sfdmu-gui-app#logging)
+Attach your relevant log file. 
+Reference: https://help.sfdmu.com/sfdmu-gui-app#logging
