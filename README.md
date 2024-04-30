@@ -30,7 +30,7 @@ This powerful tool supports migration from other Salesforce orgs or CSV files an
 ## Installation Instructions:
 1. **Prepare Environment:** Install the Salesforce CLI following the [official instructions](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm).
 2. **Plugin Installation:**
-   
+  
    ```bash
    # Uninstall old version, if any:
    $ sf plugins uninstall sfdmu
@@ -102,13 +102,15 @@ $ sf sfdmu run --sourceusername source.org.username@name.com --targetusername cs
 $ sf sfdmu run --sourceusername csvfile --targetusername target.org.username@name.com
 ```
 
-Note: When importing or exporting from/to CSV files, ensure that the files are located in the directory containing the `export.json` file. The files should be named according to the API name of the respective sObject, such as `Account.csv`, `Contact.csv`. This naming convention helps in accurately mapping the data to the correct sObjects during the import or export process.
+**Note:** 
 
-**Watch the Demo:**
+When importing or exporting from/to CSV files, ensure that the files are located in the directory containing the `export.json` file. The files should be named according to the API name of the respective sObject, such as `Account.csv`, `Contact.csv`. This naming convention helps in accurately mapping the data to the correct sObjects during the import or export process.
+
+## Whatch the Demo
 
 - Experience the plugin in action [here](https://www.youtube.com/watch?v=KI_1vD93prA).
 
-**Documentation Links:**
+## Documentation Links:
 - [**Getting Started**](https://help.sfdmu.com/get-started)
 - [**Installation Guide**](https://help.sfdmu.com/installation)
 - [**Configuration Tips**](https://help.sfdmu.com/configuration)
@@ -118,7 +120,7 @@ Note: When importing or exporting from/to CSV files, ensure that the files are l
 - [**Detailed export.json Format**](https://help.sfdmu.com/full-configuration)
 - [**SFDMU GUI Application Detailed Documentation**](https://help.sfdmu.com/sfdmu-gui-app)
 
-**Notes:** 
+## Additional Notes
 
 - If you encounter permission issues on MacOS, prepend your commands with `sudo`. Adjust CLI command syntax if using the older SFDX CLI platform.
 - To allow SFDMU to connect to your source and target orgs, ensure you have established a local connection to these orgs using the standard `sf org login web` commands, as detailed in the [Authorize an Org Using a Browser](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_web_flow.htm) documentation.
