@@ -8,32 +8,43 @@ jobs:
   respond:
     runs-on: ubuntu-latest
     steps:
-      - name: Delay
-        run: sleep 60     
-      
-      - name: Post Comment for 'bug'
-        if: contains(github.event.issue.labels.*.name, 'bug')
-        run: |
-          curl -X POST \
-          -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          -d '{"body":"Hello, @${{ github.event.issue.user.login }}\nThank you for reporting a bug. I will take a look at it as soon as possible and let you know of any updates.\nCheers"}' \
-          https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments
+    
+    - name: Random Delay
+      run: |
+        # Set minimum and maximum delay in minutes
+        MIN_DELAY=5  # n1 minutes
+        MAX_DELAY=15  # n2 minutes
 
-      - name: Post Comment for 'feature-request'
-        if: contains(github.event.issue.labels.*.name, 'feature-request')
-        run: |
-          curl -X POST \
-          -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          -d '{"body":"Hello, @${{ github.event.issue.user.login }}\nThank you for your feature request. I will review it as soon as possible and provide updates as they become available.\nCheers"}' \
-          https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments
+        # Generate a random delay between MIN_DELAY and MAX_DELAY
+        DELAY=$(( (RANDOM % (MAX_DELAY - MIN_DELAY + 1) + MIN_DELAY) * 60 ))
 
-      - name: Post Comment for 'help-wanted'
-        if: contains(github.event.issue.labels.*.name, 'help-wanted')
-        run: |
-          curl -X POST \
-          -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          -d '{"body":"Hello, @${{ github.event.issue.user.login }}\nThank you for reaching out. I will do my best to assist you as quickly as possible and will keep you updated on my progress.\nCheers"}' \
-          https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments
+        # Sleep for the randomly determined number of seconds
+        echo "Delaying for $((DELAY / 60)) minutes"
+        sleep $DELAY
+             
+    - name: Post Comment for 'bug'
+      if: contains(github.event.issue.labels.*.name, 'bug')
+      run: |
+        curl -X POST \
+        -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        -d '{"body":"Hello, @${{ github.event.issue.user.login }}\nThank you for reporting a bug. I will take a look at it as soon as possible and let you know of any updates.\nCheers"}' \
+        https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments
+
+    - name: Post Comment for 'feature-request'
+      if: contains(github.event.issue.labels.*.name, 'feature-request')
+      run: |
+        curl -X POST \
+        -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        -d '{"body":"Hello, @${{ github.event.issue.user.login }}\nThank you for your feature request. I will review it as soon as possible and provide updates as they become available.\nCheers"}' \
+        https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments
+
+    - name: Post Comment for 'help-wanted'
+      if: contains(github.event.issue.labels.*.name, 'help-wanted')
+      run: |
+        curl -X POST \
+        -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        -d '{"body":"Hello, @${{ github.event.issue.user.login }}\nThank you for reaching out. I will do my best to assist you as quickly as possible and will keep you updated on my progress.\nCheers"}' \
+        https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments
