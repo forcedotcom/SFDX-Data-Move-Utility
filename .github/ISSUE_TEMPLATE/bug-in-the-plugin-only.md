@@ -1,6 +1,6 @@
 ---
-name: BUG REPORT in the Sfdmu Plugin
-about: Report a bug in the Sfdmu Plugin
+name: Bug in the Plugin ONLY
+about: Report a bug in the SFDMU Plugin (NOT for GUI bugs!)
 title: "[BUG]-The bug title"
 labels: bug
 assignees: hknokh
