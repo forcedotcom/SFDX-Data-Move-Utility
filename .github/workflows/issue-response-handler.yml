@@ -12,8 +12,8 @@ jobs:
     - name: Random Delay
       run: |
         # Set minimum and maximum delay in minutes
-        MIN_DELAY=5  # n1 minutes
-        MAX_DELAY=15  # n2 minutes
+        MIN_DELAY=10  # n1 minutes
+        MAX_DELAY=30  # n2 minutes
 
         # Generate a random delay between MIN_DELAY and MAX_DELAY
         DELAY=$(( (RANDOM % (MAX_DELAY - MIN_DELAY + 1) + MIN_DELAY) * 60 ))
