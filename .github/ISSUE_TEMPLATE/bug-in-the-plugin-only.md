@@ -1,7 +1,8 @@
 ---
 name: Bug in the Plugin ONLY
 about: Report a bug in the SFDMU Plugin (NOT for GUI bugs!)
-title: "[BUG]-The bug title"
+title: "[BUG] - Make sure to replace this placeholder text with a specific title for
+  the issue!"
 labels: bug
 assignees: hknokh
 
