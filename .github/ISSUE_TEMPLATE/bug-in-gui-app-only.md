@@ -1,7 +1,8 @@
 ---
 name: Bug in GUI App ONLY
 about: Report a bug in the GUI App (NOT for Plugin bugs!)
-title: "[GUI-BUG]-The bug title"
+title: "[GUI-BUG] - Make sure to replace this placeholder text with a specific title
+  for the issue!"
 labels: bug, gui
 assignees: hknokh
 
