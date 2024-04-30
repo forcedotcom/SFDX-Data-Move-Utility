@@ -14,7 +14,7 @@ The **SFDX Data Move Utility (SFDMU)** is an advanced SFDX plugin designed to st
 
 This powerful tool supports migration from other Salesforce orgs or CSV files and efficiently manages various data operations, enabling the migration of **multiple related sObjects in a single run**.
 
-- **[SFDMU GUI Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **A simple and intuitive GUI for creating and managing the `export.json` configuration file used by the SFDMU Plugin.** 
+- **[SFDMU GUI Desktop Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **A simple and intuitive GUI for creating and managing the `export.json` configuration file used by the SFDMU Plugin.** 
 - [**SFDMU Help Center:**](https://help.sfdmu.com/) Comprehensive documentation available.
 - [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) Review guidelines before opening support cases.
 - [**Contribution Policy:**](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
