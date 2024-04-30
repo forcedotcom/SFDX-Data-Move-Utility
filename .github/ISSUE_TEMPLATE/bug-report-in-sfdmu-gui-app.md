@@ -2,7 +2,7 @@
 name: BUG REPORT in SFDMU GUI App
 about: Report a bug in the SFDMU GUI Application
 title: "[GUI-BUG]-The bug title"
-labels: bug
+labels: bug, gui
 assignees: hknokh
 
 ---
