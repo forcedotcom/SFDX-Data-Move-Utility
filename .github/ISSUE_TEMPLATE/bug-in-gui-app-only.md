@@ -1,7 +1,6 @@
 ---
-name: BUG in SFDMU GUI App ONLY
-about: Report a bug in the SFDMU GUI Application (use appropriate template for bug
-  in SFDMU Plugin)
+name: Bug in GUI App ONLY
+about: Report a bug in the GUI App (NOT for Plugin bugs!)
 title: "[GUI-BUG]-The bug title"
 labels: bug, gui
 assignees: hknokh
