@@ -8,6 +8,9 @@ jobs:
   respond:
     runs-on: ubuntu-latest
     steps:
+      - name: Delay
+        run: sleep 60     
+      
       - name: Post Comment for 'bug'
         if: contains(github.event.issue.labels.*.name, 'bug')
         run: |
