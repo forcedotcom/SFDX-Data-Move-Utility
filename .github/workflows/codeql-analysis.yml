@@ -1,13 +1,22 @@
 name: "CodeQL"
 
+permissions:
+  contents: read  # Default read-only at the top level  
+
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'src/**/*'  # Trigger only when files in src folder are changed
   pull_request:
     branches: [ master ]
+    paths:
+      - 'src/**/*'  # Trigger only when files in src folder are changed
   schedule:
     - cron: '0 14 * * 0'  # Schedule a weekly run
+  workflow_dispatch:  # Allows the workflow to be run manually
 
+  
 jobs:
   analyze:
     name: Analyze
