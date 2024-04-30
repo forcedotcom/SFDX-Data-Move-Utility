@@ -26,3 +26,22 @@ jobs:
           close-issue-message: "This case has been closed, since it has no activity for the last 6 days. Feel free to reopen it, if you need more help."
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Remove 'to-be-closed' label from closed issues
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { repo, owner } = context.repo;
+            const labelToRemove = "to-be-closed";
+            const query = `is:issue is:closed label:"${labelToRemove}" repo:${owner}/${repo}`;
+            const issues = await github.paginate(github.rest.search.issuesAndPullRequests, { q: query });
+            for (const issue of issues) {
+              await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number: issue.number,
+                name: labelToRemove,
+              });
+            }
+
+
