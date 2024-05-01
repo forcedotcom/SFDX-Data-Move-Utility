@@ -28,7 +28,7 @@
     "madge": "^3.8.0",
     "promise-parallel-throttle": "^3.4.1",
     "reflect-metadata": "^0.1.13",
-    "soql-parser-js": "^1.2.1",
+    "soql-parser-js": "^5.0.2",
     "tslib": "^1"
   },
   "devDependencies": {
