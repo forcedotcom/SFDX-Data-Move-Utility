@@ -19,17 +19,17 @@
     "casual": "^1.6.2",
     "class-transformer": "^0.5.1",
     "csv-parse": "^4.12.0",
-    "csv-writer": "^1.5.0",
+    "csv-writer": "^1.6.0",
     "deep.clone": "^2.1.2",
     "es6-shim": "^0.35.5",
     "fastest-levenshtein": "^1.0.16",
-    "glob": "^7.1.4",
+    "glob": "^10.3.12",
     "jsforce": "^1.11.1",
     "madge": "^3.8.0",
     "promise-parallel-throttle": "^3.4.1",
     "reflect-metadata": "^0.1.13",
     "soql-parser-js": "^1.2.1",
-    "tslib": "^1"
+    "tslib": "^2.6.2"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.26.10",
