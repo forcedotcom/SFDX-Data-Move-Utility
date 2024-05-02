@@ -21,3 +21,4 @@ updates:
   groups:
     security-updates:  
       applies-to: security-updates  
+      pattern: ["*"]
