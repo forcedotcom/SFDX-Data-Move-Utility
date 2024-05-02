@@ -7,7 +7,7 @@ updates:
     time: "07:00"
   allow:
       - dependency-type: "direct" # Optional: Focus on direct dependencies
-  open-pull-requests-limit: 0
+  open-pull-requests-limit: 10
   versioning-strategy: increase
   ignore:
       - dependency-name: "csv-parse" 
@@ -17,7 +17,4 @@ updates:
       - dependency-name: "nyc"
       - dependency-name: "@oclif/*"    
       - dependency-name: "soql-parser-js" 
-      - dependency-name: "@babel/*" 
-  groups:
-    security:  
-      applies-to: security-updates  
+      - dependency-name: "@babel/*"   
