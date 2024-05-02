@@ -10,4 +10,9 @@ updates:
   ignore:
       - dependency-name: "csv-parse" 
       - dependency-name: "globby" 
-        
+      - dependency-name: "madge"  
+      - dependency-name: "mocha"
+      - dependency-name: "nyc"
+      - dependency-name: "@oclif/*"    
+      - dependency-name: "soql-parser-js" 
+      - dependency-name: "@babel/*"  
