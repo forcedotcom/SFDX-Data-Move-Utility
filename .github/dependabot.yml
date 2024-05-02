@@ -7,7 +7,7 @@ updates:
     time: "07:00"
   allow:
       - dependency-type: "direct" # Optional: Focus on direct dependencies
-      update-types: ["security"]
+      - update-types: ["security"]
   open-pull-requests-limit: 10
   versioning-strategy: increase
   ignore:
