@@ -19,6 +19,5 @@ updates:
       - dependency-name: "soql-parser-js" 
       - dependency-name: "@babel/*" 
   groups:
-    security-updates:  
+    security:  
       applies-to: security-updates  
-      pattern: ["*"]
