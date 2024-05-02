@@ -1,7 +1,7 @@
 name: "CodeQL"
 
 permissions:
-  contents: read  # Default read-only at the top level  
+  contents: read 
 
 on:
   push:

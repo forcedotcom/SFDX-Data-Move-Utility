@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read  # Default read-only at the top level  
+  contents: read  
       
 jobs:
   close-stale-issues:
