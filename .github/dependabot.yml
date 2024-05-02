@@ -5,9 +5,12 @@ updates:
   schedule:
     interval: daily
     time: "07:00"
+  allow:
+      - dependency-type: "direct" # Optional: Focus on direct dependencies
   open-pull-requests-limit: 10
   versioning-strategy: increase
   ignore:
+      - update-types: ["version-update:semver-patch", "version-update:semver-minor", "version-update:semver-major"]
       - dependency-name: "csv-parse" 
       - dependency-name: "globby" 
       - dependency-name: "madge"  
