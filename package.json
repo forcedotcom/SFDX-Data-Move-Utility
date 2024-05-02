@@ -56,20 +56,7 @@
     "/oclif.manifest.json"
   ],
   "homepage": "https://help.sfdmu.com",
-  "keywords": [
-    "sfdx plugin",
-    "data migration",
-    "data loader",
-    "salesforce data migration",
-    "migrating salesforce data",
-    "salesforce data migration tool",
-    "salesforce data loader",
-    "sfdx data loader",
-    "sfdmu",
-    "sfdx data move utility",
-    "open-source data loader",
-    "fast data seeding"
-  ],
+  "keywords": [],
   "oclif": {
     "commands": "./lib/commands",
     "bin": "sfdx",
