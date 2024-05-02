@@ -27,7 +27,7 @@
     "jsforce": "^1.11.1",
     "madge": "^3.8.0",
     "promise-parallel-throttle": "^3.4.1",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.2",
     "soql-parser-js": "^1.2.1",
     "tslib": "^2.6.2"
   },
