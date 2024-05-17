@@ -1,6 +1,6 @@
 ---
 name: ASK QUESTION - Plugin Only!
-about: Ask question or any help needed (not a bug or feature request)
+about: 'Ask question or any help needed for SFDMU Plugin '
 title: "[QUESTION] - Make sure to replace this placeholder text with a specific title
   for the issue!"
 labels: help-wanted
