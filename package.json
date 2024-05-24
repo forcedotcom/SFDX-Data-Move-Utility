@@ -15,7 +15,7 @@
     "@salesforce/core": "^7.3.3",
     "@salesforce/dev-config": "^4.1.0",
     "@types/bunyan": "^1.8.11",
-    "alasql": "^0.6.4",
+    "alasql": "^4.4.0",
     "casual": "^1.6.2",
     "class-transformer": "^0.5.1",
     "csv-parse": "^4.12.0",
