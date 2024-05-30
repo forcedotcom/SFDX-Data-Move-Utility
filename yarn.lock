@@ -4193,10 +4193,10 @@ process@^0.11.10:
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
 
-promise-parallel-throttle@^3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/promise-parallel-throttle/-/promise-parallel-throttle-3.4.1.tgz#d415a8645298a820b7b6e6c1909b44335e37b3a3"
-  integrity sha512-aurKMPfoh9rhyS9AO7y0k7UmTzMTfxn55GZLP2415anFuHo0vaG4TOE1nOprAjD/GP2uNT0rkWwRH7Ihdt7y5A==
+promise-parallel-throttle@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/promise-parallel-throttle/-/promise-parallel-throttle-3.5.0.tgz#9d527c71b1e399a73f8f3f1112cd3a692c01cde5"
+  integrity sha512-PXqj8TEaYMV6pQd6IVPoMjRrOHh2o/vxbWbt5eUxPuuAplrLgcdzo3KGqh2aT0A4Se6JSQxoGnB8CSIXeAOLvQ==
 
 promise@^7.1.1:
   version "7.3.1"
