@@ -643,16 +643,16 @@
     jsonwebtoken "9.0.0"
     ts-retry-promise "^0.7.0"
 
-"@salesforce/core@^7.3.3":
-  version "7.3.3"
-  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-7.3.3.tgz#4b84aba806264dd13716f4c4774bd5a417259662"
-  integrity sha512-THjYnOrfj0vW+qvlm70NDasH3RHD03cm884yi1+1axA4ugS4FFxXrPDPWAEU5ve5B4vnT7CJfuD/Q56l67ug8w==
+"@salesforce/core@^7.3.10":
+  version "7.3.10"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-7.3.10.tgz#83da85c4e93ca625e2c13118aad9c1df2931bc0f"
+  integrity sha512-kEKoqkmhWNoiucAE3Ylv6FpC4iVgk4aE0dmcwSmNrMjxSbtjQJGUybprfO/itrLJv+56eM7/4FARQQ2gDbRzQQ==
   dependencies:
     "@jsforce/jsforce-node" "^3.2.0"
     "@salesforce/kit" "^3.1.1"
-    "@salesforce/schemas" "^1.7.0"
+    "@salesforce/schemas" "^1.9.0"
     "@salesforce/ts-types" "^2.0.9"
-    ajv "^8.12.0"
+    ajv "^8.15.0"
     change-case "^4.1.2"
     faye "^1.4.0"
     form-data "^4.0.0"
@@ -660,11 +660,11 @@
     jsonwebtoken "9.0.2"
     jszip "3.10.1"
     pino "^8.21.0"
-    pino-abstract-transport "^1.1.0"
+    pino-abstract-transport "^1.2.0"
     pino-pretty "^10.3.1"
     proper-lockfile "^4.1.2"
-    semver "^7.6.0"
-    ts-retry-promise "^0.7.1"
+    semver "^7.6.2"
+    ts-retry-promise "^0.8.1"
 
 "@salesforce/dev-config@^4.1.0":
   version "4.1.0"
@@ -688,10 +688,10 @@
     "@salesforce/ts-types" "^2.0.9"
     tslib "^2.6.2"
 
-"@salesforce/schemas@^1.5.1", "@salesforce/schemas@^1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/schemas/-/schemas-1.7.0.tgz#b7e0af3ee414ae7160bce351c0184d77ccb98fe3"
-  integrity sha512-Z0PiCEV55khm0PG+DsnRYCjaDmacNe3HDmsoSm/CSyYvJJm+D5vvkHKN9/PKD/gaRe8XAU836yfamIYFblLINw==
+"@salesforce/schemas@^1.5.1", "@salesforce/schemas@^1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/schemas/-/schemas-1.9.0.tgz#ba477a112653a20b4edcf989c61c57bdff9aa3ca"
+  integrity sha512-LiN37zG5ODT6z70sL1fxF7BQwtCX9JOWofSU8iliSNIM+WDEeinnoFtVqPInRSNt8I0RiJxIKCrqstsmQRBNvA==
 
 "@salesforce/ts-types@^1.7.1", "@salesforce/ts-types@^1.7.2", "@salesforce/ts-types@^1.7.3":
   version "1.7.3"
@@ -920,15 +920,15 @@ ajv@^6.12.3:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@^8.12.0:
-  version "8.13.0"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.13.0.tgz#a3939eaec9fb80d217ddf0c3376948c023f28c91"
-  integrity sha512-PRA911Blj99jR5RMeTunVbNXMF6Lp4vZXnk5GQjcnUWUTsrXtekg/pnmFFI2u/I36Y/2bITGS30GZCXei6uNkA==
+ajv@^8.12.0, ajv@^8.15.0:
+  version "8.15.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.15.0.tgz#d918c661e3e820bbbc65a320e182ee56a1aa978a"
+  integrity sha512-15BTtQUOsSrmHCy+B4VnAiJAJxJ8IFgu6fcjFQF3jQYZ78nLSQthlFg4ehp+NLIyfvFgOlxNsjKIEhydtFPVHQ==
   dependencies:
     fast-deep-equal "^3.1.3"
+    fast-uri "^2.3.0"
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
-    uri-js "^4.4.1"
 
 alasql@^0.6.4:
   version "0.6.7"
@@ -2250,6 +2250,11 @@ fast-safe-stringify@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.1.1.tgz#c406a83b6e70d9e35ce3b30a81141df30aeba884"
   integrity sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==
+
+fast-uri@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-2.3.0.tgz#bdae493942483d299e7285dcb4627767d42e2793"
+  integrity sha512-eel5UKGn369gGEWOqBShmFJWfq/xSJvsgDzgLYC845GneayWvXBf0lJCBn5qTABfewy1ZDPoaR5OZCP+kssfuw==
 
 fastest-levenshtein@^1.0.16:
   version "1.0.16"
@@ -4061,7 +4066,7 @@ pify@^4.0.1:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pino-abstract-transport@^1.0.0, pino-abstract-transport@^1.1.0, pino-abstract-transport@^1.2.0:
+pino-abstract-transport@^1.0.0, pino-abstract-transport@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pino-abstract-transport/-/pino-abstract-transport-1.2.0.tgz#97f9f2631931e242da531b5c66d3079c12c9d1b5"
   integrity sha512-Guhh8EZfPCfH+PMXAb6rKOjGQEoy0xlAIn+irODG5kgfYV+BQ0rGYYWTIel3P5mmyXqkYkPmdIkywsn6QKUR1Q==
@@ -4575,12 +4580,10 @@ semver@^6.0.0, semver@^6.3.0, semver@^6.3.1:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
-semver@^7.3.2, semver@^7.3.4, semver@^7.3.7, semver@^7.3.8, semver@^7.5.3, semver@^7.5.4, semver@^7.6.0:
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-7.6.0.tgz#1a46a4db4bffcccd97b743b5005c8325f23d4e2d"
-  integrity sha512-EnwXhrlwXMk9gKu5/flx5sv/an57AkRplG3hTK68W7FRDN+k+OWBj65M7719OkA82XLBxrcX0KSHj+X5COhOVg==
-  dependencies:
-    lru-cache "^6.0.0"
+semver@^7.3.2, semver@^7.3.4, semver@^7.3.7, semver@^7.3.8, semver@^7.5.3, semver@^7.5.4, semver@^7.6.2:
+  version "7.6.2"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.6.2.tgz#1e3b34759f896e8f14d6134732ce798aeb0c6e13"
+  integrity sha512-FNAIBWCx9qcRhoHcgcJ0gvU7SN1lYU2ZXuSfl04bSC5OpvDHFyJCjdNHomPXxjQlCBU67YW64PzY7/VIEH7F2w==
 
 sentence-case@^3.0.4:
   version "3.0.4"
@@ -5070,10 +5073,15 @@ ts-node@^10.9.1, ts-node@^10.9.2:
     v8-compile-cache-lib "^3.0.1"
     yn "3.1.1"
 
-ts-retry-promise@^0.7.0, ts-retry-promise@^0.7.1:
+ts-retry-promise@^0.7.0:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ts-retry-promise/-/ts-retry-promise-0.7.1.tgz#176d6eee6415f07b6c7c286d3657355e284a6906"
   integrity sha512-NhHOCZ2AQORvH42hOPO5UZxShlcuiRtm7P2jIq2L2RY3PBxw2mLnUsEdHrIslVBFya1v5aZmrR55lWkzo13LrQ==
+
+ts-retry-promise@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/ts-retry-promise/-/ts-retry-promise-0.8.1.tgz#ba90eb07cb03677fcbf78fe38e94c9183927e154"
+  integrity sha512-+AHPUmAhr5bSRRK5CurE9kNH8gZlEHnCgusZ0zy2bjfatUBDX0h6vGQjiT0YrGwSDwRZmU+bapeX6mj55FOPvg==
 
 tslib@^1.13.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.14.1"
@@ -5214,7 +5222,7 @@ upper-case@^2.0.2:
   dependencies:
     tslib "^2.0.3"
 
-uri-js@^4.2.2, uri-js@^4.4.1:
+uri-js@^4.2.2:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/uri-js/-/uri-js-4.4.1.tgz#9b1a52595225859e55f669d928f88c6c57f2a77e"
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
