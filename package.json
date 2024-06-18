@@ -37,7 +37,7 @@
     "@oclif/test": "^3.2.10",
     "@types/chai": "^4.3.14",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.14.5",
     "chai": "^5.1.0",
     "globby": "11.0.0",
     "mocha": "^10.4.0",
