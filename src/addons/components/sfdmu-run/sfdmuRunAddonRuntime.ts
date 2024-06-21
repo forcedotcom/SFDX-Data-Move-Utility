@@ -119,10 +119,11 @@ export default class SfdmuRunAddonRuntime extends AddonRuntime implements ISfdmu
    * @param {string} [fieldName="Id"] The field of the IN clause
    * @param {string} sObjectName The object api name to select
    * @param {string[]} valuesIN The array of values to use in the IN clause
+   * @param {string} orderBy Order returned records by a field
    * @returns {string[]} The array of SOQLs depend on the given values to include all of them
    */
-  createFieldInQueries(selectFields: string[], fieldName: string = "Id", sObjectName: string, valuesIN: string[], whereClause?: string): string[] {
-    return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN, whereClause);
+  createFieldInQueries(selectFields: string[], fieldName: string = "Id", sObjectName: string, valuesIN: string[], whereClause?: string, orderBy?: string): string[] {
+    return Common.createFieldInQueries(selectFields, fieldName, sObjectName, valuesIN, whereClause, orderBy);
   }
 
 
