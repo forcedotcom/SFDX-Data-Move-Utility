@@ -666,10 +666,10 @@
     semver "^7.6.0"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/dev-config@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.1.0.tgz#e529576466d074e7a5f1441236510fef123da01e"
-  integrity sha512-2iDDepiIwjXHS5IVY7pwv8jMo4xWosJ7p/UTj+lllpB/gnJiYLhjJPE4Z3FCGFKyvfg5jGaimCd8Ca6bLGsCQA==
+"@salesforce/dev-config@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@salesforce/dev-config/-/dev-config-4.2.0.tgz#65a59b95aeb4f5512435770da43cba780aa0cfc7"
+  integrity sha512-ahmHPhUslKhIe6qCaZTmMmHZrTXRhUcoMXVimEJaDPxTw2q3Dloq/lehWZdhLsRQCDKscP0WPIOdKulIgZJFBg==
 
 "@salesforce/kit@^1.8.5", "@salesforce/kit@^1.9.2":
   version "1.9.2"
