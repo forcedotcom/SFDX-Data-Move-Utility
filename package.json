@@ -24,7 +24,7 @@
     "es6-shim": "^0.35.5",
     "fastest-levenshtein": "^1.0.16",
     "glob": "^10.3.12",
-    "jsforce": "^1.11.1",
+    "jsforce": "^3.3.3",
     "madge": "^3.8.0",
     "promise-parallel-throttle": "^3.4.1",
     "reflect-metadata": "^0.1.13",
