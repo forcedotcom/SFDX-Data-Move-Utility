@@ -40,6 +40,11 @@ interface IOnExecuteArguments {
    */
   targetWhere: string;
 
+  /**
+   * Order how the content document links are populated.
+   * ORDER BY [contentDocumentLinkOrderBy].
+   */
+  contentDocumentLinkOrderBy: string;
 
   /**
    * For optimized porocessing, files are grouped into multiple chunks and uploaded sequentially.
@@ -297,7 +302,7 @@ export default class ExportFiles extends SfdmuRunAddonModule {
           ['Id', 'LinkedEntityId', 'ContentDocumentId', 'ShareType', 'Visibility'],
           'LinkedEntityId',
           'ContentDocumentLink',
-          [...task.sourceTaskData.idRecordsMap.keys()]);
+          [...task.sourceTaskData.idRecordsMap.keys()], '', args.contentDocumentLinkOrderBy);
 
         let contentDocLinks = await _self.runtime.queryMultiAsync(true, queries);
         sourceFiles.recIdToDocLinks = Common.arrayToMapMulti(contentDocLinks, ['LinkedEntityId']);
