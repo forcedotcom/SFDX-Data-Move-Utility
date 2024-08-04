@@ -105,7 +105,7 @@ $ sf sfdmu run --sourceusername csvfile --targetusername target.org.username@nam
 
 When importing or exporting from/to CSV files, ensure that the files are located in the directory containing the `export.json` file. The files should be named according to the API name of the respective sObject, such as `Account.csv`, `Contact.csv`. This naming convention helps in accurately mapping the data to the correct sObjects during the import or export process.
 
-## Whatch the Demo
+## Watch the Demo
 
 - Experience the plugin in action [here](https://www.youtube.com/watch?v=KI_1vD93prA).
 
