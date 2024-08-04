@@ -1047,6 +1047,7 @@ export default class MigrationJobTask {
         this.logger.infoNormal(RESOURCES.writingToFile, this.sObjectName, this.data.csvFilename);
         let records = await ___filterRecords(this.sourceData.records);
         records = ___mockRecords(records);
+        self.mapRecords(records);
         records = ___removeCSVFileColumns(records);
         await ___writeToTargetCSVFile(records);
         await Common.writeCsvFileAsync(self.data.csvFilename, records, true);
