@@ -1,3 +1,12 @@
+## [4.33.18](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.17...4.33.18) (2024-08-04)
+
+
+### Bug Fixes
+
+* perform value mapping when exporting to CSV ([f53e0ab](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/f53e0ab4626605ff056341b7a979f8a2c55f5026))
+
+
+
 ## [4.33.17](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.16...4.33.17) (2024-05-02)
 
 
