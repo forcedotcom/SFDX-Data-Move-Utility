@@ -1,3 +1,12 @@
+## [4.33.19](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.18...4.33.19) (2024-08-09)
+
+
+### Bug Fixes
+
+* fixed lookup search in cor:RecordsTransform ([2b99f5a](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/2b99f5aebc35b10da1483cac4dfb95f7bb5626a7))
+
+
+
 ## [4.33.18](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.17...4.33.18) (2024-08-04)
 
 
