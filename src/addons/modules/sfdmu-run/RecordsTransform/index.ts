@@ -285,7 +285,7 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
             let sourceRecords = field.sourceTask.sourceTaskData.records;
             let targetRecords = field.sourceTask.targetTaskData.records;
 
-            if (transformation.targetObject == field.sourceObject) {
+            if (transformation.targetObject == field.sourceObject || !!field.lookupExpression) {
               // Same object => direct transformation (formula[accountCategory] = Account.Category__c)
               __setFormulaValue(formula, transformedRecord, transformedRecord, field, sourceRecords, targetRecords);
             } else {
