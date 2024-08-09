@@ -26,7 +26,7 @@
     "glob": "^10.3.12",
     "jsforce": "^1.11.1",
     "madge": "^3.8.0",
-    "promise-parallel-throttle": "^3.4.1",
+    "promise-parallel-throttle": "^3.5.0",
     "reflect-metadata": "^0.1.13",
     "soql-parser-js": "^1.2.1",
     "tslib": "^2.6.2"
