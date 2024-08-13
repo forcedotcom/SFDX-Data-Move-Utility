@@ -554,7 +554,7 @@ export default class MigrationJobTask {
                   cachedCSVContent.updatedFilenames.add(childTask.data.sourceCsvFilename);
                 }
               });
-            } 
+            }
             // else {
             //   csvIssues.push({
             //     "Date update": Common.formatDateTime(new Date()),
@@ -1641,7 +1641,7 @@ export default class MigrationJobTask {
             let fn = mockField.pattern;
             let mockFieldNameToUse = mockField.name == CONSTANTS.MOCK_ALL_FIELDS_PATTERN ? fieldDescribe.name : mockField.name;
             if (CONSTANTS.SPECIAL_MOCK_COMMANDS.some(x => fn.startsWith(x + "("))) {
-              fn = fn.replace(/\(/, `('${mockFieldNameToUse}',`);
+              fn = fn.replace(/\(/, `('${mockFieldNameToUse}',`).replace(/\)/, ', value)');
             }
             mockField.excludedRegex = mockField.excludedRegex || '';
             mockField.includedRegex = mockField.includedRegex || '';
@@ -1681,7 +1681,8 @@ export default class MigrationJobTask {
           if (!doNotMock) {
             [...fieldNameToMockFieldMap.keys()].forEach(fieldName => {
               if (mockAllRecord || fieldsToMockMap.has(fieldName)) {
-                let mockField = fieldNameToMockFieldMap.get(fieldName);
+                const mockField = fieldNameToMockFieldMap.get(fieldName);
+                const value = updatedRecord[fieldName]; value == value;
                 if (mockField.fn == "ids") {
                   updatedRecord[fieldName] = recordIds[index];
                 } else {

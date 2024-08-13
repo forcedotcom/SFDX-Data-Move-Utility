@@ -5,6 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import { CONSTANTS } from "./statics";
+
 
 
 /**
@@ -46,8 +48,11 @@ export class MockGenerator {
             return prefix + self.counter.counter[field];
         });
 
-        casual.define('c_set_value', function (field : any, value: any = null) {
-          return value;
+        casual.define('c_set_value', function (field: any, value: any = null, originalValue: any = null) {
+            if (typeof value == 'string') {
+                return value.replace(CONSTANTS.MOCK_EXPRESSION_ORIGINAL_VALUE, originalValue);
+            }
+            return value;
         });
 
         casual.define('c_seq_date', function (field: any, from: any, step: any) {
