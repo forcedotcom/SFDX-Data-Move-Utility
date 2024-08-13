@@ -1191,6 +1191,7 @@ export class Common {
      * @param {string} [fieldName="Id"] The field name to use in the  WHERE Field IN (Values) clause
      * @param {Array<string>} valuesIN Values to use in in the WHERE Field IN (Values) clause
      * @param {string} whereClause The additional where clause to add besides the IN, like (Id Name ('Name1', 'Name2)) AND (Field__c = 'value')
+     * @param {string} orderByClause Specify how records are ordered i.e. ORDER By CreatedDate
      * @returns {Array<string>} Returns an array of SOQLs
      * @memberof SfdxUtils
      */
@@ -1199,7 +1200,8 @@ export class Common {
     fieldName: string = "Id",
     sObjectName: string,
     valuesIN: Array<string>,
-    whereClause?: string): Array<string> {
+    whereClause?: string,
+    orderByClause?: string): Array<string> {
 
     if (valuesIN.length == 0) {
       return new Array<string>();
@@ -1219,6 +1221,11 @@ export class Common {
       parsedWhere = whereClause && parseQuery('SELECT Id FROM Account WHERE (' + whereClause + ')');
       //parsedWhere.where.left.openParen = 1;
       //parsedWhere.where.left.closeParen = 1;
+    }
+
+    let parsedOrderBy: Query;
+    if(orderByClause){
+      parsedOrderBy = orderByClause && parseQuery('SELECT Id FROM Account ORDER BY ' + orderByClause + '')
     }
 
 
@@ -1247,6 +1254,11 @@ export class Common {
           tempQuery.where.right = parsedWhere.where;
           tempQuery.where.operator = "AND";
         }
+
+        if(parsedOrderBy){
+          tempQuery.orderBy = parsedOrderBy.orderBy
+        }
+
         yield composeQuery(tempQuery);
 
         whereValues = new Array<string>();
