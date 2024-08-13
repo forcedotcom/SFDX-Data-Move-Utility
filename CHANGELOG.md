@@ -1,3 +1,12 @@
+## [4.34.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.1...4.34.2) (2024-08-13)
+
+
+### Bug Fixes
+
+* add keywords for better discoverability via npmjs.com ([45fe123](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/45fe1232ff50a5220b80074e72b038d853236cd3)), closes [/github.com/salesforcecli/plugin-dev/blob/main/test/fixtures/plugin-test/package.json#L35-L43](https://github.com//github.com/salesforcecli/plugin-dev/blob/main/test/fixtures/plugin-test/package.json/issues/L35-L43)
+
+
+
 ## [4.34.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.0...4.34.1) (2024-08-13)
 
 
