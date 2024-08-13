@@ -1,3 +1,12 @@
+## [4.34.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.0...4.34.1) (2024-08-13)
+
+
+### Bug Fixes
+
+* fixed 'parse is not a function' error ([4364ad2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/4364ad213e36f6ad82abae9cc1e57b32b5d1a33c))
+
+
+
 # [4.34.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.19...4.34.0) (2024-08-13)
 
 
