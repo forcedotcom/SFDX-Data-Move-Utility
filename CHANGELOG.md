@@ -1,3 +1,12 @@
+# [4.35.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.2...4.35.0) (2024-08-13)
+
+
+### Features
+
+* Added support to use order by in SOQL queries for the core:ExportFiles Add On [#779](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/779) ([2d7f74f](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/2d7f74fd1ce6138ff1e829613d8af24c21b270c7))
+
+
+
 ## [4.34.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.1...4.34.2) (2024-08-13)
 
 
