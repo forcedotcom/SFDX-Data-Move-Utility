@@ -1216,18 +1216,16 @@ export class Common {
     };
     let whereValuesCounter: number = 0;
     let whereValues = new Array<string>();
+
     let parsedWhere: Query;
     if (whereClause) {
-      parsedWhere = whereClause && parseQuery('SELECT Id FROM Account WHERE (' + whereClause + ')');
-      //parsedWhere.where.left.openParen = 1;
-      //parsedWhere.where.left.closeParen = 1;
+      parsedWhere = parseQuery('SELECT Id FROM Account WHERE (' + whereClause + ')');
     }
 
     let parsedOrderBy: Query;
-    if(orderByClause){
-      parsedOrderBy = orderByClause && parseQuery('SELECT Id FROM Account ORDER BY ' + orderByClause + '')
+    if (orderByClause) {
+      parsedOrderBy = parseQuery('SELECT Id FROM Account ORDER BY ' + orderByClause + '')
     }
-
 
     function* queryGen() {
       while (true) {
@@ -1255,7 +1253,7 @@ export class Common {
           tempQuery.where.operator = "AND";
         }
 
-        if(parsedOrderBy){
+        if (parsedOrderBy) {
           tempQuery.orderBy = parsedOrderBy.orderBy
         }
 
