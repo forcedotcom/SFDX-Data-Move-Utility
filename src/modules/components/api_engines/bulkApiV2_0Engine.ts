@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
-
-import * as parse2 from 'csv-parse/lib/sync';
+const parse2 = require('csv-parse/lib/sync');
+//import * as parse2 from 'csv-parse/lib/sync';
 
 import {
   ApiEngineBase,

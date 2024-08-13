@@ -8,7 +8,8 @@
 
 import { Buffer } from 'buffer';
 import { execSync } from 'child_process';
-import * as parse2 from 'csv-parse/lib/sync';
+//import * as parse2 from 'csv-parse/sync';
+const parse2 = require('csv-parse/lib/sync');
 import * as fs from 'fs';
 import * as glob2 from 'glob';
 import * as path from 'path';
