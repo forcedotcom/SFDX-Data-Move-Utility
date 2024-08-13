@@ -1,3 +1,12 @@
+# [4.34.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.19...4.34.0) (2024-08-13)
+
+
+### Features
+
+* Added RAW_VALUE placement to c_set_value anonymization pattern ([52e2343](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/52e23434875b6bec813c2a233438e01b450764c8))
+
+
+
 ## [4.33.19](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.18...4.33.19) (2024-08-09)
 
 
