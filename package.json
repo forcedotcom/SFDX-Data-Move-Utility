@@ -56,7 +56,15 @@
     "/oclif.manifest.json"
   ],
   "homepage": "https://help.sfdmu.com",
-  "keywords": [],
+  "keywords": [
+    "force",
+    "salesforce",
+    "salesforcedx",
+    "sf",
+    "sf-plugin",
+    "sfdx",
+    "sfdx-plugin"
+  ],
   "oclif": {
     "commands": "./lib/commands",
     "bin": "sfdx",
