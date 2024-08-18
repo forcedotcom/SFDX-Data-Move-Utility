@@ -78,6 +78,10 @@ export default class ScriptOrg implements IAppScriptOrg, ISfdmuRunCustomAddonScr
     return this.media == DATA_MEDIA_TYPE.File;
   }
 
+  get isOrgMedia(): boolean {
+    return this.media == DATA_MEDIA_TYPE.Org;
+  }
+
   get isDescribed(): boolean {
     return this.orgDescribe.size > 0;
   }

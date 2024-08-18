@@ -1293,6 +1293,10 @@ export default class MigrationJobTask {
         processedData.recordsToInsert = __filterInserts(processedData.recordsToInsert);
         processedData.recordsToUpdate = __filterUpdates(processedData.recordsToUpdate);
 
+        // Final data transforation (for example to set #N/A values)
+        __finalDataTransformation(processedData.recordsToInsert);
+        __finalDataTransformation(processedData.recordsToUpdate);
+
       }
 
       return processedData;
@@ -1604,6 +1608,19 @@ export default class MigrationJobTask {
     function __filterUpdates(records: Array<any>): Array<any> {
       // TODO: Optional, implement this if needed
       return records;
+    }
+
+
+    function __finalDataTransformation(records: Array<any>): void {
+      if (self.script.sourceOrg.isOrgMedia) {
+        records.forEach(record => {
+          Object.keys(record).forEach(fieldName => {
+            if (record[fieldName] == null) {
+              record[fieldName] = '#N/A';
+            }
+          });
+        });
+      }
     }
 
     function ___truncateRecords(records: Array<any>): Array<any> {

@@ -46,6 +46,9 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
   }
 
   async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
+
+    this._fixRecords(allRecords);
+
     let connection = Sfdx.createOrgConnection(this.connectionData);
     connection.bulk.pollTimeout = CONSTANTS.POLL_TIMEOUT;
     let job = connection.bulk.createJob(
@@ -212,5 +215,14 @@ export class BulkApiV1_0Engine extends ApiEngineBase implements IApiEngine {
 
 
   // ----------------------- ---------------- -------------------------------------------
+  private _fixRecords(allRecords: Array<any>) {
+    allRecords.forEach(record => {
+      Object.keys(record).forEach(key => {
+        if (record[key] === '#N/A') {
+          record[key] = null;
+        }
+      });
+    });
+  }
 
 }

@@ -803,9 +803,6 @@ export class Common {
       if (context.header || typeof context.column == "undefined") {
         return value;
       }
-      if (value == "#N/A") {
-        return null;
-      }
       let fieldType = columnToColumnDataTypeMap && columnToColumnDataTypeMap.get(context.column);
       if (fieldType == "boolean") {
         if (value == "1" || value == "TRUE" || value == "true")

@@ -7,14 +7,14 @@
 
 import { CsvChunks } from '../../models';
 import {
-  ApiEngineBase,
-  ApiInfo,
-  IApiEngineInitParameters,
+    ApiEngineBase,
+    ApiInfo,
+    IApiEngineInitParameters,
 } from '../../models/api_models';
 import {
-  IApiEngine,
-  IApiJobCreateResult,
-  ICsvChunk,
+    IApiEngine,
+    IApiJobCreateResult,
+    ICsvChunk,
 } from '../../models/api_models/helper_interfaces';
 import { Common } from '../common_components/common';
 import { OPERATION } from '../common_components/enumerations';
@@ -42,9 +42,12 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
     }
 
     async createCRUDApiJobAsync(allRecords: Array<any>): Promise<IApiJobCreateResult> {
+
+        this._fixRecords(allRecords);
+
         let connection = Sfdx.createOrgConnection(this.connectionData);
         let chunks: CsvChunks;
-        if (!this.restApiBatchSize){
+        if (!this.restApiBatchSize) {
             chunks = new CsvChunks().fromArray(this.getSourceRecordsArray(allRecords));
         } else {
             let recordChunks = Common.chunkArray(this.getSourceRecordsArray(allRecords), this.restApiBatchSize);
@@ -139,7 +142,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                     }
                 });
                 if (progressCallback) {
-                    if (self.numberJobRecordsFailed > 0)  {
+                    if (self.numberJobRecordsFailed > 0) {
                         // Some records are failed
                         progressCallback(new ApiInfo({
                             jobState: "JobComplete",
@@ -150,7 +153,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                         }));
                     }
                     // Progress message: operation finished
-                    if (self.numberJobRecordProcessed == self.numberJobTotalRecordsToProcess){
+                    if (self.numberJobRecordProcessed == self.numberJobTotalRecordsToProcess) {
                         progressCallback(new ApiInfo({
                             jobState: "OperationFinished",
                             numberRecordsProcessed: self.numberJobRecordProcessed,
@@ -159,7 +162,7 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
                             batchId: apiInfo.batchId
                         }));
                     } else {
-                        progressCallback (new ApiInfo({
+                        progressCallback(new ApiInfo({
                             jobState: "InProgress",
                             numberRecordsProcessed: self.numberJobRecordProcessed,
                             numberRecordsFailed: self.numberJobRecordsFailed,
@@ -177,7 +180,17 @@ export class RestApiEngine extends ApiEngineBase implements IApiEngine {
     getEngineClassType(): typeof ApiEngineBase {
         return RestApiEngine;
     }
+
     // ----------------------- ---------------- -------------------------------------------
+    private _fixRecords(allRecords: Array<any>) {
+        allRecords.forEach(record => {
+            Object.keys(record).forEach(key => {
+                if (record[key] === '#N/A') {
+                    record[key] = null;
+                }
+            });
+        });
+    }
 
 
 
