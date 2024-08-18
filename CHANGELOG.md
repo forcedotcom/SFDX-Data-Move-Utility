@@ -1,3 +1,12 @@
+## [4.35.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.35.0...4.35.1) (2024-08-18)
+
+
+### Bug Fixes
+
+* option to use #N/A to clear the target field and null to retain it in Bulk API 2.0. ([a7e506b](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/a7e506b2e2d75f80c8b42447206ff396bc15637f))
+
+
+
 # [4.35.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.2...4.35.0) (2024-08-13)
 
 
