@@ -44,11 +44,13 @@ interface IField {
   isConstant: boolean;
   lookupExpression: string;
   lookupSource: 'source' | 'target';
+  valueSource: 'source' | 'target';
 
   // Runtime ------
   sourceTask: SfdmuRunAddonTask,
   lookupFieldMap: Map<string, string[]>, // referenced object => child id fields
   constantValue: any;
+  targetToSourceRecordMap: Map<any, any>
 }
 
 interface IOnExecuteArguments {
@@ -239,11 +241,14 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
                 field.sourceObject);
             } else {
               fieldsMap.set(field.alias, Object.assign(field, {
-                sourceTask: task,
-                lookupFieldMap: __getLookups(task.fieldsInQueryMap)
-              }));
+                sourceTask: task,               
+                lookupFieldMap: __getLookups(task.fieldsInQueryMap),
+                targetToSourceRecordMap: new Map<any, any>()
+              } as IField));
             }
-
+            task.sourceToTargetRecordMap.forEach((targetRecord, sourceRecord) => {
+              fieldsMap.get(field.alias).targetToSourceRecordMap.set(targetRecord, sourceRecord);
+            });
           }
         }
       });
@@ -279,38 +284,50 @@ export default class RecordsTransform extends SfdmuRunAddonModule {
 
           let formula = {};
 
+          let transformationSourceRecord = transformation.targetTask.sourceTaskData.idRecordsMap.get(transformedRecord["___Id"]);
+          let tranformationTargetRecord = transformation.targetTask.sourceToTargetRecordMap.get(transformationSourceRecord);
+
           // Generate formula properties for further eval() on the targetRecord
           fieldsMap.forEach((field: IField) => {
 
             let sourceRecords = field.sourceTask.sourceTaskData.records;
             let targetRecords = field.sourceTask.targetTaskData.records;
 
+            let sourceRecord = field.sourceTask.sourceTaskData.idRecordsMap.get(transformedRecord["___Id"]);
+            
             if (transformation.targetObject == field.sourceObject || !!field.lookupExpression) {
               // Same object => direct transformation (formula[accountCategory] = Account.Category__c)
-              __setFormulaValue(formula, transformedRecord, transformedRecord, field, sourceRecords, targetRecords);
+              let targetRecord = field.sourceTask.sourceToTargetRecordMap.get(sourceRecord);
+              const tempSourceRecord = field.valueSource != 'target' ? sourceRecord : targetRecord;
+              __setFormulaValue(formula, tempSourceRecord, transformedRecord, field, sourceRecords, targetRecords);
             } else {
               // Different object => lookup based transformation
               let sourceIdFields = transformation.lookupFieldMap.get(field.sourceObject);// [Account.Country__c]
               if (sourceIdFields) {
                 // Target ==> Source: selecting the source record using the target lookup to the source record (Account.Country__c => Country Id)
                 sourceIdFields.forEach(sourceIdField => {
-                  let sourceId = transformedRecord[sourceIdField];
-                  let sourceRecord = field.lookupSource == 'source' ? field.sourceTask.sourceTaskData.idRecordsMap.get(sourceId) : field.sourceTask.targetTaskData.idRecordsMap.get(sourceId);
-                  __setFormulaValue(formula, sourceRecord, transformedRecord, field, sourceRecords, targetRecords);
+                  let targetId = transformedRecord[sourceIdField]; // Its always the Id field on the target side because the transformed records is ready to be inserted or
+                  let targetRecord = field.sourceTask.targetTaskData.idRecordsMap.get(targetId);
+                  sourceRecord = field.targetToSourceRecordMap.get(targetRecord);
+                  const tempSourceRecord = field.valueSource != 'target' ? sourceRecord : targetRecord;
+                  __setFormulaValue(formula, tempSourceRecord, transformedRecord, field, sourceRecords, targetRecords);
                 });
               } else {
                 let targetIdFields = field.lookupFieldMap.get(transformation.targetObject); // [Country__c.BusinessAccount__c]
                 if (targetIdFields) {
                   // Source ==> Target: selecting the source record using source lookup to the target record (Country__c.BusinessAccount__c => Account.Id => Country Id
-                  let targetId = transformedRecord["Id"];
+                  let targetId = tranformationTargetRecord["Id"];
                   if (targetId) {
-                    // Find all the source records which is pointing to the current targetId
-                    for (let index = 0; index < sourceRecords.length; index++) {
-                      const sourceRecord = sourceRecords[index];
-                      if (Object.keys(sourceRecord).some(fieldName => {
+                    // Find all the target records which is pointing to the current targetId
+                    for (let index = 0; index < targetRecords.length; index++) {
+                      let targetRecord = targetRecords[index];
+                      if (Object.keys(targetRecord).some(fieldName => {
+                        // Check if any lookup field on the target record is pointing to the current targetId
                         return sourceRecord[fieldName] == targetId;
                       })) {
-                        __setFormulaValue(formula, sourceRecord, transformedRecord, field, sourceRecords, targetRecords);
+                        sourceRecord = field.targetToSourceRecordMap.get(targetRecord);
+                        const tempSourceRecord = field.valueSource != 'target' ? sourceRecord : targetRecord;
+                        __setFormulaValue(formula, tempSourceRecord, transformedRecord, field, sourceRecords, targetRecords);
                         break;
                       }
                     }
