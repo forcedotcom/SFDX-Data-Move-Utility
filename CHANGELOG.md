@@ -1,3 +1,12 @@
+# [4.36.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.35.1...4.36.0) (2024-09-07)
+
+
+### Features
+
+* new valueSource prop in core:RecordsTransform module ([cfeaf34](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/cfeaf3415c04053ef3b18b479109ec4a669c5ff9))
+
+
+
 ## [4.35.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.35.0...4.35.1) (2024-08-18)
 
 
