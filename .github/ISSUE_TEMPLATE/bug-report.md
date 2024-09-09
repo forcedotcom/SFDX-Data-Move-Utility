@@ -1,8 +1,8 @@
 ---
 name: Bug Report
 about: Report a bug in the SFDMU Plugin
-title: "[BUG] - Make sure to replace this placeholder text with a specific title for
-  the issue!"
+title: '[BUG] - Replace this placeholder with a specific title for the issue. Do not
+  delete "BUG".'
 labels: bug
 assignees: hknokh
 

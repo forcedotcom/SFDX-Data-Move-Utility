@@ -1,8 +1,8 @@
 ---
 name: Request a New Feature
 about: Suggest an idea for this project
-title: "[FEATURE REQUEST] - Make sure to replace this placeholder text with a specific
-  title for the issue!"
+title: Replace this placeholder with a specific title for the issue. Do not delete
+  "[FEATURE REQUEST]" .
 labels: feature-request
 assignees: hknokh
 
