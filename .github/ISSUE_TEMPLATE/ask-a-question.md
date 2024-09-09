@@ -1,5 +1,5 @@
 ---
-name: ASK QUESTION - Plugin Only!
+name: Ask a Question
 about: 'Ask question or any help needed for SFDMU Plugin '
 title: "[QUESTION] - Make sure to replace this placeholder text with a specific title
   for the issue!"

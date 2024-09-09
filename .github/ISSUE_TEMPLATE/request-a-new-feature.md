@@ -1,5 +1,5 @@
 ---
-name: FEATURE REQUEST
+name: Request a New Feature
 about: Suggest an idea for this project
 title: "[FEATURE REQUEST] - Make sure to replace this placeholder text with a specific
   title for the issue!"
