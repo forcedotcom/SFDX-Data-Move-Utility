@@ -1,4 +1,6 @@
 {
+    "newLine": "",
+    "separator": "=============",
     "source": "SOURCE",
     "target": "TARGET",
     "step1": "STAGE 1",
