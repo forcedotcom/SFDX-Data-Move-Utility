@@ -20,8 +20,8 @@ import { CONSTANTS } from './statics';
 // ----------------------//
 export enum RESOURCES {
 
-  newLine = "newLine",
-  separator = "separator",
+  newLine = "",
+  separator = "===========",
   source = "Source",
   target = "Target",
   step1 = "step1",
