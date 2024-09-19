@@ -1,3 +1,12 @@
+## [4.36.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.2...4.36.3) (2024-09-19)
+
+
+### Bug Fixes
+
+* fixed plugin installation issue ([0b3ba98](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/0b3ba9805fee0a89ee92304fdf8787c7d1b88b32))
+
+
+
 ## [4.36.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.1...4.36.2) (2024-09-19)
 
 
