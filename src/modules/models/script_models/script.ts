@@ -685,6 +685,7 @@ export default class Script implements IAppScript, ISfdmuRunScript {
           }
           if (mapping.sourceField && mapping.targetField) {
             this.sourceTargetFieldMapping.get(object.name).fieldMapping.set(mapping.sourceField, mapping.targetField);
+            this.sourceTargetFieldMapping.get(object.name).fieldMapping.set(Common.getFieldName__r(null, mapping.sourceField), Common.getFieldName__r(null, mapping.targetField));
           }
         });
       }
