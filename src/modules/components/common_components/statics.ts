@@ -27,6 +27,7 @@ export const CONSTANTS = {
 
 
   __ID_FIELD_NAME: "___Id",
+  __SOURCE_ID_FIELD_NAME: "___SourceId",
   __IS_PROCESSED_FIELD_NAME: "___IsProcessed",
 
   ERRORS_FIELD_NAME: "Errors",

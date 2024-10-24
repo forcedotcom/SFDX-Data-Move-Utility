@@ -1256,6 +1256,7 @@ export default class MigrationJobTask {
         // Create separated record sets to Update/Insert /////////////
         processedData.clonedToSourceMap.forEach((source, cloned) => {
           source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] = typeof source[CONSTANTS.__IS_PROCESSED_FIELD_NAME] == "undefined" ? false : source[CONSTANTS.__IS_PROCESSED_FIELD_NAME];
+          cloned[CONSTANTS.__SOURCE_ID_FIELD_NAME] = source["Id"];
           delete cloned[CONSTANTS.__ID_FIELD_NAME];
           let target = self.data.sourceToTargetRecordMap.get(source);
           if (target && self.data.task.scriptObject.skipExistingRecords) {
@@ -2330,12 +2331,16 @@ export default class MigrationJobTask {
         records.forEach(record => {
           fieldMapping.forEach((newProp, oldProp) => {
             if (newProp != oldProp && record.hasOwnProperty(oldProp)) {
-              record[newProp] = record[oldProp];
-              if (oldProp != "Id") { // Id => ExternalId__c (Id -> ExternalId__c)
+              // Id => ExternalId__c 
+              if (oldProp != "Id") {
+                record[newProp] = record[oldProp];
                 delete record[oldProp];
+              } else {
+                record[newProp] = record[CONSTANTS.__SOURCE_ID_FIELD_NAME];
               }
             }
           });
+          delete record[CONSTANTS.__SOURCE_ID_FIELD_NAME];
         });
         return {
           targetSObjectName: mapping.targetSObjectName,
@@ -2343,6 +2348,9 @@ export default class MigrationJobTask {
         };
       }
     }
+    records.forEach(record => {
+      delete record[CONSTANTS.__SOURCE_ID_FIELD_NAME];
+    });
     return {
       targetSObjectName: sourceSObjectName,
       records
@@ -2360,7 +2368,8 @@ export default class MigrationJobTask {
           fieldMapping.forEach((newProp, oldProp) => {
             if (newProp != oldProp && record.hasOwnProperty(newProp)) {
               if (oldProp != "Id") {
-                record[oldProp] = record[newProp]; // Id => Externalid__c (ExternalId -> Id)
+                // Externalid__c => Id
+                record[oldProp] = record[newProp];
               }
               delete record[newProp];
             }
