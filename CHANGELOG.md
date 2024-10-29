@@ -1,3 +1,16 @@
+## [4.36.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.3...4.36.7) (2024-10-29)
+
+
+### Bug Fixes
+
+* fixed referenced field mapping [#896](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/896) ([05b0213](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/05b02139cc0a1caf657ad1dd14172cfdbc0f211b))
+* Record Id mapping issue [#895](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/895) ([0180193](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/0180193fc1b71f0660e2ee2dfaef687f64e3e1bf))
+* Record Id mapping issue [#895](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/895) ([09794b6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/09794b60bf7d7689c4dc31d07636b1077d9a6602))
+* Record Id mapping issue [#895](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/895) ([e14e4c1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/e14e4c1aa625ccf47af499d969b891db1a40af7b))
+* Record Id mapping issue [#895](https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues/895) ([5ba91ab](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/5ba91abb1438ad0fff5088f50b577b3aca8f3758))
+
+
+
 ## [4.36.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.2...4.36.3) (2024-09-19)
 
 
