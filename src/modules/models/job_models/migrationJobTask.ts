@@ -1751,7 +1751,7 @@ export default class MigrationJobTask {
       return Object.keys(cloned)
         .filter(key => fieldsToCompareRecords.length == 0 || fieldsToCompareRecords.indexOf(key) >= 0)
         .some(key => {
-          if (key != "Id" && key != CONSTANTS.__ID_FIELD_NAME) {
+          if (key != "Id" && key != CONSTANTS.__ID_FIELD_NAME && key != CONSTANTS.__SOURCE_ID_FIELD_NAME) {
             // FIXME: && target.hasOwnProperty(key) solves issue
             // Auto-number fields ignored when used as sourceField in fieldMapping #89
             // But it causes error when copying self-referencing fields with field mapping with complex extgernal id
