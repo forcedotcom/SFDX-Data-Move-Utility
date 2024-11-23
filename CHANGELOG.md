@@ -1,3 +1,12 @@
+## [4.36.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.7...4.36.8) (2024-11-23)
+
+
+### Bug Fixes
+
+* resolve record comparison issue in updates ([1871fc4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/1871fc4b8a5991646d41a0fab6758735f88bac68))
+
+
+
 ## [4.36.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.3...4.36.7) (2024-10-29)
 
 
