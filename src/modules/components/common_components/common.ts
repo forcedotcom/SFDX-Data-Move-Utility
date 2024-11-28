@@ -1860,7 +1860,7 @@ export class Common {
     return new Promise(resolve => setTimeout(resolve, time));
   }
 
-  static wrapWhereClauseInParenthesis(clause: WhereClause): { beginClause: WhereClause, endClause: WhereClause } {
+  private static wrapWhereClauseInParenthesis(clause: WhereClause): { beginClause: WhereClause, endClause: WhereClause } {
     const clone = JSON.parse(JSON.stringify(clause)) as WhereClause;
     clone.left.openParen = (clone.left.openParen ?? 0) + 1
     let current = clone;
