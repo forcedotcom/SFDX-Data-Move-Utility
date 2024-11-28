@@ -191,6 +191,7 @@
     "writingToFile": "{%s} Creating the file %s ...",
     "nothingUpdated": "Nothing was updated.",
     "skippedUpdatesWarning": "{%s} %s target records remained untouched, since they do not differ from the corresponding source records.",
+    "skippedSourceRecordsFilterWarning": "One 'sourceRecordsFilter' could not be applied: %s.",
     "skippedTargetRecordsFilterWarning": "One 'targetRecordsFilter' could not be applied: %s.",
     "missingParentLookupsPrompt": "{%s} %s missing parent lookup records were found. See %s file for the details.",
     "updatingSummary": "Data processing summary.",

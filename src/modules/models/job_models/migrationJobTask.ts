@@ -637,6 +637,14 @@ export default class MigrationJobTask {
     if (isTargetQuery) {
       // Fix target query
       ___filterTargetQuery(tempQuery);
+    } else if (this.scriptObject.sourceRecordsFilter) {
+      // Add any extra filter conditions to the source query
+      try {
+        const additionalWhereClause = parseQuery(`SELECT Id FROM ${this.sObjectName} WHERE ${this.scriptObject.sourceRecordsFilter}`).where;
+        tempQuery.where = Common.mergeWhereClauses(tempQuery.where, additionalWhereClause);
+      } catch (ex) {
+        self.logger.warn(RESOURCES.skippedSourceRecordsFilterWarning, ex.message);
+      }
     }
 
     let query = composeQuery(tempQuery);
