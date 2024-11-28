@@ -1,3 +1,18 @@
+# [4.37.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.8...4.37.0) (2024-11-28)
+
+
+### Bug Fixes
+
+* make wrapWhereClauseInParenthesis private ([2158490](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/2158490d9fa6315b9c5c4497f33ac4c6c6e2f3e8))
+
+
+### Features
+
+* error handling for skippedSourceRecordsFilterWarning ([70d5d80](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/70d5d808041ed62507e8bb4fdc499defe3670f01))
+* sourceRecordsFilter option added ([9f6c8fe](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/9f6c8fe4ccc60951e50fbe3825ac7c9ec8e1b5f5))
+
+
+
 ## [4.36.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.7...4.36.8) (2024-11-23)
 
 
