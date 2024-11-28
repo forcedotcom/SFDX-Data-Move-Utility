@@ -78,6 +78,7 @@ export default class ScriptObject implements ISfdmuRunScriptObject {
   hardDelete: boolean = false;
   updateWithMockData: boolean = false;
   //mockCSVData: boolean = false;
+  sourceRecordsFilter: string = "";
   targetRecordsFilter: string = "";
   excluded: boolean = false;
   useCSVValuesMapping: boolean = false;

@@ -637,6 +637,10 @@ export default class MigrationJobTask {
     if (isTargetQuery) {
       // Fix target query
       ___filterTargetQuery(tempQuery);
+    } else if (this.scriptObject.sourceRecordsFilter) {
+      // Add any extra filter conditions to the source query
+      const additionalWhereClause = parseQuery(`SELECT Id FROM ${this.sObjectName} WHERE ${this.scriptObject.sourceRecordsFilter}`).where;
+      tempQuery.where = Common.mergeWhereClauses(tempQuery.where, additionalWhereClause);
     }
 
     let query = composeQuery(tempQuery);
