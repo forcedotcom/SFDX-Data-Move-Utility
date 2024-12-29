@@ -163,6 +163,7 @@ export const CONSTANTS = {
 
   FIELDS_NOT_TO_USE_IN_QUERY_MULTISELECT: {
     '*': ['MasterRecordId'],
+    'Product2': ['ExternalDataSourceId'],
     'Opportunity': ['ContactId']
   },
 
