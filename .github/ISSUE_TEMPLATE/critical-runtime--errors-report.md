@@ -4,7 +4,7 @@ about: NOTE! Report only if you program stops with “Uncaught TypeError” or �
   messages!
 title: '[RUNTIME ERROR] - Replace this placeholder with a specific title for the issue.
   Do not delete "BUG".'
-labels: bug
+labels: runtime error
 assignees: hknokh
 
 ---
