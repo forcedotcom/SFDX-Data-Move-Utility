@@ -29,6 +29,7 @@ export interface IAppScript {
   parallelBinaryDownloads: number;
   binaryCacheDirectory: string;
   sourceRecordsCacheDirectory: string;
+  groupQuery?: string;
 }
 
 export interface IAppScriptOrg {

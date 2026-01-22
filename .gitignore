@@ -21,5 +21,6 @@ typedoc-sfdmu-run-addons.json
 *-private*
 /.vscode
 /.images
+AGENTS.md
 
 

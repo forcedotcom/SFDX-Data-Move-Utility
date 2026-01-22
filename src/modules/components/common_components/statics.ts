@@ -67,6 +67,13 @@ export const CONSTANTS = {
   FILE_LOG_FILEEXTENSION: "log",
   VALUE_MAPPING_CSV_FILENAME: 'ValueMapping.csv',
   USER_AND_GROUP_FILENAME: 'UserAndGroup',
+  USER_AND_GROUP_COMMON_FIELDS: [
+    'Id',
+    'Name',
+    'CreatedDate',
+    'LastModifiedDate',
+    'SystemModstamp'
+  ],
   CSV_ISSUES_ERRORS_FILENAME: 'CSVIssuesReport.csv',
   MISSING_PARENT_LOOKUP_RECORDS_ERRORS_FILENAME: "MissingParentRecordsReport.csv",
   FIELD_MAPPING_FILENAME: "FieldMapping.csv",

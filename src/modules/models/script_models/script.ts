@@ -15,6 +15,7 @@ import {
   composeQuery,
   Field as SOQLField,
   getComposedField,
+  parseQuery,
 } from 'soql-parser-js';
 
 import {
@@ -121,6 +122,8 @@ export default class Script implements IAppScript, ISfdmuRunScript {
 
   @Type(() => ScriptAddonManifestDefinition)
   dataRetrievedAddons: ScriptAddonManifestDefinition[] = new Array<ScriptAddonManifestDefinition>();
+
+  groupQuery: string = "";
 
 
 
@@ -321,6 +324,24 @@ export default class Script implements IAppScript, ISfdmuRunScript {
       // Fix operations
       object.operation = ScriptObject.getOperation(object.operation);
     });
+
+    // Capture optional Group query for the User/Group combined lookup set
+    this.groupQuery = "";
+    for (let i = 0; i < this.objects.length; i++) {
+      const object = this.objects[i];
+      if (!object.query || !/\bfrom\s+group\b/i.test(object.query)) {
+        continue;
+      }
+      try {
+        let parsedQuery = parseQuery(object.query);
+        if (parsedQuery.sObject == "Group") {
+          this.groupQuery = object.query;
+          break;
+        }
+      } catch (ex: any) {
+        throw new CommandInitializationError(this.logger.getResourceString(RESOURCES.malformedQuery, "Group", object.query, ex));
+      }
+    }
 
     // Call addons module initialization
     await this.addonManager.triggerAddonModuleInitAsync();

@@ -197,7 +197,6 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
 
       // Map query /////
       let parsedQuery = parseQuery(soql);
-      soql = this.sourceQueryToTarget(soql, parsedQuery.sObject).query;
 
       if (!useBulkQueryApi) {
         this.logger.infoVerbose(RESOURCES.usingRestApi, parsedQuery.sObject);
@@ -206,12 +205,18 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
       }
 
       // Query records /////
-      let records = [].concat(await ___queryAsync(soql));
+      let records = new Array<any>();
       if (parsedQuery.sObject == 'User') {
-        let parsedGroupQuery = parseQuery(soql);
-        parsedGroupQuery.sObject = 'Group';
-        parsedGroupQuery.where = Common.composeWhereClause(null, "Type", "Queue", "=", "STRING", "AND");
-        soql = composeQuery(parsedGroupQuery);
+        let userQuery = ___buildUserGroupQuery('User', parsedQuery.where);
+        userQuery = this.sourceQueryToTarget(userQuery, 'User').query;
+        records = records.concat(await ___queryAsync(userQuery));
+
+        let groupWhere = ___getGroupWhereClause();
+        let groupQuery = ___buildUserGroupQuery('Group', groupWhere);
+        groupQuery = this.sourceQueryToTarget(groupQuery, 'Group').query;
+        records = records.concat(await ___queryAsync(groupQuery));
+      } else {
+        soql = this.sourceQueryToTarget(soql, parsedQuery.sObject).query;
         records = records.concat(await ___queryAsync(soql));
       }
 
@@ -276,6 +281,27 @@ export class Sfdx implements IAppSfdxService, IFieldMapping {
       }
 
       return records;
+    }
+
+    function ___getGroupWhereClause(): any {
+      let groupQuery = self.org.script.groupQuery;
+      if (groupQuery) {
+        let parsedGroupQuery = parseQuery(groupQuery);
+        if (parsedGroupQuery.sObject == "Group") {
+          return parsedGroupQuery.where;
+        }
+      }
+      return Common.composeWhereClause(null, "Type", "Queue", "=", "STRING", "AND");
+    }
+
+    function ___buildUserGroupQuery(sObjectName: string, whereClause?: any): string {
+      let parsed = parseQuery(`SELECT Id FROM ${sObjectName}`);
+      parsed.fields = CONSTANTS.USER_AND_GROUP_COMMON_FIELDS
+        .map(fieldName => getComposedField(fieldName));
+      parsed.fields = Common.distinctArray(parsed.fields, "field")
+        .filter(field => !!(<SOQLField>field).field);
+      parsed.where = whereClause || null;
+      return composeQuery(parsed);
     }
 
     function ___formatSoql(soql: string): [string, Map<string, Array<string>>, Array<string>, string] {
