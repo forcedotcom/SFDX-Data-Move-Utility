@@ -26,7 +26,7 @@
     "apiversionFlagDescription": "[Optional] Overrides the api version set in the export.json definition",
     "apiversionFlagLongDescription": "[Optional] If specified, it overrides the apiVersion parameter of the export.json file. This value is used for all API requests made by this command.",
 
-    "filelogFlagDescription": "[Optional] Turns onn/off file logging",
+    "filelogFlagDescription": "[Optional] Turns on/off file logging",
     "filelogFlagLongDescription": "[Optional] In addition to logging to the standard output (stdout), this flag controls logging to a file. Set this flag to 1 (or omit this flag) to enable file logging, or set it to 0 to disable file logging.",
 
     "nopromptFlagDescription": "[Optional] Suppresses prompting the user for input or confirmation",
