@@ -1,0 +1,21 @@
+{
+  "name": "sfdmu-addon-sdk",
+  "version": "1.0.0",
+  "description": "Interface SDK for building SFDMU custom add-on modules.",
+  "private": true,
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./interfaces/index.ts",
+  "exports": {
+    ".": {
+      "types": "./interfaces/index.ts",
+      "default": "./dist/interfaces/index.js"
+    },
+    "./interfaces": {
+      "types": "./interfaces/index.ts",
+      "default": "./dist/interfaces/index.js"
+    }
+  },
+  "sideEffects": false
+}

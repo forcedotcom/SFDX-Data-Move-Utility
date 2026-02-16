@@ -1,5 +1,5 @@
 environment:
-  nodejs_version: "10"
+  nodejs_version: '10'
 cache:
   - '%LOCALAPPDATA%\Yarn -> appveyor.yml'
   - node_modules -> yarn.lock
@@ -17,6 +17,4 @@ after_test:
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
       bash codecov.sh
 
-
 build: off
-

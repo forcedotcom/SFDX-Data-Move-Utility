@@ -8,17 +8,26 @@
 [![License](https://img.shields.io/npm/l/sfdmu.svg)](https://github.com/forcedotcom/SFDX-Data-Move-Utility/blob/master/LICENSE.txt)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-
-The **SFDX Data Move Utility (SFDMU)** is an advanced SFDX plugin designed to streamline data migration within various Salesforce environments, including scratch, development, sandbox, and production orgs. 
+The **SFDX Data Move Utility (SFDMU)** is an advanced SFDX plugin designed to streamline data migration within various Salesforce environments, including scratch, development, sandbox, and production orgs.
 
 This powerful tool supports migration from other Salesforce orgs or CSV files and efficiently manages various data operations, enabling the migration of **multiple related sObjects in a single run**.
 
-- **[SFDMU GUI Desktop Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **A straightforward and intuitive application for creating, managing, and executing data migrations.** 
+- **[SFDMU GUI Desktop Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **A straightforward and intuitive application for creating, managing, and executing data migrations.**
 - [**SFDMU Help Center:**](https://help.sfdmu.com/) Comprehensive documentation available.
 - [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) Review guidelines before opening support cases.
 - [**Contribution Policy:**](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
 
+## Version Notice (Starting from 5.0.0)
+
+This repository contains the SFDMU beta engine line **starting from 5.0.0**, built on the new
+**SF CLI API** and including the latest available security updates. We recommend moving to this
+line if it works correctly in your environment; if it does not work correctly yet, you can
+temporarily roll back to v4.39.0. Full details about improvements, breaking changes, and
+migration guidance are on [**Get Started**](https://help.sfdmu.com/get-started). SFDMU is
+supported as an **SF CLI plugin** (`sf sfdmu run`).
+
 ## Key Features:
+
 - **Comprehensive Migration Support:** Enables direct Org-to-Org data migration, eliminating the need for CSV intermediates, and supports CRUD operations: Insert, Upsert, Update, Delete.
 - **Multiple Objects and Relationships:** Manages migrations involving multiple object sets and handles complex relationships, including [circular references](https://help.sfdmu.com/examples/basic-examples#example-1-handling-circular-references).
 - **Ease of Use:** Simplifies the configuration process with a [single export.json file](https://help.sfdmu.com/full-configuration).
@@ -27,19 +36,33 @@ This powerful tool supports migration from other Salesforce orgs or CSV files an
 - **Extended Functionality:** Provides advanced features such as [custom field mapping](https://help.sfdmu.com/full-documentation/advanced-features/fields-mapping), [data anonymization](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization), and supports [composite external ID keys](https://help.sfdmu.com/full-documentation/advanced-features/composite-external-id-keys) among others.
 
 ## Installation Instructions:
+
 1. **Prepare Environment:** Install the Salesforce CLI following the [official instructions](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm).
-2. **Plugin Installation:**
-  
+2. **Install SFDMU plugin:**
+
    ```bash
    # Uninstall old version, if any:
    $ sf plugins uninstall sfdmu
-   
-   # Install the latest version:
+
+   # Install the latest published version:
    $ sf plugins install sfdmu
+   $ sf plugins install sfdmu@latest
+
+   # Or install a specific plugin version:
+   $ sf plugins install sfdmu@5.0.0
+   ```
+
+3. **Rollback if the beta line starting from 5.0.0 does not work yet:**
+
+   ```bash
+   # Install previous stable version:
+   $ sf plugins install sfdmu@4.39.0
    ```
 
 ## Detailed Setup for Developers:
+
 For developers needing customization or access to the source:
+
 ```bash
 # Clone the repository:
 $ git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility
@@ -57,34 +80,25 @@ Here is a basic `export.json` example for upserting Accounts and their related C
 
 ```json
 {
-    "objects": [
-        {
-            "operation": "Upsert",
-            "externalId": "LastName",
-            "query": "SELECT FirstName, LastName, AccountId FROM Contact",
-            "master": false
-        },
-        {
-            "operation": "Upsert",
-            "externalId": "Name",
-            "query": "SELECT Name, Phone FROM Account WHERE Name = 'John Smith'"
-        }
-    ]
+  "objects": [
+    {
+      "operation": "Upsert",
+      "externalId": "LastName",
+      "query": "SELECT FirstName, LastName, AccountId FROM Contact",
+      "master": false
+    },
+    {
+      "operation": "Upsert",
+      "externalId": "Name",
+      "query": "SELECT Name, Phone FROM Account WHERE Name = 'John Smith'"
+    }
+  ]
 }
 ```
 
-### Description of JSON Content:
-
-1. **First Object (Contact)**:
-   - **Operation:** "Upsert" - Can be "Update", "Upsert", "Insert", "Delete", among others as specified in the documentation.
-   - **External ID:** "LastName" - Used as the unique identifier for Contacts to support upsert operations.
-   - **Query:** "SELECT FirstName, LastName, AccountId FROM Contact" - Defines the fields to be transferred from the source to the target during the migration. This ensures that only the specified fields are processed.
-   - **Master:** `false` - This setting ensures that SFDMU only processes Contact records that are related to the specified Accounts.
-
-2. **Second Object (Account)**:
-   - **Operation:** "Upsert" - Specifies the type of operation for Accounts.
-   - **External ID:** "Name" - The unique identifier for Accounts, used for upsert operations.
-   - **Query:** "SELECT Name, Phone FROM Account WHERE Name = 'John Smith'" - Selects specific Accounts by Name for the operation. This ensures that only Accounts with the name "John Smith" are targeted for the upsert.
+For full object model details, advanced parameters, and edge cases, use:
+[**Get Started**](https://help.sfdmu.com/get-started) and
+[**Detailed export.json Format**](https://help.sfdmu.com/full-configuration).
 
 ## Migration Execution:
 
@@ -101,7 +115,9 @@ $ sf sfdmu run --sourceusername source.org.username@name.com --targetusername cs
 $ sf sfdmu run --sourceusername csvfile --targetusername target.org.username@name.com
 ```
 
-**Note:** 
+SFDMU execution is plugin-only. Standalone Node.js module run mode is not supported.
+
+**Note:**
 
 When importing or exporting from/to CSV files, ensure that the files are located in the directory containing the `export.json` file. The files should be named according to the API name of the respective sObject, such as `Account.csv`, `Contact.csv`. This naming convention helps in accurately mapping the data to the correct sObjects during the import or export process.
 
@@ -110,6 +126,7 @@ When importing or exporting from/to CSV files, ensure that the files are located
 - Experience the plugin in action [here](https://www.youtube.com/watch?v=KI_1vD93prA).
 
 ## Documentation Links:
+
 - [**Getting Started**](https://help.sfdmu.com/get-started)
 - [**Installation Guide**](https://help.sfdmu.com/installation)
 - [**Configuration Tips**](https://help.sfdmu.com/configuration)
@@ -123,4 +140,3 @@ When importing or exporting from/to CSV files, ensure that the files are located
 
 - If you encounter permission issues on MacOS, prepend your commands with `sudo`. Adjust CLI command syntax if using the older SFDX CLI platform.
 - To allow SFDMU to connect to your source and target orgs, ensure you have established a local connection to these orgs using the standard `sf org login web` commands, as detailed in the [Authorize an Org Using a Browser](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_web_flow.htm) documentation.
-

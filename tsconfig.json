@@ -1,17 +1,10 @@
 {
-  "extends": "./node_modules/@salesforce/dev-config/tsconfig",
+  "extends": "@salesforce/dev-config/tsconfig-strict-esm",
   "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "./src",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "removeComments": true,
-    "resolveJsonModule": true,
+    "outDir": "lib",
+    "rootDir": ".",
     "skipLibCheck": true,
-    "types": ["node"]
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": [
-    "./src/**/*",
-    "src/addons/addonsCore.json"
-  ]
+  "include": ["./src/**/*.ts", "./custom-addon-sdk/custom-modules/**/*.ts", "./custom-addon-sdk/interfaces/**/*.ts"]
 }

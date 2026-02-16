@@ -1,0 +1,18 @@
+{
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "SFDMU custom add-on: demo.",
+  "private": true,
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./index.ts",
+  "scripts": {
+    "compile": "tsc -p . --pretty",
+    "build": "npm run compile"
+  },
+  "devDependencies": {
+    "sfdmu-addon-sdk": "file:../../",
+    "typescript": "^5.4.5"
+  }
+}
