@@ -17,9 +17,9 @@ This powerful tool supports migration from other Salesforce orgs or CSV files an
 - [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) **Review guidelines before opening support cases.**
 - [**Contribution Policy:**](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
 
-## Version Notice (Starting from v5)
+## Version Notice
 
-This repository contains the SFDMU beta engine line **starting from v5**, built on the latest **SF CLI plugin architecture** and including the latest available security updates. We recommend using the latest version of this line.
+This repository contains the SFDMU **new improved version of the plugin**, built on the latest **SF CLI plugin architecture** and including the latest available security updates. We recommend using the latest available plugin version.
 If it does not work correctly in your environment yet, temporarily roll back to **v4.39.0**.
 SFDMU is supported as an **SF CLI plugin** (`sf sfdmu run`).
 Full migration guidance is available on [**Get Started**](https://help.sfdmu.com/get-started).
@@ -36,17 +36,17 @@ Full migration guidance is available on [**Get Started**](https://help.sfdmu.com
 ## Installation Instructions:
 
 1. **Prepare Environment:** Install the Salesforce CLI following the [official instructions](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm).
-2. **Install the latest beta plugin line (recommended):**
+2. **Install the new improved version of the plugin (recommended):**
 
    ```bash
    # Uninstall old version, if any:
    $ sf plugins uninstall sfdmu
 
-   # Install the latest published beta line:
+   # Install the latest published plugin version:
    $ sf plugins install sfdmu@latest
    ```
 
-3. **Temporarily roll back to the previous stable line if beta does not work yet:**
+3. **Temporarily roll back to the previous stable line if the new improved version does not work yet:**
 
    ```bash
    # Remove current plugin:
@@ -56,7 +56,7 @@ Full migration guidance is available on [**Get Started**](https://help.sfdmu.com
    $ sf plugins install sfdmu@4.39.0
    ```
 
-4. **Switch back to the latest beta line later:**
+4. **Switch back to the new improved version later:**
 
    ```bash
    $ sf plugins install sfdmu@latest
@@ -68,7 +68,7 @@ Full migration guidance is available on [**Get Started**](https://help.sfdmu.com
    $ sf plugins install sfdmu@<version>
    ```
 
-6. **If you find a bug in the beta line, please report it with diagnostic logs:**
+6. **If you find a bug in the new improved version of the plugin, please report it with diagnostic logs:**
 
    ```bash
    $ sf sfdmu run --sourceusername source@name.com --targetusername target@name.com --diagnostic --anonymise
