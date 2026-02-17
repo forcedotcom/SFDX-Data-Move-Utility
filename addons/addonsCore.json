@@ -1,0 +1,52 @@
+{
+  "addons": [
+    {
+      "command": "sfdmu:run",
+      "path": null,
+      "module": "core:OnBefore",
+      "event": "onBefore",
+      "excluded": true,
+      "args": null
+    },
+    {
+      "command": "sfdmu:run",
+      "path": null,
+      "module": "core:OnAfter",
+      "event": "onAfter",
+      "excluded": true,
+      "args": null
+    },
+    {
+      "command": "sfdmu:run",
+      "path": null,
+      "module": "core:RecordsFilter",
+      "event": "filterRecordsAddons",
+      "excluded": true,
+      "args": null
+    },
+    {
+      "command": "sfdmu:run",
+      "path": null,
+      "module": "core:RecordsTransform",
+      "event": "onDataRetrieved",
+      "excluded": true,
+      "args": null
+    },
+    {
+      "command": "sfdmu:run",
+      "path": null,
+      "module": "core:RecordsTransform",
+      "event": "onBeforeUpdate",
+      "excluded": true,
+      "args": null
+    },
+    {
+      "command": "sfdmu:run",
+      "path": null,
+      "module": "core:ExportFiles",
+      "event": "onAfterUpdate",
+      "excluded": true,
+      "args": null
+    }
+  ]
+}

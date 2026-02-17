@@ -33,7 +33,7 @@
     "no-function-constructor-with-string-args": false,
     "no-var-requires": false,
     "one-variable-per-declaration": false,
-    "typedef-whitespace":false,
+    "typedef-whitespace": false,
     "eofline": false,
     "variable-name": false,
     "object-literal-key-quotes": false

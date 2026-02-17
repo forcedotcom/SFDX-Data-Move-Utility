@@ -1,26 +1,73 @@
+# -- CLEAN
+tmp/
+# use yarn by default, so ignore npm
+package-lock.json
+
+# never checkin npm config
+.npmrc
+
+# debug logs
+npm-error.log
+yarn-error.log
+
+
+# compile source
+lib
+
+# test artifacts
+*xunit.xml
+*checkstyle.xml
+*unitcoverage
+.nyc_output
+coverage
+test_session*
+
+# generated docs
+docs
+
+# ignore sfdx-trust files
+*.tgz
+*.sig
+package.json.bak.
+
+
+npm-shrinkwrap.json
+oclif.manifest.json
+oclif.lock
+
+# -- CLEAN ALL
+*.tsbuildinfo
+.eslintcache
+.wireit
+node_modules
+
+# --
+# put files here you don't want cleaned with sf-clean
+
+# os specific files
+.DS_Store
+.idea
+
+# Project-specific rules from .gitignore-new
+custom-addon-sdk/dist
+custom-addon-sdk/custom-modules/**/dist
+custom-addon-sdk/custom-modules/**/*
+!custom-addon-sdk/custom-modules/.gitkeep
+!custom-addon-sdk/custom-modules/demo/
+!custom-addon-sdk/custom-modules/demo/**
+custom-addon-sdk/custom-modules/demo/dist
+custom-addon-sdk/custom-modules/demo/dist/**
+
+tmp*
 *-debug.log
 *-error.log
-/.nyc_output
-/dist
-/dist2
-/lib
-/package-lock.json
-/tmp
-node_modules
 /export*.json
 ._*
-.DS_Store
 /logs
 /source
 /target
-/development
-/documentation
-/src/addons/modules/sfdmu-run/custom-addons/TestModule*
-typedoc-sfdmu-run-addons.json
-/temp
 *-private*
 /.vscode
-/.images
+/development
+CHANGELOG-DEV.md
 AGENTS.md
-
-

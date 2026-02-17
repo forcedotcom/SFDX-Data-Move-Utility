@@ -1,159 +1,225 @@
 /*
- * Copyright (c) 2020, salesforce.com, inc.
+ * Copyright (c) 2026, salesforce.com, inc.
  * All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import {
-  flags,
-  FlagsConfig,
-  SfdxCommand,
-} from '@salesforce/command';
+import { stdin as input, stdout as output } from 'node:process';
+import { createInterface } from 'node:readline/promises';
+import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
-import { AnyJson } from '@salesforce/ts-types';
+import { FILE_LOG_DEFAULT, PLUGIN_NAME, RUN_MESSAGE_BUNDLE } from '../../modules/constants/Constants.js';
+import SfdmuRunService from '../../modules/run/SfdmuRunService.js';
+import type { SfdmuRunFlagsType } from '../../modules/run/models/SfdmuRunFlagsType.js';
+import type { SfdmuRunRequestType } from '../../modules/run/models/SfdmuRunRequestType.js';
+import type { SfdmuRunResultType } from '../../modules/run/models/SfdmuRunResultType.js';
 
-import { IRunProcess } from '../../modules/commands_processors/IRunProcess';
-import { RunCommand } from '../../modules/commands_processors/runCommand';
-import RunCommandExecutor
-  from '../../modules/commands_processors/runCommandExecutor';
-import {
-  IResourceBundle,
-  IUxLogger,
-} from '../../modules/components/common_components/logger';
-import ISfdmuCommand from '../../modules/models/common_models/ISfdxCommand';
+Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
+const messages = Messages.loadMessages(PLUGIN_NAME, RUN_MESSAGE_BUNDLE);
 
-Messages.importMessagesDirectory(__dirname);
+/**
+ * Normalize parsed CLI flags into a strictly typed object.
+ *
+ * @param flags - Parsed flags from oclif.
+ * @returns Typed flags for the run service.
+ */
+const mapFlags = (flags: SfdmuRunFlagsType): SfdmuRunFlagsType => ({
+  sourceusername: flags.sourceusername,
+  targetusername: flags.targetusername,
+  path: flags.path,
+  silent: flags.silent,
+  quiet: flags.quiet,
+  diagnostic: flags.diagnostic,
+  anonymise: flags.anonymise,
+  verbose: false,
+  concise: flags.concise,
+  logfullquery: flags.logfullquery,
+  apiversion: flags.apiversion,
+  filelog: flags.filelog,
+  json: flags.json,
+  noprompt: flags.noprompt,
+  nowarnings: flags.nowarnings,
+  canmodify: flags.canmodify,
+  simulation: flags.simulation,
+  loglevel: flags.loglevel,
+  usesf: flags.usesf,
+  version: flags.version,
+});
 
-const commandMessages = Messages.loadMessages('sfdmu', 'run');
-const resources = Messages.loadMessages('sfdmu', 'resources');
-export default class Run extends SfdxCommand implements IRunProcess {
+/**
+ * Normalize argv values into a string array for storage.
+ *
+ * @param argv - Raw argv values from oclif.
+ * @returns Normalized argv values as strings.
+ */
+const normalizeArgv = (argv: unknown[]): string[] => argv.map((value) => String(value));
 
-  exportJson: string;
+/**
+ * sfdmu run command implementation.
+ */
+export default class Run extends SfCommand<SfdmuRunResultType> {
+  // ------------------------------------------------------//
+  // -------------------- STATIC MEMBERS ------------------ //
+  // ------------------------------------------------------//
 
-  exitProcess: boolean = true;
+  /**
+   * Summary text for CLI help.
+   */
+  public static readonly summary = messages.getMessage('summary');
 
-  m_flags: any;
-  m_ux: IUxLogger;
+  /**
+   * Description text for CLI help.
+   */
+  public static readonly description = messages.getMessage('description');
 
-  cmd: ISfdmuCommand;
-  command: RunCommand;
+  /**
+   * Example usage snippets for CLI help.
+   */
+  public static readonly examples = messages.getMessages('examples');
 
-  commandMessages: IResourceBundle = commandMessages;
-  resources: IResourceBundle = resources;
-
-  protected static supportsUsername = true;
-  protected static requiresUsername = false;
-  protected static varargs = false;
-
-  public static description = commandMessages.getMessage('commandDescription');
-  public static longDescription = commandMessages.getMessage('commandLongDescription');
-
-  public static readonly flagsConfig: FlagsConfig = {
-    sourceusername: flags.string({
-      char: "s",
-      description: commandMessages.getMessage('sourceusernameFlagDescription'),
-      longDescription: commandMessages.getMessage('sourceusernameFlagLongDescription'),
-      default: ''
+  /**
+   * CLI flags for the sfdmu run command.
+   */
+  public static readonly flags = {
+    sourceusername: Flags.string({
+      char: 's',
+      summary: messages.getMessage('flags.sourceusername.summary'),
+      description: messages.getMessage('flags.sourceusername.description'),
     }),
-    path: flags.directory({
+    targetusername: Flags.string({
+      char: 'u',
+      summary: messages.getMessage('flags.targetusername.summary'),
+      description: messages.getMessage('flags.targetusername.description'),
+    }),
+    path: Flags.string({
       char: 'p',
-      description: commandMessages.getMessage('pathFlagDescription'),
-      longDescription: commandMessages.getMessage('pathFlagLongDescription'),
-      default: ''
+      summary: messages.getMessage('flags.path.summary'),
+      description: messages.getMessage('flags.path.description'),
     }),
-    verbose: flags.builtin({
-      description: commandMessages.getMessage('verboseFlagDescription'),
-      longDescription: commandMessages.getMessage('verboseFlagLongDescription')
+    silent: Flags.boolean({
+      summary: messages.getMessage('flags.silent.summary'),
+      description: messages.getMessage('flags.silent.description'),
     }),
-    concise: flags.builtin({
-      description: commandMessages.getMessage('conciseFlagDescription'),
-      longDescription: commandMessages.getMessage('conciseFlagLongDescription'),
+    quiet: Flags.boolean({
+      summary: messages.getMessage('flags.quiet.summary'),
+      description: messages.getMessage('flags.quiet.description'),
     }),
-    quiet: flags.builtin({
-      description: commandMessages.getMessage('quietFlagDescription'),
-      longDescription: commandMessages.getMessage('quietFlagLongDescription'),
+    diagnostic: Flags.boolean({
+      summary: messages.getMessage('flags.diagnostic.summary'),
+      description: messages.getMessage('flags.diagnostic.description'),
     }),
-    silent: flags.boolean({
-      description: commandMessages.getMessage("silentFlagDescription"),
-      longDescription: commandMessages.getMessage("silentFlagLongDescription")
+    anonymise: Flags.boolean({
+      summary: messages.getMessage('flags.anonymise.summary'),
+      description: messages.getMessage('flags.anonymise.description'),
     }),
-    version: flags.boolean({
-      char: "v",
-      description: commandMessages.getMessage("versionFlagDescription"),
-      longDescription: commandMessages.getMessage("versionFlagLongDescription")
+    verbose: Flags.boolean({
+      summary: messages.getMessage('flags.verbose.summary'),
+      description: messages.getMessage('flags.verbose.description'),
     }),
-    apiversion: flags.builtin({
-      description: commandMessages.getMessage("apiversionFlagDescription"),
-      longDescription: commandMessages.getMessage("apiversionFlagLongDescription")
+    concise: Flags.boolean({
+      summary: messages.getMessage('flags.concise.summary'),
+      description: messages.getMessage('flags.concise.description'),
     }),
-    filelog: flags.integer({
-      char: "l",
-      description: commandMessages.getMessage("filelogFlagDescription"),
-      longDescription: commandMessages.getMessage("filelogFlagLongDescription"),
-      default: 1
+    logfullquery: Flags.boolean({
+      summary: messages.getMessage('flags.logfullquery.summary'),
+      description: messages.getMessage('flags.logfullquery.description'),
     }),
-    noprompt: flags.boolean({
-      char: "n",
-      description: commandMessages.getMessage("nopromptFlagDescription"),
-      longDescription: commandMessages.getMessage("nopromptLongFlagDescription")
+    apiversion: Flags.string({
+      summary: messages.getMessage('flags.apiversion.summary'),
+      description: messages.getMessage('flags.apiversion.description'),
     }),
-    json: flags.boolean({
-      description: commandMessages.getMessage("jsonFlagDescription"),
-      longDescription: commandMessages.getMessage("jsonLongFlagDescription"),
-      default: false
+    filelog: Flags.integer({
+      char: 'l',
+      summary: messages.getMessage('flags.filelog.summary'),
+      description: messages.getMessage('flags.filelog.description'),
+      default: FILE_LOG_DEFAULT,
     }),
-    nowarnings: flags.boolean({
-      char: "w",
-      description: commandMessages.getMessage("nowarningsFlagDescription"),
-      longDescription: commandMessages.getMessage("nowarningsLongFlagDescription")
+    noprompt: Flags.boolean({
+      char: 'n',
+      summary: messages.getMessage('flags.noprompt.summary'),
+      description: messages.getMessage('flags.noprompt.description'),
     }),
-    canmodify: flags.string({
-      char: "c",
-      description: commandMessages.getMessage('canModifyFlagDescription'),
-      longDescription: commandMessages.getMessage('canModifyFlagLongDescription'),
-      default: ''
+    nowarnings: Flags.boolean({
+      char: 'w',
+      summary: messages.getMessage('flags.nowarnings.summary'),
+      description: messages.getMessage('flags.nowarnings.description'),
     }),
-    simulation: flags.boolean({
-      char: "m",
-      description: commandMessages.getMessage("simulationFlagDescription"),
-      longDescription: commandMessages.getMessage("simulationLongFlagDescription")
+    canmodify: Flags.string({
+      char: 'c',
+      summary: messages.getMessage('flags.canmodify.summary'),
+      description: messages.getMessage('flags.canmodify.description'),
     }),
-    loglevel: flags.string({
-      description: commandMessages.getMessage('loglevelFlagDescription'),
-      longDescription: commandMessages.getMessage('loglevelLongFlagDescription'),
-      default: 'trace',
-      options: ['info', 'debug', 'warn', 'error', 'fatal', 'trace', 'INFO', 'DEBUG', 'WARN', 'ERROR', 'FATAL', 'TRACE']
+    simulation: Flags.boolean({
+      char: 'm',
+      summary: messages.getMessage('flags.simulation.summary'),
+      description: messages.getMessage('flags.simulation.description'),
     }),
-    usesf: flags.string({
-      description: commandMessages.getMessage("useSfFlagDescription"),
-      longDescription: commandMessages.getMessage("useSfLongFlagDescription"),
-      default: "true",
-      options: ['true', 'false', 'TRUE', 'FALSE']
+    loglevel: Flags.string({
+      summary: messages.getMessage('flags.loglevel.summary'),
+      description: messages.getMessage('flags.loglevel.description'),
     }),
-    logfullquery: flags.boolean({
-      description: commandMessages.getMessage("logfullqueryFlagDescription"),
-      longDescription: commandMessages.getMessage("logfullqueryLongFlagDescription")
+    usesf: Flags.boolean({
+      summary: messages.getMessage('flags.usesf.summary'),
+      description: messages.getMessage('flags.usesf.description'),
+    }),
+    version: Flags.boolean({
+      char: 'v',
+      summary: messages.getMessage('flags.version.summary'),
+      description: messages.getMessage('flags.version.description'),
     }),
   };
 
+  // ------------------------------------------------------//
+  // -------------------- PUBLIC METHODS ------------------ //
+  // ------------------------------------------------------//
 
-  public async run(): Promise<AnyJson> {
-
-    this.ux["isOutputEnabled"] = true;
-
-    this.m_flags = this.flags;
-    this.m_ux = this.ux;
-
-    await RunCommandExecutor.execute(this);
-
-    return {};
+  /**
+   * Command entry point required by oclif.
+   *
+   * @returns The command result payload.
+   */
+  public run(): Promise<SfdmuRunResultType> {
+    return this._runAsync();
   }
 
-  runCommand(): Promise<any> {
-    throw new Error('Method not implemented.');
-  }
+  // ------------------------------------------------------//
+  // ------------------- PRIVATE METHODS ------------------ //
+  // ------------------------------------------------------//
 
+  /**
+   * Async command implementation.
+   *
+   * @returns The command result payload.
+   */
+  private async _runAsync(): Promise<SfdmuRunResultType> {
+    const parsed = await this.parse(Run);
+    const flags = mapFlags(parsed.flags);
+    const jsonWriter = flags.json ? (): void => undefined : this.logJson.bind(this);
+    const textPromptWriter = async (message: string): Promise<string> => {
+      const rl = createInterface({ input, output });
+      try {
+        return await rl.question(message ?? '');
+      } finally {
+        rl.close();
+      }
+    };
+    const request: SfdmuRunRequestType = {
+      argv: normalizeArgv(parsed.argv),
+      flags,
+      stdoutWriter: this.log.bind(this),
+      stderrWriter: this.logToStderr.bind(this),
+      warnWriter: this.warn.bind(this),
+      errorWriter: (message: string) => {
+        this.logToStderr(message);
+      },
+      jsonWriter,
+      promptWriter: (message: string) => this.confirm({ message }),
+      textPromptWriter,
+      tableWriter: this.table.bind(this),
+    };
+    const result = await SfdmuRunService.executeAsync(request);
+    process.exitCode = result.status;
+    return result;
+  }
 }
-
-
