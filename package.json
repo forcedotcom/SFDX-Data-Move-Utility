@@ -96,7 +96,7 @@
     "lint": "wireit",
     "addon": "node ./scripts/addon.js",
     "addon:compile": "wireit",
-    "postinstall": "yarn husky install",
+    "postinstall": "node -e \"const fs=require('fs');const cp=require('child_process');const omit=String(process.env.npm_config_omit||'').split(',').map(s=>s.trim()).filter(Boolean);const devOmitted=omit.includes('dev')||process.env.npm_config_production==='true';if(devOmitted||process.env.SFDMU_SKIP_HUSKY==='1'||!fs.existsSync('.git')){process.exit(0);}try{cp.execSync('husky install',{stdio:'inherit',shell:true});}catch{process.exit(0);}\"",
     "postpack": "sf-clean --ignore-signing-artifacts",
     "prepack": "sf-prepack",
     "test": "wireit",
