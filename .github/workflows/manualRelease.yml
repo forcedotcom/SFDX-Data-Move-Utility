@@ -7,7 +7,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           token: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
       - name: Conventional Changelog Action
