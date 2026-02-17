@@ -19,7 +19,7 @@ This powerful tool supports migration from other Salesforce orgs or CSV files an
 
 ## Version Notice
 
-This repository contains the SFDMU **new improved version of the plugin**, built on the latest **SF CLI plugin architecture** and including the latest available security updates. We recommend using the latest available plugin version.
+We recently released a **new improved v5 version of the SFDMU plugin**, built on the latest **SF CLI plugin architecture** and including the latest available security updates. We recommend using the latest available plugin version.
 If it does not work correctly in your environment yet, temporarily roll back to **v4.39.0**.
 SFDMU is supported as an **SF CLI plugin** (`sf sfdmu run`).
 Full migration guidance is available on [**Get Started**](https://help.sfdmu.com/get-started).
