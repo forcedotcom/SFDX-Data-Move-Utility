@@ -22,6 +22,10 @@ type LoggingContextOptionsType = {
   rootPath: string;
   logLevelName?: string;
   fileLogEnabled?: boolean | number;
+  anonymise?: boolean;
+  anonymiseValues?: string[];
+  anonymiseEntries?: Array<{ value: string; label: string }>;
+  anonymiseSeed?: string;
   jsonEnabled?: boolean;
   quiet?: boolean;
   silent?: boolean;
@@ -116,6 +120,26 @@ export default class LoggingContext {
   public readonly fileLogEnabled: boolean;
 
   /**
+   * Flag indicating file log anonymization is enabled.
+   */
+  public readonly anonymise: boolean;
+
+  /**
+   * Literal values to mask in file logs.
+   */
+  public readonly anonymiseValues: string[];
+
+  /**
+   * Labeled values to hash in file logs.
+   */
+  public readonly anonymiseEntries: Array<{ value: string; label: string }>;
+
+  /**
+   * Run-scoped random seed used by anonymization hashing.
+   */
+  public readonly anonymiseSeed: string;
+
+  /**
    * Flag indicating warnings should be suppressed in stdout.
    */
   public readonly noWarnings: boolean;
@@ -200,6 +224,20 @@ export default class LoggingContext {
     this.verbose = Boolean(options.verbose);
     const fileLogFlag = options.fileLogEnabled;
     this.fileLogEnabled = !(fileLogFlag === false || fileLogFlag === 0);
+    this.anonymise = Boolean(options.anonymise);
+    this.anonymiseValues = Array.isArray(options.anonymiseValues)
+      ? options.anonymiseValues.filter((value) => typeof value === 'string' && value.trim().length > 0)
+      : [];
+    this.anonymiseEntries = Array.isArray(options.anonymiseEntries)
+      ? options.anonymiseEntries.filter(
+          (entry) =>
+            typeof entry?.value === 'string' &&
+            entry.value.trim().length > 0 &&
+            typeof entry?.label === 'string' &&
+            entry.label.trim().length > 0
+        )
+      : [];
+    this.anonymiseSeed = typeof options.anonymiseSeed === 'string' ? options.anonymiseSeed : '';
     this.noWarnings = Boolean(options.noWarnings);
     const suppressPromptsByLogLevel = this.logLevel >= LOG_LEVELS.ERROR;
     this.noPrompt =

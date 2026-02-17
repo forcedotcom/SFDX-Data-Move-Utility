@@ -108,6 +108,11 @@ export default class ScriptOrg {
    */
   public isSandbox = false;
 
+  /**
+   * True when the org is a scratch org.
+   */
+  public isScratch = false;
+
   // ------------------------------------------------------//
   // -------------------- PRIVATE FIELDS ----------------- //
   // ------------------------------------------------------//
@@ -311,6 +316,7 @@ export default class ScriptOrg {
     this.accessToken = this._connection.accessToken ?? this.accessToken;
 
     await this._validateOrgAsync();
+    await this._resolveScratchOrgFlagAsync();
 
     logger?.info('successfullyConnected', this.name);
   }
@@ -380,6 +386,23 @@ export default class ScriptOrg {
       this.isPersonAccountEnabled = true;
     } catch {
       this.isPersonAccountEnabled = false;
+    }
+  }
+
+  /**
+   * Resolves the scratch-org flag from SF CLI auth metadata.
+   */
+  private async _resolveScratchOrgFlagAsync(): Promise<void> {
+    if (this.isFileMedia || this._hasManualCredentials()) {
+      this.isScratch = false;
+      return;
+    }
+
+    try {
+      const org = await OrgConnectionAdapter.resolveOrgAsync(this.name);
+      this.isScratch = org.isScratch();
+    } catch {
+      this.isScratch = false;
     }
   }
 

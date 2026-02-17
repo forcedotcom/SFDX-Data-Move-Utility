@@ -57,6 +57,15 @@ Enable diagnostic file logging.
 Writes diagnostic details to the .log file and forces file logging on.
 Stdout output is unchanged.
 
+# flags.anonymise.summary
+
+Hash sensitive values in file logs.
+
+# flags.anonymise.description
+
+When set, sensitive values in .log files are anonymized with deterministic run-scoped hash tokens.
+Stdout and JSON output are unchanged.
+
 # flags.verbose.summary
 
 Legacy verbose flag (deprecated, no effect).

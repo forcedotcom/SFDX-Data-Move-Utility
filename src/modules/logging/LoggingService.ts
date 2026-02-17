@@ -16,6 +16,7 @@ import {
 } from '../constants/Constants.js';
 import type { LogColorType } from './LoggerType.js';
 import FileLoggingService from './FileLoggingService.js';
+import LogFileAnonymizer from './LogFileAnonymizer.js';
 import LoggingContext from './LoggingContext.js';
 import type { FinishMessageType } from './models/FinishMessageType.js';
 
@@ -62,6 +63,11 @@ export default class LoggingService {
    */
   private readonly _messages = loggingMessages;
 
+  /**
+   * File log anonymizer.
+   */
+  private readonly _fileLogAnonymizer: LogFileAnonymizer;
+
   // ------------------------------------------------------//
   // ----------------------- CONSTRUCTOR ----------------- //
   // ------------------------------------------------------//
@@ -75,6 +81,12 @@ export default class LoggingService {
     this.context = context;
     this._logLevelValue = context.logLevel;
     this._fileLogger = context.fileLogEnabled ? new FileLoggingService(context.logFilePath) : null;
+    this._fileLogAnonymizer = new LogFileAnonymizer({
+      enabled: context.anonymise,
+      maskedValues: context.anonymiseValues,
+      maskedEntries: context.anonymiseEntries,
+      seed: context.anonymiseSeed,
+    });
   }
 
   // ------------------------------------------------------//
@@ -622,11 +634,12 @@ export default class LoggingService {
     if (!this._fileLogger || !this.context.fileLogEnabled) {
       return;
     }
+    const fileMessage = this._fileLogAnonymizer.anonymize(message);
     if (!resolvedMessage) {
-      this._fileLogger.appendLine(message);
+      this._fileLogger.appendLine(fileMessage);
       return;
     }
-    this._fileLogger.appendLine(message);
+    this._fileLogger.appendLine(fileMessage);
   }
 
   /**

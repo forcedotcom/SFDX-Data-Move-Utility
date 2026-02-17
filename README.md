@@ -8,23 +8,21 @@
 [![License](https://img.shields.io/npm/l/sfdmu.svg)](https://github.com/forcedotcom/SFDX-Data-Move-Utility/blob/master/LICENSE.txt)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
-The **SFDX Data Move Utility (SFDMU)** is an advanced SFDX plugin designed to streamline data migration within various Salesforce environments, including scratch, development, sandbox, and production orgs.
+The **SFDX Data Move Utility (SFDMU)** is an advanced SF CLI plugin designed to streamline data migration within various Salesforce environments, including scratch, development, sandbox, and production orgs.
 
 This powerful tool supports migration from other Salesforce orgs or CSV files and efficiently manages various data operations, enabling the migration of **multiple related sObjects in a single run**.
 
 - **[SFDMU GUI Desktop Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **A straightforward and intuitive application for creating, managing, and executing data migrations.**
 - [**SFDMU Help Center:**](https://help.sfdmu.com/) Comprehensive documentation available.
-- [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) Review guidelines before opening support cases.
+- [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) **Review guidelines before opening support cases.**
 - [**Contribution Policy:**](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
 
 ## Version Notice (Starting from 5.0.0)
 
-This repository contains the SFDMU beta engine line **starting from 5.0.0**, built on the new
-**SF CLI API** and including the latest available security updates. We recommend moving to this
-line if it works correctly in your environment; if it does not work correctly yet, you can
-temporarily roll back to v4.39.0. Full details about improvements, breaking changes, and
-migration guidance are on [**Get Started**](https://help.sfdmu.com/get-started). SFDMU is
-supported as an **SF CLI plugin** (`sf sfdmu run`).
+This repository contains the SFDMU beta engine line **starting from 5.0.0**, built on the latest **SF CLI plugin architecture** and including the latest available security updates. We recommend using the latest version of this line.
+If it does not work correctly in your environment yet, temporarily roll back to **v4.39.0**.
+SFDMU is supported as an **SF CLI plugin** (`sf sfdmu run`).
+Full migration guidance is available on [**Get Started**](https://help.sfdmu.com/get-started).
 
 ## Key Features:
 
@@ -38,28 +36,51 @@ supported as an **SF CLI plugin** (`sf sfdmu run`).
 ## Installation Instructions:
 
 1. **Prepare Environment:** Install the Salesforce CLI following the [official instructions](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm).
-2. **Install SFDMU plugin:**
+2. **Install the latest beta plugin line (recommended):**
 
    ```bash
    # Uninstall old version, if any:
    $ sf plugins uninstall sfdmu
 
-   # Install the latest published version:
-   $ sf plugins install sfdmu
+   # Install the latest published beta line:
    $ sf plugins install sfdmu@latest
-
-   # Or install a specific plugin version:
-   $ sf plugins install sfdmu@5.0.0
    ```
 
-3. **Rollback if the beta line starting from 5.0.0 does not work yet:**
+3. **Temporarily roll back to the previous stable line if beta does not work yet:**
 
    ```bash
+   # Remove current plugin:
+   $ sf plugins uninstall sfdmu
+
    # Install previous stable version:
    $ sf plugins install sfdmu@4.39.0
    ```
 
-## Detailed Setup for Developers:
+4. **Switch back to the latest beta line later:**
+
+   ```bash
+   $ sf plugins install sfdmu@latest
+   ```
+
+5. **If you need to pin a specific plugin version:**
+
+   ```bash
+   $ sf plugins install sfdmu@<version>
+   ```
+
+6. **If you find a bug in the beta line, please report it with diagnostic logs:**
+
+   ```bash
+   $ sf sfdmu run --sourceusername source@name.com --targetusername target@name.com --diagnostic --anonymise
+   ```
+
+   Attach the full generated `.log` file, your `export.json`, and related CSV samples.
+   `--anonymise` hashes sensitive values in `.log` files before sharing.
+   Full masking list: [Log File Management in Plugin Migrations](https://help.sfdmu.com/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not).
+
+## For Developers:
+
+### Detailed Setup
 
 For developers needing customization or access to the source:
 
@@ -71,6 +92,18 @@ $ cd SFDX-Data-Move-Utility
 $ npm install
 $ sf plugins link
 ```
+
+### Debugging
+
+Use the source-debug flow from the official debugging guide:
+
+```bash
+$ ./sfdmu-run-debug.cmd --sourceusername source@mail.com --targetusername target@mail.com --path .
+```
+
+In VSCode, enable `Node Debug -> Auto Attach` (`On`) and set `Use Preview Auto Attach` to `Off`.
+
+For detailed debugging guidance, see [**Debugging Steps**](https://help.sfdmu.com/debugging).
 
 ## Migration Configuration:
 
@@ -96,9 +129,7 @@ Here is a basic `export.json` example for upserting Accounts and their related C
 }
 ```
 
-For full object model details, advanced parameters, and edge cases, use:
-[**Get Started**](https://help.sfdmu.com/get-started) and
-[**Detailed export.json Format**](https://help.sfdmu.com/full-configuration).
+For full object model details, advanced parameters, and edge cases, use: [**Get Started**](https://help.sfdmu.com/get-started) and [**Detailed export.json Format**](https://help.sfdmu.com/full-configuration).
 
 ## Migration Execution:
 
@@ -131,7 +162,6 @@ When importing or exporting from/to CSV files, ensure that the files are located
 - [**Installation Guide**](https://help.sfdmu.com/installation)
 - [**Configuration Tips**](https://help.sfdmu.com/configuration)
 - [**How to Run Migrations**](https://help.sfdmu.com/running)
-
 - [**Debugging Steps**](https://help.sfdmu.com/debugging)
 - [**Detailed export.json Format**](https://help.sfdmu.com/full-configuration)
 - [**SFDMU GUI Application Detailed Documentation**](https://help.sfdmu.com/sfdmu-gui-app)

@@ -28,6 +28,7 @@ import SFieldDescribe from '../../../src/modules/models/sf/SFieldDescribe.js';
 import SObjectDescribe from '../../../src/modules/models/sf/SObjectDescribe.js';
 import OrgConnectionAdapter from '../../../src/modules/org/OrgConnectionAdapter.js';
 import ScriptLoader from '../../../src/modules/script/ScriptLoader.js';
+import type { CsvIssueRowType } from '../../../src/modules/csv/models/CsvIssueRowType.js';
 
 type FieldInitType = Partial<SFieldDescribe> & { name: string };
 type OrgConnectionStubType = {
@@ -56,11 +57,18 @@ type MigrationJobCsvPrivateApiType = {
 
 const createTempDir = (): string => fs.mkdtempSync(path.join(os.tmpdir(), 'sfdmu-csv-'));
 
-const createLoggingService = (rootPath: string): LoggingService => {
+const createLoggingService = (
+  rootPath: string,
+  options?: { diagnostic?: boolean; anonymise?: boolean; anonymiseSeed?: string }
+): LoggingService => {
+  const diagnostic = Boolean(options?.diagnostic);
   const context = new LoggingContext({
     commandName: 'run',
     rootPath,
-    fileLogEnabled: false,
+    fileLogEnabled: diagnostic,
+    verbose: diagnostic,
+    anonymise: Boolean(options?.anonymise),
+    anonymiseSeed: options?.anonymiseSeed ?? '',
   });
   return new LoggingService(context);
 };
@@ -968,6 +976,62 @@ describe('MigrationJob CSV processing', () => {
     const reportPath = path.join(script.reportsDirectoryPath, CSV_ISSUES_ERRORS_FILENAME);
     const reportContent = fs.readFileSync(reportPath, 'utf8');
     assert.ok(reportContent.includes('MISSING COLUMN IN THE CSV FILE'));
+  });
+
+  it('anonymizes CSV issues diagnostic dump lines when anonymise is enabled', async () => {
+    const rootPath = createTempDir();
+    const logger = createLoggingService(rootPath, {
+      diagnostic: true,
+      anonymise: true,
+      anonymiseSeed: 'csv-issues-seed',
+    });
+    Common.logger = logger;
+
+    const script = await loadScriptAsync(rootPath, logger, {
+      objects: [
+        {
+          name: 'Account',
+          query: 'SELECT Name FROM Account',
+          operation: 'Upsert',
+        },
+      ],
+      promptOnIssuesInCSVFiles: false,
+    });
+
+    const describes = new Map<string, SObjectDescribe>([
+      [
+        'Account',
+        createDescribe('Account', [
+          { name: 'Id', updateable: true, creatable: true },
+          { name: 'Name', nameField: true, updateable: true, creatable: true },
+        ]),
+      ],
+    ]);
+    const metadataProvider = createMetadataProvider(describes);
+    const job = new MigrationJob({ script, metadataProvider });
+
+    await job.loadAsync();
+    await job.setupAsync();
+
+    job.csvIssues = [
+      {
+        'Date update': '01/01/2026 00:00',
+        'sObject name': 'Account',
+        'Field name': 'Name',
+        'Field value': 'user@example.com',
+        'Parent SObject name': '',
+        'Parent field name': '',
+        'Parent field value': '',
+        Error: 'MISSING CSV FILE',
+      },
+    ] as CsvIssueRowType[];
+
+    fs.mkdirSync(script.reportsDirectoryPath, { recursive: true });
+    await (job as unknown as { _writeCsvIssuesReportAsync: () => Promise<void> })._writeCsvIssuesReportAsync();
+
+    const logContent = fs.readFileSync(logger.context.logFilePath, 'utf8');
+    assert.equal(logContent.includes('user@example.com'), false);
+    assert.match(logContent, /email<[A-F0-9]{16}>/u);
   });
 
   it('skips readonly lookup fields during CSV missing-parent validation and repair', async () => {

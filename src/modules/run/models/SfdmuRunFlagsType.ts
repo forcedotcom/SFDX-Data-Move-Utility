@@ -40,6 +40,11 @@ export type SfdmuRunFlagsType = {
   diagnostic?: boolean;
 
   /**
+   * Masks sensitive values in file logs.
+   */
+  anonymise?: boolean;
+
+  /**
    * Legacy verbose flag retained for backward compatibility (unused).
    */
   verbose?: boolean;

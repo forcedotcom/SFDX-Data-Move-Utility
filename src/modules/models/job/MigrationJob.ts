@@ -3444,7 +3444,7 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
     try {
       const raw = await fs.readFile(reportPath, 'utf8');
       logger.verboseFile('newLine');
-      logger.verboseFile('csvIssuesDiagnosticHeader');
+      logger.verboseFile(logger.getResourceString('csvIssuesDiagnosticHeader'));
       raw.split(/\r?\n/).forEach((line) => logger.verboseFile(line));
       logger.verboseFile('newLine');
     } catch {

@@ -32,6 +32,7 @@ import {
   FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT,
   FIELDS_MAPPING_EVAL_PATTERN,
   FIELDS_MAPPING_REGEX_PATTERN,
+  LOG_FILE_NO_ANONYMIZE_MARKER,
   LOG_QUERY_SELECT_MAXLENGTH,
   LOG_QUERY_WHERE_MAXLENGTH,
   MAX_SOQL_WHERE_CLAUSE_CHARACTER_LENGTH,
@@ -2250,9 +2251,13 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
         mappingEntries.push({ raw: rawValue, mapped: mappedValue });
       });
       const mappingRulesSummary = mappingEntries.map((entry) => `${entry.raw} -> ${entry.mapped}`).join('; ') || 'none';
-      Common.logDiagnostics(
-        logger.getResourceString('mappingValueRules', this.sObjectName, field, mappingRulesSummary),
-        logger
+      logger.verboseFile(
+        `${LOG_FILE_NO_ANONYMIZE_MARKER}${logger.getResourceString(
+          'mappingValueRules',
+          this.sObjectName,
+          field,
+          mappingRulesSummary
+        )}`
       );
       const ruleCounts = new Map<string, number>();
 
@@ -2327,9 +2332,14 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       mappingEntries.forEach((entry) => {
         const ruleLabel = `${entry.raw} -> ${entry.mapped}`;
         const count = ruleCounts.get(entry.raw) ?? 0;
-        Common.logDiagnostics(
-          logger.getResourceString('mappingValueRuleApplied', this.sObjectName, field, ruleLabel, String(count)),
-          logger
+        logger.verboseFile(
+          `${LOG_FILE_NO_ANONYMIZE_MARKER}${logger.getResourceString(
+            'mappingValueRuleApplied',
+            this.sObjectName,
+            field,
+            ruleLabel,
+            String(count)
+          )}`
         );
       });
     });

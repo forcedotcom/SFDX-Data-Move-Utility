@@ -235,7 +235,7 @@ export default class OrgMetadataProvider implements IMetadataProvider {
     }
 
     const connection = await this._getConnectionAsync(org);
-    this._logDescribeStart(trimmed, org.name);
+    this._logDescribeStart(trimmed, isSource);
     const describeResult = await describeSObjectAsync(connection, trimmed);
     const describe = mapDescribe(trimmed, describeResult);
 
@@ -297,10 +297,15 @@ export default class OrgMetadataProvider implements IMetadataProvider {
    * Logs the describe operation for visibility.
    *
    * @param objectName - Object API name.
-   * @param orgName - Org display name.
+   * @param isSource - True for source-org metadata.
    */
-  private _logDescribeStart(objectName: string, orgName: string): void {
-    this._script.logger?.log('retrievingObjectMetadata', objectName, orgName);
+  private _logDescribeStart(objectName: string, isSource: boolean): void {
+    const logger = this._script.logger;
+    if (!logger) {
+      return;
+    }
+    const orgDisplayName = logger.getResourceString(isSource ? 'source' : 'target');
+    logger.log('retrievingObjectMetadata', objectName, orgDisplayName);
   }
 
   /**

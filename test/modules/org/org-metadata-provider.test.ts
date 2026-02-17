@@ -7,6 +7,7 @@
 
 import { strict as assert } from 'node:assert';
 import { DATA_MEDIA_TYPE } from '../../../src/modules/common/Enumerations.js';
+import type LoggingService from '../../../src/modules/logging/LoggingService.js';
 import OrgMetadataProvider from '../../../src/modules/org/OrgMetadataProvider.js';
 import OrgConnectionAdapter from '../../../src/modules/org/OrgConnectionAdapter.js';
 import Script from '../../../src/modules/models/script/Script.js';
@@ -147,6 +148,43 @@ describe('OrgMetadataProvider', () => {
       assert.equal(result.createable, false);
       assert.equal(result.updateable, true);
       assert.equal(result.deletable, true);
+    } finally {
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+    }
+  });
+
+  it('logs metadata retrieval with SOURCE/TARGET labels instead of org alias values', async () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'very-sensitive-org-alias';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    sourceOrg.script = script;
+    script.sourceOrg = sourceOrg;
+
+    const logCalls: Array<{ message: string; tokens: string[] }> = [];
+    const loggerStub = {
+      log(message: string, ...tokens: string[]) {
+        logCalls.push({ message, tokens });
+      },
+      getResourceString(key: string) {
+        return key.toUpperCase();
+      },
+    } as unknown as LoggingService;
+    script.logger = loggerStub;
+
+    const describe = createDescribeStub();
+    const connection = createConnectionStub(describe, []);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => connection as never;
+
+    try {
+      const provider = new OrgMetadataProvider({ script });
+      await provider.describeSObjectAsync('Account', true);
+
+      assert.ok(logCalls.length > 0);
+      const describeLog = logCalls.find((entry) => entry.message === 'retrievingObjectMetadata');
+      assert.ok(describeLog);
+      assert.deepEqual(describeLog?.tokens, ['Account', 'SOURCE']);
     } finally {
       OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
     }

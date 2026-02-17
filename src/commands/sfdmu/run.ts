@@ -31,6 +31,7 @@ const mapFlags = (flags: SfdmuRunFlagsType): SfdmuRunFlagsType => ({
   silent: flags.silent,
   quiet: flags.quiet,
   diagnostic: flags.diagnostic,
+  anonymise: flags.anonymise,
   verbose: false,
   concise: flags.concise,
   logfullquery: flags.logfullquery,
@@ -107,6 +108,10 @@ export default class Run extends SfCommand<SfdmuRunResultType> {
     diagnostic: Flags.boolean({
       summary: messages.getMessage('flags.diagnostic.summary'),
       description: messages.getMessage('flags.diagnostic.description'),
+    }),
+    anonymise: Flags.boolean({
+      summary: messages.getMessage('flags.anonymise.summary'),
+      description: messages.getMessage('flags.anonymise.description'),
     }),
     verbose: Flags.boolean({
       summary: messages.getMessage('flags.verbose.summary'),

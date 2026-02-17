@@ -98,6 +98,7 @@ export const CSV_TARGET_FILE_SUFFIX = '_target';
 export const CSV_TARGET_FILE_PERSON_ACCOUNTS_SUFFIX = '_person';
 export const FILE_LOG_SUBDIRECTORY = 'logs';
 export const FILE_LOG_FILEEXTENSION = 'log';
+export const LOG_FILE_NO_ANONYMIZE_MARKER = '@@NO_ANON@@';
 export const VALUE_MAPPING_CSV_FILENAME = 'ValueMapping.csv';
 export const USER_AND_GROUP_FILENAME = 'UserAndGroup';
 export const USER_AND_GROUP_COMMON_FIELDS = ['Id', 'Name', 'CreatedDate', 'LastModifiedDate', 'SystemModstamp'];

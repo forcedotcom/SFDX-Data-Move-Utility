@@ -7,6 +7,7 @@
 
 import * as path from 'node:path';
 import * as os from 'node:os';
+import { randomBytes } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -50,11 +51,25 @@ type OrgNamesType = {
   target?: string;
 };
 
+type OrgSummaryConnectionType = {
+  singleRecordQuery?: <T>(query: string) => Promise<T>;
+};
+
+type OrganizationSummaryType = {
+  OrganizationType?: string;
+  IsSandbox?: boolean;
+};
+
 type ObjectOrderInfoType = {
   objectSetIndex: number;
   queryOrder: string[];
   deleteOrder: string[];
   updateOrder: string[];
+};
+
+type AnonymiseEntryType = {
+  value: string;
+  label: string;
 };
 
 const execFileAsync = promisify(execFile);
@@ -165,6 +180,7 @@ export default class SfdmuRunService {
       }
 
       const objectSets = this._resolveObjectSets(script, logger);
+      await this._resolveOrgTypesForSummaryAsync(script);
       const metadataCaches: OrgMetadataCacheType = {
         sourceDescribeCache: new Map(),
         targetDescribeCache: new Map(),
@@ -177,7 +193,7 @@ export default class SfdmuRunService {
         logger.logColored('objectSetStarted', 'green', String(index + 1));
         logger.info('newLine');
         if (index === 0) {
-          this._logRunSummary(logger, orgNames);
+          this._logRunSummary(logger, orgNames, script);
         }
         const orderInfo = await this._runObjectSetAsync(script, index, logger, request, metadataCaches);
         if (orderInfo) {
@@ -219,6 +235,7 @@ export default class SfdmuRunService {
       silent: Boolean(flags.silent),
       quiet: Boolean(flags.quiet),
       diagnostic: Boolean(flags.diagnostic),
+      anonymise: Boolean(flags.anonymise),
       verbose: false,
       loglevel,
       canmodify,
@@ -280,6 +297,7 @@ export default class SfdmuRunService {
     promptWriter?: (message: string) => Promise<boolean>,
     textPromptWriter?: (message: string) => Promise<string>
   ): LoggingService {
+    const anonymiseSeed = flags.anonymise ? this._createAnonymiseSeed() : undefined;
     const context = new LoggingContext({
       commandName: RUN_COMMAND_NAME,
       rootPath,
@@ -289,6 +307,10 @@ export default class SfdmuRunService {
       quiet: flags.quiet,
       silent: flags.silent,
       verbose: flags.diagnostic,
+      anonymise: flags.anonymise,
+      anonymiseValues: this._createAnonymiseValueList(flags, rootPath),
+      anonymiseEntries: this._createAnonymiseEntries(flags, rootPath),
+      anonymiseSeed,
       noWarnings: flags.nowarnings,
       noPrompt: flags.noprompt,
       stdoutWriter,
@@ -344,7 +366,7 @@ export default class SfdmuRunService {
     ];
 
     lines.forEach((line) => logger.verboseFile(line));
-    await this._logExportJsonDiagnosticsAsync(logger, rootPath);
+    await this._logExportJsonDiagnosticsAsync(logger, rootPath, Boolean(flags.anonymise));
   }
 
   /**
@@ -380,12 +402,164 @@ export default class SfdmuRunService {
   }
 
   /**
+   * Builds literal values list used for file-log anonymization.
+   *
+   * @param flags - Normalized command flags.
+   * @param rootPath - Resolved working path.
+   * @returns Values to mask in file logs.
+   */
+  private static _createAnonymiseValueList(flags: SfdmuRunFlagsType, rootPath: string): string[] {
+    const values = new Set<string>();
+    const addValue = (value?: string): void => {
+      const trimmed = value?.trim();
+      if (!trimmed) {
+        return;
+      }
+      values.add(trimmed);
+      values.add(trimmed.replace(/\\/g, '/'));
+      values.add(trimmed.replace(/\//g, '\\'));
+    };
+
+    addValue(flags.sourceusername);
+    addValue(flags.targetusername);
+    addValue(flags.canmodify);
+    if (flags.path && path.isAbsolute(flags.path)) {
+      addValue(flags.path);
+    }
+    addValue(rootPath);
+
+    return [...values].filter((value) => value.length > 0);
+  }
+
+  /**
+   * Builds labeled values used for contextual file-log anonymization.
+   *
+   * @param flags - Normalized command flags.
+   * @param rootPath - Resolved working path.
+   * @returns Labeled values to hash in file logs.
+   */
+  private static _createAnonymiseEntries(flags: SfdmuRunFlagsType, rootPath: string): AnonymiseEntryType[] {
+    const keySeparator = '\u0000';
+    const entries = new Map<string, AnonymiseEntryType>();
+    const addEntry = (value: string | undefined, label: string): void => {
+      const trimmed = value?.trim();
+      if (!trimmed) {
+        return;
+      }
+      const variants = new Set<string>([trimmed, trimmed.replace(/\\/g, '/'), trimmed.replace(/\//g, '\\')]);
+      variants.forEach((variant) => {
+        if (!variant) {
+          return;
+        }
+        const key = `${variant}${keySeparator}${label}`;
+        if (!entries.has(key)) {
+          entries.set(key, { value: variant, label });
+        }
+      });
+    };
+
+    addEntry(flags.sourceusername, this._resolveUsernameAnonymiseLabel(flags.sourceusername, true));
+    addEntry(flags.targetusername, this._resolveUsernameAnonymiseLabel(flags.targetusername, false));
+    addEntry(flags.canmodify, 'canModify');
+    if (flags.path && path.isAbsolute(flags.path)) {
+      addEntry(flags.path, 'path');
+    }
+    addEntry(rootPath, 'cwd');
+
+    return [...entries.values()];
+  }
+
+  /**
+   * Resolves label for source/target username values.
+   *
+   * @param username - Raw source/target username flag value.
+   * @param isSource - True for source username.
+   * @returns Context label.
+   */
+  private static _resolveUsernameAnonymiseLabel(username: string | undefined, isSource: boolean): string {
+    const normalized = username?.trim() ?? '';
+    const isEmail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/u.test(normalized);
+    if (isSource) {
+      return isEmail ? 'sourceUser' : 'sourceOrg';
+    }
+    return isEmail ? 'targetUser' : 'targetOrg';
+  }
+
+  /**
+   * Creates a random run-scoped anonymization seed.
+   *
+   * @returns Random seed value.
+   */
+  private static _createAnonymiseSeed(): string {
+    return randomBytes(32).toString('hex');
+  }
+
+  /**
+   * Masks sensitive fields only inside export.json `orgs` entries.
+   *
+   * @param raw - Raw export.json string.
+   * @returns Masked JSON string.
+   */
+  private static _maskExportJsonOrgsSection(raw: string): string {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (!isRecord(parsed)) {
+        return raw;
+      }
+
+      const clone = JSON.parse(JSON.stringify(parsed)) as RawRecordType;
+      const orgs = clone['orgs'];
+      if (!Array.isArray(orgs)) {
+        return raw;
+      }
+
+      orgs.forEach((entry) => {
+        if (!isRecord(entry)) {
+          return;
+        }
+        this._maskOrgEntrySecrets(entry);
+      });
+
+      return JSON.stringify(clone, null, 2);
+    } catch {
+      return raw;
+    }
+  }
+
+  /**
+   * Masks auth-related fields in one export.json org entry.
+   *
+   * @param orgEntry - Org entry object.
+   */
+  private static _maskOrgEntrySecrets(orgEntry: RawRecordType): void {
+    const nextEntry = orgEntry;
+    Object.keys(nextEntry).forEach((key) => {
+      const normalized = key.toLowerCase();
+      if (
+        normalized === 'accesstoken' ||
+        normalized === 'refreshtoken' ||
+        normalized === 'password' ||
+        normalized === 'clientsecret' ||
+        normalized === 'instanceurl' ||
+        normalized === 'sessionid' ||
+        normalized === 'token'
+      ) {
+        nextEntry[key] = '<masked>';
+      }
+    });
+  }
+
+  /**
    * Logs the export.json contents into the diagnostic file log.
    *
    * @param logger - Logging service instance.
    * @param rootPath - Working directory.
    */
-  private static async _logExportJsonDiagnosticsAsync(logger: LoggingService, rootPath: string): Promise<void> {
+  private static async _logExportJsonDiagnosticsAsync(
+    logger: LoggingService,
+    rootPath: string,
+    anonymise: boolean
+  ): Promise<void> {
     if (!logger.context.verbose || !logger.context.fileLogEnabled) {
       return;
     }
@@ -393,8 +567,9 @@ export default class SfdmuRunService {
     const scriptPath = path.join(rootPath, SCRIPT_FILE_NAME);
     try {
       const raw = await readFile(scriptPath, 'utf8');
+      const content = anonymise ? this._maskExportJsonOrgsSection(raw) : raw;
       logger.verboseFile(logger.getMessage('exportJsonDiagnosticHeader'));
-      raw.split(/\r?\n/).forEach((line) => logger.verboseFile(line));
+      content.split(/\r?\n/).forEach((line) => logger.verboseFile(line));
     } catch {
       // Ignore missing export.json diagnostics.
     }
@@ -755,14 +930,123 @@ export default class SfdmuRunService {
    * @param logger - Logging service instance.
    * @param orgNames - Normalized org names.
    */
-  private static _logRunSummary(logger: LoggingService, orgNames: OrgNamesType): void {
+  private static _logRunSummary(logger: LoggingService, orgNames: OrgNamesType, script: Script): void {
     const sourceLabel = logger.getMessage('source');
     const targetLabel = logger.getMessage('target');
-    const sourceValue = logger.getMessage('sourceOrg', orgNames.source ?? '');
-    const targetValue = logger.getMessage('targetOrg', orgNames.target ?? '');
+    const sourceDisplay = this._formatOrgWithType(script.sourceOrg, orgNames.source);
+    const targetDisplay = this._formatOrgWithType(script.targetOrg, orgNames.target);
+    const sourceValue = logger.getMessage('sourceOrg', sourceDisplay);
+    const targetValue = logger.getMessage('targetOrg', targetDisplay);
 
     logger.logColored(`${sourceLabel}: ${sourceValue}`, 'green');
     logger.logColored(`${targetLabel}: ${targetValue}`, 'green');
+  }
+
+  /**
+   * Formats an org display string with a user-facing org type label.
+   *
+   * @param org - Script org metadata.
+   * @param fallbackName - Fallback org name from command flags.
+   * @returns Formatted org display value.
+   */
+  private static _formatOrgWithType(org?: ScriptOrg, fallbackName?: string): string {
+    const primaryName = org?.name?.trim();
+    const orgName = primaryName && primaryName.length > 0 ? primaryName : fallbackName?.trim() ?? '';
+    if (!orgName) {
+      return '';
+    }
+
+    const orgType = this._resolveOrgTypeLabel(org);
+    if (!orgType) {
+      return orgName;
+    }
+
+    return `${orgName} (${orgType})`;
+  }
+
+  /**
+   * Resolves a stable user-facing org type label.
+   *
+   * @param org - Script org metadata.
+   * @returns Org type label.
+   */
+  private static _resolveOrgTypeLabel(org?: ScriptOrg): string | undefined {
+    if (!org || org.isFileMedia) {
+      return undefined;
+    }
+    if (org.isScratch) {
+      return 'scratch org';
+    }
+    if (org.isSandbox) {
+      return 'sandbox';
+    }
+    if (org.isDeveloper) {
+      return 'dev edition';
+    }
+    if (org.isProduction) {
+      return 'production';
+    }
+    return 'production';
+  }
+
+  /**
+   * Resolves org type metadata for SOURCE/TARGET summary output.
+   *
+   * @param script - Script instance.
+   */
+  private static async _resolveOrgTypesForSummaryAsync(script: Script): Promise<void> {
+    await Promise.all([
+      this._resolveSingleOrgTypeForSummaryAsync(script.sourceOrg),
+      this._resolveSingleOrgTypeForSummaryAsync(script.targetOrg),
+    ]);
+  }
+
+  /**
+   * Resolves sandbox/dev/prod/scratch flags for a single org.
+   *
+   * @param org - Script org metadata.
+   */
+  private static async _resolveSingleOrgTypeForSummaryAsync(org?: ScriptOrg): Promise<void> {
+    if (!org || org.isFileMedia) {
+      return;
+    }
+    const scriptOrg = org;
+
+    try {
+      const connection = (await scriptOrg.getConnectionAsync()) as unknown as OrgSummaryConnectionType;
+      const summary = await this._queryOrganizationSummaryAsync(connection);
+      if (typeof summary.OrganizationType === 'string' && summary.OrganizationType.trim().length > 0) {
+        scriptOrg.organizationType = summary.OrganizationType;
+      }
+      if (typeof summary.IsSandbox === 'boolean') {
+        scriptOrg.isSandbox = summary.IsSandbox;
+      }
+    } catch {
+      // Keep existing defaults when organization summary cannot be resolved.
+    }
+
+    try {
+      const resolvedOrg = await OrgConnectionAdapter.resolveOrgAsync(scriptOrg.name);
+      scriptOrg.isScratch = resolvedOrg.isScratch();
+    } catch {
+      // Keep existing scratch-org flag when it cannot be resolved.
+    }
+  }
+
+  /**
+   * Queries Organization info needed for user-facing org type labels.
+   *
+   * @param connection - Active org connection.
+   * @returns Organization summary fields.
+   */
+  private static async _queryOrganizationSummaryAsync(
+    connection: OrgSummaryConnectionType
+  ): Promise<OrganizationSummaryType> {
+    const query = 'SELECT OrganizationType, IsSandbox FROM Organization LIMIT 1';
+    if (connection.singleRecordQuery) {
+      return connection.singleRecordQuery<OrganizationSummaryType>(query);
+    }
+    return {};
   }
 
   /**

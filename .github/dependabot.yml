@@ -1,20 +1,47 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "07:00"
-  allow:
-      - dependency-type: "direct" # Optional: Focus on direct dependencies
-  open-pull-requests-limit: 10
-  versioning-strategy: increase
-  ignore:
-      - dependency-name: "csv-parse" 
-      - dependency-name: "globby" 
-      - dependency-name: "madge"  
-      - dependency-name: "mocha"
-      - dependency-name: "nyc"
-      - dependency-name: "@oclif/*"    
-      - dependency-name: "soql-parser-js" 
-      - dependency-name: "@babel/*"   
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '07:00'
+      timezone: 'UTC'
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    rebase-strategy: auto
+    groups:
+      sf-cli-and-oclif:
+        patterns:
+          - '@salesforce/*'
+          - '@oclif/*'
+          - 'oclif'
+      third-party-runtime:
+        patterns:
+          - 'soql-parser-js'
+          - 'alasql'
+          - 'casual'
+          - 'class-transformer'
+          - 'csv-parse'
+          - 'csv-writer'
+          - 'es6-shim'
+          - 'glob'
+          - 'promise-parallel-throttle'
+          - 'reflect-metadata'
+      build-and-test-tooling:
+        patterns:
+          - '@jsforce/jsforce-node'
+          - 'typescript'
+          - 'ts-node'
+          - 'eslint*'
+          - 'mocha'
+          - 'nyc'
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '07:30'
+      timezone: 'UTC'
+    open-pull-requests-limit: 5
+    rebase-strategy: auto
