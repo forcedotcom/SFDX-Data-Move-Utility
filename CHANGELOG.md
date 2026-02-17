@@ -1,3 +1,12 @@
+## [5.1.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.0...5.1.1) (2026-02-17)
+
+
+### Bug Fixes
+
+* stabilize yarn dependency resolution and eslint install set ([db4062b](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/db4062bd82bb723b20cfb7e168bd9061741044e2))
+
+
+
 # [5.1.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.39.0...5.1.0) (2026-02-17)
 
 
