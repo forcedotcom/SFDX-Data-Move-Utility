@@ -6,6 +6,7 @@
  */
 
 import { strict as assert } from 'node:assert';
+import { EventEmitter } from 'node:events';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
@@ -267,6 +268,52 @@ describe('OrgDataService', () => {
       assert.equal(records.length, 1);
       assert.ok(requestUrl.includes('/queryAll?q='));
       assert.ok(requestUrl.includes(encodeURIComponent("SELECT Id FROM Account WHERE Name = 'A'")));
+    } finally {
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+    }
+  });
+
+  it('handles bulk query streams returned as promises', async () => {
+    const script = new Script();
+
+    const org = new ScriptOrg();
+    org.name = 'source';
+    org.media = DATA_MEDIA_TYPE.Org;
+    org.script = script;
+
+    const connection = {
+      query: async (query: string) => {
+        void query;
+        throw new Error('REST query should not be used when bulk is requested.');
+      },
+      bulk: {
+        pollInterval: 0,
+        pollTimeout: 0,
+        query: async (query: string) => {
+          void query;
+          const stream = new EventEmitter();
+          setImmediate(() => {
+            stream.emit('record', { Id: '001' });
+            stream.emit('record', { Id: '002' });
+            stream.emit('end');
+          });
+          return stream;
+        },
+      },
+    };
+
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => connection as never;
+
+    try {
+      const service = new OrgDataService(script);
+      const records = await service.queryOrgAsync('SELECT Id FROM Account', org, { useBulk: true });
+
+      assert.equal(records.length, 2);
+      assert.equal(records[0].Id, '001');
+      assert.equal(records[1].Id, '002');
+      assert.equal(connection.bulk.pollInterval, script.pollingIntervalMs);
+      assert.equal(connection.bulk.pollTimeout, script.pollingQueryTimeoutMs);
     } finally {
       OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
     }

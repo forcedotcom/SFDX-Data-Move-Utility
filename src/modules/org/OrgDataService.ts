@@ -42,10 +42,12 @@ type BulkQueryType = {
   on(event: 'error', listener: (error: Error) => void): BulkQueryType;
 };
 
+type BulkQueryResultType = BulkQueryType | Promise<BulkQueryType>;
+
 type BulkConnectionType = {
   pollInterval: number;
   pollTimeout: number;
-  query: (soql: string) => BulkQueryType;
+  query: (soql: string) => BulkQueryResultType;
 };
 
 type OrgConnectionType = Omit<Connection, 'bulk'> & {
@@ -576,17 +578,23 @@ export default class OrgDataService {
     return new Promise<Array<Record<string, unknown>>>((resolve, reject) => {
       const records: Array<Record<string, unknown>> = [];
       let progress = createProgressState(QUERY_PROGRESS_MESSAGE_PER_RECORDS);
-      const bulkQuery = bulk.query(query);
+      const subscribeAsync = async (): Promise<void> => {
+        const bulkQuery = await Promise.resolve(bulk.query(query));
 
-      bulkQuery.on('record', (record) => {
-        records.push(record);
-        progress = this._logProgress(records.length, progress);
+        bulkQuery.on('record', (record) => {
+          records.push(record);
+          progress = this._logProgress(records.length, progress);
+        });
+        bulkQuery.on('end', () => {
+          this._logFinalProgress(records.length, progress);
+          resolve(records);
+        });
+        bulkQuery.on('error', (error) => reject(error));
+      };
+
+      void subscribeAsync().catch((error: unknown) => {
+        reject(error instanceof Error ? error : new Error(String(error ?? 'Unknown bulk query error')));
       });
-      bulkQuery.on('end', () => {
-        this._logFinalProgress(records.length, progress);
-        resolve(records);
-      });
-      bulkQuery.on('error', (error) => reject(error));
     });
   }
 
