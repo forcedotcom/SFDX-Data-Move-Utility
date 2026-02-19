@@ -8,6 +8,7 @@
 import { Messages } from '@salesforce/core';
 import { Common } from '../common/Common.js';
 import {
+  COMMAND_EXIT_STATUSES,
   DEFAULT_USER_PROMPT_TEXT_ENTER_TIMEOUT_MS,
   DEFAULT_USER_PROMPT_TIMEOUT_MS,
   LOGGING_MESSAGE_BUNDLE,
@@ -429,6 +430,12 @@ export default class LoggingService {
       [],
       'blue'
     );
+    if (this._shouldWriteFailureGuidance(status)) {
+      if (this.context.shouldWriteStdout()) {
+        this.context.stdoutWriter('');
+      }
+      this._writeLog(LOG_LEVELS.INFO, 'commandFailedConfigurationGuidance', [], 'yellow');
+    }
     this._writeLog(LOG_LEVELS.INFO, this.getMessage('timeElapsedLogTemplate', timeElapsedString), [], 'blue');
 
     const result: FinishMessageType = {
@@ -458,6 +465,17 @@ export default class LoggingService {
   }
 
   /**
+   * Determines whether a post-failure guidance message should be printed.
+   *
+   * @param status - Exit status code.
+   * @returns True when guidance should be shown.
+   */
+  private _shouldWriteFailureGuidance(status: number): boolean {
+    void this;
+    return status !== COMMAND_EXIT_STATUSES.SUCCESS && status !== COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER;
+  }
+
+  /**
    * Sanitizes token values before logging to avoid platform-specific escape sequences.
    *
    * @param token - Token to sanitize.
@@ -472,7 +490,7 @@ export default class LoggingService {
       return token;
     }
     const normalized = token.replace(/\\/g, '/');
-    const collapsed = normalized.replace(/\/{2,}/g, '/');
+    const collapsed = normalized.replace(/(^|[^:])\/{2,}/g, '$1/');
     return collapsed.replace(/\r?\n/g, ' ').replace(/\t/g, ' ');
   }
 

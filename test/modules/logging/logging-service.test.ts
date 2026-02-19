@@ -9,6 +9,7 @@ import { strict as assert } from 'node:assert';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { COMMAND_EXIT_STATUSES } from '../../../src/modules/constants/Constants.js';
 import LoggingContext from '../../../src/modules/logging/LoggingContext.js';
 import LoggingService from '../../../src/modules/logging/LoggingService.js';
 
@@ -188,6 +189,82 @@ describe('LoggingService', () => {
     assert.equal(jsonStdout.statusString, 'COMMAND_UNEXPECTED_ERROR');
     assert.ok(jsonStdout.message.includes('oops'));
     assert.ok(jsonStdout.stack[0]?.includes('oops'));
+  });
+
+  it('shows yellow failure guidance after exit code for non-zero status', () => {
+    const rootPath = createTempDir();
+    const stdout: string[] = [];
+    const stderr: string[] = [];
+    const context = new LoggingContext({
+      commandName: 'run',
+      rootPath,
+      logLevelName: 'INFO',
+      fileLogEnabled: true,
+      stdoutWriter: (message: string) => stdout.push(message),
+      stderrWriter: (message: string) => stderr.push(message),
+      startTime: new Date('2024-01-01T00:00:00Z'),
+    });
+    const service = new LoggingService(context);
+
+    service.finishCommandWithError(
+      'commandExecutionErrorResult',
+      COMMAND_EXIT_STATUSES.COMMAND_EXECUTION_ERROR,
+      'COMMAND_EXECUTION_ERROR',
+      new Error('boom')
+    );
+
+    const exitCodeLineIndex = stdout.findIndex((line) =>
+      line.includes('Execution of the command sfdmu:run has been completed. Exit code 4 (COMMAND_EXECUTION_ERROR).')
+    );
+    const guidanceLineIndex = stdout.findIndex((line) =>
+      line.includes('To localize the root cause of the issue, first check your migration configuration')
+    );
+
+    assert.ok(exitCodeLineIndex >= 0);
+    assert.ok(guidanceLineIndex > exitCodeLineIndex);
+    assert.equal(stdout[exitCodeLineIndex + 1], '');
+    assert.ok(stdout[guidanceLineIndex].includes('\u001b[33m'));
+    assert.ok(
+      stdout[guidanceLineIndex].includes(
+        'https://help.sfdmu.com/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not'
+      )
+    );
+    assert.equal(stderr.length, 1);
+  });
+
+  it('does not show failure guidance for success and user-aborted statuses', () => {
+    const rootPath = createTempDir();
+    const stdout: string[] = [];
+    const stderr: string[] = [];
+    const context = new LoggingContext({
+      commandName: 'run',
+      rootPath,
+      logLevelName: 'INFO',
+      fileLogEnabled: true,
+      stdoutWriter: (message: string) => stdout.push(message),
+      stderrWriter: (message: string) => stderr.push(message),
+      startTime: new Date('2024-01-01T00:00:00Z'),
+    });
+    const service = new LoggingService(context);
+
+    service.finishCommand('commandSucceededResult', COMMAND_EXIT_STATUSES.SUCCESS, 'SUCCESS');
+    service.finishCommand(
+      'commandAbortedByUserErrorResult',
+      COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER,
+      'COMMAND_ABORTED_BY_USER'
+    );
+
+    assert.equal(
+      stdout.some((line) =>
+        line.includes('To localize the root cause of the issue, first check your migration configuration')
+      ),
+      false
+    );
+    assert.equal(
+      stdout.some((line) => line === ''),
+      false
+    );
+    assert.ok(stderr.some((line) => line.includes('Execution of the command has aborted by the user.')));
   });
 
   it('uses default prompt answers when json is enabled', async () => {

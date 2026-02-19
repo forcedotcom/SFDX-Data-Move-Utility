@@ -150,6 +150,22 @@ Execution of the command %s has been started.
 
 Execution of the command %s has been completed. Exit code %s (%s).
 
+# commandFailedConfigurationGuidance
+
+To localize the root cause of the issue, first check your migration configuration, because most failures are caused by setup mistakes.
+
+If you decide to open an issue in the GitHub issue tracker, please run SFDMU with --diagnostic --anonymise and attach to your issue the full generated .log file from that run.
+
+Example:
+sf sfdmu run --sourceusername source@name.com --targetusername target@name.com --diagnostic --anonymise
+
+Sensitive data in this log is masked when --anonymise is used.
+For exact details, see https://help.sfdmu.com/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not.
+
+If there are failed rows, please also attach the relevant \_target.csv (with 1-2 full affected rows).
+
+Without the full diagnostic log, I cannot investigate and help with this issue.
+
 # jobCompletedHeader
 
 ===== MIGRATION JOB ENDED =====
