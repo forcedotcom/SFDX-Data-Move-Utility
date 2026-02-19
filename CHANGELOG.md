@@ -1,3 +1,12 @@
+## [5.1.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.3...5.1.4) (2026-02-19)
+
+
+### Bug Fixes
+
+* show non-zero exit guidance with diagnostic log requirements ([869ed88](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/869ed88bcc618b313386df3fc1fc8767566610ff))
+
+
+
 ## [5.1.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.2...5.1.3) (2026-02-19)
 
 
