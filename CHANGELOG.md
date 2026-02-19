@@ -1,3 +1,12 @@
+## [5.1.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.2...5.1.3) (2026-02-19)
+
+
+### Bug Fixes
+
+* handle Promise-based bulk query streams and prevent bulk runtime crash ([7220a9d](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/7220a9d4b0aa8b8bcba2d2da4b59f5e69f2a9f8d))
+
+
+
 ## [5.1.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.1...5.1.2) (2026-02-17)
 
 

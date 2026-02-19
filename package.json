@@ -1,7 +1,7 @@
 {
   "name": "sfdmu",
   "description": "The SFDX Data Move Utility (SFDMU) is the most modern and powerful salesforce data migration tool. It will help you to populate your org with data in minutes.",
-  "version": "5.1.2",
+  "version": "5.1.3",
   "author": "Haim Knokh",
   "license": "BSD-3-Clause",
   "bugs": "https://github.com/forcedotcom/SFDX-Data-Move-Utility/issues",
