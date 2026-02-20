@@ -447,6 +447,7 @@ describe('ScriptLoader', () => {
             {
               "name": "Name",
               "pattern": "name",
+              "locale": "ru_RU",
               "excludedRegex": "test"
             },
             {
@@ -556,6 +557,7 @@ describe('ScriptLoader', () => {
       assert.equal(mockObject.updateWithMockData, true);
       assert.equal(mockObject.mockFields.length, 4);
       assert.equal(mockObject.mockFields[0].name, 'Name');
+      assert.equal(mockObject.mockFields[0].locale, 'ru_RU');
 
       const excludedObject = script.objectSets[0].objects[8];
       assert.equal(excludedObject.excluded, true);

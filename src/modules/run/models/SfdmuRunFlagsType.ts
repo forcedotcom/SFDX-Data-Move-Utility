@@ -85,6 +85,11 @@ export type SfdmuRunFlagsType = {
   nowarnings?: boolean;
 
   /**
+   * Abort execution on the first warning and return warning-as-error status.
+   */
+  failonwarning?: boolean;
+
+  /**
    * Allow modifications in production without prompt.
    */
   canmodify?: string;

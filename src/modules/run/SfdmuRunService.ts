@@ -33,6 +33,7 @@ import { CommandInitializationNoStackError } from '../models/common/CommandIniti
 import { OrgMetadataError } from '../models/common/OrgMetadataError.js';
 import { SuccessExit } from '../models/common/SuccessExit.js';
 import { UnresolvableWarning } from '../models/common/UnresolvableWarning.js';
+import { CommandAbortedByWarningError } from '../models/common/CommandAbortedByWarningError.js';
 import Script from '../models/script/Script.js';
 import ScriptObjectSet from '../models/script/ScriptObjectSet.js';
 import ScriptOrg from '../models/script/ScriptOrg.js';
@@ -97,6 +98,7 @@ export default class SfdmuRunService {
     [COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_USER, 'COMMAND_ABORTED_BY_USER'],
     [COMMAND_EXIT_STATUSES.UNRESOLVABLE_WARNING, 'UNRESOLVABLE_WARNING'],
     [COMMAND_EXIT_STATUSES.COMMAND_ABORTED_BY_ADDON, 'COMMAND_ABORTED_BY_ADDON'],
+    [COMMAND_EXIT_STATUSES.WARNING_AS_ERROR, 'WARNING_AS_ERROR'],
   ]);
 
   // ------------------------------------------------------//
@@ -236,6 +238,7 @@ export default class SfdmuRunService {
       quiet: Boolean(flags.quiet),
       diagnostic: Boolean(flags.diagnostic),
       anonymise: Boolean(flags.anonymise),
+      failonwarning: Boolean(flags.failonwarning),
       verbose: false,
       loglevel,
       canmodify,
@@ -312,6 +315,7 @@ export default class SfdmuRunService {
       anonymiseEntries: this._createAnonymiseEntries(flags, rootPath),
       anonymiseSeed,
       noWarnings: flags.nowarnings,
+      failOnWarning: flags.failonwarning,
       noPrompt: flags.noprompt,
       stdoutWriter,
       stderrWriter,
@@ -393,12 +397,23 @@ export default class SfdmuRunService {
       json: flags.json ?? null,
       noprompt: flags.noprompt ?? null,
       nowarnings: flags.nowarnings ?? null,
+      failonwarning: this._toNullableFlagValue(flags.failonwarning),
       canmodify: flags.canmodify ?? null,
       simulation: flags.simulation ?? null,
       loglevel: flags.loglevel ?? null,
       usesf: flags.usesf ?? null,
       version: flags.version ?? null,
     };
+  }
+
+  /**
+   * Normalizes optional scalar flag values to explicit nullable values.
+   *
+   * @param value - Optional flag value.
+   * @returns Original value or null.
+   */
+  private static _toNullableFlagValue(value: string | number | boolean | undefined): string | number | boolean | null {
+    return value ?? null;
   }
 
   /**
@@ -1188,6 +1203,15 @@ export default class SfdmuRunService {
         'commandAbortedDueWarningErrorResult',
         COMMAND_EXIT_STATUSES.UNRESOLVABLE_WARNING,
         this._getStatusString(COMMAND_EXIT_STATUSES.UNRESOLVABLE_WARNING),
+        error
+      );
+      return this._attachFlags(finish, flags);
+    }
+    if (error instanceof CommandAbortedByWarningError) {
+      const finish = logger.finishCommandWithError(
+        'commandAbortedDueWarningErrorResult',
+        COMMAND_EXIT_STATUSES.WARNING_AS_ERROR,
+        this._getStatusString(COMMAND_EXIT_STATUSES.WARNING_AS_ERROR),
         error
       );
       return this._attachFlags(finish, flags);

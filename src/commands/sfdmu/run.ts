@@ -40,6 +40,7 @@ const mapFlags = (flags: SfdmuRunFlagsType): SfdmuRunFlagsType => ({
   json: flags.json,
   noprompt: flags.noprompt,
   nowarnings: flags.nowarnings,
+  failonwarning: flags.failonwarning,
   canmodify: flags.canmodify,
   simulation: flags.simulation,
   loglevel: flags.loglevel,
@@ -144,6 +145,10 @@ export default class Run extends SfCommand<SfdmuRunResultType> {
       char: 'w',
       summary: messages.getMessage('flags.nowarnings.summary'),
       description: messages.getMessage('flags.nowarnings.description'),
+    }),
+    failonwarning: Flags.boolean({
+      summary: messages.getMessage('flags.failonwarning.summary'),
+      description: messages.getMessage('flags.failonwarning.description'),
     }),
     canmodify: Flags.string({
       char: 'c',

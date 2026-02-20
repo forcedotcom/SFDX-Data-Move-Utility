@@ -17,6 +17,7 @@ export default interface ISfdmuRunCustomAddonScriptMockField {
   name: string;
   excludeNames: string[];
   pattern: string;
+  locale: string;
   excludedRegex: string;
   includedRegex: string;
 }

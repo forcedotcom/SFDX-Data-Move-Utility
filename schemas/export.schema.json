@@ -1,0 +1,446 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/forcedotcom/SFDX-Data-Move-Utility/main/schemas/export.schema.json",
+  "title": "SFDMU export.json schema",
+  "description": "Schema for SFDMU export.json configuration",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "orgs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scriptOrg"
+      }
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scriptObject"
+      }
+    },
+    "objectSets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scriptObjectSet"
+      }
+    },
+    "pollingIntervalMs": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pollingQueryTimeoutMs": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "concurrencyMode": {
+      "type": "string",
+      "enum": ["Serial", "Parallel"]
+    },
+    "bulkThreshold": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "queryBulkApiThreshold": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "bulkApiVersion": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "bulkApiV1BatchSize": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "restApiBatchSize": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "allOrNone": {
+      "type": "boolean"
+    },
+    "promptOnMissingParentObjects": {
+      "type": "boolean"
+    },
+    "promptOnIssuesInCSVFiles": {
+      "type": "boolean"
+    },
+    "validateCSVFilesOnly": {
+      "type": "boolean"
+    },
+    "apiVersion": {
+      "type": "string"
+    },
+    "proxyUrl": {
+      "type": "string"
+    },
+    "createTargetCSVFiles": {
+      "type": "boolean"
+    },
+    "importCSVFilesAsIs": {
+      "type": "boolean"
+    },
+    "excludeIdsFromCSVFiles": {
+      "type": "boolean"
+    },
+    "keepObjectOrderWhileExecute": {
+      "type": "boolean"
+    },
+    "allowFieldTruncation": {
+      "type": "boolean"
+    },
+    "alwaysUseRestApiToUpdateRecords": {
+      "type": "boolean"
+    },
+    "simulationMode": {
+      "type": "boolean"
+    },
+    "csvFileDelimiter": {
+      "type": "string"
+    },
+    "csvReadFileDelimiter": {
+      "type": "string"
+    },
+    "csvWriteFileDelimiter": {
+      "type": "string"
+    },
+    "csvFileEncoding": {
+      "type": "string"
+    },
+    "csvInsertNulls": {
+      "type": "boolean"
+    },
+    "csvUseEuropeanDateFormat": {
+      "type": "boolean"
+    },
+    "csvWriteUpperCaseHeaders": {
+      "type": "boolean"
+    },
+    "csvUseUtf8Bom": {
+      "type": "boolean"
+    },
+    "csvAlwaysQuoted": {
+      "type": "boolean"
+    },
+    "useSeparatedCSVFiles": {
+      "type": "boolean"
+    },
+    "binaryDataCache": {
+      "type": "string",
+      "enum": ["InMemory", "CleanFileCache", "FileCache"]
+    },
+    "sourceRecordsCache": {
+      "type": "string",
+      "enum": ["InMemory", "CleanFileCache", "FileCache"]
+    },
+    "parallelBinaryDownloads": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "parallelBulkJobs": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "parallelRestJobs": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "groupQuery": {
+      "type": "string"
+    },
+    "beforeAddons": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/addonManifestDefinition"
+      }
+    },
+    "afterAddons": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/addonManifestDefinition"
+      }
+    },
+    "dataRetrievedAddons": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/addonManifestDefinition"
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "required": ["objects"]
+    },
+    {
+      "required": ["objectSets"]
+    }
+  ],
+  "$defs": {
+    "scriptOrg": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "orgUserName": {
+          "type": "string"
+        },
+        "instanceUrl": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        }
+      }
+    },
+    "scriptObjectSet": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/scriptObject"
+          }
+        }
+      }
+    },
+    "scriptObject": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "deleteQuery": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string",
+          "enum": ["Insert", "Update", "Upsert", "Readonly", "Delete", "DeleteSource", "DeleteHierarchy", "HardDelete"]
+        },
+        "externalId": {
+          "type": "string"
+        },
+        "master": {
+          "type": "boolean"
+        },
+        "useFieldMapping": {
+          "type": "boolean"
+        },
+        "useCSVValuesMapping": {
+          "type": "boolean"
+        },
+        "useValuesMapping": {
+          "type": "boolean"
+        },
+        "updateWithMockData": {
+          "type": "boolean"
+        },
+        "deleteOldData": {
+          "type": "boolean"
+        },
+        "deleteFromSource": {
+          "type": "boolean"
+        },
+        "deleteByHierarchy": {
+          "type": "boolean"
+        },
+        "hardDelete": {
+          "type": "boolean"
+        },
+        "sourceRecordsFilter": {
+          "type": "string"
+        },
+        "targetRecordsFilter": {
+          "type": "string"
+        },
+        "excluded": {
+          "type": "boolean"
+        },
+        "useQueryAll": {
+          "type": "boolean"
+        },
+        "queryAllTarget": {
+          "type": "boolean"
+        },
+        "skipExistingRecords": {
+          "type": "boolean"
+        },
+        "bulkApiV1BatchSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "restApiBatchSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parallelBulkJobs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parallelRestJobs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "useSourceCSVFile": {
+          "type": "boolean"
+        },
+        "skipRecordsComparison": {
+          "type": "boolean"
+        },
+        "excludedFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludedFromUpdateFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fieldMapping": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/mappingItem"
+          }
+        },
+        "mockFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/mockField"
+          }
+        },
+        "beforeAddons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/addonManifestDefinition"
+          }
+        },
+        "afterAddons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/addonManifestDefinition"
+          }
+        },
+        "beforeUpdateAddons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/addonManifestDefinition"
+          }
+        },
+        "afterUpdateAddons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/addonManifestDefinition"
+          }
+        },
+        "filterRecordsAddons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/addonManifestDefinition"
+          }
+        },
+        "polymorphicLookups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/polymorphicLookup"
+          }
+        }
+      },
+      "required": ["query"]
+    },
+    "mappingItem": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "sourceField": {
+          "type": "string"
+        },
+        "targetField": {
+          "type": "string"
+        },
+        "targetObject": {
+          "type": "string"
+        }
+      }
+    },
+    "mockField": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "excludedRegex": {
+          "type": "string"
+        },
+        "includedRegex": {
+          "type": "string"
+        },
+        "excludeNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["name", "pattern"]
+    },
+    "addonManifestDefinition": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "args": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "anyOf": [
+        {
+          "required": ["module"]
+        },
+        {
+          "required": ["path"]
+        }
+      ]
+    },
+    "polymorphicLookup": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "fieldName": {
+          "type": "string"
+        },
+        "referencedObjectType": {
+          "type": "string"
+        }
+      },
+      "required": ["fieldName"]
+    }
+  }
+}

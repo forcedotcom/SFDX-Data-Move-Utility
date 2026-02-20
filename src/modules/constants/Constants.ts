@@ -35,6 +35,7 @@ export const COMMAND_EXIT_STATUSES = {
   COMMAND_ABORTED_BY_USER: 5,
   UNRESOLVABLE_WARNING: 6,
   COMMAND_ABORTED_BY_ADDON: 7,
+  WARNING_AS_ERROR: 8,
 } as const;
 export const FILE_LOG_DEFAULT = 0;
 export const JOB_PIPELINE_STAGES = ['load', 'setup', 'processCsv', 'prepare', 'addons', 'execute'] as const;
@@ -65,6 +66,7 @@ export const __ID_FIELD_NAME = '___Id';
 export const __SOURCE_ID_FIELD_NAME = '___SourceId';
 export const __IS_PROCESSED_FIELD_NAME = '___IsProcessed';
 export const ERRORS_FIELD_NAME = 'Errors';
+export const TARGET_CSV_OLD_ID_FIELD_NAME = 'Old Id';
 export const OLD_DEFAULT_RECORD_TYPE_ID_FIELD_R_NAME = 'RecordType.DeveloperName';
 export const COMPLEX_FIELDS_QUERY_SEPARATOR = '$';
 export const COMPLEX_FIELDS_QUERY_PREFIX = '$$';

@@ -24,6 +24,11 @@ export default class ScriptMockField {
   public pattern = '';
 
   /**
+   * Optional casual locale for this field pattern (for example ru_RU).
+   */
+  public locale = '';
+
+  /**
    * Optional exclusion regex used to skip mocking.
    */
   public excludedRegex = '';

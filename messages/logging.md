@@ -206,6 +206,14 @@ Error during execution of the command: %s.
 
 Execution of the command has aborted due to warning: %s.
 
+# failOnWarningAbortDiagnostic
+
+[diagnostic] Stop reason: --failonwarning is enabled. Warning promoted to error: %s.
+
+# exclusionReasonDiagnostic
+
+[diagnostic] Exclusion reason (%s): %s.
+
 # commandAbortedByUserErrorResult
 
 Execution of the command has aborted by the user.
@@ -361,6 +369,10 @@ Access token to the %s has been expired or the user has no access permissions.
 # referencedFieldExcludedFromQuery
 
 [WARNING] {%s.%s} Referenced field removed from the script query. It will be added automatically if required.
+
+# queryFieldNotWritableForOperationExcluded
+
+[WARNING] {%s.%s} Field is in query but is not %s for %s operation and will be excluded from DML.
 
 # fieldIsNotOfPolymorphicType
 

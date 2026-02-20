@@ -26,9 +26,9 @@ export default class MockGenerator {
   private static _counter: { counter: Record<string, number | Date> } = { counter: {} };
 
   /**
-   * Tracks whether custom generators were initialized.
+   * Tracks casual generator instances already initialized with custom generators.
    */
-  private static _isInitialized = false;
+  private static _initializedGenerators: WeakSet<object> = new WeakSet();
 
   /**
    * Date step handlers for sequential date mocks.
@@ -63,7 +63,10 @@ export default class MockGenerator {
    * @param casual - Casual instance.
    */
   public static createCustomGenerators(casual: CasualGeneratorType): void {
-    if (this._isInitialized || !casual || typeof casual.define !== 'function') {
+    if (!casual || typeof casual.define !== 'function') {
+      return;
+    }
+    if (this._initializedGenerators.has(casual)) {
       return;
     }
 
@@ -111,7 +114,7 @@ export default class MockGenerator {
         return next instanceof Date ? new Date(next.getTime()) : new Date();
       });
 
-      this._isInitialized = true;
+      this._initializedGenerators.add(casual);
     } catch {
       // Swallow initialization errors to avoid breaking the run.
     }

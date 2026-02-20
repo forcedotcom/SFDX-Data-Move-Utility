@@ -43,6 +43,7 @@ import {
   REFERENCE_FIELD_OBJECT_SEPARATOR,
   SPECIAL_MOCK_COMMANDS,
   SPECIAL_MOCK_PATTERNS,
+  TARGET_CSV_OLD_ID_FIELD_NAME,
 } from '../../constants/Constants.js';
 import CjsDependencyAdapters from '../../dependencies/CjsDependencyAdapters.js';
 import type { LoggerType } from '../../logging/LoggerType.js';
@@ -61,6 +62,7 @@ type UpdateModeType = 'forwards' | 'backwards';
 
 type MockFieldRuntimeType = {
   fn: string;
+  locale: string;
   regExcl: string;
   regIncl: string;
   disallowMockAllRecord: boolean;
@@ -231,6 +233,11 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
    * Zero-based update pass counter for the current object set.
    */
   private _updatePassNumber = -1;
+
+  /**
+   * Dedupes field capability warnings emitted for this task execution.
+   */
+  private _warnedFieldCapabilityKeys: Set<string> = new Set();
 
   // ------------------------------------------------------//
   // ----------------------- CONSTRUCTOR ----------------- //
@@ -1429,13 +1436,37 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       if (this.sObjectName === 'Account') {
         const filtered = fields.filter((field) => {
           const fieldName = field.nameId ?? field.name;
-          return !field.person && !FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_ACCOUNT.includes(fieldName);
+          if (field.person) {
+            this._logVerboseField(
+              this.sObjectName,
+              fieldName,
+              '[diagnostic] Excluded from business-account pass: person-account field is not valid for this pass.'
+            );
+            return false;
+          }
+          if (FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_ACCOUNT.includes(fieldName)) {
+            this._logVerboseField(
+              this.sObjectName,
+              fieldName,
+              '[diagnostic] Excluded from business-account pass: field is not valid for business-account DML.'
+            );
+            return false;
+          }
+          return true;
         });
         return { shouldProcess: true, fields: filtered };
       }
       const filtered = fields.filter((field) => {
         const fieldName = field.nameId ?? field.name;
-        return !FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_CONTACT.includes(fieldName);
+        if (FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_BUSINESS_CONTACT.includes(fieldName)) {
+          this._logVerboseField(
+            this.sObjectName,
+            fieldName,
+            '[diagnostic] Excluded from business-contact pass: field is not valid for business-contact DML.'
+          );
+          return false;
+        }
+        return true;
       });
       return { shouldProcess: true, fields: filtered };
     }
@@ -1443,11 +1474,22 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     if (this.sObjectName === 'Account') {
       const filtered = fields.filter((field) => {
         const fieldName = field.nameId ?? field.name;
-        return !FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.includes(fieldName);
+        if (FIELDS_TO_EXCLUDE_FROM_UPDATE_FOR_PERSON_ACCOUNT.includes(fieldName)) {
+          this._logVerboseField(
+            this.sObjectName,
+            fieldName,
+            '[diagnostic] Excluded from person-account pass: field is not valid for person-account DML.'
+          );
+          return false;
+        }
+        return true;
       });
       return { shouldProcess: true, fields: filtered };
     }
 
+    this._getLogger().verboseFile(
+      `[diagnostic] Person-account pass skipped: object=${this.sObjectName} reason=Contact is handled via related Account mapping in this pass.`
+    );
     return { shouldProcess: false, fields };
   }
 
@@ -2001,8 +2043,9 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       return records;
     }
 
-    const casual = CjsDependencyAdapters.getCasual() as CasualGeneratorType;
-    MockGenerator.createCustomGenerators(casual);
+    const casualModule = CjsDependencyAdapters.getCasual() as Record<string, unknown>;
+    const casualByLocale = new Map<string, CasualGeneratorType>();
+    this._resolveCasualGeneratorByLocale(casualModule, '', casualByLocale);
     MockGenerator.resetCounter();
 
     const recordIds = records.map((record) => this._resolveMockIdsValue(record));
@@ -2059,8 +2102,14 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
               mockApplyCounts.set(fieldName, (mockApplyCounts.get(fieldName) ?? 0) + 1);
               return;
             }
+            const casualGenerator = this._resolveCasualGeneratorByLocale(
+              casualModule,
+              mockField.locale,
+              casualByLocale
+            );
+            void casualGenerator;
             // eslint-disable-next-line no-eval
-            updatedRecord[fieldName] = eval(`casual.${mockField.fn}`);
+            updatedRecord[fieldName] = eval(`casualGenerator.${mockField.fn}`);
             mockApplyCounts.set(fieldName, (mockApplyCounts.get(fieldName) ?? 0) + 1);
             void value;
           }
@@ -2119,6 +2168,7 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       const includedRegex = mockField.includedRegex ?? '';
       fieldNameToMockFieldMap.set(mockFieldNameToUse, {
         fn,
+        locale: String(mockField.locale ?? '').trim(),
         regExcl: excludedRegex.split(MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
         regIncl: includedRegex.split(MOCK_PATTERN_ENTIRE_ROW_FLAG)[0].trim(),
         disallowMockAllRecord: excludedRegex.includes(MOCK_PATTERN_ENTIRE_ROW_FLAG),
@@ -2168,6 +2218,55 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       return !value;
     }
     return new RegExp(expr, 'ig').test(String(value ?? ''));
+  }
+
+  /**
+   * Resolves the casual generator by locale with fallback to default locale.
+   *
+   * @param casualModule - Raw casual module export.
+   * @param locale - Requested locale key.
+   * @param cache - Locale to generator cache.
+   * @returns Casual generator instance.
+   */
+  private _resolveCasualGeneratorByLocale(
+    casualModule: Record<string, unknown>,
+    locale: string,
+    cache: Map<string, CasualGeneratorType>
+  ): CasualGeneratorType {
+    const requestedLocale = String(locale ?? '').trim();
+    const cacheKey = requestedLocale || '__default__';
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    const defaultGenerator = this._isCasualGenerator(casualModule) ? casualModule : undefined;
+    const normalizedLocale = requestedLocale.replace('-', '_');
+    const localeCandidate =
+      (requestedLocale && casualModule[requestedLocale]) || (normalizedLocale && casualModule[normalizedLocale]);
+    const resolvedGenerator = this._isCasualGenerator(localeCandidate) ? localeCandidate : defaultGenerator;
+    if (!resolvedGenerator) {
+      throw new CommandExecutionError(`Unable to resolve casual generator for locale "${requestedLocale}".`);
+    }
+
+    MockGenerator.createCustomGenerators(resolvedGenerator);
+    cache.set(cacheKey, resolvedGenerator);
+    return resolvedGenerator;
+  }
+
+  /**
+   * Returns true when value matches the minimal casual generator contract.
+   *
+   * @param value - Value to inspect.
+   * @returns True when define() is available.
+   */
+  private _isCasualGenerator(value: unknown): value is CasualGeneratorType {
+    void this;
+    return (
+      typeof value === 'object' &&
+      value !== null &&
+      typeof (value as Partial<CasualGeneratorType>).define === 'function'
+    );
   }
 
   /**
@@ -2681,26 +2780,192 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     processedData: ProcessedData,
     fieldsToCompareRecords: string[]
   ): ProcessedFieldsToRemoveType {
+    const explicitQueryFields = this._resolveExplicitQueryFieldSet();
+    const insertExclusionReasons = new Map<string, Set<string>>();
+    const updateExclusionReasons = new Map<string, Set<string>>();
+    const addReason = (target: Map<string, Set<string>>, fieldName: string, reason: string): void => {
+      if (!fieldName || !reason) {
+        return;
+      }
+      const reasons = target.get(fieldName) ?? new Set<string>();
+      reasons.add(reason);
+      target.set(fieldName, reasons);
+    };
+    const notCreatableSourceFields = processedData.fields.filter(
+      (field) => field.isDescribed && !field.creatable && field.nameId !== 'Id'
+    );
+    const notUpdateableSourceFields = processedData.fields.filter(
+      (field) => field.isDescribed && !field.updateable && field.nameId !== 'Id'
+    );
+
+    this._warnFieldCapabilityByOperation(OPERATION.Insert, 'createable', notCreatableSourceFields, explicitQueryFields);
+    this._warnFieldCapabilityByOperation(
+      OPERATION.Update,
+      'updateable',
+      notUpdateableSourceFields,
+      explicitQueryFields
+    );
+
     const mappedFieldsToUpdate = processedData.fields
       .map((field) => this.scriptObject.mapFieldNameToTarget(field.nameId ?? field.name))
       .filter((fieldName) => fieldName.length > 0);
 
     const compareOnlyFields = fieldsToCompareRecords.filter((fieldName) => !mappedFieldsToUpdate.includes(fieldName));
+    compareOnlyFields.forEach((fieldName) => {
+      addReason(
+        insertExclusionReasons,
+        fieldName,
+        'field is used only for comparison and excluded from Insert payload'
+      );
+      addReason(
+        updateExclusionReasons,
+        fieldName,
+        'field is used only for comparison and excluded from Update payload'
+      );
+    });
 
-    const notCreatableFields = processedData.fields
-      .filter((field) => field.isDescribed && !field.creatable && field.nameId !== 'Id')
-      .map((field) => this.scriptObject.mapFieldNameToTarget(field.nameId ?? field.name));
+    const notCreatableFields = notCreatableSourceFields.map((field) => {
+      const sourceFieldName = field.nameId ?? field.name;
+      const targetFieldName = this.scriptObject.mapFieldNameToTarget(sourceFieldName);
+      addReason(insertExclusionReasons, targetFieldName, 'field is not createable for Insert operation');
+      if (targetFieldName.toLowerCase() !== sourceFieldName.toLowerCase()) {
+        addReason(insertExclusionReasons, targetFieldName, `mapped from source field ${sourceFieldName}`);
+      }
+      return targetFieldName;
+    });
 
-    const notUpdateableFields = processedData.fields
-      .filter((field) => field.isDescribed && !field.updateable && field.nameId !== 'Id')
-      .map((field) => this.scriptObject.mapFieldNameToTarget(field.nameId ?? field.name));
+    const notUpdateableFields = notUpdateableSourceFields.map((field) => {
+      const sourceFieldName = field.nameId ?? field.name;
+      const targetFieldName = this.scriptObject.mapFieldNameToTarget(sourceFieldName);
+      addReason(updateExclusionReasons, targetFieldName, 'field is not updateable for Update operation');
+      if (targetFieldName.toLowerCase() !== sourceFieldName.toLowerCase()) {
+        addReason(updateExclusionReasons, targetFieldName, `mapped from source field ${sourceFieldName}`);
+      }
+      return targetFieldName;
+    });
 
     const notInsertableFields = Common.distinctStringArray(compareOnlyFields.concat(notCreatableFields));
+    this._logDmlFieldExclusionsDiagnostic(OPERATION.Insert, insertExclusionReasons);
+    this._logDmlFieldExclusionsDiagnostic(OPERATION.Update, updateExclusionReasons);
 
     return {
       notInsertableFields,
       notUpdateableFields: Common.distinctStringArray(notUpdateableFields.concat(compareOnlyFields)),
     };
+  }
+
+  /**
+   * Resolves explicitly listed query fields from the original user query.
+   *
+   * @returns Lower-cased explicit query field names.
+   */
+  private _resolveExplicitQueryFieldSet(): Set<string> {
+    const explicit = new Set<string>();
+    const originalFields = this.scriptObject.originalFieldsInQuery;
+    if (originalFields.length === 0) {
+      return explicit;
+    }
+
+    originalFields.forEach((fieldName) => {
+      const normalized = Common.getFieldFromComplexField(String(fieldName ?? '')).trim();
+      if (!normalized || Common.isComplexOr__rField(normalized)) {
+        return;
+      }
+      explicit.add(normalized.toLowerCase());
+    });
+
+    return explicit;
+  }
+
+  /**
+   * Emits operation-aware warnings for fields explicitly listed in query but not writable.
+   *
+   * @param operationToValidate - Insert or Update operation context.
+   * @param capabilityName - Capability token for the warning text.
+   * @param fields - Candidate fields that fail capability checks.
+   * @param explicitQueryFields - Explicit query field set.
+   */
+  private _warnFieldCapabilityByOperation(
+    operationToValidate: OPERATION,
+    capabilityName: 'createable' | 'updateable',
+    fields: SFieldDescribe[],
+    explicitQueryFields: Set<string>
+  ): void {
+    if (explicitQueryFields.size === 0 || fields.length === 0) {
+      return;
+    }
+
+    const currentOperation = this.scriptObject.operation;
+    const shouldWarn =
+      (operationToValidate === OPERATION.Insert &&
+        (currentOperation === OPERATION.Insert || currentOperation === OPERATION.Upsert)) ||
+      (operationToValidate === OPERATION.Update &&
+        (currentOperation === OPERATION.Update || currentOperation === OPERATION.Upsert));
+    if (!shouldWarn) {
+      return;
+    }
+
+    const logger = this._getLogger();
+    const operationLabel = ScriptObject.getStrOperation(operationToValidate);
+    fields.forEach((field) => {
+      const sourceFieldName = (field.nameId || field.name || '').trim();
+      if (!sourceFieldName) {
+        return;
+      }
+      if (!explicitQueryFields.has(sourceFieldName.toLowerCase())) {
+        return;
+      }
+
+      const warningKey = `${operationLabel}:${capabilityName}:${sourceFieldName.toLowerCase()}`;
+      if (this._warnedFieldCapabilityKeys.has(warningKey)) {
+        return;
+      }
+      this._warnedFieldCapabilityKeys.add(warningKey);
+      logger.warn(
+        'queryFieldNotWritableForOperationExcluded',
+        this.sObjectName,
+        sourceFieldName,
+        capabilityName,
+        operationLabel
+      );
+    });
+  }
+
+  /**
+   * Writes detailed diagnostic lines for DML field exclusions.
+   *
+   * @param operationToValidate - Operation that excludes the field.
+   * @param reasonsByField - Field to reason list map.
+   */
+  private _logDmlFieldExclusionsDiagnostic(
+    operationToValidate: OPERATION,
+    reasonsByField: Map<string, Set<string>>
+  ): void {
+    if (reasonsByField.size === 0) {
+      return;
+    }
+    const currentOperation = this.scriptObject.operation;
+    const shouldLog =
+      (operationToValidate === OPERATION.Insert &&
+        (currentOperation === OPERATION.Insert || currentOperation === OPERATION.Upsert)) ||
+      (operationToValidate === OPERATION.Update &&
+        (currentOperation === OPERATION.Update || currentOperation === OPERATION.Upsert));
+    if (!shouldLog) {
+      return;
+    }
+
+    const logger = this._getLogger();
+    const operationLabel = ScriptObject.getStrOperation(operationToValidate);
+    reasonsByField.forEach((reasons, fieldName) => {
+      if (!fieldName || reasons.size === 0) {
+        return;
+      }
+      logger.verboseFile(
+        `[diagnostic] DML field excluded: object=${
+          this.sObjectName
+        } operation=${operationLabel} field=${fieldName} reasons=${[...reasons].join(' | ')}`
+      );
+    });
   }
 
   /**
@@ -3052,11 +3317,22 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
    * @returns Sanitized records.
    */
   private _sanitizeTargetCsvRecords(records: Array<Record<string, unknown>>): Array<Record<string, unknown>> {
-    const fieldsToRemove = [__ID_FIELD_NAME, __SOURCE_ID_FIELD_NAME, __IS_PROCESSED_FIELD_NAME];
+    const fieldsToRemove = [__ID_FIELD_NAME, __IS_PROCESSED_FIELD_NAME];
     const fieldsToMask: string[] = [];
+    const includeOldIdColumn = records.some((record) =>
+      Object.prototype.hasOwnProperty.call(record, __SOURCE_ID_FIELD_NAME)
+    );
     return records.map((record) => {
       const sanitized = { ...record };
+      const oldIdValue = sanitized[__SOURCE_ID_FIELD_NAME];
       this._removeRecordFields(sanitized, fieldsToRemove);
+      if (Object.prototype.hasOwnProperty.call(sanitized, __SOURCE_ID_FIELD_NAME)) {
+        delete sanitized[__SOURCE_ID_FIELD_NAME];
+      }
+      if (includeOldIdColumn) {
+        sanitized[TARGET_CSV_OLD_ID_FIELD_NAME] =
+          oldIdValue === null || typeof oldIdValue === 'undefined' ? null : String(oldIdValue);
+      }
       if (!Object.prototype.hasOwnProperty.call(sanitized, ERRORS_FIELD_NAME)) {
         sanitized[ERRORS_FIELD_NAME] = null;
       }

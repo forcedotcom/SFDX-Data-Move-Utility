@@ -1432,13 +1432,14 @@ export default class ScriptObject {
     );
     if (this.mockFields.length > 0) {
       this.mockFields.forEach((mockField) => {
+        const locale = mockField.locale ? ` locale=${mockField.locale}` : '';
         const excluded = mockField.excludedRegex ? ` excludedRegex=${mockField.excludedRegex}` : '';
         const included = mockField.includedRegex ? ` includedRegex=${mockField.includedRegex}` : '';
         const excludeNames =
           mockField.excludeNames.length > 0 ? ` excludeNames=${mockField.excludeNames.join(',')}` : '';
         this._logVerboseField(
           mockField.name,
-          `Mock configured. pattern=${mockField.pattern}${excluded}${included}${excludeNames}`
+          `Mock configured. pattern=${mockField.pattern}${locale}${excluded}${included}${excludeNames}`
         );
       });
     }

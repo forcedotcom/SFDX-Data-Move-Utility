@@ -443,4 +443,47 @@ describe('SfdmuRunService', () => {
       fs.rmSync(rootPath, { recursive: true, force: true });
     }
   });
+
+  it('returns warning-as-error status when failonwarning is enabled', async () => {
+    const rootPath = createTempDir();
+    const payload: ScriptPayloadType = {
+      objectSets: [
+        {
+          objects: [],
+        },
+      ],
+    };
+    writeExportJson(rootPath, payload);
+
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => createDescribeConnection() as never;
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          sourceusername: 'source',
+          targetusername: 'target',
+          failonwarning: true,
+          filelog: 0,
+        })
+      );
+
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.WARNING_AS_ERROR);
+      assert.equal(result.statusString, 'WARNING_AS_ERROR');
+      assert.ok(result.message.includes('aborted due to warning'));
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
 });

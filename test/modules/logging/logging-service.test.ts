@@ -10,6 +10,7 @@ import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import { COMMAND_EXIT_STATUSES } from '../../../src/modules/constants/Constants.js';
+import { CommandAbortedByWarningError } from '../../../src/modules/models/common/CommandAbortedByWarningError.js';
 import LoggingContext from '../../../src/modules/logging/LoggingContext.js';
 import LoggingService from '../../../src/modules/logging/LoggingService.js';
 
@@ -65,6 +66,76 @@ describe('LoggingService', () => {
     assert.equal(stdout.length, 0);
     const fileContent = fs.readFileSync(context.logFilePath, 'utf8');
     assert.ok(fileContent.includes('quiet message'));
+  });
+
+  it('aborts on first warning when failOnWarning is enabled', () => {
+    const rootPath = createTempDir();
+    const stdout: string[] = [];
+    const context = new LoggingContext({
+      commandName: 'run',
+      rootPath,
+      logLevelName: 'INFO',
+      fileLogEnabled: true,
+      failOnWarning: true,
+      stdoutWriter: (message: string) => stdout.push(message),
+      startTime: new Date('2024-01-01T00:00:00Z'),
+    });
+    const service = new LoggingService(context);
+
+    assert.throws(
+      () => service.warn('json warn'),
+      (error: unknown) => {
+        assert.ok(error instanceof CommandAbortedByWarningError);
+        return true;
+      }
+    );
+    assert.ok(stdout.some((line) => line.includes('json warn')));
+  });
+
+  it('writes diagnostic stop reason when failOnWarning aborts execution', () => {
+    const rootPath = createTempDir();
+    const context = new LoggingContext({
+      commandName: 'run',
+      rootPath,
+      logLevelName: 'INFO',
+      fileLogEnabled: true,
+      verbose: true,
+      failOnWarning: true,
+      startTime: new Date('2024-01-01T00:00:00Z'),
+    });
+    const service = new LoggingService(context);
+
+    assert.throws(
+      () => service.warn('json warn for diagnostic'),
+      (error: unknown) => {
+        assert.ok(error instanceof CommandAbortedByWarningError);
+        return true;
+      }
+    );
+
+    const fileContent = fs.readFileSync(context.logFilePath, 'utf8');
+    assert.ok(fileContent.includes('json warn for diagnostic'));
+    assert.ok(fileContent.includes('Stop reason: --failonwarning is enabled'));
+    assert.ok(fileContent.includes('Warning promoted to error'));
+  });
+
+  it('writes diagnostic exclusion reason for exclusion warnings', () => {
+    const rootPath = createTempDir();
+    const context = new LoggingContext({
+      commandName: 'run',
+      rootPath,
+      logLevelName: 'INFO',
+      fileLogEnabled: true,
+      verbose: true,
+      startTime: new Date('2024-01-01T00:00:00Z'),
+    });
+    const service = new LoggingService(context);
+
+    service.warn('missingFieldInTargetExcluded', 'Account', 'Name', '');
+
+    const fileContent = fs.readFileSync(context.logFilePath, 'utf8');
+    assert.ok(fileContent.includes('Missing in the Target and will be excluded from the migration'));
+    assert.ok(fileContent.includes('[diagnostic] Exclusion reason (missingFieldInTargetExcluded):'));
   });
 
   it('writes json output to stdout at command completion', () => {
@@ -166,6 +237,35 @@ describe('LoggingService', () => {
     assert.equal(jsonStdout.statusString, 'COMMAND_EXECUTION_ERROR');
     assert.ok(jsonStdout.message.includes('boom'));
     assert.equal(jsonStdout.stack[0], 'Error: boom');
+  });
+
+  it('masks folder paths in stack trace inside diagnostic file log', () => {
+    const rootPath = createTempDir();
+    const context = new LoggingContext({
+      commandName: 'run',
+      rootPath,
+      logLevelName: 'INFO',
+      fileLogEnabled: true,
+      startTime: new Date('2024-01-01T00:00:00Z'),
+    });
+    const service = new LoggingService(context);
+    const error = new Error('boom');
+    error.stack = [
+      'Error: boom',
+      '    at one (D:\\Software Projects\\Repo\\src\\index.ts:10:5)',
+      '    at two (/home/user/repo/src/main.ts:22:9)',
+      '    at three (file:///D:/Software%20Projects/Repo/src/loader.ts:33:1)',
+    ].join('\n');
+
+    service.finishCommandWithError('commandExecutionErrorResult', 4, 'COMMAND_EXECUTION_ERROR', error);
+
+    const fileContent = fs.readFileSync(context.logFilePath, 'utf8');
+    assert.ok(fileContent.includes('Error: boom'));
+    assert.ok(fileContent.includes('<masked-path>/index.ts:10:5'));
+    assert.ok(fileContent.includes('<masked-path>/main.ts:22:9'));
+    assert.ok(fileContent.includes('file://<masked-path>/loader.ts:33:1'));
+    assert.equal(fileContent.includes('D:/Software Projects/Repo/src'), false);
+    assert.equal(fileContent.includes('/home/user/repo/src'), false);
   });
 
   it('adds stack traces for unexpected non-error failures', () => {

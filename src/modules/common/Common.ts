@@ -965,14 +965,20 @@ export class Common {
       return [];
     }
     const errorColumnSet = new Set([CONSTANTS.ERRORS_FIELD_NAME.toLowerCase()]);
+    const oldIdColumnSet = new Set([CONSTANTS.TARGET_CSV_OLD_ID_FIELD_NAME.toLowerCase()]);
     const ordered: string[] = [];
     const middle: string[] = [];
     const tail: string[] = [];
     let idColumn: string | undefined;
+    let oldIdColumn: string | undefined;
 
     columns.forEach((column) => {
       if (column === 'Id') {
         idColumn = column;
+        return;
+      }
+      if (oldIdColumnSet.has(column.toLowerCase())) {
+        oldIdColumn = column;
         return;
       }
       if (errorColumnSet.has(column.toLowerCase())) {
@@ -984,6 +990,9 @@ export class Common {
 
     if (idColumn) {
       ordered.push(idColumn);
+    }
+    if (oldIdColumn) {
+      ordered.push(oldIdColumn);
     }
     ordered.push(...middle, ...tail);
     return ordered;

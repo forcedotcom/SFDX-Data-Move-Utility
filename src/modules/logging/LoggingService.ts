@@ -15,6 +15,7 @@ import {
   LOG_LEVELS,
   PLUGIN_NAME,
 } from '../constants/Constants.js';
+import { CommandAbortedByWarningError } from '../models/common/CommandAbortedByWarningError.js';
 import type { LogColorType } from './LoggerType.js';
 import FileLoggingService from './FileLoggingService.js';
 import LogFileAnonymizer from './LogFileAnonymizer.js';
@@ -132,7 +133,16 @@ export default class LoggingService {
    * @param tokens - Optional token values.
    */
   public warn(message: string, ...tokens: LogTokensType): void {
+    const resolvedMessage = this.getMessage(message, ...tokens);
     this._writeLog(LOG_LEVELS.WARN, message, tokens);
+    if (this._shouldWriteExclusionDiagnostic(message, resolvedMessage)) {
+      this.verboseFile('exclusionReasonDiagnostic', message, resolvedMessage || message);
+    }
+    if (!this.context.failOnWarning) {
+      return;
+    }
+    this.verboseFile('failOnWarningAbortDiagnostic', resolvedMessage || message);
+    throw new CommandAbortedByWarningError(resolvedMessage || message);
   }
 
   /**
@@ -422,7 +432,8 @@ export default class LoggingService {
       this.error(resolvedMessage);
     }
     if (stack && status !== 0) {
-      this.logFileOnly(this.getMessage('traceLogTemplate', stack));
+      const maskedStack = this._maskStackTracePaths(stack);
+      this.logFileOnly(this.getMessage('traceLogTemplate', maskedStack));
     }
     this._writeLog(
       LOG_LEVELS.INFO,
@@ -492,6 +503,53 @@ export default class LoggingService {
     const normalized = token.replace(/\\/g, '/');
     const collapsed = normalized.replace(/(^|[^:])\/{2,}/g, '$1/');
     return collapsed.replace(/\r?\n/g, ' ').replace(/\t/g, ' ');
+  }
+
+  /**
+   * Returns true when warning describes an exclusion and requires diagnostic reason logging.
+   *
+   * @param messageKey - Warning key or text.
+   * @param resolvedMessage - Resolved warning message.
+   * @returns True when exclusion diagnostics should be written.
+   */
+  private _shouldWriteExclusionDiagnostic(messageKey: string, resolvedMessage: string): boolean {
+    void this;
+    const pattern = /\bexclud(?:e|ed|ing)\b/i;
+    return pattern.test(messageKey ?? '') || pattern.test(resolvedMessage ?? '');
+  }
+
+  /**
+   * Masks absolute folder paths in stack traces while preserving file names and positions.
+   *
+   * @param stack - Raw stack trace text.
+   * @returns Stack trace with masked folder paths.
+   */
+  private _maskStackTracePaths(stack: string): string {
+    void this;
+    if (!stack) {
+      return stack;
+    }
+
+    let output = stack;
+    output = output.replace(
+      /(file:\/\/\/)(?:[A-Za-z]:\/|\/)?(?:[^:\r\n()]+\/)+([^/:\r\n()]+)(:\d+(?::\d+)?)?/g,
+      (_full: string, prefix: string, fileName: string, position: string | undefined) =>
+        `${prefix}<masked-path>/${fileName}${position ?? ''}`
+    );
+    output = output.replace(
+      /\\\\[^\\\r\n]+\\[^\\\r\n]+\\(?:[^\\:\r\n()]+\\)+([^\\:\r\n()]+)(:\d+(?::\d+)?)?/g,
+      (_full: string, fileName: string, position: string | undefined) => `<masked-path>\\${fileName}${position ?? ''}`
+    );
+    output = output.replace(
+      /[A-Za-z]:\\(?:[^\\:\r\n()]+\\)+([^\\:\r\n()]+)(:\d+(?::\d+)?)?/g,
+      (_full: string, fileName: string, position: string | undefined) => `<masked-path>\\${fileName}${position ?? ''}`
+    );
+    output = output.replace(
+      /\/(?!<masked-path>\/)(?:[^/:\r\n()]+\/)+([^/:\r\n()]+)(:\d+(?::\d+)?)?/g,
+      (_full: string, fileName: string, position: string | undefined) => `<masked-path>/${fileName}${position ?? ''}`
+    );
+
+    return output;
   }
 
   /**

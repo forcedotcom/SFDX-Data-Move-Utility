@@ -15,6 +15,7 @@ import {
   __ID_FIELD_NAME,
   __IS_PROCESSED_FIELD_NAME,
   __SOURCE_ID_FIELD_NAME,
+  TARGET_CSV_OLD_ID_FIELD_NAME,
 } from '../../../src/modules/constants/Constants.js';
 import LoggingContext from '../../../src/modules/logging/LoggingContext.js';
 import LoggingService from '../../../src/modules/logging/LoggingService.js';
@@ -27,6 +28,7 @@ import ScriptObject from '../../../src/modules/models/script/ScriptObject.js';
 import ScriptOrg from '../../../src/modules/models/script/ScriptOrg.js';
 import SFieldDescribe from '../../../src/modules/models/sf/SFieldDescribe.js';
 import SObjectDescribe from '../../../src/modules/models/sf/SObjectDescribe.js';
+import CjsDependencyAdapters from '../../../src/modules/dependencies/CjsDependencyAdapters.js';
 import OrgDataService from '../../../src/modules/org/OrgDataService.js';
 
 type TaskFixtureType = {
@@ -68,6 +70,298 @@ const createTaskFixture = (): TaskFixtureType => {
 };
 
 const createMap = (pairs: Array<[string, string]>): LookupIdMapType => new Map(pairs);
+
+describe('MigrationJobTask field capability warnings', () => {
+  it('warns only for explicit update query fields that are not updateable', () => {
+    const originalLogger = Common.logger;
+    const { task } = createTaskFixture();
+    const logger = createLoggingService();
+    const warnCalls: string[] = [];
+    const originalWarn = logger.warn.bind(logger) as (...args: unknown[]) => void;
+    logger.warn = ((message: string, ...tokens: string[]) => {
+      warnCalls.push(message);
+      originalWarn(message, ...tokens);
+    }) as typeof logger.warn;
+
+    Common.logger = logger;
+    task.job.script.logger = logger;
+    task.scriptObject.operation = OPERATION.Update;
+
+    (
+      task.scriptObject as unknown as {
+        _originalFieldsInQuery: string[];
+      }
+    )._originalFieldsInQuery = ['Explicit__c'];
+
+    const resolveFieldsToRemove = (
+      task as unknown as {
+        _resolveFieldsToRemove: (
+          processedData: { fields: SFieldDescribe[] },
+          fieldsToCompareRecords: string[]
+        ) => { notInsertableFields: string[]; notUpdateableFields: string[] };
+      }
+    )._resolveFieldsToRemove.bind(task);
+
+    try {
+      resolveFieldsToRemove(
+        {
+          fields: [
+            new SFieldDescribe({
+              name: 'Explicit__c',
+              isDescribed: true,
+              creatable: true,
+              updateable: false,
+            }),
+            new SFieldDescribe({
+              name: 'AutoAdded__c',
+              isDescribed: true,
+              creatable: true,
+              updateable: false,
+            }),
+          ],
+        },
+        []
+      );
+
+      assert.equal(warnCalls.filter((key) => key === 'queryFieldNotWritableForOperationExcluded').length, 1);
+    } finally {
+      Common.logger = originalLogger;
+    }
+  });
+
+  it('does not emit writeability warnings for delete operation', () => {
+    const originalLogger = Common.logger;
+    const { task } = createTaskFixture();
+    const logger = createLoggingService();
+    const warnCalls: string[] = [];
+    const originalWarn = logger.warn.bind(logger) as (...args: unknown[]) => void;
+    logger.warn = ((message: string, ...tokens: string[]) => {
+      warnCalls.push(message);
+      originalWarn(message, ...tokens);
+    }) as typeof logger.warn;
+
+    Common.logger = logger;
+    task.job.script.logger = logger;
+    task.scriptObject.operation = OPERATION.Delete;
+
+    (
+      task.scriptObject as unknown as {
+        _originalFieldsInQuery: string[];
+      }
+    )._originalFieldsInQuery = ['Explicit__c'];
+
+    const resolveFieldsToRemove = (
+      task as unknown as {
+        _resolveFieldsToRemove: (
+          processedData: { fields: SFieldDescribe[] },
+          fieldsToCompareRecords: string[]
+        ) => { notInsertableFields: string[]; notUpdateableFields: string[] };
+      }
+    )._resolveFieldsToRemove.bind(task);
+
+    try {
+      resolveFieldsToRemove(
+        {
+          fields: [
+            new SFieldDescribe({
+              name: 'Explicit__c',
+              isDescribed: true,
+              creatable: false,
+              updateable: false,
+            }),
+          ],
+        },
+        []
+      );
+
+      assert.equal(warnCalls.includes('queryFieldNotWritableForOperationExcluded'), false);
+    } finally {
+      Common.logger = originalLogger;
+    }
+  });
+
+  it('warns for explicit insert query fields that are not createable', () => {
+    const originalLogger = Common.logger;
+    const { task } = createTaskFixture();
+    const logger = createLoggingService();
+    const warnCalls: string[] = [];
+    const originalWarn = logger.warn.bind(logger) as (...args: unknown[]) => void;
+    logger.warn = ((message: string, ...tokens: string[]) => {
+      warnCalls.push(message);
+      originalWarn(message, ...tokens);
+    }) as typeof logger.warn;
+
+    Common.logger = logger;
+    task.job.script.logger = logger;
+    task.scriptObject.operation = OPERATION.Insert;
+
+    (
+      task.scriptObject as unknown as {
+        _originalFieldsInQuery: string[];
+      }
+    )._originalFieldsInQuery = ['Explicit__c'];
+
+    const resolveFieldsToRemove = (
+      task as unknown as {
+        _resolveFieldsToRemove: (
+          processedData: { fields: SFieldDescribe[] },
+          fieldsToCompareRecords: string[]
+        ) => { notInsertableFields: string[]; notUpdateableFields: string[] };
+      }
+    )._resolveFieldsToRemove.bind(task);
+
+    try {
+      resolveFieldsToRemove(
+        {
+          fields: [
+            new SFieldDescribe({
+              name: 'Explicit__c',
+              isDescribed: true,
+              creatable: false,
+              updateable: true,
+            }),
+          ],
+        },
+        []
+      );
+
+      assert.equal(warnCalls.includes('queryFieldNotWritableForOperationExcluded'), true);
+    } finally {
+      Common.logger = originalLogger;
+    }
+  });
+
+  it('writes detailed diagnostic reasons for DML field exclusions', () => {
+    const originalLogger = Common.logger;
+    const { task } = createTaskFixture();
+    const logger = createLoggingService();
+    const verboseCalls: string[] = [];
+    const originalVerboseFile = logger.verboseFile.bind(logger) as (...args: unknown[]) => void;
+    logger.verboseFile = ((message: string, ...tokens: string[]) => {
+      verboseCalls.push(typeof message === 'string' ? message : String(message));
+      originalVerboseFile(message, ...tokens);
+    }) as typeof logger.verboseFile;
+
+    Common.logger = logger;
+    task.job.script.logger = logger;
+    task.scriptObject.operation = OPERATION.Upsert;
+
+    const resolveFieldsToRemove = (
+      task as unknown as {
+        _resolveFieldsToRemove: (
+          processedData: { fields: SFieldDescribe[] },
+          fieldsToCompareRecords: string[]
+        ) => { notInsertableFields: string[]; notUpdateableFields: string[] };
+      }
+    )._resolveFieldsToRemove.bind(task);
+
+    try {
+      resolveFieldsToRemove(
+        {
+          fields: [
+            new SFieldDescribe({
+              name: 'Readonly__c',
+              isDescribed: true,
+              creatable: false,
+              updateable: false,
+            }),
+          ],
+        },
+        ['CompareOnly__c']
+      );
+
+      assert.equal(
+        verboseCalls.some(
+          (line) =>
+            line.includes('[diagnostic] DML field excluded:') &&
+            line.includes('field=Readonly__c') &&
+            line.includes('not createable for Insert operation')
+        ),
+        true
+      );
+      assert.equal(
+        verboseCalls.some(
+          (line) =>
+            line.includes('[diagnostic] DML field excluded:') &&
+            line.includes('field=Readonly__c') &&
+            line.includes('not updateable for Update operation')
+        ),
+        true
+      );
+      assert.equal(
+        verboseCalls.some(
+          (line) =>
+            line.includes('[diagnostic] DML field excluded:') &&
+            line.includes('field=CompareOnly__c') &&
+            line.includes('used only for comparison')
+        ),
+        true
+      );
+    } finally {
+      Common.logger = originalLogger;
+    }
+  });
+
+  it('writes person-account field exclusion reasons to diagnostic log', () => {
+    const originalLogger = Common.logger;
+    const { task } = createTaskFixture();
+    const logger = createLoggingService();
+    const verboseCalls: string[] = [];
+    const originalVerboseFile = logger.verboseFile.bind(logger) as (...args: unknown[]) => void;
+    logger.verboseFile = ((message: string, ...tokens: string[]) => {
+      verboseCalls.push(typeof message === 'string' ? message : String(message));
+      originalVerboseFile(message, ...tokens);
+    }) as typeof logger.verboseFile;
+
+    Common.logger = logger;
+    task.job.script.logger = logger;
+    task.scriptObject.name = 'Account';
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.media = DATA_MEDIA_TYPE.File;
+    sourceOrg.script = task.job.script;
+    const targetOrg = new ScriptOrg();
+    targetOrg.media = DATA_MEDIA_TYPE.File;
+    targetOrg.script = task.job.script;
+    task.job.script.sourceOrg = sourceOrg;
+    task.job.script.targetOrg = targetOrg;
+
+    const applyPersonAccountFieldFiltering = (
+      task as unknown as {
+        _applyPersonAccountFieldFiltering: (
+          fields: SFieldDescribe[],
+          processPersonAccounts: boolean
+        ) => { shouldProcess: boolean; fields: SFieldDescribe[] };
+      }
+    )._applyPersonAccountFieldFiltering.bind(task);
+
+    try {
+      applyPersonAccountFieldFiltering(
+        [
+          new SFieldDescribe({ name: 'Name' }),
+          new SFieldDescribe({ name: 'PersonEmail', custom: false }),
+          new SFieldDescribe({ name: 'Custom__c' }),
+        ],
+        false
+      );
+      applyPersonAccountFieldFiltering([new SFieldDescribe({ name: 'Name' })], true);
+
+      assert.equal(
+        verboseCalls.some(
+          (line) => line.includes('{Account.PersonEmail}') && line.includes('person-account field is not valid')
+        ),
+        true
+      );
+      assert.equal(
+        verboseCalls.some(
+          (line) => line.includes('{Account.Name}') && line.includes('not valid for person-account DML')
+        ),
+        true
+      );
+    } finally {
+      Common.logger = originalLogger;
+    }
+  });
+});
 
 describe('MigrationJobTask polymorphic lookup matching', () => {
   it('merges User and Group maps for polymorphic fields without explicit target', () => {
@@ -527,6 +821,78 @@ describe('MigrationJobTask person account updates', () => {
 });
 
 describe('MigrationJobTask file target output', () => {
+  it('uses locale-specific casual generator for mock fields', () => {
+    const { task } = createTaskFixture();
+    task.scriptObject.updateWithMockData = true;
+
+    const localizedMock = new ScriptMockField();
+    localizedMock.name = 'Name';
+    localizedMock.pattern = 'first_name';
+    localizedMock.locale = 'ru_RU';
+
+    const fallbackMock = new ScriptMockField();
+    fallbackMock.name = 'Alias__c';
+    fallbackMock.pattern = 'first_name';
+    fallbackMock.locale = 'unknown_LOCALE';
+
+    task.scriptObject.mockFields = [localizedMock, fallbackMock];
+
+    const createCasualGenerator = (
+      firstName: string
+    ): Record<string, unknown> & {
+      define: (name: string, generator: (...args: unknown[]) => unknown) => void;
+    } => {
+      const generator = {} as Record<string, unknown> & {
+        define: (name: string, generator: (...args: unknown[]) => unknown) => void;
+      };
+      generator['first_name'] = firstName;
+      generator.define = (name: string, valueGenerator: (...args: unknown[]) => unknown) => {
+        Object.defineProperty(generator, name, {
+          configurable: true,
+          enumerable: true,
+          get: () => valueGenerator(),
+        });
+      };
+      return generator;
+    };
+
+    const baseGenerator = createCasualGenerator('John');
+    baseGenerator['ru_RU'] = createCasualGenerator('Ivan');
+
+    const originalGetCasualDescriptor = Object.getOwnPropertyDescriptor(CjsDependencyAdapters, 'getCasual');
+    Object.defineProperty(CjsDependencyAdapters, 'getCasual', {
+      configurable: true,
+      value: (() => baseGenerator) as typeof CjsDependencyAdapters.getCasual,
+    });
+
+    const applyMocking = (
+      task as unknown as {
+        _applyMocking: (
+          records: Array<Record<string, unknown>>,
+          fields: SFieldDescribe[]
+        ) => Array<Record<string, unknown>>;
+      }
+    )._applyMocking.bind(task);
+
+    try {
+      const records = [
+        {
+          Name: 'Original Name',
+          ['Alias__c']: 'Original Alias',
+        },
+      ];
+      const fields = [new SFieldDescribe({ name: 'Name' }), new SFieldDescribe({ name: 'Alias__c' })];
+      const mockedRecords = applyMocking(records, fields);
+
+      assert.equal(mockedRecords[0].Name, 'Ivan');
+      assert.equal(mockedRecords[0]['Alias__c'], 'John');
+    } finally {
+      if (originalGetCasualDescriptor) {
+        Object.defineProperty(CjsDependencyAdapters, 'getCasual', originalGetCasualDescriptor);
+      }
+    }
+  });
+
   it('does not mock internal id fields when mockFields name is all', async () => {
     const tempDir = createTempDir();
     const originalLogger = Common.logger;
@@ -1561,6 +1927,28 @@ describe('MigrationJobTask file target output', () => {
       Common.logger = originalLogger;
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
+  });
+
+  it('maps internal ___SourceId to Old Id in target CSV payloads', () => {
+    const { task } = createTaskFixture();
+    const sanitizeTargetCsvRecords = (
+      task as unknown as {
+        _sanitizeTargetCsvRecords: (records: Array<Record<string, unknown>>) => Array<Record<string, unknown>>;
+      }
+    )._sanitizeTargetCsvRecords.bind(task);
+
+    const sanitized = sanitizeTargetCsvRecords([
+      {
+        Id: 'a00000000000099',
+        Name: 'Mapped Row',
+        [__SOURCE_ID_FIELD_NAME]: 'a00000000000005',
+      },
+    ]);
+
+    assert.equal(sanitized.length, 1);
+    assert.equal(sanitized[0].Id, 'a00000000000099');
+    assert.equal(sanitized[0][TARGET_CSV_OLD_ID_FIELD_NAME], 'a00000000000005');
+    assert.equal(Object.prototype.hasOwnProperty.call(sanitized[0], __SOURCE_ID_FIELD_NAME), false);
   });
 
   it('applies value mapping before onBeforeUpdate addons for file targets', async () => {

@@ -137,6 +137,14 @@ Suppress warning output.
 
 Suppress warnings in stdout and JSON fullLog while still logging warnings to file when enabled.
 
+# flags.failonwarning.summary
+
+Abort on first warning.
+
+# flags.failonwarning.description
+
+Treat any warning as an error, stop execution immediately, and return a dedicated warning-as-error exit code.
+
 # flags.canmodify.summary
 
 Allow production modifications without confirmation.

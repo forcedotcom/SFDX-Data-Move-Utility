@@ -31,6 +31,7 @@ type LoggingContextOptionsType = {
   silent?: boolean;
   verbose?: boolean;
   noWarnings?: boolean;
+  failOnWarning?: boolean;
   noPrompt?: boolean;
   startTime?: Date;
   stdoutWriter?: (message: string) => void;
@@ -145,6 +146,11 @@ export default class LoggingContext {
   public readonly noWarnings: boolean;
 
   /**
+   * Flag indicating warnings should abort command execution.
+   */
+  public readonly failOnWarning: boolean;
+
+  /**
    * Flag indicating prompts should be suppressed.
    */
   public readonly noPrompt: boolean;
@@ -239,6 +245,7 @@ export default class LoggingContext {
       : [];
     this.anonymiseSeed = typeof options.anonymiseSeed === 'string' ? options.anonymiseSeed : '';
     this.noWarnings = Boolean(options.noWarnings);
+    this.failOnWarning = Boolean(options.failOnWarning);
     const suppressPromptsByLogLevel = this.logLevel >= LOG_LEVELS.ERROR;
     this.noPrompt =
       Boolean(options.noPrompt) || this.jsonEnabled || this.silent || this.quiet || suppressPromptsByLogLevel;
