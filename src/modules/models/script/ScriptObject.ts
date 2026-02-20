@@ -82,15 +82,9 @@ const expandComplexFieldNames = (fieldName: string): string[] => {
     if (splitParts.length === 0) {
       return [fieldName];
     }
-    const firstPart = splitParts[0] ?? '';
-    const relationshipPrefixIndex = firstPart.lastIndexOf('.');
-    const relationshipPrefix = relationshipPrefixIndex > 0 ? firstPart.slice(0, relationshipPrefixIndex + 1) : '';
     return splitParts.map((part) => {
       if (prefix) {
         return part.includes('.') ? part : `${prefix}${part}`;
-      }
-      if (relationshipPrefix && !part.includes('.')) {
-        return `${relationshipPrefix}${part}`;
       }
       return part;
     });
@@ -3263,7 +3257,12 @@ export default class ScriptObject {
     void this;
     if (fieldName.includes('.')) {
       const relationshipName = fieldName.split('.')[0] ?? fieldName;
-      return Common.getFieldNameId(undefined, relationshipName);
+      let idFieldName = Common.getFieldNameId(undefined, relationshipName);
+      if (idFieldName === relationshipName && (relationshipName.endsWith('__r') || relationshipName.endsWith('__pr'))) {
+        idFieldName = Common.replaceLast(relationshipName, '__pr', '__pc');
+        idFieldName = Common.replaceLast(idFieldName, '__r', '__c');
+      }
+      return idFieldName;
     }
     return fieldName;
   }

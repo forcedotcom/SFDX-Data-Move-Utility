@@ -229,6 +229,35 @@ describe('Script object external id', () => {
     assert.ok(object.query.includes('SobjectType'));
   });
 
+  it('keeps mixed relationship and local composite externalId fields separated', () => {
+    const script = new Script();
+    const object = new ScriptObject('TestObject3__c');
+    object.externalId = 'TestObject2__r.Name;Test2__c';
+    object.query = 'SELECT Name, TestObject2__c, Test2__c FROM TestObject3__c';
+    object.setup(script);
+
+    const describe = createDescribe('TestObject3__c', [
+      { name: 'Id', type: 'id' },
+      { name: 'Name', type: 'string', updateable: true, creatable: true, nameField: true },
+      { name: 'Test2__c', type: 'string', updateable: true, creatable: true, custom: true },
+      {
+        name: 'TestObject2__c',
+        type: 'reference',
+        updateable: true,
+        creatable: true,
+        lookup: true,
+        referencedObjectType: 'TestObject2__c',
+        custom: true,
+      },
+    ]);
+
+    object.applyDescribe(describe);
+
+    assert.ok(object.query.includes('TestObject2__r.Name'));
+    assert.ok(object.query.includes('Test2__c'));
+    assert.ok(!object.query.includes('TestObject2__r.Test2__c'));
+  });
+
   it('recalculates target query after external id change', () => {
     const script = new Script();
     const object = new ScriptObject('RecordType');
