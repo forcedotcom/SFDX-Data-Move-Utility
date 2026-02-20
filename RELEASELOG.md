@@ -8,6 +8,11 @@
 - Added support for the same auto-selection behavior when org credentials are provided manually with `instanceUrl` and `accessToken`.
 - Kept explicit `apiVersion` in `export.json` and `--apiversion` as strict overrides over auto-selection.
 
+**See the related articles:**
+
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format) - default selection and explicit override behavior
+- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion) - CLI override and auto-detection flow
+
 ## [5.2.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.4...5.2.0) (2026-02-20)
 
 ###### New features:
@@ -26,6 +31,15 @@
 - Improved diagnostic reporting for exclusion paths with detailed per-field reasons for operation-specific DML filtering.
 - Improved Person Account diagnostics by logging exclusion reasons for invalid fields in business and person contexts.
 
+**See the related articles:**
+
+- [Run Command Flags - failonwarning](https://help.sfdmu.com/full-documentation/reports/run-command-flags#failonwarning) - flag behavior and exit code details
+- [Running - --failonwarning](https://help.sfdmu.com/running#--failonwarning) - command usage for warning-as-error flow
+- [MockField Object - locale](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/mock-field-object#locale-string) - field-level locale configuration for mock data
+- [Data Anonymization](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization) - patterns, examples, and usage guidance
+- [The Target CSV Files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) - Old Id mapping output in target report files
+- [Script Object - createTargetCSVFiles](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#createtargetcsvfiles-boolean) - how target CSV generation is controlled
+
 ## [5.1.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.3...5.1.4) (2026-02-19)
 
 ###### Fixes:
@@ -39,6 +53,12 @@
 - Added detailed guidance text for issue reporting with `--diagnostic --anonymise`, full `.log` attachment, and failed-row `_target.csv` reminder.
 - Added and updated logging tests for guidance visibility, spacing, color, exclusion conditions, and URL output.
 
+**See the related articles:**
+
+- [The Target CSV Files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) - Old Id mapping output in target report files
+- [Script Object - createTargetCSVFiles](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#createtargetcsvfiles-boolean) - how target CSV generation is controlled
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+
 ## [5.1.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.2...5.1.3) (2026-02-19)
 
 ###### Fixes:
@@ -50,6 +70,12 @@
 
 - Added unit test coverage for Promise-based bulk query stream handling.
 - Updated version notice wording in root README for consistent v5 messaging.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [5.1.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.1...5.1.2) (2026-02-17)
 
@@ -63,6 +89,12 @@
 - Updated release metadata synchronization baseline between release bodies and release sections.
 - Updated root README version notice wording for consistent v5 messaging.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [5.1.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.0...5.1.1) (2026-02-17)
 
 ###### Fixes:
@@ -73,6 +105,12 @@
 ###### Other changes:
 
 - Updated lockfile resolutions for stable dependency selection across environments.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [5.1.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.39.0...5.1.0) (2026-02-17)
 
@@ -112,6 +150,14 @@
 - Changed diagnostic defaults: `--filelog` default is `0` and `--diagnostic` is the recommended troubleshooting mode.
 - Improved support workflow security: documentation now includes a complete `--anonymise` masking matrix that explicitly lists what is hashed and what remains unchanged.
 
+**See the related articles:**
+
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format) - default selection and explicit override behavior
+- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion) - CLI override and auto-detection flow
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
+
 # [4.39.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.38.0...4.39.0) (2026-01-22)
 
 ###### New features:
@@ -132,6 +178,12 @@
 - Updated governance files (CODEOWNERS, SECURITY.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, LICENSE.txt): updated ownership mappings, contribution process notes, and security reporting instructions.
 - Updated .gitignore: updated ignore patterns for local artifacts, logs, and development-generated files.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.38.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.37.0...4.38.0) (2024-12-29)
 
 ###### New features:
@@ -141,6 +193,11 @@
 ###### Improvements:
 
 - Improved multiselect query auto-selection for `Product2` by excluding unsupported technical fields from generated queries.
+
+**See the related articles:**
+
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string) - explicit query fields and warning behavior notes
+- [Field Multiselect](https://help.sfdmu.com/full-documentation/advanced-features/field-multiselect) - auto-added field behavior and exclusions
 
 # [4.37.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.8...4.37.0) (2024-11-28)
 
@@ -161,11 +218,23 @@
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
+- [ScriptObject Object - sourceRecordsFilter](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#sourcerecordsfilter-string) - source-side filtering behavior and examples
+
 ## [4.36.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.7...4.36.8) (2024-11-23)
 
 ###### Fixes:
 
 - Fixed record comparison during update processing by ignoring temporary source-id helper fields, reducing false-positive update detections.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.36.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.3...4.36.7) (2024-10-29)
 
@@ -177,6 +246,12 @@
 ###### Improvements:
 
 - Added stable source-record identity tracking so mapped update/upsert flows keep consistent source-target links.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.36.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.2...4.36.3) (2024-09-19)
 
@@ -190,12 +265,24 @@
 - Changed package.json: updated dependencies (@oclif/command, @oclif/config, @oclif/errors, @oclif/core, @salesforce/core); updated devDependencies (@types/node).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.36.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.1...4.36.2) (2024-09-19)
 
 ###### Other changes:
 
 - Changed package.json: updated dependencies (madge).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.36.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.0...4.36.1) (2024-09-19)
 
@@ -210,11 +297,23 @@
 - Changed package.json: updated dependencies (@oclif/core, @oclif/command, @oclif/config, @oclif/errors, @salesforce/core, alasql (+1 more)); updated devDependencies (@types/node, typescript).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.36.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.35.1...4.36.0) (2024-09-07)
 
 ###### New features:
 
 - Added support for `valueSource` in `core:RecordsTransform`, allowing transformation logic to explicitly use source or target-side values during record updates.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.35.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.35.0...4.35.1) (2024-08-18)
 
@@ -227,6 +326,12 @@
 
 - Added explicit runtime null-marker processing (`#N/A`) in write pipelines to support controlled target-field clearing in org migrations.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.35.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.2...4.35.0) (2024-08-13)
 
 ###### New features:
@@ -234,15 +339,31 @@
 - Added `ORDER BY` support for `core:ExportFiles` linked-document retrieval (`contentDocumentLinkOrderBy`) to make file export/import ordering predictable.
 - Added add-on runtime support for `orderBy` in generated SOQL helper queries, enabling deterministic query ordering in add-on modules.
 
+**See the related articles:**
+
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+
 ## [4.34.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.1...4.34.2) (2024-08-13)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.34.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.0...4.34.1) (2024-08-13)
 
 ###### Fixes:
 
 - Fixed CSV parser loading (`parse is not a function`) by switching to a compatible sync parser import path in Bulk API v2/common CSV processing.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.34.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.19...4.34.0) (2024-08-13)
 
@@ -255,11 +376,22 @@ Code improvements and bug fixes
 
 - Fixed mock expression execution flow so current field value is correctly passed into `c_set_value`, preventing incorrect substitutions in anonymization pipelines.
 
+**See the related articles:**
+
+- [MockField Object - locale](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/mock-field-object#locale-string) - field-level locale configuration for mock data
+- [Data Anonymization](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization) - patterns, examples, and usage guidance
+
 ## [4.33.19](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.18...4.33.19) (2024-08-09)
 
 ###### Fixes:
 
 - Fixed lookup search behavior in `core:RecordsTransform`, improving relation resolution reliability during transformed migrations.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.33.18](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.17...4.33.18) (2024-08-04)
 
@@ -273,6 +405,10 @@ Code improvements and bug fixes
 - Updated issue templates (ask-question---gui-only-.md, ask-question---plugin-only-.md): updated issue form fields, required reproduction steps, and mandatory diagnostic/log sections.
 - Updated .github/dependabot.yml: changed update cadence, package-ecosystem scope, and repository directory targets.
 
+**See the related articles:**
+
+- [Values Mapping](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping) - value mapping rules and examples
+
 ## [4.33.17](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.16...4.33.17) (2024-05-02)
 
 ###### Other changes:
@@ -281,6 +417,12 @@ Code improvements and bug fixes
 - Updated .github/dependabot.yml: changed update cadence, package-ecosystem scope, and repository directory targets.
 - Changed package.json: updated dependencies (csv-writer, glob, tslib).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.33.16](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.15...4.33.16) (2024-05-01)
 
@@ -292,6 +434,12 @@ Code improvements and bug fixes
 - Changed package.json: updated dependencies (@salesforce/core, class-transformer, fastest-levenshtein, jsforce, promise-parallel-throttle); updated devDependencies (ts-node, tslint).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.33.15](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.14...4.33.15) (2024-04-28)
 
 ###### Fixes:
@@ -302,12 +450,24 @@ Code improvements and bug fixes
 
 - Updated CI/release workflows (codeql-analysis.yml, stale.yml): changed workflow triggers, schedules, and automation rules for issue/pr/release maintenance.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.33.14](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.13...4.33.14) (2024-04-28)
 
 ###### Other changes:
 
 - Updated issue templates (bug-report-in-sfdmu-gui-app.md, bug-report-in-the-sfdmu-plugin.md): updated issue form fields, required reproduction steps, and mandatory diagnostic/log sections.
 - Changed package.json: updated dependencies (@babel/traverse); updated package metadata fields (author).
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.33.13](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.12...4.33.13) (2024-04-23)
 
@@ -317,17 +477,41 @@ Code improvements and bug fixes
 - Changed package.json: updated dependencies (@oclif/command, @oclif/config, @salesforce/command, @salesforce/core, @salesforce/dev-config, @types/bunyan); updated devDependencies (@oclif/dev-cli, @oclif/plugin-help, @oclif/test, @types/chai, @types/mocha, @types/node (+4 more)).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.33.12](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.11...4.33.12) (2024-04-22)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.33.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.10...4.33.11) (2024-04-22)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.33.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.9...4.33.10) (2024-04-22)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.33.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.8...4.33.9) (2024-04-20)
 
@@ -336,12 +520,24 @@ Code improvements and bug fixes
 - Changed package.json: updated dependencies (@oclif/command, @oclif/config, @salesforce/command, @salesforce/core, @salesforce/dev-config, @types/bunyan); updated devDependencies (@oclif/dev-cli, @oclif/plugin-help, @oclif/test, @types/chai, @types/mocha, @types/node (+4 more)).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.33.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.7...4.33.8) (2024-04-20)
 
 ###### Other changes:
 
 - Changed package.json: updated dependencies (@oclif/command, @oclif/config, @salesforce/command, @salesforce/core, @salesforce/dev-config, @types/bunyan); updated devDependencies (@oclif/dev-cli, @oclif/plugin-help, @oclif/test, @types/chai, @types/mocha, @types/node (+4 more)).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.33.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.6...4.33.7) (2024-04-15)
 
@@ -350,6 +546,12 @@ Code improvements and bug fixes
 - Fixed CSV source-file repair diagnostics to use clearer, user-oriented column names.
 - Fixed noisy CSV issue reporting in lookup-repair paths to reduce misleading warning rows.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.33.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.5...4.33.6) (2024-04-15)
 
 ###### Fixes:
@@ -357,11 +559,22 @@ Code improvements and bug fixes
 - Fixed CSV target file generation when `excludeIdsFromCSVFiles=true` and operation is `Insert`.
 - Fixed engine behavior for file-target runs by using a safe operation mode that avoids invalid CSV generation.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.33.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.4...4.33.5) (2024-04-11)
 
 ###### Improvements:
 
 - Updated the default Salesforce API version from `53.0` to `60.0` for newly created runs.
+
+**See the related articles:**
+
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format) - default selection and explicit override behavior
+- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion) - CLI override and auto-detection flow
 
 ## [4.33.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.3...4.33.4) (2024-03-15)
 
@@ -374,12 +587,23 @@ Code improvements and bug fixes
 - Added an explicit add-on event name `filterRecordsAddons` for record filtering handlers.
 - Changed custom add-on event contracts to use `filterRecordsAddons` instead of `onTargetDataFiltering`.
 
+**See the related articles:**
+
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
+- [ScriptObject Object - filterRecordsAddons](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#filterrecordsaddons-array-of-addonmanifestdefinition) - filter add-on stage and configuration details
+
 ## [4.33.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.2...4.33.3) (2024-03-13)
 
 ###### Improvements:
 
 - Improved custom add-on TypeScript interfaces by making script and object members optional.
 - Improved add-on compatibility by allowing modules to consume only required fields without strict full-model requirements.
+
+**See the related articles:**
+
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
 
 ## [4.33.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.1...4.33.2) (2024-03-12)
 
@@ -392,12 +616,24 @@ Code improvements and bug fixes
 - Changed User-related reference preload behavior to run a dedicated Queue `Group` query for stable User/Queue resolution.
 - Improved object handling so `Group` is managed through preload logic instead of direct migration flow.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.33.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.0...4.33.1) (2024-03-12)
 
 ###### Fixes:
 
 - Fixed User/Group auto-query expansion so it runs only for non-filtered queries.
 - Fixed unexpected query broadening when your original SOQL already has a `WHERE` clause.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.33.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.8...4.33.0) (2024-03-12)
 
@@ -410,11 +646,24 @@ Code improvements and bug fixes
 
 - Fixed update/upsert selection logic so `skipRecordsComparison=true` reliably moves matched records into the update pipeline.
 
+**See the related articles:**
+
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
+- [ScriptObject Object - skipRecordsComparison](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#skiprecordscomparison-boolean) - force-update behavior without source-target compare
+- [ScriptObject Object - filterRecordsAddons](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#filterrecordsaddons-array-of-addonmanifestdefinition) - filter add-on stage and configuration details
+
 ## [4.32.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.7...4.32.8) (2024-03-11)
 
 ###### Fixes:
 
 - Fixed custom lookup/relationship field-name normalization to prevent malformed reference field names in queries and mappings.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.32.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.6...4.32.7) (2024-03-10)
 
@@ -428,15 +677,33 @@ Code improvements and bug fixes
 - Improved reference type detection for commonly used ownership/lookup fields.
 - Changed add-on `onBeforeUpdate` timing so it runs before insert/update split and can inspect all prepared records.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.32.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.5...4.32.6) (2024-03-03)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.32.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.4...4.32.5) (2024-03-03)
 
 ###### Fixes:
 
 - Fixed `--logfullquery` CLI help binding so the long description text is resolved correctly.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.32.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.3...4.32.4) (2024-03-03)
 
@@ -453,17 +720,35 @@ Code improvements and bug fixes
 
 - Updated messages/run.json: refined CLI flag descriptions and examples.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.32.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.2...4.32.3) (2024-03-03)
 
 ###### Improvements:
 
 - Changed default command mode to `--usesf=true`, so modern `sf` CLI commands are used unless explicitly overridden.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.32.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.1...4.32.2) (2023-11-30)
 
 ###### Fixes:
 
 - Fixed update detection when Id mapping is active, so mapped records are no longer skipped as unchanged.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.32.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.0...4.32.1) (2023-11-22)
 
@@ -476,6 +761,12 @@ Code improvements and bug fixes
 
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.32.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.31.0...4.32.0) (2023-11-14)
 
 ###### New features:
@@ -485,6 +776,12 @@ Code improvements and bug fixes
 ###### Improvements:
 
 - Improved CSV determinism by sorting generated CSV columns alphabetically for easier diff/review.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.31.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.30.0...4.31.0) (2023-11-13)
 
@@ -502,6 +799,12 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.30.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.8...4.30.0) (2023-08-14)
 
 ###### New features:
@@ -510,12 +813,24 @@ Code improvements and bug fixes
 - Applied the timeout consistently across source/target queries, filtered retrieval, delete reads, and add-on runtime queries.
 - Replaced fixed query-poll timeout constants with script-configurable timeout behavior.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.29.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.7...4.29.8) (2023-08-11)
 
 ###### Fixes:
 
 - Fixed value-mapping handling for `null`, `undefined`, and boolean `false` source values.
 - Fixed false-empty conversion during mapping to keep expected field values in migration output.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.29.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.6...4.29.7) (2023-08-03)
 
@@ -524,17 +839,35 @@ Code improvements and bug fixes
 - Fixed large CSV write stability by using stream-based CSV output and waiting for file completion before finishing the step.
 - Reduced incomplete-file risk in heavy CSV export runs.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.29.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.5...4.29.6) (2023-07-31)
 
 ###### Fixes:
 
 - Reverted the previous CSV writer change to restore stable CSV generation behavior.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.29.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.4...4.29.5) (2023-07-29)
 
 ###### Improvements:
 
 - Added stream-based CSV writer processing to reduce memory pressure during very large CSV exports.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.29.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.3...4.29.4) (2023-07-26)
 
@@ -543,6 +876,12 @@ Code improvements and bug fixes
 - Fixed `excludedFromUpdateFields` property naming (`excudedFromUpdateFields` typo removed).
 - Fixed update filtering behavior and add-on typings to use the corrected property consistently.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.29.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.2...4.29.3) (2023-07-20)
 
 ###### Fixes:
@@ -550,12 +889,22 @@ Code improvements and bug fixes
 - Fixed `core:ExportFiles` upload error marking so only versions in the failed chunk are flagged.
 - Fixed chunk-level error scoping so unrelated files are not incorrectly marked as failed.
 
+**See the related articles:**
+
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+
 ## [4.29.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.1...4.29.2) (2023-06-25)
 
 ###### Fixes:
 
 - Fixed composed WHERE-clause generation by wrapping incoming filter expressions in parentheses.
 - Improved query correctness when combining existing filters with additional conditions.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.29.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.0...4.29.1) (2023-06-25)
 
@@ -567,6 +916,11 @@ Code improvements and bug fixes
 ###### Other changes:
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
+
+**See the related articles:**
+
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
 
 # [4.29.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.28.1...4.29.0) (2023-06-25)
 
@@ -584,6 +938,12 @@ Code improvements and bug fixes
 
 - Updated messages/run.json: refined CLI flag descriptions and examples.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.28.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.28.0...4.28.1) (2023-06-25)
 
 ###### Fixes:
@@ -593,6 +953,12 @@ Code improvements and bug fixes
 ###### Improvements:
 
 - Improved TRACE diagnostics so full SOQL text is available when deep troubleshooting is needed.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.28.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.27.0...4.28.0) (2023-06-05)
 
@@ -608,6 +974,12 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.27.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.13...4.27.0) (2023-05-17)
 
 ###### New features:
@@ -618,13 +990,31 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json and messages/run.json: refined runtime messages and CLI help text.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.26.13](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.12...4.26.13) (2023-05-02)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.26.12](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.11...4.26.12) (2023-05-02)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.26.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.10...4.26.11) (2023-05-01)
 
@@ -632,9 +1022,21 @@ Code improvements and bug fixes
 
 - Updated CI/release workflows (manualRelease.yml): changed workflow triggers, schedules, and automation rules for issue/pr/release maintenance.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.26.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.8...4.26.10) (2023-03-20)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.26.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.7...4.26.8) (2023-02-19)
 
@@ -642,21 +1044,51 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.26.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.6...4.26.7) (2023-02-19)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.26.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.5...4.26.6) (2023-02-19)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.26.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.4...4.26.5) (2023-02-08)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.26.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.3...4.26.4) (2023-02-08)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.26.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.2...4.26.3) (2023-02-08)
 
@@ -664,13 +1096,31 @@ Code improvements and bug fixes
 
 - Changed package.json: updated oclif plugin metadata; updated package metadata fields (description).
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.26.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.1...4.26.2) (2023-01-28)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.26.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.0...4.26.1) (2023-01-28)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.26.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.25.0...4.26.0) (2023-01-27)
 
@@ -682,11 +1132,23 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.25.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.24.0...4.25.0) (2023-01-27)
 
 ###### New features:
 
 - Added separate CSV delimiter settings for input and output (`csvReadFileDelimiter`, `csvWriteFileDelimiter`).
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.24.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.11...4.24.0) (2023-01-27)
 
@@ -694,41 +1156,95 @@ Code improvements and bug fixes
 
 - Added `useSourceCSVFile`, allowing jobs to read source CSV files directly when configured.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.23.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.9...4.23.11) (2023-01-26)
 
 ###### Other changes:
 
 - Changed package.json: updated oclif plugin metadata; updated package metadata fields (description).
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.23.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.8...4.23.9) (2023-01-18)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.23.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.7...4.23.8) (2023-01-16)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.23.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.6...4.23.7) (2023-01-16)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.23.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.5...4.23.6) (2023-01-16)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.23.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.4...4.23.5) (2023-01-16)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.23.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.3...4.23.4) (2023-01-16)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.23.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.2...4.23.3) (2023-01-16)
 
 ###### Other changes:
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.23.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.1...4.23.2) (2023-01-09)
 
@@ -738,17 +1254,33 @@ Code improvements and bug fixes
 - Changed package.json: updated dependencies (@oclif/command, @oclif/config, @oclif/errors, @salesforce/command, @salesforce/core, @salesforce/dev-config); updated oclif plugin metadata; updated package metadata fields (description).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.23.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.0...4.23.1) (2023-01-04)
 
 ###### Other changes:
 
 - Updated CI/release workflows (stale.yml): changed workflow triggers, schedules, and automation rules for issue/pr/release maintenance.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.23.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.22.0...4.23.0) (2022-12-30)
 
 ###### New features:
 
 - Added support for exporting Feed Attachments.
+
+**See the related articles:**
+
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
 
 # [4.22.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.20.0...4.22.0) (2022-12-29)
 
@@ -760,19 +1292,43 @@ Code improvements and bug fixes
 
 - Updated CI/release workflows (stale.yml): changed workflow triggers, schedules, and automation rules for issue/pr/release maintenance.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 # [4.20.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.6...4.20.0) (2022-12-26)
 
 ###### New features:
 
 - Added `skipExistingRecords` at object level to skip records that already exist in the target.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.19.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.5...4.19.6) (2022-12-25)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.19.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.4...4.19.5) (2022-12-25)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.19.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.3...4.19.4) (2022-12-25)
 
@@ -780,17 +1336,41 @@ Code improvements and bug fixes
 
 - Updated CI/release workflows (stale.yml): changed workflow triggers, schedules, and automation rules for issue/pr/release maintenance.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.19.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.2...4.19.3) (2022-12-23)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.19.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.1...4.19.2) (2022-12-23)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.19.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.0...4.19.1) (2022-12-23)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.19.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.18.2...4.19.0) (2022-12-23)
 
@@ -808,13 +1388,31 @@ Code improvements and bug fixes
 - Updated issue templates (ask-question.md, feature-request.md): updated issue form fields, required reproduction steps, and mandatory diagnostic/log sections.
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.18.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.18.1...4.18.2) (2022-12-02)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.18.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.18.0...4.18.1) (2022-12-02)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.18.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.8...4.18.0) (2022-11-24)
 
@@ -822,29 +1420,71 @@ Code improvements and bug fixes
 
 - Added `maxChunkSize` for `ExportFiles` add-on to control batch size for large file-processing jobs.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.17.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.7...4.17.8) (2022-11-24)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.17.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.6...4.17.7) (2022-11-24)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.17.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.5...4.17.6) (2022-10-17)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.17.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.4...4.17.5) (2022-10-13)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.17.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.3...4.17.4) (2022-10-12)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.17.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.2...4.17.3) (2022-10-12)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.17.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.16.10...4.17.2) (2022-10-01)
 
@@ -852,9 +1492,21 @@ Code improvements and bug fixes
 
 - Added `excludedObjects` support to skip selected objects during migration execution.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.16.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.16.6...4.16.10) (2022-09-29)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.16.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.16.3...4.16.6) (2022-09-29)
 
@@ -863,13 +1515,31 @@ Code improvements and bug fixes
 - Updated CI/release workflows (failureNotifications.yml, manualRelease.yml, onPushToMain.yml, onRelease.yml): changed workflow triggers, schedules, and automation rules for issue/pr/release maintenance.
 - Updated .circleci/config.yml: updated CI jobs, branch/tag filters, and release execution steps.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.16.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.16.1...v4.16.3) (2022-09-19)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.16.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.16.0...v4.16.1) (2022-09-19)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.16.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.5...v4.16.0) (2022-09-17)
 
@@ -877,25 +1547,61 @@ Code improvements and bug fixes
 
 - Added `hardDelete` and source-side delete operation support for more flexible delete scenarios.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.15.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.4...v4.15.5) (2022-09-14)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.15.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.3...v4.15.4) (2022-09-14)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.15.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.2...v4.15.3) (2022-09-13)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.15.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.1...v4.15.2) (2022-09-13)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.15.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.0...v4.15.1) (2022-08-03)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.15.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.6...v4.15.0) (2022-07-07)
 
@@ -907,29 +1613,71 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json and messages/run.json: refined runtime messages and CLI help text.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.14.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.5...v4.14.6) (2022-07-06)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.14.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.4...v4.14.5) (2022-07-06)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.14.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.3...v4.14.4) (2022-05-21)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.14.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.2...v4.14.3) (2022-05-12)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.14.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.1...v4.14.2) (2022-05-10)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.14.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.0...v4.14.1) (2022-05-09)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.14.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.5...v4.14.0) (2022-05-09)
 
@@ -941,13 +1689,31 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.13.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.4...v4.13.5) (2022-05-07)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.13.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.3...v4.13.4) (2022-04-18)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.13.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.2...v4.13.3) (2022-04-18)
 
@@ -955,15 +1721,33 @@ Code improvements and bug fixes
 
 - Updated messages/run.json: refined CLI flag descriptions and examples.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.13.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.1...v4.13.2) (2022-04-18)
 
 ###### Other changes:
 
 - Updated issue templates (feature-request.md): updated issue form fields, required reproduction steps, and mandatory diagnostic/log sections.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.13.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.0...v4.13.1) (2022-04-16)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.13.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.11...v4.13.0) (2022-03-24)
 
@@ -971,17 +1755,41 @@ Code improvements and bug fixes
 
 - Added per-object parallelism controls (`parallelBulkJobs`, `parallelRestJobs`) to tune migration throughput.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.12.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.10...v4.12.11) (2022-03-22)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.12.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.9...v4.12.10) (2022-03-21)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.12.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.8...v4.12.9) (2022-02-27)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.12.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.6...v4.12.8) (2022-02-27)
 
@@ -990,29 +1798,71 @@ Code improvements and bug fixes
 - Updated issue templates (bug-report-in-the-sfdmu-gui-app.md, feature-request.md): updated issue form fields, required reproduction steps, and mandatory diagnostic/log sections.
 - Updated .circleci/config.yml: updated CI jobs, branch/tag filters, and release execution steps.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.12.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.5...v4.12.6) (2022-01-19)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.12.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.4...v4.12.5) (2022-01-16)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.12.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.3...v4.12.4) (2022-01-15)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.12.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.2...v4.12.3) (2022-01-09)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.12.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.1...v4.12.2) (2022-01-02)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.12.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.0...v4.12.1) (2022-01-01)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.12.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.11...v4.12.0) (2022-01-01)
 
@@ -1020,17 +1870,41 @@ Code improvements and bug fixes
 
 - Added `RecordsFilter` core add-on for configurable record filtering during migration runs.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.11.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.10...v4.11.11) (2021-12-30)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.11.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.9...v4.11.10) (2021-12-29)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.11.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.7...v4.11.9) (2021-12-21)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.11.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.6...v4.11.7) (2021-12-19)
 
@@ -1038,25 +1912,61 @@ Code improvements and bug fixes
 
 - Updated .gitignore: updated ignore patterns for local artifacts, logs, and development-generated files.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.11.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.4...v4.11.6) (2021-12-17)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.11.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.3...v4.11.4) (2021-12-17)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.11.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.2...v4.11.3) (2021-12-16)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.11.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.1...v4.11.2) (2021-12-15)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.11.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.0...v4.11.1) (2021-12-14)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.11.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.10.3...v4.11.0) (2021-12-14)
 
@@ -1070,17 +1980,41 @@ Code improvements and bug fixes
 
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.10.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.10.2...v4.10.3) (2021-11-27)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.10.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.10.1...v4.10.2) (2021-11-18)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.10.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.10.0...v4.10.1) (2021-11-18)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.10.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.5...v4.10.0) (2021-11-18)
 
@@ -1088,25 +2022,61 @@ Code improvements and bug fixes
 
 - Added `useQueryAll` support to include archived/deleted records where Salesforce query-all is available.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.9.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.4...v4.9.5) (2021-11-02)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.9.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.3...v4.9.4) (2021-11-02)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.9.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.2...v4.9.3) (2021-11-02)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.9.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.1...v4.9.2) (2021-11-02)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.9.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.0...v4.9.1) (2021-11-02)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.9.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.3...v4.9.0) (2021-11-01)
 
@@ -1114,23 +2084,53 @@ Code improvements and bug fixes
 
 - Added `excludedFromUpdateFields` to keep selected fields unchanged during update operations.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.8.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.2...v4.8.3) (2021-10-31)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.8.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.1...v4.8.2) (2021-10-31)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.8.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.0...v4.8.1) (2021-10-31)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.8.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.7.0...v4.8.0) (2021-10-31)
 
 ###### New features:
 
 - Added new `RecordsTransform` add-on capabilities for richer field and lookup transformation scenarios.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.7.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.4...v4.7.0) (2021-10-28)
 
@@ -1142,23 +2142,53 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.6.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.3...v4.6.4) (2021-10-26)
 
 ###### Other changes:
 
 - Updated governance files (CODEOWNERS): updated ownership mappings, contribution process notes, and security reporting instructions.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.6.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.2...v4.6.3) (2021-10-25)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.6.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.1...v4.6.2) (2021-10-25)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.6.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.0...v4.6.1) (2021-10-24)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.6.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.10...v4.6.0) (2021-10-24)
 
@@ -1170,15 +2200,31 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+
 ## [4.5.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.9...v4.5.10) (2021-10-21)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.5.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.8...v4.5.9) (2021-10-21)
 
 ###### Other changes:
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.5.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.7...v4.5.8) (2021-10-20)
 
@@ -1187,13 +2233,31 @@ Code improvements and bug fixes
 - Updated .gitignore: updated ignore patterns for local artifacts, logs, and development-generated files.
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.5.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.6...v4.5.7) (2021-10-19)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.5.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.5...v4.5.6) (2021-10-19)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.5.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.4...v4.5.5) (2021-10-19)
 
@@ -1201,21 +2265,51 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.5.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.3...v4.5.4) (2021-10-18)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.5.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.2...v4.5.3) (2021-10-18)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.5.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.1...v4.5.2) (2021-10-18)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.5.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.0...v4.5.1) (2021-10-13)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.5.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.7...v4.5.0) (2021-10-13)
 
@@ -1230,9 +2324,21 @@ Code improvements and bug fixes
 - Changed package.json: updated scripts (typedoc-sfdmu-run-addons); updated devDependencies (typescript).
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.4.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.6...v4.4.7) (2021-10-05)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.4.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.5...v4.4.6) (2021-09-30)
 
@@ -1240,25 +2346,61 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.4.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.4...v4.4.5) (2021-08-18)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.4.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.3...v4.4.4) (2021-08-15)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.4.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.2...v4.4.3) (2021-07-11)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.4.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.1...v4.4.2) (2021-05-30)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.4.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.0...v4.4.1) (2021-05-23)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.4.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.3.1...v4.4.0) (2021-05-22)
 
@@ -1270,9 +2412,21 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json and messages/run.json: refined runtime messages and CLI help text.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.3.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.3.0...v4.3.1) (2021-05-15)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.3.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.6...v4.3.0) (2021-05-12)
 
@@ -1284,15 +2438,33 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.2.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.4...v4.2.6) (2021-05-03)
 
 ###### Other changes:
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.2.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.3...v4.2.4) (2021-05-03)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.2.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.2...v4.2.3) (2021-05-03)
 
@@ -1300,15 +2472,33 @@ Code improvements and bug fixes
 
 - Updated issue templates (feature-request.md): updated issue form fields, required reproduction steps, and mandatory diagnostic/log sections.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.2.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.1...v4.2.2) (2021-05-02)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.2.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.0...v4.2.1) (2021-05-02)
 
 ###### Other changes:
 
 - Updated .circleci/config.yml: updated CI jobs, branch/tag filters, and release execution steps.
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.2.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.4...v4.2.0) (2021-05-01)
 
@@ -1321,13 +2511,31 @@ Code improvements and bug fixes
 - Updated .circleci/config.yml: updated CI jobs, branch/tag filters, and release execution steps.
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.1.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.3...v4.1.4) (2021-04-29)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.1.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.2...v4.1.3) (2021-04-29)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [4.1.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.1...v4.1.2) (2021-04-29)
 
@@ -1335,9 +2543,21 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.1.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.0...v4.1.1) (2021-04-27)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.1.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.0.3...v4.1.0) (2021-04-27)
 
@@ -1349,13 +2569,31 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.0.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.0.2...v4.0.3) (2021-04-20)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [4.0.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.0.0...v4.0.2) (2021-04-19)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [4.0.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.10.5...v4.0.0) (2021-03-18)
 
@@ -1381,15 +2619,33 @@ Code improvements and bug fixes
 - Updated .circleci/config.yml: updated CI jobs, branch/tag filters, and release execution steps.
 - Changed package.json: updated scripts (build, postpack, prepack).
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [3.10.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.10.4...v3.10.5) (2021-02-28)
 
 ###### Other changes:
 
 - Updated yarn.lock: regenerated lockfile to match package.json dependency changes.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [3.10.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.10.3...v3.10.4) (2021-02-25)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [3.10.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.9.3...v3.10.3) (2021-02-25)
 
@@ -1405,13 +2661,29 @@ Code improvements and bug fixes
 
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 
+**See the related articles:**
+
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+
 ## [3.7.21](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.7.20...v3.7.21) (2020-11-23)
 
 Code improvements and bug fixes
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [3.7.17](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.7.14...v3.7.17) (2020-10-20)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 ## [3.7.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.7.3...v3.7.4) (2020-09-21)
 
@@ -1419,9 +2691,21 @@ Code improvements and bug fixes
 
 - Updated issue templates (question-or-help.md): updated issue form fields, required reproduction steps, and mandatory diagnostic/log sections.
 
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+
 ## [3.5.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.5.5...v3.5.9) (2020-07-21)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
 
 # [3.4.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.3.5...v3.4.0) (2020-06-13)
 
@@ -1434,6 +2718,16 @@ Code improvements and bug fixes
 - Updated messages/resources.json: updated runtime message keys and wording for command output, warnings, and errors.
 - Changed package.json: updated oclif plugin metadata; updated package metadata fields (description).
 
+**See the related articles:**
+
+- [Values Mapping](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping) - value mapping rules and examples
+
 ## [3.1.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.1.0...v3.1.2) (2020-06-01)
 
 Code improvements and bug fixes
+
+**See the related articles:**
+
+- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
+- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
