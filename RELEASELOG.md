@@ -1,3 +1,21 @@
+## [5.2.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.4...5.2.0) (2026-02-20)
+
+###### New features:
+
+- Added `--failonwarning` to stop migration on the first warning and return dedicated exit code `8`.
+- Added `mockFields.locale` so mock data generation can use locale-specific values per field.
+- Added `Old Id` in `_target.csv` reports, mapped from internal source id, for easier source-target traceability.
+
+###### Fixes:
+
+- Fixed warning escalation flow to always write an explicit diagnostic stop reason when `--failonwarning` aborts execution.
+- Fixed diagnostic stack traces to mask absolute folder paths while preserving file names and line numbers.
+
+###### Improvements:
+
+- Improved diagnostic reporting for exclusion paths with detailed per-field reasons for operation-specific DML filtering.
+- Improved Person Account diagnostics by logging exclusion reasons for invalid fields in business and person contexts.
+
 ## [5.1.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.3...5.1.4) (2026-02-19)
 
 ###### Fixes:
