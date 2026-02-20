@@ -1,3 +1,14 @@
+## [5.3.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.0...5.3.1) (2026-02-20)
+
+###### Fixes:
+
+- Fixed composite `externalId` handling for mixed relationship and local fields (for example `Lookup__r.Name;LocalField__c`), so query expansion and externalId validation resolve correctly without false mandatory externalId warnings.
+
+**See the related articles:**
+
+- [ScriptObject Object - externalId](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#externalid-string) - composite externalId syntax and behavior details.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - where externalId is configured in migration scripts.
+
 ## [5.3.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.2.0...5.3.0) (2026-02-20)
 
 ###### New features:
