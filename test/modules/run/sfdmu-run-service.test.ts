@@ -26,6 +26,7 @@ const PACKAGE_VERSION = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), '
 const EXPECTED_VERSION = `v${PACKAGE_VERSION.version ?? ''}`;
 
 type ScriptPayloadType = {
+  apiVersion?: string;
   objectSets: Array<{ objects: Array<{ name: string; query: string }> }>;
 };
 
@@ -482,6 +483,172 @@ describe('SfdmuRunService', () => {
     } finally {
       OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
       OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
+
+  it('auto-resolves default apiVersion as min(source max, target max)', async () => {
+    const rootPath = createTempDir();
+    const payload: ScriptPayloadType = {
+      objectSets: [
+        {
+          objects: [{ name: 'Account', query: 'SELECT Id FROM Account' }],
+        },
+      ],
+    };
+    writeExportJson(rootPath, payload);
+
+    const capturedVersions: string[] = [];
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalResolveMaxApi = OrgConnectionAdapter.resolveMaxApiVersionAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveMaxApiVersionAsync = async (aliasOrUsername: string) =>
+      aliasOrUsername === 'source' ? '65.0' : '63.0';
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async (_aliasOrUsername: string, apiVersion?: string) => {
+      if (apiVersion) {
+        capturedVersions.push(apiVersion);
+      }
+      return createDescribeConnection() as never;
+    };
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          sourceusername: 'source',
+          targetusername: 'target',
+          filelog: 0,
+        })
+      );
+
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.SUCCESS);
+      assert.ok(capturedVersions.length > 0);
+      assert.ok(capturedVersions.every((version) => version === '63.0'));
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.resolveMaxApiVersionAsync = originalResolveMaxApi;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
+
+  it('keeps export.json apiVersion and skips auto-resolve', async () => {
+    const rootPath = createTempDir();
+    const payload: ScriptPayloadType = {
+      apiVersion: '61.0',
+      objectSets: [
+        {
+          objects: [{ name: 'Account', query: 'SELECT Id FROM Account' }],
+        },
+      ],
+    };
+    writeExportJson(rootPath, payload);
+
+    const capturedVersions: string[] = [];
+    let resolveMaxCallCount = 0;
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalResolveMaxApi = OrgConnectionAdapter.resolveMaxApiVersionAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveMaxApiVersionAsync = async () => {
+      resolveMaxCallCount += 1;
+      return '65.0';
+    };
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async (_aliasOrUsername: string, apiVersion?: string) => {
+      if (apiVersion) {
+        capturedVersions.push(apiVersion);
+      }
+      return createDescribeConnection() as never;
+    };
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          sourceusername: 'source',
+          targetusername: 'target',
+          filelog: 0,
+        })
+      );
+
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.SUCCESS);
+      assert.equal(resolveMaxCallCount, 0);
+      assert.ok(capturedVersions.length > 0);
+      assert.ok(capturedVersions.every((version) => version === '61.0'));
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.resolveMaxApiVersionAsync = originalResolveMaxApi;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
+
+  it('keeps CLI --apiversion and skips auto-resolve', async () => {
+    const rootPath = createTempDir();
+    const payload: ScriptPayloadType = {
+      objectSets: [
+        {
+          objects: [{ name: 'Account', query: 'SELECT Id FROM Account' }],
+        },
+      ],
+    };
+    writeExportJson(rootPath, payload);
+
+    const capturedVersions: string[] = [];
+    let resolveMaxCallCount = 0;
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalResolveMaxApi = OrgConnectionAdapter.resolveMaxApiVersionAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveMaxApiVersionAsync = async () => {
+      resolveMaxCallCount += 1;
+      return '65.0';
+    };
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async (_aliasOrUsername: string, apiVersion?: string) => {
+      if (apiVersion) {
+        capturedVersions.push(apiVersion);
+      }
+      return createDescribeConnection() as never;
+    };
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          sourceusername: 'source',
+          targetusername: 'target',
+          apiversion: '62.0',
+          filelog: 0,
+        })
+      );
+
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.SUCCESS);
+      assert.equal(resolveMaxCallCount, 0);
+      assert.ok(capturedVersions.length > 0);
+      assert.ok(capturedVersions.every((version) => version === '62.0'));
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.resolveMaxApiVersionAsync = originalResolveMaxApi;
       OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
       fs.rmSync(rootPath, { recursive: true, force: true });
     }

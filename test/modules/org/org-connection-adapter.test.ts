@@ -6,6 +6,7 @@
  */
 
 import { strict as assert } from 'node:assert';
+import type { Connection } from '@jsforce/jsforce-node';
 import { ORG_TEST_SOURCE_ENV, ORG_TEST_TARGET_ENV } from '../../../src/modules/constants/Constants.js';
 import OrgConnectionAdapter from '../../../src/modules/org/OrgConnectionAdapter.js';
 
@@ -36,5 +37,45 @@ describe('OrgConnectionAdapter', () => {
 
     assert.ok(pair.sourceOrg);
     assert.ok(pair.targetOrg);
+  });
+
+  it('resolves max API version from org versions endpoint', async () => {
+    const originalResolve = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    const originalConnection = OrgConnectionAdapter.getConnectionAsync.bind(OrgConnectionAdapter);
+
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    OrgConnectionAdapter.getConnectionAsync = async () =>
+      ({
+        request: async () => [{ version: '61.0' }, { version: '64.0' }, { version: '63.0' }],
+        getApiVersion: () => '59.0',
+      } as unknown as Connection);
+
+    try {
+      const version = await OrgConnectionAdapter.resolveMaxApiVersionAsync('source');
+      assert.equal(version, '64.0');
+    } finally {
+      OrgConnectionAdapter.resolveOrgAsync = originalResolve;
+      OrgConnectionAdapter.getConnectionAsync = originalConnection;
+    }
+  });
+
+  it('falls back to connection apiVersion when org versions endpoint is unavailable', async () => {
+    const originalResolve = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    const originalConnection = OrgConnectionAdapter.getConnectionAsync.bind(OrgConnectionAdapter);
+
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    OrgConnectionAdapter.getConnectionAsync = async () =>
+      ({
+        request: async () => ({ invalid: true }),
+        getApiVersion: () => '62.0',
+      } as unknown as Connection);
+
+    try {
+      const version = await OrgConnectionAdapter.resolveMaxApiVersionAsync('source');
+      assert.equal(version, '62.0');
+    } finally {
+      OrgConnectionAdapter.resolveOrgAsync = originalResolve;
+      OrgConnectionAdapter.getConnectionAsync = originalConnection;
+    }
   });
 });

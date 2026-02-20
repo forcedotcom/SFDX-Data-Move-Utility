@@ -12,16 +12,19 @@ import { execFile } from 'node:child_process';
 import { readFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import type { Connection } from '@jsforce/jsforce-node';
 import { Common } from '../common/Common.js';
 import { DATA_MEDIA_TYPE } from '../common/Enumerations.js';
 import {
   COMMAND_EXIT_STATUSES,
   CSV_FILE_ORG_NAME,
   LOG_LEVELS,
+  MAX_PARALLEL_REQUESTS,
   PLUGIN_NAME,
   RUN_COMMAND_NAME,
   SCRIPT_FILE_NAME,
 } from '../constants/Constants.js';
+import CjsDependencyAdapters from '../dependencies/CjsDependencyAdapters.js';
 import LoggingContext from '../logging/LoggingContext.js';
 import LoggingService from '../logging/LoggingService.js';
 import MigrationJob from '../models/job/MigrationJob.js';
@@ -72,6 +75,13 @@ type AnonymiseEntryType = {
   value: string;
   label: string;
 };
+
+type ManualConnectionCtorType = new (options: {
+  instanceUrl: string;
+  accessToken: string;
+  maxRequest: number;
+  proxyUrl?: string;
+}) => Connection;
 
 const execFileAsync = promisify(execFile);
 
@@ -181,6 +191,7 @@ export default class SfdmuRunService {
         }
       }
 
+      await this._resolveDefaultApiVersionAsync(script, flags, logger);
       const objectSets = this._resolveObjectSets(script, logger);
       await this._resolveOrgTypesForSummaryAsync(script);
       const metadataCaches: OrgMetadataCacheType = {
@@ -1297,6 +1308,157 @@ export default class SfdmuRunService {
       return false;
     }
     return Boolean(scriptOrg.instanceUrl?.trim()) && Boolean(scriptOrg.accessToken?.trim());
+  }
+
+  /**
+   * Resolves default API version from org metadata when user did not set it explicitly.
+   *
+   * @param script - Script instance.
+   * @param flags - Normalized flags.
+   * @param logger - Logging service instance.
+   */
+  private static async _resolveDefaultApiVersionAsync(
+    script: Script,
+    flags: SfdmuRunFlagsType,
+    logger: LoggingService
+  ): Promise<void> {
+    if (this._hasExplicitApiVersion(script, flags)) {
+      return;
+    }
+
+    const [sourceVersion, targetVersion] = await Promise.all([
+      this._resolveSingleOrgMaxApiVersionAsync(script.sourceOrg, logger),
+      this._resolveSingleOrgMaxApiVersionAsync(script.targetOrg, logger),
+    ]);
+
+    const autoResolvedVersion = this._resolveDefaultApiVersionFromOrgs(sourceVersion, targetVersion);
+    if (!autoResolvedVersion) {
+      return;
+    }
+
+    const nextScript = script;
+    nextScript.apiVersion = autoResolvedVersion;
+    logger.verboseFile(`[diagnostic] Auto-resolved run apiVersion=${autoResolvedVersion}`);
+  }
+
+  /**
+   * Returns true when apiVersion was explicitly set by user in CLI or export.json.
+   *
+   * @param script - Script instance.
+   * @param flags - Normalized flags.
+   * @returns True when apiVersion is explicit.
+   */
+  private static _hasExplicitApiVersion(script: Script, flags: SfdmuRunFlagsType): boolean {
+    if (typeof flags.apiversion === 'string' && flags.apiversion.trim().length > 0) {
+      return true;
+    }
+
+    const workingJson = script.workingJson;
+    if (!isRecord(workingJson)) {
+      return false;
+    }
+    if (!Object.prototype.hasOwnProperty.call(workingJson, 'apiVersion')) {
+      return false;
+    }
+    const value = workingJson.apiVersion;
+    if (typeof value === 'string') {
+      return value.trim().length > 0;
+    }
+    if (typeof value === 'number') {
+      return Number.isFinite(value);
+    }
+    return value !== null && typeof value !== 'undefined';
+  }
+
+  /**
+   * Resolves the maximum API version for a single org.
+   *
+   * @param org - Script org definition.
+   * @param logger - Logging service instance.
+   * @returns Maximum org API version.
+   */
+  private static async _resolveSingleOrgMaxApiVersionAsync(
+    org: ScriptOrg | undefined,
+    logger: LoggingService
+  ): Promise<string | undefined> {
+    if (!org || org.isFileMedia) {
+      return undefined;
+    }
+    try {
+      if (this._hasManualOrgCredentials(org)) {
+        return await this._resolveManualOrgMaxApiVersionAsync(org);
+      }
+      const version = await OrgConnectionAdapter.resolveMaxApiVersionAsync(org.name);
+      return version.trim().length > 0 ? version : undefined;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      logger.verboseFile(`[diagnostic] Failed to auto-resolve max apiVersion for org "${org.name}", reason=${message}`);
+      return undefined;
+    }
+  }
+
+  /**
+   * Resolves a single default API version from source and target org versions.
+   *
+   * @param sourceVersion - Source max API version.
+   * @param targetVersion - Target max API version.
+   * @returns Effective default API version.
+   */
+  private static _resolveDefaultApiVersionFromOrgs(sourceVersion?: string, targetVersion?: string): string | undefined {
+    const source = this._parseApiVersion(sourceVersion);
+    const target = this._parseApiVersion(targetVersion);
+    if (typeof source === 'undefined' && typeof target === 'undefined') {
+      return undefined;
+    }
+    if (typeof source === 'undefined') {
+      return targetVersion?.trim();
+    }
+    if (typeof target === 'undefined') {
+      return sourceVersion?.trim();
+    }
+    return source <= target ? sourceVersion?.trim() : targetVersion?.trim();
+  }
+
+  /**
+   * Resolves max API version for an org configured with manual credentials.
+   *
+   * @param org - Script org definition with manual auth data.
+   * @returns Maximum org API version.
+   */
+  private static async _resolveManualOrgMaxApiVersionAsync(org: ScriptOrg): Promise<string | undefined> {
+    const jsforceModule = CjsDependencyAdapters.getJsforceNode() as {
+      Connection?: ManualConnectionCtorType;
+    };
+    const ConnectionCtor = jsforceModule.Connection;
+    if (!ConnectionCtor) {
+      return undefined;
+    }
+
+    const connection = new ConnectionCtor({
+      instanceUrl: org.instanceUrl,
+      accessToken: org.accessToken,
+      maxRequest: MAX_PARALLEL_REQUESTS,
+      proxyUrl: org.script?.proxyUrl ?? undefined,
+    });
+    return OrgConnectionAdapter.resolveMaxApiVersionFromConnectionAsync(connection);
+  }
+
+  /**
+   * Parses API version string into numeric form.
+   *
+   * @param version - API version string.
+   * @returns Parsed numeric version.
+   */
+  private static _parseApiVersion(version?: string): number | undefined {
+    const normalized = version?.trim();
+    if (!normalized) {
+      return undefined;
+    }
+    const parsed = Number.parseFloat(normalized);
+    if (!Number.isFinite(parsed)) {
+      return undefined;
+    }
+    return parsed;
   }
 
   /**
