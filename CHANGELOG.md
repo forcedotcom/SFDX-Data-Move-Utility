@@ -1,3 +1,12 @@
+# [5.2.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.4...5.2.0) (2026-02-20)
+
+
+### Features
+
+* add failonwarning flow and expanded diagnostic reporting ([ccac487](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/ccac487b60748104ba0baf7725ae29138fd39cec))
+
+
+
 ## [5.1.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.3...5.1.4) (2026-02-19)
 
 
