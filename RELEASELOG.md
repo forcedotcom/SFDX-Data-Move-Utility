@@ -1,3 +1,13 @@
+## [5.3.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.2.0...5.3.0) (2026-02-20)
+
+###### New features:
+
+- Added automatic default `apiVersion` selection when `apiVersion` is not explicitly provided in `export.json` or via `--apiversion`.
+- For `org -> org` migrations, SFDMU now uses the lower maximum API version supported by source and target orgs.
+- For `org -> csvfile` and `csvfile -> org` migrations, SFDMU now uses the maximum API version supported by the connected org.
+- Added support for the same auto-selection behavior when org credentials are provided manually with `instanceUrl` and `accessToken`.
+- Kept explicit `apiVersion` in `export.json` and `--apiversion` as strict overrides over auto-selection.
+
 ## [5.2.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.4...5.2.0) (2026-02-20)
 
 ###### New features:
