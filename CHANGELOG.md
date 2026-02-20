@@ -1,3 +1,12 @@
+## [5.3.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.0...5.3.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* fix mixed composite externalId relationship handling ([b397605](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/b39760543e97a42a9ce1dab05e3f387dfd7f258f))
+
+
+
 # [5.3.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.2.0...5.3.0) (2026-02-20)
 
 
