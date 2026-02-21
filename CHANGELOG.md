@@ -1,3 +1,12 @@
+# [5.5.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.4.0...5.5.0) (2026-02-21)
+
+
+### Features
+
+* add skipped-update reason breakdown and diagnostic summary logging ([1b80d03](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/1b80d0304c72daa7d8067ce1c5e53d3a0cf8f724))
+
+
+
 # [5.4.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.1...5.4.0) (2026-02-21)
 
 
