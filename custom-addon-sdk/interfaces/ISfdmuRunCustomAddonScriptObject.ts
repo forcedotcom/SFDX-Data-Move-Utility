@@ -25,15 +25,21 @@ export default interface ISfdmuRunCustomAddonScriptObject {
   deleteQuery?: string;
   operation?: OPERATION;
   externalId?: string;
+  originalExternalId?: string;
+  originalExternalIdIsEmpty?: boolean;
   deleteOldData?: boolean;
   deleteFromSource?: boolean;
   deleteByHierarchy?: boolean;
   hardDelete?: boolean;
+  respectOrderByOnDeleteRecords?: boolean;
   updateWithMockData?: boolean;
   // mockCSVData?: boolean;
   sourceRecordsFilter?: string;
   targetRecordsFilter?: string;
   excluded?: boolean;
+  useQueryAll?: boolean;
+  queryAllTarget?: boolean;
+  skipExistingRecords?: boolean;
   useCSVValuesMapping?: boolean;
   useFieldMapping?: boolean;
   /**
@@ -44,8 +50,12 @@ export default interface ISfdmuRunCustomAddonScriptObject {
   master?: boolean;
   excludedFields?: string[];
   excludedFromUpdateFields?: string[];
+  excludedFieldsFromUpdate?: string[];
   restApiBatchSize?: number;
   bulkApiV1BatchSize?: number;
+  alwaysUseBulkApiToUpdateRecords?: boolean;
+  alwaysUseRestApi?: boolean;
+  alwaysUseBulkApi?: boolean;
   parallelBulkJobs?: number;
   parallelRestJobs?: number;
 
@@ -70,6 +80,21 @@ export default interface ISfdmuRunCustomAddonScriptObject {
 
   /** Extra fields to be updated on target records. */
   extraFieldsToUpdate: string[];
+
+  processAllSource?: boolean;
+  processAllTarget?: boolean;
+  isFromOriginalScript?: boolean;
+  sourceSObjectDescribe?: unknown;
+  targetSObjectDescribe?: unknown;
+  isExtraObject?: boolean;
+
+  /**
+   * Polymorphic lookup object hints defined in export.json.
+   */
+  polymorphicLookups?: Array<{
+    fieldName: string;
+    referencedObjectType?: string;
+  }>;
 
   /**
    * True when the object is auto-added by the runtime.

@@ -233,6 +233,27 @@ export default class ScriptObject {
   public hardDelete = false;
 
   /**
+   * Enforces REST delete one-by-one mode to preserve ORDER BY intent.
+   * Applies only to delete-like operations.
+   */
+  public respectOrderByOnDeleteRecords = false;
+
+  /**
+   * Forces Bulk API for object DML operations when REST override is not active.
+   */
+  public alwaysUseBulkApiToUpdateRecords = false;
+
+  /**
+   * Forces REST API usage for object queries and object DML operations.
+   */
+  public alwaysUseRestApi = false;
+
+  /**
+   * Forces Bulk API usage for object queries and object DML operations.
+   */
+  public alwaysUseBulkApi = false;
+
+  /**
    * Source records filter expression applied before DML.
    */
   public sourceRecordsFilter = '';

@@ -87,7 +87,7 @@ export default class ApiEngineFactory {
       return API_ENGINE.BULK_API_V1;
     }
 
-    const bulkAllowed = amountToProcess > bulkThreshold && !alwaysUseRest && bulkSupported;
+    const bulkAllowed = amountToProcess >= bulkThreshold && !alwaysUseRest && bulkSupported;
 
     if (!bulkAllowed) {
       return API_ENGINE.REST_API;

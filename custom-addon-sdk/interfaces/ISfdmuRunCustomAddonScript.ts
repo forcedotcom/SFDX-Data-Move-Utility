@@ -22,6 +22,9 @@ import type { DATA_CACHE_TYPES } from './common.js';
 export default interface ISfdmuRunCustomAddonScript {
   orgs?: ISfdmuRunCustomAddonScriptOrg[];
   objects?: ISfdmuRunCustomAddonScriptObject[];
+  objectSets?: Array<{ objects: ISfdmuRunCustomAddonScriptObject[] }>;
+  objectsMap?: Map<string, ISfdmuRunCustomAddonScriptObject>;
+  excludedObjects?: string[];
   job?: ISFdmuRunCustomAddonJob;
 
   /**
@@ -53,6 +56,7 @@ export default interface ISfdmuRunCustomAddonScript {
   promptOnIssuesInCSVFiles?: boolean;
   validateCSVFilesOnly?: boolean;
   apiVersion?: string;
+  groupQuery?: string;
   createTargetCSVFiles?: boolean;
   importCSVFilesAsIs?: boolean;
   alwaysUseRestApiToUpdateRecords?: boolean;
@@ -111,6 +115,7 @@ export default interface ISfdmuRunCustomAddonScript {
    */
   objectSetIndex?: number;
   proxyUrl?: string;
+  canModify?: string;
   binaryDataCache?: DATA_CACHE_TYPES;
   sourceRecordsCache?: DATA_CACHE_TYPES;
   parallelBinaryDownloads?: number;
@@ -120,6 +125,7 @@ export default interface ISfdmuRunCustomAddonScript {
   beforeAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
   afterAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
   dataRetrievedAddons?: ISfdmuRunCustomAddonScriptAddonManifestDefinition[];
+  sourceTargetFieldMapping?: Map<string, unknown>;
 
   /**
    * Returns all configured script objects.

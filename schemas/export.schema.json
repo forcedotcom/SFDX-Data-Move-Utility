@@ -259,6 +259,18 @@
         "hardDelete": {
           "type": "boolean"
         },
+        "respectOrderByOnDeleteRecords": {
+          "type": "boolean"
+        },
+        "alwaysUseBulkApiToUpdateRecords": {
+          "type": "boolean"
+        },
+        "alwaysUseRestApi": {
+          "type": "boolean"
+        },
+        "alwaysUseBulkApi": {
+          "type": "boolean"
+        },
         "sourceRecordsFilter": {
           "type": "string"
         },

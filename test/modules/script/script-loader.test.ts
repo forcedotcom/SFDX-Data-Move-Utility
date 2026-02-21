@@ -696,6 +696,36 @@ describe('ScriptLoader', () => {
     }
   });
 
+  it('parses object-level API override flags', async () => {
+    const rootPath = createTempDir();
+    const payload: ScriptPayloadType = {
+      objects: [
+        {
+          name: 'Account',
+          query: 'SELECT Id FROM Account',
+          respectOrderByOnDeleteRecords: true,
+          alwaysUseBulkApiToUpdateRecords: true,
+          alwaysUseRestApi: false,
+          alwaysUseBulkApi: true,
+        },
+      ],
+    };
+    writeExportJson(rootPath, payload);
+    const logger = createLogger(rootPath);
+
+    try {
+      const script = await ScriptLoader.loadFromPathAsync(rootPath, logger);
+      const object = script.objectSets[0].objects[0];
+
+      assert.equal(object.respectOrderByOnDeleteRecords, true);
+      assert.equal(object.alwaysUseBulkApiToUpdateRecords, true);
+      assert.equal(object.alwaysUseRestApi, false);
+      assert.equal(object.alwaysUseBulkApi, true);
+    } finally {
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
+
   it('rehydrates a specific object set from workingJson', async () => {
     const rootPath = createTempDir();
     const payload: ScriptPayloadType = {

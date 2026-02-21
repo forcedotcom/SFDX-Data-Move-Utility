@@ -87,6 +87,20 @@ describe('ApiEngineFactory', () => {
     assert.equal(engine.getEngineType(), API_ENGINE.BULK_API_V2);
   });
 
+  it('uses Bulk API when amount equals bulk threshold', () => {
+    const connection = { bulk2: {} } as Connection;
+    const engine = ApiEngineFactory.createEngine({
+      connection,
+      sObjectName: 'Account',
+      amountToProcess: 100,
+      bulkThreshold: 100,
+      alwaysUseRest: false,
+      bulkApiVersion: '2.0',
+    });
+
+    assert.equal(engine.getEngineType(), API_ENGINE.BULK_API_V2);
+  });
+
   it('keeps REST API for unsupported objects even when forceBulk is true', () => {
     const connection = { bulk2: {} } as Connection;
     const unsupportedObject = NOT_SUPPORTED_OBJECTS_IN_BULK_API[0] ?? 'Attachment';

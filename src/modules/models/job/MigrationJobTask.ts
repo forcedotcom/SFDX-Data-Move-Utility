@@ -84,6 +84,12 @@ type ProcessedFieldsToRemoveType = {
   notUpdateableFields: string[];
 };
 
+type DmlExecutionSettingsType = {
+  alwaysUseRest: boolean;
+  bulkThreshold: number;
+  restApiBatchSizeOverride?: number;
+};
+
 const { parseQuery, composeQuery } = CjsDependencyAdapters.getSoqlParser();
 
 /**
@@ -3471,14 +3477,16 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       return [];
     }
 
+    const dmlSettings = this._resolveDmlExecutionSettings(operation);
+    const effectiveScriptObject = this._createEffectiveScriptObject(dmlSettings.restApiBatchSizeOverride);
     const connection = await this._getConnectionAsync(org);
     const engine = ApiEngineFactory.createEngine({
       connection,
       sObjectName,
       amountToProcess: records.length,
-      bulkThreshold: this.job.script.bulkThreshold,
-      alwaysUseRest: this.job.script.alwaysUseRestApiToUpdateRecords,
-      forceBulk: operation === OPERATION.HardDelete,
+      bulkThreshold: dmlSettings.bulkThreshold,
+      alwaysUseRest: dmlSettings.alwaysUseRest,
+      forceBulk: operation === OPERATION.HardDelete && !dmlSettings.alwaysUseRest,
       bulkApiVersion: this.job.script.bulkApiVersion,
     });
     const apiVersion = this._resolveApiVersion(connection);
@@ -3497,7 +3505,9 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
         operation
       )} engine=${engine.getEngineName()} apiVersion=${apiVersion} count=${records.length} allOrNone=${String(
         this.job.script.allOrNone
-      )} updateRecordId=${String(updateRecordId)} finalAttempt=${String(isFinalDmlAttempt)}`
+      )} updateRecordId=${String(updateRecordId)} finalAttempt=${String(isFinalDmlAttempt)} alwaysUseRest=${String(
+        dmlSettings.alwaysUseRest
+      )} bulkThreshold=${dmlSettings.bulkThreshold} restBatchOverride=${dmlSettings.restApiBatchSizeOverride ?? 'none'}`
     );
 
     const executor = new ApiEngineExecutor({
@@ -3507,7 +3517,7 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       updateRecordId,
       logger: this._getLogger(),
       script: this.job.script,
-      scriptObject: this.scriptObject,
+      scriptObject: effectiveScriptObject,
       isFinalDmlAttempt,
     });
     let processed: Array<Record<string, unknown>>;
@@ -3522,7 +3532,7 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
         connection,
         sObjectName,
         amountToProcess: records.length,
-        bulkThreshold: this.job.script.bulkThreshold,
+        bulkThreshold: dmlSettings.bulkThreshold,
         alwaysUseRest: true,
         forceBulk: false,
         bulkApiVersion: this.job.script.bulkApiVersion,
@@ -3554,7 +3564,7 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
         updateRecordId,
         logger: this._getLogger(),
         script: this.job.script,
-        scriptObject: this.scriptObject,
+        scriptObject: effectiveScriptObject,
         isFinalDmlAttempt,
       });
       processed = await restExecutor.executeCrudAsync();
@@ -3567,6 +3577,68 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     );
 
     return processed;
+  }
+
+  /**
+   * Resolves effective DML engine settings for the current object and operation.
+   *
+   * @param operation - Operation to execute.
+   * @returns Effective DML settings.
+   */
+  private _resolveDmlExecutionSettings(operation: OPERATION): DmlExecutionSettingsType {
+    const script = this.job.script;
+    const object = this.scriptObject;
+    const isDeleteOperation = this._isDeleteLikeOperation(operation);
+    let alwaysUseRest = script.alwaysUseRestApiToUpdateRecords || object.alwaysUseRestApi;
+    let bulkThreshold = script.bulkThreshold;
+    let restApiBatchSizeOverride: number | undefined;
+
+    if (object.respectOrderByOnDeleteRecords && isDeleteOperation) {
+      alwaysUseRest = true;
+      restApiBatchSizeOverride = 1;
+    }
+
+    if (!alwaysUseRest && (object.alwaysUseBulkApi || object.alwaysUseBulkApiToUpdateRecords)) {
+      bulkThreshold = 0;
+    }
+
+    return {
+      alwaysUseRest,
+      bulkThreshold,
+      restApiBatchSizeOverride,
+    };
+  }
+
+  /**
+   * Returns true when the operation is delete-like.
+   *
+   * @param operation - Operation to inspect.
+   * @returns True when delete-like.
+   */
+  private _isDeleteLikeOperation(operation: OPERATION): boolean {
+    void this;
+    return (
+      operation === OPERATION.Delete ||
+      operation === OPERATION.DeleteHierarchy ||
+      operation === OPERATION.DeleteSource ||
+      operation === OPERATION.HardDelete
+    );
+  }
+
+  /**
+   * Creates a script-object view with an optional REST batch-size override.
+   *
+   * @param restApiBatchSizeOverride - Optional REST batch-size override.
+   * @returns Effective script object for API executor options.
+   */
+  private _createEffectiveScriptObject(restApiBatchSizeOverride?: number): ScriptObject {
+    if (!restApiBatchSizeOverride || this.scriptObject.restApiBatchSize === restApiBatchSizeOverride) {
+      return this.scriptObject;
+    }
+
+    const clone = Object.assign(new ScriptObject(), this.scriptObject);
+    clone.restApiBatchSize = restApiBatchSizeOverride;
+    return clone;
   }
 
   /**

@@ -137,8 +137,19 @@ export default class TaskOrgData {
    * @returns True when Bulk API query should be used.
    */
   public get useBulkQueryApi(): boolean {
-    const threshold = this.task.job.script.queryBulkApiThreshold;
-    return Boolean(threshold && this.totalRecordCount >= threshold);
+    const object = this.task.scriptObject;
+    if (object.alwaysUseRestApi) {
+      return false;
+    }
+    if (object.alwaysUseBulkApi) {
+      return true;
+    }
+
+    const threshold = Number(this.task.job.script.queryBulkApiThreshold);
+    if (!Number.isFinite(threshold)) {
+      return false;
+    }
+    return this.totalRecordCount >= threshold;
   }
 
   // ------------------------------------------------------//
