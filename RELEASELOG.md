@@ -1,3 +1,21 @@
+## [5.4.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.1...5.4.0) (2026-02-21)
+
+###### New features:
+
+- Added object-level API mode controls: `alwaysUseRestApi`, `alwaysUseBulkApi`, and `alwaysUseBulkApiToUpdateRecords`.
+- Added `respectOrderByOnDeleteRecords` to enforce ordered delete execution through REST one-by-one mode.
+- Added SDK contract updates for add-on modules to expose new object-level API mode fields and related runtime metadata.
+
+###### Improvements:
+
+- Changed query and DML bulk-threshold behavior to threshold-inclusive evaluation (`>=`) for clearer switching at exact threshold values.
+
+**See the related articles:**
+
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - new object-level API mode properties and delete-order behavior.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - bulk/query threshold settings and runtime switching behavior.
+- [Custom Add-On API Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - SDK contract fields available to add-on modules.
+
 ## [5.3.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.0...5.3.1) (2026-02-20)
 
 ###### Fixes:
