@@ -1,3 +1,21 @@
+## [5.5.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.4.0...5.5.0) (2026-02-22)
+
+###### New features:
+
+- Added skipped-update reason breakdown counters in warning output for update and upsert processing: `sameData`, `noMatchingTarget`, and `other`.
+- Added detailed skipped-update summary data to make investigation of update/upsert behavior faster in large runs.
+
+###### Fixes:
+
+- Fixed missing diagnostic visibility for skipped-update split details by adding a dedicated diagnostic summary line in execution logs.
+
+**See the related articles:**
+
+- [Log File Management in Plugin Migrations - Skipped Records Reason Breakdown](https://help.sfdmu.com/full-documentation/reports/the-execution-log#skipped-records-reason-breakdown)
+- [Run Command Flags - diagnostic](https://help.sfdmu.com/full-documentation/reports/run-command-flags#diagnostic)
+- [ScriptObject Object - skipRecordsComparison](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#skiprecordscomparison-boolean)
+- [Target Records Filter](https://help.sfdmu.com/full-documentation/advanced-features/target-records-filter) review skipped updates when target rows are filtered out.
+
 ## [5.4.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.1...5.4.0) (2026-02-21)
 
 ###### New features:
