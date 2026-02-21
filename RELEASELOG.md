@@ -12,9 +12,13 @@
 
 **See the related articles:**
 
-- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - new object-level API mode properties and delete-order behavior.
-- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - bulk/query threshold settings and runtime switching behavior.
-- [Custom Add-On API Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - SDK contract fields available to add-on modules.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check new object-level API mode properties and delete-order behavior.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - scan bulk/query threshold settings and runtime switching behavior.
+- [Custom Add-On API Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - go through SDK contract fields available to add-on modules.
+- [ScriptObject Object - alwaysUseRestApi](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#alwaysuserestapi-boolean)
+- [ScriptObject Object - alwaysUseBulkApi](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#alwaysusebulkapi-boolean)
+- [ScriptObject Object - alwaysUseBulkApiToUpdateRecords](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#alwaysusebulkapitoupdaterecords-boolean)
+- [ScriptObject Object - respectOrderByOnDeleteRecords](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#respectorderbyondeleterecords-boolean)
 
 ## [5.3.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.0...5.3.1) (2026-02-20)
 
@@ -24,8 +28,10 @@
 
 **See the related articles:**
 
-- [ScriptObject Object - externalId](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#externalid-string) - composite externalId syntax and behavior details.
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - where externalId is configured in migration scripts.
+- [ScriptObject Object - externalId](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#externalid-string)
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at where externalId is configured in migration scripts.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [5.3.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.2.0...5.3.0) (2026-02-20)
 
@@ -39,8 +45,9 @@
 
 **See the related articles:**
 
-- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format) - default selection and explicit override behavior
-- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion) - CLI override and auto-detection flow
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
+- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion)
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
 
 ## [5.2.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.4...5.2.0) (2026-02-20)
 
@@ -62,12 +69,14 @@
 
 **See the related articles:**
 
-- [Run Command Flags - failonwarning](https://help.sfdmu.com/full-documentation/reports/run-command-flags#failonwarning) - flag behavior and exit code details
-- [Running - --failonwarning](https://help.sfdmu.com/running#--failonwarning) - command usage for warning-as-error flow
-- [MockField Object - locale](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/mock-field-object#locale-string) - field-level locale configuration for mock data
-- [Data Anonymization](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization) - patterns, examples, and usage guidance
-- [The Target CSV Files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) - Old Id mapping output in target report files
-- [Script Object - createTargetCSVFiles](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#createtargetcsvfiles-boolean) - how target CSV generation is controlled
+- [Run Command Flags - failonwarning](https://help.sfdmu.com/full-documentation/reports/run-command-flags#failonwarning)
+- [Running - --failonwarning](https://help.sfdmu.com/running#--failonwarning)
+- [MockField Object - locale](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/mock-field-object#locale-string)
+- [Data Anonymization](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization) - look at patterns, examples, and usage guidance.
+- [The Target CSV Files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) - verify Old Id mapping output in target report files.
+- [Script Object - createTargetCSVFiles](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#createtargetcsvfiles-boolean)
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [5.1.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.3...5.1.4) (2026-02-19)
 
@@ -84,9 +93,10 @@
 
 **See the related articles:**
 
-- [The Target CSV Files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) - Old Id mapping output in target report files
-- [Script Object - createTargetCSVFiles](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#createtargetcsvfiles-boolean) - how target CSV generation is controlled
-- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+- [The Target CSV Files](https://help.sfdmu.com/full-documentation/reports/the-target-csv-files) - scan Old Id mapping output in target report files.
+- [Script Object - createTargetCSVFiles](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#createtargetcsvfiles-boolean)
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module)
+- [Running - --diagnostic](https://help.sfdmu.com/running#--diagnostic)
 
 ## [5.1.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.2...5.1.3) (2026-02-19)
 
@@ -102,9 +112,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - look at property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - focus on object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [5.1.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.1...5.1.2) (2026-02-17)
 
@@ -120,9 +134,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - scan property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - look at object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [5.1.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.1.0...5.1.1) (2026-02-17)
 
@@ -137,9 +155,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - read property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - review object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [5.1.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.39.0...5.1.0) (2026-02-17)
 
@@ -181,11 +203,17 @@
 
 **See the related articles:**
 
-- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format) - default selection and explicit override behavior
-- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion) - CLI override and auto-detection flow
-- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
-- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
-- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
+- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion)
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module)
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - scan SDK and custom add-on implementation flow.
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - check runtime object model and API contracts.
+- [Running - --verbose](https://help.sfdmu.com/running#--verbose)
+- [Running - --concise](https://help.sfdmu.com/running#--concise)
+- [Running - --usesf](https://help.sfdmu.com/running#--usesf)
+- [Script Object - excludeIdsFromCSVFiles](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#excludeidsfromcsvfiles-boolean)
+- [Running - --filelog](https://help.sfdmu.com/running#--filelog)
+- [Running - --diagnostic](https://help.sfdmu.com/running#--diagnostic)
 
 # [4.39.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.38.0...4.39.0) (2026-01-22)
 
@@ -209,9 +237,10 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - groupQuery](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#groupquery-boolean)
 
 # [4.38.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.37.0...4.38.0) (2024-12-29)
 
@@ -225,8 +254,9 @@
 
 **See the related articles:**
 
-- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string) - explicit query fields and warning behavior notes
-- [Field Multiselect](https://help.sfdmu.com/full-documentation/advanced-features/field-multiselect) - auto-added field behavior and exclusions
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Field Multiselect](https://help.sfdmu.com/full-documentation/advanced-features/field-multiselect)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.37.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.8...4.37.0) (2024-11-28)
 
@@ -249,9 +279,11 @@
 
 **See the related articles:**
 
-- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
-- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
-- [ScriptObject Object - sourceRecordsFilter](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#sourcerecordsfilter-string) - source-side filtering behavior and examples
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - review SDK and custom add-on implementation flow.
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - read runtime object model and API contracts.
+- [ScriptObject Object - sourceRecordsFilter](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#sourcerecordsfilter-string)
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.36.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.7...4.36.8) (2024-11-23)
 
@@ -261,9 +293,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - verify property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.36.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.3...4.36.7) (2024-10-29)
 
@@ -278,9 +314,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - look at property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - verify object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.36.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.2...4.36.3) (2024-09-19)
 
@@ -296,9 +336,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - go through property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - see object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.36.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.1...4.36.2) (2024-09-19)
 
@@ -309,9 +353,11 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.36.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.36.0...4.36.1) (2024-09-19)
 
@@ -328,9 +374,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - verify property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - scan object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.36.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.35.1...4.36.0) (2024-09-07)
 
@@ -340,9 +390,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - scan property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - go through object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.35.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.35.0...4.35.1) (2024-08-18)
 
@@ -357,9 +411,13 @@
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - look at property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.35.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.2...4.35.0) (2024-08-13)
 
@@ -370,7 +428,8 @@
 
 **See the related articles:**
 
-- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module)
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
 
 ## [4.34.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.1...4.34.2) (2024-08-13)
 
@@ -378,9 +437,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.34.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.34.0...4.34.1) (2024-08-13)
 
@@ -390,9 +451,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - see property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.34.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.19...4.34.0) (2024-08-13)
 
@@ -407,8 +472,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [MockField Object - locale](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/mock-field-object#locale-string) - field-level locale configuration for mock data
-- [Data Anonymization](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization) - patterns, examples, and usage guidance
+- [MockField Object - locale](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/mock-field-object#locale-string)
+- [Data Anonymization](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization) - check patterns, examples, and usage guidance.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.19](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.18...4.33.19) (2024-08-09)
 
@@ -418,9 +485,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - read property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - go through object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.18](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.17...4.33.18) (2024-08-04)
 
@@ -436,7 +507,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Values Mapping](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping) - value mapping rules and examples
+- [Values Mapping](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping) - focus on value mapping rules and examples.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - focus on property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - look at object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.17](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.16...4.33.17) (2024-05-02)
 
@@ -449,9 +524,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.16](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.15...4.33.16) (2024-05-01)
 
@@ -465,9 +542,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.15](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.14...4.33.15) (2024-04-28)
 
@@ -481,9 +560,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - focus on property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - scan object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.14](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.13...4.33.14) (2024-04-28)
 
@@ -494,9 +577,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.13](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.12...4.33.13) (2024-04-23)
 
@@ -508,9 +593,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.12](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.11...4.33.12) (2024-04-22)
 
@@ -518,9 +605,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.10...4.33.11) (2024-04-22)
 
@@ -528,9 +617,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.9...4.33.10) (2024-04-22)
 
@@ -538,9 +629,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.8...4.33.9) (2024-04-20)
 
@@ -551,9 +644,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.7...4.33.8) (2024-04-20)
 
@@ -564,9 +659,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.6...4.33.7) (2024-04-15)
 
@@ -577,9 +674,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - check property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.5...4.33.6) (2024-04-15)
 
@@ -590,9 +691,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [Script Object - excludeIdsFromCSVFiles](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#excludeidsfromcsvfiles-boolean)
 
 ## [4.33.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.4...4.33.5) (2024-04-11)
 
@@ -602,8 +704,9 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format) - default selection and explicit override behavior
-- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion) - CLI override and auto-detection flow
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
+- [Running - --apiversion](https://help.sfdmu.com/running#--apiversion)
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
 
 ## [4.33.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.3...4.33.4) (2024-03-15)
 
@@ -618,9 +721,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
-- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
-- [ScriptObject Object - filterRecordsAddons](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#filterrecordsaddons-array-of-addonmanifestdefinition) - filter add-on stage and configuration details
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - verify SDK and custom add-on implementation flow.
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - review runtime object model and API contracts.
+- [ScriptObject Object - filterRecordsAddons](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#filterrecordsaddons-array-of-addonmanifestdefinition)
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.2...4.33.3) (2024-03-13)
 
@@ -631,8 +736,12 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
-- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - see SDK and custom add-on implementation flow.
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - focus on runtime object model and API contracts.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - scan property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - focus on object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.1...4.33.2) (2024-03-12)
 
@@ -647,9 +756,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - review property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - verify object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.33.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.33.0...4.33.1) (2024-03-12)
 
@@ -660,9 +773,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - check property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - verify object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.33.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.8...4.33.0) (2024-03-12)
 
@@ -677,10 +794,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
-- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
-- [ScriptObject Object - skipRecordsComparison](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#skiprecordscomparison-boolean) - force-update behavior without source-target compare
-- [ScriptObject Object - filterRecordsAddons](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#filterrecordsaddons-array-of-addonmanifestdefinition) - filter add-on stage and configuration details
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - see SDK and custom add-on implementation flow.
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - focus on runtime object model and API contracts.
+- [ScriptObject Object - skipRecordsComparison](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#skiprecordscomparison-boolean)
+- [ScriptObject Object - filterRecordsAddons](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#filterrecordsaddons-array-of-addonmanifestdefinition)
+- [ScriptObject Object - useSourceCSVFile](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#usesourcecsvfile-boolean)
 
 ## [4.32.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.7...4.32.8) (2024-03-11)
 
@@ -690,9 +808,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - go through property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - look at object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.32.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.6...4.32.7) (2024-03-10)
 
@@ -708,9 +830,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - review property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - read object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.32.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.5...4.32.6) (2024-03-03)
 
@@ -718,9 +844,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.32.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.4...4.32.5) (2024-03-03)
 
@@ -730,9 +858,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [Running - --logfullquery](https://help.sfdmu.com/running#--logfullquery)
 
 ## [4.32.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.3...4.32.4) (2024-03-03)
 
@@ -751,9 +880,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [Running - --usesf](https://help.sfdmu.com/running#--usesf)
 
 ## [4.32.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.2...4.32.3) (2024-03-03)
 
@@ -763,9 +893,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [Running - --usesf](https://help.sfdmu.com/running#--usesf)
 
 ## [4.32.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.1...4.32.2) (2023-11-30)
 
@@ -775,9 +906,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - scan property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - go through object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.32.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.32.0...4.32.1) (2023-11-22)
 
@@ -792,9 +927,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - review property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - see object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.32.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.31.0...4.32.0) (2023-11-14)
 
@@ -808,9 +947,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - check property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - look at object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.31.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.30.0...4.31.0) (2023-11-13)
 
@@ -830,9 +973,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Script Object - queryBulkApiThreshold](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#querybulkapithreshold-integer)
 
 # [4.30.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.8...4.30.0) (2023-08-14)
 
@@ -844,9 +988,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [Script Object - pollingQueryTimeoutMs](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#pollingquerytimeoutms-integer)
 
 ## [4.29.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.7...4.29.8) (2023-08-11)
 
@@ -857,9 +1002,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - inspect property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - look at object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.29.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.6...4.29.7) (2023-08-03)
 
@@ -870,9 +1019,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - read property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.29.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.5...4.29.6) (2023-07-31)
 
@@ -882,9 +1035,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - look at property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - focus on object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.29.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.4...4.29.5) (2023-07-29)
 
@@ -894,9 +1051,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - focus on property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - see object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.29.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.3...4.29.4) (2023-07-26)
 
@@ -907,9 +1068,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - scan property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - review object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.29.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.2...4.29.3) (2023-07-20)
 
@@ -920,7 +1085,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module)
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - verify property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - review object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.29.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.1...4.29.2) (2023-06-25)
 
@@ -931,9 +1100,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - verify property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.29.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.29.0...4.29.1) (2023-06-25)
 
@@ -948,8 +1121,12 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - SDK and custom add-on implementation flow
-- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - runtime object model and API contracts
+- [Custom SFDMU Add-On API](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-api) - review SDK and custom add-on implementation flow.
+- [Custom SFDMU Add-On Object Reference](https://help.sfdmu.com/full-documentation/add-on-api/custom-sfdmu-add-on-object-reference) - see runtime object model and API contracts.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - read property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - review object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.29.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.28.1...4.29.0) (2023-06-25)
 
@@ -969,9 +1146,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Running - --logfullquery](https://help.sfdmu.com/running#--logfullquery)
 
 ## [4.28.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.28.0...4.28.1) (2023-06-25)
 
@@ -985,9 +1163,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - check property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - read object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.28.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.27.0...4.28.0) (2023-06-05)
 
@@ -1005,9 +1187,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - targetRecordsFilter](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#targetrecordsfilter-string)
 
 # [4.27.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.13...4.27.0) (2023-05-17)
 
@@ -1021,9 +1204,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - inspect property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - go through object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.13](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.12...4.26.13) (2023-05-02)
 
@@ -1031,9 +1218,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.12](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.11...4.26.12) (2023-05-02)
 
@@ -1041,9 +1230,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.10...4.26.11) (2023-05-01)
 
@@ -1053,9 +1244,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.8...4.26.10) (2023-03-20)
 
@@ -1063,9 +1256,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.7...4.26.8) (2023-02-19)
 
@@ -1075,9 +1270,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.6...4.26.7) (2023-02-19)
 
@@ -1085,9 +1282,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.5...4.26.6) (2023-02-19)
 
@@ -1095,9 +1294,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.4...4.26.5) (2023-02-08)
 
@@ -1105,9 +1306,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.3...4.26.4) (2023-02-08)
 
@@ -1115,9 +1318,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.2...4.26.3) (2023-02-08)
 
@@ -1127,9 +1332,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.1...4.26.2) (2023-01-28)
 
@@ -1137,9 +1344,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.26.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.26.0...4.26.1) (2023-01-28)
 
@@ -1147,9 +1356,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.26.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.25.0...4.26.0) (2023-01-27)
 
@@ -1163,9 +1374,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - review property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.25.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.24.0...4.25.0) (2023-01-27)
 
@@ -1175,9 +1390,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - inspect property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - verify object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.24.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.11...4.24.0) (2023-01-27)
 
@@ -1187,9 +1406,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - useSourceCSVFile](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#usesourcecsvfile-boolean)
 
 ## [4.23.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.9...4.23.11) (2023-01-26)
 
@@ -1199,9 +1419,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.8...4.23.9) (2023-01-18)
 
@@ -1209,9 +1431,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.7...4.23.8) (2023-01-16)
 
@@ -1219,9 +1443,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.6...4.23.7) (2023-01-16)
 
@@ -1229,9 +1455,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.5...4.23.6) (2023-01-16)
 
@@ -1239,9 +1467,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.4...4.23.5) (2023-01-16)
 
@@ -1249,9 +1479,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.3...4.23.4) (2023-01-16)
 
@@ -1259,9 +1491,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.2...4.23.3) (2023-01-16)
 
@@ -1271,9 +1505,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.1...4.23.2) (2023-01-09)
 
@@ -1285,9 +1521,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.23.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.23.0...4.23.1) (2023-01-04)
 
@@ -1297,9 +1535,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.23.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.22.0...4.23.0) (2022-12-30)
 
@@ -1309,7 +1549,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module)
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - read property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - review object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.22.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.20.0...4.22.0) (2022-12-29)
 
@@ -1323,9 +1567,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - scan property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.20.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.6...4.20.0) (2022-12-26)
 
@@ -1335,9 +1583,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - check property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - verify object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.19.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.5...4.19.6) (2022-12-25)
 
@@ -1345,9 +1597,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.19.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.4...4.19.5) (2022-12-25)
 
@@ -1355,9 +1609,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.19.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.3...4.19.4) (2022-12-25)
 
@@ -1367,9 +1623,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.19.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.2...4.19.3) (2022-12-23)
 
@@ -1377,9 +1635,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.19.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.1...4.19.2) (2022-12-23)
 
@@ -1387,9 +1647,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.19.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.19.0...4.19.1) (2022-12-23)
 
@@ -1397,9 +1659,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.19.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.18.2...4.19.0) (2022-12-23)
 
@@ -1419,9 +1683,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - verify property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.18.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.18.1...4.18.2) (2022-12-02)
 
@@ -1429,9 +1697,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.18.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.18.0...4.18.1) (2022-12-02)
 
@@ -1439,9 +1709,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.18.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.8...4.18.0) (2022-11-24)
 
@@ -1451,9 +1723,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [Script Object - maxChunkSize](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#maxchunksize-integer)
 
 ## [4.17.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.7...4.17.8) (2022-11-24)
 
@@ -1461,9 +1734,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.17.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.6...4.17.7) (2022-11-24)
 
@@ -1471,9 +1746,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.17.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.5...4.17.6) (2022-10-17)
 
@@ -1481,9 +1758,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.17.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.4...4.17.5) (2022-10-13)
 
@@ -1491,9 +1770,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.17.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.3...4.17.4) (2022-10-12)
 
@@ -1501,9 +1782,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.17.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.17.2...4.17.3) (2022-10-12)
 
@@ -1511,9 +1794,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.17.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.16.10...4.17.2) (2022-10-01)
 
@@ -1523,9 +1808,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - verify property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - focus on object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.16.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/4.16.6...4.16.10) (2022-09-29)
 
@@ -1533,9 +1822,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.16.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.16.3...4.16.6) (2022-09-29)
 
@@ -1546,9 +1837,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.16.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.16.1...v4.16.3) (2022-09-19)
 
@@ -1556,9 +1849,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.16.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.16.0...v4.16.1) (2022-09-19)
 
@@ -1566,9 +1861,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.16.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.5...v4.16.0) (2022-09-17)
 
@@ -1578,9 +1875,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - read property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - go through object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.15.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.4...v4.15.5) (2022-09-14)
 
@@ -1588,9 +1889,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.15.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.3...v4.15.4) (2022-09-14)
 
@@ -1598,9 +1901,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.15.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.2...v4.15.3) (2022-09-13)
 
@@ -1608,9 +1913,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.15.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.1...v4.15.2) (2022-09-13)
 
@@ -1618,9 +1925,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.15.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.15.0...v4.15.1) (2022-08-03)
 
@@ -1628,9 +1937,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.15.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.6...v4.15.0) (2022-07-07)
 
@@ -1644,9 +1955,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - go through property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - verify object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.14.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.5...v4.14.6) (2022-07-06)
 
@@ -1654,9 +1969,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.14.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.4...v4.14.5) (2022-07-06)
 
@@ -1664,9 +1981,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.14.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.3...v4.14.4) (2022-05-21)
 
@@ -1674,9 +1993,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.14.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.2...v4.14.3) (2022-05-12)
 
@@ -1684,9 +2005,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.14.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.1...v4.14.2) (2022-05-10)
 
@@ -1694,9 +2017,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.14.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.14.0...v4.14.1) (2022-05-09)
 
@@ -1704,9 +2029,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.14.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.5...v4.14.0) (2022-05-09)
 
@@ -1720,9 +2047,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - read property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - go through object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.13.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.4...v4.13.5) (2022-05-07)
 
@@ -1730,9 +2061,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.13.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.3...v4.13.4) (2022-04-18)
 
@@ -1740,9 +2073,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.13.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.2...v4.13.3) (2022-04-18)
 
@@ -1752,9 +2087,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.13.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.1...v4.13.2) (2022-04-18)
 
@@ -1764,9 +2101,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.13.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.13.0...v4.13.1) (2022-04-16)
 
@@ -1774,9 +2113,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.13.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.11...v4.13.0) (2022-03-24)
 
@@ -1786,9 +2127,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [Script Object - parallelBulkJobs](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#parallelbulkjobs-integer)
+- [Script Object - parallelRestJobs](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#parallelrestjobs-integer)
 
 ## [4.12.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.10...v4.12.11) (2022-03-22)
 
@@ -1796,9 +2139,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.9...v4.12.10) (2022-03-21)
 
@@ -1806,9 +2151,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.8...v4.12.9) (2022-02-27)
 
@@ -1816,9 +2163,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.6...v4.12.8) (2022-02-27)
 
@@ -1829,9 +2178,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.5...v4.12.6) (2022-01-19)
 
@@ -1839,9 +2190,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.4...v4.12.5) (2022-01-16)
 
@@ -1849,9 +2202,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.3...v4.12.4) (2022-01-15)
 
@@ -1859,9 +2214,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.2...v4.12.3) (2022-01-09)
 
@@ -1869,9 +2226,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.1...v4.12.2) (2022-01-02)
 
@@ -1879,9 +2238,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.12.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.12.0...v4.12.1) (2022-01-01)
 
@@ -1889,9 +2250,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.12.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.11...v4.12.0) (2022-01-01)
 
@@ -1901,9 +2264,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - verify property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - read object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.11](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.10...v4.11.11) (2021-12-30)
 
@@ -1911,9 +2278,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.9...v4.11.10) (2021-12-29)
 
@@ -1921,9 +2290,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.7...v4.11.9) (2021-12-21)
 
@@ -1931,9 +2302,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.6...v4.11.7) (2021-12-19)
 
@@ -1943,9 +2316,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.4...v4.11.6) (2021-12-17)
 
@@ -1953,9 +2328,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.3...v4.11.4) (2021-12-17)
 
@@ -1963,9 +2340,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.2...v4.11.3) (2021-12-16)
 
@@ -1973,9 +2352,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.1...v4.11.2) (2021-12-15)
 
@@ -1983,9 +2364,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.11.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.11.0...v4.11.1) (2021-12-14)
 
@@ -1993,9 +2376,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.11.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.10.3...v4.11.0) (2021-12-14)
 
@@ -2011,9 +2396,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [Script Object - queryAllTarget](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#queryalltarget-boolean)
 
 ## [4.10.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.10.2...v4.10.3) (2021-11-27)
 
@@ -2021,9 +2407,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.10.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.10.1...v4.10.2) (2021-11-18)
 
@@ -2031,9 +2419,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.10.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.10.0...v4.10.1) (2021-11-18)
 
@@ -2041,9 +2431,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.10.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.5...v4.10.0) (2021-11-18)
 
@@ -2053,9 +2445,10 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [Script Object - useQueryAll](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#usequeryall-boolean)
 
 ## [4.9.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.4...v4.9.5) (2021-11-02)
 
@@ -2063,9 +2456,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.9.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.3...v4.9.4) (2021-11-02)
 
@@ -2073,9 +2468,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.9.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.2...v4.9.3) (2021-11-02)
 
@@ -2083,9 +2480,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.9.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.1...v4.9.2) (2021-11-02)
 
@@ -2093,9 +2492,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - look at overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.9.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.9.0...v4.9.1) (2021-11-02)
 
@@ -2103,9 +2504,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.9.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.3...v4.9.0) (2021-11-01)
 
@@ -2115,9 +2518,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - review property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - look at object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.8.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.2...v4.8.3) (2021-10-31)
 
@@ -2125,9 +2532,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.8.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.1...v4.8.2) (2021-10-31)
 
@@ -2135,9 +2544,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.8.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.8.0...v4.8.1) (2021-10-31)
 
@@ -2145,9 +2556,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.8.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.7.0...v4.8.0) (2021-10-31)
 
@@ -2157,9 +2570,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - see property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - focus on object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.7.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.4...v4.7.0) (2021-10-28)
 
@@ -2173,9 +2590,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - look at property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - inspect object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.6.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.3...v4.6.4) (2021-10-26)
 
@@ -2185,9 +2606,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.6.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.2...v4.6.3) (2021-10-25)
 
@@ -2195,9 +2618,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.6.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.1...v4.6.2) (2021-10-25)
 
@@ -2205,9 +2630,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.6.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.6.0...v4.6.1) (2021-10-24)
 
@@ -2215,9 +2642,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.6.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.10...v4.6.0) (2021-10-24)
 
@@ -2231,7 +2660,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module)
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - verify property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.10](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.9...v4.5.10) (2021-10-21)
 
@@ -2239,9 +2672,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.8...v4.5.9) (2021-10-21)
 
@@ -2251,9 +2686,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.8](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.7...v4.5.8) (2021-10-20)
 
@@ -2264,9 +2701,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.6...v4.5.7) (2021-10-19)
 
@@ -2274,9 +2713,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.5...v4.5.6) (2021-10-19)
 
@@ -2284,9 +2725,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.4...v4.5.5) (2021-10-19)
 
@@ -2296,9 +2739,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.3...v4.5.4) (2021-10-18)
 
@@ -2306,9 +2751,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.2...v4.5.3) (2021-10-18)
 
@@ -2316,9 +2763,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.1...v4.5.2) (2021-10-18)
 
@@ -2326,9 +2775,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.5.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.5.0...v4.5.1) (2021-10-13)
 
@@ -2336,9 +2787,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.5.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.7...v4.5.0) (2021-10-13)
 
@@ -2355,9 +2808,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - check property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - scan object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.4.7](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.6...v4.4.7) (2021-10-05)
 
@@ -2365,9 +2822,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.4.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.5...v4.4.6) (2021-09-30)
 
@@ -2377,9 +2836,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.4.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.4...v4.4.5) (2021-08-18)
 
@@ -2387,9 +2848,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.4.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.3...v4.4.4) (2021-08-15)
 
@@ -2397,9 +2860,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.4.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.2...v4.4.3) (2021-07-11)
 
@@ -2407,9 +2872,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - inspect command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.4.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.1...v4.4.2) (2021-05-30)
 
@@ -2417,9 +2884,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - see command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.4.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.4.0...v4.4.1) (2021-05-23)
 
@@ -2427,9 +2896,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.4.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.3.1...v4.4.0) (2021-05-22)
 
@@ -2443,9 +2914,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - see property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - look at object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.3.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.3.0...v4.3.1) (2021-05-15)
 
@@ -2453,9 +2928,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - see navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.3.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.6...v4.3.0) (2021-05-12)
 
@@ -2469,9 +2946,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - read property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - check object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.2.6](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.4...v4.2.6) (2021-05-03)
 
@@ -2481,9 +2962,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.2.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.3...v4.2.4) (2021-05-03)
 
@@ -2491,9 +2974,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.2.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.2...v4.2.3) (2021-05-03)
 
@@ -2503,9 +2988,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - verify navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.2.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.1...v4.2.2) (2021-05-02)
 
@@ -2513,9 +3000,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - scan overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.2.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.2.0...v4.2.1) (2021-05-02)
 
@@ -2525,9 +3014,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - scan command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.2.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.4...v4.2.0) (2021-05-01)
 
@@ -2542,9 +3033,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - go through command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - inspect property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - scan object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.1.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.3...v4.1.4) (2021-04-29)
 
@@ -2552,9 +3047,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.1.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.2...v4.1.3) (2021-04-29)
 
@@ -2562,9 +3059,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - focus on overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.1.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.1...v4.1.2) (2021-04-29)
 
@@ -2574,9 +3073,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.1.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.1.0...v4.1.1) (2021-04-27)
 
@@ -2584,9 +3085,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - check overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - scan navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.1.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.0.3...v4.1.0) (2021-04-27)
 
@@ -2600,9 +3103,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - check command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - inspect property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - read object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.0.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.0.2...v4.0.3) (2021-04-20)
 
@@ -2610,9 +3117,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - inspect overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - review command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - check navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [4.0.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v4.0.0...v4.0.2) (2021-04-19)
 
@@ -2620,9 +3129,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - verify command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [4.0.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.10.5...v4.0.0) (2021-03-18)
 
@@ -2650,9 +3161,13 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - verify overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - inspect navigation map for script and object configuration.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - inspect property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - read object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [3.10.5](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.10.4...v3.10.5) (2021-02-28)
 
@@ -2662,9 +3177,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - review navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [3.10.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.10.3...v3.10.4) (2021-02-25)
 
@@ -2672,9 +3189,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - go through overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [3.10.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.9.3...v3.10.3) (2021-02-25)
 
@@ -2692,7 +3211,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module) - file and binary transfer scenarios and options
+- [Export File Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module)
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - check property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - scan object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [3.7.21](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.7.20...v3.7.21) (2020-11-23)
 
@@ -2700,9 +3223,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [3.7.17](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.7.14...v3.7.17) (2020-10-20)
 
@@ -2710,9 +3235,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - see overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - go through navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [3.7.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.7.3...v3.7.4) (2020-09-21)
 
@@ -2722,9 +3249,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - read overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - focus on command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - focus on navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [3.5.9](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.5.5...v3.5.9) (2020-07-21)
 
@@ -2732,9 +3261,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - look at command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - look at navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 # [3.4.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.3.5...v3.4.0) (2020-06-13)
 
@@ -2749,7 +3280,11 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Values Mapping](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping) - value mapping rules and examples
+- [Values Mapping](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping) - scan value mapping rules and examples.
+- [Script Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object) - review property sections mentioned in this release, especially script-level migration controls.
+- [ScriptObject Object](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object) - look at object-level property sections mentioned in this release and their operation impact.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
 
 ## [3.1.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/v3.1.0...v3.1.2) (2020-06-01)
 
@@ -2757,6 +3292,8 @@ Code improvements and bug fixes
 
 **See the related articles:**
 
-- [Get Started](https://help.sfdmu.com/get-started) - overview of current plugin behavior and migration basics
-- [Running](https://help.sfdmu.com/running) - command execution patterns and common flags
-- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - navigation map for script and object configuration
+- [Get Started](https://help.sfdmu.com/get-started) - review overview of current plugin behavior and migration basics.
+- [Running](https://help.sfdmu.com/running) - read command execution patterns and common flags.
+- [Export.json File Overview](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/export-json-file-overview) - read navigation map for script and object configuration.
+- [ScriptObject Object - query](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+- [Script Object - apiVersion](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object#apiversion-string-in-float-format)
