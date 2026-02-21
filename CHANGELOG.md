@@ -1,3 +1,12 @@
+# [5.4.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.1...5.4.0) (2026-02-21)
+
+
+### Features
+
+* add object-level api mode controls and threshold-inclusive bulk behavior ([e0c953a](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/e0c953afd4a43ef7fdb0bbf9599050c59c109a80))
+
+
+
 ## [5.3.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.3.0...5.3.1) (2026-02-20)
 
 
