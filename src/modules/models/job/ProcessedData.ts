@@ -53,6 +53,16 @@ export default class ProcessedData {
    */
   public insertedRecordsSourceToTargetMap: ProcessedRecordMapType = new Map();
 
+  /**
+   * Number of skipped records where source and target data are equal.
+   */
+  public skippedBecauseSameDataCount = 0;
+
+  /**
+   * Number of skipped records where no matching target record was found.
+   */
+  public skippedBecauseNoMatchingTargetCount = 0;
+
   // ------------------------------------------------------//
   // -------------------- GETTERS/SETTERS ----------------//
   // ------------------------------------------------------//
@@ -82,5 +92,16 @@ export default class ProcessedData {
    */
   public get nonProcessedRecordsAmount(): number {
     return [...this.clonedToSourceMap.values()].filter((record) => record[__IS_PROCESSED_FIELD_NAME] === false).length;
+  }
+
+  /**
+   * Returns amount of skipped records not covered by known skip-reason counters.
+   *
+   * @returns Other skipped-record count.
+   */
+  public get skippedBecauseOtherReasonsCount(): number {
+    const known = this.skippedBecauseSameDataCount + this.skippedBecauseNoMatchingTargetCount;
+    const delta = this.nonProcessedRecordsAmount - known;
+    return delta > 0 ? delta : 0;
   }
 }

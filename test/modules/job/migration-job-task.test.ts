@@ -21,6 +21,7 @@ import LoggingContext from '../../../src/modules/logging/LoggingContext.js';
 import LoggingService from '../../../src/modules/logging/LoggingService.js';
 import MigrationJobTask from '../../../src/modules/models/job/MigrationJobTask.js';
 import MigrationJob from '../../../src/modules/models/job/MigrationJob.js';
+import ProcessedData from '../../../src/modules/models/job/ProcessedData.js';
 import Script from '../../../src/modules/models/script/Script.js';
 import type { LookupIdMapType } from '../../../src/modules/models/script/LookupIdMapType.js';
 import ScriptMockField from '../../../src/modules/models/script/ScriptMockField.js';
@@ -2154,6 +2155,161 @@ describe('MigrationJobTask file target output', () => {
     } finally {
       Common.logger = originalLogger;
       fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it('tracks skipped reason counters for same-data and no-match records', () => {
+    const { task } = createTaskFixture();
+    task.scriptObject.operation = OPERATION.Update;
+    const processedData = new ProcessedData();
+
+    const classifyForwardsRecord = (
+      task as unknown as {
+        _classifyForwardsRecord: (
+          sourceRecord: Record<string, unknown>,
+          clonedRecord: Record<string, unknown>,
+          processedData: ProcessedData,
+          targetRecord: Record<string, unknown> | undefined,
+          shouldCompare: boolean,
+          notInsertableFields: string[],
+          notUpdateableFields: string[],
+          doNotDeleteIdFieldOnInsert: boolean
+        ) => void;
+      }
+    )._classifyForwardsRecord.bind(task);
+
+    classifyForwardsRecord(
+      { Id: 'a00000000000001' },
+      { Name: 'Same' },
+      processedData,
+      { Id: '001000000000001' },
+      false,
+      [],
+      [],
+      false
+    );
+
+    classifyForwardsRecord(
+      { Id: 'a00000000000002' },
+      { Name: 'NoTarget' },
+      processedData,
+      undefined,
+      true,
+      [],
+      [],
+      false
+    );
+
+    assert.equal(processedData.skippedBecauseSameDataCount, 1);
+    assert.equal(processedData.skippedBecauseNoMatchingTargetCount, 1);
+    assert.equal(processedData.recordsToInsert.length, 0);
+    assert.equal(processedData.recordsToUpdate.length, 0);
+  });
+
+  it('logs skipped warning with split reason counters', async () => {
+    const originalLogger = Common.logger;
+    const logger = createLoggingService();
+    const logCalls: Array<{ message: string; tokens: string[] }> = [];
+    const diagnosticLines: string[] = [];
+    const originalLog = logger.log.bind(logger) as (...args: unknown[]) => void;
+    const originalVerboseFile = logger.verboseFile.bind(logger) as (...args: unknown[]) => void;
+    logger.log = ((message: string, ...tokens: string[]) => {
+      logCalls.push({ message, tokens });
+      originalLog(message, ...tokens);
+    }) as typeof logger.log;
+    logger.verboseFile = ((message: string, ...tokens: string[]) => {
+      diagnosticLines.push(typeof message === 'string' ? message : String(message));
+      originalVerboseFile(message, ...tokens);
+    }) as typeof logger.verboseFile;
+
+    Common.logger = logger;
+    const { task } = createTaskFixture();
+    task.job.script.logger = logger;
+    task.scriptObject.operation = OPERATION.Upsert;
+
+    const updateRecordsForPassAsync = (
+      task as unknown as {
+        _updateRecordsForPassAsync: (
+          updateMode: 'forwards' | 'backwards',
+          warnMissingParentsAsync: ((data: ProcessedData) => Promise<void>) | undefined,
+          processPersonAccounts: boolean
+        ) => Promise<{
+          processedCount: number;
+          nonProcessedCount: number;
+          skippedBecauseSameDataCount: number;
+          skippedBecauseNoMatchingTargetCount: number;
+          processedData: ProcessedData;
+          summary: { inserted: number; updated: number; deleted: number };
+        }>;
+      }
+    )._updateRecordsForPassAsync;
+    const isPersonAccountOrContact = (
+      task as unknown as {
+        _isPersonAccountOrContact: () => boolean;
+      }
+    )._isPersonAccountOrContact;
+
+    (
+      task as unknown as {
+        _updateRecordsForPassAsync: (
+          updateMode: 'forwards' | 'backwards',
+          warnMissingParentsAsync: ((data: ProcessedData) => Promise<void>) | undefined,
+          processPersonAccounts: boolean
+        ) => Promise<{
+          processedCount: number;
+          nonProcessedCount: number;
+          skippedBecauseSameDataCount: number;
+          skippedBecauseNoMatchingTargetCount: number;
+          processedData: ProcessedData;
+          summary: { inserted: number; updated: number; deleted: number };
+        }>;
+        _isPersonAccountOrContact: () => boolean;
+      }
+    )._updateRecordsForPassAsync = async () => ({
+      processedCount: 2,
+      nonProcessedCount: 5,
+      skippedBecauseSameDataCount: 2,
+      skippedBecauseNoMatchingTargetCount: 1,
+      processedData: new ProcessedData(),
+      summary: { inserted: 1, updated: 1, deleted: 0 },
+    });
+    (
+      task as unknown as {
+        _isPersonAccountOrContact: () => boolean;
+      }
+    )._isPersonAccountOrContact = () => false;
+
+    try {
+      const processed = await task.updateRecordsAsync('forwards');
+      assert.equal(processed, 2);
+      const skippedCall = logCalls.find((item) => item.message === 'skippedUpdatesWarning');
+      assert.ok(skippedCall);
+      assert.deepEqual(skippedCall?.tokens, ['Account', '5', '2', '1', '2']);
+      assert.equal(
+        diagnosticLines.some(
+          (line) =>
+            line.includes('[diagnostic] update skipped summary:') &&
+            line.includes('object=Account') &&
+            line.includes('total=5') &&
+            line.includes('sameData=2') &&
+            line.includes('noMatchingTarget=1') &&
+            line.includes('other=2')
+        ),
+        true
+      );
+    } finally {
+      (
+        task as unknown as {
+          _updateRecordsForPassAsync: typeof updateRecordsForPassAsync;
+          _isPersonAccountOrContact: typeof isPersonAccountOrContact;
+        }
+      )._updateRecordsForPassAsync = updateRecordsForPassAsync;
+      (
+        task as unknown as {
+          _isPersonAccountOrContact: typeof isPersonAccountOrContact;
+        }
+      )._isPersonAccountOrContact = isPersonAccountOrContact;
+      Common.logger = originalLogger;
     }
   });
 });

@@ -736,7 +736,7 @@ Nothing was updated.
 
 # skippedUpdatesWarning
 
-{%s} %s target records remained untouched, since they do not differ from the corresponding source records.
+{%s} %s target records remained untouched. Same data: %s. No matching target: %s. Other reasons: %s.
 
 # skippedTargetRecordsFilterWarning
 

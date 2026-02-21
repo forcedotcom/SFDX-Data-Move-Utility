@@ -701,10 +701,14 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
 
     let totalProcessed = 0;
     let totalNonProcessed = 0;
+    let totalSkippedBecauseSameData = 0;
+    let totalSkippedBecauseNoMatchingTarget = 0;
 
     const businessPass = await this._updateRecordsForPassAsync(updateMode, warnMissingParentsAsync, false);
     totalProcessed += businessPass.processedCount;
     totalNonProcessed += businessPass.nonProcessedCount;
+    totalSkippedBecauseSameData += businessPass.skippedBecauseSameDataCount;
+    totalSkippedBecauseNoMatchingTarget += businessPass.skippedBecauseNoMatchingTargetCount;
     applyPassSummary(businessPass.summary);
 
     if (this._isPersonAccountOrContact()) {
@@ -712,6 +716,8 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       const personPass = await this._updateRecordsForPassAsync(updateMode, warnMissingParentsAsync, true);
       totalProcessed += personPass.processedCount;
       totalNonProcessed += personPass.nonProcessedCount;
+      totalSkippedBecauseSameData += personPass.skippedBecauseSameDataCount;
+      totalSkippedBecauseNoMatchingTarget += personPass.skippedBecauseNoMatchingTargetCount;
       applyPassSummary(personPass.summary);
 
       if (
@@ -723,7 +729,19 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     }
 
     if (totalNonProcessed > 0) {
-      logger.log('skippedUpdatesWarning', this.sObjectName, String(totalNonProcessed));
+      const knownSkipped = totalSkippedBecauseSameData + totalSkippedBecauseNoMatchingTarget;
+      const otherSkipped = Math.max(0, totalNonProcessed - knownSkipped);
+      logger.log(
+        'skippedUpdatesWarning',
+        this.sObjectName,
+        String(totalNonProcessed),
+        String(totalSkippedBecauseSameData),
+        String(totalSkippedBecauseNoMatchingTarget),
+        String(otherSkipped)
+      );
+      logger.verboseFile(
+        `[diagnostic] update skipped summary: object=${this.sObjectName} total=${totalNonProcessed} sameData=${totalSkippedBecauseSameData} noMatchingTarget=${totalSkippedBecauseNoMatchingTarget} other=${otherSkipped}`
+      );
     }
 
     logger.verboseFile(`[diagnostic] update complete: processed=${totalProcessed}`);
@@ -749,6 +767,8 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
   ): Promise<{
     processedCount: number;
     nonProcessedCount: number;
+    skippedBecauseSameDataCount: number;
+    skippedBecauseNoMatchingTargetCount: number;
     processedData: ProcessedData;
     summary: CrudSummaryType;
   }> {
@@ -766,6 +786,8 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       return {
         processedCount: 0,
         nonProcessedCount: 0,
+        skippedBecauseSameDataCount: 0,
+        skippedBecauseNoMatchingTargetCount: 0,
         processedData,
         summary,
       };
@@ -787,6 +809,8 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
         return {
           processedCount: 0,
           nonProcessedCount: 0,
+          skippedBecauseSameDataCount: 0,
+          skippedBecauseNoMatchingTargetCount: 0,
           processedData,
           summary,
         };
@@ -796,6 +820,8 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
         return {
           processedCount: 0,
           nonProcessedCount: 0,
+          skippedBecauseSameDataCount: 0,
+          skippedBecauseNoMatchingTargetCount: 0,
           processedData,
           summary,
         };
@@ -810,6 +836,8 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       return {
         processedCount: records.length,
         nonProcessedCount: 0,
+        skippedBecauseSameDataCount: 0,
+        skippedBecauseNoMatchingTargetCount: 0,
         processedData,
         summary,
       };
@@ -896,6 +924,8 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     return {
       processedCount: totalProcessed,
       nonProcessedCount: processedData.nonProcessedRecordsAmount,
+      skippedBecauseSameDataCount: processedData.skippedBecauseSameDataCount,
+      skippedBecauseNoMatchingTargetCount: processedData.skippedBecauseNoMatchingTargetCount,
       processedData,
       summary,
     };
@@ -3095,7 +3125,13 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
   ): void {
     const mutableSourceRecord = sourceRecord;
     const mutableClonedRecord = clonedRecord;
-    if (!targetRecord || !shouldCompare) {
+    const mutableProcessedData = processedData;
+    if (!targetRecord) {
+      mutableProcessedData.skippedBecauseNoMatchingTargetCount += 1;
+      return;
+    }
+    if (!shouldCompare) {
+      mutableProcessedData.skippedBecauseSameDataCount += 1;
       return;
     }
     mutableClonedRecord.Id = targetRecord['Id'];
@@ -3128,6 +3164,7 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
   ): void {
     const mutableSourceRecord = sourceRecord;
     const mutableClonedRecord = clonedRecord;
+    const mutableProcessedData = processedData;
 
     const canInsert =
       this.scriptObject.operation === OPERATION.Upsert || this.scriptObject.operation === OPERATION.Insert;
@@ -3143,7 +3180,15 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
 
     const canUpdate =
       this.scriptObject.operation === OPERATION.Upsert || this.scriptObject.operation === OPERATION.Update;
-    if (!targetRecord || !canUpdate || !shouldCompare) {
+    if (!targetRecord) {
+      mutableProcessedData.skippedBecauseNoMatchingTargetCount += 1;
+      return;
+    }
+    if (!canUpdate) {
+      return;
+    }
+    if (!shouldCompare) {
+      mutableProcessedData.skippedBecauseSameDataCount += 1;
       return;
     }
     mutableClonedRecord.Id = targetRecord['Id'];
