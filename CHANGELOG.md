@@ -1,3 +1,12 @@
+# [5.6.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.5.0...5.6.0) (2026-02-22)
+
+
+### Features
+
+* add --file export selection and diagnostic path masking updates ([94ea407](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/94ea407099813e5e0eb56dbcd48910709edd3efd))
+
+
+
 # [5.5.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.4.0...5.5.0) (2026-02-21)
 
 
