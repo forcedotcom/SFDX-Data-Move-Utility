@@ -10,6 +10,10 @@ updates:
     open-pull-requests-limit: 10
     versioning-strategy: increase
     rebase-strategy: auto
+    ignore:
+      - dependency-name: 'ajv'
+      - dependency-name: 'minimatch'
+      - dependency-name: 'fast-xml-parser'
     groups:
       sf-cli-and-oclif:
         patterns:
