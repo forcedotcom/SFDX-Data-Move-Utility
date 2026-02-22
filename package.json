@@ -26,7 +26,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
-    "@types/node": "^22.9.0",
+    "@types/node": "^25.3.0",
     "@jsforce/jsforce-node": "^3.10.13",
     "@oclif/plugin-command-snapshot": "^5.1.9",
     "@salesforce/cli-plugins-testkit": "^5.3.10",
