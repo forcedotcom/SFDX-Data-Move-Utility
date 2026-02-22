@@ -794,6 +794,8 @@ export default class ScriptObject {
 
     const objectMapping = this._getObjectMapping();
     const isMappingEnabled = this.useFieldMapping && objectMapping.hasChanges();
+    const excludedTargetFields = this._getNormalizedFieldList(this.excludedFieldsFromUpdate);
+    const excludedSourceFields = this._getNormalizedFieldList(this.excludedFromUpdateFields);
     const fields = this.parsedQuery.fields
       .map((fieldType) => {
         const field = fieldType as SoqlField;
@@ -816,11 +818,11 @@ export default class ScriptObject {
           this._logVerboseField(sourceFieldName, 'Skipped for update (readonly).');
           return null;
         }
-        if (this.excludedFieldsFromUpdate.includes(targetFieldName)) {
+        if (excludedTargetFields.includes(targetFieldName)) {
           this._logVerboseField(sourceFieldName, `Skipped for update (excluded target field ${targetFieldName}).`);
           return null;
         }
-        if (this.excludedFromUpdateFields.includes(sourceFieldName)) {
+        if (excludedSourceFields.includes(sourceFieldName)) {
           this._logVerboseField(sourceFieldName, 'Skipped for update (excluded source field).');
           return null;
         }
@@ -2436,7 +2438,7 @@ export default class ScriptObject {
    */
   private _getExcludedQueryFields(isSource: boolean): Set<string> {
     const excluded = new Set<string>();
-    this.excludedFields.forEach((field) => {
+    this._getNormalizedFieldList(this.excludedFields).forEach((field) => {
       if (field) {
         excluded.add(field.toLowerCase());
       }
@@ -2463,6 +2465,29 @@ export default class ScriptObject {
   }
 
   /**
+   * Normalizes a raw field-list script value to an array of field names.
+   *
+   * @param value - Raw list value from script object.
+   * @returns Normalized field name list.
+   */
+  private _getNormalizedFieldList(value: unknown): string[] {
+    void this;
+    if (Array.isArray(value)) {
+      return value
+        .filter((item): item is string => typeof item === 'string')
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
+    }
+    if (typeof value === 'string') {
+      return value
+        .split(COMPLEX_FIELDS_SEPARATOR)
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0);
+    }
+    return [];
+  }
+
+  /**
    * Applies multiselect and mandatory field rules.
    *
    * @param describe - Object describe metadata.
@@ -2479,14 +2504,16 @@ export default class ScriptObject {
     });
 
     const previousExternalId = this.externalId;
+    let normalizedExcludedFromUpdateFields = this._getNormalizedFieldList(this.excludedFromUpdateFields);
 
     const fieldDescribes = [...describe.fieldsMap.values()];
     if (this._multiselectPattern) {
       this._resolveMultiselectFieldNames(describe).forEach((fieldName) => {
         parsedQuery.fields.push(getComposedField(fieldName));
-        this.excludedFromUpdateFields = this.excludedFromUpdateFields.filter((field) => field !== fieldName);
+        normalizedExcludedFromUpdateFields = normalizedExcludedFromUpdateFields.filter((field) => field !== fieldName);
       });
     }
+    this.excludedFromUpdateFields = normalizedExcludedFromUpdateFields;
 
     const fieldsInOriginalQuery = [...this.fieldsInQuery];
     parsedQuery.fields = [];
@@ -2946,9 +2973,79 @@ export default class ScriptObject {
       .split(COMPLEX_FIELDS_SEPARATOR)
       .map((part) => part.trim())
       .filter((part) => part.length > 0);
-    const mappedParts = parts.map((part) => this._mapQueryFieldNameToTarget(part, contextObject));
-    const recomposed = mappedParts.join(COMPLEX_FIELDS_SEPARATOR);
-    return Common.getComplexField(recomposed);
+    if (parts.length === 0) {
+      return fieldName;
+    }
+
+    const relationshipPrefix = this._resolveComplexRelationshipPrefix(parts);
+    const mappedParts = parts.map((part, index) => {
+      const normalizedPart =
+        relationshipPrefix && index > 0 && !part.includes('.') ? `${relationshipPrefix}.${part}` : part;
+      return this._mapQueryFieldNameToTarget(normalizedPart, contextObject);
+    });
+    return this._composeComplexQueryField(mappedParts);
+  }
+
+  /**
+   * Resolves shared relationship prefix for complex field parts.
+   *
+   * @param parts - Complex field parts.
+   * @returns Shared relationship prefix or empty string.
+   */
+  private _resolveComplexRelationshipPrefix(parts: string[]): string {
+    void this;
+    if (parts.length < 2) {
+      return '';
+    }
+    const firstPart = parts[0];
+    const lastDotIndex = firstPart.lastIndexOf('.');
+    if (lastDotIndex <= 0) {
+      return '';
+    }
+    const prefix = firstPart.slice(0, lastDotIndex);
+    if (!prefix) {
+      return '';
+    }
+    const canApplyToAllRemaining = parts.slice(1).every((part) => part.length > 0 && !part.includes('.'));
+    return canApplyToAllRemaining ? prefix : '';
+  }
+
+  /**
+   * Composes complex query field from mapped parts preserving relationship prefixes.
+   *
+   * @param mappedParts - Mapped complex field parts.
+   * @returns Composed field token for query parser.
+   */
+  private _composeComplexQueryField(mappedParts: string[]): string {
+    void this;
+    if (mappedParts.length === 0) {
+      return '';
+    }
+    if (mappedParts.length === 1) {
+      return mappedParts[0];
+    }
+
+    const firstPart = mappedParts[0];
+    const firstDotIndex = firstPart.lastIndexOf('.');
+    if (firstDotIndex <= 0) {
+      return Common.getComplexField(mappedParts.join(COMPLEX_FIELDS_SEPARATOR));
+    }
+
+    const prefix = firstPart.slice(0, firstDotIndex);
+    const suffixes: string[] = [];
+
+    for (const part of mappedParts) {
+      if (!part.startsWith(`${prefix}.`)) {
+        return Common.getComplexField(mappedParts.join(COMPLEX_FIELDS_SEPARATOR));
+      }
+      const suffix = part.slice(prefix.length + 1);
+      if (!suffix || suffix.includes('.')) {
+        return Common.getComplexField(mappedParts.join(COMPLEX_FIELDS_SEPARATOR));
+      }
+      suffixes.push(suffix);
+    }
+
+    return `${prefix}.${COMPLEX_FIELDS_QUERY_PREFIX}${suffixes.join(COMPLEX_FIELDS_QUERY_SEPARATOR)}`;
   }
 
   /**
@@ -3187,12 +3284,16 @@ export default class ScriptObject {
       if (parts.length === 0) {
         return fieldName;
       }
-      const normalizedParts = parts.map((part) => this._normalizeMappedRelationshipFieldName(part, targetDescribe));
-      const normalizedFieldName = normalizedParts.join(COMPLEX_FIELDS_SEPARATOR);
+      const relationshipPrefix = this._resolveComplexRelationshipPrefix(parts);
+      const normalizedParts = parts.map((part, index) => {
+        const normalizedPart =
+          relationshipPrefix && index > 0 && !part.includes('.') ? `${relationshipPrefix}.${part}` : part;
+        return this._normalizeMappedRelationshipFieldName(normalizedPart, targetDescribe);
+      });
       if (Common.isComplexField(fieldName) || fieldName.includes(COMPLEX_FIELDS_QUERY_PREFIX)) {
-        return Common.getComplexField(normalizedFieldName);
+        return this._composeComplexQueryField(normalizedParts);
       }
-      return normalizedFieldName;
+      return normalizedParts.join(COMPLEX_FIELDS_SEPARATOR);
     }
 
     if (!fieldName.includes('.')) {

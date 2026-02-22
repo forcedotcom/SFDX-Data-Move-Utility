@@ -28,6 +28,7 @@ const mapFlags = (flags: SfdmuRunFlagsType): SfdmuRunFlagsType => ({
   sourceusername: flags.sourceusername,
   targetusername: flags.targetusername,
   path: flags.path,
+  file: flags.file,
   silent: flags.silent,
   quiet: flags.quiet,
   diagnostic: flags.diagnostic,
@@ -97,6 +98,10 @@ export default class Run extends SfCommand<SfdmuRunResultType> {
       char: 'p',
       summary: messages.getMessage('flags.path.summary'),
       description: messages.getMessage('flags.path.description'),
+    }),
+    file: Flags.string({
+      summary: messages.getMessage('flags.file.summary'),
+      description: messages.getMessage('flags.file.description'),
     }),
     silent: Flags.boolean({
       summary: messages.getMessage('flags.silent.summary'),

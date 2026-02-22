@@ -323,6 +323,18 @@ describe('Script object external id', () => {
     assert.ok(targetQuery.includes('AccountNew__r.Owner__r.Name'));
   });
 
+  it('keeps relationship prefix for complex RecordType tokens in target query', () => {
+    const object = new ScriptObject('Account');
+    object.useFieldMapping = true;
+    const mapper = object as unknown as {
+      _mapComplexFieldNameToTarget(fieldName: string, contextObject: ScriptObject): string;
+    };
+
+    const mapped = mapper._mapComplexFieldNameToTarget('RecordType.DeveloperName;NamespacePrefix;SobjectType', object);
+
+    assert.equal(mapped, 'RecordType.$$DeveloperName$NamespacePrefix$SobjectType');
+  });
+
   it('maps target query when external id uses ParentId', () => {
     const script = new Script();
     const object = new ScriptObject('Account');
@@ -550,6 +562,31 @@ describe('Script object operations', () => {
     object.excludedFieldsFromUpdate = ['Readonly__c'];
 
     const fieldsToUpdate = object.fieldsToUpdate;
+    assert.ok(!fieldsToUpdate.includes('Name'));
+    assert.ok(!fieldsToUpdate.includes('Readonly__c'));
+  });
+
+  it('supports string values in excluded field lists without runtime crash', () => {
+    const script = new Script();
+    const object = new ScriptObject('Account');
+    object.operation = OPERATION.Update;
+    object.query = 'SELECT Id, Name, Type, Readonly__c FROM Account';
+    object.setup(script);
+
+    const describe = createDescribe('Account', [
+      { name: 'Id', type: 'id', updateable: false, creatable: false },
+      { name: 'Name', type: 'string', updateable: true, creatable: true },
+      { name: 'Type', type: 'string', updateable: true, creatable: true },
+      { name: 'Readonly__c', type: 'string', updateable: false, creatable: false },
+    ]);
+
+    object.excludedFields = 'Type' as unknown as string[];
+    object.excludedFromUpdateFields = 'Name' as unknown as string[];
+    object.excludedFieldsFromUpdate = 'Readonly__c' as unknown as string[];
+    object.applyDescribe(describe, describe);
+
+    const fieldsToUpdate = object.fieldsToUpdate;
+    assert.ok(!object.fieldsInQuery.includes('Type'));
     assert.ok(!fieldsToUpdate.includes('Name'));
     assert.ok(!fieldsToUpdate.includes('Readonly__c'));
   });

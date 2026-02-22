@@ -32,6 +32,16 @@ Directory containing export.json.
 
 Defaults to the current working directory.
 
+# flags.file.summary
+
+Path to export.json file.
+
+# flags.file.description
+
+Optionally specifies a custom export.json file to execute.
+If relative, it is resolved against --path.
+All runtime folders and relative resources still use --path as the base directory.
+
 # flags.silent.summary
 
 Suppress standard output.

@@ -125,12 +125,14 @@ export default class SfdmuRunService {
     const startTime = new Date();
     const flags = this._normalizeFlags(request.flags);
     const rootPath = this._resolveRootPath(flags.path);
+    const exportJsonPath = this._resolveExportJsonPath(rootPath, flags.file);
     if (flags.version) {
       return this._handleVersionOutputAsync(request.stdoutWriter, flags, startTime);
     }
     const logger = this._createLogger(
       rootPath,
       flags,
+      exportJsonPath,
       request.stdoutWriter,
       request.stderrWriter,
       request.warnWriter,
@@ -140,7 +142,7 @@ export default class SfdmuRunService {
       request.textPromptWriter
     );
     Common.logger = logger;
-    await this._logEnvironmentDiagnosticsAsync(logger, rootPath, flags);
+    await this._logEnvironmentDiagnosticsAsync(logger, rootPath, exportJsonPath, flags);
 
     try {
       logger.logColored('jobStartedHeader', 'green');
@@ -157,7 +159,7 @@ export default class SfdmuRunService {
         throw new CommandInitializationError(logger.getMessage('cannotMigrateFile2File'));
       }
 
-      const script = await ScriptLoader.loadFromPathAsync(rootPath, logger);
+      const script = await ScriptLoader.loadFromPathAsync(rootPath, logger, exportJsonPath);
       this._applyScriptRuntimeFlags(script, flags, rootPath, logger);
       this._initializeScriptOrgs(script, orgNames);
 
@@ -240,6 +242,7 @@ export default class SfdmuRunService {
   private static _normalizeFlags(flags: SfdmuRunFlagsType): SfdmuRunFlagsType {
     const loglevel = typeof flags.loglevel === 'string' ? flags.loglevel.toUpperCase() : flags.loglevel;
     const canmodify = typeof flags.canmodify === 'string' ? flags.canmodify.trim() : flags.canmodify;
+    const file = typeof flags.file === 'string' ? flags.file.trim() : flags.file;
     const filelog = flags.diagnostic ? 1 : flags.filelog;
     return {
       ...flags,
@@ -253,6 +256,7 @@ export default class SfdmuRunService {
       verbose: false,
       loglevel,
       canmodify,
+      file,
       filelog,
     };
   }
@@ -294,6 +298,24 @@ export default class SfdmuRunService {
   }
 
   /**
+   * Resolve export.json file path using --file when provided.
+   *
+   * @param rootPath - Resolved --path base directory.
+   * @param scriptFile - Optional --file value.
+   * @returns Absolute path to export.json to execute.
+   */
+  private static _resolveExportJsonPath(rootPath: string, scriptFile?: string): string {
+    const normalized = scriptFile?.trim();
+    if (!normalized) {
+      return path.join(rootPath, SCRIPT_FILE_NAME);
+    }
+    if (path.isAbsolute(normalized)) {
+      return path.resolve(normalized);
+    }
+    return path.resolve(rootPath, normalized);
+  }
+
+  /**
    * Create the logging service from normalized flags.
    *
    * @param rootPath - Working directory.
@@ -303,6 +325,7 @@ export default class SfdmuRunService {
   private static _createLogger(
     rootPath: string,
     flags: SfdmuRunFlagsType,
+    exportJsonPath: string,
     stdoutWriter?: (message: string) => void,
     stderrWriter?: (message: string) => void,
     warnWriter?: (message: string) => void,
@@ -322,8 +345,8 @@ export default class SfdmuRunService {
       silent: flags.silent,
       verbose: flags.diagnostic,
       anonymise: flags.anonymise,
-      anonymiseValues: this._createAnonymiseValueList(flags, rootPath),
-      anonymiseEntries: this._createAnonymiseEntries(flags, rootPath),
+      anonymiseValues: this._createAnonymiseValueList(flags, rootPath, exportJsonPath),
+      anonymiseEntries: this._createAnonymiseEntries(flags, rootPath, exportJsonPath),
       anonymiseSeed,
       noWarnings: flags.nowarnings,
       failOnWarning: flags.failonwarning,
@@ -349,6 +372,7 @@ export default class SfdmuRunService {
   private static async _logEnvironmentDiagnosticsAsync(
     logger: LoggingService,
     rootPath: string,
+    exportJsonPath: string,
     flags: SfdmuRunFlagsType
   ): Promise<void> {
     if (!logger.context.verbose || !logger.context.fileLogEnabled) {
@@ -365,7 +389,12 @@ export default class SfdmuRunService {
 
     const execPathSafe = this._sanitizeLogPath(process.execPath);
     const rootPathSafe = this._sanitizeLogPath(rootPath);
+    const exportJsonPathSafe = this._sanitizeLogPath(exportJsonPath);
+    const exportJsonPathDiagnostic = flags.anonymise
+      ? this._maskAbsolutePathPrefix(rootPath, exportJsonPathSafe)
+      : exportJsonPathSafe;
     const flagsJson = JSON.stringify(this._createDiagnosticFlagsSnapshot(flags), null, 2) ?? '{}';
+    const isCustomExportFilePath = path.resolve(exportJsonPath) !== path.join(path.resolve(rootPath), SCRIPT_FILE_NAME);
     const lines = [
       'Run flags:',
       ...flagsJson.split(/\r?\n/),
@@ -378,10 +407,14 @@ export default class SfdmuRunService {
       `arch: ${process.arch}`,
       `execPath: ${execPathSafe}`,
       `cwd: ${rootPathSafe}`,
+      `[diagnostic] export.json path: ${exportJsonPathDiagnostic}`,
     ];
+    if (isCustomExportFilePath) {
+      lines.push('[diagnostic] export.json path differs from --path root.');
+    }
 
     lines.forEach((line) => logger.verboseFile(line));
-    await this._logExportJsonDiagnosticsAsync(logger, rootPath, Boolean(flags.anonymise));
+    await this._logExportJsonDiagnosticsAsync(logger, exportJsonPath, Boolean(flags.anonymise));
   }
 
   /**
@@ -394,26 +427,27 @@ export default class SfdmuRunService {
     flags: SfdmuRunFlagsType
   ): Record<string, string | number | boolean | null> {
     return {
-      sourceusername: flags.sourceusername ?? null,
-      targetusername: flags.targetusername ?? null,
-      path: flags.path ?? null,
-      silent: flags.silent ?? null,
-      quiet: flags.quiet ?? null,
-      diagnostic: flags.diagnostic ?? null,
-      verbose: flags.verbose ?? null,
-      concise: flags.concise ?? null,
-      logfullquery: flags.logfullquery ?? null,
-      apiversion: flags.apiversion ?? null,
-      filelog: flags.filelog ?? null,
-      json: flags.json ?? null,
-      noprompt: flags.noprompt ?? null,
-      nowarnings: flags.nowarnings ?? null,
+      sourceusername: this._toNullableFlagValue(flags.sourceusername),
+      targetusername: this._toNullableFlagValue(flags.targetusername),
+      path: this._toNullableFlagValue(flags.path),
+      file: this._toNullableFlagValue(flags.file),
+      silent: this._toNullableFlagValue(flags.silent),
+      quiet: this._toNullableFlagValue(flags.quiet),
+      diagnostic: this._toNullableFlagValue(flags.diagnostic),
+      verbose: this._toNullableFlagValue(flags.verbose),
+      concise: this._toNullableFlagValue(flags.concise),
+      logfullquery: this._toNullableFlagValue(flags.logfullquery),
+      apiversion: this._toNullableFlagValue(flags.apiversion),
+      filelog: this._toNullableFlagValue(flags.filelog),
+      json: this._toNullableFlagValue(flags.json),
+      noprompt: this._toNullableFlagValue(flags.noprompt),
+      nowarnings: this._toNullableFlagValue(flags.nowarnings),
       failonwarning: this._toNullableFlagValue(flags.failonwarning),
-      canmodify: flags.canmodify ?? null,
-      simulation: flags.simulation ?? null,
-      loglevel: flags.loglevel ?? null,
-      usesf: flags.usesf ?? null,
-      version: flags.version ?? null,
+      canmodify: this._toNullableFlagValue(flags.canmodify),
+      simulation: this._toNullableFlagValue(flags.simulation),
+      loglevel: this._toNullableFlagValue(flags.loglevel),
+      usesf: this._toNullableFlagValue(flags.usesf),
+      version: this._toNullableFlagValue(flags.version),
     };
   }
 
@@ -434,7 +468,11 @@ export default class SfdmuRunService {
    * @param rootPath - Resolved working path.
    * @returns Values to mask in file logs.
    */
-  private static _createAnonymiseValueList(flags: SfdmuRunFlagsType, rootPath: string): string[] {
+  private static _createAnonymiseValueList(
+    flags: SfdmuRunFlagsType,
+    rootPath: string,
+    exportJsonPath: string
+  ): string[] {
     const values = new Set<string>();
     const addValue = (value?: string): void => {
       const trimmed = value?.trim();
@@ -453,6 +491,7 @@ export default class SfdmuRunService {
       addValue(flags.path);
     }
     addValue(rootPath);
+    addValue(exportJsonPath);
 
     return [...values].filter((value) => value.length > 0);
   }
@@ -464,7 +503,11 @@ export default class SfdmuRunService {
    * @param rootPath - Resolved working path.
    * @returns Labeled values to hash in file logs.
    */
-  private static _createAnonymiseEntries(flags: SfdmuRunFlagsType, rootPath: string): AnonymiseEntryType[] {
+  private static _createAnonymiseEntries(
+    flags: SfdmuRunFlagsType,
+    rootPath: string,
+    exportJsonPath: string
+  ): AnonymiseEntryType[] {
     const keySeparator = '\u0000';
     const entries = new Map<string, AnonymiseEntryType>();
     const addEntry = (value: string | undefined, label: string): void => {
@@ -491,6 +534,7 @@ export default class SfdmuRunService {
       addEntry(flags.path, 'path');
     }
     addEntry(rootPath, 'cwd');
+    addEntry(exportJsonPath, 'exportJsonPath');
 
     return [...entries.values()];
   }
@@ -579,20 +623,19 @@ export default class SfdmuRunService {
    * Logs the export.json contents into the diagnostic file log.
    *
    * @param logger - Logging service instance.
-   * @param rootPath - Working directory.
+   * @param exportJsonPath - Resolved export.json path.
    */
   private static async _logExportJsonDiagnosticsAsync(
     logger: LoggingService,
-    rootPath: string,
+    exportJsonPath: string,
     anonymise: boolean
   ): Promise<void> {
     if (!logger.context.verbose || !logger.context.fileLogEnabled) {
       return;
     }
 
-    const scriptPath = path.join(rootPath, SCRIPT_FILE_NAME);
     try {
-      const raw = await readFile(scriptPath, 'utf8');
+      const raw = await readFile(exportJsonPath, 'utf8');
       const content = anonymise ? this._maskExportJsonOrgsSection(raw) : raw;
       logger.verboseFile(logger.getMessage('exportJsonDiagnosticHeader'));
       content.split(/\r?\n/).forEach((line) => logger.verboseFile(line));
@@ -698,6 +741,28 @@ export default class SfdmuRunService {
   private static _sanitizeLogPath(value: string): string {
     const normalized = value.replace(/\\/g, '/').replace(/\r?\n/g, ' ').replace(/\t/g, ' ');
     return normalized.replace(/\/{2,}/g, '/');
+  }
+
+  /**
+   * Masks absolute path prefix and keeps relative segment from the base path.
+   *
+   * @param basePath - Base path used as relative anchor.
+   * @param absolutePath - Absolute path to mask.
+   * @returns Masked path with preserved relative segment.
+   */
+  private static _maskAbsolutePathPrefix(basePath: string, absolutePath: string): string {
+    const normalizedBasePath = this._sanitizeLogPath(path.resolve(basePath));
+    const normalizedAbsolutePath = this._sanitizeLogPath(path.resolve(absolutePath));
+    const basePrefix = `${normalizedBasePath}/`;
+    if (normalizedAbsolutePath === normalizedBasePath) {
+      return '<masked-path>';
+    }
+    if (normalizedAbsolutePath.startsWith(basePrefix)) {
+      const relativePart = normalizedAbsolutePath.slice(basePrefix.length);
+      return relativePart ? `<masked-path>/${relativePart}` : '<masked-path>';
+    }
+    const relativePart = this._sanitizeLogPath(path.relative(normalizedBasePath, normalizedAbsolutePath));
+    return relativePart ? `<masked-path>/${relativePart}` : '<masked-path>';
   }
 
   /**

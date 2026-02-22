@@ -40,11 +40,16 @@ export default class ScriptLoader {
    *
    * @param rootPath - Working directory containing export.json.
    * @param logger - Logging service instance.
+   * @param scriptFilePath - Optional explicit export.json file path.
    * @returns Parsed Script instance.
    */
-  public static async loadFromPathAsync(rootPath: string, logger: LoggingService): Promise<Script> {
+  public static async loadFromPathAsync(
+    rootPath: string,
+    logger: LoggingService,
+    scriptFilePath?: string
+  ): Promise<Script> {
     await this._ensureWorkingPathAsync(rootPath, logger);
-    const scriptPath = path.join(rootPath, SCRIPT_FILE_NAME);
+    const scriptPath = scriptFilePath?.trim() ? path.resolve(scriptFilePath) : path.join(rootPath, SCRIPT_FILE_NAME);
     logger.info('loadingExportJson', scriptPath);
 
     let rawJson = '';

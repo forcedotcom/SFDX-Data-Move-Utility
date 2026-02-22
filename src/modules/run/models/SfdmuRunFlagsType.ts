@@ -25,6 +25,11 @@ export type SfdmuRunFlagsType = {
   path?: string;
 
   /**
+   * Path to a specific export.json file to execute.
+   */
+  file?: string;
+
+  /**
    * Suppress standard output.
    */
   silent?: boolean;

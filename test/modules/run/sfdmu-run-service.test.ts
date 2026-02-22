@@ -69,6 +69,19 @@ const writeExportJson = (dir: string, payload: ScriptPayloadType): void => {
   fs.writeFileSync(filePath, JSON.stringify(payload), 'utf8');
 };
 
+const getLatestLogFilePath = (rootPath: string): string => {
+  const logsDir = path.join(rootPath, FILE_LOG_SUBDIRECTORY);
+  const logFiles = fs
+    .readdirSync(logsDir)
+    .filter((file) => file.endsWith('.log'))
+    .map((file) => path.join(logsDir, file))
+    .sort((left, right) => fs.statSync(right).mtimeMs - fs.statSync(left).mtimeMs);
+  if (logFiles.length === 0) {
+    throw new Error('No log files found.');
+  }
+  return logFiles[0];
+};
+
 const buildRequest = (
   flags: SfdmuRunFlagsType,
   argv: string[] = [],
@@ -376,6 +389,108 @@ describe('SfdmuRunService', () => {
       OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
       OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
       fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
+
+  it('loads export.json from --file and keeps runtime folders under --path', async () => {
+    const rootPath = createTempDir();
+    const customScriptDir = createTempDir();
+    const payload: ScriptPayloadType = {
+      objectSets: [
+        {
+          objects: [{ name: 'Account', query: 'SELECT Id FROM Account' }],
+        },
+      ],
+    };
+    writeExportJson(customScriptDir, payload);
+    const customScriptPath = path.join(customScriptDir, SCRIPT_FILE_NAME);
+
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => createDescribeConnection() as never;
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          file: customScriptPath,
+          sourceusername: 'source',
+          targetusername: 'target',
+          filelog: 1,
+          quiet: true,
+        })
+      );
+
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.SUCCESS);
+      assert.equal(fs.existsSync(path.join(rootPath, FILE_LOG_SUBDIRECTORY)), true);
+      assert.equal(fs.existsSync(path.join(customScriptDir, FILE_LOG_SUBDIRECTORY)), false);
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+      fs.rmSync(customScriptDir, { recursive: true, force: true });
+    }
+  });
+
+  it('writes anonymised diagnostic export.json path with preserved relative segment for --file', async () => {
+    const rootPath = createTempDir();
+    const customScriptDir = createTempDir();
+    const payload: ScriptPayloadType = {
+      objectSets: [
+        {
+          objects: [{ name: 'Account', query: 'SELECT Id FROM Account' }],
+        },
+      ],
+    };
+    writeExportJson(customScriptDir, payload);
+    const customScriptPath = path.join(customScriptDir, SCRIPT_FILE_NAME);
+
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => createDescribeConnection() as never;
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          file: customScriptPath,
+          sourceusername: 'source',
+          targetusername: 'target',
+          diagnostic: true,
+          anonymise: true,
+          filelog: 0,
+          quiet: true,
+        })
+      );
+
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.SUCCESS);
+      const latestLogPath = getLatestLogFilePath(rootPath);
+      const logContent = fs.readFileSync(latestLogPath, 'utf8');
+      const expectedPath = customScriptPath.replace(/\\/g, '/');
+      const expectedRelative = path.relative(rootPath, customScriptPath).replace(/\\/g, '/');
+      assert.ok(logContent.includes('[diagnostic] export.json path:'));
+      assert.ok(logContent.includes(`<masked-path>/${expectedRelative}`));
+      assert.equal(logContent.includes(expectedPath), false);
+      assert.ok(logContent.includes('[diagnostic] export.json path differs from --path root.'));
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+      fs.rmSync(customScriptDir, { recursive: true, force: true });
     }
   });
 

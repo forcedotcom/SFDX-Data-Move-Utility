@@ -5,6 +5,8 @@
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Messages } from '@salesforce/core';
 import { Common } from '../common/Common.js';
 import {
@@ -32,6 +34,22 @@ type LogLevelType = (typeof LOG_LEVELS)[keyof typeof LOG_LEVELS];
  * Logging service with legacy formatting.
  */
 export default class LoggingService {
+  // ------------------------------------------------------//
+  // -------------------- STATIC FIELDS ------------------ //
+  // ------------------------------------------------------//
+
+  /**
+   * Absolute plugin root path resolved from this module location.
+   */
+  private static readonly _PLUGIN_ROOT_PATH = path
+    .resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..')
+    .replace(/\\/g, '/');
+
+  /**
+   * Plugin root folder name used as visible anchor in masked stack paths.
+   */
+  private static readonly _PLUGIN_ROOT_FOLDER = path.basename(LoggingService._PLUGIN_ROOT_PATH);
+
   // ------------------------------------------------------//
   // -------------------- PUBLIC FIELDS ------------------ //
   // ------------------------------------------------------//
@@ -519,37 +537,146 @@ export default class LoggingService {
   }
 
   /**
-   * Masks absolute folder paths in stack traces while preserving file names and positions.
+   * Masks stack-trace absolute paths while preserving plugin-relative paths.
    *
    * @param stack - Raw stack trace text.
-   * @returns Stack trace with masked folder paths.
+   * @returns Stack trace with masked leading path segments.
    */
   private _maskStackTracePaths(stack: string): string {
-    void this;
     if (!stack) {
       return stack;
     }
 
-    let output = stack;
-    output = output.replace(
-      /(file:\/\/\/)(?:[A-Za-z]:\/|\/)?(?:[^:\r\n()]+\/)+([^/:\r\n()]+)(:\d+(?::\d+)?)?/g,
-      (_full: string, prefix: string, fileName: string, position: string | undefined) =>
-        `${prefix}<masked-path>/${fileName}${position ?? ''}`
-    );
-    output = output.replace(
-      /\\\\[^\\\r\n]+\\[^\\\r\n]+\\(?:[^\\:\r\n()]+\\)+([^\\:\r\n()]+)(:\d+(?::\d+)?)?/g,
-      (_full: string, fileName: string, position: string | undefined) => `<masked-path>\\${fileName}${position ?? ''}`
-    );
-    output = output.replace(
-      /[A-Za-z]:\\(?:[^\\:\r\n()]+\\)+([^\\:\r\n()]+)(:\d+(?::\d+)?)?/g,
-      (_full: string, fileName: string, position: string | undefined) => `<masked-path>\\${fileName}${position ?? ''}`
-    );
-    output = output.replace(
-      /\/(?!<masked-path>\/)(?:[^/:\r\n()]+\/)+([^/:\r\n()]+)(:\d+(?::\d+)?)?/g,
-      (_full: string, fileName: string, position: string | undefined) => `<masked-path>/${fileName}${position ?? ''}`
-    );
+    const lines = stack.split('\n').map((line) => this._maskStackTraceLine(line));
+    return lines.join('\n');
+  }
 
+  /**
+   * Masks absolute path tokens in one stack-trace line.
+   *
+   * @param line - Stack trace line.
+   * @returns Line with masked path prefixes.
+   */
+  private _maskStackTraceLine(line: string): string {
+    let output = line.replace(/\(([^()]+)\)/g, (_full: string, candidate: string) => {
+      const masked = this._maskStackPathCandidate(candidate);
+      return `(${masked})`;
+    });
+    output = output.replace(
+      /^\s*at\s+([^(].+)$/u,
+      (_full: string, candidate: string) => `    at ${this._maskStackPathCandidate(candidate)}`
+    );
     return output;
+  }
+
+  /**
+   * Masks one stack path candidate and preserves plugin-relative suffix when possible.
+   *
+   * @param candidate - Raw stack path candidate.
+   * @returns Masked candidate.
+   */
+  private _maskStackPathCandidate(candidate: string): string {
+    void this;
+    if (!candidate || candidate.includes('<masked-path>')) {
+      return candidate;
+    }
+
+    if (candidate.startsWith('file:///')) {
+      const rawPath = candidate.replace(/^file:\/\/\//u, '');
+      const decodedPath = this._safeDecodeUriComponent(rawPath);
+      const { pathValue, position } = this._splitStackPathPosition(decodedPath);
+      const maskedPath = this._maskAbsolutePathPrefix(pathValue);
+      return `file:///${maskedPath}${position}`;
+    }
+
+    if (!this._isAbsoluteStackPath(candidate)) {
+      return candidate;
+    }
+
+    const { pathValue, position } = this._splitStackPathPosition(candidate);
+    const maskedPath = this._maskAbsolutePathPrefix(pathValue);
+    return `${maskedPath}${position}`;
+  }
+
+  /**
+   * Determines whether a stack candidate is an absolute filesystem path.
+   *
+   * @param candidate - Raw stack candidate.
+   * @returns True when candidate is absolute path-like.
+   */
+  private _isAbsoluteStackPath(candidate: string): boolean {
+    void this;
+    return (
+      (candidate.length > 2 &&
+        /[A-Za-z]/u.test(candidate[0]) &&
+        candidate[1] === ':' &&
+        ['\\', '/'].includes(candidate[2])) ||
+      candidate.startsWith('\\\\') ||
+      candidate.startsWith('/')
+    );
+  }
+
+  /**
+   * Splits a path token into the path part and optional line or column suffix.
+   *
+   * @param value - Raw token value.
+   * @returns Separated path and position parts.
+   */
+  private _splitStackPathPosition(value: string): { pathValue: string; position: string } {
+    void this;
+    const match = value.match(/^(.*?)(:\d+(?::\d+)?)$/u);
+    if (!match) {
+      return { pathValue: value, position: '' };
+    }
+    return { pathValue: match[1], position: match[2] };
+  }
+
+  /**
+   * Masks absolute prefix and keeps plugin-relative suffix when available.
+   *
+   * @param rawPath - Raw absolute path.
+   * @returns Masked path.
+   */
+  private _maskAbsolutePathPrefix(rawPath: string): string {
+    void this;
+    const normalizedPath = rawPath
+      .replace(/\\/g, '/')
+      .replace(/^\/([A-Za-z]:\/)/u, '$1')
+      .replace(/\/+/g, '/');
+    const pluginRoot = LoggingService._PLUGIN_ROOT_PATH;
+    const pluginRootLower = pluginRoot.toLowerCase();
+    const normalizedLower = normalizedPath.toLowerCase();
+    const pluginRootFolder = LoggingService._PLUGIN_ROOT_FOLDER;
+
+    if (normalizedLower === pluginRootLower || normalizedLower.startsWith(`${pluginRootLower}/`)) {
+      const suffix = normalizedPath.slice(pluginRoot.length).replace(/^\/+/u, '');
+      return suffix ? `<masked-path>/${suffix}` : '<masked-path>';
+    }
+
+    const marker = `/${pluginRootFolder.toLowerCase()}/`;
+    const markerIndex = normalizedLower.indexOf(marker);
+    if (markerIndex >= 0) {
+      const relativeFromRoot = normalizedPath.slice(markerIndex + marker.length);
+      return `<masked-path>/${relativeFromRoot}`;
+    }
+
+    const fileName = normalizedPath.split('/').filter(Boolean).pop();
+    return fileName ? `<masked-path>/${fileName}` : '<masked-path>';
+  }
+
+  /**
+   * Safely decodes URI text for file URL path masking.
+   *
+   * @param value - URI text.
+   * @returns Decoded text or original value on decode errors.
+   */
+  private _safeDecodeUriComponent(value: string): string {
+    void this;
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
   }
 
   /**
@@ -588,18 +715,10 @@ export default class LoggingService {
     if (!message) {
       return '';
     }
-    let formatted: string;
-    switch (level) {
-      case LOG_LEVELS.ERROR:
-        formatted = this.getMessage('errorLogTemplate', date, message);
-        break;
-      case LOG_LEVELS.WARN:
-        formatted = this.getMessage('warnLogTemplate', date, message);
-        break;
-      default:
-        formatted = this.getMessage('infoLogTemplate', date, message);
-        break;
-    }
+    const formatted = message
+      .split('\n')
+      .map((line) => (line ? this._formatStdoutLineByLevel(level, date, line) : ''))
+      .join('\n');
 
     if (this.context.jsonEnabled) {
       return formatted;
@@ -611,6 +730,25 @@ export default class LoggingService {
       return formatted;
     }
     return `${colorCode}${formatted}\u001b[0m`;
+  }
+
+  /**
+   * Formats one stdout line by log level.
+   *
+   * @param level - Log level.
+   * @param date - Formatted date.
+   * @param messageLine - One message line.
+   * @returns Formatted line.
+   */
+  private _formatStdoutLineByLevel(level: LogLevelType, date: string, messageLine: string): string {
+    switch (level) {
+      case LOG_LEVELS.ERROR:
+        return this.getMessage('errorLogTemplate', date, messageLine);
+      case LOG_LEVELS.WARN:
+        return this.getMessage('warnLogTemplate', date, messageLine);
+      default:
+        return this.getMessage('infoLogTemplate', date, messageLine);
+    }
   }
 
   /**
@@ -666,13 +804,28 @@ export default class LoggingService {
     if (!message) {
       return '\n';
     }
+    return message
+      .split('\n')
+      .map((line) => (line ? this._formatFileLineByLevel(level, date, line) : ''))
+      .join('\n');
+  }
+
+  /**
+   * Formats one file-log line by log level.
+   *
+   * @param level - Log level.
+   * @param date - Formatted date.
+   * @param messageLine - One message line.
+   * @returns Formatted file log line.
+   */
+  private _formatFileLineByLevel(level: LogLevelType, date: string, messageLine: string): string {
     switch (level) {
       case LOG_LEVELS.ERROR:
-        return this.getMessage('errorFileLogTemplate', date, message);
+        return this.getMessage('errorFileLogTemplate', date, messageLine);
       case LOG_LEVELS.WARN:
-        return this.getMessage('warnFileLogTemplate', date, message);
+        return this.getMessage('warnFileLogTemplate', date, messageLine);
       default:
-        return this.getMessage('infoFileLogTemplate', date, message);
+        return this.getMessage('infoFileLogTemplate', date, messageLine);
     }
   }
 

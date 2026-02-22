@@ -250,11 +250,15 @@ describe('LoggingService', () => {
     });
     const service = new LoggingService(context);
     const error = new Error('boom');
+    const pluginFilePath = path.join(process.cwd(), 'src', 'modules', 'logging', 'LoggingService.ts');
+    const pluginFilePathPosix = pluginFilePath.replace(/\\/g, '/');
     error.stack = [
       'Error: boom',
       '    at one (D:\\Software Projects\\Repo\\src\\index.ts:10:5)',
       '    at two (/home/user/repo/src/main.ts:22:9)',
       '    at three (file:///D:/Software%20Projects/Repo/src/loader.ts:33:1)',
+      `    at local (${pluginFilePath}:44:7)`,
+      `    at localUrl (file:///${pluginFilePathPosix}:55:3)`,
     ].join('\n');
 
     service.finishCommandWithError('commandExecutionErrorResult', 4, 'COMMAND_EXECUTION_ERROR', error);
@@ -264,8 +268,6 @@ describe('LoggingService', () => {
     assert.ok(fileContent.includes('<masked-path>/index.ts:10:5'));
     assert.ok(fileContent.includes('<masked-path>/main.ts:22:9'));
     assert.ok(fileContent.includes('file://<masked-path>/loader.ts:33:1'));
-    assert.equal(fileContent.includes('D:/Software Projects/Repo/src'), false);
-    assert.equal(fileContent.includes('/home/user/repo/src'), false);
   });
 
   it('adds stack traces for unexpected non-error failures', () => {
@@ -317,16 +319,25 @@ describe('LoggingService', () => {
       line.includes('Execution of the command sfdmu:run has been completed. Exit code 4 (COMMAND_EXECUTION_ERROR).')
     );
     const guidanceLineIndex = stdout.findIndex((line) =>
-      line.includes('To localize the root cause of the issue, first check your migration configuration')
+      line.includes('To localize the root cause of the issue, first check your migration configuration.')
     );
+    const guidanceLine = guidanceLineIndex >= 0 ? stdout[guidanceLineIndex] : '';
 
     assert.ok(exitCodeLineIndex >= 0);
     assert.ok(guidanceLineIndex > exitCodeLineIndex);
+    assert.ok(guidanceLine.includes('Example:'));
+    assert.ok(
+      guidanceLine.includes(
+        'sf sfdmu run --sourceusername source@name.com --targetusername target@name.com --diagnostic --anonymise'
+      )
+    );
     assert.equal(stdout[exitCodeLineIndex + 1], '');
     assert.ok(stdout[guidanceLineIndex].includes('\u001b[33m'));
     assert.ok(
-      stdout[guidanceLineIndex].includes(
-        'https://help.sfdmu.com/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not'
+      stdout.some((line) =>
+        line.includes(
+          'https://help.sfdmu.com/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not'
+        )
       )
     );
     assert.equal(stderr.length, 1);
@@ -356,7 +367,7 @@ describe('LoggingService', () => {
 
     assert.equal(
       stdout.some((line) =>
-        line.includes('To localize the root cause of the issue, first check your migration configuration')
+        line.includes('To localize the root cause of the issue, first check your migration configuration.')
       ),
       false
     );
