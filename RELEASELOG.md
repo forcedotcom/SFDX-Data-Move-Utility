@@ -1,3 +1,28 @@
+## [5.6.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.5.0...5.6.0) (2026-02-22)
+
+###### New features:
+
+- Added `--file` CLI flag to run a migration from an explicit `export.json` path while keeping `--path` as the base folder for runtime resources.
+- Added diagnostic lines that show the resolved `export.json` path and a dedicated note when this path differs from `--path`.
+- Added anonymisation support for explicit `export.json` path values in diagnostic logs when `--anonymise` is enabled.
+
+###### Improvements:
+
+- Improved stack trace anonymisation to mask only the absolute machine-specific prefix while keeping plugin-root relative file paths visible.
+
+###### Fixes:
+
+- Updated non-zero exit guidance text to use consistent team wording in the final diagnostic instruction line.
+
+**See the related articles:**
+
+- [Running - --file](https://help.sfdmu.com/running#--file)
+- [Run Command Flags - file](https://help.sfdmu.com/full-documentation/reports/run-command-flags#file)
+- [Run Command Flags - path](https://help.sfdmu.com/full-documentation/reports/run-command-flags#path)
+- [Run Command Flags - diagnostic](https://help.sfdmu.com/full-documentation/reports/run-command-flags#diagnostic)
+- [Run Command Flags - anonymise](https://help.sfdmu.com/full-documentation/reports/run-command-flags#anonymise)
+- [Log File Management - What is masked and what is not](https://help.sfdmu.com/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not)
+
 ## [5.5.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.4.0...5.5.0) (2026-02-22)
 
 ###### New features:
