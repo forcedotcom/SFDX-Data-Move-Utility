@@ -1,3 +1,12 @@
+## [5.6.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.0...5.6.1) (2026-02-24)
+
+
+### Bug Fixes
+
+* enable useSourceCSVFile prep for org source object sets ([a674fcf](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/a674fcf2e687f1ecb01ad41a8e09281e958156ce))
+
+
+
 # [5.6.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.5.0...5.6.0) (2026-02-22)
 
 
