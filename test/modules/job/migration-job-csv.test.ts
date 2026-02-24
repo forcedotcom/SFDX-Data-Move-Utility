@@ -936,6 +936,81 @@ describe('MigrationJob CSV processing', () => {
     assert.equal(map?.get('Customer'), 'Client');
   });
 
+  it('prepares source CSV for useSourceCSVFile in object-set mode when source is org', async () => {
+    const rootPath = createTempDir();
+    const logger = createLoggingService(rootPath);
+    Common.logger = logger;
+
+    const exportPath = path.join(rootPath, 'export.json');
+    fs.writeFileSync(
+      exportPath,
+      JSON.stringify(
+        {
+          objectSets: [
+            {
+              objects: [
+                {
+                  name: 'Contact',
+                  query: 'SELECT Id FROM Contact',
+                  operation: 'Readonly',
+                },
+              ],
+            },
+            {
+              objects: [
+                {
+                  name: 'Account',
+                  query: "SELECT Id, Name FROM Account WHERE Name = 'CSV_ONLY'",
+                  operation: 'Upsert',
+                  externalId: 'Name',
+                  useSourceCSVFile: true,
+                },
+              ],
+            },
+          ],
+        },
+        null,
+        2
+      ),
+      'utf8'
+    );
+
+    const baseScript = await ScriptLoader.loadFromPathAsync(rootPath, logger);
+    baseScript.logger = logger;
+    baseScript.sourceOrg = createOrg(baseScript, 'source', DATA_MEDIA_TYPE.Org);
+    baseScript.targetOrg = createOrg(baseScript, 'target', DATA_MEDIA_TYPE.Org);
+    const script = ScriptLoader.createScriptForObjectSet(baseScript, 1);
+
+    const describes = new Map<string, SObjectDescribe>([
+      [
+        'Account',
+        createDescribe('Account', [
+          { name: 'Id', updateable: true, creatable: true },
+          { name: 'Name', nameField: true, updateable: true, creatable: true },
+        ]),
+      ],
+    ]);
+    const metadataProvider = createMetadataProvider(describes);
+    const job = new MigrationJob({ script, metadataProvider });
+
+    await job.loadAsync();
+    await job.setupAsync();
+
+    fs.mkdirSync(script.rawSourceDirectoryPath, { recursive: true });
+    await Common.writeCsvFileAsync(
+      path.join(script.rawSourceDirectoryPath, 'Account.csv'),
+      [{ Name: 'CSV_ONLY' }],
+      true
+    );
+
+    await job.processCsvAsync();
+
+    const sourceFile = Common.getCSVFilename(script.sourceDirectoryPath, 'Account', CSV_SOURCE_FILE_SUFFIX);
+    const rows = await Common.readCsvFileAsync(sourceFile);
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0]['Name'], 'CSV_ONLY');
+  });
+
   it('writes CSV issues report when required columns are missing', async () => {
     const rootPath = createTempDir();
     const logger = createLoggingService(rootPath);

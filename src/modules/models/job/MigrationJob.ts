@@ -413,23 +413,17 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
     await this._loadValueMappingFileAsync();
 
     const sourceIsCsv = this.script.sourceOrg?.isFileMedia ?? false;
-    const targetIsCsv = this.script.targetOrg?.isFileMedia ?? false;
-    if (!sourceIsCsv && !targetIsCsv) {
-      return;
-    }
-    if (!sourceIsCsv) {
-      return;
-    }
-
     const csvTasks = this._getCsvTasks();
+    const hasCsvSourceTasks = csvTasks.length > 0;
+    if (!sourceIsCsv && !hasCsvSourceTasks) {
+      return;
+    }
     if (csvTasks.length === 0) {
       return;
     }
 
     await this._ensureCsvDirectoriesAsync();
-    if (sourceIsCsv) {
-      await this._clearCsvDirectoryAsync(this.script.sourceDirectoryPath, 'unableToDeleteSourceDirectory');
-    }
+    await this._clearCsvDirectoryAsync(this.script.sourceDirectoryPath, 'unableToDeleteSourceDirectory');
     await this._prepareUserAndGroupCsvSourcesAsync(csvTasks);
 
     const logger = this._getLogger();
