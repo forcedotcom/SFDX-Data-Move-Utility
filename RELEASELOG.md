@@ -1,3 +1,19 @@
+## [5.6.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.0...5.6.1) (2026-02-24)
+
+###### Fixes:
+
+- Fixed `useSourceCSVFile` processing for `org -> org` object-set runs: source CSV preparation now executes for CSV-based source tasks even when the source org is not `csvfile`.
+- Fixed source CSV cleanup timing so prepared object-set source files are rebuilt deterministically before copy/repair processing.
+
+###### Other changes:
+
+- Updated Dependabot ignore rules for blocked advisories (`ajv`, `minimatch`, `fast-xml-parser`) to keep dependency update noise aligned with current project constraints.
+
+**See the related articles:**
+
+- [ScriptObject Object - useSourceCSVFile](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#usesourcecsvfile-boolean)
+- [Use Separate CSV Files](https://help.sfdmu.com/full-documentation/advanced-features/use-separate-csv-files)
+
 ## [5.6.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.5.0...5.6.0) (2026-02-22)
 
 ###### New features:
