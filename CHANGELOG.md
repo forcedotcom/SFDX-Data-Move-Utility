@@ -1,3 +1,12 @@
+## [5.6.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.1...5.6.2) (2026-02-25)
+
+
+### Bug Fixes
+
+* support polymorphic ExportFiles parsing and sync v5.6.1 notes ([f849230](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/f84923071f61425e5e06bbbf222da7387250beb8))
+
+
+
 ## [5.6.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.0...5.6.1) (2026-02-24)
 
 
