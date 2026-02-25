@@ -103,4 +103,26 @@ describe('Core add-ons', () => {
     assert.equal(filteredRecords.length, 1);
     assert.equal(filteredRecords[0]?.['Name'], 'Bad foo');
   });
+
+  it('initializes core ExportFiles with polymorphic FeedItem fields', async () => {
+    const scriptObject = new ScriptObject('FeedItem');
+    scriptObject.query = "SELECT Id, Body, ParentId$Account FROM FeedItem WHERE Type = 'ContentPost'";
+    scriptObject.afterAddons = [
+      new ScriptAddonManifestDefinition({
+        module: 'core:ExportFiles',
+      }),
+    ];
+
+    const script = new Script();
+    script.basePath = os.tmpdir();
+    script.logger = createLoggingService();
+    script.objectSets = [new ScriptObjectSet([scriptObject])];
+
+    const manager = new SfdmuRunAddonManager(script);
+    await manager.initializeAsync();
+
+    assert.ok(scriptObject.query.includes('ParentId$Account'));
+    assert.ok(scriptObject.query.includes('Type'));
+    assert.ok(!scriptObject.query.includes('__DOLLAR__'));
+  });
 });

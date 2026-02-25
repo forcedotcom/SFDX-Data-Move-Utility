@@ -16,6 +16,8 @@ import {
   ERRORS_FIELD_NAME,
   MAX_CHUNK_SIZE,
   MAX_FILE_SIZE,
+  POLYMORPHIC_FIELD_PARSER_PLACEHOLDER,
+  REFERENCE_FIELD_OBJECT_SEPARATOR,
 } from '../../../../constants/Constants.js';
 import CjsDependencyAdapters from '../../../../dependencies/CjsDependencyAdapters.js';
 import ScriptObject from '../../../../models/script/ScriptObject.js';
@@ -168,9 +170,9 @@ export default class ExportFiles implements ISfdmuRunCustomAddonModule {
     const script = this.runtime.getScript();
     const targetObject = script.getAllObjects().find((object) => object.name === context.objectName);
     if (targetObject && context.objectName === 'FeedItem' && targetObject.query) {
-      const parsedQuery = parseQuery(targetObject.query);
+      const parsedQuery = parseQuery(this._sanitizeQueryForParser(targetObject.query));
       Common.addOrRemoveQueryFields(parsedQuery, ['Type']);
-      targetObject.query = composeQuery(parsedQuery);
+      targetObject.query = this._restoreQueryFromParser(composeQuery(parsedQuery));
     }
     void args;
     return Promise.resolve(new AddonResult());
@@ -733,6 +735,34 @@ export default class ExportFiles implements ISfdmuRunCustomAddonModule {
       maxChunkSize: typeof args['maxChunkSize'] === 'number' ? args['maxChunkSize'] : undefined,
       maxFileSize: typeof args['maxFileSize'] === 'number' ? args['maxFileSize'] : undefined,
     };
+  }
+
+  /**
+   * Sanitizes polymorphic query markers for SOQL parser compatibility.
+   *
+   * @param query - Raw query text.
+   * @returns Query safe for parser.
+   */
+  private _sanitizeQueryForParser(query: string): string {
+    void this;
+    if (!query || !query.includes(REFERENCE_FIELD_OBJECT_SEPARATOR)) {
+      return query;
+    }
+    return query.replaceAll(REFERENCE_FIELD_OBJECT_SEPARATOR, POLYMORPHIC_FIELD_PARSER_PLACEHOLDER);
+  }
+
+  /**
+   * Restores polymorphic query markers after query composition.
+   *
+   * @param query - Parser-safe query text.
+   * @returns Query with original polymorphic markers.
+   */
+  private _restoreQueryFromParser(query: string): string {
+    void this;
+    if (!query || !query.includes(POLYMORPHIC_FIELD_PARSER_PLACEHOLDER)) {
+      return query;
+    }
+    return query.replaceAll(POLYMORPHIC_FIELD_PARSER_PLACEHOLDER, REFERENCE_FIELD_OBJECT_SEPARATOR);
   }
 
   /**
