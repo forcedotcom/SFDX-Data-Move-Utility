@@ -1,3 +1,15 @@
+## [5.6.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.1...5.6.2) (2026-02-25)
+
+###### Fixes:
+
+- Fixed `core:ExportFiles` query parsing for polymorphic fields (for example `ParentId$Account`) so initialization keeps original polymorphic field names in composed queries.
+
+**See the related articles:**
+
+- [ExportFiles Core Add-On Module](https://help.sfdmu.com/full-documentation/add-on-api/export-file-core-add-on-module#overview)
+- [Polymorphic Lookup Fields](https://help.sfdmu.com/full-documentation/advanced-features/polymorphic-lookup-fields)
+- [Advanced Examples](https://help.sfdmu.com/examples/advanced-examples) - review FeedItem and polymorphic query scenarios.
+
 ## [5.6.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.0...5.6.1) (2026-02-24)
 
 ###### Fixes:
