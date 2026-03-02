@@ -18,7 +18,7 @@
     "csv-parse": "^6.1.0",
     "csv-writer": "^1.6.0",
     "es6-shim": "^0.35.8",
-    "glob": "^13.0.3",
+    "glob": "^13.0.6",
     "promise-parallel-throttle": "^3.5.0",
     "reflect-metadata": "^0.2.2",
     "soql-parser-js": "npm:@jetstreamapp/soql-parser-js@^6.3.1"
