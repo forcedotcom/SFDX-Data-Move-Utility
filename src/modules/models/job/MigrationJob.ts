@@ -706,15 +706,46 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
    * @returns Relationship field names.
    */
   private _getRelationshipFieldNames(lookupField: SFieldDescribe): string[] {
-    void this;
     const names = new Set<string>();
-    if (lookupField.fullName__r) {
-      names.add(lookupField.fullName__r);
-    }
-    if (lookupField.fullOriginalName__r) {
-      names.add(lookupField.fullOriginalName__r);
-    }
+    this._expandRelationshipFieldNames(lookupField.fullName__r).forEach((name) => names.add(name));
+    this._expandRelationshipFieldNames(lookupField.fullOriginalName__r).forEach((name) => names.add(name));
     return [...names.values()];
+  }
+
+  /**
+   * Expands relationship fields containing complex parent external-id segments.
+   *
+   * @param relationshipFieldName - Relationship field name to expand.
+   * @returns Expanded relationship field list.
+   */
+  private _expandRelationshipFieldNames(relationshipFieldName: string): string[] {
+    void this;
+    if (!relationshipFieldName) {
+      return [];
+    }
+    const firstDotIndex = relationshipFieldName.indexOf('.');
+    if (firstDotIndex <= 0 || firstDotIndex >= relationshipFieldName.length - 1) {
+      return [relationshipFieldName];
+    }
+    const relationshipName = relationshipFieldName.substring(0, firstDotIndex);
+    const relationshipTail = relationshipFieldName.substring(firstDotIndex + 1);
+    if (!Common.isContainsComplexField(relationshipTail)) {
+      return [relationshipFieldName];
+    }
+    const relationshipSegments = Common.getFieldFromComplexField(relationshipTail)
+      .split(COMPLEX_FIELDS_SEPARATOR)
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0);
+    if (!relationshipSegments.some((part) => part.includes('.'))) {
+      return [relationshipFieldName];
+    }
+    const expandedFields = relationshipSegments
+      .filter((part) => !part.includes('.'))
+      .map((part) => (part.startsWith(`${relationshipName}.`) ? part : `${relationshipName}.${part}`));
+    if (expandedFields.length === 0) {
+      return [relationshipFieldName];
+    }
+    return Common.distinctStringArray(expandedFields);
   }
 
   /**

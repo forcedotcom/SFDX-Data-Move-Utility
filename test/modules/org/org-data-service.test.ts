@@ -117,6 +117,7 @@ describe('OrgDataService', () => {
       'Id,ISACTIVE,employees,AnnualRevenue,Name,NullToken,DateValue,DateTimeValue,Toggle',
       '001,TRUE,42,12345.67,Acme,NULL,31/12/2025,31.12.2025 14:05:06,yes',
       '002,false,-7,-12.5,Zen,#N/A,01.01.26,01/01/26 00:00,off',
+      '003,true,0,0,LiteralNA,N/A,02.01.26,02/01/26 00:00,on',
     ].join('\n');
     fs.writeFileSync(csvFile, csvContent, 'utf8');
 
@@ -144,7 +145,7 @@ describe('OrgDataService', () => {
         csvColumnDataTypeMap,
       });
 
-      assert.equal(records.length, 2);
+      assert.equal(records.length, 3);
       assert.equal(typeof records[0].ISACTIVE, 'boolean');
       assert.equal(records[0].ISACTIVE, true);
       assert.equal(typeof records[0].employees, 'number');
@@ -165,6 +166,15 @@ describe('OrgDataService', () => {
       assert.equal(records[1].DateValue, '2026-01-01');
       assert.equal(records[1].DateTimeValue, '2026-01-01T00:00:00.000Z');
       assert.equal(records[1].Toggle, false);
+
+      assert.equal(records[2].ISACTIVE, true);
+      assert.equal(records[2].employees, 0);
+      assert.equal(records[2].AnnualRevenue, 0);
+      assert.equal(records[2].Name, 'LiteralNA');
+      assert.equal(records[2].NullToken, 'N/A');
+      assert.equal(records[2].DateValue, '2026-01-02');
+      assert.equal(records[2].DateTimeValue, '2026-01-02T00:00:00.000Z');
+      assert.equal(records[2].Toggle, true);
     } finally {
       Common.csvUseEuropeanDateFormat = previousEuropeanDateFormat;
       Common.csvInsertNulls = previousInsertNulls;

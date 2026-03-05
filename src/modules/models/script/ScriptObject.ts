@@ -1148,10 +1148,14 @@ export default class ScriptObject {
       if (!field.lookup || !field.parentLookupObject) {
         return;
       }
-      const relationshipField = field.fullName__r;
-      if (relationshipField && !existing.has(relationshipField.toLowerCase())) {
-        parsedQuery.fields.push(getComposedField(relationshipField));
-      }
+      const relationshipFields = this._expandRelationshipQueryFields(field.fullName__r);
+      relationshipFields.forEach((relationshipField) => {
+        const normalizedField = relationshipField.toLowerCase();
+        if (!existing.has(normalizedField)) {
+          parsedQuery.fields.push(getComposedField(relationshipField));
+          existing.add(normalizedField);
+        }
+      });
     });
     this._dedupeQueryFields();
     this._setQueryFromParsed(parsedQuery);
@@ -3475,6 +3479,42 @@ export default class ScriptObject {
   private _getMandatoryQueryFields(): string[] {
     void this;
     return [];
+  }
+
+  /**
+   * Expands a relationship field that can contain complex external-id segments.
+   *
+   * @param relationshipFieldName - Raw relationship field name.
+   * @returns Concrete relationship field list safe for SOQL query composition.
+   */
+  private _expandRelationshipQueryFields(relationshipFieldName: string): string[] {
+    void this;
+    if (!relationshipFieldName) {
+      return [];
+    }
+    const firstDotIndex = relationshipFieldName.indexOf('.');
+    if (firstDotIndex <= 0 || firstDotIndex >= relationshipFieldName.length - 1) {
+      return [relationshipFieldName];
+    }
+    const relationshipName = relationshipFieldName.substring(0, firstDotIndex);
+    const relationshipTail = relationshipFieldName.substring(firstDotIndex + 1);
+    if (!Common.isContainsComplexField(relationshipTail)) {
+      return [relationshipFieldName];
+    }
+    const relationshipSegments = Common.getFieldFromComplexField(relationshipTail)
+      .split(COMPLEX_FIELDS_SEPARATOR)
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0);
+    if (!relationshipSegments.some((part) => part.includes('.'))) {
+      return [relationshipFieldName];
+    }
+    const expandedFields = relationshipSegments
+      .filter((part) => !part.includes('.'))
+      .map((part) => (part.startsWith(`${relationshipName}.`) ? part : `${relationshipName}.${part}`));
+    if (expandedFields.length === 0) {
+      return [relationshipFieldName];
+    }
+    return Common.distinctStringArray(expandedFields);
   }
 }
 

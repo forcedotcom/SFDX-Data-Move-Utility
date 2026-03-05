@@ -169,7 +169,7 @@ export class Common {
   /**
    * CSV values that represent null.
    */
-  private static readonly _CSV_NULL_TOKENS = new Set(['#n/a', 'n/a', 'null', 'undefined', '#error!', '#value!']);
+  private static readonly _CSV_NULL_TOKENS = new Set(['#n/a', 'null', 'undefined', '#error!', '#value!']);
 
   /**
    * Polyfill of flatMap for legacy usage.

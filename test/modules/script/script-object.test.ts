@@ -524,6 +524,47 @@ describe('Script object operations', () => {
     assert.ok(!object.targetQuery.includes('Test2__r.'));
   });
 
+  it('keeps relationship prefix for every complex parent externalId segment', () => {
+    const script = new Script();
+
+    const parentObject = new ScriptObject('AttributeDefinition');
+    parentObject.operation = OPERATION.Upsert;
+    parentObject.query = 'SELECT Id, CPQ_External_ID__c, PicklistId FROM AttributeDefinition';
+    parentObject.externalId = 'CPQ_External_ID__c;Picklist.CPQ_External_ID__c';
+    parentObject.originalExternalId = parentObject.externalId;
+    parentObject.setup(script);
+
+    const childObject = new ScriptObject('AttributeCategoryAttribute');
+    childObject.operation = OPERATION.Upsert;
+    childObject.query = 'SELECT Id, CPQ_External_ID__c, AttributeDefinitionId FROM AttributeCategoryAttribute';
+    childObject.externalId = 'CPQ_External_ID__c;AttributeDefinition.CPQ_External_ID__c';
+    childObject.originalExternalId = childObject.externalId;
+    childObject.setup(script);
+
+    const parentDescribe = createDescribe('AttributeDefinition', [
+      { name: 'Id', type: 'id', updateable: false, creatable: false },
+      { name: 'CPQ_External_ID__c', type: 'string', updateable: true, creatable: true },
+      { name: 'PicklistId', type: 'reference', lookup: true, referencedObjectType: 'AttributePicklist' },
+    ]);
+    const childDescribe = createDescribe('AttributeCategoryAttribute', [
+      { name: 'Id', type: 'id', updateable: false, creatable: false },
+      { name: 'CPQ_External_ID__c', type: 'string', updateable: true, creatable: true },
+      { name: 'AttributeDefinitionId', type: 'reference', lookup: true, referencedObjectType: 'AttributeDefinition' },
+    ]);
+
+    parentObject.applyDescribe(parentDescribe, parentDescribe);
+    childObject.applyDescribe(childDescribe, childDescribe);
+
+    const lookupField = childObject.sourceSObjectDescribe?.fieldsMap.get('AttributeDefinitionId');
+    assert.ok(lookupField);
+    lookupField.parentLookupObject = parentObject;
+    childObject.ensureLookupFieldsInQuery();
+
+    assert.ok(childObject.fieldsInQuery.includes('AttributeDefinition.CPQ_External_ID__c'));
+    assert.ok(!childObject.fieldsInQuery.includes('AttributeDefinition.Picklist.CPQ_External_ID__c'));
+    assert.ok(!childObject.fieldsInQuery.includes('Picklist.CPQ_External_ID__c'));
+  });
+
   it('maps where/order by fields in target query', () => {
     const script = new Script();
     const object = new ScriptObject('Account');
