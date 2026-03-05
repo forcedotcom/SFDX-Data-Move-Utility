@@ -1,3 +1,12 @@
+## [5.6.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.2...5.6.3) (2026-03-05)
+
+
+### Bug Fixes
+
+* fix CSV null-token parsing and prevent nested lookup segment leakage ([64690cf](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/64690cff73cf2390d884629121686393c7149598))
+
+
+
 ## [5.6.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.1...5.6.2) (2026-02-25)
 
 
