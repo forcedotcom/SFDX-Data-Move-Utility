@@ -1,3 +1,16 @@
+## [5.6.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.2...5.6.3) (2026-03-05)
+
+###### Fixes:
+
+- Fixed CSV null-token handling so bare `N/A` is preserved as a literal value while `#N/A` remains a null marker.
+- Fixed lookup query generation for child objects with `SELECT all` so nested parent relationship segments from composite external IDs are not leaked as invalid bare relationship fields.
+
+**See the related articles:**
+
+- [Values Mapping](https://help.sfdmu.com/full-documentation/advanced-features/values-mapping) - check `#N/A` usage for null resets.
+- [Composite External Id Keys](https://help.sfdmu.com/full-documentation/advanced-features/composite-external-id-keys)
+- [ScriptObject Object - externalId](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#externalid-string)
+
 ## [5.6.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.1...5.6.2) (2026-02-25)
 
 ###### Fixes:
