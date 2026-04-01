@@ -200,6 +200,7 @@ export default class SfdmuRunService {
         sourceDescribeCache: new Map(),
         targetDescribeCache: new Map(),
         polymorphicCache: new Map(),
+        targetRecordCache: new Map(),
       };
 
       const objectOrders: ObjectOrderInfoType[] = [];
@@ -922,7 +923,7 @@ export default class SfdmuRunService {
     const script = ScriptLoader.createScriptForObjectSet(baseScript, objectSetIndex);
     await this._clearTargetDirectoryForObjectSetAsync(script, logger);
     const metadataProvider = new OrgMetadataProvider({ script, caches: metadataCaches });
-    const job = new MigrationJob({ script, metadataProvider });
+    const job = new MigrationJob({ script, metadataProvider, targetRecordCache: metadataCaches.targetRecordCache });
     logger.info('newLine');
     logger.info('dataMigrationProcessStarted');
     await job.loadAsync();
@@ -948,8 +949,103 @@ export default class SfdmuRunService {
     logger.info('newLine');
     logger.info('executingJob');
     await job.executeAsync();
+    // Store target record mappings for use in subsequent object sets
+    if (metadataCaches.targetRecordCache) {
+      for (const task of job.tasks) {
+        const existingMap = metadataCaches.targetRecordCache.get(task.sObjectName);
+        const cacheMap = existingMap ?? new Map<string, string>();
+
+        // Merge existing extIdToRecordIdMap entries
+        for (const [extId, recordId] of task.targetData.extIdToRecordIdMap.entries()) {
+          cacheMap.set(extId, recordId);
+        }
+
+        // Also cache by all reference field values that might be used for lookups
+        for (const targetRecord of task.targetData.records) {
+          this._cacheRecordByVariousKeys(task, cacheMap, targetRecord);
+        }
+
+        if (!existingMap) {
+          metadataCaches.targetRecordCache.set(task.sObjectName, cacheMap);
+        }
+      }
+    }
     logger.info('newLine');
     return orderInfo;
+  }
+
+  /**
+   * Extracts nested external ID value from record with nested relationships.
+   *
+   * @param record - Record to extract from.
+   * @param externalId - External ID field path.
+   * @returns Extracted value or undefined.
+   */
+  private static _extractNestedExternalIdValue(
+    record: Record<string, unknown>,
+    externalId: string
+  ): string | undefined {
+    const parts = externalId.split('.');
+    let current: unknown = record;
+
+    for (const part of parts) {
+      if (!current || typeof current !== 'object') {
+        return undefined;
+      }
+      current = (current as Record<string, unknown>)[part];
+    }
+
+    return current ? String(current) : undefined;
+  }
+
+  /**
+   * Cache a record by various keys for cross-object-set lookup resolution.
+   *
+   * @param task - Migration task.
+   * @param cacheMap - Cache map to populate.
+   * @param targetRecord - Target record to cache.
+   */
+  private static _cacheRecordByVariousKeys(
+    task: { sObjectName: string; scriptObject: { externalId: string | null } },
+    cacheMap: Map<string, string>,
+    targetRecord: Record<string, unknown>
+  ): void {
+    const recordId = targetRecord['Id'];
+    if (!recordId) {
+      return;
+    }
+
+    // Cache by external ID value
+    const externalIdValue = task.scriptObject.externalId ? targetRecord[task.scriptObject.externalId] : null;
+    if (externalIdValue) {
+      cacheMap.set(String(externalIdValue), String(recordId));
+    }
+
+    // Also cache by Name field if it exists and differs from external ID
+    if (task.scriptObject.externalId !== 'Name' && targetRecord['Name']) {
+      cacheMap.set(String(targetRecord['Name']), String(recordId));
+    }
+
+    // For objects with lookup relationships, also cache by those relationship IDs
+    // This allows child records to find parents by relationship ID
+    for (const [fieldName, fieldValue] of Object.entries(targetRecord)) {
+      if (fieldName.endsWith('__c') || fieldName.endsWith('Id')) {
+        // This looks like a lookup field - cache the record by this value too
+        if (fieldValue && typeof fieldValue === 'string' && fieldValue.length === 18) {
+          cacheMap.set(fieldValue, String(recordId));
+        }
+      }
+    }
+
+    // Cache by nested field combinations for multi-level external IDs
+    // For records with parent relationships, cache by parent field values
+    if (task.scriptObject.externalId && task.scriptObject.externalId.includes('.')) {
+      // Parse multi-level external ID and cache by each component
+      const nestedValue = this._extractNestedExternalIdValue(targetRecord, task.scriptObject.externalId);
+      if (nestedValue) {
+        cacheMap.set(nestedValue, String(recordId));
+      }
+    }
   }
 
   /**

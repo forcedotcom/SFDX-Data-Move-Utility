@@ -86,6 +86,11 @@ export type MigrationJobOptionsType = {
    * Optional metadata provider for describing objects.
    */
   metadataProvider?: IMetadataProvider;
+
+  /**
+   * Optional cache of target records from previous object sets.
+   */
+  targetRecordCache?: Map<string, Map<string, string>>;
 };
 
 /**
@@ -312,6 +317,11 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
    */
   private _rawCsvPathBySourcePath: Map<string, string> = new Map();
 
+  /**
+   * Cache of target records from previous object sets.
+   */
+  private _targetRecordCache?: Map<string, Map<string, string>>;
+
   // ------------------------------------------------------//
   // ----------------------- CONSTRUCTOR ----------------- //
   // ------------------------------------------------------//
@@ -324,11 +334,21 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
   public constructor(options: MigrationJobOptionsType) {
     this.script = options.script;
     this._metadataProvider = options.metadataProvider;
+    this._targetRecordCache = options.targetRecordCache;
   }
 
   // ------------------------------------------------------//
   // -------------------- PUBLIC METHODS ----------------- //
   // ------------------------------------------------------//
+
+  /**
+   * Gets the target record cache for cross-object-set lookups.
+   *
+   * @returns Target record cache.
+   */
+  public get targetRecordCache(): Map<string, Map<string, string>> | undefined {
+    return this._targetRecordCache;
+  }
 
   /**
    * Runs the full job pipeline.
@@ -473,6 +493,59 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
     await this._retrieveRecordsAsync();
     await this._updateRecordsAsync();
     await this._runAddonEventAsync(ADDON_EVENTS.onAfter);
+  }
+
+  /**
+   * Writes updated CSV files from cache.
+   */
+  public async saveCachedCsvDataFilesAsync(): Promise<void> {
+    const logger = this._getLogger();
+    const writeTasks = [...this.cachedCsvContent.csvDataCacheMap.entries()].map(([filePath, csvData]) => async () => {
+      const rawPath = this._rawCsvPathBySourcePath.get(filePath);
+      const objectName = this._getObjectNameFromCsvFilename(filePath);
+      const csvRows = [...csvData.values()];
+      const firstRow = csvRows[0];
+      const originalColumns = firstRow ? Object.keys(firstRow) : [];
+      const orderedColumns = originalColumns.length
+        ? Common.orderCsvColumnsWithIdFirstAndErrorsLast(originalColumns)
+        : [];
+      const columnsAlreadyOrdered =
+        originalColumns.length === orderedColumns.length &&
+        originalColumns.every((column, index) => column === orderedColumns[index]);
+      if (firstRow && !columnsAlreadyOrdered) {
+        this.cachedCsvContent.updatedFilenames.add(filePath);
+      }
+
+      const rawExists = rawPath ? await this._pathExistsAsync(rawPath) : false;
+      if (this.cachedCsvContent.updatedFilenames.has(filePath) || !rawExists) {
+        logger.log('writingCsvFile', filePath);
+        if (objectName) {
+          this._logVerboseObject(objectName, `CSV cache written to ${filePath}. Rows=${csvData.size}.`);
+        }
+        if (csvRows.length > 0) {
+          await Common.writeCsvFileAsync(filePath, csvRows, true, orderedColumns, true, true);
+        } else {
+          await Common.writeCsvFileAsync(filePath, [], true, undefined, false, true);
+        }
+        this._logDiagnostics(`Saved CSV file: ${filePath}.`);
+        return undefined;
+      }
+      if (rawPath && rawExists) {
+        if (objectName) {
+          this._logVerboseObject(objectName, `CSV cache unchanged. Copying raw file ${rawPath} to ${filePath}.`);
+        }
+        await fs.copyFile(rawPath, filePath);
+        this._logDiagnostics(`Saved CSV file: ${filePath}.`);
+        return undefined;
+      }
+      if (objectName) {
+        this._logVerboseObject(objectName, `CSV cache empty. Writing empty file ${filePath}.`);
+      }
+      await Common.writeCsvFileAsync(filePath, [], true, undefined, false, true);
+      this._logDiagnostics(`Saved CSV file: ${filePath}.`);
+      return undefined;
+    });
+    await Common.serialExecAsync(writeTasks);
   }
 
   /**
@@ -2596,7 +2669,7 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
 
     this.csvIssues.push(...this._addMissingIdColumnFinalPass(csvTasks));
 
-    await this._saveCachedCsvDataFilesAsync();
+    await this.saveCachedCsvDataFilesAsync();
     this._logCsvIssueSummaryByFile();
     logger.log('csvFilesWereUpdated', String(this.cachedCsvContent.updatedFilenames.size));
 
@@ -3324,59 +3397,6 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
   }
 
   /**
-   * Writes updated CSV files from cache.
-   */
-  private async _saveCachedCsvDataFilesAsync(): Promise<void> {
-    const logger = this._getLogger();
-    const writeTasks = [...this.cachedCsvContent.csvDataCacheMap.entries()].map(([filePath, csvData]) => async () => {
-      const rawPath = this._rawCsvPathBySourcePath.get(filePath);
-      const objectName = this._getObjectNameFromCsvFilename(filePath);
-      const csvRows = [...csvData.values()];
-      const firstRow = csvRows[0];
-      const originalColumns = firstRow ? Object.keys(firstRow) : [];
-      const orderedColumns = originalColumns.length
-        ? Common.orderCsvColumnsWithIdFirstAndErrorsLast(originalColumns)
-        : [];
-      const columnsAlreadyOrdered =
-        originalColumns.length === orderedColumns.length &&
-        originalColumns.every((column, index) => column === orderedColumns[index]);
-      if (firstRow && !columnsAlreadyOrdered) {
-        this.cachedCsvContent.updatedFilenames.add(filePath);
-      }
-
-      const rawExists = rawPath ? await this._pathExistsAsync(rawPath) : false;
-      if (this.cachedCsvContent.updatedFilenames.has(filePath) || !rawExists) {
-        logger.log('writingCsvFile', filePath);
-        if (objectName) {
-          this._logVerboseObject(objectName, `CSV cache written to ${filePath}. Rows=${csvData.size}.`);
-        }
-        if (csvRows.length > 0) {
-          await Common.writeCsvFileAsync(filePath, csvRows, true, orderedColumns, true, true);
-        } else {
-          await Common.writeCsvFileAsync(filePath, [], true, undefined, false, true);
-        }
-        this._logDiagnostics(`Saved CSV file: ${filePath}.`);
-        return undefined;
-      }
-      if (rawPath && rawExists) {
-        if (objectName) {
-          this._logVerboseObject(objectName, `CSV cache unchanged. Copying raw file ${rawPath} to ${filePath}.`);
-        }
-        await fs.copyFile(rawPath, filePath);
-        this._logDiagnostics(`Saved CSV file: ${filePath}.`);
-        return undefined;
-      }
-      if (objectName) {
-        this._logVerboseObject(objectName, `CSV cache empty. Writing empty file ${filePath}.`);
-      }
-      await Common.writeCsvFileAsync(filePath, [], true, undefined, false, true);
-      this._logDiagnostics(`Saved CSV file: ${filePath}.`);
-      return undefined;
-    });
-    await Common.serialExecAsync(writeTasks);
-  }
-
-  /**
    * Removes the CSV issues report file at the start of validation.
    */
   private async _removeCsvIssuesReportAsync(): Promise<void> {
@@ -3637,6 +3657,39 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
     const row = csvRow;
     const idValue = this._getRecordValue(csvRow, columnNameId);
     const refValue = this._getRecordValue(csvRow, columnNameR);
+
+    // If ID is missing but reference value exists, try to resolve from target cache or CSV
+    if (!idValue && refValue && field.parentLookupObject) {
+      const parentObjectName = field.parentLookupObject.name;
+      const isSelfLookup = parentObjectName === task.sObjectName;
+
+      // Try to find parent in target record cache (from previous object set)
+      if (!isSelfLookup && this._targetRecordCache) {
+        const parentRecordMap = this._targetRecordCache.get(parentObjectName);
+        if (parentRecordMap) {
+          const targetParentId = parentRecordMap.get(refValue);
+          if (targetParentId) {
+            row[columnNameId] = targetParentId;
+            this.cachedCsvContent.updatedFilenames.add(this._getSourceCsvFilePath(task));
+            return { resolved: true, reported: false };
+          }
+        }
+      }
+
+      // Try to find parent in CSV cache
+      const parentByRef = parentCsvRowsMap.get(refValue);
+      if (parentByRef) {
+        const expectedId = this._getRecordValue(parentByRef, 'Id');
+        if (expectedId) {
+          row[columnNameId] = expectedId;
+          this.cachedCsvContent.updatedFilenames.add(this._getSourceCsvFilePath(task));
+          return { resolved: true, reported: false };
+        }
+      }
+
+      return { resolved: false, reported: false };
+    }
+
     if (!idValue || !refValue) {
       return { resolved: false, reported: false };
     }
@@ -3729,12 +3782,31 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
       return { addedId: 1, addedReference: 0, createdParents: 0 };
     }
 
+    let parentRow = parentCsvRowsMap.get(desiredExternalIdValue);
+
+    // If parent not in CSV cache, try to find it in target org (from previous object set)
+    if (!parentRow && !isSelfLookup && this._targetRecordCache) {
+      const parentRecordMap = this._targetRecordCache.get(parentObjectName);
+      Common.logger.log(`[DEBUG] Checking target cache for ${parentObjectName}, desiredExtId=${desiredExternalIdValue}`);
+      Common.logger.log(`[DEBUG] Target cache has ${parentObjectName}: ${parentRecordMap ? `yes (${parentRecordMap.size} entries)` : 'no'}`);
+      if (parentRecordMap) {
+        Common.logger.log(`[DEBUG] Cache keys for ${parentObjectName}: ${Array.from(parentRecordMap.keys()).slice(0, 5).join(', ')}`);
+        const targetParentId = parentRecordMap.get(desiredExternalIdValue);
+        Common.logger.log(`[DEBUG] Found targetParentId: ${targetParentId ?? 'null'}`);
+        if (targetParentId) {
+          // Found parent in target org from previous object set - use its real ID
+          row[columnNameId] = targetParentId;
+          addedId = 1;
+          return { addedId, addedReference: 0, createdParents: 0 };
+        }
+      }
+    }
+
     if (!allowGeneratedIds) {
       row[columnNameId] = null;
       return { addedId: 1, addedReference: 0, createdParents: 0 };
     }
 
-    let parentRow = parentCsvRowsMap.get(desiredExternalIdValue);
     if (!parentRow) {
       if (!this.script.excludeIdsFromCSVFiles) {
         issues.push(

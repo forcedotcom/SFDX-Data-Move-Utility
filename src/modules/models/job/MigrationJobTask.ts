@@ -349,6 +349,89 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     return { ...this._lastCrudSummary };
   }
 
+  /**
+   * Tries to resolve a lookup from a parent task in the same object set.
+   *
+   * @param parentTask - Parent task.
+   * @param referenceValue - Reference field value to look up.
+   * @param idField - Lookup field metadata.
+   * @param cloned - Cloned record to update.
+   * @returns True if resolved.
+   */
+  private static _tryResolveFromParentTaskStatic(
+    parentTask: MigrationJobTask,
+    referenceValue: string,
+    idField: SFieldDescribe,
+    cloned: Record<string, unknown>
+  ): boolean {
+    // Look up by external ID: extId -> syntheticId -> record -> targetRecord
+    let syntheticId = parentTask.sourceData.extIdRecordsMap?.get(referenceValue);
+
+    // If not found, try alternate lookup strategies
+    if (!syntheticId) {
+      // Strategy 1: If parent has composite external ID, try looking up by Name field alone
+      if (Common.isComplexField(parentTask.scriptObject.externalId ?? '')) {
+        for (const [recordId, record] of parentTask.sourceData.idRecordsMap.entries()) {
+          if (record.Name === referenceValue) {
+            syntheticId = recordId;
+            break;
+          }
+        }
+      }
+
+      // Strategy 2: If still not found, check if reference value matches any part of composite keys
+      if (!syntheticId && parentTask.sourceData.extIdRecordsMap) {
+        for (const [extId, recordId] of parentTask.sourceData.extIdRecordsMap.entries()) {
+          // If the external ID contains a semicolon (composite), check if reference matches end part
+          if (extId.includes(COMPLEX_FIELDS_SEPARATOR) && extId.endsWith(COMPLEX_FIELDS_SEPARATOR + referenceValue)) {
+            syntheticId = recordId;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!syntheticId) {
+      return false;
+    }
+
+    const parentRecord = parentTask.sourceData.idRecordsMap.get(syntheticId);
+    if (!parentRecord) {
+      return false;
+    }
+
+    const targetRecord = parentTask.sourceToTargetRecordMap.get(parentRecord);
+    const resolvedId = targetRecord ? String(targetRecord['Id'] ?? '') : '';
+    if (!resolvedId) {
+      return false;
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    cloned[idField.nameId] = resolvedId;
+    return true;
+  }
+
+  /**
+   * Retrieves a value from a nested object path.
+   *
+   * @param record - Record to traverse.
+   * @param fieldPath - Dot-separated path (e.g., "Account.Owner.Name").
+   * @returns Value at path or undefined.
+   */
+  private static _getNestedValue(record: Record<string, unknown>, fieldPath: string): unknown {
+    const parts = fieldPath.split('.');
+    let current: unknown = record;
+
+    for (const part of parts) {
+      if (!current || typeof current !== 'object') {
+        return undefined;
+      }
+      current = (current as Record<string, unknown>)[part];
+    }
+
+    return current;
+  }
+
   // ------------------------------------------------------//
   // -------------------- PUBLIC METHODS ----------------- //
   // ------------------------------------------------------//
@@ -1779,15 +1862,18 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
    * @returns External id value or undefined.
    */
   private _getRecordExternalIdValue(record: Record<string, unknown>, fieldName: string): string | undefined {
+    // Try direct value first
     const directValue = this._getRecordFieldValue(record, fieldName);
     if (directValue) {
       return directValue;
     }
 
+    // Handle composite field (contains ";")
     if (!Common.isComplexField(fieldName)) {
       return undefined;
     }
 
+    // Try transformed complex field format
     const complexFieldName = Common.getComplexField(fieldName);
     if (complexFieldName !== fieldName) {
       const complexValue = this._getRecordFieldValue(record, complexFieldName);
@@ -1796,17 +1882,25 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       }
     }
 
+    // Parse composite parts and handle nested paths
     const plainField = Common.getFieldFromComplexField(fieldName);
     const parts = plainField
       .split(COMPLEX_FIELDS_SEPARATOR)
       .map((part) => part.trim())
       .filter((part) => part.length > 0);
+
     const values = parts
-      .map((part) => this._getRecordFieldValue(record, part) ?? '')
+      .map((part) => {
+        // _getRecordFieldValue now handles nested paths automatically
+        const value = this._getRecordFieldValue(record, part);
+        return value ?? '';
+      })
       .filter((value) => value.length > 0);
+
     if (values.length === 0) {
       return undefined;
     }
+
     return values.join(COMPLEX_FIELDS_SEPARATOR);
   }
 
@@ -1819,15 +1913,30 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
    */
   private _getRecordFieldValue(record: Record<string, unknown>, fieldName: string): string | undefined {
     void this;
-    if (!fieldName || !Object.prototype.hasOwnProperty.call(record, fieldName)) {
-      return undefined;
+
+    // Try flat field first (existing logic)
+    if (fieldName && Object.prototype.hasOwnProperty.call(record, fieldName)) {
+      const rawValue = record[fieldName];
+      if (rawValue !== null && typeof rawValue !== 'undefined') {
+        const textValue = String(rawValue);
+        if (textValue.length > 0) {
+          return textValue;
+        }
+      }
     }
-    const rawValue = record[fieldName];
-    if (rawValue === null || typeof rawValue === 'undefined') {
-      return undefined;
+
+    // Try nested path if fieldName contains dots or relationship notation
+    if (fieldName && (fieldName.includes('.') || fieldName.includes('__r'))) {
+      const nestedValue = MigrationJobTask._getNestedValue(record, fieldName);
+      if (nestedValue !== null && typeof nestedValue !== 'undefined') {
+        const textValue = String(nestedValue);
+        if (textValue.length > 0) {
+          return textValue;
+        }
+      }
     }
-    const textValue = String(rawValue);
-    return textValue.length > 0 ? textValue : undefined;
+
+    return undefined;
   }
 
   /**
@@ -2721,23 +2830,102 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       // eslint-disable-next-line no-param-reassign
       cloned[idField.nameId] = null;
       const parentId = this._getRecordFieldValue(source, idField.nameId);
-      if (!parentId) {
-        return;
-      }
       const parentObjectName = idField.parentLookupObject?.name;
       const parentTask = parentObjectName ? this.job.getTaskBySObjectName(parentObjectName) : undefined;
-      const parentRecord = parentTask?.sourceData.idRecordsMap.get(parentId);
-      const targetRecord = parentRecord ? parentTask?.sourceToTargetRecordMap.get(parentRecord) : undefined;
-      const resolvedId = targetRecord ? String(targetRecord['Id'] ?? '') : '';
-      if (resolvedId) {
-        // eslint-disable-next-line no-param-reassign
-        cloned[idField.nameId] = resolvedId;
+      // If parent task doesn't exist in current object set, parent must be from previous set - use target cache
+      if (!parentTask) {
+        if (this._tryResolveFromTargetCache(idField, source, cloned)) {
+          return;
+        }
+        // Couldn't resolve from cache either - report as missing
+        if (parentId && idField.parentLookupObject) {
+          processedData.missingParentLookups.push(this._createMissingParentLookupRecord(idField, source));
+        }
         return;
       }
+      // Parent task exists - try to resolve from it
+      if (parentId) {
+        // We have a parent ID - use it to look up the parent record
+        const parentRecord = parentTask?.sourceData.idRecordsMap.get(parentId);
+        const targetRecord = parentRecord ? parentTask?.sourceToTargetRecordMap.get(parentRecord) : undefined;
+        const resolvedId = targetRecord ? String(targetRecord['Id'] ?? '') : '';
+        if (resolvedId) {
+          // eslint-disable-next-line no-param-reassign
+          cloned[idField.nameId] = resolvedId;
+          return;
+        }
+      }
+      // No parent ID or couldn't resolve - try target cache as fallback
+      if (this._tryResolveFromTargetCache(idField, source, cloned)) {
+        return;
+      }
+      // Still couldn't resolve - report as missing if we had a parent ID
       if (parentId && idField.parentLookupObject) {
         processedData.missingParentLookups.push(this._createMissingParentLookupRecord(idField, source));
       }
     });
+  }
+
+  /**
+   * Tries to resolve a lookup from the target record cache.
+   *
+   * @param idField - Lookup field metadata.
+   * @param source - Source record.
+   * @param cloned - Cloned record to update.
+   * @returns True if resolved.
+   */
+  private _tryResolveFromTargetCache(
+    idField: SFieldDescribe,
+    source: Record<string, unknown>,
+    cloned: Record<string, unknown>
+  ): boolean {
+    // Try to get reference value with multiple strategies
+    let referenceValue = this._getRecordFieldValue(source, idField.fullName__r);
+
+    // Strategy 1: If transformed complex field, try untransformed path
+    if (!referenceValue && Common.isTransformedComplexField(idField.fullName__r)) {
+      const untransformed = Common.untransformComplexField(idField.fullName__r);
+      referenceValue = this._getRecordFieldValue(source, untransformed);
+    }
+
+    // Strategy 2: If not found and fullName__r looks like a complex/composite field, try the simple reference field
+    if (!referenceValue && (Common.isComplexField(idField.fullName__r) || idField.fullName__r.includes('$$'))) {
+      // Try looking for a simpler reference field like "ParentObject__r.Name"
+      const relationshipName = idField.nameId.replace(/c$/, 'r').replace(/Id$/, '');
+      const simpleRefField = `${relationshipName}.Name`;
+      referenceValue = this._getRecordFieldValue(source, simpleRefField);
+    }
+
+    if (!referenceValue || !idField.parentLookupObject) {
+      return false;
+    }
+    const parentObjectName = idField.parentLookupObject.name;
+    const isSelfLookup = parentObjectName === this.sObjectName;
+    if (isSelfLookup) {
+      return false;
+    }
+
+    // First try the parent task if it exists (same object set)
+    const parentTask = this.job.getTaskBySObjectName(parentObjectName);
+    if (parentTask && MigrationJobTask._tryResolveFromParentTaskStatic(parentTask, referenceValue, idField, cloned)) {
+      return true;
+    }
+
+    // If not found in parent task, try target cache (cross object set)
+    if (!this.job.targetRecordCache) {
+      return false;
+    }
+    const parentRecordMap = this.job.targetRecordCache.get(parentObjectName);
+    if (!parentRecordMap) {
+      return false;
+    }
+    const targetParentId = parentRecordMap.get(referenceValue);
+    if (!targetParentId) {
+      return false;
+    }
+    // eslint-disable-next-line no-param-reassign
+    cloned[idField.nameId] = targetParentId;
+    return true;
   }
 
   /**
@@ -3271,6 +3459,12 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     }
 
     this._stripInternalFieldsForDml(records);
+    if (this.sObjectName === 'Opportunity' && operation === OPERATION.Insert && records.length > 0) {
+      const firstRecord = records[0];
+      const fieldNames = Object.keys(firstRecord);
+      Common.logger.log(`[DEBUG] Opportunity Insert - Fields in DML: ${fieldNames.join(', ')}`);
+      Common.logger.log(`[DEBUG] Opportunity Insert - AccountId value: ${String(firstRecord['AccountId'] ?? 'undefined')}`);
+    }
     const processed = await this._executeCrudAsync(
       this.targetData.org,
       this.targetObjectName,

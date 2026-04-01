@@ -229,6 +229,50 @@ describe('Common utilities', () => {
     assert.ok(Common.isComplexOr__rField('$$Account__r.Name$Account__r.Id'));
   });
 
+  it('detects transformed complex fields', () => {
+    // Should detect fields with $$ prefix followed by $
+    assert.ok(Common.isTransformedComplexField('Parent__r.$$Field1$Field2'));
+    assert.ok(Common.isTransformedComplexField('$$Account__r.Name$Account__r.Id'));
+    assert.ok(Common.isTransformedComplexField('Opportunity__r.$$Account__r.Name$Owner.Name'));
+
+    // Should not detect fields without transformed pattern
+    assert.ok(!Common.isTransformedComplexField('Parent__r.Field1.Field2'));
+    assert.ok(!Common.isTransformedComplexField('Account__r.Name'));
+    assert.ok(!Common.isTransformedComplexField('Name'));
+    assert.ok(!Common.isTransformedComplexField(''));
+    assert.ok(!Common.isTransformedComplexField(null as unknown as string));
+    assert.ok(!Common.isTransformedComplexField(undefined as unknown as string));
+  });
+
+  it('untransforms complex fields to dot notation', () => {
+    // Should convert $$ prefix and $ separators to dots
+    assert.equal(Common.untransformComplexField('$$Field1$Field2'), 'Field1.Field2');
+    assert.equal(
+      Common.untransformComplexField('Parent__r.$$Account__r.Name$Owner.Name'),
+      'Parent__r.Account__r.Name.Owner.Name'
+    );
+    assert.equal(
+      Common.untransformComplexField('$$Opportunity__r.Account__r.Name$Owner.Id'),
+      'Opportunity__r.Account__r.Name.Owner.Id'
+    );
+
+    // Should handle fields without transformation
+    assert.equal(Common.untransformComplexField('Parent__r.Field1.Field2'), 'Parent__r.Field1.Field2');
+    assert.equal(Common.untransformComplexField('Account__r.Name'), 'Account__r.Name');
+    assert.equal(Common.untransformComplexField('Name'), 'Name');
+
+    // Should handle edge cases
+    assert.equal(Common.untransformComplexField(''), '');
+    assert.equal(Common.untransformComplexField(null as unknown as string), null);
+    assert.equal(Common.untransformComplexField(undefined as unknown as string), undefined);
+
+    // Should handle complex nested structures
+    assert.equal(
+      Common.untransformComplexField('$$Level1$Level2$Level3$Level4$Level5'),
+      'Level1.Level2.Level3.Level4.Level5'
+    );
+  });
+
   it('matches description properties', () => {
     assert.ok(Common.isDescriptionPropertyMatching('type', 'type'));
     assert.ok(Common.isDescriptionPropertyMatching('type', undefined));

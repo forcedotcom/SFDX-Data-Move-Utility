@@ -805,6 +805,33 @@ export class Common {
   }
 
   /**
+   * Detects if field has been transformed with $$ prefix.
+   *
+   * @param fieldName - Field to check.
+   * @returns True if transformed.
+   */
+  public static isTransformedComplexField(fieldName: string): boolean {
+    return Boolean(fieldName && fieldName.includes(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX));
+  }
+
+  /**
+   * Converts transformed complex field back to original path.
+   * Example: "Parent__r.$$Field1$Field2" → "Parent__r.Field1.Field2"
+   *
+   * @param fieldName - Transformed field.
+   * @returns Original dot-separated path.
+   */
+  public static untransformComplexField(fieldName: string): string {
+    if (!fieldName) {
+      return fieldName;
+    }
+
+    return fieldName
+      .replace(CONSTANTS.COMPLEX_FIELDS_QUERY_PREFIX, '')
+      .replace(new RegExp(`\\${CONSTANTS.COMPLEX_FIELDS_QUERY_SEPARATOR}`, 'g'), '.');
+  }
+
+  /**
    * Reads CSV file from the disk.
    *
    * @param filePath - Full path to the CSV file.

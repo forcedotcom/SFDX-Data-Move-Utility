@@ -2313,3 +2313,165 @@ describe('MigrationJobTask file target output', () => {
     }
   });
 });
+
+describe('MigrationJobTask nested field access', () => {
+  it('resolves single-level nested field values', () => {
+    const getNestedValue = (MigrationJobTask as unknown as {
+      _getNestedValue: (record: Record<string, unknown>, fieldPath: string) => unknown;
+    })._getNestedValue;
+
+    const record = {
+      Account: { Name: 'Acme Corporation' },
+      Id: '001000000000001',
+    };
+
+    assert.equal(getNestedValue(record, 'Account.Name'), 'Acme Corporation');
+    assert.equal(getNestedValue(record, 'Id'), '001000000000001');
+  });
+
+  it('resolves multi-level nested field values', () => {
+    const getNestedValue = (MigrationJobTask as unknown as {
+      _getNestedValue: (record: Record<string, unknown>, fieldPath: string) => unknown;
+    })._getNestedValue;
+
+    /* eslint-disable camelcase */
+    const record = {
+      SBQQ__Opportunity2__r: {
+        Account: {
+          Owner: {
+            Name: 'John Doe',
+            Manager: { Name: 'Jane Smith' },
+          },
+          Name: 'Acme Corporation',
+        },
+        Name: 'Opportunity Alpha',
+      },
+      Id: '001000000000001',
+    };
+    /* eslint-enable camelcase */
+
+    assert.equal(getNestedValue(record, 'SBQQ__Opportunity2__r.Account.Name'), 'Acme Corporation');
+    assert.equal(getNestedValue(record, 'SBQQ__Opportunity2__r.Account.Owner.Name'), 'John Doe');
+    assert.equal(getNestedValue(record, 'SBQQ__Opportunity2__r.Account.Owner.Manager.Name'), 'Jane Smith');
+    assert.equal(getNestedValue(record, 'SBQQ__Opportunity2__r.Name'), 'Opportunity Alpha');
+  });
+
+  it('returns undefined for missing nested paths', () => {
+    const getNestedValue = (MigrationJobTask as unknown as {
+      _getNestedValue: (record: Record<string, unknown>, fieldPath: string) => unknown;
+    })._getNestedValue;
+
+    const record = {
+      Account: { Name: 'Acme' },
+    };
+
+    assert.equal(getNestedValue(record, 'Account.Owner.Name'), undefined);
+    assert.equal(getNestedValue(record, 'MissingField.Name'), undefined);
+    assert.equal(getNestedValue(record, 'Account.MissingField'), undefined);
+  });
+
+  it('handles null and undefined values in nested paths', () => {
+    const getNestedValue = (MigrationJobTask as unknown as {
+      _getNestedValue: (record: Record<string, unknown>, fieldPath: string) => unknown;
+    })._getNestedValue;
+
+    const record = {
+      Account: null,
+      Contact: undefined,
+      Valid: { Name: 'Test' },
+    };
+
+    assert.equal(getNestedValue(record, 'Account.Name'), undefined);
+    assert.equal(getNestedValue(record, 'Contact.Name'), undefined);
+    assert.equal(getNestedValue(record, 'Valid.Name'), 'Test');
+  });
+
+  it('extracts nested field values via _getRecordFieldValue', () => {
+    const { task } = createTaskFixture();
+    const getRecordFieldValue = (task as unknown as {
+      _getRecordFieldValue: (record: Record<string, unknown>, fieldName: string) => string | undefined;
+    })._getRecordFieldValue.bind(task);
+
+    /* eslint-disable camelcase */
+    const record = {
+      Id: '001000000000001',
+      Name: 'Quote Alpha',
+      SBQQ__Opportunity2__r: {
+        Account: {
+          Name: 'Acme Corporation',
+          Owner: { Name: 'John Doe' },
+        },
+      },
+    };
+    /* eslint-enable camelcase */
+
+    // Test flat field access (existing behavior)
+    assert.equal(getRecordFieldValue(record, 'Id'), '001000000000001');
+    assert.equal(getRecordFieldValue(record, 'Name'), 'Quote Alpha');
+
+    // Test nested field access (new behavior)
+    assert.equal(getRecordFieldValue(record, 'SBQQ__Opportunity2__r.Account.Name'), 'Acme Corporation');
+    assert.equal(getRecordFieldValue(record, 'SBQQ__Opportunity2__r.Account.Owner.Name'), 'John Doe');
+
+    // Test missing nested path
+    assert.equal(getRecordFieldValue(record, 'SBQQ__Opportunity2__r.Account.MissingField'), undefined);
+  });
+
+  it('extracts nested external ID values', () => {
+    const { task } = createTaskFixture();
+    const getRecordExternalIdValue = (task as unknown as {
+      _getRecordExternalIdValue: (record: Record<string, unknown>, fieldName: string) => string | undefined;
+    })._getRecordExternalIdValue.bind(task);
+
+    /* eslint-disable camelcase */
+    const record = {
+      Id: '001000000000001',
+      Name: 'Quote Alpha',
+      SBQQ__Opportunity2__r: {
+        Account: {
+          Name: 'Acme Corporation',
+        },
+      },
+    };
+
+    // Test nested external ID
+    assert.equal(getRecordExternalIdValue(record, 'SBQQ__Opportunity2__r.Account.Name'), 'Acme Corporation');
+
+    // Test composite external ID with nested paths
+    const compositeRecord = {
+      SBQQ__Opportunity2__r: {
+        Account: {
+          Name: 'Acme',
+        },
+      },
+      Status__c: 'Active',
+    };
+    /* eslint-enable camelcase */
+
+    assert.equal(
+      getRecordExternalIdValue(compositeRecord, 'SBQQ__Opportunity2__r.Account.Name;Status__c'),
+      'Acme;Active'
+    );
+  });
+
+  it('handles empty and edge case nested paths', () => {
+    const getNestedValue = (MigrationJobTask as unknown as {
+      _getNestedValue: (record: Record<string, unknown>, fieldPath: string) => unknown;
+    })._getNestedValue;
+
+    const record = {
+      Value: 'test',
+      Nested: { Deep: { Value: 123 } },
+    };
+
+    // Single field (no dots)
+    assert.equal(getNestedValue(record, 'Value'), 'test');
+
+    // Deep nesting
+    assert.equal(getNestedValue(record, 'Nested.Deep.Value'), 123);
+
+    // Empty string returns undefined (split returns [''] and record[''] is undefined)
+    const result = getNestedValue(record, '');
+    assert.equal(result, undefined);
+  });
+});

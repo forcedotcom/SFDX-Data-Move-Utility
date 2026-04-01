@@ -189,4 +189,191 @@ describe('OrgMetadataProvider', () => {
       OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
     }
   });
+
+  it('accepts target record cache in options for cross-object-set lookups', async () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    sourceOrg.script = script;
+    script.sourceOrg = sourceOrg;
+
+    // Create a target record cache
+    const targetCache = new Map<string, Map<string, string>>();
+    const accountCache = new Map<string, string>();
+    accountCache.set('Acme Corporation', '001000000000001AAA');
+    accountCache.set('Beta Industries', '001000000000002AAA');
+    targetCache.set('Account', accountCache);
+
+    const describe = createDescribeStub();
+    const connection = createConnectionStub(describe, []);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => connection as never;
+
+    try {
+      const provider = new OrgMetadataProvider({
+        script,
+        caches: { targetRecordCache: targetCache },
+      });
+
+      // Verify the provider was created successfully
+      const result = await provider.describeSObjectAsync('Account', true);
+      assert.equal(result.name, 'Account');
+
+      // Verify the cache is still accessible (passed by reference)
+      assert.equal(targetCache.size, 1);
+      assert.ok(targetCache.has('Account'));
+      assert.equal(targetCache.get('Account')?.get('Acme Corporation'), '001000000000001AAA');
+    } finally {
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+    }
+  });
+
+  it('accepts multiple cache types together including target record cache', async () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    sourceOrg.script = script;
+    script.sourceOrg = sourceOrg;
+
+    const targetOrg = new ScriptOrg();
+    targetOrg.name = 'target';
+    targetOrg.media = DATA_MEDIA_TYPE.Org;
+    targetOrg.script = script;
+    script.targetOrg = targetOrg;
+
+    // Create all cache types
+    const sourceDescribeCache = new Map();
+    const targetDescribeCache = new Map();
+    const polymorphicCache = new Map();
+    const targetRecordCache = new Map<string, Map<string, string>>();
+
+    // Populate target record cache with sample data
+    const accountCache = new Map<string, string>();
+    accountCache.set('Account-001', '001000000000001AAA');
+    targetRecordCache.set('Account', accountCache);
+
+    const contactCache = new Map<string, string>();
+    contactCache.set('Contact-001', '003000000000001AAA');
+    targetRecordCache.set('Contact', contactCache);
+
+    const describe = createDescribeStub();
+    const connection = createConnectionStub(describe, []);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => connection as never;
+
+    try {
+      const provider = new OrgMetadataProvider({
+        script,
+        caches: {
+          sourceDescribeCache,
+          targetDescribeCache,
+          polymorphicCache,
+          targetRecordCache,
+        },
+      });
+
+      // Verify provider works with all caches
+      const result = await provider.describeSObjectAsync('Account', true);
+      assert.equal(result.name, 'Account');
+
+      // Verify target record cache is accessible
+      assert.equal(targetRecordCache.size, 2);
+      assert.ok(targetRecordCache.has('Account'));
+      assert.ok(targetRecordCache.has('Contact'));
+      assert.equal(targetRecordCache.get('Account')?.get('Account-001'), '001000000000001AAA');
+      assert.equal(targetRecordCache.get('Contact')?.get('Contact-001'), '003000000000001AAA');
+    } finally {
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+    }
+  });
+
+  it('creates provider without target record cache when not provided', async () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    sourceOrg.script = script;
+    script.sourceOrg = sourceOrg;
+
+    const describe = createDescribeStub();
+    const connection = createConnectionStub(describe, []);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => connection as never;
+
+    try {
+      // Create provider without cache options
+      const provider = new OrgMetadataProvider({ script });
+
+      // Verify provider works without caches
+      const result = await provider.describeSObjectAsync('Account', true);
+      assert.equal(result.name, 'Account');
+      assert.ok(result.fieldsMap.has('Name'));
+    } finally {
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+    }
+  });
+
+  it('supports target record cache with nested external ID values', async () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    sourceOrg.script = script;
+    script.sourceOrg = sourceOrg;
+
+    // Create cache with nested lookup values (simulating multi-level external IDs)
+    const targetCache = new Map<string, Map<string, string>>();
+
+    // Account cache (first object set)
+    const accountCache = new Map<string, string>();
+    accountCache.set('Acme Corporation', '001000000000001AAA');
+    targetCache.set('Account', accountCache);
+
+    // Opportunity cache (second object set, using Account.Name as external ID)
+    const opportunityCache = new Map<string, string>();
+    opportunityCache.set('Acme Corporation', '006000000000001AAA'); // externalId = Account.Name
+    targetCache.set('Opportunity', opportunityCache);
+
+    /* eslint-disable camelcase */
+    // Quote cache (third object set, using Opportunity.Account.Name as external ID)
+    const quoteCache = new Map<string, string>();
+    quoteCache.set('Acme Corporation', '0Q6000000000001AAA'); // externalId = SBQQ__Opportunity2__r.Account.Name
+    targetCache.set('SBQQ__Quote__c', quoteCache);
+    /* eslint-enable camelcase */
+
+    const describe = createDescribeStub();
+    const connection = createConnectionStub(describe, []);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => connection as never;
+
+    try {
+      const provider = new OrgMetadataProvider({
+        script,
+        caches: { targetRecordCache: targetCache },
+      });
+
+      // Verify provider created successfully
+      const result = await provider.describeSObjectAsync('Account', true);
+      assert.equal(result.name, 'Account');
+
+      // Verify multi-level cache structure
+      assert.equal(targetCache.size, 3);
+      assert.ok(targetCache.has('Account'));
+      assert.ok(targetCache.has('Opportunity'));
+      assert.ok(targetCache.has('SBQQ__Quote__c'));
+
+      // Verify nested external ID resolution
+      const accountId = targetCache.get('Account')?.get('Acme Corporation');
+      const oppId = targetCache.get('Opportunity')?.get('Acme Corporation');
+      const quoteId = targetCache.get('SBQQ__Quote__c')?.get('Acme Corporation');
+
+      assert.equal(accountId, '001000000000001AAA');
+      assert.equal(oppId, '006000000000001AAA');
+      assert.equal(quoteId, '0Q6000000000001AAA');
+    } finally {
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+    }
+  });
 });

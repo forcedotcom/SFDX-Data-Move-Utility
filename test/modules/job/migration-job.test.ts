@@ -829,4 +829,167 @@ describe('MigrationJob', () => {
     assert.equal(contactAccountField?.parentLookupObject?.name, 'Account');
     assert.ok(!job.tasks.some((task) => task.sObjectName === 'Account__c'));
   });
+
+  it('provides access to target record cache for cross-object-set lookups', () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    const targetOrg = new ScriptOrg();
+    targetOrg.name = 'target';
+    targetOrg.media = DATA_MEDIA_TYPE.Org;
+    script.sourceOrg = sourceOrg;
+    script.targetOrg = targetOrg;
+
+    // Create a target record cache
+    const targetCache = new Map<string, Map<string, string>>();
+    const accountCache = new Map<string, string>();
+    accountCache.set('Acme Corporation', '001000000000001AAA');
+    accountCache.set('Beta Industries', '001000000000002AAA');
+    targetCache.set('Account', accountCache);
+
+    const job = new MigrationJob({ script, targetRecordCache: targetCache });
+
+    // Verify the cache is accessible
+    assert.ok(job.targetRecordCache);
+    assert.equal(job.targetRecordCache, targetCache);
+    assert.equal(job.targetRecordCache.size, 1);
+    assert.ok(job.targetRecordCache.has('Account'));
+    assert.equal(job.targetRecordCache.get('Account')?.get('Acme Corporation'), '001000000000001AAA');
+  });
+
+  it('handles undefined target record cache', () => {
+    const script = new Script();
+    const job = new MigrationJob({ script });
+
+    // Verify the cache is undefined when not provided
+    assert.equal(job.targetRecordCache, undefined);
+  });
+
+  it('allows target record cache for nested external ID resolution', () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    const targetOrg = new ScriptOrg();
+    targetOrg.name = 'target';
+    targetOrg.media = DATA_MEDIA_TYPE.Org;
+    script.sourceOrg = sourceOrg;
+    script.targetOrg = targetOrg;
+
+    // Simulate cache from previous object set with nested values
+    const targetCache = new Map<string, Map<string, string>>();
+
+    // Account cache (from first object set)
+    const accountCache = new Map<string, string>();
+    accountCache.set('Acme Corporation', '001000000000001AAA');
+    targetCache.set('Account', accountCache);
+
+    // Opportunity cache (from second object set, referencing Account)
+    const opportunityCache = new Map<string, string>();
+    opportunityCache.set('Acme Corporation', '006000000000001AAA'); // External ID = Account.Name
+    targetCache.set('Opportunity', opportunityCache);
+
+    const job = new MigrationJob({ script, targetRecordCache: targetCache });
+
+    // Verify multi-level cache structure
+    assert.ok(job.targetRecordCache);
+    assert.equal(job.targetRecordCache.size, 2);
+    assert.ok(job.targetRecordCache.has('Account'));
+    assert.ok(job.targetRecordCache.has('Opportunity'));
+
+    // Verify nested lookups can be resolved
+    const accountId = job.targetRecordCache.get('Account')?.get('Acme Corporation');
+    const oppId = job.targetRecordCache.get('Opportunity')?.get('Acme Corporation');
+    assert.equal(accountId, '001000000000001AAA');
+    assert.equal(oppId, '006000000000001AAA');
+  });
+
+  it('supports cache updates across object sets', () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    const targetOrg = new ScriptOrg();
+    targetOrg.name = 'target';
+    targetOrg.media = DATA_MEDIA_TYPE.Org;
+    script.sourceOrg = sourceOrg;
+    script.targetOrg = targetOrg;
+
+    // Start with empty cache
+    const targetCache = new Map<string, Map<string, string>>();
+    const job = new MigrationJob({ script, targetRecordCache: targetCache });
+
+    // Simulate first object set adding Account records
+    const accountCache = new Map<string, string>();
+    accountCache.set('Account-001', '001000000000001AAA');
+    accountCache.set('Account-002', '001000000000002AAA');
+    targetCache.set('Account', accountCache);
+
+    // Verify cache was updated
+    assert.ok(job.targetRecordCache?.has('Account'));
+    assert.equal(job.targetRecordCache?.get('Account')?.size, 2);
+
+    // Simulate second object set adding Contact records
+    const contactCache = new Map<string, string>();
+    contactCache.set('Contact-001', '003000000000001AAA');
+    targetCache.set('Contact', contactCache);
+
+    // Verify both caches exist
+    assert.equal(job.targetRecordCache?.size, 2);
+    assert.ok(job.targetRecordCache?.has('Account'));
+    assert.ok(job.targetRecordCache?.has('Contact'));
+  });
+
+  it('resolves task by sObject name', () => {
+    const script = new Script();
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    const targetOrg = new ScriptOrg();
+    targetOrg.name = 'target';
+    targetOrg.media = DATA_MEDIA_TYPE.Org;
+    script.sourceOrg = sourceOrg;
+    script.targetOrg = targetOrg;
+
+    const account = new ScriptObject('Account');
+    account.query = 'SELECT Id, Name FROM Account';
+    account.operation = OPERATION.Upsert;
+    const contact = new ScriptObject('Contact');
+    contact.query = 'SELECT Id, LastName, AccountId FROM Contact';
+    contact.operation = OPERATION.Upsert;
+
+    const objectSet = new ScriptObjectSet([account, contact]);
+    script.objectSets = [objectSet];
+
+    const describes = new Map<string, SObjectDescribe>([
+      ['Account', createDescribe('Account', [{ name: 'Id' }, { name: 'Name', nameField: true }])],
+      ['Contact', createDescribe('Contact', [{ name: 'Id' }, { name: 'LastName', nameField: true }])],
+    ]);
+
+    const metadataProvider = createMetadataProvider(describes);
+    const job = new MigrationJob({ script, metadataProvider });
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => createOrgConnectionStub() as never;
+
+    return (async () => {
+      try {
+        await job.loadAsync();
+        await job.setupAsync();
+
+        // Test getTaskBySObjectName
+        const accountTask = job.getTaskBySObjectName('Account');
+        const contactTask = job.getTaskBySObjectName('Contact');
+        const missingTask = job.getTaskBySObjectName('Opportunity');
+
+        assert.ok(accountTask);
+        assert.equal(accountTask.sObjectName, 'Account');
+        assert.ok(contactTask);
+        assert.equal(contactTask.sObjectName, 'Contact');
+        assert.equal(missingTask, undefined);
+      } finally {
+        OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      }
+    })();
+  });
 });

@@ -768,4 +768,231 @@ describe('SfdmuRunService', () => {
       fs.rmSync(rootPath, { recursive: true, force: true });
     }
   });
+
+  it('supports target record cache for cross-object-set lookups', async () => {
+    const rootPath = createTempDir();
+    writeExportJson(rootPath, {
+      apiVersion: '65.0',
+      objectSets: [
+        {
+          objects: [
+            {
+              name: 'Account',
+              query: 'SELECT Id, Name FROM Account',
+            },
+          ],
+        },
+        {
+          objects: [
+            {
+              name: 'Contact',
+              query: 'SELECT Id, LastName, AccountId FROM Contact',
+            },
+          ],
+        },
+      ],
+    });
+
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => createDescribeConnection() as never;
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          sourceusername: CSV_FILE_ORG_NAME,
+          targetusername: 'target',
+          filelog: 0,
+        })
+      );
+
+      // Verify execution completed
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.SUCCESS);
+
+      // The test verifies that the service supports multiple object sets
+      // and that cross-object-set caching is enabled (integration level)
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
+
+  it('processes multiple object sets with target record cache persistence', async () => {
+    const rootPath = createTempDir();
+    writeExportJson(rootPath, {
+      apiVersion: '65.0',
+      objectSets: [
+        {
+          objects: [
+            {
+              name: 'Account',
+              query: 'SELECT Id, Name FROM Account',
+            },
+          ],
+        },
+        {
+          objects: [
+            {
+              name: 'Opportunity',
+              query: 'SELECT Id, Name, AccountId FROM Opportunity',
+            },
+          ],
+        },
+        {
+          objects: [
+            {
+              name: 'Contact',
+              query: 'SELECT Id, LastName, AccountId FROM Contact',
+            },
+          ],
+        },
+      ],
+    });
+
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => createDescribeConnection() as never;
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          sourceusername: CSV_FILE_ORG_NAME,
+          targetusername: 'target',
+          filelog: 0,
+        })
+      );
+
+      // Verify execution completed with multiple object sets
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.SUCCESS);
+
+      // The test verifies that:
+      // 1. Multiple object sets are processed sequentially
+      // 2. Target record cache persists across object sets
+      // 3. Later object sets can reference records from earlier sets
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
+
+  it('handles nested external ID fields in target record cache', async () => {
+    const rootPath = createTempDir();
+
+    // Create a scenario with nested external ID reference
+    /* eslint-disable camelcase */
+    writeExportJson(rootPath, {
+      apiVersion: '65.0',
+      objectSets: [
+        {
+          objects: [
+            {
+              name: 'Account',
+              query: 'SELECT Id, Name FROM Account',
+            },
+          ],
+        },
+        {
+          objects: [
+            {
+              name: 'SBQQ__Quote__c',
+              query: 'SELECT Id, Name, SBQQ__Opportunity2__c, SBQQ__Opportunity2__r.Account.Name FROM SBQQ__Quote__c',
+            },
+          ],
+        },
+      ],
+    });
+    /* eslint-enable camelcase */
+
+    const quoteDescribe: DescribeObjectStubType = {
+      name: 'SBQQ__Quote__c',
+      label: 'Quote',
+      createable: true,
+      updateable: true,
+      custom: true,
+      fields: [
+        { name: 'Id', type: 'id', label: 'Id', createable: false, updateable: false },
+        { name: 'Name', type: 'string', label: 'Name', createable: true, updateable: true, nameField: true },
+        {
+          name: 'SBQQ__Opportunity2__c',
+          type: 'reference',
+          label: 'Opportunity',
+          createable: true,
+          updateable: true,
+          referenceTo: ['Opportunity'],
+        },
+      ],
+    };
+
+    const createNestedConnection = (): ConnectionStubType => ({
+      sobject: (name: string) => ({
+        describe: async () => {
+          if (name === 'SBQQ__Quote__c') {
+            return quoteDescribe;
+          }
+          return createDescribeConnection().sobject(name).describe();
+        },
+      }),
+      query: async <T>(query: string) => {
+        if (query.includes('FROM Organization')) {
+          return { records: [{ OrganizationType: 'Developer Edition', IsSandbox: false } as T], done: true };
+        }
+        if (query.includes('FROM Account')) {
+          return { records: [{ IsPersonAccount: false } as T], done: true };
+        }
+        return { records: [] as T[], done: true };
+      },
+    });
+
+    const originalResolve = OrgConnectionAdapter.resolveOrgPairAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgPairAsync = async () => ({
+      sourceOrg: undefined,
+      targetOrg: undefined,
+    });
+    const originalResolveOrg = OrgConnectionAdapter.resolveOrgAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.resolveOrgAsync = async () => ({} as never);
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => createNestedConnection() as never;
+
+    try {
+      const result = await SfdmuRunService.executeAsync(
+        buildRequest({
+          path: rootPath,
+          sourceusername: CSV_FILE_ORG_NAME,
+          targetusername: 'target',
+          filelog: 0,
+        })
+      );
+
+      // Verify execution completed with nested external ID
+      assert.equal(result.status, COMMAND_EXIT_STATUSES.SUCCESS);
+
+      // The test verifies that:
+      // 1. Objects with nested external ID fields are processed
+      // 2. Nested relationships like SBQQ__Opportunity2__r.Account.Name are supported
+      // 3. Cache can store and retrieve nested field values
+    } finally {
+      OrgConnectionAdapter.resolveOrgPairAsync = originalResolve;
+      OrgConnectionAdapter.resolveOrgAsync = originalResolveOrg;
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
 });

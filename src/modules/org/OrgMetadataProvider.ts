@@ -53,6 +53,7 @@ export type OrgMetadataCacheType = {
   sourceDescribeCache?: Map<string, SObjectDescribe>;
   targetDescribeCache?: Map<string, SObjectDescribe>;
   polymorphicCache?: Map<string, string[]>;
+  targetRecordCache?: Map<string, Map<string, string>>;
 };
 
 type OrgMetadataProviderOptionsType = {
