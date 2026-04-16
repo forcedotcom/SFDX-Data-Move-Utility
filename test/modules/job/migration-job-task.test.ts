@@ -72,6 +72,31 @@ const createTaskFixture = (): TaskFixtureType => {
 
 const createMap = (pairs: Array<[string, string]>): LookupIdMapType => new Map(pairs);
 
+describe('MigrationJobTask relationship external id matching', () => {
+  it('links target records by nested relationship external id values', () => {
+    const { task } = createTaskFixture();
+    task.scriptObject.externalId = 'Account__r.Name';
+
+    const sourceRecord: Record<string, unknown> = {
+      Id: 'a1B000000000001AAA',
+      'Account__r.Name': 'Acme Corp',
+    };
+    const targetRecord: Record<string, unknown> = {
+      Id: 'a1B000000000002AAA',
+      'Account__r': {
+        Name: 'Acme Corp',
+      },
+    };
+
+    task.registerRecords([sourceRecord], task.sourceData, false);
+    task.registerRecords([targetRecord], task.targetData, true);
+
+    assert.equal(task.sourceData.extIdToRecordIdMap.get('Acme Corp'), 'a1B000000000001AAA');
+    assert.equal(task.targetData.extIdToRecordIdMap.get('Acme Corp'), 'a1B000000000002AAA');
+    assert.equal(task.sourceToTargetRecordMap.get(sourceRecord), targetRecord);
+  });
+});
+
 describe('MigrationJobTask field capability warnings', () => {
   it('warns only for explicit update query fields that are not updateable', () => {
     const originalLogger = Common.logger;

@@ -1818,16 +1818,67 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
    * @returns Field value or undefined.
    */
   private _getRecordFieldValue(record: Record<string, unknown>, fieldName: string): string | undefined {
-    void this;
     if (!fieldName || !Object.prototype.hasOwnProperty.call(record, fieldName)) {
+      return this._getNestedRecordFieldValue(record, fieldName);
+    }
+    return this._normalizeRecordFieldValue(record[fieldName]);
+  }
+
+  /**
+   * Reads a nested record field value using a dotted relationship path.
+   *
+   * @param record - Record to inspect.
+   * @param fieldName - Dotted field path.
+   * @returns Field value or undefined.
+   */
+  private _getNestedRecordFieldValue(record: Record<string, unknown>, fieldName: string): string | undefined {
+    if (!fieldName.includes('.')) {
       return undefined;
     }
-    const rawValue = record[fieldName];
+
+    let currentValue: unknown = record;
+    const pathParts = fieldName
+      .split('.')
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0);
+    if (pathParts.length < 2) {
+      return undefined;
+    }
+
+    for (const pathPart of pathParts) {
+      if (!this._isRecordLike(currentValue) || !Object.prototype.hasOwnProperty.call(currentValue, pathPart)) {
+        return undefined;
+      }
+      currentValue = currentValue[pathPart];
+    }
+
+    return this._normalizeRecordFieldValue(currentValue);
+  }
+
+  /**
+   * Converts a raw record value to a non-empty string.
+   *
+   * @param rawValue - Raw value.
+   * @returns Normalized text value or undefined.
+   */
+  private _normalizeRecordFieldValue(rawValue: unknown): string | undefined {
+    void this;
     if (rawValue === null || typeof rawValue === 'undefined') {
       return undefined;
     }
     const textValue = String(rawValue);
     return textValue.length > 0 ? textValue : undefined;
+  }
+
+  /**
+   * Determines whether a value can be traversed as a record object.
+   *
+   * @param value - Value to inspect.
+   * @returns True when the value is a plain record-like object.
+   */
+  private _isRecordLike(value: unknown): value is Record<string, unknown> {
+    void this;
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
   }
 
   /**
