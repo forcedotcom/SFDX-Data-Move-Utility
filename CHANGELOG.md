@@ -1,3 +1,12 @@
+## [5.6.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.3...5.6.4) (2026-04-16)
+
+
+### Bug Fixes
+
+* match relationship externalId values from nested records ([50be987](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/50be98755ffee668f358192ca2e6ab6e668bc556))
+
+
+
 ## [5.6.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.2...5.6.3) (2026-03-05)
 
 
