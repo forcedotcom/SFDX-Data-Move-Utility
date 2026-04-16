@@ -1,3 +1,14 @@
+## [5.6.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.3...5.6.4) (2026-04-16)
+
+###### Fixes:
+
+- Fixed upsert matching for relationship external IDs such as `Account__r.Name` when the source is `csvfile` and the target org returns the parent relationship as a nested Salesforce API object. Existing target child records are now matched and updated instead of being treated as new inserts.
+
+**See the related articles:**
+
+- [ScriptObject Object - externalId](https://help.sfdmu.com/full-documentation/export-json-file-objects-specification/script-object-object#externalid-string)
+- [Composite External Id Keys](https://help.sfdmu.com/full-documentation/advanced-features/composite-external-id-keys)
+
 ## [5.6.3](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.2...5.6.3) (2026-03-05)
 
 ###### Fixes:
