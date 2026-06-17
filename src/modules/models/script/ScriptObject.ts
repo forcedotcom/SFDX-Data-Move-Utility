@@ -556,11 +556,13 @@ export default class ScriptObject {
    * @returns Expanded original query fields.
    */
   public get expandedOriginalQueryFields(): string[] {
+    const excluded = this._getExcludedQueryFields(false);
     const baseFields = [...this._originalFieldsInQuery];
     const expanded = this._expandCompoundFieldNames(baseFields);
     const describe = this.sourceSObjectDescribe ?? this.targetSObjectDescribe;
     const multiselectFields = describe ? this._resolveMultiselectFieldNames(describe) : [];
-    return Common.distinctStringArray([...expanded, ...multiselectFields]);
+    const all = Common.distinctStringArray([...expanded, ...multiselectFields]);
+    return all.filter((f) => !excluded.has(f.toLowerCase()));
   }
 
   /**
