@@ -78,7 +78,7 @@
   }
 
   async function loadSearchDataAsync() {
-    const indexVersion = document.documentElement.dataset.searchIndexVersion || '1783023447110';
+    const indexVersion = document.documentElement.dataset.searchIndexVersion || '1783024423015';
     const response = await fetch(root + 'search-index.json?v=' + encodeURIComponent(indexVersion), {
       cache: 'no-store',
     });
