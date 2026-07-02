@@ -13,25 +13,25 @@ The **SFDX Data Move Utility (SFDMU)** is an advanced SF CLI plugin designed to 
 This powerful tool supports migration from other Salesforce orgs or CSV files and efficiently manages various data operations, enabling the migration of **multiple related sObjects in a single run**.
 
 - **[SFDMU GUI Desktop Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **A straightforward and intuitive application for creating, managing, and executing data migrations.**
-- [**SFDMU Help Center:**](https://help.sfdmu.com/) Comprehensive documentation available.
-- [**User Support Policy:**](https://help.sfdmu.com/full-documentation/additional-information/support_policy) **Review guidelines before opening support cases.**
-- [**Contribution Policy:**](https://help.sfdmu.com/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
+- [**SFDMU Help Center:**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/) Comprehensive documentation available.
+- [**User Support Policy:**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/additional-information/support_policy) **Review guidelines before opening support cases.**
+- [**Contribution Policy:**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
 
 ## Version Notice
 
 We recently released a **new improved v5 version of the SFDMU plugin**, built on the latest **SF CLI plugin architecture** and including the latest available security updates. We recommend using the latest available plugin version.
 If it does not work correctly in your environment yet, temporarily roll back to **v4.39.0**.
 SFDMU is supported as an **SF CLI plugin** (`sf sfdmu run`).
-Full migration guidance is available on [**Get Started**](https://help.sfdmu.com/get-started).
+Full migration guidance is available on [**Get Started**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/get-started).
 
 ## Key Features:
 
 - **Comprehensive Migration Support:** Enables direct Org-to-Org data migration, eliminating the need for CSV intermediates, and supports CRUD operations: Insert, Upsert, Update, Delete.
-- **Multiple Objects and Relationships:** Manages migrations involving multiple object sets and handles complex relationships, including [circular references](https://help.sfdmu.com/examples/basic-examples#example-1-handling-circular-references).
-- **Ease of Use:** Simplifies the configuration process with a [single export.json file](https://help.sfdmu.com/full-configuration).
+- **Multiple Objects and Relationships:** Manages migrations involving multiple object sets and handles complex relationships, including [circular references](https://forcedotcom.github.io/SFDX-Data-Move-Utility/examples/basic-examples#example-1-handling-circular-references).
+- **Ease of Use:** Simplifies the configuration process with a [single export.json file](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-configuration).
 - **Secure and Local:** Ensures data security as all operations are performed locally without cloud interactions.
 - **High Performance:** Optimizes processing by focusing on necessary data subsets.
-- **Extended Functionality:** Provides advanced features such as [custom field mapping](https://help.sfdmu.com/full-documentation/advanced-features/fields-mapping), [data anonymization](https://help.sfdmu.com/full-documentation/advanced-features/data-anonymization), and supports [composite external ID keys](https://help.sfdmu.com/full-documentation/advanced-features/composite-external-id-keys) among others.
+- **Extended Functionality:** Provides advanced features such as [custom field mapping](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/advanced-features/fields-mapping), [data anonymization](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/advanced-features/data-anonymization), and supports [composite external ID keys](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/advanced-features/composite-external-id-keys) among others.
 
 ## Installation Instructions:
 
@@ -76,7 +76,7 @@ Full migration guidance is available on [**Get Started**](https://help.sfdmu.com
 
    Attach the full generated `.log` file, your `export.json`, and related CSV samples.
    `--anonymise` hashes sensitive values in `.log` files before sharing.
-   Full masking list: [Log File Management in Plugin Migrations](https://help.sfdmu.com/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not).
+   Full masking list: [Log File Management in Plugin Migrations](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not).
 
 ## For Developers:
 
@@ -103,11 +103,11 @@ $ ./sfdmu-run-debug.cmd --sourceusername source@mail.com --targetusername target
 
 In VSCode, enable `Node Debug -> Auto Attach` (`On`) and set `Use Preview Auto Attach` to `Off`.
 
-For detailed debugging guidance, see [**Debugging Steps**](https://help.sfdmu.com/debugging).
+For detailed debugging guidance, see [**Debugging Steps**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/debugging).
 
 ## Migration Configuration:
 
-Set up a migration job by creating an `export.json` file with specific data models and operations, as detailed in the [Full export.json Format Guide](https://help.sfdmu.com/full-configuration).
+Set up a migration job by creating an `export.json` file with specific data models and operations, as detailed in the [Full export.json Format Guide](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-configuration).
 
 Here is a basic `export.json` example for upserting Accounts and their related Contacts, assuming a unique Name for Accounts and a unique LastName for Contacts across source and target orgs:
 
@@ -129,7 +129,7 @@ Here is a basic `export.json` example for upserting Accounts and their related C
 }
 ```
 
-For full object model details, advanced parameters, and edge cases, use: [**Get Started**](https://help.sfdmu.com/get-started) and [**Detailed export.json Format**](https://help.sfdmu.com/full-configuration).
+For full object model details, advanced parameters, and edge cases, use: [**Get Started**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/get-started) and [**Detailed export.json Format**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-configuration).
 
 ## Migration Execution:
 
@@ -158,13 +158,13 @@ When importing or exporting from/to CSV files, ensure that the files are located
 
 ## Documentation Links:
 
-- [**Getting Started**](https://help.sfdmu.com/get-started)
-- [**Installation Guide**](https://help.sfdmu.com/installation)
-- [**Configuration Tips**](https://help.sfdmu.com/configuration)
-- [**How to Run Migrations**](https://help.sfdmu.com/running)
-- [**Debugging Steps**](https://help.sfdmu.com/debugging)
-- [**Detailed export.json Format**](https://help.sfdmu.com/full-configuration)
-- [**SFDMU GUI Application Detailed Documentation**](https://help.sfdmu.com/sfdmu-gui-app)
+- [**Getting Started**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/get-started)
+- [**Installation Guide**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/installation)
+- [**Configuration Tips**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/configuration)
+- [**How to Run Migrations**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/running)
+- [**Debugging Steps**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/debugging)
+- [**Detailed export.json Format**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-configuration)
+- [**SFDMU GUI Application Detailed Documentation**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/sfdmu-gui-app)
 
 ## Additional Notes
 
