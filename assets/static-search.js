@@ -78,7 +78,10 @@
   }
 
   async function loadSearchDataAsync() {
-    const response = await fetch(root + 'search-index.json');
+    const indexVersion = document.documentElement.dataset.searchIndexVersion || '1783023147580';
+    const response = await fetch(root + 'search-index.json?v=' + encodeURIComponent(indexVersion), {
+      cache: 'no-store',
+    });
 
     if (!response.ok) {
       throw new Error('Cannot load search-index.json');
@@ -193,7 +196,7 @@
         category +
         '</a>' +
         '</h2>' +
-        '<div class="page-excerpt">' + highlightExcerpt(page.excerpt || page.text || '', query) + '</div>' +
+        '<div class="page-excerpt">' + highlightExcerpt(stripSearchNoise(page.excerpt || page.text || ''), query) + '</div>' +
         '</div>';
     }).join('');
   }
@@ -215,6 +218,13 @@
   function sanitizeQuery(query) {
     return String(query)
       .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function stripSearchNoise(value) {
+    return String(value)
+      .replace(/\[TOC[^\]]*]\s*/gim, ' ')
       .replace(/\s+/g, ' ')
       .trim();
   }
