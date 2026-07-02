@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Data Anonymization | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Data Anonymization | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,13 +255,58 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#feature-configuration">Feature Configuration</a></li><li><a href="#example-configuration">Example Configuration</a></li><li><a href="#detailed-mockfield-object-configuration">Detailed MockField Object Configuration</a></li><li><a href="#most-common-anonymization-patterns">Most Common Anonymization Patterns</a></li><li class="toc-child"><a href="#address">Address</a></li><li class="toc-child"><a href="#personal-information">Personal Information</a></li><li class="toc-child"><a href="#text">Text</a></li><li class="toc-child"><a href="#internet">Internet</a></li><li class="toc-child"><a href="#numbers-and-dates">Numbers and Dates</a></li><li><a href="#special-anonymization-functions-and-patterns">Special Anonymization Functions and Patterns</a></li><li class="toc-child"><a href="#1-cseqnumber-prefix-from-step">1. cseqnumber(prefix, from, step)</a></li><li class="toc-child"><a href="#2-cseqdate-from-step">2. cseqdate(from, step)</a></li><li class="toc-child"><a href="#3-csetvalue-value">3. csetvalue(value)</a></li><li class="toc-child"><a href="#4-ids">4. ids</a></li><li class="toc-child"><a href="#rawvalue-keyword">RAWVALUE Keyword</a></li><li><a href="#special-regex-expressions">Special Regex Expressions</a></li><li><a href="#full-list-of-available-patterns">Full List of Available Patterns</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#feature-configuration">Feature Configuration</a></li>
+<li><a href="#example-configuration">Example Configuration</a></li>
+<li><a href="#detailed-mockfield-object-configuration">Detailed MockField Object Configuration</a></li>
+<li><a href="#most-common-anonymization-patterns">Most Common Anonymization Patterns</a><ul>
+<li><a href="#address">Address</a></li>
+<li><a href="#personal-information">Personal Information</a></li>
+<li><a href="#text">Text</a></li>
+<li><a href="#internet">Internet</a></li>
+<li><a href="#numbers-and-dates">Numbers and Dates</a></li>
+</ul></li>
+<li><a href="#special-anonymization-functions-and-patterns">Special Anonymization Functions and Patterns</a><ul>
+<li><a href="#1-cseqnumber-prefix-from-step">1. <strong><code>c_seq_number(prefix, from, step)</code></strong></a></li>
+<li><a href="#2-cseqdate-from-step">2. <strong><code>c_seq_date(from, step)</code></strong></a></li>
+<li><a href="#3-csetvalue-value">3. <strong><code>c_set_value(value)</code></strong></a></li>
+<li><a href="#4-ids">4. <strong><code>ids</code></strong></a></li>
+<li><a href="#rawvalue-keyword">RAW_VALUE Keyword</a></li>
+</ul></li>
+<li><a href="#special-regex-expressions">Special Regex Expressions</a></li>
+<li><a href="#full-list-of-available-patterns">Full List of Available Patterns</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>: This feature is designed to allow developers to test applications in environments that simulate production settings without exposing sensitive data. </p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>: This feature is designed to allow developers to test applications in environments that simulate production settings without exposing sensitive data. </p>
 <p>It supports the substitution of real record values with anonymized, fake ones in the target environment.</p>
-<h2 id="feature-configuration">Feature Configuration<a class="heading-anchor" href="#feature-configuration" aria-label="Link to section">#</a></h2><p>Developers can define which fields within the <code>SObject</code> should have their real values replaced with fake data, and the specific patterns for generating these fake values.</p>
-<h2 id="example-configuration">Example Configuration<a class="heading-anchor" href="#example-configuration" aria-label="Link to section">#</a></h2><p>Here is a script configuration example that anonymizes the <code>Name</code> field in the <code>Account</code> object:</p>
+<a class="heading-anchor" id="feature-configuration"></a>
+                <h2>
+                    Feature Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Developers can define which fields within the <code>SObject</code> should have their real values replaced with fake data, and the specific patterns for generating these fake values.</p>
+<a class="heading-anchor" id="example-configuration"></a>
+                <h2>
+                    Example Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Here is a script configuration example that anonymizes the <code>Name</code> field in the <code>Account</code> object:</p>
 <pre><code class="language-json">&quot;objects&quot;: [
     {
         &quot;query&quot;: &quot;SELECT Id, Name FROM Account&quot;,
@@ -280,7 +326,14 @@
 ]
 </code></pre>
 <p>This script replaces the original <code>Name</code> values with randomly generated fake names during data insertion.</p>
-<h2 id="detailed-mockfield-object-configuration">Detailed MockField Object Configuration<a class="heading-anchor" href="#detailed-mockfield-object-configuration" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="detailed-mockfield-object-configuration"></a>
+                <h2>
+                    Detailed MockField Object Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><strong><code>name</code></strong>: Specifies the field to anonymize. Using <code>&quot;name&quot;: &quot;all&quot;</code> applies anonymization rules to all fields, except those listed in <code>excludeNames</code>.</li>
 <li><strong><code>excludeNames</code></strong>: An array of field names to exclude from anonymization when <code>&quot;name&quot;: &quot;all&quot;</code> is used.</li>
 <li><strong><code>pattern</code></strong>: Defines the type of fake data to generate for the field. </li>
@@ -288,15 +341,36 @@
 <li><strong><code>excludedRegex</code></strong> and <strong><code>includedRegex</code></strong>: JavaScript regex expressions that exclude or include values for anonymization. The <code>--row</code> flag can be added to these expressions to exclude/include the entire row based on the matching field value.</li>
 <li><strong><code>excludeNames</code></strong>:  Fields to exclude from anonymization, for example, when using the <code>all</code> keyword as <code>name</code>. This helps to selectively anonymize fields within an object while preserving specific field data.</li>
 </ul>
-<h2 id="most-common-anonymization-patterns">Most Common Anonymization Patterns<a class="heading-anchor" href="#most-common-anonymization-patterns" aria-label="Link to section">#</a></h2><p>Here&#39;s a streamlined list of patterns for use with SFDMU:</p>
-<h3 id="address">Address<a class="heading-anchor" href="#address" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="most-common-anonymization-patterns"></a>
+                <h2>
+                    Most Common Anonymization Patterns
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Here&#39;s a streamlined list of patterns for use with SFDMU:</p>
+<a class="heading-anchor" id="address"></a>
+                <h3>
+                    Address
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><strong>Country</strong>: <code>country</code></li>
 <li><strong>City</strong>: <code>city</code></li>
 <li><strong>Street</strong>: <code>street</code></li>
 <li><strong>Address</strong>: <code>address</code></li>
 <li><strong>ZIP Code</strong>: <code>zip</code></li>
 </ul>
-<h3 id="personal-information">Personal Information<a class="heading-anchor" href="#personal-information" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="personal-information"></a>
+                <h3>
+                    Personal Information
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><strong>Name:</strong> <code>name</code></li>
 <li><strong>Full Name</strong>: <code>full_name</code></li>
 <li><strong>Username</strong>: <code>username</code></li>
@@ -304,26 +378,68 @@
 <li><strong>Last Name</strong>: <code>last_name</code></li>
 <li><strong>Email</strong>: <code>email</code></li>
 </ul>
-<h3 id="text">Text<a class="heading-anchor" href="#text" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="text"></a>
+                <h3>
+                    Text
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><strong>Sentence</strong>: <code>sentence</code></li>
 <li><strong>Title</strong>: <code>title</code></li>
 <li><strong>Text</strong>: <code>text</code></li>
 <li><strong>Word</strong>: <code>word</code></li>
 </ul>
-<h3 id="internet">Internet<a class="heading-anchor" href="#internet" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="internet"></a>
+                <h3>
+                    Internet
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><strong>IP Address</strong>: <code>ip</code></li>
 <li><strong>Domain Name</strong>: <code>domain</code></li>
 <li><strong>URL</strong>: <code>url</code></li>
 </ul>
-<h3 id="numbers-and-dates">Numbers and Dates<a class="heading-anchor" href="#numbers-and-dates" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="numbers-and-dates"></a>
+                <h3>
+                    Numbers and Dates
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><strong>Random Number</strong>: <code>integer</code></li>
 <li><strong>Date</strong>: <code>date</code></li>
 <li><strong>Time</strong>: <code>time</code></li>
 <li><strong>Year</strong>: <code>year</code></li>
 </ul>
-<h2 id="special-anonymization-functions-and-patterns">Special Anonymization Functions and Patterns<a class="heading-anchor" href="#special-anonymization-functions-and-patterns" aria-label="Link to section">#</a></h2><h3 id="1-cseqnumber-prefix-from-step">1. <strong><code>c_seq_number(prefix, from, step)</code></strong><a class="heading-anchor" href="#1-cseqnumber-prefix-from-step" aria-label="Link to section">#</a></h3><p>   Generates a sequence of strings with numbers, starting from a specified number, incremented by a defined step, prefixed by a string.</p>
+<a class="heading-anchor" id="special-anonymization-functions-and-patterns"></a>
+                <h2>
+                    Special Anonymization Functions and Patterns
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="1-cseqnumber-prefix-from-step"></a>
+                <h3>
+                    1. <strong><code>c_seq_number(prefix, from, step)</code></strong>
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>   Generates a sequence of strings with numbers, starting from a specified number, incremented by a defined step, prefixed by a string.</p>
 <p>Example: <code>c_seq_number(&#39;Account &#39;, 100, 10)</code> generates &quot;Account 100&quot;, &quot;Account 110&quot;, &quot;Account 120&quot;, etc.</p>
-<h3 id="2-cseqdate-from-step">2. <strong><code>c_seq_date(from, step)</code></strong><a class="heading-anchor" href="#2-cseqdate-from-step" aria-label="Link to section">#</a></h3><p>   Produces a sequence of dates starting from a given date, incremented by a defined step. Steps can be:</p>
+<a class="heading-anchor" id="2-cseqdate-from-step"></a>
+                <h3>
+                    2. <strong><code>c_seq_date(from, step)</code></strong>
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>   Produces a sequence of dates starting from a given date, incremented by a defined step. Steps can be:</p>
 <ul>
 <li><code>&quot;d&quot;</code>: Increment by one day.</li>
 <li><code>&quot;-d&quot;</code>: Decrement by one day.</li>
@@ -338,13 +454,41 @@
 <li><code>&quot;-ms&quot;</code>: Decrement by one millisecond.</li>
 </ul>
 <p>Example: <code>c_seq_date(&#39;2020-01-01&#39;, &#39;d&#39;)</code> would generate dates &quot;2020-01-01&quot;, &quot;2020-01-02&quot;, &quot;2020-01-03&quot;, etc.</p>
-<h3 id="3-csetvalue-value">3. <strong><code>c_set_value(value)</code></strong><a class="heading-anchor" href="#3-csetvalue-value" aria-label="Link to section">#</a></h3><p>   Sets the field to a specified value.</p>
+<a class="heading-anchor" id="3-csetvalue-value"></a>
+                <h3>
+                    3. <strong><code>c_set_value(value)</code></strong>
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>   Sets the field to a specified value.</p>
 <p>   Example: <code>c_set_value(&quot;Active&quot;)</code> sets the field to &quot;Active&quot;.</p>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>If you want to reset field value to null using <code>c_set_value</code>,  please refer to this documentation: <a href="../../../examples/record-transformation/#example-2-clear-all-text-fields-in-an-sobject">Clear all text fields of the object</a></li>
 </ul>
-<h3 id="4-ids">4. <strong><code>ids</code></strong><a class="heading-anchor" href="#4-ids" aria-label="Link to section">#</a></h3><p>   Populates the given field with the source record ID value.</p>
-<h3 id="rawvalue-keyword">RAW_VALUE Keyword<a class="heading-anchor" href="#rawvalue-keyword" aria-label="Link to section">#</a></h3><p>If you want to update a field value based on its existing value, you can use the <code>RAW_VALUE</code> keyword (similar to the <code>RAW_VALUE</code> used in <a href="../values-mapping/#raw_value-keyword">Value Mapping RAW_VALUE Keyword</a>). For example, to add <code>.test</code> to the original email address, you can use the following configuration:</p>
+<a class="heading-anchor" id="4-ids"></a>
+                <h3>
+                    4. <strong><code>ids</code></strong>
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>   Populates the given field with the source record ID value.</p>
+<a class="heading-anchor" id="rawvalue-keyword"></a>
+                <h3>
+                    RAW_VALUE Keyword
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>If you want to update a field value based on its existing value, you can use the <code>RAW_VALUE</code> keyword (similar to the <code>RAW_VALUE</code> used in <a href="../values-mapping/#raw_value-keyword">Value Mapping RAW_VALUE Keyword</a>). For example, to add <code>.test</code> to the original email address, you can use the following configuration:</p>
 <pre><code class="language-json">{
     &quot;name&quot;: &quot;Email&quot;,
     &quot;pattern&quot;: &quot;c_set_value(&#39;RAW_VALUE.test&#39;)&quot;,
@@ -352,11 +496,25 @@
 }
 </code></pre>
 <p>This example appends <code>.test</code> to the current value of the &quot;Email&quot; field if the original email value is present.</p>
-<h2 id="special-regex-expressions">Special Regex Expressions<a class="heading-anchor" href="#special-regex-expressions" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="special-regex-expressions"></a>
+                <h2>
+                    Special Regex Expressions
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><strong><code>*</code></strong>: Matches only any non-empty value, which is useful, for example, for including only non-empty fields in anonymization (when defined as an <code>includedRegex</code>).</li>
 <li><strong><code>^*</code></strong>: Matches only empty values, which is useful, for example, if you want to populate all empty values (when defined as an <code>includedRegex</code>).</li>
 </ul>
-<h2 id="full-list-of-available-patterns">Full List of Available Patterns<a class="heading-anchor" href="#full-list-of-available-patterns" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="full-list-of-available-patterns"></a>
+                <h2>
+                    Full List of Available Patterns
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><p>The plugin leverages the <a href="https://www.npmjs.com/package/casual" target="_blank" rel="noopener noreferrer">casual</a> library to generate patterns.</p>
 </li>
 <li><p>For a complete catalog of patterns appropriate for the SFDMU Data Anonymization feature, please visit the <a href="https://www.npmjs.com/package/casual#embedded-generators" target="_blank" rel="noopener noreferrer">Full List of Available Patterns</a>. When using these patterns, refer directly to the pattern name such as <code>sentences(n = 3)</code> instead of <code>casual.sentences(n = 3)</code>. Use these names directly in the <a href="../../export-json-file-objects-specification/mock-field-object/#pattern-string"><code>pattern</code></a> attribute of the <a href="../../export-json-file-objects-specification/mock-field-object/"><code>MockField</code></a> object. Note that the casual reference page does not cover the Special Anonymization Functions and Patterns listed above.</p>
@@ -365,10 +523,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -388,9 +543,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

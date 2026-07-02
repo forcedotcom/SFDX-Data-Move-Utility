@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DeleteSource operation | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>DeleteSource operation | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,14 +255,44 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#feature-description">Feature Description</a></li><li><a href="#example-of-deletesource-configuration">Example of DeleteSource Configuration</a></li><li><a href="#executing-the-deletion">Executing the Deletion</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#feature-description">Feature Description</a></li>
+<li><a href="#example-of-deletesource-configuration">Example of DeleteSource Configuration</a></li>
+<li><a href="#executing-the-deletion">Executing the Deletion</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>: This feature enables the deletion of records directly from the source Salesforce organization, based on a complex selection derived from the entire <code>export.json</code> configuration and considering the relationships between objects.</p>
-<h2 id="feature-description">Feature Description<a class="heading-anchor" href="#feature-description" aria-label="Link to section">#</a></h2><p>Unlike the standard <strong>Delete</strong> operation that targets records in the destination organization, the <strong>DeleteSource</strong> operation removes records from the source organization itself. This is particularly useful in scenarios where the data model involves complex relationships and direct SOQL query selection is insufficient or impractical.</p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>: This feature enables the deletion of records directly from the source Salesforce organization, based on a complex selection derived from the entire <code>export.json</code> configuration and considering the relationships between objects.</p>
+<a class="heading-anchor" id="feature-description"></a>
+                <h2>
+                    Feature Description
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Unlike the standard <strong>Delete</strong> operation that targets records in the destination organization, the <strong>DeleteSource</strong> operation removes records from the source organization itself. This is particularly useful in scenarios where the data model involves complex relationships and direct SOQL query selection is insufficient or impractical.</p>
 <p>For instance, you may need to delete Contacts related to specific Accounts, which in turn are linked to another object (e.g., Test__c). The <strong>DeleteSource</strong> operation handles such complex hierarchical data deletions by first retrieving all records for all objects configured in the <code>export.json</code>, processing their relationships, and then executing deletions.</p>
 <p>This operation is ideal if there is no separate target organization and you need to cleanse or manage data within a single org.</p>
-<h2 id="example-of-deletesource-configuration">Example of DeleteSource Configuration<a class="heading-anchor" href="#example-of-deletesource-configuration" aria-label="Link to section">#</a></h2><p>Here’s how you might configure the <code>DeleteSource</code> operation:</p>
+<a class="heading-anchor" id="example-of-deletesource-configuration"></a>
+                <h2>
+                    Example of DeleteSource Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Here’s how you might configure the <code>DeleteSource</code> operation:</p>
 <pre><code class="language-json">&quot;objects&quot;: [
     {
         &quot;operation&quot;: &quot;Readonly&quot;,
@@ -280,20 +311,48 @@
 <blockquote>
 <p><strong>CAUTION: THIS OPERATION PERMANENTLY DELETES RECORDS FROM THE SOURCE ORGANIZATION. PLEASE PROCEED WITH CARE.</strong></p>
 </blockquote>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>When using <strong>DeleteSource</strong>, you only need to define the <code>--sourceusername</code> flag.</li>
 <li>You <strong>cannot</strong> use a CSV file as the deletion source with the <strong>DeleteSource</strong> operation.</li>
 <li>It is possible to mix operations within the configuration; for instance, you can set <strong>DeleteSource</strong> for one object and other operations like Upsert for others. If doing so, include the <code>--targetusername</code> in your CLI command as necessary.</li>
 </ul>
-<h2 id="executing-the-deletion">Executing the Deletion<a class="heading-anchor" href="#executing-the-deletion" aria-label="Link to section">#</a></h2><p>Below is an example of a CLI command to execute a deletion from the source organization:</p>
+<a class="heading-anchor" id="executing-the-deletion"></a>
+                <h2>
+                    Executing the Deletion
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Below is an example of a CLI command to execute a deletion from the source organization:</p>
 <pre><code class="language-bash">sf sfdmu run --sourceusername delete-it@testorg.com
 </code></pre>
-<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-1"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><code>DeleteSource</code> permanently removes data from the source org, so it should be used only for controlled cleanup scenarios.</li>
 <li>Before execution, make sure your <code>query</code> filters are restrictive enough and tested on a small dataset.</li>
 <li>If mixed with other operations, verify that <code>--targetusername</code> points to the intended target to avoid accidental updates.</li>
 </ul>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../composite-external-id-keys/">Composite External Id Keys</a></li>
 <li><a href="../compound-fields/">Compound Fields</a></li>
 <li><a href="../data-anonymization/">Data Anonymization</a></li>
@@ -301,10 +360,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -324,9 +380,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

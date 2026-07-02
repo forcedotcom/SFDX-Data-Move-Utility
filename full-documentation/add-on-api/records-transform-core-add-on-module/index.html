@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RecordsTransform Core Add-On Module | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>RecordsTransform Core Add-On Module | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,11 +255,66 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#sample-of-record-transformation">Sample of Record Transformation</a></li><li class="toc-child"><a href="#configuration-file">Configuration File</a></li><li class="toc-child"><a href="#object-model">Object Model</a></li><li class="toc-child"><a href="#requirements">Requirements</a></li><li class="toc-child"><a href="#solution">Solution</a></li><li><a href="#full-specification-of-args-properties">Full Specification of args Properties</a></li><li class="toc-child"><a href="#fields-array-of-field-objects">fields (Array of Field objects)</a></li><li class="toc-child"><a href="#transformations-array-of-transformation-objects">transformations (Array of Transformation objects)</a></li><li><a href="#additional-notes">Additional Notes</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#sample-of-record-transformation">Sample of Record Transformation</a><ul>
+<li><a href="#configuration-file">Configuration File</a></li>
+<li><a href="#object-model">Object Model</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#solution">Solution</a><ul>
+<li><a href="#step-1-define-the-source-fields"><strong>Step 1:</strong> Define the Source Fields</a></li>
+<li><a href="#step-2-setup-lookup-relationships"><strong>Step 2</strong> Setup lookup relationships.</a></li>
+<li><a href="#step-3-define-the-target-fields-and-transformation-expressions"><strong>Step 3</strong> Define the Target Fields and Transformation Expressions</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#full-specification-of-args-properties">Full Specification of <code>args</code> Properties</a><ul>
+<li><a href="#fields-array-of-field-objects">fields (Array of <code>Field</code> objects)</a><ul>
+<li><a href="#field-alias-string">Field.alias (String)</a></li>
+<li><a href="#field-sourceobject-string">Field.sourceObject (String)</a></li>
+<li><a href="#field-sourcefield-string">Field.sourceField (String)</a></li>
+<li><a href="#field-includefields-array-of-strings">Field.includeFields (Array of strings)</a></li>
+<li><a href="#field-valuesource-string">Field.valueSource (String)</a></li>
+<li><a href="#field-lookupsource-string">Field.lookupSource (String)</a></li>
+<li><a href="#field-isconstant-boolean">Field.isConstant (Boolean)</a></li>
+<li><a href="#field-lookupexpression-string">Field.lookupExpression (String)</a></li>
+</ul></li>
+<li><a href="#transformations-array-of-transformation-objects">transformations (Array of <code>Transformation</code> objects)</a><ul>
+<li><a href="#transformation-targetobject-string">Transformation.targetObject (String)</a></li>
+<li><a href="#transformation-targetfield-string">Transformation.targetField (String)</a></li>
+<li><a href="#transformation-expressions-array-of-strings">Transformation.expressions (Array of strings)</a></li>
+<li><a href="#transformation-formula-string">Transformation.formula (String)</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#additional-notes">Additional Notes</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p>The <code>core:RecordsTransform</code> module provides advanced functionality for applying custom transformations and mappings to source records before they are uploaded to the target system. It significantly enhances capabilities beyond the <a href="../../advanced-features/values-mapping/">Values Mapping</a> feature by allowing updates to fields using multiple different sObjects as data sources. This enables complex transformations that utilize customized expressions to fine-tune data according to specific needs.</p>
-<h2 id="sample-of-record-transformation">Sample of Record Transformation<a class="heading-anchor" href="#sample-of-record-transformation" aria-label="Link to section">#</a></h2><h3 id="configuration-file">Configuration File<a class="heading-anchor" href="#configuration-file" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <code>core:RecordsTransform</code> module provides advanced functionality for applying custom transformations and mappings to source records before they are uploaded to the target system. It significantly enhances capabilities beyond the <a href="../../advanced-features/values-mapping/">Values Mapping</a> feature by allowing updates to fields using multiple different sObjects as data sources. This enables complex transformations that utilize customized expressions to fine-tune data according to specific needs.</p>
+<a class="heading-anchor" id="sample-of-record-transformation"></a>
+                <h2>
+                    Sample of Record Transformation
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="configuration-file"></a>
+                <h3>
+                    Configuration File
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{
     &quot;objects&quot;: [
         {
             &quot;operation&quot;: &quot;Upsert&quot;,
@@ -305,7 +361,14 @@
     ]
 }
 </code></pre>
-<h3 id="object-model">Object Model<a class="heading-anchor" href="#object-model" aria-label="Link to section">#</a></h3><table>
+<a class="heading-anchor" id="object-model"></a>
+                <h3>
+                    Object Model
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><table>
 <thead>
 <tr>
 <th>sObject</th>
@@ -345,20 +408,48 @@
 <td>Name (Region name field)</td>
 </tr>
 </tbody></table>
-<h3 id="requirements">Requirements<a class="heading-anchor" href="#requirements" aria-label="Link to section">#</a></h3><p>Our task involves extracting values from various source fields, conducting a series of calculations, and subsequently updating two target account fields with the outcomes.</p>
+<a class="heading-anchor" id="requirements"></a>
+                <h3>
+                    Requirements
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Our task involves extracting values from various source fields, conducting a series of calculations, and subsequently updating two target account fields with the outcomes.</p>
 <p>The transformations needed are as follows:</p>
 <ul>
 <li><strong>Account</strong>.<strong>CategoryName__c</strong> should be set to the value of <strong>Account</strong>.<strong>Category__r.Name</strong>.</li>
 <li><strong>Account</strong>.<strong>CategoryAndRegionName__c</strong> should combine the values of <strong>Account</strong>.<strong>Category__r.Name</strong> and <strong>Country__c</strong>.<strong>Region__r.Name</strong>, formatted as <code>Account.Category__r.Name + &#39; (&#39; + Country__c.Region__r.Name + &#39;)&#39;</code>.</li>
 </ul>
-<h3 id="solution">Solution<a class="heading-anchor" href="#solution" aria-label="Link to section">#</a></h3><h4 id="step-1-define-the-source-fields"><strong>Step 1:</strong> Define the Source Fields<a class="heading-anchor" href="#step-1-define-the-source-fields" aria-label="Link to section">#</a></h4><p>We specify two source fields (categorized under the <code>Field</code> object type) with the designated aliases:</p>
+<a class="heading-anchor" id="solution"></a>
+                <h3>
+                    Solution
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><a class="heading-anchor" id="step-1-define-the-source-fields"></a>
+                <h4>
+                    <strong>Step 1:</strong> Define the Source Fields
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>We specify two source fields (categorized under the <code>Field</code> object type) with the designated aliases:</p>
 <ul>
 <li><strong>accountCategory</strong>: This sources its value from <strong>Account.Category__r.Name</strong>.</li>
 <li><strong>accountRegion</strong>: This retrieves its value from <strong>Country__c.Region__r.Name</strong>.</li>
 </ul>
 <p>But, how does the Add-On pinpoint the <strong>Country</strong> record to evaluate <strong>Region__r.Name</strong> for it?</p>
 <p>With the <strong>BusinessAccount__c</strong> lookup field at its disposal, it efficiently locates the child <strong>Country</strong> that references the <strong>Account</strong>, leveraging its data for the transformation. </p>
-<h4 id="step-2-setup-lookup-relationships"><strong>Step 2</strong> Setup lookup relationships.<a class="heading-anchor" href="#step-2-setup-lookup-relationships" aria-label="Link to section">#</a></h4><p>As mentioned above, to select the child <strong>Country</strong> record by its parent <strong>Account</strong>, we use the <strong>Country__c.BusinessAccount__c</strong> as a parent-child lookup field. Therefore, <strong>BusinessAccount__c</strong> should be included in the query string of <strong>Country__c</strong>.</p>
+<a class="heading-anchor" id="step-2-setup-lookup-relationships"></a>
+                <h4>
+                    <strong>Step 2</strong> Setup lookup relationships.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>As mentioned above, to select the child <strong>Country</strong> record by its parent <strong>Account</strong>, we use the <strong>Country__c.BusinessAccount__c</strong> as a parent-child lookup field. Therefore, <strong>BusinessAccount__c</strong> should be included in the query string of <strong>Country__c</strong>.</p>
 <p>The method for including the <strong>BusinessAccount__c</strong> field in the query string of <strong>Country__c</strong> is by utilizing the <code>includeFields</code> property in the <strong>accountRegion</strong> definition. This allows the Add-On to link between Account and Country:</p>
 <pre><code class="language-json">{
   &quot;includeFields&quot;: [
@@ -385,7 +476,14 @@
                 }
 //.....
 </code></pre>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><p>To include a field in the SOQL query of an object other than the one defined as the <code>sourceObject</code>, use the following syntax:<br><code>[Object Name].[Field Name]</code>. For example:</p>
 <pre><code class="language-json">{
     &quot;alias&quot;: &quot;accountRegion&quot;,
@@ -400,7 +498,14 @@
 <p>This will include both <code>BusinessAccount__c</code> in the query for <code>Country__c</code> and <code>Website</code> in the query for <code>Account</code>.</p>
 </li>
 </ul>
-<h4 id="step-3-define-the-target-fields-and-transformation-expressions"><strong>Step 3</strong> Define the Target Fields and Transformation Expressions<a class="heading-anchor" href="#step-3-define-the-target-fields-and-transformation-expressions" aria-label="Link to section">#</a></h4><p>In the <code>transformations</code> array, specify two <code>Transformation</code> objects containing logic to update two fields of the <strong>Account</strong>: <strong>CategoryName__c</strong> and <strong>CategoryAndRegionName__c</strong>.</p>
+<a class="heading-anchor" id="step-3-define-the-target-fields-and-transformation-expressions"></a>
+                <h4>
+                    <strong>Step 3</strong> Define the Target Fields and Transformation Expressions
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>In the <code>transformations</code> array, specify two <code>Transformation</code> objects containing logic to update two fields of the <strong>Account</strong>: <strong>CategoryName__c</strong> and <strong>CategoryAndRegionName__c</strong>.</p>
 <p>Each <code>Transformation</code> object includes:</p>
 <ul>
 <li><p><strong>formula</strong>: A mandatory expression used to update the target field. Source <strong>aliases</strong> like <code>formula.[ALIAS]</code>, e.g., <code>formula.accountCategory</code>, are used within this expression. 
@@ -410,23 +515,93 @@
 For example, <code>formula.exists = formula.accountCategory &amp;&amp; formula.accountRegion</code> creates a new property <code>exists</code> based on a JavaScript expression using field values via their aliases. The <code>formula.exists</code> value is then used in the final <code>formula</code> expression to compute and fill the <strong>CategoryAndRegionName__c</strong> field.</p>
 </li>
 </ul>
-<h2 id="full-specification-of-args-properties">Full Specification of <code>args</code> Properties<a class="heading-anchor" href="#full-specification-of-args-properties" aria-label="Link to section">#</a></h2><h3 id="fields-array-of-field-objects">fields (Array of <code>Field</code> objects)<a class="heading-anchor" href="#fields-array-of-field-objects" aria-label="Link to section">#</a></h3><p><strong>Mandatory</strong>. List of the data sources to transform.</p>
-<h4 id="field-alias-string">Field.alias (String)<a class="heading-anchor" href="#field-alias-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. Variable name (akin to JavaScript variable naming), allows for the inclusion of this <code>Field</code> in the transformation expression.</p>
-<h4 id="field-sourceobject-string">Field.sourceObject (String)<a class="heading-anchor" href="#field-sourceobject-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. SObject used as the data source for the transformation.</p>
-<h4 id="field-sourcefield-string">Field.sourceField (String)<a class="heading-anchor" href="#field-sourcefield-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. Field belonging to the <code>sourceObject</code> which is used as the value source for the transformation.</p>
-<h4 id="field-includefields-array-of-strings">Field.includeFields (Array of strings)<a class="heading-anchor" href="#field-includefields-array-of-strings" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>. A list of sObject fields to include in the original query of the <code>sourceObject</code> (e.g., selecting a parent object in a relationship). The format for this definition is <code>[sObject API Name].[Field Name]</code>, where <code>sObject API Name</code> is the optional name of the sObject to which you want to add the <code>Field Name</code> in its query string. Use this format when you want to include the field from a different sObject than the current <code>sourceObject</code>.</p>
-<h4 id="field-valuesource-string">Field.valueSource (String)<a class="heading-anchor" href="#field-valuesource-string" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>, <strong>Default: &#39;source&#39;</strong>. Specifies whether the value for this field should be taken from the <strong>Data Source</strong> or <strong>Data Target</strong>.</p>
+<a class="heading-anchor" id="full-specification-of-args-properties"></a>
+                <h2>
+                    Full Specification of <code>args</code> Properties
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="fields-array-of-field-objects"></a>
+                <h3>
+                    fields (Array of <code>Field</code> objects)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Mandatory</strong>. List of the data sources to transform.</p>
+<a class="heading-anchor" id="field-alias-string"></a>
+                <h4>
+                    Field.alias (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Mandatory</strong>. Variable name (akin to JavaScript variable naming), allows for the inclusion of this <code>Field</code> in the transformation expression.</p>
+<a class="heading-anchor" id="field-sourceobject-string"></a>
+                <h4>
+                    Field.sourceObject (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Mandatory</strong>. SObject used as the data source for the transformation.</p>
+<a class="heading-anchor" id="field-sourcefield-string"></a>
+                <h4>
+                    Field.sourceField (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Mandatory</strong>. Field belonging to the <code>sourceObject</code> which is used as the value source for the transformation.</p>
+<a class="heading-anchor" id="field-includefields-array-of-strings"></a>
+                <h4>
+                    Field.includeFields (Array of strings)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Optional</strong>. A list of sObject fields to include in the original query of the <code>sourceObject</code> (e.g., selecting a parent object in a relationship). The format for this definition is <code>[sObject API Name].[Field Name]</code>, where <code>sObject API Name</code> is the optional name of the sObject to which you want to add the <code>Field Name</code> in its query string. Use this format when you want to include the field from a different sObject than the current <code>sourceObject</code>.</p>
+<a class="heading-anchor" id="field-valuesource-string"></a>
+                <h4>
+                    Field.valueSource (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Optional</strong>, <strong>Default: &#39;source&#39;</strong>. Specifies whether the value for this field should be taken from the <strong>Data Source</strong> or <strong>Data Target</strong>.</p>
 <ul>
 <li><strong>source</strong>: Takes the value from the current <strong>data source</strong> (such as a Salesforce org or a CSV file).</li>
 <li><strong>target</strong>: Takes the value from the current <strong>data target</strong>. Note that the target value may not always be the original field value from the target Salesforce org, as it may have been modified by previous updates or data manipulation operations.</li>
 </ul>
-<h4 id="field-lookupsource-string">Field.lookupSource (String)<a class="heading-anchor" href="#field-lookupsource-string" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>, <strong>Default: &#39;source&#39;</strong>. Defines whether the <strong>lookupExpression</strong> should be run in a loop over the records from the <strong>Data Source</strong> or <strong>Data Target</strong>.</p>
+<a class="heading-anchor" id="field-lookupsource-string"></a>
+                <h4>
+                    Field.lookupSource (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Optional</strong>, <strong>Default: &#39;source&#39;</strong>. Defines whether the <strong>lookupExpression</strong> should be run in a loop over the records from the <strong>Data Source</strong> or <strong>Data Target</strong>.</p>
 <ul>
 <li><strong>source</strong>: It iterates over all <strong>data source</strong> records. In this case, the given field finally selects and evaluates the record from the Data Source.</li>
 <li><strong>target</strong>: It iterates over all <strong>data target</strong> records. In this case, the given field finally selects and evaluates the record from the Data Target.</li>
 </ul>
-<h4 id="field-isconstant-boolean">Field.isConstant (Boolean)<a class="heading-anchor" href="#field-isconstant-boolean" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>, <strong>Default: false</strong>. Setting this property to <code>true</code> ensures that the <code>formula</code> expression for this <code>Field.alias</code> (for example <code>formula.accountCategory</code>) is calculated <strong>only once</strong> <strong>per job</strong>, functioning similarly to a cached value for each <strong>expression</strong> in the <code>Transformation.expressions</code> for all rest records use this cached formula value. So, the first non-null (non-empty string) result is then utilized in <strong>all</strong> subsequent transformations.</p>
-<h4 id="field-lookupexpression-string">Field.lookupExpression (String)<a class="heading-anchor" href="#field-lookupexpression-string" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>. If you prefer a <strong>customized</strong> search for evaluating the current <code>Field</code> value instead of using a regular lookup, you can use the <code>lookupExpression</code> feature.</p>
+<a class="heading-anchor" id="field-isconstant-boolean"></a>
+                <h4>
+                    Field.isConstant (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Optional</strong>, <strong>Default: false</strong>. Setting this property to <code>true</code> ensures that the <code>formula</code> expression for this <code>Field.alias</code> (for example <code>formula.accountCategory</code>) is calculated <strong>only once</strong> <strong>per job</strong>, functioning similarly to a cached value for each <strong>expression</strong> in the <code>Transformation.expressions</code> for all rest records use this cached formula value. So, the first non-null (non-empty string) result is then utilized in <strong>all</strong> subsequent transformations.</p>
+<a class="heading-anchor" id="field-lookupexpression-string"></a>
+                <h4>
+                    Field.lookupExpression (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Optional</strong>. If you prefer a <strong>customized</strong> search for evaluating the current <code>Field</code> value instead of using a regular lookup, you can use the <code>lookupExpression</code> feature.</p>
 <p>Unlike finding records through regular lookup relationships, <code>lookupExpression</code> enables <strong>dynamic comparison</strong> of source or target records <strong>against the record currently being modified as a result of the transformation</strong>.</p>
 <p><code>lookupExpression</code> is a JavaScript expression that uses two constants, <strong>source</strong> and <strong>target</strong>:</p>
 <ul>
@@ -496,12 +671,54 @@ For example, <code>formula.exists = formula.accountCategory &amp;&amp; formula.a
     ]
 }
 </code></pre>
-<h3 id="transformations-array-of-transformation-objects">transformations (Array of <code>Transformation</code> objects)<a class="heading-anchor" href="#transformations-array-of-transformation-objects" aria-label="Link to section">#</a></h3><p><strong>Mandatory</strong>. List of the sObject fields to update, including expressions to transform them.</p>
-<h4 id="transformation-targetobject-string">Transformation.targetObject (String)<a class="heading-anchor" href="#transformation-targetobject-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. sObject to update.</p>
-<h4 id="transformation-targetfield-string">Transformation.targetField (String)<a class="heading-anchor" href="#transformation-targetfield-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. <code>Transformation.targetObject</code>&#39;s field to update.</p>
-<h4 id="transformation-expressions-array-of-strings">Transformation.expressions (Array of strings)<a class="heading-anchor" href="#transformation-expressions-array-of-strings" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>. A collection of JavaScript expressions, all evaluated before the main <code>Transformation.formula</code> expression is executed. This feature enables you to augment the <code>formula</code> object with additional properties, assisting in the construction of the final <code>formula</code> expression.</p>
-<h4 id="transformation-formula-string">Transformation.formula (String)<a class="heading-anchor" href="#transformation-formula-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. Final JavaScript expression, which is running for each target record to update the <strong>targetField</strong>.</p>
-<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="transformations-array-of-transformation-objects"></a>
+                <h3>
+                    transformations (Array of <code>Transformation</code> objects)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Mandatory</strong>. List of the sObject fields to update, including expressions to transform them.</p>
+<a class="heading-anchor" id="transformation-targetobject-string"></a>
+                <h4>
+                    Transformation.targetObject (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Mandatory</strong>. sObject to update.</p>
+<a class="heading-anchor" id="transformation-targetfield-string"></a>
+                <h4>
+                    Transformation.targetField (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Mandatory</strong>. <code>Transformation.targetObject</code>&#39;s field to update.</p>
+<a class="heading-anchor" id="transformation-expressions-array-of-strings"></a>
+                <h4>
+                    Transformation.expressions (Array of strings)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Optional</strong>. A collection of JavaScript expressions, all evaluated before the main <code>Transformation.formula</code> expression is executed. This feature enables you to augment the <code>formula</code> object with additional properties, assisting in the construction of the final <code>formula</code> expression.</p>
+<a class="heading-anchor" id="transformation-formula-string"></a>
+                <h4>
+                    Transformation.formula (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Mandatory</strong>. Final JavaScript expression, which is running for each target record to update the <strong>targetField</strong>.</p>
+<a class="heading-anchor" id="additional-notes"></a>
+                <h2>
+                    Additional Notes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><p>The <code>RecordsTransform Module</code> is designed <strong>to transform source records</strong> <strong>after they have been fetched from the data source</strong> and <strong>right before they are saved in the target org</strong>. However, this module <strong>cannot be used</strong> in any way <strong>to modify target records</strong> after they have been saved in the target org. </p>
 </li>
 <li><p>The object defined as a <code>targetObject</code> in a <code>Transformation</code> item <strong>must be listed</strong> in the <code>export.json</code> <strong>for editing</strong>, either with <code>Insert</code>, <code>Update</code>, or another operation within <code>objects</code> or <code>objectSets</code>. Conversely, a <code>sourceObject</code> can be set with a <code>Readonly</code> operation.</p>
@@ -529,10 +746,7 @@ For instance, if you define <code>Category__r.Name</code> for the Account, the A
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -552,9 +766,11 @@ For instance, if you define <code>Category__r.Name</code> for the Account, the A
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

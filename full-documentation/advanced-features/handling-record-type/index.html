@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Handling of the RecordType | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Handling of the RecordType | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,19 +255,51 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#use-cases">Use cases</a></li><li><a href="#full-recordtype-object-definition">Full RecordType Object Definition</a></li><li><a href="#key-considerations">Key Considerations</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#use-cases">Use cases</a></li>
+<li><a href="#full-recordtype-object-definition">Full RecordType Object Definition</a><ul>
+<li><a href="#configuration-details">Configuration Details</a></li>
+</ul></li>
+<li><a href="#key-considerations">Key Considerations</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>: This feature facilitates the seamless migration of RecordType attributes with records, ensuring that the RecordTypes in the target environment match those in the source. </p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>: This feature facilitates the seamless migration of RecordType attributes with records, ensuring that the RecordTypes in the target environment match those in the source. </p>
 <p>It handles complexities such as multiple RecordTypes with the same DeveloperName, which can create confusion in the target environment.</p>
-<h2 id="use-cases">Use cases<a class="heading-anchor" href="#use-cases" aria-label="Link to section">#</a></h2><p>To maintain the integrity of RecordTypes during data migration:</p>
+<a class="heading-anchor" id="use-cases"></a>
+                <h2>
+                    Use cases
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>To maintain the integrity of RecordTypes during data migration:</p>
 <ul>
 <li><p><strong>Basic Usage</strong>: To simply migrate records while preserving their RecordType, include the <code>RecordTypeId</code> field in your query. The plugin will automatically handle the migration of the RecordType ID associated with each record.</p>
 </li>
 <li><p><strong>Advanced Customization</strong>: For more complex scenarios, where customization of the RecordType export is needed, you can directly include the RecordType object in your <code>export.json</code>. This allows for more control over which RecordTypes are migrated and how they are identified in the target environment.</p>
 </li>
 </ul>
-<h2 id="full-recordtype-object-definition">Full RecordType Object Definition<a class="heading-anchor" href="#full-recordtype-object-definition" aria-label="Link to section">#</a></h2><p>Here&#39;s an example of how to include a RecordType object within an <code>export.json</code> to ensure only active RecordTypes are migrated:</p>
+<a class="heading-anchor" id="full-recordtype-object-definition"></a>
+                <h2>
+                    Full RecordType Object Definition
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Here&#39;s an example of how to include a RecordType object within an <code>export.json</code> to ensure only active RecordTypes are migrated:</p>
 <pre><code class="language-json">&quot;objects&quot;: [
     {
         &quot;query&quot;: &quot;SELECT Id FROM RecordType WHERE IsActive = true&quot;,
@@ -274,7 +307,14 @@
     }
 ]
 </code></pre>
-<h4 id="configuration-details">Configuration Details<a class="heading-anchor" href="#configuration-details" aria-label="Link to section">#</a></h4><ul>
+<a class="heading-anchor" id="configuration-details"></a>
+                <h4>
+                    Configuration Details
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ul>
 <li><p><strong>Active RecordTypes Only</strong>: This configuration includes only RecordTypes that are active. Records linked to inactive RecordTypes will be reassigned to the default &#39;Master&#39; RecordType in the target environment.</p>
 </li>
 <li><p><strong>Composite External ID</strong>: The <code>externalId</code> field uses a composite format combining <code>DeveloperName</code>, <code>NamespacePrefix</code>, and <code>SobjectType</code>. This composite ID helps in accurately matching RecordTypes across different environments, especially when there are RecordTypes with the same DeveloperName.</p>
@@ -286,11 +326,25 @@
 <li><p><strong>Customizing SOQL Query</strong>: The SOQL query for RecordType can be customized to fit specific needs, such as including only certain types of RecordTypes or filtering based on other criteria.</p>
 </li>
 </ul>
-<h2 id="key-considerations">Key Considerations<a class="heading-anchor" href="#key-considerations" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="key-considerations"></a>
+                <h2>
+                    Key Considerations
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li>Ensure that the SOQL query for the RecordType object aligns with the needs of your migration strategy, particularly in terms of which RecordTypes need to be included based on their active status or other attributes.</li>
 <li>When setting up your <code>export.json</code>, consider how RecordTypes with the <strong>same DeveloperName</strong> are managed to avoid any issues in the target environment.</li>
 </ul>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../composite-external-id-keys/">Composite External Id Keys</a></li>
 <li><a href="../compound-fields/">Compound Fields</a></li>
 <li><a href="../data-anonymization/">Data Anonymization</a></li>
@@ -298,10 +352,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -321,9 +372,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

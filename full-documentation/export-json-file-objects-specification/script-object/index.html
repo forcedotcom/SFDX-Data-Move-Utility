@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Script Object | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Script Object | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -255,12 +256,78 @@
           <div class="col-sm-9">
             <section class="content page-content">
               <p><strong>🡨  Go Back to <a href="../export-json-file-overview/">Export.json File Overview</a></strong></p>
-<nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#script-object-overview">Script Object Overview</a></li><li><a href="#script-object-structure">Script Object Structure</a></li><li><a href="#script-object-properties">Script Object Properties</a></li><li class="toc-child"><a href="#afteraddons-array-of-addonmanifestdefinition">afterAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#allornone-boolean">allOrNone (Boolean)</a></li><li class="toc-child"><a href="#allowfieldtruncation-boolean">allowFieldTruncation (Boolean)</a></li><li class="toc-child"><a href="#alwaysuserestapitoupdaterecords-boolean">alwaysUseRestApiToUpdateRecords (Boolean)</a></li><li class="toc-child"><a href="#apiversion-string-in-float-format">apiVersion (String in float format)</a></li><li class="toc-child"><a href="#beforeaddons-array-of-addonmanifestdefinition">beforeAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#binarydatacache-string">binaryDataCache (String)</a></li><li class="toc-child"><a href="#bulkapiv1batchsize-integer">bulkApiV1BatchSize (Integer)</a></li><li class="toc-child"><a href="#bulkapiversion-string">bulkApiVersion (String)</a></li><li class="toc-child"><a href="#bulkthreshold-integer">bulkThreshold (Integer)</a></li><li class="toc-child"><a href="#querybulkapithreshold-integer">queryBulkApiThreshold (Integer)</a></li><li class="toc-child"><a href="#concurrencymode-string">concurrencyMode (String)</a></li><li class="toc-child"><a href="#createtargetcsvfiles-boolean">createTargetCSVFiles (Boolean)</a></li><li class="toc-child"><a href="#csvfiledelimiter-string">csvFileDelimiter (String)</a></li><li class="toc-child"><a href="#csvreadfiledelimiter-string">csvReadFileDelimiter (String)</a></li><li class="toc-child"><a href="#csvwritefiledelimiter-string">csvWriteFileDelimiter (String)</a></li><li class="toc-child"><a href="#csvfileencoding-string">csvFileEncoding (String)</a></li><li class="toc-child"><a href="#csvinsertnulls-boolean">csvInsertNulls (Boolean)</a></li><li class="toc-child"><a href="#csvuseeuropeandateformat-boolean">csvUseEuropeanDateFormat (Boolean)</a></li><li class="toc-child"><a href="#csvwriteuppercaseheaders-boolean">csvWriteUpperCaseHeaders (Boolean)</a></li><li class="toc-child"><a href="#csvuseutf8bom-boolean">csvUseUtf8Bom (Boolean)</a></li><li class="toc-child"><a href="#csvalwaysquoted-boolean">csvAlwaysQuoted (Boolean)</a></li><li class="toc-child"><a href="#dataretrievedaddons-array-of-addonmanifestdefinition">dataRetrievedAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#excludeidsfromcsvfiles-boolean">excludeIdsFromCSVFiles (Boolean)</a></li><li class="toc-child"><a href="#excludedobjects-array-of-strings">excludedObjects (Array of Strings)</a></li><li class="toc-child"><a href="#importcsvfilesasis-boolean">importCSVFilesAsIs (Boolean)</a></li><li class="toc-child"><a href="#keepobjectorderwhileexecute-boolean">keepObjectOrderWhileExecute (Boolean)</a></li><li class="toc-child"><a href="#objectsets-array-of-scriptobjectset">objectSets (Array of ScriptObjectSet)</a></li><li class="toc-child"><a href="#objects-array-of-scriptobject">objects (Array of ScriptObject)</a></li><li class="toc-child"><a href="#orgs-array-of-scriptorg">orgs (Array of ScriptOrg)</a></li><li class="toc-child"><a href="#parallelbulkjobs-integer">parallelBulkJobs (Integer)</a></li><li class="toc-child"><a href="#parallelrestjobs-integer">parallelRestJobs (Integer)</a></li><li class="toc-child"><a href="#parallelbinarydownloads-integer">parallelBinaryDownloads (Integer)</a></li><li class="toc-child"><a href="#pollingintervalms-integer">pollingIntervalMs (Integer)</a></li><li class="toc-child"><a href="#pollingquerytimeoutms-integer">pollingQueryTimeoutMs (Integer)</a></li><li class="toc-child"><a href="#promptonissuesincsvfiles-boolean">promptOnIssuesInCSVFiles (Boolean)</a></li><li class="toc-child"><a href="#promptonmissingparentobjects-boolean">promptOnMissingParentObjects (Boolean)</a></li><li class="toc-child"><a href="#groupquery-string">groupQuery (String)</a></li><li class="toc-child"><a href="#proxyurl-string">proxyUrl (String)</a></li><li class="toc-child"><a href="#restapibatchsize-integer">restApiBatchSize (Integer)</a></li><li class="toc-child"><a href="#simulationmode-boolean">simulationMode (Boolean)</a></li><li class="toc-child"><a href="#sourcerecordscache-string">sourceRecordsCache (String)</a></li><li class="toc-child"><a href="#validatecsvfilesonly-boolean">validateCSVFilesOnly (Boolean)</a></li><li class="toc-child"><a href="#useseparatedcsvfiles-boolean">useSeparatedCSVFiles (Boolean)</a></li></ul></nav>
-## Script Object Overview
+<hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#script-object-overview">Script Object Overview</a></li>
+<li><a href="#script-object-structure">Script Object Structure</a></li>
+<li><a href="#script-object-properties">Script Object Properties</a><ul>
+<li><a href="#afteraddons-array-of-addonmanifestdefinition">afterAddons (Array of AddonManifestDefinition)</a></li>
+<li><a href="#allornone-boolean">allOrNone (Boolean)</a></li>
+<li><a href="#allowfieldtruncation-boolean">allowFieldTruncation (Boolean)</a></li>
+<li><a href="#alwaysuserestapitoupdaterecords-boolean">alwaysUseRestApiToUpdateRecords (Boolean)</a></li>
+<li><a href="#apiversion-string-in-float-format">apiVersion (String in float format)</a></li>
+<li><a href="#beforeaddons-array-of-addonmanifestdefinition">beforeAddons (Array of AddonManifestDefinition)</a></li>
+<li><a href="#binarydatacache-string">binaryDataCache (String)</a></li>
+<li><a href="#bulkapiv1batchsize-integer">bulkApiV1BatchSize (Integer)</a></li>
+<li><a href="#bulkapiversion-string">bulkApiVersion (String)</a></li>
+<li><a href="#bulkthreshold-integer">bulkThreshold (Integer)</a></li>
+<li><a href="#querybulkapithreshold-integer">queryBulkApiThreshold (Integer)</a></li>
+<li><a href="#concurrencymode-string">concurrencyMode (String)</a></li>
+<li><a href="#createtargetcsvfiles-boolean">createTargetCSVFiles (Boolean)</a></li>
+<li><a href="#csvfiledelimiter-string">csvFileDelimiter (String)</a></li>
+<li><a href="#csvreadfiledelimiter-string">csvReadFileDelimiter (String)</a></li>
+<li><a href="#csvwritefiledelimiter-string">csvWriteFileDelimiter (String)</a></li>
+<li><a href="#csvfileencoding-string">csvFileEncoding (String)</a></li>
+<li><a href="#csvinsertnulls-boolean">csvInsertNulls (Boolean)</a></li>
+<li><a href="#csvuseeuropeandateformat-boolean">csvUseEuropeanDateFormat (Boolean)</a></li>
+<li><a href="#csvwriteuppercaseheaders-boolean">csvWriteUpperCaseHeaders (Boolean)</a></li>
+<li><a href="#csvuseutf8bom-boolean">csvUseUtf8Bom (Boolean)</a></li>
+<li><a href="#csvalwaysquoted-boolean">csvAlwaysQuoted (Boolean)</a></li>
+<li><a href="#dataretrievedaddons-array-of-addonmanifestdefinition">dataRetrievedAddons (Array of AddonManifestDefinition)</a></li>
+<li><a href="#excludeidsfromcsvfiles-boolean">excludeIdsFromCSVFiles (Boolean)</a></li>
+<li><a href="#excludedobjects-array-of-strings">excludedObjects (Array of Strings)</a></li>
+<li><a href="#importcsvfilesasis-boolean">importCSVFilesAsIs (Boolean)</a></li>
+<li><a href="#keepobjectorderwhileexecute-boolean">keepObjectOrderWhileExecute (Boolean)</a></li>
+<li><a href="#objectsets-array-of-scriptobjectset">objectSets (Array of ScriptObjectSet)</a></li>
+<li><a href="#objects-array-of-scriptobject">objects (Array of ScriptObject)</a></li>
+<li><a href="#orgs-array-of-scriptorg">orgs (Array of ScriptOrg)</a></li>
+<li><a href="#parallelbulkjobs-integer">parallelBulkJobs (Integer)</a></li>
+<li><a href="#parallelrestjobs-integer">parallelRestJobs (Integer)</a></li>
+<li><a href="#parallelbinarydownloads-integer">parallelBinaryDownloads (Integer)</a></li>
+<li><a href="#pollingintervalms-integer">pollingIntervalMs (Integer)</a></li>
+<li><a href="#pollingquerytimeoutms-integer">pollingQueryTimeoutMs (Integer)</a></li>
+<li><a href="#promptonissuesincsvfiles-boolean">promptOnIssuesInCSVFiles (Boolean)</a></li>
+<li><a href="#promptonmissingparentobjects-boolean">promptOnMissingParentObjects (Boolean)</a></li>
+<li><a href="#groupquery-string">groupQuery (String)</a></li>
+<li><a href="#proxyurl-string">proxyUrl (String)</a></li>
+<li><a href="#restapibatchsize-integer">restApiBatchSize (Integer)</a></li>
+<li><a href="#simulationmode-boolean">simulationMode (Boolean)</a></li>
+<li><a href="#sourcerecordscache-string">sourceRecordsCache (String)</a></li>
+<li><a href="#validatecsvfilesonly-boolean">validateCSVFilesOnly (Boolean)</a></li>
+<li><a href="#useseparatedcsvfiles-boolean">useSeparatedCSVFiles (Boolean)</a></li>
+</ul></li>
+</ul>
+<p><br /><br /></p>
 
-<p>The <strong>export.json</strong> file includes a <strong>root-level</strong> <strong>Script</strong> object that serves as a central configuration point for defining global migration parameters. </p>
+
+<a class="heading-anchor" id="script-object-overview"></a>
+                <h2>
+                    Script Object Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <strong>export.json</strong> file includes a <strong>root-level</strong> <strong>Script</strong> object that serves as a central configuration point for defining global migration parameters. </p>
 <p>Properties set within this <strong>Script</strong> object apply universally across the entire migration process and can override similar properties specified at lower levels within the configuration hierarchy.</p>
-<h2 id="script-object-structure">Script Object Structure<a class="heading-anchor" href="#script-object-structure" aria-label="Link to section">#</a></h2><p>Here&#39;s an example of how the <strong>Script</strong> object is structured in the <strong>export.json</strong> file:</p>
+<a class="heading-anchor" id="script-object-structure"></a>
+                <h2>
+                    Script Object Structure
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Here&#39;s an example of how the <strong>Script</strong> object is structured in the <strong>export.json</strong> file:</p>
 <pre><code class="language-json">{
   // Root level of export.json functions as the global Script object for setting migration parameters.
   &quot;objects&quot;: [
@@ -274,8 +341,22 @@
   // Additional global Script object properties
 }
 </code></pre>
-<h2 id="script-object-properties">Script Object Properties<a class="heading-anchor" href="#script-object-properties" aria-label="Link to section">#</a></h2><p>The properties of the <strong>Script</strong> object are set at the global parent scope, ensuring consistent settings across the migration process.</p>
-<h3 id="afteraddons-array-of-addonmanifestdefinition">afterAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#afteraddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines add-ons to be executed after the migration process for specific objects. These add-ons can perform tasks such as data validation or cleanup. Detailed information about the supported events can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<a class="heading-anchor" id="script-object-properties"></a>
+                <h2>
+                    Script Object Properties
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The properties of the <strong>Script</strong> object are set at the global parent scope, ensuring consistent settings across the migration process.</p>
+<a class="heading-anchor" id="afteraddons-array-of-addonmanifestdefinition"></a>
+                <h3>
+                    afterAddons (Array of AddonManifestDefinition)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Defines add-ons to be executed after the migration process for specific objects. These add-ons can perform tasks such as data validation or cleanup. Detailed information about the supported events can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
 <p><strong>Item Type:</strong> <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -291,7 +372,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="allornone-boolean">allOrNone (Boolean)<a class="heading-anchor" href="#allornone-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When any record fails during the target update, setting this property to <strong>true</strong> will enforce the SFDMU to abort the migration job. When using the REST API, all changes made in the target org within the current API call will be rolled back before aborting the migration job, using the native feature of the Salesforce REST API. Changes aren&#39;t committed unless all records are processed successfully. This property is ignored when using the Bulk API since it isn&#39;t natively supported by the SF Bulk API.</p>
+<a class="heading-anchor" id="allornone-boolean"></a>
+                <h3>
+                    allOrNone (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> When any record fails during the target update, setting this property to <strong>true</strong> will enforce the SFDMU to abort the migration job. When using the REST API, all changes made in the target org within the current API call will be rolled back before aborting the migration job, using the native feature of the Salesforce REST API. Changes aren&#39;t committed unless all records are processed successfully. This property is ignored when using the Bulk API since it isn&#39;t natively supported by the SF Bulk API.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],
@@ -299,7 +387,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="allowfieldtruncation-boolean">allowFieldTruncation (Boolean)<a class="heading-anchor" href="#allowfieldtruncation-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Allows truncation of the field value before importing into the target org for specific field types like Url, Multi-select Picklist, Phone, Picklist, Text, Text (Encrypted), and Text Area (Long). The field value is truncated to the length defined by the field metadata, similar to the feature available in the standard Salesforce Data Loader.</p>
+<a class="heading-anchor" id="allowfieldtruncation-boolean"></a>
+                <h3>
+                    allowFieldTruncation (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Allows truncation of the field value before importing into the target org for specific field types like Url, Multi-select Picklist, Phone, Picklist, Text, Text (Encrypted), and Text Area (Long). The field value is truncated to the length defined by the field metadata, similar to the feature available in the standard Salesforce Data Loader.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -307,7 +402,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="alwaysuserestapitoupdaterecords-boolean">alwaysUseRestApiToUpdateRecords (Boolean)<a class="heading-anchor" href="#alwaysuserestapitoupdaterecords-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Enforces the plugin to always update records through the REST Api engine, even when the number of updated records exceeds the bulkThreshold limit.</p>
+<a class="heading-anchor" id="alwaysuserestapitoupdaterecords-boolean"></a>
+                <h3>
+                    alwaysUseRestApiToUpdateRecords (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Enforces the plugin to always update records through the REST Api engine, even when the number of updated records exceeds the bulkThreshold limit.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -315,7 +417,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="apiversion-string-in-float-format">apiVersion (String in float format)<a class="heading-anchor" href="#apiversion-string-in-float-format" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies the API version number to use. Example value: &quot;65.0&quot;.</p>
+<a class="heading-anchor" id="apiversion-string-in-float-format"></a>
+                <h3>
+                    apiVersion (String in float format)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies the API version number to use. Example value: &quot;65.0&quot;.</p>
 <p>If not set explicitly:</p>
 <ul>
 <li>for <code>org -&gt; org</code>, SFDMU auto-detects max API version in both orgs and uses the lower one.</li>
@@ -329,7 +438,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="beforeaddons-array-of-addonmanifestdefinition">beforeAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#beforeaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies add-ons to be executed before the migration process begins for each object. These add-ons can prepare data, verify conditions, or set initial parameters. More information on the event types available for these add-ons can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<a class="heading-anchor" id="beforeaddons-array-of-addonmanifestdefinition"></a>
+                <h3>
+                    beforeAddons (Array of AddonManifestDefinition)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies add-ons to be executed before the migration process begins for each object. These add-ons can prepare data, verify conditions, or set initial parameters. More information on the event types available for these add-ons can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
 <p><strong>Item Type:</strong> <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -345,7 +461,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="binarydatacache-string">binaryDataCache (String)<a class="heading-anchor" href="#binarydatacache-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &#39;InMemory&#39;.</strong> This configuration allows for caching of large binary data on the local disk instead of keeping it in memory when processing binary files such as Attachments or Files. This can enhance job performance and conserve memory usage. Available options are &quot;InMemory&quot;, &quot;CleanFileCache&quot;, and &quot;FileCache&quot;.</p>
+<a class="heading-anchor" id="binarydatacache-string"></a>
+                <h3>
+                    binaryDataCache (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: &#39;InMemory&#39;.</strong> This configuration allows for caching of large binary data on the local disk instead of keeping it in memory when processing binary files such as Attachments or Files. This can enhance job performance and conserve memory usage. Available options are &quot;InMemory&quot;, &quot;CleanFileCache&quot;, and &quot;FileCache&quot;.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -362,7 +485,14 @@
 <li><p><strong>&quot;FileCache&quot;</strong>: In this mode, blob data is also stored on the local disk in the <code>./binary_cache/[source_user_name]</code> directory. Unlike &quot;CleanFileCache&quot;, the cache is not cleared between jobs, meaning that files are preserved and reused. This reduces the need to repeatedly download data from the source, significantly saving time and resources. However, there is a risk of using outdated data if files at the source are updated. This option is most suitable when file updates are infrequent or when consistent data across jobs is crucial.</p>
 </li>
 </ul>
-<h3 id="bulkapiv1batchsize-integer">bulkApiV1BatchSize (Integer)<a class="heading-anchor" href="#bulkapiv1batchsize-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 9500.</strong> Sets the maximum size of each batch when processing records by the Bulk Api V1, similar to the <code>restApiBatchSize</code> for the REST Api.</p>
+<a class="heading-anchor" id="bulkapiv1batchsize-integer"></a>
+                <h3>
+                    bulkApiV1BatchSize (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 9500.</strong> Sets the maximum size of each batch when processing records by the Bulk Api V1, similar to the <code>restApiBatchSize</code> for the REST Api.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -370,7 +500,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="bulkapiversion-string">bulkApiVersion (String)<a class="heading-anchor" href="#bulkapiversion-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &quot;2.0&quot;.</strong> Specifies the version of the Salesforce Bulk Api to use. Valid values are &quot;1.0&quot; and &quot;2.0&quot;.</p>
+<a class="heading-anchor" id="bulkapiversion-string"></a>
+                <h3>
+                    bulkApiVersion (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: &quot;2.0&quot;.</strong> Specifies the version of the Salesforce Bulk Api to use. Valid values are &quot;1.0&quot; and &quot;2.0&quot;.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -378,7 +515,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="bulkthreshold-integer">bulkThreshold (Integer)<a class="heading-anchor" href="#bulkthreshold-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 200.</strong> This configuration parameter sets the minimum size of data required to switch from using the Collection API to the Bulk API for CRUD (Create, Read, Update, Delete) operations on records. It is important to note that this parameter does not influence the use of the Bulk API for querying records; for that, refer to the <code>queryBulkApiThreshold</code> parameter.</p>
+<a class="heading-anchor" id="bulkthreshold-integer"></a>
+                <h3>
+                    bulkThreshold (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 200.</strong> This configuration parameter sets the minimum size of data required to switch from using the Collection API to the Bulk API for CRUD (Create, Read, Update, Delete) operations on records. It is important to note that this parameter does not influence the use of the Bulk API for querying records; for that, refer to the <code>queryBulkApiThreshold</code> parameter.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -397,7 +541,14 @@
 <li><p><strong>Exact Condition</strong>: The Bulk API switch is triggered when <code>amountToProcess &gt;= bulkThreshold</code>.</p>
 </li>
 </ul>
-<h3 id="querybulkapithreshold-integer">queryBulkApiThreshold (Integer)<a class="heading-anchor" href="#querybulkapithreshold-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 30000.</strong> This parameter sets the minimum size of a data query required to activate the use of the Bulk API Query instead of the standard REST API. This switch is essential for efficiently managing large-scale data queries.</p>
+<a class="heading-anchor" id="querybulkapithreshold-integer"></a>
+                <h3>
+                    queryBulkApiThreshold (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 30000.</strong> This parameter sets the minimum size of a data query required to activate the use of the Bulk API Query instead of the standard REST API. This switch is essential for efficiently managing large-scale data queries.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -416,7 +567,14 @@
 <li><p><strong>Initial Data Estimation</strong>: At the start of a job, the plugin assesses the total volume of data by executing a <code>COUNT()</code> query on all source and target records of the specified sObject. The outcome of this count is then compared to <code>queryBulkApiThreshold</code>. If the result is greater than or equal to the threshold, the Bulk API Query is used for the operation.</p>
 </li>
 </ul>
-<h3 id="concurrencymode-string">concurrencyMode (String)<a class="heading-anchor" href="#concurrencymode-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &quot;Parallel&quot;.</strong> Defines the concurrency mode to perform the bulk operations when using Bulk API V1. Valid values are &quot;Serial&quot; and &quot;Parallel&quot;.</p>
+<a class="heading-anchor" id="concurrencymode-string"></a>
+                <h3>
+                    concurrencyMode (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: &quot;Parallel&quot;.</strong> Defines the concurrency mode to perform the bulk operations when using Bulk API V1. Valid values are &quot;Serial&quot; and &quot;Parallel&quot;.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -424,7 +582,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="createtargetcsvfiles-boolean">createTargetCSVFiles (Boolean)<a class="heading-anchor" href="#createtargetcsvfiles-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: true.</strong> If set to <strong>true</strong>, the Plugin will produce a CSV file containing target records for each processed sObject with error information (if occurred) per record. The generated target CSV files also include the <strong>Old Id</strong> column for source-to-target Id mapping when available. Setting this property to <strong>false</strong> will suppress producing these target files.</p>
+<a class="heading-anchor" id="createtargetcsvfiles-boolean"></a>
+                <h3>
+                    createTargetCSVFiles (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: true.</strong> If set to <strong>true</strong>, the Plugin will produce a CSV file containing target records for each processed sObject with error information (if occurred) per record. The generated target CSV files also include the <strong>Old Id</strong> column for source-to-target Id mapping when available. Setting this property to <strong>false</strong> will suppress producing these target files.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -432,7 +597,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="csvfiledelimiter-string">csvFileDelimiter (String)<a class="heading-anchor" href="#csvfiledelimiter-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &quot;,&quot;.</strong> Specifies the common delimiter for non-service CSV read and write operations.</p>
+<a class="heading-anchor" id="csvfiledelimiter-string"></a>
+                <h3>
+                    csvFileDelimiter (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: &quot;,&quot;.</strong> Specifies the common delimiter for non-service CSV read and write operations.</p>
 <p>Supported values:</p>
 <ul>
 <li><code>comma</code> or <code>,</code></li>
@@ -454,7 +626,14 @@
 <li>It is applied consistently to both reading and writing of non-service CSV files.</li>
 <li>It does not change internal service CSV formatting used by SFDMU reports and runtime files.</li>
 </ul>
-<h3 id="csvreadfiledelimiter-string">csvReadFileDelimiter (String)<a class="heading-anchor" href="#csvreadfiledelimiter-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Deprecated, Default: &quot;,&quot;.</strong> Legacy fallback delimiter for reading non-service CSV files.</p>
+<a class="heading-anchor" id="csvreadfiledelimiter-string"></a>
+                <h3>
+                    csvReadFileDelimiter (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Deprecated, Default: &quot;,&quot;.</strong> Legacy fallback delimiter for reading non-service CSV files.</p>
 <p>Use <code>csvFileDelimiter</code> for new configurations.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -468,7 +647,14 @@
 <li>This property is read only as a fallback when <code>csvFileDelimiter</code> is not explicitly provided.</li>
 <li>Keep it only for older scripts that still rely on separate read/write delimiter settings.</li>
 </ul>
-<h3 id="csvwritefiledelimiter-string">csvWriteFileDelimiter (String)<a class="heading-anchor" href="#csvwritefiledelimiter-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Deprecated, Default: &quot;,&quot;.</strong> Legacy fallback delimiter for writing non-service CSV files.</p>
+<a class="heading-anchor" id="csvwritefiledelimiter-string"></a>
+                <h3>
+                    csvWriteFileDelimiter (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Deprecated, Default: &quot;,&quot;.</strong> Legacy fallback delimiter for writing non-service CSV files.</p>
 <p>Use <code>csvFileDelimiter</code> for new configurations.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -482,7 +668,14 @@
 <li>This property is used only when <code>csvFileDelimiter</code> is not set.</li>
 <li>For new configurations, a single common delimiter is easier to maintain and less error-prone.</li>
 </ul>
-<h3 id="csvfileencoding-string">csvFileEncoding (String)<a class="heading-anchor" href="#csvfileencoding-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &quot;utf8&quot;.</strong> Specifies encoding for non-service CSV read/write operations.</p>
+<a class="heading-anchor" id="csvfileencoding-string"></a>
+                <h3>
+                    csvFileEncoding (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: &quot;utf8&quot;.</strong> Specifies encoding for non-service CSV read/write operations.</p>
 <p>Supported values:</p>
 <ul>
 <li><code>utf8</code>, <code>utf-8</code></li>
@@ -510,7 +703,14 @@
 </li>
 <li>Unsupported encoding values are automatically normalized to <code>utf8</code>.</li>
 </ul>
-<h3 id="csvinsertnulls-boolean">csvInsertNulls (Boolean)<a class="heading-anchor" href="#csvinsertnulls-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: true.</strong> Enables Data Loader-like null handling for CSV import semantics.</p>
+<a class="heading-anchor" id="csvinsertnulls-boolean"></a>
+                <h3>
+                    csvInsertNulls (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: true.</strong> Enables Data Loader-like null handling for CSV import semantics.</p>
 <p>When enabled, SFDMU treats special null markers and empty-value rules according to the CSV pipeline behavior.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -525,7 +725,14 @@
 <li><code>#N/A</code> is treated as a null token, while bare <code>N/A</code> is preserved as a literal string value.</li>
 <li>Keep this setting enabled when business logic expects explicit clearing of target field values.</li>
 </ul>
-<h3 id="csvuseeuropeandateformat-boolean">csvUseEuropeanDateFormat (Boolean)<a class="heading-anchor" href="#csvuseeuropeandateformat-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Enables parsing of European date formats in CSV import data.</p>
+<a class="heading-anchor" id="csvuseeuropeandateformat-boolean"></a>
+                <h3>
+                    csvUseEuropeanDateFormat (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Enables parsing of European date formats in CSV import data.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],
@@ -538,7 +745,14 @@
 <li>Use this option when source CSV date values are represented in day-first notation.</li>
 <li>Enable it consistently across runs to avoid inconsistent date parsing outcomes.</li>
 </ul>
-<h3 id="csvwriteuppercaseheaders-boolean">csvWriteUpperCaseHeaders (Boolean)<a class="heading-anchor" href="#csvwriteuppercaseheaders-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Writes non-service CSV header names in uppercase when exporting CSV data.</p>
+<a class="heading-anchor" id="csvwriteuppercaseheaders-boolean"></a>
+                <h3>
+                    csvWriteUpperCaseHeaders (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Writes non-service CSV header names in uppercase when exporting CSV data.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],
@@ -551,7 +765,14 @@
 <li>This is useful when downstream tools require uppercase column names.</li>
 <li>It improves consistency when CSV files are compared or version-controlled across teams.</li>
 </ul>
-<h3 id="csvuseutf8bom-boolean">csvUseUtf8Bom (Boolean)<a class="heading-anchor" href="#csvuseutf8bom-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: true.</strong> Controls UTF-8 BOM behavior for non-service CSV read/write operations when UTF-8 encoding is used.</p>
+<a class="heading-anchor" id="csvuseutf8bom-boolean"></a>
+                <h3>
+                    csvUseUtf8Bom (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: true.</strong> Controls UTF-8 BOM behavior for non-service CSV read/write operations when UTF-8 encoding is used.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],
@@ -564,7 +785,14 @@
 <li>This option matters only for UTF-8 encodings.</li>
 <li>For non-UTF encodings, BOM behavior is not applicable and is ignored.</li>
 </ul>
-<h3 id="csvalwaysquoted-boolean">csvAlwaysQuoted (Boolean)<a class="heading-anchor" href="#csvalwaysquoted-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: true.</strong> Controls whether all non-service CSV values are always written in quotes.</p>
+<a class="heading-anchor" id="csvalwaysquoted-boolean"></a>
+                <h3>
+                    csvAlwaysQuoted (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: true.</strong> Controls whether all non-service CSV values are always written in quotes.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],
@@ -578,7 +806,14 @@
 <li>When set to <code>false</code>, non-service CSV values are quoted only when required by CSV escaping rules.</li>
 <li>Internal service CSV files (<code>source/*</code>, <code>target/*</code>, <code>reports/*</code>) always use quoted values regardless of this setting.</li>
 </ul>
-<h3 id="dataretrievedaddons-array-of-addonmanifestdefinition">dataRetrievedAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#dataretrievedaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines add-ons that are activated after data is retrieved from the source but before it is processed or migrated. This stage allows for preliminary data manipulation, analysis, or logging. For further details on the supported events, refer to: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<a class="heading-anchor" id="dataretrievedaddons-array-of-addonmanifestdefinition"></a>
+                <h3>
+                    dataRetrievedAddons (Array of AddonManifestDefinition)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Defines add-ons that are activated after data is retrieved from the source but before it is processed or migrated. This stage allows for preliminary data manipulation, analysis, or logging. For further details on the supported events, refer to: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
 <p><strong>Item Type:</strong> <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -594,7 +829,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="excludeidsfromcsvfiles-boolean">excludeIdsFromCSVFiles (Boolean)<a class="heading-anchor" href="#excludeidsfromcsvfiles-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> If set to <strong>true</strong>, all record ID and lookup ID columns will not be added on CSV export, making CSV files more compact and well usable with version control systems. The relationships between objects will still be maintained using External ID lookup columns. If set to <strong>true</strong> on CSV import, it will enforce repairing back virtually the source CSV files by adding missing ID columns.</p>
+<a class="heading-anchor" id="excludeidsfromcsvfiles-boolean"></a>
+                <h3>
+                    excludeIdsFromCSVFiles (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> If set to <strong>true</strong>, all record ID and lookup ID columns will not be added on CSV export, making CSV files more compact and well usable with version control systems. The relationships between objects will still be maintained using External ID lookup columns. If set to <strong>true</strong> on CSV import, it will enforce repairing back virtually the source CSV files by adding missing ID columns.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -602,7 +844,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="excludedobjects-array-of-strings">excludedObjects (Array of Strings)<a class="heading-anchor" href="#excludedobjects-array-of-strings" aria-label="Link to section">#</a></h3><p>Specifies a list of API names to exclude sobjects from the job globally across all objectSets. This provides a handy and quick way to exclude objects in cases where multiple objectSets are used and control over object exclusion needs to be maintained globally from one place.</p>
+<a class="heading-anchor" id="excludedobjects-array-of-strings"></a>
+                <h3>
+                    excludedObjects (Array of Strings)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Specifies a list of API names to exclude sobjects from the job globally across all objectSets. This provides a handy and quick way to exclude objects in cases where multiple objectSets are used and control over object exclusion needs to be maintained globally from one place.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -610,7 +859,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="importcsvfilesasis-boolean">importCSVFilesAsIs (Boolean)<a class="heading-anchor" href="#importcsvfilesasis-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> If set to <strong>true</strong>, validation and fixing of the source CSV files are disabled, making them taken <strong>as is</strong> for importing data into the Target org. You are responsible for preparing these files for the import. If set to <strong>false</strong> (default value), the SFDMU will try to analyze and repair the source CSV files before using them to update the Target org.</p>
+<a class="heading-anchor" id="importcsvfilesasis-boolean"></a>
+                <h3>
+                    importCSVFilesAsIs (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> If set to <strong>true</strong>, validation and fixing of the source CSV files are disabled, making them taken <strong>as is</strong> for importing data into the Target org. You are responsible for preparing these files for the import. If set to <strong>false</strong> (default value), the SFDMU will try to analyze and repair the source CSV files before using them to update the Target org.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],    
@@ -618,7 +874,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="keepobjectorderwhileexecute-boolean">keepObjectOrderWhileExecute (Boolean)<a class="heading-anchor" href="#keepobjectorderwhileexecute-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> If set to <strong>true</strong>, objects are executed in the order they appear in the <code>objects[]</code> array. You should arrange objects in the proper order to avoid issues, e.g., parent objects should be placed before child objects. If set to <strong>false</strong> (default value), the &quot;Smart Order&quot; mode is enabled, where the Plugin decides the best order to execute objects. There is a predefined list of objects, which are always executed before</p>
+<a class="heading-anchor" id="keepobjectorderwhileexecute-boolean"></a>
+                <h3>
+                    keepObjectOrderWhileExecute (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> If set to <strong>true</strong>, objects are executed in the order they appear in the <code>objects[]</code> array. You should arrange objects in the proper order to avoid issues, e.g., parent objects should be placed before child objects. If set to <strong>false</strong> (default value), the &quot;Smart Order&quot; mode is enabled, where the Plugin decides the best order to execute objects. There is a predefined list of objects, which are always executed before</p>
 <p> other objects, regardless of the order defined by the script or calculated by the Smart Order, e.g., the <strong>RecordType</strong> object.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -627,7 +890,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="objectsets-array-of-scriptobjectset">objectSets (Array of ScriptObjectSet)<a class="heading-anchor" href="#objectsets-array-of-scriptobjectset" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> List of sub-sets of SObjects you want to process. For more details, see: <a href="../../advanced-features/multiple-object-sets/">Multiple Object Sets</a>.</p>
+<a class="heading-anchor" id="objectsets-array-of-scriptobjectset"></a>
+                <h3>
+                    objectSets (Array of ScriptObjectSet)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> List of sub-sets of SObjects you want to process. For more details, see: <a href="../../advanced-features/multiple-object-sets/">Multiple Object Sets</a>.</p>
 <p><strong>Item Type</strong>: <a href="../script-object-set-object/">ScriptObjectSet</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -656,7 +926,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="objects-array-of-scriptobject">objects (Array of ScriptObject)<a class="heading-anchor" href="#objects-array-of-scriptobject" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies the SObjects you want to process.</p>
+<a class="heading-anchor" id="objects-array-of-scriptobject"></a>
+                <h3>
+                    objects (Array of ScriptObject)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies the SObjects you want to process.</p>
 <p><strong>Item Type</strong>: <a href="../script-object-object/">ScriptObject</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -686,7 +963,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="orgs-array-of-scriptorg">orgs (Array of ScriptOrg)<a class="heading-anchor" href="#orgs-array-of-scriptorg" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Provides credentials data of the Salesforce orgs you want to process. It&#39;s optional if you need to configure a manual connection to any of the processed orgs. Alternatively, you can enforce the Plugin to use local Salesforce CLI auth data by omitting the orgs section.</p>
+<a class="heading-anchor" id="orgs-array-of-scriptorg"></a>
+                <h3>
+                    orgs (Array of ScriptOrg)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Provides credentials data of the Salesforce orgs you want to process. It&#39;s optional if you need to configure a manual connection to any of the processed orgs. Alternatively, you can enforce the Plugin to use local Salesforce CLI auth data by omitting the orgs section.</p>
 <p><strong>Item Type:</strong> <a href="../script-org-object/">ScriptOrg</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -701,7 +985,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="parallelbulkjobs-integer">parallelBulkJobs (Integer)<a class="heading-anchor" href="#parallelbulkjobs-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 1.</strong> Sets the maximum number of Bulk API jobs running in parallel when performing a large size CRUD API operation. The Plugin splits records into multiple small pieces (chunks), then processes each chunk independently by creating a dedicated Bulk API job. All these jobs run together in parallel threads, which can increase the overall Plugin performance but also requires significantly more bandwidth.</p>
+<a class="heading-anchor" id="parallelbulkjobs-integer"></a>
+                <h3>
+                    parallelBulkJobs (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 1.</strong> Sets the maximum number of Bulk API jobs running in parallel when performing a large size CRUD API operation. The Plugin splits records into multiple small pieces (chunks), then processes each chunk independently by creating a dedicated Bulk API job. All these jobs run together in parallel threads, which can increase the overall Plugin performance but also requires significantly more bandwidth.</p>
 <p>Sometimes setting this option to &gt; 1 can cause the well-known <a href="https://help.salesforce.com/s/articleView?id=000387767&amp;language=en_US&amp;r=https%3A%2F%2Fwww.google.ru%2F&amp;type=1" target="_blank" rel="noopener noreferrer">&quot;Unable to lock row - Record currently unavailable&quot;</a> issue. However, in most cases, there is no chance to run into the problem of &quot;record locked&quot;, because each bulk job always processes only its own record set, which should prevent unwanted collisions between the parallel jobs.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -710,7 +1001,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="parallelrestjobs-integer">parallelRestJobs (Integer)<a class="heading-anchor" href="#parallelrestjobs-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 1.</strong> Defines the number of REST API jobs that can run in parallel, similar to <code>parallelBulkJobs</code> for Bulk API jobs.</p>
+<a class="heading-anchor" id="parallelrestjobs-integer"></a>
+                <h3>
+                    parallelRestJobs (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 1.</strong> Defines the number of REST API jobs that can run in parallel, similar to <code>parallelBulkJobs</code> for Bulk API jobs.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],        
@@ -718,7 +1016,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="parallelbinarydownloads-integer">parallelBinaryDownloads (Integer)<a class="heading-anchor" href="#parallelbinarydownloads-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 20</strong> The <code>parallelBinaryDownloads</code> property in the <code>export.json</code> configuration file for the SFDMU Plugin specifies the number of concurrent download threads used when transferring binary data (like Salesforce attachments and document files) between orgs. </p>
+<a class="heading-anchor" id="parallelbinarydownloads-integer"></a>
+                <h3>
+                    parallelBinaryDownloads (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 20</strong> The <code>parallelBinaryDownloads</code> property in the <code>export.json</code> configuration file for the SFDMU Plugin specifies the number of concurrent download threads used when transferring binary data (like Salesforce attachments and document files) between orgs. </p>
 <p>Increasing this value can significantly speed up the migration of large volumes of binary data by utilizing more parallel threads, though this should be managed in accordance with the network and Salesforce API limitations to avoid potential throttling.</p>
 <p>This setting is particularly beneficial for optimizing data transfer times in large-scale migrations where binary data constitutes a significant portion of the data being migrated.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
@@ -745,7 +1050,14 @@
 }
 </code></pre>
 <p>In this configuration, the <code>parallelBinaryDownloads</code> is set to 10, meaning that up to ten binary files  can be downloaded simultaneously using core:ExportFiles Add-On.</p>
-<h3 id="pollingintervalms-integer">pollingIntervalMs (Integer)<a class="heading-anchor" href="#pollingintervalms-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 5000.</strong> Defines the polling interval in milliseconds to check for the bulk job status when using the Bulk API. Decreasing this value may cause extra system load.</p>
+<a class="heading-anchor" id="pollingintervalms-integer"></a>
+                <h3>
+                    pollingIntervalMs (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 5000.</strong> Defines the polling interval in milliseconds to check for the bulk job status when using the Bulk API. Decreasing this value may cause extra system load.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],        
@@ -753,7 +1065,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="pollingquerytimeoutms-integer">pollingQueryTimeoutMs (Integer)<a class="heading-anchor" href="#pollingquerytimeoutms-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 240000</strong> The <code>pollingQueryTimeoutMs</code> property in the SFDMU Plugin&#39;s <code>export.json</code> configuration file sets the maximum timeout, in milliseconds, for waiting on a response from a SOQL query. This timeout ensures that migration processes do not linger indefinitely, especially when dealing with large datasets or complex queries.</p>
+<a class="heading-anchor" id="pollingquerytimeoutms-integer"></a>
+                <h3>
+                    pollingQueryTimeoutMs (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 240000</strong> The <code>pollingQueryTimeoutMs</code> property in the SFDMU Plugin&#39;s <code>export.json</code> configuration file sets the maximum timeout, in milliseconds, for waiting on a response from a SOQL query. This timeout ensures that migration processes do not linger indefinitely, especially when dealing with large datasets or complex queries.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;pollingQueryTimeoutMs&quot;: 180000,  // Sets the query timeout to 180 seconds (3 minutes)
@@ -768,7 +1087,14 @@
 }
 </code></pre>
 <p>In this configuration, the <code>pollingQueryTimeoutMs</code> is adjusted to 180000 ms (3 minutes) for longer query responses, ensuring smooth migration operations without premature timeouts.</p>
-<h3 id="promptonissuesincsvfiles-boolean">promptOnIssuesInCSVFiles (Boolean)<a class="heading-anchor" href="#promptonissuesincsvfiles-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: true.</strong> If set to <strong>true</strong>, the Plugin prompts the user to stop the execution or continue when issues are found in the source CSV files. Setting this property to <strong>false</strong> will suppress asking for the user&#39;s confirmation, and the job will continue despite the issues.</p>
+<a class="heading-anchor" id="promptonissuesincsvfiles-boolean"></a>
+                <h3>
+                    promptOnIssuesInCSVFiles (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: true.</strong> If set to <strong>true</strong>, the Plugin prompts the user to stop the execution or continue when issues are found in the source CSV files. Setting this property to <strong>false</strong> will suppress asking for the user&#39;s confirmation, and the job will continue despite the issues.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],        
@@ -776,7 +1102,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="promptonmissingparentobjects-boolean">promptOnMissingParentObjects (Boolean)<a class="heading-anchor" href="#promptonmissingparentobjects-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: true.</strong> If set to <strong>true</strong>, the SFDMU pauses the execution and prompts the user to decide whether to abort or continue when the parent lookup or parent MD records are missing for some child records, potentially breaking the relationship between objects. Setting this property to <strong>false</strong> will suppress asking for user&#39;s confirmation, and the execution will continue.</p>
+<a class="heading-anchor" id="promptonmissingparentobjects-boolean"></a>
+                <h3>
+                    promptOnMissingParentObjects (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: true.</strong> If set to <strong>true</strong>, the SFDMU pauses the execution and prompts the user to decide whether to abort or continue when the parent lookup or parent MD records are missing for some child records, potentially breaking the relationship between objects. Setting this property to <strong>false</strong> will suppress asking for user&#39;s confirmation, and the execution will continue.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],        
@@ -784,7 +1117,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="groupquery-string">groupQuery (String)<a class="heading-anchor" href="#groupquery-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Overrides the <code>Group</code> query (or WHERE clause) used in polymorphic lookup scenarios.</p>
+<a class="heading-anchor" id="groupquery-string"></a>
+                <h3>
+                    groupQuery (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Overrides the <code>Group</code> query (or WHERE clause) used in polymorphic lookup scenarios.</p>
 <p>Use this option when the default <code>Group</code> retrieval logic must be restricted or expanded for your org setup.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -798,7 +1138,14 @@
 <li>You can provide either a full SOQL query for <code>Group</code> or a WHERE-oriented override, depending on your scenario.</li>
 <li>This is commonly used when default Group retrieval must be narrowed to specific group types.</li>
 </ul>
-<h3 id="proxyurl-string">proxyUrl (String)<a class="heading-anchor" href="#proxyurl-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies the URL of the</p>
+<a class="heading-anchor" id="proxyurl-string"></a>
+                <h3>
+                    proxyUrl (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies the URL of the</p>
 <p> proxy server that should be used to connect to SF instances instead of direct connection. This option can be used, for instance, to connect to orgs through a secured corporate VPN instead of an unsecured direct connection.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -807,7 +1154,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="restapibatchsize-integer">restApiBatchSize (Integer)<a class="heading-anchor" href="#restapibatchsize-integer" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Sets the maximum size of each batch when processing records by the REST Api. Large jobs are internally split into small chunks as it&#39;s available for the Bulk API. This can be useful to avoid the &quot;maximum request size exceeded&quot; error when uploading large binary data, such as the Attachment object, which is not supported by the Bulk API.</p>
+<a class="heading-anchor" id="restapibatchsize-integer"></a>
+                <h3>
+                    restApiBatchSize (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Sets the maximum size of each batch when processing records by the REST Api. Large jobs are internally split into small chunks as it&#39;s available for the Bulk API. This can be useful to avoid the &quot;maximum request size exceeded&quot; error when uploading large binary data, such as the Attachment object, which is not supported by the Bulk API.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],        
@@ -815,7 +1169,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="simulationmode-boolean">simulationMode (Boolean)<a class="heading-anchor" href="#simulationmode-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> This feature allows checking which records will be affected by the <strong>export.json</strong> configuration without actually updating the target org. In this mode, the Plugin produces the same reports (logs and target CSV files) as in live mode, but no actual records are affected.</p>
+<a class="heading-anchor" id="simulationmode-boolean"></a>
+                <h3>
+                    simulationMode (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> This feature allows checking which records will be affected by the <strong>export.json</strong> configuration without actually updating the target org. In this mode, the Plugin produces the same reports (logs and target CSV files) as in live mode, but no actual records are affected.</p>
 <p>In simulation mode, since no actual records are created, the Plugin generates dummy record IDs in the _target.csv files instead of real record IDs as in live mode. Sometimes simulated output might be different than live output. This is because normally, in each step, the Plugin uses all previously processed records to decide which target records should now be processed.</p>
 <p>Such differences between simulated and live output are a normal behavior of the Plugin. Since in the simulation mode, the records in the target org are not updated (they have to be left untouched because there is no records rollback feature in the Salesforce API), you can&#39;t use simulation mode to test your migration task against target triggers, validation rules, and other functions that require actual update of records.</p>
 <p>However, you can still see which records are pulled from the Source and which are about to be pulled to the Target.</p>
@@ -826,7 +1187,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="sourcerecordscache-string">sourceRecordsCache (String)<a class="heading-anchor" href="#sourcerecordscache-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &#39;InMemory&#39;.</strong> Allows storing records retrieved from the Source on the local disk instead of fetching them again on the next run of the same job. This can speed up the job performance. This option has the same available values as the <strong>binaryDataCache</strong> option but controls caching of records instead of binary data. The subdirectory containing the cache is: <strong>./source_records_cache/[source_user_name]</strong>.</p>
+<a class="heading-anchor" id="sourcerecordscache-string"></a>
+                <h3>
+                    sourceRecordsCache (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: &#39;InMemory&#39;.</strong> Allows storing records retrieved from the Source on the local disk instead of fetching them again on the next run of the same job. This can speed up the job performance. This option has the same available values as the <strong>binaryDataCache</strong> option but controls caching of records instead of binary data. The subdirectory containing the cache is: <strong>./source_records_cache/[source_user_name]</strong>.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],        
@@ -834,7 +1202,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="validatecsvfilesonly-boolean">validateCSVFilesOnly (Boolean)<a class="heading-anchor" href="#validatecsvfilesonly-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> If this property is set to <strong>false</strong> (default value), when using CSV files as a data source, the SFDMU performs a validation and a smart fixing of the source CSVs before actually running the migration job. Setting this property to <strong>true</strong> will stop execution after the CSV validation process is completed, allowing you just to detect possible issues in the files without updating the Target.</p>
+<a class="heading-anchor" id="validatecsvfilesonly-boolean"></a>
+                <h3>
+                    validateCSVFilesOnly (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> If this property is set to <strong>false</strong> (default value), when using CSV files as a data source, the SFDMU performs a validation and a smart fixing of the source CSVs before actually running the migration job. Setting this property to <strong>true</strong> will stop execution after the CSV validation process is completed, allowing you just to detect possible issues in the files without updating the Target.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [],        
@@ -842,7 +1217,14 @@
   // ... other export.json properties 
 }
 </code></pre>
-<h3 id="useseparatedcsvfiles-boolean">useSeparatedCSVFiles (Boolean)<a class="heading-anchor" href="#useseparatedcsvfiles-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> If this property is set to <strong>false</strong> (default value), when using CSV files as a data source and multiple Object Sets are in the <code>export.json</code>, the SFDMU will take <strong>the same</strong> CSV source files placed in the root working directory <strong>for each object set</strong>.</p>
+<a class="heading-anchor" id="useseparatedcsvfiles-boolean"></a>
+                <h3>
+                    useSeparatedCSVFiles (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> If this property is set to <strong>false</strong> (default value), when using CSV files as a data source and multiple Object Sets are in the <code>export.json</code>, the SFDMU will take <strong>the same</strong> CSV source files placed in the root working directory <strong>for each object set</strong>.</p>
 <p>Setting this property to <strong>true</strong> will enforce the SFDMU to use separated CSV source files for each executed Object Set. For the first Object Set, it will always take the source files from the root working directory (to avoid backward incompatibility issues). For the rest of the Object Sets, it will take the source CSV files from the subdirectory with the following pattern: <strong>./objectset_source/object-set-&lt;ObjectSet Index&gt;</strong>, e.g., <strong>./objectset_source/object-set-2/</strong>.</p>
 <p>Make sure you always put the source CSV files in the correct path, for example, Account.csv for the object set #1 you should put into <strong>./Account.csv</strong> and for the object set #2 into <strong>./objectset_source/object-set-2/Account.csv</strong>.</p>
 <p>When <code>core:ExportFiles</code> is used with CSV media modes, this flag also affects binary path resolution per object set.</p>
@@ -856,10 +1238,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 5th Mar 2026
                 </div>
               </div>
             </section>
@@ -879,9 +1258,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

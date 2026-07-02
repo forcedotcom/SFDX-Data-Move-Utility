@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>SFDMU GUI Application | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>SFDMU GUI Application | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../favicon.png">
-  <link rel="stylesheet" href="../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "..";</script>
-  <link rel="stylesheet" href="../styles/raneto.min.css">
-  <link rel="stylesheet" href="../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../styles/custom.css">
+  <link rel="preload" href="../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -255,59 +256,237 @@
           <div class="col-sm-9">
             <section class="content page-content">
               <p><strong>👉 The Application GitHub repository can be found here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App" target="_blank" rel="noopener noreferrer">SFDMU GUI App Application Repository</a></strong></p>
-<nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#when-is-sfdmu-gui-application-useful">When is SFDMU GUI Application Useful?</a></li><li><a href="#supported-os">Supported OS</a></li><li><a href="#installation-of-the-release-version">Installation of the Release Version</a></li><li class="toc-child"><a href="#general-information">General Information</a></li><li class="toc-child"><a href="#prerequisites">Prerequisites</a></li><li class="toc-child"><a href="#installation-of-latest-release">Installation of Latest Release</a></li><li class="toc-child"><a href="#installation-of-specific-release">Installation of Specific Release</a></li><li class="toc-child"><a href="#running-the-installed-application">Running the Installed Application</a></li><li class="toc-child"><a href="#uninstallation-and-upgrades">Uninstallation and Upgrades</a></li><li><a href="#installation-of-the-source-code">Installation of the Source Code</a></li><li class="toc-child"><a href="#prerequisites-8201">Prerequisites&amp;8201;</a></li><li class="toc-child"><a href="#installation-on-windows">Installation on Windows</a></li><li class="toc-child"><a href="#installation-on-macos-and-linux">Installation on macOS and Linux</a></li><li class="toc-child"><a href="#creating-build-artifacts-from-source">Creating Build Artifacts from Source</a></li><li class="toc-child"><a href="#upgrading">Upgrading</a></li><li><a href="#debugging">Debugging</a></li><li class="toc-child"><a href="#start-the-debug-session">Start the Debug Session</a></li><li><a href="#application-configuration">Application Configuration</a></li><li class="toc-child"><a href="#setting-up-the-configuration">Setting Up the Configuration</a></li><li class="toc-child"><a href="#configuration-file-description">Configuration File Description</a></li><li class="toc-child"><a href="#configuration-file-properties">Configuration File Properties</a></li><li><a href="#translation">Translation</a></li><li><a href="#logging">Logging</a></li><li><a href="#backup">Backup</a></li><li><a href="#additional-notes">Additional Notes</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
-The SFDMU GUI Application is a desktop visual interface for creating, editing, validating, and running the SFDMU plugin configuration file (`export.json`). It makes SFDMU setup and execution simpler by replacing most manual JSON editing and command-line steps with a guided visual workflow.
+<hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#when-is-sfdmu-gui-application-useful">When is SFDMU GUI Application Useful?</a></li>
+<li><a href="#supported-os">Supported OS</a></li>
+<li><a href="#installation-of-the-release-version">Installation of the Release Version</a><ul>
+<li><a href="#general-information">General Information</a></li>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#installation-of-latest-release">Installation of Latest Release</a><ul>
+<li><a href="#step-1-download">Step 1. Download</a></li>
+<li><a href="#step-2-install">Step 2. Install</a></li>
+</ul></li>
+<li><a href="#installation-of-specific-release">Installation of Specific Release</a><ul>
+<li><a href="#step-1-select-the-release">Step 1: Select the Release</a></li>
+<li><a href="#step-2-select-the-release-tag">Step 2: Select the Release Tag</a></li>
+<li><a href="#step-3-download-the-setup-files">Step 3: Download the Setup Files</a></li>
+<li><a href="#step-4-install-the-application">Step 4: Install the Application</a></li>
+</ul></li>
+<li><a href="#running-the-installed-application">Running the Installed Application</a></li>
+<li><a href="#uninstallation-and-upgrades">Uninstallation and Upgrades</a><ul>
+<li><a href="#uninstalling-the-app">Uninstalling the App</a></li>
+<li><a href="#upgrading-the-app">Upgrading the App</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#installation-of-the-source-code">Installation of the Source Code</a><ul>
+<li><a href="#prerequisites-8201">Prerequisites&#8201;</a></li>
+<li><a href="#installation-on-windows">Installation on Windows</a><ul>
+<li><a href="#step-1-complete-the-following-prerequisites">Step 1:  Complete the following prerequisites:</a></li>
+<li><a href="#step-2-clone-the-repository">Step 2: Clone the repository:</a></li>
+<li><a href="#step-3-navigate-to-the-project-directory">Step 3: Navigate to the project directory:</a></li>
+<li><a href="#step-4-install-project-dependencies">Step 4: Install project dependencies:</a></li>
+<li><a href="#step-5-build-the-project">Step 5: Build the project:</a></li>
+<li><a href="#step-6-run-the-application-without-debugging">Step 6: Run the application without debugging:</a></li>
+</ul></li>
+<li><a href="#installation-on-macos-and-linux">Installation on macOS and Linux</a><ul>
+<li><a href="#step-1-clone-the-repository">Step 1.  Clone the repository:</a></li>
+<li><a href="#step-2-navigate-to-the-project-directory">Step 2. Navigate to the project directory:</a></li>
+<li><a href="#step-3-install-project-dependencies">Step 3. Install project dependencies:</a></li>
+<li><a href="#step-4-build-the-project">Step 4. Build the project:</a></li>
+<li><a href="#step-5-run-the-application">Step 5. Run the application:</a></li>
+</ul></li>
+<li><a href="#creating-build-artifacts-from-source">Creating Build Artifacts from Source</a><ul>
+<li><a href="#windows-host">Windows host</a></li>
+<li><a href="#linux-host">Linux host</a></li>
+<li><a href="#debian-or-ubuntu-host">Debian or Ubuntu host</a></li>
+<li><a href="#rpm-based-linux-host">RPM-based Linux host</a></li>
+</ul></li>
+<li><a href="#upgrading">Upgrading</a><ul>
+<li><a href="#step-1-navigate-to-the-project-directory-where-the-repository-is-cloned">Step 1. Navigate to the project directory where the repository is cloned.</a></li>
+<li><a href="#step-2-pull-the-latest-changes">Step 2. Pull the latest changes:</a></li>
+<li><a href="#step-3-install-any-updated-project-dependencies">Step 3. Install any updated project dependencies:</a></li>
+<li><a href="#step-4-build-the-project-1">Step 4.  Build the project:</a></li>
+<li><a href="#step-5-run-the-application-1">Step 5.  Run the application:</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#debugging">Debugging</a><ul>
+<li><a href="#start-the-debug-session">Start the Debug Session</a></li>
+</ul></li>
+<li><a href="#application-configuration">Application Configuration</a><ul>
+<li><a href="#setting-up-the-configuration">Setting Up the Configuration</a></li>
+<li><a href="#configuration-file-description">Configuration File Description</a></li>
+<li><a href="#configuration-file-properties">Configuration File Properties</a><ul>
+<li><a href="#dataroot">dataRoot</a></li>
+<li><a href="#approot">appRoot</a></li>
+<li><a href="#databasefilename">databaseFilename</a></li>
+<li><a href="#locales">locales</a></li>
+<li><a href="#defaultlocale">defaultLocale</a></li>
+<li><a href="#logbufferflushintervalseconds">logBufferFlushIntervalSeconds</a></li>
+<li><a href="#backuponapplicationstart">backupOnApplicationStart</a></li>
+<li><a href="#backupeverynminutes">backupEveryNMinutes</a></li>
+<li><a href="#language">language</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#translation">Translation</a></li>
+<li><a href="#logging">Logging</a></li>
+<li><a href="#backup">Backup</a></li>
+<li><a href="#additional-notes">Additional Notes</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The SFDMU GUI Application is a desktop visual interface for creating, editing, validating, and running the SFDMU plugin configuration file (<code>export.json</code>). It makes SFDMU setup and execution simpler by replacing most manual JSON editing and command-line steps with a guided visual workflow.</p>
 <p><strong>Version <code>5.0.0</code> is the recommended upgrade path.</strong><br>The <code>5.x</code> release line includes the current security dependency updates, substantial UI and engine refactoring, multiple bug fixes, and performance improvements.</p>
-<h2 id="when-is-sfdmu-gui-application-useful">When is SFDMU GUI Application Useful?<a class="heading-anchor" href="#when-is-sfdmu-gui-application-useful" aria-label="Link to section">#</a></h2><p>Beyond the basic setup, the <code>export.json</code> file contains numerous advanced properties useful for creating and executing intricate migration jobs. Consequently, in some situations, the JSON file may become lengthy and challenging to manually edit using standard Notepad.</p>
+<a class="heading-anchor" id="when-is-sfdmu-gui-application-useful"></a>
+                <h2>
+                    When is SFDMU GUI Application Useful?
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Beyond the basic setup, the <code>export.json</code> file contains numerous advanced properties useful for creating and executing intricate migration jobs. Consequently, in some situations, the JSON file may become lengthy and challenging to manually edit using standard Notepad.</p>
 <p>With this Desktop Application, there’s no need for Notepad and Console. All tasks are performed visually, significantly simplifying migration job management. Effortlessly add or remove organization connections, configure SObjects and fields, and run the Plugin directly from the application.</p>
-<h2 id="supported-os">Supported OS<a class="heading-anchor" href="#supported-os" aria-label="Link to section">#</a></h2><p>The Application is built using the <a href="https://www.electronjs.org/" target="_blank" rel="noopener noreferrer">ElectronJS</a> framework.</p>
+<a class="heading-anchor" id="supported-os"></a>
+                <h2>
+                    Supported OS
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The Application is built using the <a href="https://www.electronjs.org/" target="_blank" rel="noopener noreferrer">ElectronJS</a> framework.</p>
 <ul>
 <li>All major OS (Win, Mac OS, Linux) are supported.</li>
 <li>For Windows, it requires Windows 10 or later.</li>
 </ul>
-<h2 id="installation-of-the-release-version">Installation of the Release Version<a class="heading-anchor" href="#installation-of-the-release-version" aria-label="Link to section">#</a></h2><p>Installing and running the release version of the SFDMU GUI App is a straightforward process.</p>
+<a class="heading-anchor" id="installation-of-the-release-version"></a>
+                <h2>
+                    Installation of the Release Version
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Installing and running the release version of the SFDMU GUI App is a straightforward process.</p>
 <p>This guide provides a step-by-step explanation of how to download and install the SFDMU GUI App from GitHub, suitable for users with minimal technical skills.</p>
-<h3 id="general-information">General Information<a class="heading-anchor" href="#general-information" aria-label="Link to section">#</a></h3><p>The SFDMU GUI App releases are generated using <a href="https://www.electronforge.io/" target="_blank" rel="noopener noreferrer">Electron Forge</a>, with different makers tailored for each operating system:</p>
+<a class="heading-anchor" id="general-information"></a>
+                <h3>
+                    General Information
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The SFDMU GUI App releases are generated using <a href="https://www.electronforge.io/" target="_blank" rel="noopener noreferrer">Electron Forge</a>, with different makers tailored for each operating system:</p>
 <ul>
 <li>For Windows, releases are created using <a href="https://www.electronforge.io/config/makers/squirrel.windows" target="_blank" rel="noopener noreferrer">Squirrel.Windows</a>.</li>
 <li>For macOS, releases are packaged using <a href="https://www.electronforge.io/config/makers/zip" target="_blank" rel="noopener noreferrer">Zip</a>.</li>
 <li>For Linux, packages are available in <a href="https://www.electronforge.io/config/makers/deb" target="_blank" rel="noopener noreferrer">deb</a> and <a href="https://www.electronforge.io/config/makers/rpm" target="_blank" rel="noopener noreferrer">RPM</a> formats.</li>
 <li>Only the <strong>x64</strong> CPU architecture is supported.</li>
 </ul>
-<h3 id="prerequisites">Prerequisites<a class="heading-anchor" href="#prerequisites" aria-label="Link to section">#</a></h3><p>Before installing and using the SFDMU GUI App, ensure you have installed the <a href="https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/install.html" target="_blank" rel="noopener noreferrer">SF CLI</a>.</p>
-<h3 id="installation-of-latest-release">Installation of Latest Release<a class="heading-anchor" href="#installation-of-latest-release" aria-label="Link to section">#</a></h3><p>The recommended baseline is version <code>5.0.0</code> or later in the <code>5.x</code> release line.</p>
+<a class="heading-anchor" id="prerequisites"></a>
+                <h3>
+                    Prerequisites
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Before installing and using the SFDMU GUI App, ensure you have installed the <a href="https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/install.html" target="_blank" rel="noopener noreferrer">SF CLI</a>.</p>
+<a class="heading-anchor" id="installation-of-latest-release"></a>
+                <h3>
+                    Installation of Latest Release
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The recommended baseline is version <code>5.0.0</code> or later in the <code>5.x</code> release line.</p>
 <p>The latest release can be found in the <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release" target="_blank" rel="noopener noreferrer">release</a> branch of the SFDMU GUI App GitHub repository.</p>
 <p>You can find the MD5 hash sums in the respective <code>.md5</code> files located in the same repository folder as the setup file.</p>
-<h4 id="step-1-download">Step 1. Download<a class="heading-anchor" href="#step-1-download" aria-label="Link to section">#</a></h4><p>Download the latest release of the SFDMU GUI App for your operating system:</p>
+<a class="heading-anchor" id="step-1-download"></a>
+                <h4>
+                    Step 1. Download
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Download the latest release of the SFDMU GUI App for your operating system:</p>
 <ul>
 <li><strong>macOS</strong>: Access the <code>zip</code> installation file here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release/dist/darwin/x64/" target="_blank" rel="noopener noreferrer">macOS x64 setup</a>.</li>
 <li><strong>Linux (Debian-based systems)</strong>: Access the <code>deb</code> installation file here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release/dist/deb/x64/" target="_blank" rel="noopener noreferrer">Debian x64 setup</a>.</li>
 <li><strong>Linux (RPM-based systems)</strong>: Access the <code>rpm</code> installation file here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release/dist/rpm/x64/" target="_blank" rel="noopener noreferrer">RPM x64 setup</a>.</li>
 <li><strong>Windows</strong>: Access the <code>zip</code> file containing the setup executable here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release/dist/windows/x64/" target="_blank" rel="noopener noreferrer">Windows x64 setup</a>.</li>
 </ul>
-<h4 id="step-2-install">Step 2. Install<a class="heading-anchor" href="#step-2-install" aria-label="Link to section">#</a></h4><ol>
+<a class="heading-anchor" id="step-2-install"></a>
+                <h4>
+                    Step 2. Install
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ol>
 <li>Click on the file link provided for your operating system to navigate to the download page.</li>
 <li>Once on the page, use the download link located at the top right to download the file.</li>
 <li>Follow the steps specific to your operating system for installation the application as detailed in <a href="./#step-4-install-the-application"><strong>Step 4</strong></a> below.</li>
 </ol>
-<h3 id="installation-of-specific-release">Installation of Specific Release<a class="heading-anchor" href="#installation-of-specific-release" aria-label="Link to section">#</a></h3><h4 id="step-1-select-the-release">Step 1: Select the Release<a class="heading-anchor" href="#step-1-select-the-release" aria-label="Link to section">#</a></h4><ol>
+<a class="heading-anchor" id="installation-of-specific-release"></a>
+                <h3>
+                    Installation of Specific Release
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><a class="heading-anchor" id="step-1-select-the-release"></a>
+                <h4>
+                    Step 1: Select the Release
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ol>
 <li>Go to the <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App" target="_blank" rel="noopener noreferrer">SFDMU GUI App Repository</a> on GitHub and locate the <code>Releases</code> link in the sidebar.</li>
 <li>Click on <code>Releases</code> to view all available versions of the SFDMU GUI App. The latest version always appears at the top of the list.</li>
 <li>Select the release you want to install by clicking on the corresponding link to navigate to its page.</li>
 </ol>
-<h4 id="step-2-select-the-release-tag">Step 2: Select the Release Tag<a class="heading-anchor" href="#step-2-select-the-release-tag" aria-label="Link to section">#</a></h4><ol>
+<a class="heading-anchor" id="step-2-select-the-release-tag"></a>
+                <h4>
+                    Step 2: Select the Release Tag
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ol>
 <li>On the release page, click on the version&#39;s tag (icon resembles a price tag) located at the top of the page. This action opens a page listing all files associated with that release.</li>
 </ol>
-<h4 id="step-3-download-the-setup-files">Step 3: Download the Setup Files<a class="heading-anchor" href="#step-3-download-the-setup-files" aria-label="Link to section">#</a></h4><p>In the code files view navigate to the specific subdirectories under <code>dist/</code> and click <code>Download File</code> for the setup file appropriate for your OS:</p>
+<a class="heading-anchor" id="step-3-download-the-setup-files"></a>
+                <h4>
+                    Step 3: Download the Setup Files
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>In the code files view navigate to the specific subdirectories under <code>dist/</code> and click <code>Download File</code> for the setup file appropriate for your OS:</p>
 <ul>
 <li><strong>macOS</strong>: Navigate to <code>dist/darwin/x64/</code> and download the file, e.g., <code>sfdmu-gui-app-darwin-x64-X.X.X.zip</code>.</li>
 <li><strong>Linux (Debian-based systems)</strong>: Go to <code>dist/deb/x64/</code> and download <code>sfdmu-gui-app_X.X.X_amd64.deb</code>.</li>
 <li><strong>Linux (RPM-based systems)</strong>: Go to <code>dist/rpm/x64/</code> and download <code>SFDMU-GUI-App-X.X.X-1.x86_64.rpm</code>.</li>
 <li><strong>Windows</strong>: Go to <code>dist/windows/x64/</code> and download the zip package, e.g., <code>sfdmu-gui-app-X.X.X Setup.zip</code>.</li>
 </ul>
-<h4 id="step-4-install-the-application">Step 4: Install the Application<a class="heading-anchor" href="#step-4-install-the-application" aria-label="Link to section">#</a></h4><ul>
+<a class="heading-anchor" id="step-4-install-the-application"></a>
+                <h4>
+                    Step 4: Install the Application
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ul>
 <li><strong>macOS</strong>:</li>
 </ul>
 <ol>
@@ -348,7 +527,14 @@ The SFDMU GUI Application is a desktop visual interface for creating, editing, v
 <li>Run the file named<code>sfdmu-gui-app-X.X.X Setup.exe</code>. The installer shows a loader with &quot;SFDMU GUI App installation is in progress...&quot;.</li>
 <li>After installation, the app will automatically launch and create a new shortcut on your desktop and in the Start menu, typically under the folder &quot;Salesforce.com, inc&quot;.</li>
 </ol>
-<h3 id="running-the-installed-application">Running the Installed Application<a class="heading-anchor" href="#running-the-installed-application" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="running-the-installed-application"></a>
+                <h3>
+                    Running the Installed Application
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><p><strong>macOS</strong>: </p>
 <ol>
 <li><p>Open a Terminal window.</p>
@@ -364,49 +550,196 @@ The SFDMU GUI Application is a desktop visual interface for creating, editing, v
 <li><p><strong>Windows</strong>:  After installation, the app typically starts automatically. For subsequent launches, find the SFDMU GUI App shortcut on your desktop or search for it in the Start menu under &quot;Salesforce.com, inc&quot;.</p>
 </li>
 </ul>
-<h3 id="uninstallation-and-upgrades">Uninstallation and Upgrades<a class="heading-anchor" href="#uninstallation-and-upgrades" aria-label="Link to section">#</a></h3><h4 id="uninstalling-the-app">Uninstalling the App<a class="heading-anchor" href="#uninstalling-the-app" aria-label="Link to section">#</a></h4><ul>
+<a class="heading-anchor" id="uninstallation-and-upgrades"></a>
+                <h3>
+                    Uninstallation and Upgrades
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><a class="heading-anchor" id="uninstalling-the-app"></a>
+                <h4>
+                    Uninstalling the App
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ul>
 <li><strong>macOS</strong>: Drag the app from the <code>Applications</code> folder to the Trash.</li>
 <li><strong>Linux (Debian-based)</strong>: Use the command <code>sudo apt-get remove sfdmu-gui-app</code>.</li>
 <li><strong>Linux (RPM-based)</strong>: Use the command <code>sudo rpm -e SFDMU-GUI-App</code>.</li>
 <li><strong>Windows</strong>: Go to <code>Control Panel</code> &gt; <code>Uninstall a program</code>. Locate the SFDMU GUI App, right-click on it, and then select <code>Uninstall</code>.</li>
 </ul>
-<h4 id="upgrading-the-app">Upgrading the App<a class="heading-anchor" href="#upgrading-the-app" aria-label="Link to section">#</a></h4><p>When a new version is available, repeat the download and installation steps. </p>
+<a class="heading-anchor" id="upgrading-the-app"></a>
+                <h4>
+                    Upgrading the App
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>When a new version is available, repeat the download and installation steps. </p>
 <p>For Linux and Windows, the new installation will overwrite the previous version.  For macOS, you may first need to delete the previous version from the <code>Applications</code> folder before installing the new one.</p>
-<h2 id="installation-of-the-source-code">Installation of the Source Code<a class="heading-anchor" href="#installation-of-the-source-code" aria-label="Link to section">#</a></h2><p>This guide details how to install the application&#39;s source code on various operating systems. </p>
+<a class="heading-anchor" id="installation-of-the-source-code"></a>
+                <h2>
+                    Installation of the Source Code
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>This guide details how to install the application&#39;s source code on various operating systems. </p>
 <p>It is intended for developers who wish to modify the original source code or prefer to run the application directly from the source, bypassing the release setup process.</p>
-<h3 id="prerequisites-8201">Prerequisites&#8201;<a class="heading-anchor" href="#prerequisites-8201" aria-label="Link to section">#</a></h3><p>Ensure you have installed <a href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">Node.js &gt;=22 LTS</a>, <a href="https://git-scm.com/downloads" target="_blank" rel="noopener noreferrer">Git</a>, and <a href="https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/install.html" target="_blank" rel="noopener noreferrer">SF CLI</a> before using the source code of the SFDMU GUI App.</p>
-<h3 id="installation-on-windows">Installation on Windows<a class="heading-anchor" href="#installation-on-windows" aria-label="Link to section">#</a></h3><p>For Windows machines, native Electron dependencies require Python and a current Visual C++ toolchain.</p>
-<h4 id="step-1-complete-the-following-prerequisites">Step 1:  Complete the following prerequisites:<a class="heading-anchor" href="#step-1-complete-the-following-prerequisites" aria-label="Link to section">#</a></h4><ol>
+<a class="heading-anchor" id="prerequisites-8201"></a>
+                <h3>
+                    Prerequisites&#8201;
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Ensure you have installed <a href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">Node.js &gt;=22 LTS</a>, <a href="https://git-scm.com/downloads" target="_blank" rel="noopener noreferrer">Git</a>, and <a href="https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/install.html" target="_blank" rel="noopener noreferrer">SF CLI</a> before using the source code of the SFDMU GUI App.</p>
+<a class="heading-anchor" id="installation-on-windows"></a>
+                <h3>
+                    Installation on Windows
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>For Windows machines, native Electron dependencies require Python and a current Visual C++ toolchain.</p>
+<a class="heading-anchor" id="step-1-complete-the-following-prerequisites"></a>
+                <h4>
+                    Step 1:  Complete the following prerequisites:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ol>
 <li><p><strong>Visual Studio Build Tools or Visual Studio Community:</strong> Install either <a href="https://visualstudio.microsoft.com/visual-cpp-build-tools/" target="_blank" rel="noopener noreferrer">Visual Studio Build Tools 2022</a> or <a href="https://visualstudio.microsoft.com/vs/community/" target="_blank" rel="noopener noreferrer">Visual Studio 2022 Community</a>. In the installer, enable <strong>Desktop development with C++</strong> and ensure the <strong>MSVC C++ x64/x86 build tools</strong> are selected.</p>
 </li>
 <li><p><strong>Python:</strong> Download and install the latest supported version of Python, ensuring <code>&quot;Add Python to PATH&quot;</code> is selected during the installation process.
 <a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer">Download Python</a></p>
 </li>
 </ol>
-<h4 id="step-2-clone-the-repository">Step 2: Clone the repository:<a class="heading-anchor" href="#step-2-clone-the-repository" aria-label="Link to section">#</a></h4><pre><code class="language-bash">git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App.git
+<a class="heading-anchor" id="step-2-clone-the-repository"></a>
+                <h4>
+                    Step 2: Clone the repository:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App.git
 </code></pre>
-<h4 id="step-3-navigate-to-the-project-directory">Step 3: Navigate to the project directory:<a class="heading-anchor" href="#step-3-navigate-to-the-project-directory" aria-label="Link to section">#</a></h4><pre><code class="language-bash">cd SFDX-Data-Move-Utility-Desktop-App
+<a class="heading-anchor" id="step-3-navigate-to-the-project-directory"></a>
+                <h4>
+                    Step 3: Navigate to the project directory:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">cd SFDX-Data-Move-Utility-Desktop-App
 </code></pre>
-<h4 id="step-4-install-project-dependencies">Step 4: Install project dependencies:<a class="heading-anchor" href="#step-4-install-project-dependencies" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm install
+<a class="heading-anchor" id="step-4-install-project-dependencies"></a>
+                <h4>
+                    Step 4: Install project dependencies:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm install
 </code></pre>
-<h4 id="step-5-build-the-project">Step 5: Build the project:<a class="heading-anchor" href="#step-5-build-the-project" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm run build
+<a class="heading-anchor" id="step-5-build-the-project"></a>
+                <h4>
+                    Step 5: Build the project:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm run build
 </code></pre>
-<h4 id="step-6-run-the-application-without-debugging">Step 6: Run the application without debugging:<a class="heading-anchor" href="#step-6-run-the-application-without-debugging" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm start
+<a class="heading-anchor" id="step-6-run-the-application-without-debugging"></a>
+                <h4>
+                    Step 6: Run the application without debugging:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm start
 </code></pre>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><p>If <code>npm install</code> fails while compiling native modules, verify that Visual Studio still has the <strong>Desktop development with C++</strong> workload installed and that Python is available in <code>PATH</code>.</p>
-<h3 id="installation-on-macos-and-linux">Installation on macOS and Linux<a class="heading-anchor" href="#installation-on-macos-and-linux" aria-label="Link to section">#</a></h3><p>Installation on macOS and Linux is straightforward in most environments.</p>
-<h4 id="step-1-clone-the-repository">Step 1.  Clone the repository:<a class="heading-anchor" href="#step-1-clone-the-repository" aria-label="Link to section">#</a></h4><pre><code class="language-bash">git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App.git
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><p>If <code>npm install</code> fails while compiling native modules, verify that Visual Studio still has the <strong>Desktop development with C++</strong> workload installed and that Python is available in <code>PATH</code>.</p>
+<a class="heading-anchor" id="installation-on-macos-and-linux"></a>
+                <h3>
+                    Installation on macOS and Linux
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Installation on macOS and Linux is straightforward in most environments.</p>
+<a class="heading-anchor" id="step-1-clone-the-repository"></a>
+                <h4>
+                    Step 1.  Clone the repository:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App.git
 </code></pre>
-<h4 id="step-2-navigate-to-the-project-directory">Step 2. Navigate to the project directory:<a class="heading-anchor" href="#step-2-navigate-to-the-project-directory" aria-label="Link to section">#</a></h4><pre><code class="language-bash">cd SFDX-Data-Move-Utility-Desktop-App
+<a class="heading-anchor" id="step-2-navigate-to-the-project-directory"></a>
+                <h4>
+                    Step 2. Navigate to the project directory:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">cd SFDX-Data-Move-Utility-Desktop-App
 </code></pre>
-<h4 id="step-3-install-project-dependencies">Step 3. Install project dependencies:<a class="heading-anchor" href="#step-3-install-project-dependencies" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm install
+<a class="heading-anchor" id="step-3-install-project-dependencies"></a>
+                <h4>
+                    Step 3. Install project dependencies:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm install
 </code></pre>
-<h4 id="step-4-build-the-project">Step 4. Build the project:<a class="heading-anchor" href="#step-4-build-the-project" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm run build
+<a class="heading-anchor" id="step-4-build-the-project"></a>
+                <h4>
+                    Step 4. Build the project:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm run build
 </code></pre>
-<h4 id="step-5-run-the-application">Step 5. Run the application:<a class="heading-anchor" href="#step-5-run-the-application" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm start
+<a class="heading-anchor" id="step-5-run-the-application"></a>
+                <h4>
+                    Step 5. Run the application:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm start
 </code></pre>
-<h3 id="creating-build-artifacts-from-source">Creating Build Artifacts from Source<a class="heading-anchor" href="#creating-build-artifacts-from-source" aria-label="Link to section">#</a></h3><p>The project supports different packaging flows depending on the host operating system.</p>
-<h4 id="windows-host">Windows host<a class="heading-anchor" href="#windows-host" aria-label="Link to section">#</a></h4><p>Use these commands on Windows:</p>
+<a class="heading-anchor" id="creating-build-artifacts-from-source"></a>
+                <h3>
+                    Creating Build Artifacts from Source
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The project supports different packaging flows depending on the host operating system.</p>
+<a class="heading-anchor" id="windows-host"></a>
+                <h4>
+                    Windows host
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Use these commands on Windows:</p>
 <pre><code class="language-bash">npm install
 npm run make-win
 npm run make-mac
@@ -451,7 +784,14 @@ npm run make-linux
 <pre><code class="language-bash">sudo apt-get install -y libgtk-3-0 libnss3 libxss1 libasound2 libgbm1 libxshmfence1 libxrandr2 libatk-bridge2.0-0 libdrm2 libxkbcommon0
 </code></pre>
 <p>If your distribution uses different package names, install the equivalent GTK 3, NSS, X11/XScrnSaver, GBM, DRM, XKB, ATK bridge, and ALSA runtime libraries.</p>
-<h4 id="linux-host">Linux host<a class="heading-anchor" href="#linux-host" aria-label="Link to section">#</a></h4><p>Use these commands on a Linux machine when you want the standard Forge Linux packaging flow:</p>
+<a class="heading-anchor" id="linux-host"></a>
+                <h4>
+                    Linux host
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Use these commands on a Linux machine when you want the standard Forge Linux packaging flow:</p>
 <pre><code class="language-bash">npm install
 npm run make-linux-native
 </code></pre>
@@ -460,7 +800,14 @@ npm run make-linux-native
 <li><code>out/make</code></li>
 </ul>
 <p>Formats depend on the enabled Linux makers for that host environment.</p>
-<h4 id="debian-or-ubuntu-host">Debian or Ubuntu host<a class="heading-anchor" href="#debian-or-ubuntu-host" aria-label="Link to section">#</a></h4><p>Use this command on a Debian-family Linux machine when you need a <code>.deb</code> package:</p>
+<a class="heading-anchor" id="debian-or-ubuntu-host"></a>
+                <h4>
+                    Debian or Ubuntu host
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Use this command on a Debian-family Linux machine when you need a <code>.deb</code> package:</p>
 <pre><code class="language-bash">npm install
 npm run make-deb
 </code></pre>
@@ -469,7 +816,14 @@ npm run make-deb
 <li>folder: <code>out/make/deb/x64</code></li>
 <li>format: <code>.deb</code></li>
 </ul>
-<h4 id="rpm-based-linux-host">RPM-based Linux host<a class="heading-anchor" href="#rpm-based-linux-host" aria-label="Link to section">#</a></h4><p>Use this command on an RPM-based Linux machine when you need an <code>.rpm</code> package:</p>
+<a class="heading-anchor" id="rpm-based-linux-host"></a>
+                <h4>
+                    RPM-based Linux host
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Use this command on an RPM-based Linux machine when you need an <code>.rpm</code> package:</p>
 <pre><code class="language-bash">npm install
 npm run make-rpm
 </code></pre>
@@ -478,31 +832,122 @@ npm run make-rpm
 <li>folder: <code>out/make/rpm/x64</code></li>
 <li>format: <code>.rpm</code></li>
 </ul>
-<h3 id="upgrading">Upgrading<a class="heading-anchor" href="#upgrading" aria-label="Link to section">#</a></h3><p>Upgrading the application is streamlined once the initial installation is complete.</p>
-<h4 id="step-1-navigate-to-the-project-directory-where-the-repository-is-cloned">Step 1. Navigate to the project directory where the repository is cloned.<a class="heading-anchor" href="#step-1-navigate-to-the-project-directory-where-the-repository-is-cloned" aria-label="Link to section">#</a></h4><h4 id="step-2-pull-the-latest-changes">Step 2. Pull the latest changes:<a class="heading-anchor" href="#step-2-pull-the-latest-changes" aria-label="Link to section">#</a></h4><pre><code class="language-bash">git pull
+<a class="heading-anchor" id="upgrading"></a>
+                <h3>
+                    Upgrading
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Upgrading the application is streamlined once the initial installation is complete.</p>
+<a class="heading-anchor" id="step-1-navigate-to-the-project-directory-where-the-repository-is-cloned"></a>
+                <h4>
+                    Step 1. Navigate to the project directory where the repository is cloned.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><a class="heading-anchor" id="step-2-pull-the-latest-changes"></a>
+                <h4>
+                    Step 2. Pull the latest changes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">git pull
 </code></pre>
-<h4 id="step-3-install-any-updated-project-dependencies">Step 3. Install any updated project dependencies:<a class="heading-anchor" href="#step-3-install-any-updated-project-dependencies" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm install
+<a class="heading-anchor" id="step-3-install-any-updated-project-dependencies"></a>
+                <h4>
+                    Step 3. Install any updated project dependencies:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm install
 </code></pre>
-<h4 id="step-4-build-the-project-1">Step 4.  Build the project:<a class="heading-anchor" href="#step-4-build-the-project-1" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm run build
+<a class="heading-anchor" id="step-4-build-the-project-1"></a>
+                <h4>
+                    Step 4.  Build the project:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm run build
 </code></pre>
-<h4 id="step-5-run-the-application-1">Step 5.  Run the application:<a class="heading-anchor" href="#step-5-run-the-application-1" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm start
+<a class="heading-anchor" id="step-5-run-the-application-1"></a>
+                <h4>
+                    Step 5.  Run the application:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm start
 </code></pre>
-<h2 id="debugging">Debugging<a class="heading-anchor" href="#debugging" aria-label="Link to section">#</a></h2><p>To debug the source code, it&#39;s necessary to have the entire source code cloned and installed locally.</p>
-<h3 id="start-the-debug-session">Start the Debug Session<a class="heading-anchor" href="#start-the-debug-session" aria-label="Link to section">#</a></h3><p>To start debugging the application, ensure the application&#39;s source code is installed as previously described, then execute the following command in a terminal window:</p>
+<a class="heading-anchor" id="debugging"></a>
+                <h2>
+                    Debugging
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>To debug the source code, it&#39;s necessary to have the entire source code cloned and installed locally.</p>
+<a class="heading-anchor" id="start-the-debug-session"></a>
+                <h3>
+                    Start the Debug Session
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>To start debugging the application, ensure the application&#39;s source code is installed as previously described, then execute the following command in a terminal window:</p>
 <pre><code class="language-bash">npm run debug
 </code></pre>
 <p>This command compiles the source code and initiates the debug session.</p>
-<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-1"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>You can set breakpoints directly in the source code to debug the Electron host context.</li>
 <li>To debug the browser context code, use the client-side debugger available in the Developer Tools of the Chromium browser. These tools will be displayed alongside the main application view when the application is running in debug mode.</li>
 </ul>
-<h2 id="application-configuration">Application Configuration<a class="heading-anchor" href="#application-configuration" aria-label="Link to section">#</a></h2><p>The application uses the <code>app-config.json</code> file, which is located in the standard <strong>configuration home</strong> folder based on the operating system (for example <code>/home/&lt;Username&gt;/.config</code>, <code>C:\Users\&lt;Username&gt;\AppData\Roaming</code>, <code>/Users/&lt;Username&gt;/Library/Application Support</code>). This file is stored under the <code>sfdmu-gui-app</code> directory.</p>
+<a class="heading-anchor" id="application-configuration"></a>
+                <h2>
+                    Application Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The application uses the <code>app-config.json</code> file, which is located in the standard <strong>configuration home</strong> folder based on the operating system (for example <code>/home/&lt;Username&gt;/.config</code>, <code>C:\Users\&lt;Username&gt;\AppData\Roaming</code>, <code>/Users/&lt;Username&gt;/Library/Application Support</code>). This file is stored under the <code>sfdmu-gui-app</code> directory.</p>
 <p>By default, the application&#39;s working data such as the database, workspaces, logs, and backups are stored separately under the user&#39;s <strong>Documents</strong> folder in the <code>sfdmu-gui-app</code> directory unless <code>appRoot</code> is explicitly overridden.</p>
 <p>The <code>app-config.json</code> file is automatically generated when the application is first launched on a device. After its creation, the file remains unchanged unless manually edited or modified through the application interface to meet specific requirements.</p>
-<h3 id="setting-up-the-configuration">Setting Up the Configuration<a class="heading-anchor" href="#setting-up-the-configuration" aria-label="Link to section">#</a></h3><p>The application configuration can be easily modified through the application interface. Navigate to <strong>File -&gt; Preferences</strong> in the main application menu to make changes.</p>
-<h3 id="configuration-file-description">Configuration File Description<a class="heading-anchor" href="#configuration-file-description" aria-label="Link to section">#</a></h3><p>The configuration file, <code>app-config.json</code>, contains several persisted user settings that customize the behavior of the application. Changes to this file will take effect after the application is restarted.</p>
+<a class="heading-anchor" id="setting-up-the-configuration"></a>
+                <h3>
+                    Setting Up the Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The application configuration can be easily modified through the application interface. Navigate to <strong>File -&gt; Preferences</strong> in the main application menu to make changes.</p>
+<a class="heading-anchor" id="configuration-file-description"></a>
+                <h3>
+                    Configuration File Description
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The configuration file, <code>app-config.json</code>, contains several persisted user settings that customize the behavior of the application. Changes to this file will take effect after the application is restarted.</p>
 <p>Some locale-related defaults are also controlled by the bundled application configuration used at startup. Those values are described below as part of the complete runtime behavior, even when they are not persisted in the user <code>app-config.json</code> file.</p>
-<h3 id="configuration-file-properties">Configuration File Properties<a class="heading-anchor" href="#configuration-file-properties" aria-label="Link to section">#</a></h3><p>Below is the default <code>app-config.json</code> file and detailed description of each property in the JSON configuration:</p>
+<a class="heading-anchor" id="configuration-file-properties"></a>
+                <h3>
+                    Configuration File Properties
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Below is the default <code>app-config.json</code> file and detailed description of each property in the JSON configuration:</p>
 <pre><code class="language-json">{
     &quot;dataRoot&quot;: &quot;sfdmu-gui-app&quot;,
     &quot;appRoot&quot;: &quot;&quot;,
@@ -513,16 +958,86 @@ npm run make-rpm
     &quot;language&quot;: &quot;en&quot;
 }
 </code></pre>
-<h4 id="dataroot">dataRoot<a class="heading-anchor" href="#dataroot" aria-label="Link to section">#</a></h4><p>Specifies the name of the folder intended to hold all application data such as the database file, configuration files, migration data, etc. Default value is <code>&quot;sfdmu-gui-app&quot;</code>.</p>
-<h4 id="approot">appRoot<a class="heading-anchor" href="#approot" aria-label="Link to section">#</a></h4><p>Indicates the full path to the parent folder that contains <code>dataRoot</code>. If left blank, the application defaults to using the standard user Documents directory.</p>
-<h4 id="databasefilename">databaseFilename<a class="heading-anchor" href="#databasefilename" aria-label="Link to section">#</a></h4><p>Defines the filename of the database file. This allows for the maintenance of multiple databases with different names within the same directory. The default filename is <code>&quot;db.json&quot;</code>.</p>
-<h4 id="locales">locales<a class="heading-anchor" href="#locales" aria-label="Link to section">#</a></h4><p>Lists the UI languages exposed by the application at runtime. In current builds this list is controlled by the bundled application configuration rather than by the persisted user <code>app-config.json</code> file.</p>
-<h4 id="defaultlocale">defaultLocale<a class="heading-anchor" href="#defaultlocale" aria-label="Link to section">#</a></h4><p>Defines the bundled default locale used by the application on the first run and when hidden or unavailable locales must be normalized internally. In current builds this value is controlled by the bundled application configuration rather than by the persisted user <code>app-config.json</code> file.</p>
-<h4 id="logbufferflushintervalseconds">logBufferFlushIntervalSeconds<a class="heading-anchor" href="#logbufferflushintervalseconds" aria-label="Link to section">#</a></h4><p>Defines how often buffered log entries are flushed to disk. The default value is <code>10</code> seconds.</p>
-<h4 id="backuponapplicationstart">backupOnApplicationStart<a class="heading-anchor" href="#backuponapplicationstart" aria-label="Link to section">#</a></h4><p>Enables automatic backup of the database file each time the Application starts. The backup is always created in the <code>db_backup</code> folder relative to the <code>dataRoot</code>.</p>
-<h4 id="backupeverynminutes">backupEveryNMinutes<a class="heading-anchor" href="#backupeverynminutes" aria-label="Link to section">#</a></h4><p>If greater than 0, this setting enables automatic backup of the database file at specified intervals, in minutes. A setting of <code>0</code> disables this feature. The backup files are named in the format: <code>db-backup-yyyy-MM-dd-HH-mm-ss.json</code>.</p>
-<h4 id="language">language<a class="heading-anchor" href="#language" aria-label="Link to section">#</a></h4><p>Specifies the active UI language. The default value is <code>&quot;en&quot;</code>.</p>
-<h2 id="translation">Translation<a class="heading-anchor" href="#translation" aria-label="Link to section">#</a></h2><p>The Application UI can easily be translated into any language.</p>
+<a class="heading-anchor" id="dataroot"></a>
+                <h4>
+                    dataRoot
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Specifies the name of the folder intended to hold all application data such as the database file, configuration files, migration data, etc. Default value is <code>&quot;sfdmu-gui-app&quot;</code>.</p>
+<a class="heading-anchor" id="approot"></a>
+                <h4>
+                    appRoot
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Indicates the full path to the parent folder that contains <code>dataRoot</code>. If left blank, the application defaults to using the standard user Documents directory.</p>
+<a class="heading-anchor" id="databasefilename"></a>
+                <h4>
+                    databaseFilename
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Defines the filename of the database file. This allows for the maintenance of multiple databases with different names within the same directory. The default filename is <code>&quot;db.json&quot;</code>.</p>
+<a class="heading-anchor" id="locales"></a>
+                <h4>
+                    locales
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Lists the UI languages exposed by the application at runtime. In current builds this list is controlled by the bundled application configuration rather than by the persisted user <code>app-config.json</code> file.</p>
+<a class="heading-anchor" id="defaultlocale"></a>
+                <h4>
+                    defaultLocale
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Defines the bundled default locale used by the application on the first run and when hidden or unavailable locales must be normalized internally. In current builds this value is controlled by the bundled application configuration rather than by the persisted user <code>app-config.json</code> file.</p>
+<a class="heading-anchor" id="logbufferflushintervalseconds"></a>
+                <h4>
+                    logBufferFlushIntervalSeconds
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Defines how often buffered log entries are flushed to disk. The default value is <code>10</code> seconds.</p>
+<a class="heading-anchor" id="backuponapplicationstart"></a>
+                <h4>
+                    backupOnApplicationStart
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Enables automatic backup of the database file each time the Application starts. The backup is always created in the <code>db_backup</code> folder relative to the <code>dataRoot</code>.</p>
+<a class="heading-anchor" id="backupeverynminutes"></a>
+                <h4>
+                    backupEveryNMinutes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>If greater than 0, this setting enables automatic backup of the database file at specified intervals, in minutes. A setting of <code>0</code> disables this feature. The backup files are named in the format: <code>db-backup-yyyy-MM-dd-HH-mm-ss.json</code>.</p>
+<a class="heading-anchor" id="language"></a>
+                <h4>
+                    language
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Specifies the active UI language. The default value is <code>&quot;en&quot;</code>.</p>
+<a class="heading-anchor" id="translation"></a>
+                <h2>
+                    Translation
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The Application UI can easily be translated into any language.</p>
 <p>Currently, the Application exposes translations in English, German, Spanish, French, and Hebrew.</p>
 <p>Translation is done in the standard i18n format using JSON files located in the <code>./i18n</code> directory.</p>
 <p><strong>To translate the Application:</strong></p>
@@ -542,33 +1057,68 @@ npm run make-rpm
   ]
 }
 </code></pre>
-<h5 id="notes-2">Notes:<a class="heading-anchor" href="#notes-2" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-2"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><p>You can add or change translation only for the Application running as a source code.</p>
 </li>
 <li><p>If you want to improve the existing translation or provide translation to other languages, please submit a PR. 
 Your support is highly appreciated! :)</p>
 </li>
 </ul>
-<h2 id="logging">Logging<a class="heading-anchor" href="#logging" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="logging"></a>
+                <h2>
+                    Logging
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li>The application provides comprehensive logs for all events, actions, and issues.</li>
 <li>Logs are stored in the <code>logs</code> subdirectory located at <strong>[appRoot]/[dataRoot]/logs</strong>. For example, based on the default configuration in <code>app-config.json</code>, the log files are located in the <code>[Documents Folder]/sfdmu-gui-app/logs/</code>.</li>
 <li>The format for log filenames is: <strong>yyyy-MM-dd-HH.log</strong>.</li>
 <li>Logs are automatically rotated and archived into zip files every two weeks to conserve disk space. </li>
 <li>The log file includes detailed information on all application events, which is essential for debugging. When reporting issues about the GUI App, please attach these logs as they help in identifying and resolving bugs. <strong>Before submitting, ensure that all sensitive information has been removed from the log files.</strong></li>
 </ul>
-<h2 id="backup">Backup<a class="heading-anchor" href="#backup" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="backup"></a>
+                <h2>
+                    Backup
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li>The Application conducts automatic database file backups. Backups are performed silently in the background and are consistently stored in the <code>db_backup</code> folder relative to the <code>dataRoot</code> folder.</li>
 <li>Adjust <a href="./#backupeverynminutes"><code>backupEveryNMinutes</code></a> in <code>app-config.json</code> to set the backup interval. A setting of 5 triggers backups every 5 minutes.</li>
 <li>Backups are saved in the format <code>db-backup-yyyy-MM-dd-HH-mm-ss.json</code>.</li>
 <li>Set <a href="./#backupeverynminutes"><code>backupEveryNMinutes</code></a> to 0 to disable automatic backups.</li>
 <li>Enable <a href="./#backuponapplicationstart"><code>backupOnApplicationStart</code></a> for backups at each application start.</li>
 </ul>
-<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="additional-notes"></a>
+                <h2>
+                    Additional Notes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><strong>The final selection of the data source and target</strong>, including the option to use CSV files as either, should not be made during the Connection step but rather <strong>during the Preview step</strong>. Simply click on the <code>&quot;Command Line Setup&quot;</code> tab on the Preview page and use the dropdown selectors to choose your desired data source and target.<br />Contrastingly, the Connection step allows you to select only Salesforce orgs, enabling you to set up the <code>export.json</code> configuration based on the metadata available in these organizations.</li>
 <li>All query settings for the object, including <code>operation</code> (e.g., Insert, Update, Upsert, etc.) and <code>externalId</code> properties, can be configured under the <code>Queries and Filters</code> tab when the object is selected during the <strong>Configuration</strong> step.</li>
 <li>Since the <strong>release version</strong> of the SFDMU GUI App is stored in the Git repository using LFS, <strong>simply downloading the <code>.zip</code> or <code>tar.gz</code> files attached to the release is insufficient.</strong> <br />Instead, you must download the appropriate setup file directly from the tagged codebase as described above.</li>
 </ul>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../get-started/">Get Started</a></li>
 <li><a href="../configuration/">Configuration</a></li>
 <li><a href="../running/">Running</a></li>
@@ -576,10 +1126,7 @@ Your support is highly appreciated! :)</p>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 12th Mar 2026
                 </div>
               </div>
             </section>
@@ -599,9 +1146,11 @@ Your support is highly appreciated! :)</p>
   <script src="../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../scripts/ghostdown.js"></script>
+  <script src="../scripts/raneto.js"></script>
   <script src="../lib/highlight.js/highlight.min.js"></script>
-  <script src="../assets/static-runtime.js"></script>
   <script src="../scripts/custom.js"></script>
+  <script src="../assets/lunr.min.js"></script>
   <script src="../assets/static-search.js"></script>
 </body>
 </html>

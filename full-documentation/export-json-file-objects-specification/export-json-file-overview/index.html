@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Export.json File Overview | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Export.json File Overview | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,11 +255,44 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#configuring-sfdmu-with-the-export-json-file">Configuring SFDMU with the export.json File</a></li><li class="toc-child"><a href="#understanding-the-export-json-file-structure">Understanding the export.json File Structure</a></li><li class="toc-child"><a href="#notes-on-configuration">Notes on Configuration</a></li><li class="toc-child"><a href="#json-schema-support-for-export-json">JSON Schema Support for export.json</a></li><li><a href="#export-json-object-model">Export.json Object Model</a></li><li class="toc-child"><a href="#script-object">Script Object</a></li><li class="toc-child"><a href="#scriptobjectset-object">ScriptObjectSet Object</a></li><li class="toc-child"><a href="#scriptorg-object">ScriptOrg Object</a></li><li class="toc-child"><a href="#scriptobject-object">ScriptObject Object</a></li><li class="toc-child"><a href="#mappingitem-object">MappingItem Object</a></li><li class="toc-child"><a href="#mockfield-object">MockField Object</a></li><li class="toc-child"><a href="#addonmanifestdefinition-object">AddonManifestDefinition Object.</a></li><li><a href="#additional-notes">Additional Notes</a></li></ul></nav>
-## Configuring SFDMU with the **export.json** File
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#configuring-sfdmu-with-the-export-json-file">Configuring SFDMU with the <strong>export.json</strong> File</a><ul>
+<li><a href="#understanding-the-export-json-file-structure">Understanding the <strong>export.json</strong> File Structure</a></li>
+<li><a href="#notes-on-configuration">Notes on Configuration</a></li>
+<li><a href="#json-schema-support-for-export-json">JSON Schema Support for <code>export.json</code></a></li>
+</ul></li>
+<li><a href="#export-json-object-model">Export.json Object Model</a><ul>
+<li><a href="#script-object">Script Object</a></li>
+<li><a href="#scriptobjectset-object">ScriptObjectSet Object</a></li>
+<li><a href="#scriptorg-object">ScriptOrg Object</a></li>
+<li><a href="#scriptobject-object">ScriptObject Object</a></li>
+<li><a href="#mappingitem-object">MappingItem Object</a></li>
+<li><a href="#mockfield-object">MockField Object</a></li>
+<li><a href="#addonmanifestdefinition-object">AddonManifestDefinition Object.</a></li>
+</ul></li>
+<li><a href="#additional-notes">Additional Notes</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p>As  <a href="../../../plugin-basics/basic-usage/minimal-configuration/">documented here</a> , the SFDMU relies on a single configuration file named <strong>export.json</strong> to tailor the data migration process. This JSON file allows for detailed customization through various objects and properties.</p>
-<h3 id="understanding-the-export-json-file-structure">Understanding the <strong>export.json</strong> File Structure<a class="heading-anchor" href="#understanding-the-export-json-file-structure" aria-label="Link to section">#</a></h3><p>The <strong>export.json</strong> file is structured with specific JSON objects and properties to define how data is transferred between Salesforce environments. Below is an outline of key components typically included in this configuration file.</p>
+
+<a class="heading-anchor" id="configuring-sfdmu-with-the-export-json-file"></a>
+                <h2>
+                    Configuring SFDMU with the <strong>export.json</strong> File
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>As  <a href="../../../plugin-basics/basic-usage/minimal-configuration/">documented here</a> , the SFDMU relies on a single configuration file named <strong>export.json</strong> to tailor the data migration process. This JSON file allows for detailed customization through various objects and properties.</p>
+<a class="heading-anchor" id="understanding-the-export-json-file-structure"></a>
+                <h3>
+                    Understanding the <strong>export.json</strong> File Structure
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The <strong>export.json</strong> file is structured with specific JSON objects and properties to define how data is transferred between Salesforce environments. Below is an outline of key components typically included in this configuration file.</p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
     {
@@ -287,13 +321,27 @@
 </li>
 <li><strong>objectSets:</strong> (Optional property) An optional array of <a href="../script-object-set-object/">ScriptObjectSet</a> objects where each item is a collection of related objects to be processed together.</li>
 </ul>
-<h3 id="notes-on-configuration">Notes on Configuration<a class="heading-anchor" href="#notes-on-configuration" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="notes-on-configuration"></a>
+                <h3>
+                    Notes on Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li>Ensure the SOQL query includes all fields necessary for the migration and that they are accessible according to your Salesforce org&#39;s permissions.</li>
 <li>The operation types and external ID configurations must align with your data integrity and duplication management strategies.</li>
 <li>It&#39;s mandatory to specify either the <code>objects</code> or <code>objectSets</code> property in your configuration.</li>
 <li>For simple migrations, start with <code>objects</code> only. Use <code>objectSets</code> when your process needs multiple sequential stages.</li>
 </ul>
-<h3 id="json-schema-support-for-export-json">JSON Schema Support for <code>export.json</code><a class="heading-anchor" href="#json-schema-support-for-export-json" aria-label="Link to section">#</a></h3><p>You can enable editor validation and autocompletion for <code>export.json</code> by adding a <code>$schema</code> property at the top of the file.</p>
+<a class="heading-anchor" id="json-schema-support-for-export-json"></a>
+                <h3>
+                    JSON Schema Support for <code>export.json</code>
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>You can enable editor validation and autocompletion for <code>export.json</code> by adding a <code>$schema</code> property at the top of the file.</p>
 <pre><code class="language-json">{
   &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/forcedotcom/SFDX-Data-Move-Utility/main/schemas/export.schema.json&quot;,
   &quot;objects&quot;: [
@@ -306,22 +354,85 @@
 }
 </code></pre>
 <p>For detailed guidance, see <a href="../json-schema-for-export-json/">JSON Schema for export.json</a>.</p>
-<h2 id="export-json-object-model">Export.json Object Model<a class="heading-anchor" href="#export-json-object-model" aria-label="Link to section">#</a></h2><h3 id="script-object">Script Object<a class="heading-anchor" href="#script-object" aria-label="Link to section">#</a></h3><p>The <strong>export.json</strong> file features a root <strong>Script</strong> object which allows defining global migration parameters. Properties set within this <strong>Script</strong> object apply globally and can override similar properties specified in child objects within the configuration hierarchy.</p>
+<a class="heading-anchor" id="export-json-object-model"></a>
+                <h2>
+                    Export.json Object Model
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="script-object"></a>
+                <h3>
+                    Script Object
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The <strong>export.json</strong> file features a root <strong>Script</strong> object which allows defining global migration parameters. Properties set within this <strong>Script</strong> object apply globally and can override similar properties specified in child objects within the configuration hierarchy.</p>
 <p><strong>Detailed information:</strong> <a href="../script-object/">Script Object</a></p>
-<h3 id="scriptobjectset-object">ScriptObjectSet Object<a class="heading-anchor" href="#scriptobjectset-object" aria-label="Link to section">#</a></h3><p>The <strong>ScriptObjectSet</strong> object is used to segment a large migration job into smaller, manageable sub-jobs within the SFDMU configuration. Each <strong>ScriptObjectSet</strong> can contain a subset of <strong>ScriptObjects</strong>, which execute together as a separate sub-job.</p>
+<a class="heading-anchor" id="scriptobjectset-object"></a>
+                <h3>
+                    ScriptObjectSet Object
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The <strong>ScriptObjectSet</strong> object is used to segment a large migration job into smaller, manageable sub-jobs within the SFDMU configuration. Each <strong>ScriptObjectSet</strong> can contain a subset of <strong>ScriptObjects</strong>, which execute together as a separate sub-job.</p>
 <p><strong>Detailed information:</strong> <a href="../script-object-set-object/">ScriptObjectSet Object</a> </p>
-<h3 id="scriptorg-object">ScriptOrg Object<a class="heading-anchor" href="#scriptorg-object" aria-label="Link to section">#</a></h3><p>The <strong>ScriptOrg</strong> object in the SFDMU <strong>export.json</strong> file provides connection information such as the username, instance URL, and access token. This is especially useful when the Salesforce orgs involved in the migration are not connected through the Salesforce CLI on the local machine executing the job.</p>
+<a class="heading-anchor" id="scriptorg-object"></a>
+                <h3>
+                    ScriptOrg Object
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The <strong>ScriptOrg</strong> object in the SFDMU <strong>export.json</strong> file provides connection information such as the username, instance URL, and access token. This is especially useful when the Salesforce orgs involved in the migration are not connected through the Salesforce CLI on the local machine executing the job.</p>
 <p><strong>Detailed information:</strong> <a href="../script-org-object/">ScriptOrg Object</a> </p>
-<h3 id="scriptobject-object">ScriptObject Object<a class="heading-anchor" href="#scriptobject-object" aria-label="Link to section">#</a></h3><p>The <strong>ScriptObject</strong> object within SFDMU&#39;s <strong>export.json</strong> file allows for customizing migration parameters for specific Salesforce objects (sObjects). Properties set within a <strong>ScriptObject</strong> override the same properties in all nested objects in the configuration hierarchy.</p>
+<a class="heading-anchor" id="scriptobject-object"></a>
+                <h3>
+                    ScriptObject Object
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The <strong>ScriptObject</strong> object within SFDMU&#39;s <strong>export.json</strong> file allows for customizing migration parameters for specific Salesforce objects (sObjects). Properties set within a <strong>ScriptObject</strong> override the same properties in all nested objects in the configuration hierarchy.</p>
 <p><strong>Detailed information:</strong> <a href="../script-object-object/">ScriptObject Object</a> </p>
-<h3 id="mappingitem-object">MappingItem Object<a class="heading-anchor" href="#mappingitem-object" aria-label="Link to section">#</a></h3><p>The <strong>MappingItem</strong> object within SFDMU&#39;s <strong>export.json</strong> is essential for configuring optional field mappings for each <strong>ScriptObject</strong>. This feature allows you to map data from fields in the source object to fields in the target object.</p>
+<a class="heading-anchor" id="mappingitem-object"></a>
+                <h3>
+                    MappingItem Object
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The <strong>MappingItem</strong> object within SFDMU&#39;s <strong>export.json</strong> is essential for configuring optional field mappings for each <strong>ScriptObject</strong>. This feature allows you to map data from fields in the source object to fields in the target object.</p>
 <p><strong>Detailed information:</strong> <a href="../mapping-item-object/">MappingItem Object</a> </p>
-<h3 id="mockfield-object">MockField Object<a class="heading-anchor" href="#mockfield-object" aria-label="Link to section">#</a></h3><p>The <strong>MockField</strong> object in the SFDMU <strong>export.json</strong> file is used for setting up optional data anonymization for specific sObjects within a migration job. This feature is activated by setting the <strong>updateWithMockData</strong> property to <strong>true</strong> and defining the <strong>mockFields</strong> array within the <strong>ScriptObject</strong>.
+<a class="heading-anchor" id="mockfield-object"></a>
+                <h3>
+                    MockField Object
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The <strong>MockField</strong> object in the SFDMU <strong>export.json</strong> file is used for setting up optional data anonymization for specific sObjects within a migration job. This feature is activated by setting the <strong>updateWithMockData</strong> property to <strong>true</strong> and defining the <strong>mockFields</strong> array within the <strong>ScriptObject</strong>.
 It also supports an optional <code>locale</code> property for localized anonymization patterns.</p>
 <p><strong>Detailed information:</strong> <a href="../mock-field-object/">MockField Object</a> </p>
-<h3 id="addonmanifestdefinition-object">AddonManifestDefinition Object.<a class="heading-anchor" href="#addonmanifestdefinition-object" aria-label="Link to section">#</a></h3><p>The <strong>AddonManifestDefinition</strong> object within the SFDMU&#39;s <strong>export.json</strong> file is designed for specifying custom add-ons that enhance the migration process by introducing additional functionalities like scripts or automated tasks before, during, or after the migration of specific sObjects.</p>
+<a class="heading-anchor" id="addonmanifestdefinition-object"></a>
+                <h3>
+                    AddonManifestDefinition Object.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The <strong>AddonManifestDefinition</strong> object within the SFDMU&#39;s <strong>export.json</strong> file is designed for specifying custom add-ons that enhance the migration process by introducing additional functionalities like scripts or automated tasks before, during, or after the migration of specific sObjects.</p>
 <p><strong>Detailed information:</strong> <a href="../addon-manifest-definition-object/">AddonManifestDefinition Object</a> </p>
-<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="additional-notes"></a>
+                <h2>
+                    Additional Notes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><p><strong>Compatibility</strong>: The <strong>objects</strong> and <strong>objectSets</strong> properties can be set simultaneously in <strong>export.json</strong>. The global <strong>objects</strong> array is processed <strong>first</strong>, followed by the <strong>ScriptObjectSets</strong>.</p>
 </li>
 <li><p><strong>Execution Model</strong>: At least one of the properties <strong>objects</strong> or <strong>objectSets</strong> must be configured. If only <strong>objects</strong> is provided, SFDMU internally builds the first object set from that array.</p>
@@ -335,10 +446,7 @@ It also supports an optional <code>locale</code> property for localized anonymiz
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -358,9 +466,11 @@ It also supports an optional <code>locale</code> property for localized anonymiz
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

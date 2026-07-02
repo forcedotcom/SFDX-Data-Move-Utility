@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Polymorphic Lookup Fields | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Polymorphic Lookup Fields | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,14 +255,45 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#how-to-specify-the-parent-object">How to Specify the Parent Object</a></li><li class="toc-child"><a href="#option-1-specify-in-query">Option 1: Specify in Query</a></li><li><a href="#key-considerations">Key Considerations</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#how-to-specify-the-parent-object">How to Specify the Parent Object</a><ul>
+<li><a href="#option-1-specify-in-query">Option 1: Specify in Query</a></li>
+</ul></li>
+<li><a href="#key-considerations">Key Considerations</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>:  Polymorphic lookup fields can relate to more than one type of object. Specifying the exact type of SObject as the parent is crucial to accurately retrieve and migrate data involving such fields. </p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>:  Polymorphic lookup fields can relate to more than one type of object. Specifying the exact type of SObject as the parent is crucial to accurately retrieve and migrate data involving such fields. </p>
 <p>This feature enables the user to specify the parent object type for polymorphic lookup fields such as <code>ParentId</code> on <code>FeedItem</code>, and <code>WhatId</code> and <code>WhoId</code> on Activities.</p>
-<h2 id="how-to-specify-the-parent-object">How to Specify the Parent Object<a class="heading-anchor" href="#how-to-specify-the-parent-object" aria-label="Link to section">#</a></h2><p>To set the parent object type for a polymorphic lookup field, concatenate the name of the
+<a class="heading-anchor" id="how-to-specify-the-parent-object"></a>
+                <h2>
+                    How to Specify the Parent Object
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>To set the parent object type for a polymorphic lookup field, concatenate the name of the
 SObject with the name of the lookup field using a <code>$</code> separator in your SOQL query.</p>
-<h3 id="option-1-specify-in-query">Option 1: Specify in Query<a class="heading-anchor" href="#option-1-specify-in-query" aria-label="Link to section">#</a></h3><p>Concatenate the name of the target SObject with the lookup field using a <code>$</code> separator.
+<a class="heading-anchor" id="option-1-specify-in-query"></a>
+                <h3>
+                    Option 1: Specify in Query
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Concatenate the name of the target SObject with the lookup field using a <code>$</code> separator.
 Example: <code>Case</code> as the parent type for <code>ParentId</code> of <code>FeedItem</code>:</p>
 <pre><code class="language-json">{
    &quot;query&quot;: &quot;SELECT Id, ParentId$Case FROM FeedItem WHERE Parent.Type = &#39;Case&#39;&quot;
@@ -269,12 +301,26 @@ Example: <code>Case</code> as the parent type for <code>ParentId</code> of <code
 </code></pre>
 <p>This configuration ensures that the query fetches <code>FeedItems</code> where <code>ParentId</code> is associated
 specifically with <code>Case</code> records.</p>
-<h2 id="key-considerations">Key Considerations<a class="heading-anchor" href="#key-considerations" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="key-considerations"></a>
+                <h2>
+                    Key Considerations
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><strong>Limitation to Polymorphic Fields</strong>: This feature is applicable only to polymorphic lookup fields. It cannot be used to override the parent object for standard lookup fields.</li>
 <li><strong>Single Parent Binding</strong>: The lookup field can only be bound to one parent SObject at a time. If you require the same lookup field to be bound to different SObjects, you will need to create separate <code>export.json</code> configurations for each desired parent type.</li>
 <li><strong>Potential Query Errors</strong>: If the parent object for a polymorphic field is not explicitly specified, you may encounter query errors such as &quot;No such column &#39;Column__c&#39; on entity &#39;Name&#39;.&quot; This error typically occurs when the system cannot determine the correct parent type for the polymorphic field.</li>
 </ul>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../composite-external-id-keys/">Composite External Id Keys</a></li>
 <li><a href="../compound-fields/">Compound Fields</a></li>
 <li><a href="../data-anonymization/">Data Anonymization</a></li>
@@ -282,10 +328,7 @@ specifically with <code>Case</code> records.</p>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -305,9 +348,11 @@ specifically with <code>Case</code> records.</p>
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>DeleteHierarchy operation | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>DeleteHierarchy operation | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,13 +255,42 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#feature-description">Feature Description</a></li><li><a href="#example-configuration-for-deletehierarchy">Example Configuration for DeleteHierarchy</a></li><li><a href="#executing-the-deletion">Executing the Deletion</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#feature-description">Feature Description</a></li>
+<li><a href="#example-configuration-for-deletehierarchy">Example Configuration for DeleteHierarchy</a></li>
+<li><a href="#executing-the-deletion">Executing the Deletion</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>: This feature facilitates the deletion of records from the target Salesforce organization, using configurations set in the <code>export.json</code> file. </p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>: This feature facilitates the deletion of records from the target Salesforce organization, using configurations set in the <code>export.json</code> file. </p>
 <p>It considers the relationships between objects to enable a hierarchical or relational context for record deletion.</p>
-<h2 id="feature-description">Feature Description<a class="heading-anchor" href="#feature-description" aria-label="Link to section">#</a></h2><p>This functionality is akin to the <a href="../delete-source/">DeleteSource operation</a> but targets records in the destination organization instead. It operates similarly to the <code>Update</code> operation but performs deletions rather than updates. This feature is particularly useful when you possess a CSV file containing a list of records that need to be removed from the target Salesforce organization. The deletion can be configured for multiple related objects within your <code>export.json</code>.</p>
-<h2 id="example-configuration-for-deletehierarchy">Example Configuration for DeleteHierarchy<a class="heading-anchor" href="#example-configuration-for-deletehierarchy" aria-label="Link to section">#</a></h2><p>Here is a straightforward example of how to configure the <code>DeleteHierarchy</code> operation within the <code>export.json</code> file, aiming to delete target records by specific record IDs:</p>
+<a class="heading-anchor" id="feature-description"></a>
+                <h2>
+                    Feature Description
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>This functionality is akin to the <a href="../delete-source/">DeleteSource operation</a> but targets records in the destination organization instead. It operates similarly to the <code>Update</code> operation but performs deletions rather than updates. This feature is particularly useful when you possess a CSV file containing a list of records that need to be removed from the target Salesforce organization. The deletion can be configured for multiple related objects within your <code>export.json</code>.</p>
+<a class="heading-anchor" id="example-configuration-for-deletehierarchy"></a>
+                <h2>
+                    Example Configuration for DeleteHierarchy
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Here is a straightforward example of how to configure the <code>DeleteHierarchy</code> operation within the <code>export.json</code> file, aiming to delete target records by specific record IDs:</p>
 <pre><code class="language-json">&quot;objects&quot;: [
     {
         &quot;operation&quot;: &quot;DeleteHierarchy&quot;,
@@ -270,11 +300,25 @@
 ]
 </code></pre>
 <p>This setup ensures that Accounts, as identified by the IDs in the CSV file, are deleted from the target Salesforce organization.</p>
-<h2 id="executing-the-deletion">Executing the Deletion<a class="heading-anchor" href="#executing-the-deletion" aria-label="Link to section">#</a></h2><p>To execute the deletion operation, the following CLI command should be used:</p>
+<a class="heading-anchor" id="executing-the-deletion"></a>
+                <h2>
+                    Executing the Deletion
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>To execute the deletion operation, the following CLI command should be used:</p>
 <pre><code class="language-bash">sf sfdmu run --sourceusername csvfile --targetusername test@testorg.com
 </code></pre>
 <p>This command initiates the deletion process where the source of the IDs is a CSV file, and the destination is the specified Salesforce organization.</p>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>Use this mode only when you intentionally want to remove target records and their dependent hierarchy.</li>
 <li>If you are preparing IDs from CSV, verify that the CSV includes only records you really plan to delete.</li>
 <li>For safer validation, run the same configuration in simulation mode first and review generated reports.</li>
@@ -282,10 +326,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -305,9 +346,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

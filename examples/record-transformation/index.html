@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Record transformation examples | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Record transformation examples | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../favicon.png">
-  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../..";</script>
-  <link rel="stylesheet" href="../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../styles/custom.css">
+  <link rel="preload" href="../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,11 +255,40 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li class="toc-child"><a href="#example-1-assign-a-default-user-e-g-ownerid-lookup-to-target-record">Example 1. Assign a default User (e.g. OwnerId lookup) to target record.</a></li><li class="toc-child"><a href="#example-2-clear-all-text-fields-in-an-sobject">Example 2. Clear all text fields in an sObject.</a></li><li class="toc-child"><a href="#example-3-assign-constant-value-to-specific-field">Example 3. Assign constant value to specific field.</a></li><li class="toc-child"><a href="#example-4-reset-all-checkbox-field-values-to-false">Example 4: Reset All Checkbox Field Values to False</a></li><li class="toc-child"><a href="#example-5-populate-text-field-in-child-object-with-parent-record-id-parent-child-relationship">Example 5. Populate Text Field in Child Object with Parent Record ID (Parent-Child Relationship)</a></li><li class="toc-child"><a href="#example-6-populate-text-field-with-values-taken-from-both-source-and-target-orgs">Example 6. Populate Text Field with Values Taken from Both Source and Target Orgs</a></li></ul></nav>
-### Example 1. Assign a default User (e.g. OwnerId lookup) to target record.
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<ul>
+<li><a href="#example-1-assign-a-default-user-e-g-ownerid-lookup-to-target-record">Example 1. Assign a default User (e.g. OwnerId lookup) to target record.</a><ul>
+<li><a href="#using-the-core-recordstransform-module">Using the core:RecordsTransform module.</a></li>
+<li><a href="#using-the-valuemapping">Using the ValueMapping.</a></li>
+</ul></li>
+<li><a href="#example-2-clear-all-text-fields-in-an-sobject">Example 2. Clear all text fields in an sObject.</a></li>
+<li><a href="#example-3-assign-constant-value-to-specific-field">Example 3. Assign constant value to specific field.</a></li>
+<li><a href="#example-4-reset-all-checkbox-field-values-to-false">Example 4: Reset All Checkbox Field Values to False</a></li>
+<li><a href="#example-5-populate-text-field-in-child-object-with-parent-record-id-parent-child-relationship">Example 5. Populate Text Field in Child Object with Parent Record ID (Parent-Child Relationship)</a></li>
+<li><a href="#example-6-populate-text-field-with-values-taken-from-both-source-and-target-orgs">Example 6. Populate Text Field with Values Taken from Both Source and Target Orgs</a></li>
+</ul>
+</ul>
+<p><br /><br /></p>
 
-<p>The configurations below assign default user Id to OwnerId lookup if the given user does not exist in the target org. </p>
-<h4 id="using-the-core-recordstransform-module">Using the core:RecordsTransform module.<a class="heading-anchor" href="#using-the-core-recordstransform-module" aria-label="Link to section">#</a></h4><p>The first solution uses the <strong>core:RecordsTransform</strong> and the <strong>constant sourceField</strong> pattern.  </p>
+
+<a class="heading-anchor" id="example-1-assign-a-default-user-e-g-ownerid-lookup-to-target-record"></a>
+                <h3>
+                    Example 1. Assign a default User (e.g. OwnerId lookup) to target record.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The configurations below assign default user Id to OwnerId lookup if the given user does not exist in the target org. </p>
+<a class="heading-anchor" id="using-the-core-recordstransform-module"></a>
+                <h4>
+                    Using the core:RecordsTransform module.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>The first solution uses the <strong>core:RecordsTransform</strong> and the <strong>constant sourceField</strong> pattern.  </p>
 <p>It allows to assign user Id <strong>dynamically</strong> by the given user&#39;s name which is usually the same in the source and in the target orgs.</p>
 <p>Let&#39;s say, the Name of the default owner user to assign is: <strong>&quot;Test Target User&quot;</strong>.</p>
 <pre><code class="language-json">{
@@ -301,7 +331,14 @@
     &quot;promptOnMissingParentObjects&quot;: false
 }
 </code></pre>
-<h4 id="using-the-valuemapping">Using the ValueMapping.<a class="heading-anchor" href="#using-the-valuemapping" aria-label="Link to section">#</a></h4><p>The second solution uses  <strong>ValuesMapping</strong> feature (this approach would be preferred when you know the exact target Owner Id value):</p>
+<a class="heading-anchor" id="using-the-valuemapping"></a>
+                <h4>
+                    Using the ValueMapping.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>The second solution uses  <strong>ValuesMapping</strong> feature (this approach would be preferred when you know the exact target Owner Id value):</p>
 <p><strong>export.json</strong>:</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
@@ -320,7 +357,14 @@
 <pre><code class="language-bash">ObjectName,FieldName,RawValue,Value
 Account,OwnerId,/^$/,0058d0000054PvGAAU
 </code></pre>
-<h3 id="example-2-clear-all-text-fields-in-an-sobject">Example 2. Clear all text fields in an sObject.<a class="heading-anchor" href="#example-2-clear-all-text-fields-in-an-sobject" aria-label="Link to section">#</a></h3><p>You can use the <strong>type_string</strong> <a href="../../full-documentation/advanced-features/field-multiselect/">Multiselect Keyword</a> to select only string-type fields and apply the <a href="../../full-documentation/advanced-features/data-anonymization/">Data Anonymization feature</a> to reset these fields.</p>
+<a class="heading-anchor" id="example-2-clear-all-text-fields-in-an-sobject"></a>
+                <h3>
+                    Example 2. Clear all text fields in an sObject.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>You can use the <strong>type_string</strong> <a href="../../full-documentation/advanced-features/field-multiselect/">Multiselect Keyword</a> to select only string-type fields and apply the <a href="../../full-documentation/advanced-features/data-anonymization/">Data Anonymization feature</a> to reset these fields.</p>
 <p>Run the job in <a href="../../running/">one-directional mode</a>.</p>
 <p>Below is a basic <strong>export.json</strong> configuration to help achieve this:</p>
 <pre><code class="language-json">{
@@ -342,7 +386,14 @@ Account,OwnerId,/^$/,0058d0000054PvGAAU
     ]
 }
 </code></pre>
-<h3 id="example-3-assign-constant-value-to-specific-field">Example 3. Assign constant value to specific field.<a class="heading-anchor" href="#example-3-assign-constant-value-to-specific-field" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+<a class="heading-anchor" id="example-3-assign-constant-value-to-specific-field"></a>
+                <h3>
+                    Example 3. Assign constant value to specific field.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{
     &quot;objects&quot;: [
         {
             &quot;operation&quot;: &quot;Update&quot;,
@@ -371,7 +422,14 @@ Account,OwnerId,/^$/,0058d0000054PvGAAU
 </tr>
 </tbody></table>
 <p>Here, <code>00530000003xqAb</code> is the constant value of the target user ID you want to assign to the OwnerId field.</p>
-<h3 id="example-4-reset-all-checkbox-field-values-to-false">Example 4: Reset All Checkbox Field Values to False<a class="heading-anchor" href="#example-4-reset-all-checkbox-field-values-to-false" aria-label="Link to section">#</a></h3><p>The configuration below uses the <a href="../../full-documentation/advanced-features/values-mapping/">Values Mapping feature</a> to reset all values for the checkbox field <code>Test__c</code> to false.</p>
+<a class="heading-anchor" id="example-4-reset-all-checkbox-field-values-to-false"></a>
+                <h3>
+                    Example 4: Reset All Checkbox Field Values to False
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The configuration below uses the <a href="../../full-documentation/advanced-features/values-mapping/">Values Mapping feature</a> to reset all values for the checkbox field <code>Test__c</code> to false.</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -399,7 +457,14 @@ Account,OwnerId,/^$/,0058d0000054PvGAAU
 <td>false</td>
 </tr>
 </tbody></table>
-<h3 id="example-5-populate-text-field-in-child-object-with-parent-record-id-parent-child-relationship">Example 5. Populate Text Field in Child Object with Parent Record ID (Parent-Child Relationship)<a class="heading-anchor" href="#example-5-populate-text-field-in-child-object-with-parent-record-id-parent-child-relationship" aria-label="Link to section">#</a></h3><p>In typical scenarios, SFDMU can automatically populate a parent record ID in a child lookup field using the provided external ID. However, if you need to populate a non-lookup or non-master-detail field with the target record ID, follow the steps below.</p>
+<a class="heading-anchor" id="example-5-populate-text-field-in-child-object-with-parent-record-id-parent-child-relationship"></a>
+                <h3>
+                    Example 5. Populate Text Field in Child Object with Parent Record ID (Parent-Child Relationship)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>In typical scenarios, SFDMU can automatically populate a parent record ID in a child lookup field using the provided external ID. However, if you need to populate a non-lookup or non-master-detail field with the target record ID, follow the steps below.</p>
 <p><strong>Scenario</strong>
 You have a custom object <code>Profile_Settings__c</code> with a text field <code>Profile_Id__c</code> that contains Profile IDs. The goal is to update <code>Profile_Id__c</code> in the target org by replacing source Profile IDs with the corresponding target Profile IDs, assuming that Profile names are identical in both orgs and can be used as the external ID.</p>
 <p>Since <code>Profile_Settings__c</code> is not linked to the Profile object by a lookup, you cannot simply include <code>Profile_Id__c</code> in a query. The following configuration won&#39;t work:</p>
@@ -470,7 +535,14 @@ Use the configuration below to achieve the desired outcome:</p>
 <li><strong>targetProfileId Field</strong>: Populates <code>formula.targetProfileId</code> with the target Profile ID using the previously calculated <code>formula.sourceProfileName</code>.</li>
 <li><strong>Transformation</strong>: Finally, updates the <code>Profile_Id__c</code> in the target org with the value of <code>formula.targetProfileId</code>.</li>
 </ol>
-<h3 id="example-6-populate-text-field-with-values-taken-from-both-source-and-target-orgs">Example 6. Populate Text Field with Values Taken from Both Source and Target Orgs<a class="heading-anchor" href="#example-6-populate-text-field-with-values-taken-from-both-source-and-target-orgs" aria-label="Link to section">#</a></h3><p>The configuration below will populate the <code>TEST_TEXTBOX__c</code> field of the <code>Account</code> object with a final value that is a concatenation of the following:</p>
+<a class="heading-anchor" id="example-6-populate-text-field-with-values-taken-from-both-source-and-target-orgs"></a>
+                <h3>
+                    Example 6. Populate Text Field with Values Taken from Both Source and Target Orgs
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The configuration below will populate the <code>TEST_TEXTBOX__c</code> field of the <code>Account</code> object with a final value that is a concatenation of the following:</p>
 <ul>
 <li>The <code>RecordTypeId</code> value from the <strong>target</strong> org.</li>
 <li>The <code>Name</code> value of the <strong>parent</strong> <code>TestObject3__c</code> record from the <strong>source</strong> org.</li>
@@ -546,10 +618,7 @@ Use the configuration below to achieve the desired outcome:</p>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -569,9 +638,11 @@ Use the configuration below to achieve the desired outcome:</p>
   <script src="../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../scripts/ghostdown.js"></script>
+  <script src="../../scripts/raneto.js"></script>
   <script src="../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../assets/static-runtime.js"></script>
   <script src="../../scripts/custom.js"></script>
+  <script src="../../assets/lunr.min.js"></script>
   <script src="../../assets/static-search.js"></script>
 </body>
 </html>

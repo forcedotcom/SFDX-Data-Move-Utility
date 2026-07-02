@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>ScriptObject Object | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>ScriptObject Object | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -255,12 +256,72 @@
           <div class="col-sm-9">
             <section class="content page-content">
               <p><strong>🡨  Go Back to <a href="../export-json-file-overview/">Export.json File Overview</a></strong></p>
-<nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#scriptobject-object-overview">ScriptObject Object Overview</a></li><li><a href="#usage-of-scriptobjects">Usage of ScriptObjects</a></li><li><a href="#scriptobject-object-properties">ScriptObject Object Properties</a></li><li class="toc-child"><a href="#afteraddons-array-of-addonmanifestdefinition">afterAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#afterupdateaddons-array-of-addonmanifestdefinition">afterUpdateAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#beforeaddons-array-of-addonmanifestdefinition">beforeAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#beforeupdateaddons-array-of-addonmanifestdefinition">beforeUpdateAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#bulkapiv1batchsize-integer">bulkApiV1BatchSize (Integer)</a></li><li class="toc-child"><a href="#respectorderbyondeleterecords-boolean">respectOrderByOnDeleteRecords (Boolean)</a></li><li class="toc-child"><a href="#alwaysusebulkapitoupdaterecords-boolean">alwaysUseBulkApiToUpdateRecords (Boolean)</a></li><li class="toc-child"><a href="#alwaysuserestapi-boolean">alwaysUseRestApi (Boolean)</a></li><li class="toc-child"><a href="#alwaysusebulkapi-boolean">alwaysUseBulkApi (Boolean)</a></li><li class="toc-child"><a href="#deletebyhierarchy-boolean">deleteByHierarchy (Boolean)</a></li><li class="toc-child"><a href="#deletefromsource-boolean">deleteFromSource (Boolean)</a></li><li class="toc-child"><a href="#deleteolddata-boolean">deleteOldData (Boolean)</a></li><li class="toc-child"><a href="#deletequery-string">deleteQuery (String)</a></li><li class="toc-child"><a href="#excluded-boolean">excluded (Boolean)</a></li><li class="toc-child"><a href="#excludedfields-array-of-string">excludedFields (Array of string)</a></li><li class="toc-child"><a href="#excludedfromupdatefields-array-of-string">excludedFromUpdateFields (Array of string)</a></li><li class="toc-child"><a href="#externalid-string">externalId (String)</a></li><li class="toc-child"><a href="#fieldmapping-array-of-mappingitem">fieldMapping (Array of MappingItem)</a></li><li class="toc-child"><a href="#filterrecordsaddons-array-of-addonmanifestdefinition">filterRecordsAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#harddelete-boolean">hardDelete (Boolean)</a></li><li class="toc-child"><a href="#master-boolean">master (Boolean)</a></li><li class="toc-child"><a href="#mockfields-array-of-mockfield">mockFields (Array of MockField)</a></li><li class="toc-child"><a href="#operation-string">operation (String)</a></li><li class="toc-child"><a href="#parallelbulkjobs-integer">parallelBulkJobs (Integer)</a></li><li class="toc-child"><a href="#parallelrestjobs-integer">parallelRestJobs (Integer)</a></li><li class="toc-child"><a href="#query-string">query (String)</a></li><li class="toc-child"><a href="#queryalltarget-boolean">queryAllTarget (Boolean)</a></li><li class="toc-child"><a href="#restapibatchsize-integer">restApiBatchSize (Integer)</a></li><li class="toc-child"><a href="#skipexistingrecords-boolean">skipExistingRecords (Boolean)</a></li><li class="toc-child"><a href="#skiprecordscomparison-boolean">skipRecordsComparison (Boolean)</a></li><li class="toc-child"><a href="#sourcerecordsfilter-string">sourceRecordsFilter (String)</a></li><li class="toc-child"><a href="#targetrecordsfilter-string">targetRecordsFilter (String)</a></li><li class="toc-child"><a href="#updatewithmockdata-boolean">updateWithMockData (Boolean)</a></li><li class="toc-child"><a href="#usecsvvaluesmapping-boolean">useCSVValuesMapping (Boolean)</a></li><li class="toc-child"><a href="#usefieldmapping-boolean">useFieldMapping (Boolean)</a></li><li class="toc-child"><a href="#usequeryall-boolean">useQueryAll (Boolean)</a></li><li class="toc-child"><a href="#usevaluesmapping-boolean">useValuesMapping (Boolean)</a></li><li class="toc-child"><a href="#usesourcecsvfile-boolean">useSourceCSVFile (Boolean)</a></li></ul></nav>
-## ScriptObject Object Overview
+<hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#scriptobject-object-overview">ScriptObject Object Overview</a></li>
+<li><a href="#usage-of-scriptobjects">Usage of ScriptObjects</a></li>
+<li><a href="#scriptobject-object-properties">ScriptObject Object Properties</a><ul>
+<li><a href="#afteraddons-array-of-addonmanifestdefinition">afterAddons (Array of AddonManifestDefinition)</a></li>
+<li><a href="#afterupdateaddons-array-of-addonmanifestdefinition">afterUpdateAddons (Array of AddonManifestDefinition)</a></li>
+<li><a href="#beforeaddons-array-of-addonmanifestdefinition">beforeAddons (Array of AddonManifestDefinition)</a></li>
+<li><a href="#beforeupdateaddons-array-of-addonmanifestdefinition">beforeUpdateAddons (Array of AddonManifestDefinition)</a></li>
+<li><a href="#bulkapiv1batchsize-integer">bulkApiV1BatchSize (Integer)</a></li>
+<li><a href="#respectorderbyondeleterecords-boolean">respectOrderByOnDeleteRecords (Boolean)</a></li>
+<li><a href="#alwaysusebulkapitoupdaterecords-boolean">alwaysUseBulkApiToUpdateRecords (Boolean)</a></li>
+<li><a href="#alwaysuserestapi-boolean">alwaysUseRestApi (Boolean)</a></li>
+<li><a href="#alwaysusebulkapi-boolean">alwaysUseBulkApi (Boolean)</a></li>
+<li><a href="#deletebyhierarchy-boolean">deleteByHierarchy (Boolean)</a></li>
+<li><a href="#deletefromsource-boolean">deleteFromSource (Boolean)</a></li>
+<li><a href="#deleteolddata-boolean">deleteOldData (Boolean)</a></li>
+<li><a href="#deletequery-string">deleteQuery (String)</a></li>
+<li><a href="#excluded-boolean">excluded (Boolean)</a></li>
+<li><a href="#excludedfields-array-of-string">excludedFields (Array of string)</a></li>
+<li><a href="#excludedfromupdatefields-array-of-string">excludedFromUpdateFields (Array of string)</a></li>
+<li><a href="#externalid-string">externalId (String)</a></li>
+<li><a href="#fieldmapping-array-of-mappingitem">fieldMapping (Array of MappingItem)</a></li>
+<li><a href="#filterrecordsaddons-array-of-addonmanifestdefinition">filterRecordsAddons (Array of AddonManifestDefinition)</a></li>
+<li><a href="#harddelete-boolean">hardDelete (Boolean)</a></li>
+<li><a href="#master-boolean">master (Boolean)</a></li>
+<li><a href="#mockfields-array-of-mockfield">mockFields (Array of MockField)</a></li>
+<li><a href="#operation-string">operation (String)</a></li>
+<li><a href="#parallelbulkjobs-integer">parallelBulkJobs (Integer)</a></li>
+<li><a href="#parallelrestjobs-integer">parallelRestJobs (Integer)</a></li>
+<li><a href="#query-string">query (String)</a></li>
+<li><a href="#queryalltarget-boolean">queryAllTarget (Boolean)</a></li>
+<li><a href="#restapibatchsize-integer">restApiBatchSize (Integer)</a></li>
+<li><a href="#skipexistingrecords-boolean">skipExistingRecords (Boolean)</a></li>
+<li><a href="#skiprecordscomparison-boolean">skipRecordsComparison (Boolean)</a></li>
+<li><a href="#sourcerecordsfilter-string">sourceRecordsFilter (String)</a></li>
+<li><a href="#targetrecordsfilter-string">targetRecordsFilter (String)</a></li>
+<li><a href="#updatewithmockdata-boolean">updateWithMockData (Boolean)</a></li>
+<li><a href="#usecsvvaluesmapping-boolean">useCSVValuesMapping (Boolean)</a></li>
+<li><a href="#usefieldmapping-boolean">useFieldMapping (Boolean)</a></li>
+<li><a href="#usequeryall-boolean">useQueryAll (Boolean)</a></li>
+<li><a href="#usevaluesmapping-boolean">useValuesMapping (Boolean)</a></li>
+<li><a href="#usesourcecsvfile-boolean">useSourceCSVFile (Boolean)</a></li>
+</ul></li>
+</ul>
+<p><br /><br /></p>
 
-<p>Within the SFDMU&#39;s <strong>export.json</strong> file, the <strong>ScriptObject</strong> object functions as a child element of the global  <strong><a href="../script-object/">Script</a></strong> object. This structure allows for specific configuration settings tailored to individual Salesforce objects (sObjects).</p>
+
+<a class="heading-anchor" id="scriptobject-object-overview"></a>
+                <h2>
+                    ScriptObject Object Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Within the SFDMU&#39;s <strong>export.json</strong> file, the <strong>ScriptObject</strong> object functions as a child element of the global  <strong><a href="../script-object/">Script</a></strong> object. This structure allows for specific configuration settings tailored to individual Salesforce objects (sObjects).</p>
 <p>Properties defined within a <strong>ScriptObject</strong> are designed to override equivalent properties at higher levels in the configuration hierarchy. This capability ensures that settings can be customized for each sObject, providing precise control over the migration parameters for those particular objects.</p>
-<h2 id="usage-of-scriptobjects">Usage of ScriptObjects<a class="heading-anchor" href="#usage-of-scriptobjects" aria-label="Link to section">#</a></h2><p>The <strong>objects</strong> property of the <strong>Script</strong> object is utilized to declare an array of <strong>ScriptObjects</strong> that are processed during the migration. Below is how they can be configured:</p>
+<a class="heading-anchor" id="usage-of-scriptobjects"></a>
+                <h2>
+                    Usage of ScriptObjects
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <strong>objects</strong> property of the <strong>Script</strong> object is utilized to declare an array of <strong>ScriptObjects</strong> that are processed during the migration. Below is how they can be configured:</p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
     
@@ -282,7 +343,21 @@
   ]
 }
 </code></pre>
-<h2 id="scriptobject-object-properties">ScriptObject Object Properties<a class="heading-anchor" href="#scriptobject-object-properties" aria-label="Link to section">#</a></h2><h3 id="afteraddons-array-of-addonmanifestdefinition">afterAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#afteraddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines add-ons that are executed after the migration operation. For detailed information on the events that can be utilized, see: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<a class="heading-anchor" id="scriptobject-object-properties"></a>
+                <h2>
+                    ScriptObject Object Properties
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="afteraddons-array-of-addonmanifestdefinition"></a>
+                <h3>
+                    afterAddons (Array of AddonManifestDefinition)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Defines add-ons that are executed after the migration operation. For detailed information on the events that can be utilized, see: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
 <p><strong>Item Type:</strong> <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -305,7 +380,14 @@
   // ... other export.json properties
 }
 </code></pre>
-<h3 id="afterupdateaddons-array-of-addonmanifestdefinition">afterUpdateAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#afterupdateaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> The <code>afterUpdateAddons</code> property in the <code>export.json</code> file specifies add-ons that are activated after each update operation during a migration job. For further details on the types of add-on events supported, refer to: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<a class="heading-anchor" id="afterupdateaddons-array-of-addonmanifestdefinition"></a>
+                <h3>
+                    afterUpdateAddons (Array of AddonManifestDefinition)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> The <code>afterUpdateAddons</code> property in the <code>export.json</code> file specifies add-ons that are activated after each update operation during a migration job. For further details on the types of add-on events supported, refer to: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
 <p><strong>Item Type:</strong> <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -328,7 +410,14 @@
   // ... other export.json properties
 }
 </code></pre>
-<h3 id="beforeaddons-array-of-addonmanifestdefinition">beforeAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#beforeaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines events that trigger before the migration operation. More details are available at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<a class="heading-anchor" id="beforeaddons-array-of-addonmanifestdefinition"></a>
+                <h3>
+                    beforeAddons (Array of AddonManifestDefinition)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Defines events that trigger before the migration operation. More details are available at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
 <p><strong>Item Type:</strong>   <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -352,7 +441,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="beforeupdateaddons-array-of-addonmanifestdefinition">beforeUpdateAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#beforeupdateaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies add-ons to be invoked before each update operation within the migration job. Detailed information can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<a class="heading-anchor" id="beforeupdateaddons-array-of-addonmanifestdefinition"></a>
+                <h3>
+                    beforeUpdateAddons (Array of AddonManifestDefinition)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies add-ons to be invoked before each update operation within the migration job. Detailed information can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
 <p><strong>Item Type:</strong>   <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -376,7 +472,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="bulkapiv1batchsize-integer">bulkApiV1BatchSize (Integer)<a class="heading-anchor" href="#bulkapiv1batchsize-integer" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies the batch size for Bulk API V1 operations at the object level, overriding the global setting if provided.</p>
+<a class="heading-anchor" id="bulkapiv1batchsize-integer"></a>
+                <h3>
+                    bulkApiV1BatchSize (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies the batch size for Bulk API V1 operations at the object level, overriding the global setting if provided.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -391,7 +494,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="respectorderbyondeleterecords-boolean">respectOrderByOnDeleteRecords (Boolean)<a class="heading-anchor" href="#respectorderbyondeleterecords-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Enables order-preserving delete mode for this object.<br>When set to <code>true</code>, SFDMU forces delete-like DML operations for this object to REST with one record per request (<code>alwaysUseRestApiToUpdateRecords=true</code>, <code>restApiBatchSize=1</code>), while keeping the rest of the delete flow unchanged.</p>
+<a class="heading-anchor" id="respectorderbyondeleterecords-boolean"></a>
+                <h3>
+                    respectOrderByOnDeleteRecords (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Enables order-preserving delete mode for this object.<br>When set to <code>true</code>, SFDMU forces delete-like DML operations for this object to REST with one record per request (<code>alwaysUseRestApiToUpdateRecords=true</code>, <code>restApiBatchSize=1</code>), while keeping the rest of the delete flow unchanged.</p>
 <p>This applies to delete scenarios:</p>
 <ul>
 <li><code>deleteOldData=true</code></li>
@@ -399,16 +509,51 @@
 <li><code>deleteByHierarchy=true</code> (<code>DeleteHierarchy</code>)</li>
 <li><code>deleteFromSource=true</code> (<code>DeleteSource</code>)</li>
 </ul>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>This mode can significantly slow down execution.</li>
 <li>This mode consumes more REST API limits because one request is sent per record.</li>
 <li>This is required to keep delete processing aligned with query ordering intent, because Salesforce APIs do not provide a strict ordered-delete guarantee in bulk-style execution.</li>
 </ul>
-<h3 id="alwaysusebulkapitoupdaterecords-boolean">alwaysUseBulkApiToUpdateRecords (Boolean)<a class="heading-anchor" href="#alwaysusebulkapitoupdaterecords-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Forces Bulk API for DML operations of this object when REST DML override is not active.</p>
+<a class="heading-anchor" id="alwaysusebulkapitoupdaterecords-boolean"></a>
+                <h3>
+                    alwaysUseBulkApiToUpdateRecords (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Forces Bulk API for DML operations of this object when REST DML override is not active.</p>
 <p>When enabled, runtime treats this object as bulk-preferred for update/delete/upsert/insert DML selection.</p>
-<h3 id="alwaysuserestapi-boolean">alwaysUseRestApi (Boolean)<a class="heading-anchor" href="#alwaysuserestapi-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Forces REST API for both query and DML operations of this object.</p>
-<h3 id="alwaysusebulkapi-boolean">alwaysUseBulkApi (Boolean)<a class="heading-anchor" href="#alwaysusebulkapi-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Forces Bulk API for both query and DML operations of this object.</p>
-<h3 id="deletebyhierarchy-boolean">deleteByHierarchy (Boolean)<a class="heading-anchor" href="#deletebyhierarchy-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false</strong> The <code>deleteByHierarchy</code> property in the SFDMU Plugin&#39;s ScriptObject activates hierarchical deletion behavior. When set to <code>true</code>, it modifies the typical &quot;Delete&quot; operation to remove not only the records specified by the query but also related records in the hierarchy.</p>
+<a class="heading-anchor" id="alwaysuserestapi-boolean"></a>
+                <h3>
+                    alwaysUseRestApi (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Forces REST API for both query and DML operations of this object.</p>
+<a class="heading-anchor" id="alwaysusebulkapi-boolean"></a>
+                <h3>
+                    alwaysUseBulkApi (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Forces Bulk API for both query and DML operations of this object.</p>
+<a class="heading-anchor" id="deletebyhierarchy-boolean"></a>
+                <h3>
+                    deleteByHierarchy (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false</strong> The <code>deleteByHierarchy</code> property in the SFDMU Plugin&#39;s ScriptObject activates hierarchical deletion behavior. When set to <code>true</code>, it modifies the typical &quot;Delete&quot; operation to remove not only the records specified by the query but also related records in the hierarchy.</p>
 <p>In common scenarios, this behavior is used to clean target-side hierarchies in a controlled way when relationships must be removed together rather than record-by-record.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -424,7 +569,14 @@
 }
 </code></pre>
 <p>This setup ensures a thorough cleanup of selected records together with related hierarchy links, according to the configured delete flow. For more details, refer to <a href="../../advanced-features/delete-by-hierarchy/">Advanced Features: Delete by Hierarchy</a>.</p>
-<h3 id="deletefromsource-boolean">deleteFromSource (Boolean)<a class="heading-anchor" href="#deletefromsource-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false</strong> The <code>deleteFromSource</code> property in the SFDMU Plugin&#39;s ScriptObject specifies whether records selected by the object&#39;s query should be deleted exclusively from the source organization. When set to <code>true</code> in conjunction with the &quot;Delete&quot; operation, it ensures that only source data is removed, and no operations are performed on the destination.</p>
+<a class="heading-anchor" id="deletefromsource-boolean"></a>
+                <h3>
+                    deleteFromSource (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false</strong> The <code>deleteFromSource</code> property in the SFDMU Plugin&#39;s ScriptObject specifies whether records selected by the object&#39;s query should be deleted exclusively from the source organization. When set to <code>true</code> in conjunction with the &quot;Delete&quot; operation, it ensures that only source data is removed, and no operations are performed on the destination.</p>
 <p>Without setting <code>deleteFromSource</code> to <code>true</code>, the &quot;Delete&quot; operation targets the destination organization, removing records there instead. This property is critical for precise data management, especially when the aim is to clean the source environment without affecting the target.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -440,7 +592,14 @@
 }
 </code></pre>
 <p>This configuration ensures deletion occurs only in the source organization, thereby leaving the destination data intact. For complete details on this functionality, refer to the section on <a href="../../advanced-features/delete-source/">Advanced Features: Delete from Source</a> in the SFDMU documentation.</p>
-<h3 id="deleteolddata-boolean">deleteOldData (Boolean)<a class="heading-anchor" href="#deleteolddata-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, old target records are deleted before performing any further operation. This acts similarly to the <strong>Delete</strong> operation but allows for additional operations like insert or update to be performed concurrently.</p>
+<a class="heading-anchor" id="deleteolddata-boolean"></a>
+                <h3>
+                    deleteOldData (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, old target records are deleted before performing any further operation. This acts similarly to the <strong>Delete</strong> operation but allows for additional operations like insert or update to be performed concurrently.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -455,7 +614,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="deletequery-string">deleteQuery (String)<a class="heading-anchor" href="#deletequery-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: none.</strong> Defines a SOQL query string used to select old records from the target organization for deletion. If omitted, the main <strong>ScriptObject.query</strong> is used for both deleting and updating records.</p>
+<a class="heading-anchor" id="deletequery-string"></a>
+                <h3>
+                    deleteQuery (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: none.</strong> Defines a SOQL query string used to select old records from the target organization for deletion. If omitted, the main <strong>ScriptObject.query</strong> is used for both deleting and updating records.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -470,7 +636,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="excluded-boolean">excluded (Boolean)<a class="heading-anchor" href="#excluded-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Setting this property to <strong>true</strong> excludes the corresponding sObject from the migration process. This is useful for documentation purposes or when certain sObjects need to be temporarily disabled without removing their configuration.</p>
+<a class="heading-anchor" id="excluded-boolean"></a>
+                <h3>
+                    excluded (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> Setting this property to <strong>true</strong> excludes the corresponding sObject from the migration process. This is useful for documentation purposes or when certain sObjects need to be temporarily disabled without removing their configuration.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -485,7 +658,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="excludedfields-array-of-string">excludedFields (Array of string)<a class="heading-anchor" href="#excludedfields-array-of-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies field names to be excluded from the data migration process. These fields are omitted from the original SOQL query and do not participate in the migration.</p>
+<a class="heading-anchor" id="excludedfields-array-of-string"></a>
+                <h3>
+                    excludedFields (Array of string)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies field names to be excluded from the data migration process. These fields are omitted from the original SOQL query and do not participate in the migration.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -504,7 +684,14 @@
 <li><strong>Function</strong>: The <code>excludedFields</code> array ensures specified fields are not retrieved during SOQL query execution, effectively omitting them from the migration.</li>
 <li><strong>Usage</strong>: Useful when using <a href="../../advanced-features/field-multiselect/">multiselect keywords</a> to exclude fields due to access restrictions or irrelevance.</li>
 </ul>
-<h3 id="excludedfromupdatefields-array-of-string">excludedFromUpdateFields (Array of string)<a class="heading-anchor" href="#excludedfromupdatefields-array-of-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> This parameter specifies field names that should be excluded from being updated in the target organization. While these fields are retrieved from both the source and target organizations, they are not updated in the target.</p>
+<a class="heading-anchor" id="excludedfromupdatefields-array-of-string"></a>
+                <h3>
+                    excludedFromUpdateFields (Array of string)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> This parameter specifies field names that should be excluded from being updated in the target organization. While these fields are retrieved from both the source and target organizations, they are not updated in the target.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -525,8 +712,22 @@
 <li><strong>Use Case</strong>: This setting is particularly useful when fields need to be accessed for purposes such as data transformation or validation (via <a href="../../add-on-api/records-transform-core-add-on-module/">TransformRecords Core Add-On</a>) but should not be altered in the target. </li>
 <li><strong>Comparison</strong>: Unlike the <code>excludedFields</code> property, which completely omits fields from the migration process, <code>excludedFromUpdateFields</code> retrieves but does not update them in the target org.</li>
 </ul>
-<h3 id="externalid-string">externalId (String)<a class="heading-anchor" href="#externalid-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &quot;Name&quot; or different name field according to the sObject type</strong> Defines the external ID field for the sObject, which is used to map child records and manage relationships during migration operations other than &quot;Insert&quot; and &quot;Readonly&quot;. It&#39;s crucial that the field name is spelled correctly as this setting is case-sensitive.</p>
-<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="externalid-string"></a>
+                <h3>
+                    externalId (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: &quot;Name&quot; or different name field according to the sObject type</strong> Defines the external ID field for the sObject, which is used to map child records and manage relationships during migration operations other than &quot;Insert&quot; and &quot;Readonly&quot;. It&#39;s crucial that the field name is spelled correctly as this setting is case-sensitive.</p>
+<a class="heading-anchor" id="notes-1"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>You can use a parent relationship field such as <code>Account__r.Name</code> as the matching key. During org and CSV migrations, SFDMU compares flat CSV columns and nested Salesforce API relationship values by the same dotted path, so existing target records can be matched by parent external ID values.</li>
 </ul>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
@@ -542,7 +743,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="fieldmapping-array-of-mappingitem">fieldMapping (Array of MappingItem)<a class="heading-anchor" href="#fieldmapping-array-of-mappingitem" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Provides field mappings as defined in the <a href="../../advanced-features/fields-mapping/">Fields Mapping documentation</a>. </p>
+<a class="heading-anchor" id="fieldmapping-array-of-mappingitem"></a>
+                <h3>
+                    fieldMapping (Array of MappingItem)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Provides field mappings as defined in the <a href="../../advanced-features/fields-mapping/">Fields Mapping documentation</a>. </p>
 <p><strong>Item Type:</strong>   <a href="../mapping-item-object/">MappingItem</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -564,7 +772,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="filterrecordsaddons-array-of-addonmanifestdefinition">filterRecordsAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#filterrecordsaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies add-ons to filter records during the migration process. Further details can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<a class="heading-anchor" id="filterrecordsaddons-array-of-addonmanifestdefinition"></a>
+                <h3>
+                    filterRecordsAddons (Array of AddonManifestDefinition)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies add-ons to filter records during the migration process. Further details can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
 <p><strong>Item Type:</strong>   <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -588,7 +803,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="harddelete-boolean">hardDelete (Boolean)<a class="heading-anchor" href="#harddelete-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, records are hard deleted from the target org, bypassing the Recycle Bin. This option can be used in conjunction with other deletion operations such as <strong>Delete</strong>, <strong>DeleteSource</strong>, and <strong>DeleteHierarchy</strong>, or when <code>deleteOldData=true</code> is set and the Bulk API is in use.</p>
+<a class="heading-anchor" id="harddelete-boolean"></a>
+                <h3>
+                    hardDelete (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, records are hard deleted from the target org, bypassing the Recycle Bin. This option can be used in conjunction with other deletion operations such as <strong>Delete</strong>, <strong>DeleteSource</strong>, and <strong>DeleteHierarchy</strong>, or when <code>deleteOldData=true</code> is set and the Bulk API is in use.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -603,7 +825,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="master-boolean">master (Boolean)<a class="heading-anchor" href="#master-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: true.</strong> Controls whether the object is processed in master mode or slave mode within the data model hierarchy.</p>
+<a class="heading-anchor" id="master-boolean"></a>
+                <h3>
+                    master (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: true.</strong> Controls whether the object is processed in master mode or slave mode within the data model hierarchy.</p>
 <p>Setting this property to <code>true</code> designates the object as a &quot;master,&quot; so SFDMU processes the records returned by the object&#39;s query as defined. Setting it to <code>false</code> marks the object as a &quot;slave,&quot; where SFDMU selects only the subset of records required to preserve relationships with records already selected by master objects. In slave mode, the WHERE clause is preserved, while the LIMIT clause can be ignored when additional related records must be selected.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -625,7 +854,14 @@
 <li><p><strong>Slave Setting (<code>false</code>)</strong>: Converts the object to a &quot;slave&quot; role relative to &quot;master&quot; objects in the configuration. This setting directs the Plugin to determine and process only the essential subset of records required to preserve relationships between objects. The actual number of records processed may vary, potentially ignoring the <code>LIMIT</code> clause depending on relational requirements.</p>
 </li>
 </ul>
-<h3 id="mockfields-array-of-mockfield">mockFields (Array of MockField)<a class="heading-anchor" href="#mockfields-array-of-mockfield" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines fields that should be updated with anonymized data during the migration process. Details on how to configure data anonymization are available in the <a href="../../advanced-features/data-anonymization/">Data Anonymization documentation</a>.</p>
+<a class="heading-anchor" id="mockfields-array-of-mockfield"></a>
+                <h3>
+                    mockFields (Array of MockField)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Defines fields that should be updated with anonymized data during the migration process. Details on how to configure data anonymization are available in the <a href="../../advanced-features/data-anonymization/">Data Anonymization documentation</a>.</p>
 <p><strong>Item Type:</strong>   <a href="../mock-field-object/">MockField</a></p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -649,7 +885,14 @@
   // ... other export.json properties    
 }
 </code></pre>
-<h3 id="operation-string">operation (String)<a class="heading-anchor" href="#operation-string" aria-label="Link to section">#</a></h3><p><strong>Optional, default &quot;Readonly&quot;</strong> This parameter specifies the type of operation to be executed on the Salesforce Object (sObject) during the migration process. It defines how records will be handled, with each operation tailored to specific use cases.</p>
+<a class="heading-anchor" id="operation-string"></a>
+                <h3>
+                    operation (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, default &quot;Readonly&quot;</strong> This parameter specifies the type of operation to be executed on the Salesforce Object (sObject) during the migration process. It defines how records will be handled, with each operation tailored to specific use cases.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -675,7 +918,14 @@ The <code>operation</code> setting determines how data is processed for the curr
 <li><strong>&quot;DeleteSource&quot;</strong>: Legacy alias. Normalized to <code>Delete</code> with <code>deleteFromSource=true</code>. For more details, see <a href="../../advanced-features/delete-source/">DeleteSource operation</a>.</li>
 <li><strong>&quot;DeleteHierarchy&quot;</strong>: Legacy alias. Normalized to <code>Delete</code> with <code>deleteByHierarchy=true</code>. For further information, see <a href="../../advanced-features/delete-by-hierarchy/">DeleteHierarchy operation</a>.</li>
 </ul>
-<h3 id="parallelbulkjobs-integer">parallelBulkJobs (Integer)<a class="heading-anchor" href="#parallelbulkjobs-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 1.</strong> Defines the number of Bulk API jobs that can be run in parallel for this specific sObject, potentially overriding the global setting.</p>
+<a class="heading-anchor" id="parallelbulkjobs-integer"></a>
+                <h3>
+                    parallelBulkJobs (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 1.</strong> Defines the number of Bulk API jobs that can be run in parallel for this specific sObject, potentially overriding the global setting.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -690,7 +940,14 @@ The <code>operation</code> setting determines how data is processed for the curr
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="parallelrestjobs-integer">parallelRestJobs (Integer)<a class="heading-anchor" href="#parallelrestjobs-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 1.</strong> Similar to <code>parallelBulkJobs</code>, this property defines the number of REST API jobs that can be executed concurrently for this specific sObject.</p>
+<a class="heading-anchor" id="parallelrestjobs-integer"></a>
+                <h3>
+                    parallelRestJobs (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: 1.</strong> Similar to <code>parallelBulkJobs</code>, this property defines the number of REST API jobs that can be executed concurrently for this specific sObject.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -705,7 +962,14 @@ The <code>operation</code> setting determines how data is processed for the curr
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="query-string">query (String)<a class="heading-anchor" href="#query-string" aria-label="Link to section">#</a></h3><p><strong>Mandatory.</strong> This parameter specifies the SOQL (Salesforce Object Query Language) query string that is used to export fields from the specified Salesforce Object (sObject). The query should encompass all necessary fields for the operation, although nested queries and complex field relationships are not supported. Subqueries for filtering purposes are permitted.</p>
+<a class="heading-anchor" id="query-string"></a>
+                <h3>
+                    query (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Mandatory.</strong> This parameter specifies the SOQL (Salesforce Object Query Language) query string that is used to export fields from the specified Salesforce Object (sObject). The query should encompass all necessary fields for the operation, although nested queries and complex field relationships are not supported. Subqueries for filtering purposes are permitted.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -728,7 +992,14 @@ The <code>operation</code> setting determines how data is processed for the curr
 <li><strong>Query Flexibility</strong>: You can refine your data selection using SQL-like clauses such as <code>WHERE</code>, <code>LIMIT</code>, <code>OFFSET</code>, etc., to filter the records according to specific criteria.</li>
 <li><strong>Support for Subqueries</strong>: While nested queries and complex fields like <code>Account__r.Name</code> are not supported, you can still utilize subqueries within the <code>WHERE</code> clause (e.g., <code>WHERE Id IN (SELECT Id FROM ...)</code>) to enhance query specificity and data relevance.</li>
 </ul>
-<h3 id="queryalltarget-boolean">queryAllTarget (Boolean)<a class="heading-anchor" href="#queryalltarget-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> This setting determines whether all records from the target organization are queried, overriding any limitations (such as <code>WHERE</code>, <code>LIMIT</code>, <code>OFFSET</code>, or <code>ORDER BY</code> clauses) specified in the object&#39;s SOQL query. This is particularly useful for ensuring complete synchronization of recent records from the source with all corresponding records in the target.</p>
+<a class="heading-anchor" id="queryalltarget-boolean"></a>
+                <h3>
+                    queryAllTarget (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> This setting determines whether all records from the target organization are queried, overriding any limitations (such as <code>WHERE</code>, <code>LIMIT</code>, <code>OFFSET</code>, or <code>ORDER BY</code> clauses) specified in the object&#39;s SOQL query. This is particularly useful for ensuring complete synchronization of recent records from the source with all corresponding records in the target.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -757,7 +1028,14 @@ The <code>operation</code> setting determines how data is processed for the curr
 <li><strong>Default Behavior</strong>: With <code>queryAllTarget</code> set to <code>false</code>, the plugin adheres to the query string&#39;s restrictions, retrieving the latest records defined by conditions like <code>LAST_N_DAYS</code>. This might lead to mismatches in source-to-target synchronization if different records have been modified within the specified period in the source and target organizations.</li>
 <li><strong>Enhanced Synchronization</strong>: Activating <code>queryAllTarget</code> ensures that while recent records are queried from the source, all records from the target are considered for updating. This approach enhances the potential for updated source records to find matching counterparts in the target, thus improving data consistency and synchronization effectiveness.</li>
 </ul>
-<h3 id="restapibatchsize-integer">restApiBatchSize (Integer)<a class="heading-anchor" href="#restapibatchsize-integer" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies the batch size for REST API operations at the object level, potentially overriding the global setting.</p>
+<a class="heading-anchor" id="restapibatchsize-integer"></a>
+                <h3>
+                    restApiBatchSize (Integer)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Specifies the batch size for REST API operations at the object level, potentially overriding the global setting.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -772,7 +1050,14 @@ The <code>operation</code> setting determines how data is processed for the curr
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="skipexistingrecords-boolean">skipExistingRecords (Boolean)<a class="heading-anchor" href="#skipexistingrecords-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> When set to <strong>true</strong>, updates are skipped for records that already exist in the target. This is useful when wanting to insert new records without updating existing ones during an upsert operation.</p>
+<a class="heading-anchor" id="skipexistingrecords-boolean"></a>
+                <h3>
+                    skipExistingRecords (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> When set to <strong>true</strong>, updates are skipped for records that already exist in the target. This is useful when wanting to insert new records without updating existing ones during an upsert operation.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -787,7 +1072,14 @@ The <code>operation</code> setting determines how data is processed for the curr
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="skiprecordscomparison-boolean">skipRecordsComparison (Boolean)<a class="heading-anchor" href="#skiprecordscomparison-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> When set to <strong>true</strong>, SFDMU skips comparing source and target records during update operations, thereby updating records regardless of whether their data matches.</p>
+<a class="heading-anchor" id="skiprecordscomparison-boolean"></a>
+                <h3>
+                    skipRecordsComparison (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> When set to <strong>true</strong>, SFDMU skips comparing source and target records during update operations, thereby updating records regardless of whether their data matches.</p>
 <p>When this option is enabled, &quot;same data&quot; skip counts are expected to decrease because matching
 records are updated instead of being left untouched.</p>
 <p>If <code>--diagnostic</code> is enabled, the execution log prints a split skipped summary line:
@@ -806,7 +1098,14 @@ records are updated instead of being left untouched.</p>
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="sourcerecordsfilter-string">sourceRecordsFilter (String)<a class="heading-anchor" href="#sourcerecordsfilter-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Allows filtering of source records before DML processing.</p>
+<a class="heading-anchor" id="sourcerecordsfilter-string"></a>
+                <h3>
+                    sourceRecordsFilter (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Allows filtering of source records before DML processing.</p>
 <p>This filter is useful for narrowing down runtime-processed rows after source retrieval.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
@@ -827,7 +1126,14 @@ records are updated instead of being left untouched.</p>
 <li>This filter is applied after source retrieval and before final write processing.</li>
 <li>It is useful for staged rollouts where only a subset of retrieved records should proceed.</li>
 </ul>
-<h3 id="targetrecordsfilter-string">targetRecordsFilter (String)<a class="heading-anchor" href="#targetrecordsfilter-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Allows the use of an AlaSQL filter expression to filter target records just before they are updated, ensuring only the desired records are affected.</p>
+<a class="heading-anchor" id="targetrecordsfilter-string"></a>
+                <h3>
+                    targetRecordsFilter (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Allows the use of an AlaSQL filter expression to filter target records just before they are updated, ensuring only the desired records are affected.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -843,7 +1149,14 @@ records are updated instead of being left untouched.</p>
 }
 </code></pre>
 <p>Refer for the details: <a href="../../advanced-features/target-records-filter/">Target Records Filter</a></p>
-<h3 id="updatewithmockdata-boolean">updateWithMockData (Boolean)<a class="heading-anchor" href="#updatewithmockdata-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, enables the <a href="../../advanced-features/data-anonymization/">data anonymization feature</a> for the sObject, allowing sensitive data to be replaced with anonymized values.</p>
+<a class="heading-anchor" id="updatewithmockdata-boolean"></a>
+                <h3>
+                    updateWithMockData (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, enables the <a href="../../advanced-features/data-anonymization/">data anonymization feature</a> for the sObject, allowing sensitive data to be replaced with anonymized values.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -858,7 +1171,14 @@ records are updated instead of being left untouched.</p>
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="usecsvvaluesmapping-boolean">useCSVValuesMapping (Boolean)<a class="heading-anchor" href="#usecsvvaluesmapping-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Deprecated, Default: false.</strong> Legacy values-mapping flag from older configuration versions.</p>
+<a class="heading-anchor" id="usecsvvaluesmapping-boolean"></a>
+                <h3>
+                    useCSVValuesMapping (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Deprecated, Default: false.</strong> Legacy values-mapping flag from older configuration versions.</p>
 <p>Use <code>useValuesMapping</code> for current engine behavior. Keep <code>useCSVValuesMapping</code> only for backward compatibility of old scripts.</p>
 <p><strong>Details:</strong></p>
 <ul>
@@ -879,7 +1199,14 @@ records are updated instead of being left untouched.</p>
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="usefieldmapping-boolean">useFieldMapping (Boolean)<a class="heading-anchor" href="#usefieldmapping-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, it enables <a href="../../advanced-features/fields-mapping/">field mapping</a> for this object, allowing custom mappings between source and target fields.</p>
+<a class="heading-anchor" id="usefieldmapping-boolean"></a>
+                <h3>
+                    useFieldMapping (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, it enables <a href="../../advanced-features/fields-mapping/">field mapping</a> for this object, allowing custom mappings between source and target fields.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -894,7 +1221,14 @@ records are updated instead of being left untouched.</p>
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="usequeryall-boolean">useQueryAll (Boolean)<a class="heading-anchor" href="#usequeryall-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, it uses the <code>/queryAll</code> API endpoint instead of <code>/query</code> when querying source records, allowing inclusion of deleted records in the query result.</p>
+<a class="heading-anchor" id="usequeryall-boolean"></a>
+                <h3>
+                    useQueryAll (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, it uses the <code>/queryAll</code> API endpoint instead of <code>/query</code> when querying source records, allowing inclusion of deleted records in the query result.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -909,7 +1243,14 @@ records are updated instead of being left untouched.</p>
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="usevaluesmapping-boolean">useValuesMapping (Boolean)<a class="heading-anchor" href="#usevaluesmapping-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, enables <a href="../../advanced-features/values-mapping/">value mapping</a> for this object via <code>ValueMapping.csv</code>.</p>
+<a class="heading-anchor" id="usevaluesmapping-boolean"></a>
+                <h3>
+                    useValuesMapping (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, enables <a href="../../advanced-features/values-mapping/">value mapping</a> for this object via <code>ValueMapping.csv</code>.</p>
 <p>This is the active values-mapping switch in the current engine for object-level mapping behavior.</p>
 <p><strong>Details:</strong></p>
 <ul>
@@ -930,7 +1271,14 @@ records are updated instead of being left untouched.</p>
     // ... other export.json properties    
 }
 </code></pre>
-<h3 id="usesourcecsvfile-boolean">useSourceCSVFile (Boolean)<a class="heading-anchor" href="#usesourcecsvfile-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to true and Salesforce org is set as the data source, it uses a specific CSV file as the source instead of querying the org. This is useful when data needs to be imported from a CSV file into the Salesforce environment for this specific object, while other objects are populated from the source org.</p>
+<a class="heading-anchor" id="usesourcecsvfile-boolean"></a>
+                <h3>
+                    useSourceCSVFile (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false.</strong> When set to true and Salesforce org is set as the data source, it uses a specific CSV file as the source instead of querying the org. This is useful when data needs to be imported from a CSV file into the Salesforce environment for this specific object, while other objects are populated from the source org.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -948,10 +1296,7 @@ records are updated instead of being left untouched.</p>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 17th Apr 2026
                 </div>
               </div>
             </section>
@@ -971,9 +1316,11 @@ records are updated instead of being left untouched.</p>
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

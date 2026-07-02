@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Get Started | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="SFDX Data Move Utility (SFDMU) is the world&#39;s leading salesforce data loader. You will get your org populated with quality record data in minutes.">
-  <title>Get Started | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../favicon.png">
-  <link rel="stylesheet" href="../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "..";</script>
-  <link rel="stylesheet" href="../styles/raneto.min.css">
-  <link rel="stylesheet" href="../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../styles/custom.css">
+  <link rel="preload" href="../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,20 +255,62 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#sfdmu-new-improved-version-of-the-plugin">SFDMU New Improved Version of the Plugin</a></li><li class="toc-child"><a href="#what-changed-in-the-new-improved-version-of-the-plugin">What Changed in the New Improved Version of the Plugin</a></li><li class="toc-child"><a href="#breaking-changes-and-migration-notes-for-the-new-improved-version-of-the-plugin">Breaking Changes and Migration Notes for the New Improved Version of the Plugin</a></li><li class="toc-child"><a href="#how-to-adjust-existing-jobs-and-source-csv-files">How to Adjust Existing Jobs and Source CSV Files</a></li><li class="toc-child"><a href="#temporary-rollback-to-previous-stable-plugin">Temporary Rollback to Previous Stable Plugin</a></li><li class="toc-child"><a href="#reporting-bugs-in-the-new-improved-version-of-the-plugin">Reporting Bugs in the New Improved Version of the Plugin</a></li><li><a href="#step-1-install-the-sfdmu">Step 1. Install the SFDMU</a></li><li><a href="#step-2-configure-the-migration-job">Step 2. Configure the Migration Job</a></li><li class="toc-child"><a href="#basic-configuration-example-upserting-accounts">Basic Configuration Example: Upserting Accounts</a></li><li class="toc-child"><a href="#advanced-configuration-example-upserting-multiple-related-sobjects">Advanced Configuration Example: Upserting Multiple Related SObjects</a></li><li class="toc-child"><a href="#important-notes">Important Notes</a></li><li><a href="#step-3-run-the-migration-job">Step 3. Run the Migration Job</a></li><li><a href="#demonstration-video">Demonstration Video</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#sfdmu-new-improved-version-of-the-plugin">SFDMU New Improved Version of the Plugin</a><ul>
+<li><a href="#what-changed-in-the-new-improved-version-of-the-plugin">What Changed in the New Improved Version of the Plugin</a></li>
+<li><a href="#breaking-changes-and-migration-notes-for-the-new-improved-version-of-the-plugin">Breaking Changes and Migration Notes for the New Improved Version of the Plugin</a></li>
+<li><a href="#how-to-adjust-existing-jobs-and-source-csv-files">How to Adjust Existing Jobs and Source CSV Files</a></li>
+<li><a href="#temporary-rollback-to-previous-stable-plugin">Temporary Rollback to Previous Stable Plugin</a></li>
+<li><a href="#reporting-bugs-in-the-new-improved-version-of-the-plugin">Reporting Bugs in the New Improved Version of the Plugin</a></li>
+</ul></li>
+<li><a href="#step-1-install-the-sfdmu">Step 1. Install the SFDMU</a></li>
+<li><a href="#step-2-configure-the-migration-job">Step 2. Configure the Migration Job</a><ul>
+<li><a href="#basic-configuration-example-upserting-accounts">Basic Configuration Example: Upserting Accounts</a></li>
+<li><a href="#advanced-configuration-example-upserting-multiple-related-sobjects">Advanced Configuration Example: Upserting Multiple Related SObjects</a></li>
+<li><a href="#important-notes">Important Notes</a></li>
+</ul></li>
+<li><a href="#step-3-run-the-migration-job">Step 3. Run the Migration Job</a></li>
+<li><a href="#demonstration-video">Demonstration Video</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p>The <strong>SFDX Data Move Utility (SFDMU)</strong> is a powerful and versatile tool designed to facilitate complex data migration and synchronization processes between Salesforce organizations. 
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <strong>SFDX Data Move Utility (SFDMU)</strong> is a powerful and versatile tool designed to facilitate complex data migration and synchronization processes between Salesforce organizations. 
 As a fully-featured, open-source solution, SFDMU offers significant advantages for Salesforce administrators and developers looking to streamline their data handling practices.</p>
 <p>👉 <strong>Use the <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App" target="_blank" rel="noopener noreferrer">SFDMU GUI Application</a> to easily configure and run the migration jobs.</strong><br>With this Desktop Application, there’s no need for Notepad and Console. All tasks are performed visually, significantly simplifying migration job management. </p>
-<h2 id="sfdmu-new-improved-version-of-the-plugin">SFDMU New Improved Version of the Plugin<a class="heading-anchor" href="#sfdmu-new-improved-version-of-the-plugin" aria-label="Link to section">#</a></h2><p>The new improved version of the plugin described in this section is built on the new
+<a class="heading-anchor" id="sfdmu-new-improved-version-of-the-plugin"></a>
+                <h2>
+                    SFDMU New Improved Version of the Plugin
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The new improved version of the plugin described in this section is built on the new
 <strong>SF CLI API</strong> and includes the latest available security updates.
 The latest pre-refactoring line was <strong>v4.39.0</strong>
 from the previous engine generation.
 We recommend moving to the new improved version of the plugin if it works correctly in your
 environment.
 If it does not work correctly yet, temporarily roll back to <strong>v4.39.0</strong>.</p>
-<h3 id="what-changed-in-the-new-improved-version-of-the-plugin">What Changed in the New Improved Version of the Plugin<a class="heading-anchor" href="#what-changed-in-the-new-improved-version-of-the-plugin" aria-label="Link to section">#</a></h3><p>The list below is based on the official old-vs-new engine comparison and includes all
+<a class="heading-anchor" id="what-changed-in-the-new-improved-version-of-the-plugin"></a>
+                <h3>
+                    What Changed in the New Improved Version of the Plugin
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The list below is based on the official old-vs-new engine comparison and includes all
 new/changed/legacy differences between the old and new engines.</p>
 <ul>
 <li><p><strong>Script-level behavior changes</strong></p>
@@ -346,7 +389,14 @@ new/changed/legacy differences between the old and new engines.</p>
 </ul>
 </li>
 </ul>
-<h3 id="breaking-changes-and-migration-notes-for-the-new-improved-version-of-the-plugin">Breaking Changes and Migration Notes for the New Improved Version of the Plugin<a class="heading-anchor" href="#breaking-changes-and-migration-notes-for-the-new-improved-version-of-the-plugin" aria-label="Link to section">#</a></h3><p>The following items can break existing automation or change behavior of existing jobs:</p>
+<a class="heading-anchor" id="breaking-changes-and-migration-notes-for-the-new-improved-version-of-the-plugin"></a>
+                <h3>
+                    Breaking Changes and Migration Notes for the New Improved Version of the Plugin
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The following items can break existing automation or change behavior of existing jobs:</p>
 <ul>
 <li>standalone Node.js/module execution mode is no longer supported; use <code>sf sfdmu run</code>.</li>
 <li>default <a href="../full-documentation/export-json-file-objects-specification/script-object/#apiversion-string-in-float-format"><code>apiVersion</code></a> is now auto-resolved from org capabilities, so behavior can differ from fixed-version legacy automation.</li>
@@ -359,7 +409,14 @@ new/changed/legacy differences between the old and new engines.</p>
 </li>
 <li>CSV id/reference handling became stricter (<a href="../full-documentation/export-json-file-objects-specification/script-object/#excludeidsfromcsvfiles-boolean"><code>excludeIdsFromCSVFiles</code></a> + new post-processing flow).</li>
 </ul>
-<h3 id="how-to-adjust-existing-jobs-and-source-csv-files">How to Adjust Existing Jobs and Source CSV Files<a class="heading-anchor" href="#how-to-adjust-existing-jobs-and-source-csv-files" aria-label="Link to section">#</a></h3><ol>
+<a class="heading-anchor" id="how-to-adjust-existing-jobs-and-source-csv-files"></a>
+                <h3>
+                    How to Adjust Existing Jobs and Source CSV Files
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ol>
 <li>API version:<ul>
 <li>if your automation depends on a fixed version, pin <a href="../full-documentation/export-json-file-objects-specification/script-object/#apiversion-string-in-float-format"><code>apiVersion</code></a> explicitly.</li>
 </ul>
@@ -396,7 +453,14 @@ new/changed/legacy differences between the old and new engines.</p>
 </ul>
 </li>
 </ol>
-<h3 id="temporary-rollback-to-previous-stable-plugin">Temporary Rollback to Previous Stable Plugin<a class="heading-anchor" href="#temporary-rollback-to-previous-stable-plugin" aria-label="Link to section">#</a></h3><p>If the new improved version of the plugin does not work for your scenario yet, you can temporarily
+<a class="heading-anchor" id="temporary-rollback-to-previous-stable-plugin"></a>
+                <h3>
+                    Temporary Rollback to Previous Stable Plugin
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>If the new improved version of the plugin does not work for your scenario yet, you can temporarily
 install the previous line
 (<code>4.39.0</code>):</p>
 <pre><code class="language-bash"># Remove current plugin
@@ -408,7 +472,14 @@ sf plugins install sfdmu@4.39.0
 <p>To switch back to the latest line later:</p>
 <pre><code class="language-bash">sf plugins install sfdmu@latest
 </code></pre>
-<h3 id="reporting-bugs-in-the-new-improved-version-of-the-plugin">Reporting Bugs in the New Improved Version of the Plugin<a class="heading-anchor" href="#reporting-bugs-in-the-new-improved-version-of-the-plugin" aria-label="Link to section">#</a></h3><p>If you find a bug in the new improved version of the plugin, please report it.
+<a class="heading-anchor" id="reporting-bugs-in-the-new-improved-version-of-the-plugin"></a>
+                <h3>
+                    Reporting Bugs in the New Improved Version of the Plugin
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>If you find a bug in the new improved version of the plugin, please report it.
 For issue analysis, run with <a href="../full-documentation/reports/run-command-flags/#diagnostic"><code>--diagnostic</code></a> and <a href="../full-documentation/reports/run-command-flags/#anonymise"><code>--anonymise</code></a>, then attach the <strong>full generated log file</strong>; without the complete diagnostic log, troubleshooting is usually not possible.</p>
 <p>For the full masked/non-masked list, see:
 <a href="../full-documentation/reports/the-execution-log/#what-is-masked-and-what-is-not">/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not</a></p>
@@ -421,7 +492,14 @@ For issue analysis, run with <a href="../full-documentation/reports/run-command-
 <li>your <code>export.json</code> and related CSV samples (sanitize secrets or sensitive data if needed);</li>
 <li>exact command line and plugin version.</li>
 </ul>
-<h2 id="step-1-install-the-sfdmu">Step 1. Install the SFDMU<a class="heading-anchor" href="#step-1-install-the-sfdmu" aria-label="Link to section">#</a></h2><p>Before you install and use the SFDMU Plugin, ensure that the <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm" target="_blank" rel="noopener noreferrer">SF CLI</a> is installed on your system.</p>
+<a class="heading-anchor" id="step-1-install-the-sfdmu"></a>
+                <h2>
+                    Step 1. Install the SFDMU
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Before you install and use the SFDMU Plugin, ensure that the <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm" target="_blank" rel="noopener noreferrer">SF CLI</a> is installed on your system.</p>
 <p>Use the following commands to manage SFDMU installation:</p>
 <pre><code class="language-bash"># Uninstall an old version of the Plugin, if any:
 $ sf plugins uninstall sfdmu
@@ -435,12 +513,33 @@ $ sf plugins install sfdmu@latest
 # Or install a specific plugin version:
 $ sf plugins install sfdmu@&lt;version&gt;
 </code></pre>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>If you encounter permission issues on MacOS, use the <code>sudo</code> prefix with the installation command:</li>
 </ul>
 <pre><code class="language-bash">$ sudo sf plugins install sfdmu
 </code></pre>
-<h2 id="step-2-configure-the-migration-job">Step 2. Configure the Migration Job<a class="heading-anchor" href="#step-2-configure-the-migration-job" aria-label="Link to section">#</a></h2><h3 id="basic-configuration-example-upserting-accounts">Basic Configuration Example: Upserting Accounts<a class="heading-anchor" href="#basic-configuration-example-upserting-accounts" aria-label="Link to section">#</a></h3><p>Create an <strong>export.json</strong> file like this for basic account upserts:</p>
+<a class="heading-anchor" id="step-2-configure-the-migration-job"></a>
+                <h2>
+                    Step 2. Configure the Migration Job
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="basic-configuration-example-upserting-accounts"></a>
+                <h3>
+                    Basic Configuration Example: Upserting Accounts
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Create an <strong>export.json</strong> file like this for basic account upserts:</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -451,7 +550,14 @@ $ sf plugins install sfdmu@&lt;version&gt;
     ]
 }
 </code></pre>
-<h3 id="advanced-configuration-example-upserting-multiple-related-sobjects">Advanced Configuration Example: Upserting Multiple Related SObjects<a class="heading-anchor" href="#advanced-configuration-example-upserting-multiple-related-sobjects" aria-label="Link to section">#</a></h3><p>Assume, the data model appears as the following:</p>
+<a class="heading-anchor" id="advanced-configuration-example-upserting-multiple-related-sobjects"></a>
+                <h3>
+                    Advanced Configuration Example: Upserting Multiple Related SObjects
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Assume, the data model appears as the following:</p>
 <p><img src="../images/diagram.jpg" alt="image" loading="lazy"></p>
 <p>For this data model with complex circular relationships, use a configuration like this to maintain relationships during upserts:</p>
 <pre><code class="language-json">{
@@ -479,10 +585,24 @@ $ sf plugins install sfdmu@&lt;version&gt;
     ]
 }
 </code></pre>
-<h3 id="important-notes">Important Notes<a class="heading-anchor" href="#important-notes" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="important-notes"></a>
+                <h3>
+                    Important Notes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li>Ensure the correct spelling of object API names in <strong>export.json</strong> queries as they are <strong>case-sensitive</strong>.</li>
 </ul>
-<h2 id="step-3-run-the-migration-job">Step 3. Run the Migration Job<a class="heading-anchor" href="#step-3-run-the-migration-job" aria-label="Link to section">#</a></h2><p>Navigate to your <strong>export.json</strong> directory and execute the appropriate command to initiate migration:</p>
+<a class="heading-anchor" id="step-3-run-the-migration-job"></a>
+                <h2>
+                    Step 3. Run the Migration Job
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Navigate to your <strong>export.json</strong> directory and execute the appropriate command to initiate migration:</p>
 <ul>
 <li>Direct migration between Salesforce orgs:</li>
 </ul>
@@ -498,13 +618,27 @@ $ sf plugins install sfdmu@&lt;version&gt;
 </ul>
 <pre><code class="language-bash">$ sf sfdmu run --sourceusername source@name.com --targetusername csvfile
 </code></pre>
-<h2 id="demonstration-video">Demonstration Video<a class="heading-anchor" href="#demonstration-video" aria-label="Link to section">#</a></h2><p>Watch SFDMU in action in this demonstration video.</p>
+<a class="heading-anchor" id="demonstration-video"></a>
+                <h2>
+                    Demonstration Video
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Watch SFDMU in action in this demonstration video.</p>
 <p>This demonstration provides all the essential steps and configurations to get started with SFDMU for efficient data migration in Salesforce:</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/KI_1vD93prA" title="SFDMU DEMO"
     frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
     allowfullscreen></iframe>
 
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../installation/">Installation</a></li>
 <li><a href="../configuration/">Configuration</a></li>
 <li><a href="../running/">Running</a></li>
@@ -512,10 +646,7 @@ $ sf plugins install sfdmu@&lt;version&gt;
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -535,9 +666,11 @@ $ sf plugins install sfdmu@&lt;version&gt;
   <script src="../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../scripts/ghostdown.js"></script>
+  <script src="../scripts/raneto.js"></script>
   <script src="../lib/highlight.js/highlight.min.js"></script>
-  <script src="../assets/static-runtime.js"></script>
   <script src="../scripts/custom.js"></script>
+  <script src="../assets/lunr.min.js"></script>
   <script src="../assets/static-search.js"></script>
 </body>
 </html>

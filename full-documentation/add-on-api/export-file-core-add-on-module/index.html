@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>ExportFiles Core Add-On Module | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>ExportFiles Core Add-On Module | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,10 +255,41 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#minimal-exportfiles-module-setup">Minimal ExportFiles Module Setup</a></li><li><a href="#full-exportfiles-module-setup">Full ExportFiles Module Setup</a></li><li class="toc-child"><a href="#deleteolddata-boolean">deleteOldData (Boolean)</a></li><li class="toc-child"><a href="#operation-string">operation (String)</a></li><li class="toc-child"><a href="#externalid-string">externalId (String)</a></li><li class="toc-child"><a href="#basebinaryfilepath-string">baseBinaryFilePath (String)</a></li><li class="toc-child"><a href="#sourcewhere-string">sourceWhere (String)</a></li><li class="toc-child"><a href="#targetwhere-string">targetWhere (String)</a></li><li class="toc-child"><a href="#contentdocumentlinkorderby-string">contentDocumentLinkOrderBy (String)</a></li><li class="toc-child"><a href="#maxchunksize-number">maxChunkSize (Number)</a></li><li class="toc-child"><a href="#maxfilesize-number">maxFileSize (Number)</a></li><li><a href="#attachment-processing-with-core-exportfiles">Attachment Processing with core:ExportFiles</a></li><li class="toc-child"><a href="#scenario-1-org-to-org-attachment-transfer">Scenario 1: Org-to-Org Attachment Transfer</a></li><li class="toc-child"><a href="#scenario-2-org-to-csv-export-with-attachment-binaries">Scenario 2: Org-to-CSV Export with Attachment Binaries</a></li><li class="toc-child"><a href="#scenario-3-csv-to-org-import-with-attachment-binaries">Scenario 3: CSV-to-Org Import with Attachment Binaries</a></li><li class="toc-child"><a href="#scenario-4-replace-existing-target-attachments">Scenario 4: Replace Existing Target Attachments</a></li><li><a href="#additional-notes">Additional Notes</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#minimal-exportfiles-module-setup">Minimal ExportFiles Module Setup</a></li>
+<li><a href="#full-exportfiles-module-setup">Full ExportFiles Module Setup</a><ul>
+<li><a href="#deleteolddata-boolean">deleteOldData (Boolean)</a></li>
+<li><a href="#operation-string">operation (String)</a></li>
+<li><a href="#externalid-string">externalId (String)</a></li>
+<li><a href="#basebinaryfilepath-string">baseBinaryFilePath (String)</a></li>
+<li><a href="#sourcewhere-string">sourceWhere (String)</a></li>
+<li><a href="#targetwhere-string">targetWhere (String)</a></li>
+<li><a href="#contentdocumentlinkorderby-string">contentDocumentLinkOrderBy (String)</a></li>
+<li><a href="#maxchunksize-number">maxChunkSize (Number)</a></li>
+<li><a href="#maxfilesize-number">maxFileSize (Number)</a></li>
+</ul></li>
+<li><a href="#attachment-processing-with-core-exportfiles">Attachment Processing with core:ExportFiles</a><ul>
+<li><a href="#scenario-1-org-to-org-attachment-transfer">Scenario 1: Org-to-Org Attachment Transfer</a></li>
+<li><a href="#scenario-2-org-to-csv-export-with-attachment-binaries">Scenario 2: Org-to-CSV Export with Attachment Binaries</a></li>
+<li><a href="#scenario-3-csv-to-org-import-with-attachment-binaries">Scenario 3: CSV-to-Org Import with Attachment Binaries</a></li>
+<li><a href="#scenario-4-replace-existing-target-attachments">Scenario 4: Replace Existing Target Attachments</a></li>
+</ul></li>
+<li><a href="#additional-notes">Additional Notes</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p>The <code>core:ExportFiles</code> module is designed to transfer Salesforce file-related entities and their binary content
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <code>core:ExportFiles</code> module is designed to transfer Salesforce file-related entities and their binary content
 in a controlled and predictable way. It helps when you need to migrate files together with parent records
 and keep links between records and files consistent.</p>
 <p>In the current engine, this module supports the following entities:</p>
@@ -273,7 +305,14 @@ and keep links between records and files consistent.</p>
 <li><code>org -&gt; csvfile</code></li>
 <li><code>csvfile -&gt; org</code></li>
 </ul>
-<h2 id="minimal-exportfiles-module-setup">Minimal ExportFiles Module Setup<a class="heading-anchor" href="#minimal-exportfiles-module-setup" aria-label="Link to section">#</a></h2><p>To transfer files linked to parent records, declare the module call in your <strong>export.json</strong>.
+<a class="heading-anchor" id="minimal-exportfiles-module-setup"></a>
+                <h2>
+                    Minimal ExportFiles Module Setup
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>To transfer files linked to parent records, declare the module call in your <strong>export.json</strong>.
 The minimal setup below upserts parent records (Accounts) and then runs <code>core:ExportFiles</code>.
 In this minimal form, the module is declared without <code>args</code>.</p>
 <pre><code class="language-json">{
@@ -294,21 +333,56 @@ In this minimal form, the module is declared without <code>args</code>.</p>
 <p><strong><code>afterAddons</code></strong> in this example means the module is executed in the object-level <strong>OnAfter</strong> event.
 This is important because parent records are already processed at that point, and file links can be created
 against the target parent records.</p>
-<h2 id="full-exportfiles-module-setup">Full ExportFiles Module Setup<a class="heading-anchor" href="#full-exportfiles-module-setup" aria-label="Link to section">#</a></h2><p>Below is the full list of <strong>args</strong> properties relevant to the <strong>core:ExportFiles</strong> module.
+<a class="heading-anchor" id="full-exportfiles-module-setup"></a>
+                <h2>
+                    Full ExportFiles Module Setup
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Below is the full list of <strong>args</strong> properties relevant to the <strong>core:ExportFiles</strong> module.
 All properties are optional, so you can omit <strong>args</strong> completely if defaults are suitable for your scenario.</p>
-<h3 id="deleteolddata-boolean">deleteOldData (Boolean)<a class="heading-anchor" href="#deleteolddata-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: inherited from parent <code>ScriptObject.deleteOldData</code> (typically false).</strong>
+<a class="heading-anchor" id="deleteolddata-boolean"></a>
+                <h3>
+                    deleteOldData (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: inherited from parent <code>ScriptObject.deleteOldData</code> (typically false).</strong>
 If set to <code>true</code>, old target file records are deleted before uploading or linking new data.
 Use this carefully in environments where target files must be replaced rather than incrementally updated.</p>
-<h3 id="operation-string">operation (String)<a class="heading-anchor" href="#operation-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: inherited from the parent object operation.</strong>
+<a class="heading-anchor" id="operation-string"></a>
+                <h3>
+                    operation (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: inherited from the parent object operation.</strong>
 Specifies which operation to apply for file processing.
 Typical values are <code>Insert</code>, <code>Update</code>, and <code>Upsert</code>.</p>
 <p>If omitted, the module follows the operation used by the parent object.
 If no operation can be resolved from context, the runtime fallback is <code>Insert</code>.
 If <code>Readonly</code> is selected, the module will not process files.</p>
-<h3 id="externalid-string">externalId (String)<a class="heading-anchor" href="#externalid-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: <code>Title</code>.</strong>
+<a class="heading-anchor" id="externalid-string"></a>
+                <h3>
+                    externalId (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: <code>Title</code>.</strong>
 Defines which <code>ContentVersion</code> field is used to compare source and target file records.
 This is useful for deciding whether a file should be inserted as new, updated, or skipped.</p>
-<h3 id="basebinaryfilepath-string">baseBinaryFilePath (String)<a class="heading-anchor" href="#basebinaryfilepath-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: <code>files</code>.</strong>
+<a class="heading-anchor" id="basebinaryfilepath-string"></a>
+                <h3>
+                    baseBinaryFilePath (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: <code>files</code>.</strong>
 Defines the base directory for binary file read/write operations in CSV media scenarios.</p>
 <p>This option is useful when:</p>
 <ul>
@@ -317,26 +391,68 @@ Defines the base directory for binary file read/write operations in CSV media sc
 <li>you need stable paths for automation.</li>
 </ul>
 <p>Path handling supports both <code>/</code> and <code>\</code>.</p>
-<h3 id="sourcewhere-string">sourceWhere (String)<a class="heading-anchor" href="#sourcewhere-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong>
+<a class="heading-anchor" id="sourcewhere-string"></a>
+                <h3>
+                    sourceWhere (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong>
 Adds an additional filter to source <code>ContentVersion</code> selection.
 Use this to limit which source files are read, for example by title pattern or other criteria.</p>
 <p><strong>Sample Value:</strong> <code>Title LIKE &#39;sample-%&#39;</code></p>
-<h3 id="targetwhere-string">targetWhere (String)<a class="heading-anchor" href="#targetwhere-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong>
+<a class="heading-anchor" id="targetwhere-string"></a>
+                <h3>
+                    targetWhere (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong>
 Adds an additional filter to target <code>ContentVersion</code> selection.
 Use this when matching/updating/deleting only a subset of target files.</p>
 <p><strong>Sample Value:</strong> <code>Title LIKE &#39;sample-%&#39;</code></p>
-<h3 id="contentdocumentlinkorderby-string">contentDocumentLinkOrderBy (String)<a class="heading-anchor" href="#contentdocumentlinkorderby-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong>
+<a class="heading-anchor" id="contentdocumentlinkorderby-string"></a>
+                <h3>
+                    contentDocumentLinkOrderBy (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong>
 Specifies the <code>ORDER BY</code> clause used when reading source <code>ContentDocumentLink</code> records.
 This is useful when you need deterministic ordering (for example, most recent files first).</p>
 <p><strong>Sample Value:</strong> <code>SystemModstamp DESC</code></p>
-<h3 id="maxchunksize-number">maxChunkSize (Number)<a class="heading-anchor" href="#maxchunksize-number" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: <code>15728640</code> bytes (<del>15 MB), Max Allowed: <code>38797312</code> bytes (</del>37 MB).</strong>
+<a class="heading-anchor" id="maxchunksize-number"></a>
+                <h3>
+                    maxChunkSize (Number)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: <code>15728640</code> bytes (<del>15 MB), Max Allowed: <code>38797312</code> bytes (</del>37 MB).</strong>
 Limits the size of upload chunks sent in one operation.
 Smaller chunk sizes may improve stability in constrained environments, while larger chunks can
 improve throughput if network and org limits allow it.</p>
-<h3 id="maxfilesize-number">maxFileSize (Number)<a class="heading-anchor" href="#maxfilesize-number" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: <code>38797312</code> bytes (<del>37 MB), Max Allowed: <code>38797312</code> bytes (</del>37 MB).</strong>
+<a class="heading-anchor" id="maxfilesize-number"></a>
+                <h3>
+                    maxFileSize (Number)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: <code>38797312</code> bytes (<del>37 MB), Max Allowed: <code>38797312</code> bytes (</del>37 MB).</strong>
 Defines the maximum file size to process.
 Files larger than this threshold are skipped by the module.</p>
-<h2 id="attachment-processing-with-core-exportfiles">Attachment Processing with core:ExportFiles<a class="heading-anchor" href="#attachment-processing-with-core-exportfiles" aria-label="Link to section">#</a></h2><p><code>core:ExportFiles</code> processes <code>Attachment</code> records together with their binary content.
+<a class="heading-anchor" id="attachment-processing-with-core-exportfiles"></a>
+                <h2>
+                    Attachment Processing with core:ExportFiles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><code>core:ExportFiles</code> processes <code>Attachment</code> records together with their binary content.
 The module works through parent records selected by your object query.</p>
 <p>In practice, this means:</p>
 <ul>
@@ -344,7 +460,14 @@ The module works through parent records selected by your object query.</p>
 <li>run <code>core:ExportFiles</code> in <code>afterAddons</code> for those parent objects;</li>
 <li>use stable parent matching (usually <code>externalId</code>) when target-side linking is required.</li>
 </ul>
-<h3 id="scenario-1-org-to-org-attachment-transfer">Scenario 1: Org-to-Org Attachment Transfer<a class="heading-anchor" href="#scenario-1-org-to-org-attachment-transfer" aria-label="Link to section">#</a></h3><p>Use this when both source and target are Salesforce orgs.
+<a class="heading-anchor" id="scenario-1-org-to-org-attachment-transfer"></a>
+                <h3>
+                    Scenario 1: Org-to-Org Attachment Transfer
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Use this when both source and target are Salesforce orgs.
 The module will move file-related records linked to selected parents, including <code>Attachment</code>.</p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -361,7 +484,14 @@ The module will move file-related records linked to selected parents, including 
   ]
 }
 </code></pre>
-<h3 id="scenario-2-org-to-csv-export-with-attachment-binaries">Scenario 2: Org-to-CSV Export with Attachment Binaries<a class="heading-anchor" href="#scenario-2-org-to-csv-export-with-attachment-binaries" aria-label="Link to section">#</a></h3><p>Use this when exporting from org to <code>csvfile</code>.
+<a class="heading-anchor" id="scenario-2-org-to-csv-export-with-attachment-binaries"></a>
+                <h3>
+                    Scenario 2: Org-to-CSV Export with Attachment Binaries
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Use this when exporting from org to <code>csvfile</code>.
 <code>baseBinaryFilePath</code> controls where binary payload files are stored.</p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -381,7 +511,14 @@ The module will move file-related records linked to selected parents, including 
   ]
 }
 </code></pre>
-<h3 id="scenario-3-csv-to-org-import-with-attachment-binaries">Scenario 3: CSV-to-Org Import with Attachment Binaries<a class="heading-anchor" href="#scenario-3-csv-to-org-import-with-attachment-binaries" aria-label="Link to section">#</a></h3><p>Use this when source is <code>csvfile</code> and target is an org.
+<a class="heading-anchor" id="scenario-3-csv-to-org-import-with-attachment-binaries"></a>
+                <h3>
+                    Scenario 3: CSV-to-Org Import with Attachment Binaries
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Use this when source is <code>csvfile</code> and target is an org.
 The module reads file metadata from CSV plus binary payload from <code>baseBinaryFilePath</code>.</p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -402,7 +539,14 @@ The module reads file metadata from CSV plus binary payload from <code>baseBinar
   ]
 }
 </code></pre>
-<h3 id="scenario-4-replace-existing-target-attachments">Scenario 4: Replace Existing Target Attachments<a class="heading-anchor" href="#scenario-4-replace-existing-target-attachments" aria-label="Link to section">#</a></h3><p>Use <code>deleteOldData=true</code> when existing target file records should be removed before upload.</p>
+<a class="heading-anchor" id="scenario-4-replace-existing-target-attachments"></a>
+                <h3>
+                    Scenario 4: Replace Existing Target Attachments
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Use <code>deleteOldData=true</code> when existing target file records should be removed before upload.</p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
     {
@@ -421,7 +565,14 @@ The module reads file metadata from CSV plus binary payload from <code>baseBinar
   ]
 }
 </code></pre>
-<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="additional-notes"></a>
+                <h2>
+                    Additional Notes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li>This module processes file data that is linked to parent business records.
 In practical terms, parent records should be part of the migration flow so links can be resolved correctly.</li>
 <li>Supported transfer directions are:<ul>
@@ -451,10 +602,7 @@ In practical terms, parent records should be part of the migration flow so links
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -474,9 +622,11 @@ In practical terms, parent records should be part of the migration flow so links
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

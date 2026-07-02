@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Custom Add-On API Object Reference | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Custom Add-On API Object Reference | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,10 +255,94 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#quick-start">Quick Start</a></li><li><a href="#add-on-declaration-model">Add-On Declaration Model</a></li><li class="toc-child"><a href="#addonmanifestdefinition">AddOnManifestDefinition</a></li><li class="toc-child"><a href="#locator-rules-module-vs-path">Locator Rules (module vs path)</a></li><li class="toc-child"><a href="#module-resolution-behavior">Module Resolution Behavior</a></li><li class="toc-child"><a href="#event-values">Event Values</a></li><li><a href="#module-contract">Module Contract</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonmodule">ISfdmuRunCustomAddonModule</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonresult">ISfdmuRunCustomAddonResult</a></li><li><a href="#runtime-context-model">Runtime Context Model</a></li><li class="toc-child"><a href="#isfdmuruncustomaddoncontext">ISfdmuRunCustomAddonContext</a></li><li><a href="#runtime-api-model">Runtime API Model</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonruntime">ISfdmuRunCustomAddonRuntime</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonapiservice">ISfdmuRunCustomAddonApiService</a></li><li><a href="#script-model">Script Model</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscript">ISfdmuRunCustomAddonScript</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptobject">ISfdmuRunCustomAddonScriptObject</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptorg">ISfdmuRunCustomAddonScriptOrg</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptaddonmanifestdefinition">ISfdmuRunCustomAddonScriptAddonManifestDefinition</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptmappingitem">ISfdmuRunCustomAddonScriptMappingItem</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptmockfield">ISfdmuRunCustomAddonScriptMockField</a></li><li><a href="#job-and-task-models">Job and Task Models</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonjob">ISFdmuRunCustomAddonJob</a></li><li class="toc-child"><a href="#isfdmuruncustomaddontask">ISFdmuRunCustomAddonTask</a></li><li class="toc-child"><a href="#isfdmuruncustomaddontaskdata">ISfdmuRunCustomAddonTaskData</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonprocesseddata">ISfdmuRunCustomAddonProcessedData</a></li><li><a href="#metadata-models">Metadata Models</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonsfielddescribe">ISfdmuRunCustomAddonSFieldDescribe</a></li><li class="toc-child"><a href="#run-and-plugin-metadata">Run and Plugin Metadata</a></li><li><a href="#core-enums-available-in-sdk">Core Enums Available in SDK</a></li><li class="toc-child"><a href="#operation">OPERATION</a></li><li class="toc-child"><a href="#datamediatype">DATAMEDIATYPE</a></li><li class="toc-child"><a href="#datacachetypes">DATACACHETYPES</a></li><li><a href="#how-to-use-the-sdk">How to Use the SDK</a></li><li class="toc-child"><a href="#install-sdk-in-your-add-on-project">Install SDK in Your Add-On Project</a></li><li class="toc-child"><a href="#recommended-project-layout">Recommended Project Layout</a></li><li class="toc-child"><a href="#create-from-template">Create from Template</a></li><li class="toc-child"><a href="#compile-and-build">Compile and Build</a></li><li><a href="#calling-and-running-custom-add-ons">Calling and Running Custom Add-Ons</a></li><li class="toc-child"><a href="#global-level-registration-export-json">Global-Level Registration (export.json)</a></li><li class="toc-child"><a href="#object-level-registration-export-json">Object-Level Registration (export.json)</a></li><li class="toc-child"><a href="#external-manifest-addons-json">External Manifest (addons.json)</a></li><li><a href="#debugging-custom-add-ons">Debugging Custom Add-Ons</a></li><li class="toc-child"><a href="#debug-from-typescript-source">Debug from TypeScript Source</a></li><li class="toc-child"><a href="#attach-debugger">Attach Debugger</a></li><li class="toc-child"><a href="#debug-checklist">Debug Checklist</a></li><li><a href="#deployment-and-distribution">Deployment and Distribution</a></li><li class="toc-child"><a href="#local-file-deployment">Local File Deployment</a></li><li class="toc-child"><a href="#npm-package-deployment">NPM Package Deployment</a></li><li class="toc-child"><a href="#message-bundles">Message Bundles</a></li><li><a href="#best-practices">Best Practices</a></li><li><a href="#common-pitfalls">Common Pitfalls</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#quick-start">Quick Start</a></li>
+<li><a href="#add-on-declaration-model">Add-On Declaration Model</a><ul>
+<li><a href="#addonmanifestdefinition">AddOnManifestDefinition</a></li>
+<li><a href="#locator-rules-module-vs-path">Locator Rules (<code>module</code> vs <code>path</code>)</a></li>
+<li><a href="#module-resolution-behavior">Module Resolution Behavior</a></li>
+<li><a href="#event-values">Event Values</a></li>
+</ul></li>
+<li><a href="#module-contract">Module Contract</a><ul>
+<li><a href="#isfdmuruncustomaddonmodule">ISfdmuRunCustomAddonModule</a></li>
+<li><a href="#isfdmuruncustomaddonresult">ISfdmuRunCustomAddonResult</a></li>
+</ul></li>
+<li><a href="#runtime-context-model">Runtime Context Model</a><ul>
+<li><a href="#isfdmuruncustomaddoncontext">ISfdmuRunCustomAddonContext</a></li>
+</ul></li>
+<li><a href="#runtime-api-model">Runtime API Model</a><ul>
+<li><a href="#isfdmuruncustomaddonruntime">ISfdmuRunCustomAddonRuntime</a><ul>
+<li><a href="#paths-and-script">Paths and Script</a></li>
+<li><a href="#logging-helpers">Logging Helpers</a></li>
+<li><a href="#data-helpers">Data Helpers</a></li>
+</ul></li>
+<li><a href="#isfdmuruncustomaddonapiservice">ISfdmuRunCustomAddonApiService</a></li>
+</ul></li>
+<li><a href="#script-model">Script Model</a><ul>
+<li><a href="#isfdmuruncustomaddonscript">ISfdmuRunCustomAddonScript</a></li>
+<li><a href="#isfdmuruncustomaddonscriptobject">ISfdmuRunCustomAddonScriptObject</a></li>
+<li><a href="#isfdmuruncustomaddonscriptorg">ISfdmuRunCustomAddonScriptOrg</a></li>
+<li><a href="#isfdmuruncustomaddonscriptaddonmanifestdefinition">ISfdmuRunCustomAddonScriptAddonManifestDefinition</a></li>
+<li><a href="#isfdmuruncustomaddonscriptmappingitem">ISfdmuRunCustomAddonScriptMappingItem</a></li>
+<li><a href="#isfdmuruncustomaddonscriptmockfield">ISfdmuRunCustomAddonScriptMockField</a></li>
+</ul></li>
+<li><a href="#job-and-task-models">Job and Task Models</a><ul>
+<li><a href="#isfdmuruncustomaddonjob">ISFdmuRunCustomAddonJob</a></li>
+<li><a href="#isfdmuruncustomaddontask">ISFdmuRunCustomAddonTask</a></li>
+<li><a href="#isfdmuruncustomaddontaskdata">ISfdmuRunCustomAddonTaskData</a></li>
+<li><a href="#isfdmuruncustomaddonprocesseddata">ISfdmuRunCustomAddonProcessedData</a></li>
+</ul></li>
+<li><a href="#metadata-models">Metadata Models</a><ul>
+<li><a href="#isfdmuruncustomaddonsfielddescribe">ISfdmuRunCustomAddonSFieldDescribe</a></li>
+<li><a href="#run-and-plugin-metadata">Run and Plugin Metadata</a><ul>
+<li><a href="#isfdmuruncustomaddoncommandruninfo">ISfdmuRunCustomAddonCommandRunInfo</a></li>
+<li><a href="#isfdmuruncustomaddonplugininfo">ISfdmuRunCustomAddonPluginInfo</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#core-enums-available-in-sdk">Core Enums Available in SDK</a><ul>
+<li><a href="#operation">OPERATION</a></li>
+<li><a href="#datamediatype">DATA_MEDIA_TYPE</a></li>
+<li><a href="#datacachetypes">DATA_CACHE_TYPES</a></li>
+</ul></li>
+<li><a href="#how-to-use-the-sdk">How to Use the SDK</a><ul>
+<li><a href="#install-sdk-in-your-add-on-project">Install SDK in Your Add-On Project</a></li>
+<li><a href="#recommended-project-layout">Recommended Project Layout</a></li>
+<li><a href="#create-from-template">Create from Template</a></li>
+<li><a href="#compile-and-build">Compile and Build</a></li>
+</ul></li>
+<li><a href="#calling-and-running-custom-add-ons">Calling and Running Custom Add-Ons</a><ul>
+<li><a href="#global-level-registration-export-json">Global-Level Registration (<code>export.json</code>)</a></li>
+<li><a href="#object-level-registration-export-json">Object-Level Registration (<code>export.json</code>)</a></li>
+<li><a href="#external-manifest-addons-json">External Manifest (<code>addons.json</code>)</a></li>
+</ul></li>
+<li><a href="#debugging-custom-add-ons">Debugging Custom Add-Ons</a><ul>
+<li><a href="#debug-from-typescript-source">Debug from TypeScript Source</a></li>
+<li><a href="#attach-debugger">Attach Debugger</a></li>
+<li><a href="#debug-checklist">Debug Checklist</a></li>
+</ul></li>
+<li><a href="#deployment-and-distribution">Deployment and Distribution</a><ul>
+<li><a href="#local-file-deployment">Local File Deployment</a></li>
+<li><a href="#npm-package-deployment">NPM Package Deployment</a></li>
+<li><a href="#message-bundles">Message Bundles</a></li>
+</ul></li>
+<li><a href="#best-practices">Best Practices</a></li>
+<li><a href="#common-pitfalls">Common Pitfalls</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p>This page is a practical reference for developers who want to build and run <strong>Custom SFDMU Add-On modules</strong>.
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>This page is a practical reference for developers who want to build and run <strong>Custom SFDMU Add-On modules</strong>.
 It documents:</p>
 <ul>
 <li>the Add-On declaration model in <code>export.json</code> and <code>addons.json</code>;</li>
@@ -266,7 +351,14 @@ It documents:</p>
 <li>how to create, debug, package, and run custom add-ons.</li>
 </ul>
 <p>This document is detailed on purpose and assumes you are a programmer, but new to SFDMU Add-On internals.</p>
-<h2 id="quick-start">Quick Start<a class="heading-anchor" href="#quick-start" aria-label="Link to section">#</a></h2><p>If you need the shortest path from zero to a running add-on, use this flow:</p>
+<a class="heading-anchor" id="quick-start"></a>
+                <h2>
+                    Quick Start
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>If you need the shortest path from zero to a running add-on, use this flow:</p>
 <ol>
 <li>Create a template:
 <code>node scripts/create-custom-addon-template.js my-addon</code></li>
@@ -288,12 +380,33 @@ It documents:</p>
   ]
 }
 </code></pre>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><code>args</code> is optional and can be omitted when your module does not need parameters.</li>
 <li>At least one locator must exist: <code>module</code> or <code>path</code>.</li>
 <li>Relative paths are resolved from the directory where <code>export.json</code> is located.</li>
 </ul>
-<h2 id="add-on-declaration-model">Add-On Declaration Model<a class="heading-anchor" href="#add-on-declaration-model" aria-label="Link to section">#</a></h2><h3 id="addonmanifestdefinition">AddOnManifestDefinition<a class="heading-anchor" href="#addonmanifestdefinition" aria-label="Link to section">#</a></h3><p>Custom add-ons are declared as manifest entries in:</p>
+<a class="heading-anchor" id="add-on-declaration-model"></a>
+                <h2>
+                    Add-On Declaration Model
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="addonmanifestdefinition"></a>
+                <h3>
+                    AddOnManifestDefinition
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Custom add-ons are declared as manifest entries in:</p>
 <ul>
 <li>script-level arrays inside <code>export.json</code>;</li>
 <li>object-level arrays inside <code>export.json</code>;</li>
@@ -447,7 +560,14 @@ It documents:</p>
 <li><code>objects</code> and <code>objectName</code> allow strict targeting.</li>
 <li><code>excluded: true</code> disables the add-on without removing configuration.</li>
 </ul>
-<h3 id="locator-rules-module-vs-path">Locator Rules (<code>module</code> vs <code>path</code>)<a class="heading-anchor" href="#locator-rules-module-vs-path" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="locator-rules-module-vs-path"></a>
+                <h3>
+                    Locator Rules (<code>module</code> vs <code>path</code>)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><code>module</code> has priority when both <code>module</code> and <code>path</code> are provided.</li>
 <li><code>module</code> can be:<ul>
 <li>package name (<code>my-sfdmu-addon</code>);</li>
@@ -473,7 +593,14 @@ It documents:</p>
 <li>runtime normalizes locator fields and uses the <code>module</code> value;</li>
 <li><code>path</code> remains legacy-compatible but does not override <code>module</code>.</li>
 </ul>
-<h3 id="module-resolution-behavior">Module Resolution Behavior<a class="heading-anchor" href="#module-resolution-behavior" aria-label="Link to section">#</a></h3><p>At runtime, SFDMU resolves custom add-ons with this strategy:</p>
+<a class="heading-anchor" id="module-resolution-behavior"></a>
+                <h3>
+                    Module Resolution Behavior
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>At runtime, SFDMU resolves custom add-ons with this strategy:</p>
 <ol>
 <li>Try dynamic ESM import for the requested locator.</li>
 <li>Try alternate extension (<code>.ts</code> &lt;-&gt; <code>.js</code>) when relevant.</li>
@@ -505,7 +632,14 @@ It documents:</p>
 <li><code>.ts</code>/<code>.js</code> file paths can be resolved as alternative entry points;</li>
 <li>if ESM import fails, loader can fallback to CommonJS <code>require</code>.</li>
 </ul>
-<h3 id="event-values">Event Values<a class="heading-anchor" href="#event-values" aria-label="Link to section">#</a></h3><p>Supported event names:</p>
+<a class="heading-anchor" id="event-values"></a>
+                <h3>
+                    Event Values
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Supported event names:</p>
 <ul>
 <li><code>onBefore</code></li>
 <li><code>onAfter</code></li>
@@ -548,7 +682,21 @@ It documents:</p>
 <li><code>onBeforeUpdate</code> -&gt; final mutation point: <a href="#isfdmuruncustomaddonprocesseddata">ISfdmuRunCustomAddonProcessedData</a></li>
 <li><code>onAfterUpdate</code> -&gt; post-update integration: <a href="#isfdmuruncustomaddontask">ISFdmuRunCustomAddonTask</a></li>
 </ul>
-<h2 id="module-contract">Module Contract<a class="heading-anchor" href="#module-contract" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonmodule">ISfdmuRunCustomAddonModule<a class="heading-anchor" href="#isfdmuruncustomaddonmodule" aria-label="Link to section">#</a></h3><p>Every custom module implements this interface.</p>
+<a class="heading-anchor" id="module-contract"></a>
+                <h2>
+                    Module Contract
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="isfdmuruncustomaddonmodule"></a>
+                <h3>
+                    ISfdmuRunCustomAddonModule
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Every custom module implements this interface.</p>
 <table>
 <thead>
 <tr>
@@ -611,7 +759,14 @@ export default class MyAddon implements ISfdmuRunCustomAddonModule {
   }
 }
 </code></pre>
-<h3 id="isfdmuruncustomaddonresult">ISfdmuRunCustomAddonResult<a class="heading-anchor" href="#isfdmuruncustomaddonresult" aria-label="Link to section">#</a></h3><table>
+<a class="heading-anchor" id="isfdmuruncustomaddonresult"></a>
+                <h3>
+                    ISfdmuRunCustomAddonResult
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><table>
 <thead>
 <tr>
 <th>Property</th>
@@ -650,7 +805,21 @@ export default class MyAddon implements ISfdmuRunCustomAddonModule {
 <li>return <code>{ cancel: true }</code> only for explicit stop conditions;</li>
 <li>use log messages so operators can understand why job was aborted.</li>
 </ul>
-<h2 id="runtime-context-model">Runtime Context Model<a class="heading-anchor" href="#runtime-context-model" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddoncontext">ISfdmuRunCustomAddonContext<a class="heading-anchor" href="#isfdmuruncustomaddoncontext" aria-label="Link to section">#</a></h3><p>Context is passed to <code>onInit</code> and <code>onExecute</code>.</p>
+<a class="heading-anchor" id="runtime-context-model"></a>
+                <h2>
+                    Runtime Context Model
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="isfdmuruncustomaddoncontext"></a>
+                <h3>
+                    ISfdmuRunCustomAddonContext
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Context is passed to <code>onInit</code> and <code>onExecute</code>.</p>
 <table>
 <thead>
 <tr>
@@ -721,8 +890,29 @@ export default class MyAddon implements ISfdmuRunCustomAddonModule {
 <li>same module can react differently depending on event/object/pass;</li>
 <li>pass metadata is useful in multi-pass update pipelines.</li>
 </ul>
-<h2 id="runtime-api-model">Runtime API Model<a class="heading-anchor" href="#runtime-api-model" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonruntime">ISfdmuRunCustomAddonRuntime<a class="heading-anchor" href="#isfdmuruncustomaddonruntime" aria-label="Link to section">#</a></h3><p>This runtime is exposed as <code>this.runtime</code> in your module.</p>
-<h4 id="paths-and-script">Paths and Script<a class="heading-anchor" href="#paths-and-script" aria-label="Link to section">#</a></h4><table>
+<a class="heading-anchor" id="runtime-api-model"></a>
+                <h2>
+                    Runtime API Model
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="isfdmuruncustomaddonruntime"></a>
+                <h3>
+                    ISfdmuRunCustomAddonRuntime
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>This runtime is exposed as <code>this.runtime</code> in your module.</p>
+<a class="heading-anchor" id="paths-and-script"></a>
+                <h4>
+                    Paths and Script
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><table>
 <thead>
 <tr>
 <th>Member</th>
@@ -763,7 +953,14 @@ this.runtime.service.log(this, `objectCount=${String(script.getAllObjects().leng
 <li>runtime paths point to the current run scope;</li>
 <li><code>getScript()</code> gives access to live script config and helper methods.</li>
 </ul>
-<h4 id="logging-helpers">Logging Helpers<a class="heading-anchor" href="#logging-helpers" aria-label="Link to section">#</a></h4><table>
+<a class="heading-anchor" id="logging-helpers"></a>
+                <h4>
+                    Logging Helpers
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><table>
 <thead>
 <tr>
 <th>Method</th>
@@ -811,7 +1008,14 @@ this.runtime.logAddonExecutionFinished(this);
 <li>formatted logs support token replacement;</li>
 <li>start/finish markers improve traceability in long runs.</li>
 </ul>
-<h4 id="data-helpers">Data Helpers<a class="heading-anchor" href="#data-helpers" aria-label="Link to section">#</a></h4><table>
+<a class="heading-anchor" id="data-helpers"></a>
+                <h4>
+                    Data Helpers
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><table>
 <thead>
 <tr>
 <th>Method</th>
@@ -861,7 +1065,14 @@ await this.runtime.updateTargetRecordsAsync(&#39;Account&#39;, OPERATION.Update,
 <li><code>queryMultiAsync</code> returns merged results from generated queries;</li>
 <li><code>updateTargetRecordsAsync</code> applies DML/engine logic via runtime.</li>
 </ul>
-<h3 id="isfdmuruncustomaddonapiservice">ISfdmuRunCustomAddonApiService<a class="heading-anchor" href="#isfdmuruncustomaddonapiservice" aria-label="Link to section">#</a></h3><p>This service is exposed as <code>this.runtime.service</code>.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddonapiservice"></a>
+                <h3>
+                    ISfdmuRunCustomAddonApiService
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>This service is exposed as <code>this.runtime.service</code>.</p>
 <table>
 <thead>
 <tr>
@@ -914,11 +1125,32 @@ if (task) {
 <li>run info is ideal for diagnostics and environment-aware logic;</li>
 <li>task + processed data expose live migration state for mutation.</li>
 </ul>
-<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-1"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><code>getProcessedData()</code> is most useful in update/filter-oriented events.</li>
 <li>In events where no task is active, the service can return empty/default structures.</li>
 </ul>
-<h2 id="script-model">Script Model<a class="heading-anchor" href="#script-model" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonscript">ISfdmuRunCustomAddonScript<a class="heading-anchor" href="#isfdmuruncustomaddonscript" aria-label="Link to section">#</a></h3><p>Represents the active runtime view of <code>export.json</code> with runtime links.</p>
+<a class="heading-anchor" id="script-model"></a>
+                <h2>
+                    Script Model
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="isfdmuruncustomaddonscript"></a>
+                <h3>
+                    ISfdmuRunCustomAddonScript
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Represents the active runtime view of <code>export.json</code> with runtime links.</p>
 <p>Main groups of properties:</p>
 <ul>
 <li>orgs and selected source/target orgs (<code>orgs</code>, <code>sourceOrg</code>, <code>targetOrg</code>);</li>
@@ -990,7 +1222,14 @@ this.runtime.service.log(this, `hasAccount=${String(hasAccount)}`, &#39;INFO&#39
 <td><a href="../../export-json-file-objects-specification/script-object/">Script Object</a></td>
 </tr>
 </tbody></table>
-<h3 id="isfdmuruncustomaddonscriptobject">ISfdmuRunCustomAddonScriptObject<a class="heading-anchor" href="#isfdmuruncustomaddonscriptobject" aria-label="Link to section">#</a></h3><p>Represents one object-level migration config plus runtime markers.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddonscriptobject"></a>
+                <h3>
+                    ISfdmuRunCustomAddonScriptObject
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Represents one object-level migration config plus runtime markers.</p>
 <p>Important fields:</p>
 <ul>
 <li>operation and delete flags (<code>operation</code>, <code>deleteOldData</code>, <code>deleteFromSource</code>, etc.);</li>
@@ -1033,7 +1272,14 @@ this.runtime.service.log(this, `useValuesMapping=${String(scriptObject.useValues
 <li>delete flags -&gt; <a href="../../advanced-features/delete-source/">Delete Source</a>,
 <a href="../../advanced-features/delete-by-hierarchy/">Delete by Hierarchy</a></li>
 </ul>
-<h3 id="isfdmuruncustomaddonscriptorg">ISfdmuRunCustomAddonScriptOrg<a class="heading-anchor" href="#isfdmuruncustomaddonscriptorg" aria-label="Link to section">#</a></h3><p>Represents resolved source/target org info in runtime.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddonscriptorg"></a>
+                <h3>
+                    ISfdmuRunCustomAddonScriptOrg
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Represents resolved source/target org info in runtime.</p>
 <table>
 <thead>
 <tr>
@@ -1139,7 +1385,14 @@ this.runtime.service.log(this, `sourceIsFile=${String(sourceOrg?.isFileMedia ?? 
 <ul>
 <li>org metadata allows different logic for org-to-org vs csvfile scenarios.</li>
 </ul>
-<h3 id="isfdmuruncustomaddonscriptaddonmanifestdefinition">ISfdmuRunCustomAddonScriptAddonManifestDefinition<a class="heading-anchor" href="#isfdmuruncustomaddonscriptaddonmanifestdefinition" aria-label="Link to section">#</a></h3><p>The SDK view of add-on declaration as seen from object/script models.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddonscriptaddonmanifestdefinition"></a>
+                <h3>
+                    ISfdmuRunCustomAddonScriptAddonManifestDefinition
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The SDK view of add-on declaration as seen from object/script models.</p>
 <table>
 <thead>
 <tr>
@@ -1180,7 +1433,14 @@ before.forEach((addon) =&gt; {
 <ul>
 <li>you can inspect declared add-ons to implement validation/reporting logic.</li>
 </ul>
-<h3 id="isfdmuruncustomaddonscriptmappingitem">ISfdmuRunCustomAddonScriptMappingItem<a class="heading-anchor" href="#isfdmuruncustomaddonscriptmappingitem" aria-label="Link to section">#</a></h3><p>Field mapping item.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddonscriptmappingitem"></a>
+                <h3>
+                    ISfdmuRunCustomAddonScriptMappingItem
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Field mapping item.</p>
 <table>
 <thead>
 <tr>
@@ -1216,7 +1476,14 @@ for (const mapItem of mappings) {
 <ul>
 <li>mapping items explain how source fields are projected to target schema.</li>
 </ul>
-<h3 id="isfdmuruncustomaddonscriptmockfield">ISfdmuRunCustomAddonScriptMockField<a class="heading-anchor" href="#isfdmuruncustomaddonscriptmockfield" aria-label="Link to section">#</a></h3><p>Mock/anonymization field rule item.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddonscriptmockfield"></a>
+                <h3>
+                    ISfdmuRunCustomAddonScriptMockField
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Mock/anonymization field rule item.</p>
 <table>
 <thead>
 <tr>
@@ -1264,7 +1531,21 @@ mockFields.forEach((field) =&gt; {
 <ul>
 <li>this metadata is useful when add-on logic must coordinate with anonymization rules.</li>
 </ul>
-<h2 id="job-and-task-models">Job and Task Models<a class="heading-anchor" href="#job-and-task-models" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonjob">ISFdmuRunCustomAddonJob<a class="heading-anchor" href="#isfdmuruncustomaddonjob" aria-label="Link to section">#</a></h3><p>Represents the active migration job.</p>
+<a class="heading-anchor" id="job-and-task-models"></a>
+                <h2>
+                    Job and Task Models
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="isfdmuruncustomaddonjob"></a>
+                <h3>
+                    ISFdmuRunCustomAddonJob
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Represents the active migration job.</p>
 <table>
 <thead>
 <tr>
@@ -1299,7 +1580,14 @@ if (resolved.task) {
 <li><code>tasks</code> lets you inspect the whole job graph;</li>
 <li><code>getTaskByFieldPath</code> helps locate lookup-driven dependencies.</li>
 </ul>
-<h3 id="isfdmuruncustomaddontask">ISFdmuRunCustomAddonTask<a class="heading-anchor" href="#isfdmuruncustomaddontask" aria-label="Link to section">#</a></h3><p>Represents one object task in current job pipeline.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddontask"></a>
+                <h3>
+                    ISFdmuRunCustomAddonTask
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Represents one object task in current job pipeline.</p>
 <p>Useful properties:</p>
 <ul>
 <li>task identity and operation (<code>sObjectName</code>, <code>targetSObjectName</code>, <code>operation</code>);</li>
@@ -1335,7 +1623,14 @@ if (context.eventName === &#39;filterRecordsAddons&#39;) {
 <li><code>task.operation</code> -&gt; <a href="#operation">OPERATION enum</a></li>
 <li><code>task.data.fieldsInQueryMap</code> / <code>processedData.fields</code> -&gt; <a href="#isfdmuruncustomaddonsfielddescribe">ISfdmuRunCustomAddonSFieldDescribe</a></li>
 </ul>
-<h3 id="isfdmuruncustomaddontaskdata">ISfdmuRunCustomAddonTaskData<a class="heading-anchor" href="#isfdmuruncustomaddontaskdata" aria-label="Link to section">#</a></h3><p>Represents source-side or target-side data state for the task.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddontaskdata"></a>
+                <h3>
+                    ISfdmuRunCustomAddonTaskData
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Represents source-side or target-side data state for the task.</p>
 <table>
 <thead>
 <tr>
@@ -1385,7 +1680,14 @@ if (knownId) {
 <ul>
 <li>maps provide fast lookups by Id/externalId without scanning full arrays.</li>
 </ul>
-<h3 id="isfdmuruncustomaddonprocesseddata">ISfdmuRunCustomAddonProcessedData<a class="heading-anchor" href="#isfdmuruncustomaddonprocesseddata" aria-label="Link to section">#</a></h3><p>Live dataset for current update/filter cycle.</p>
+<a class="heading-anchor" id="isfdmuruncustomaddonprocesseddata"></a>
+                <h3>
+                    ISfdmuRunCustomAddonProcessedData
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Live dataset for current update/filter cycle.</p>
 <table>
 <thead>
 <tr>
@@ -1434,7 +1736,21 @@ this.runtime.service.log(
 <li><a href="../supported-events/">Supported Add-On API Events</a></li>
 <li><a href="../../export-json-file-objects-specification/script-object-object/">ScriptObject and update cycle</a></li>
 </ul>
-<h2 id="metadata-models">Metadata Models<a class="heading-anchor" href="#metadata-models" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonsfielddescribe">ISfdmuRunCustomAddonSFieldDescribe<a class="heading-anchor" href="#isfdmuruncustomaddonsfielddescribe" aria-label="Link to section">#</a></h3><p>Describe metadata for one Salesforce field.</p>
+<a class="heading-anchor" id="metadata-models"></a>
+                <h2>
+                    Metadata Models
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="isfdmuruncustomaddonsfielddescribe"></a>
+                <h3>
+                    ISfdmuRunCustomAddonSFieldDescribe
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Describe metadata for one Salesforce field.</p>
 <p>Includes:</p>
 <ul>
 <li>identity (<code>objectName</code>, <code>name</code>, <code>label</code>, <code>type</code>);</li>
@@ -1461,7 +1777,21 @@ for (const field of task.processedData.fields) {
 <ul>
 <li>field describe metadata helps enforce safe transformation rules.</li>
 </ul>
-<h3 id="run-and-plugin-metadata">Run and Plugin Metadata<a class="heading-anchor" href="#run-and-plugin-metadata" aria-label="Link to section">#</a></h3><h4 id="isfdmuruncustomaddoncommandruninfo">ISfdmuRunCustomAddonCommandRunInfo<a class="heading-anchor" href="#isfdmuruncustomaddoncommandruninfo" aria-label="Link to section">#</a></h4><table>
+<a class="heading-anchor" id="run-and-plugin-metadata"></a>
+                <h3>
+                    Run and Plugin Metadata
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><a class="heading-anchor" id="isfdmuruncustomaddoncommandruninfo"></a>
+                <h4>
+                    ISfdmuRunCustomAddonCommandRunInfo
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><table>
 <thead>
 <tr>
 <th>Property</th>
@@ -1500,7 +1830,14 @@ this.runtime.service.log(this, `target=${run.targetUsername}`, &#39;INFO&#39;);
 <ul>
 <li>use this object for environment-dependent behavior and diagnostics.</li>
 </ul>
-<h4 id="isfdmuruncustomaddonplugininfo">ISfdmuRunCustomAddonPluginInfo<a class="heading-anchor" href="#isfdmuruncustomaddonplugininfo" aria-label="Link to section">#</a></h4><table>
+<a class="heading-anchor" id="isfdmuruncustomaddonplugininfo"></a>
+                <h4>
+                    ISfdmuRunCustomAddonPluginInfo
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><table>
 <thead>
 <tr>
 <th>Property</th>
@@ -1548,7 +1885,21 @@ this.runtime.service.log(this, `addonApi=${plugin.runAddOnApiInfo.version}`, &#3
 <ul>
 <li>use plugin metadata to guard features by API version.</li>
 </ul>
-<h2 id="core-enums-available-in-sdk">Core Enums Available in SDK<a class="heading-anchor" href="#core-enums-available-in-sdk" aria-label="Link to section">#</a></h2><h3 id="operation">OPERATION<a class="heading-anchor" href="#operation" aria-label="Link to section">#</a></h3><p>Supported values:</p>
+<a class="heading-anchor" id="core-enums-available-in-sdk"></a>
+                <h2>
+                    Core Enums Available in SDK
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="operation"></a>
+                <h3>
+                    OPERATION
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Supported values:</p>
 <ul>
 <li><code>Insert</code></li>
 <li><code>Update</code></li>
@@ -1581,7 +1932,14 @@ switch (task?.operation) {
 <ul>
 <li>enum-based branching is safer than string comparisons.</li>
 </ul>
-<h3 id="datamediatype">DATA_MEDIA_TYPE<a class="heading-anchor" href="#datamediatype" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="datamediatype"></a>
+                <h3>
+                    DATA_MEDIA_TYPE
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><code>Org</code></li>
 <li><code>File</code></li>
 </ul>
@@ -1598,7 +1956,14 @@ if (task?.targetData.mediaType === DATA_MEDIA_TYPE.Org) {
 <ul>
 <li>media checks are important for add-ons that mix CSV and org behavior.</li>
 </ul>
-<h3 id="datacachetypes">DATA_CACHE_TYPES<a class="heading-anchor" href="#datacachetypes" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="datacachetypes"></a>
+                <h3>
+                    DATA_CACHE_TYPES
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li><code>InMemory</code></li>
 <li><code>CleanFileCache</code></li>
 <li><code>FileCache</code></li>
@@ -1613,7 +1978,21 @@ if (script.binaryDataCache === DATA_CACHE_TYPES.FileCache) {
 <ul>
 <li>cache mode helps explain runtime performance and I/O behavior in logs.</li>
 </ul>
-<h2 id="how-to-use-the-sdk">How to Use the SDK<a class="heading-anchor" href="#how-to-use-the-sdk" aria-label="Link to section">#</a></h2><h3 id="install-sdk-in-your-add-on-project">Install SDK in Your Add-On Project<a class="heading-anchor" href="#install-sdk-in-your-add-on-project" aria-label="Link to section">#</a></h3><pre><code class="language-bash">npm install &lt;absolute-path-to&gt;/custom-addon-sdk
+<a class="heading-anchor" id="how-to-use-the-sdk"></a>
+                <h2>
+                    How to Use the SDK
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="install-sdk-in-your-add-on-project"></a>
+                <h3>
+                    Install SDK in Your Add-On Project
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-bash">npm install &lt;absolute-path-to&gt;/custom-addon-sdk
 </code></pre>
 <p>Then import types:</p>
 <pre><code class="language-ts">import type { ISfdmuRunCustomAddonModule } from &#39;sfdmu-addon-sdk&#39;;
@@ -1631,7 +2010,14 @@ if (script.binaryDataCache === DATA_CACHE_TYPES.FileCache) {
 <ul>
 <li>use <code>import type</code> for interface-only imports and cleaner build output.</li>
 </ul>
-<h3 id="recommended-project-layout">Recommended Project Layout<a class="heading-anchor" href="#recommended-project-layout" aria-label="Link to section">#</a></h3><pre><code class="language-plaintext">my-addon/
+<a class="heading-anchor" id="recommended-project-layout"></a>
+                <h3>
+                    Recommended Project Layout
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-plaintext">my-addon/
 |- index.ts
 |- package.json
 |- tsconfig.json
@@ -1658,7 +2044,14 @@ if (script.binaryDataCache === DATA_CACHE_TYPES.FileCache) {
 <li><code>main</code> points to compiled runtime entry;</li>
 <li><code>types</code> points to source typings for editor support.</li>
 </ul>
-<h3 id="create-from-template">Create from Template<a class="heading-anchor" href="#create-from-template" aria-label="Link to section">#</a></h3><p>From repository root:</p>
+<a class="heading-anchor" id="create-from-template"></a>
+                <h3>
+                    Create from Template
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>From repository root:</p>
 <pre><code class="language-bash">node scripts/create-custom-addon-template.js &lt;addon-name&gt;
 </code></pre>
 <p>Template location:</p>
@@ -1683,7 +2076,14 @@ if (script.binaryDataCache === DATA_CACHE_TYPES.FileCache) {
 <ul>
 <li>template gives you a valid contract with runtime already injected.</li>
 </ul>
-<h3 id="compile-and-build">Compile and Build<a class="heading-anchor" href="#compile-and-build" aria-label="Link to section">#</a></h3><p>Standalone add-on:</p>
+<a class="heading-anchor" id="compile-and-build"></a>
+                <h3>
+                    Compile and Build
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Standalone add-on:</p>
 <pre><code class="language-bash">npm install
 npm run compile
 npm run build
@@ -1710,7 +2110,21 @@ npm run build
 <ul>
 <li><code>NodeNext</code> keeps compatibility with runtime loader for modern module formats.</li>
 </ul>
-<h2 id="calling-and-running-custom-add-ons">Calling and Running Custom Add-Ons<a class="heading-anchor" href="#calling-and-running-custom-add-ons" aria-label="Link to section">#</a></h2><h3 id="global-level-registration-export-json">Global-Level Registration (<code>export.json</code>)<a class="heading-anchor" href="#global-level-registration-export-json" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+<a class="heading-anchor" id="calling-and-running-custom-add-ons"></a>
+                <h2>
+                    Calling and Running Custom Add-Ons
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="global-level-registration-export-json"></a>
+                <h3>
+                    Global-Level Registration (<code>export.json</code>)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{
   &quot;beforeAddons&quot;: [
     {
       &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/demo/dist/index.js&quot;,
@@ -1726,7 +2140,14 @@ npm run build
 <li>this hook runs once per job before object processing starts;</li>
 <li>useful for setup, script validation, and global feature toggles.</li>
 </ul>
-<h3 id="object-level-registration-export-json">Object-Level Registration (<code>export.json</code>)<a class="heading-anchor" href="#object-level-registration-export-json" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+<a class="heading-anchor" id="object-level-registration-export-json"></a>
+                <h3>
+                    Object-Level Registration (<code>export.json</code>)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{
   &quot;objects&quot;: [
     {
       &quot;query&quot;: &quot;SELECT Id, Name FROM Account&quot;,
@@ -1748,7 +2169,14 @@ npm run build
 <li>this hook runs in the context of a specific object task;</li>
 <li>best for record-level transformations tied to that object.</li>
 </ul>
-<h3 id="external-manifest-addons-json">External Manifest (<code>addons.json</code>)<a class="heading-anchor" href="#external-manifest-addons-json" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+<a class="heading-anchor" id="external-manifest-addons-json"></a>
+                <h3>
+                    External Manifest (<code>addons.json</code>)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{
   &quot;addons&quot;: [
     {
       &quot;event&quot;: &quot;onBefore&quot;,
@@ -1767,12 +2195,33 @@ npm run build
 <li>external manifests are useful when you want reusable add-on packages across projects;</li>
 <li>you can keep <code>export.json</code> focused on data migration config and move add-on catalog to <code>addons.json</code>.</li>
 </ul>
-<h5 id="notes-2">Notes:<a class="heading-anchor" href="#notes-2" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-2"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><code>command</code> is optional; default scope is <code>sfdmu:run</code>.</li>
 <li><code>objects</code> can be used to narrow execution without duplicating declarations.</li>
 <li>If both <code>module</code> and <code>path</code> are absent, SFDMU logs a warning and skips that entry.</li>
 </ul>
-<h2 id="debugging-custom-add-ons">Debugging Custom Add-Ons<a class="heading-anchor" href="#debugging-custom-add-ons" aria-label="Link to section">#</a></h2><h3 id="debug-from-typescript-source">Debug from TypeScript Source<a class="heading-anchor" href="#debug-from-typescript-source" aria-label="Link to section">#</a></h3><p>For fast development feedback, point <code>module</code> to the <code>.ts</code> file:</p>
+<a class="heading-anchor" id="debugging-custom-add-ons"></a>
+                <h2>
+                    Debugging Custom Add-Ons
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="debug-from-typescript-source"></a>
+                <h3>
+                    Debug from TypeScript Source
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>For fast development feedback, point <code>module</code> to the <code>.ts</code> file:</p>
 <pre><code class="language-json">{
   &quot;addons&quot;: [
     {
@@ -1793,7 +2242,14 @@ this.runtime.service.log(this, `recordsToInsert=${data.recordsToInsert.length}`,
 <ul>
 <li>these logs help verify that breakpoints and event timing align with expectations.</li>
 </ul>
-<h3 id="attach-debugger">Attach Debugger<a class="heading-anchor" href="#attach-debugger" aria-label="Link to section">#</a></h3><ol>
+<a class="heading-anchor" id="attach-debugger"></a>
+                <h3>
+                    Attach Debugger
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ol>
 <li>Start plugin with the universal debug runner <code>./sfdmu-run-debug.cmd</code>.</li>
 <li>Attach your IDE debugger to Node process.</li>
 <li>Set breakpoints in add-on <code>index.ts</code>.</li>
@@ -1806,14 +2262,35 @@ this.runtime.service.log(this, `recordsToInsert=${data.recordsToInsert.length}`,
 <ul>
 <li>inspector-enabled run allows IDE attachment before add-on methods execute.</li>
 </ul>
-<h3 id="debug-checklist">Debug Checklist<a class="heading-anchor" href="#debug-checklist" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="debug-checklist"></a>
+                <h3>
+                    Debug Checklist
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li>Confirm event name in config matches expected hook.</li>
 <li>Confirm module path is resolved from <code>export.json</code> directory.</li>
 <li>Confirm add-on is not <code>excluded</code>.</li>
 <li>Confirm return object is <code>{ cancel: false }</code> unless intentional stop.</li>
 <li>Confirm logs appear through <code>runtime.service.log(...)</code>.</li>
 </ul>
-<h2 id="deployment-and-distribution">Deployment and Distribution<a class="heading-anchor" href="#deployment-and-distribution" aria-label="Link to section">#</a></h2><h3 id="local-file-deployment">Local File Deployment<a class="heading-anchor" href="#local-file-deployment" aria-label="Link to section">#</a></h3><p>Best for development and internal automation:</p>
+<a class="heading-anchor" id="deployment-and-distribution"></a>
+                <h2>
+                    Deployment and Distribution
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="local-file-deployment"></a>
+                <h3>
+                    Local File Deployment
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Best for development and internal automation:</p>
 <ul>
 <li>compile add-on to <code>dist/index.js</code>;</li>
 <li>reference local file path via <code>module</code>.</li>
@@ -1832,7 +2309,14 @@ this.runtime.service.log(this, `recordsToInsert=${data.recordsToInsert.length}`,
 <ul>
 <li>this approach is fastest for internal projects and CI with fixed workspace paths.</li>
 </ul>
-<h3 id="npm-package-deployment">NPM Package Deployment<a class="heading-anchor" href="#npm-package-deployment" aria-label="Link to section">#</a></h3><p>Best for versioned team distribution:</p>
+<a class="heading-anchor" id="npm-package-deployment"></a>
+                <h3>
+                    NPM Package Deployment
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Best for versioned team distribution:</p>
 <ol>
 <li>set package name/version;</li>
 <li>build package;</li>
@@ -1856,7 +2340,14 @@ this.runtime.service.log(this, `recordsToInsert=${data.recordsToInsert.length}`,
 <ul>
 <li>package-based deployment is better for semantic versioning and reuse across teams.</li>
 </ul>
-<h3 id="message-bundles">Message Bundles<a class="heading-anchor" href="#message-bundles" aria-label="Link to section">#</a></h3><p>Custom add-ons can provide local message keys in:</p>
+<a class="heading-anchor" id="message-bundles"></a>
+                <h3>
+                    Message Bundles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Custom add-ons can provide local message keys in:</p>
 <p><code>resources/messages.md</code></p>
 <p>Resolution is isolated per add-on module, so local keys do not leak between modules.</p>
 <p>Example <code>resources/messages.md</code>:</p>
@@ -1874,7 +2365,14 @@ this.runtime.logFormattedInfo(this, &#39;records_count&#39;, String(42));
 <ul>
 <li>keep message keys stable and local to the module for safer upgrades.</li>
 </ul>
-<h2 id="best-practices">Best Practices<a class="heading-anchor" href="#best-practices" aria-label="Link to section">#</a></h2><ol>
+<a class="heading-anchor" id="best-practices"></a>
+                <h2>
+                    Best Practices
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ol>
 <li>Keep business logic deterministic and idempotent where possible.</li>
 <li>Treat context/script metadata as configuration; mutate only when required.</li>
 <li>Prefer editing <code>recordsToInsert</code> and <code>recordsToUpdate</code> in update-phase events.</li>
@@ -1903,7 +2401,14 @@ for (const record of processed.recordsToInsert) {
 <li>version checks protect contract changes;</li>
 <li>idempotent writes avoid unstable repeated transformations.</li>
 </ul>
-<h2 id="common-pitfalls">Common Pitfalls<a class="heading-anchor" href="#common-pitfalls" aria-label="Link to section">#</a></h2><ol>
+<a class="heading-anchor" id="common-pitfalls"></a>
+                <h2>
+                    Common Pitfalls
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ol>
 <li>Registering add-on under a wrong event and expecting unavailable data context.</li>
 <li>Using only <code>path</code> in new configs instead of <code>module</code>.</li>
 <li>Forgetting to compile add-on before running in non-dev mode.</li>
@@ -1923,7 +2428,14 @@ this.runtime.service.log(this, `currentInsertBatch=${String(currentCount)}`, &#3
 <ul>
 <li>avoid hidden state between events; use runtime-provided context/task data instead.</li>
 </ul>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../introduction-to-the-sfdmu-add-on-api-engine/">Add-On API Overview</a></li>
 <li><a href="../custom-sfdmu-add-on-api/">Custom Add-On API</a></li>
 <li><a href="../supported-events/">Supported Add-On API Events</a></li>
@@ -1937,10 +2449,7 @@ this.runtime.service.log(this, `currentInsertBatch=${String(currentCount)}`, &#3
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -1960,9 +2469,11 @@ this.runtime.service.log(this, `currentInsertBatch=${String(currentCount)}`, &#3
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

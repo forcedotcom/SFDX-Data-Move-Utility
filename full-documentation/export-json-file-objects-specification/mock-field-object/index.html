@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>MockField Object | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>MockField Object | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -255,13 +256,41 @@
           <div class="col-sm-9">
             <section class="content page-content">
               <p><strong>🡨  Go Back to <a href="../export-json-file-overview/">Export.json File Overview</a></strong></p>
-<nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#mockfield-object-overview">MockField Object Overview</a></li><li><a href="#configuring-data-anonymization">Configuring Data Anonymization</a></li><li><a href="#mockfield-object-properties">MockField Object Properties</a></li><li class="toc-child"><a href="#name-string">name (String)</a></li><li class="toc-child"><a href="#pattern-string">pattern (String)</a></li><li class="toc-child"><a href="#locale-string">locale (String)</a></li><li class="toc-child"><a href="#excludedregex-string">excludedRegex (String)</a></li><li class="toc-child"><a href="#includedregex-string">includedRegex (String)</a></li><li class="toc-child"><a href="#excludenames-array-of-string">excludeNames (Array of String)</a></li></ul></nav>
-## MockField Object Overview
+<hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#mockfield-object-overview">MockField Object Overview</a></li>
+<li><a href="#configuring-data-anonymization">Configuring Data Anonymization</a></li>
+<li><a href="#mockfield-object-properties">MockField Object Properties</a><ul>
+<li><a href="#name-string">name (String)</a></li>
+<li><a href="#pattern-string">pattern (String)</a></li>
+<li><a href="#locale-string">locale (String)</a></li>
+<li><a href="#excludedregex-string">excludedRegex (String)</a></li>
+<li><a href="#includedregex-string">includedRegex (String)</a></li>
+<li><a href="#excludenames-array-of-string">excludeNames (Array of String)</a></li>
+</ul></li>
+</ul>
+<p><br /><br /></p>
 
-<p>The <strong>MockField</strong> object within the SFDMU&#39;s <strong>export.json</strong> file is a child of the <strong><a href="../script-object-object/">ScriptObject</a></strong> . It plays a vital role in the setup of data anonymization for specific Salesforce objects (sObjects) within a migration job.</p>
+
+<a class="heading-anchor" id="mockfield-object-overview"></a>
+                <h2>
+                    MockField Object Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <strong>MockField</strong> object within the SFDMU&#39;s <strong>export.json</strong> file is a child of the <strong><a href="../script-object-object/">ScriptObject</a></strong> . It plays a vital role in the setup of data anonymization for specific Salesforce objects (sObjects) within a migration job.</p>
 <p>This anonymization feature is activated by setting the <strong>updateWithMockData</strong> property to <strong>true</strong> on the parent <strong>ScriptObject</strong>. Configuring the <strong>mockFields</strong> array within this parent object allows for detailed specifications on how data should be anonymized during the migration process.</p>
 <p>For further details, refer to the <a href="../../advanced-features/data-anonymization/">Data Anonymization feature documentation</a>.</p>
-<h2 id="configuring-data-anonymization">Configuring Data Anonymization<a class="heading-anchor" href="#configuring-data-anonymization" aria-label="Link to section">#</a></h2><p>Below is an example of how to configure data anonymization using <strong>MockField</strong> objects within a <strong>ScriptObject</strong>:</p>
+<a class="heading-anchor" id="configuring-data-anonymization"></a>
+                <h2>
+                    Configuring Data Anonymization
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Below is an example of how to configure data anonymization using <strong>MockField</strong> objects within a <strong>ScriptObject</strong>:</p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
     {
@@ -282,17 +311,66 @@
   ]
 }
 </code></pre>
-<h2 id="mockfield-object-properties">MockField Object Properties<a class="heading-anchor" href="#mockfield-object-properties" aria-label="Link to section">#</a></h2><h3 id="name-string">name (String)<a class="heading-anchor" href="#name-string" aria-label="Link to section">#</a></h3><p><strong>Mandatory.</strong> Specifies the API name of the field to anonymize. The special value <code>all</code> can be used to indicate that all fields specified to update for the current object should be anonymized.</p>
-<h3 id="pattern-string">pattern (String)<a class="heading-anchor" href="#pattern-string" aria-label="Link to section">#</a></h3><p><strong>Mandatory.</strong> This attribute specifies a predefined pattern used to generate mock data for a field. Below are resources where you can find various patterns:</p>
+<a class="heading-anchor" id="mockfield-object-properties"></a>
+                <h2>
+                    MockField Object Properties
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="name-string"></a>
+                <h3>
+                    name (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Mandatory.</strong> Specifies the API name of the field to anonymize. The special value <code>all</code> can be used to indicate that all fields specified to update for the current object should be anonymized.</p>
+<a class="heading-anchor" id="pattern-string"></a>
+                <h3>
+                    pattern (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Mandatory.</strong> This attribute specifies a predefined pattern used to generate mock data for a field. Below are resources where you can find various patterns:</p>
 <ul>
 <li><a href="../../advanced-features/data-anonymization/#most-common-anonymization-patterns">Common Patterns</a>: Access commonly used anonymization patterns.</li>
 <li><a href="../../advanced-features/data-anonymization/#special-anonymization-functions-and-patterns">Special Patterns</a>: Explore specialized functions and unique patterns.</li>
 <li><a href="../../advanced-features/data-anonymization/#full-list-of-available-patterns">Full List of Patterns</a>: Review the comprehensive catalog of patterns available for data anonymization.</li>
 </ul>
-<h3 id="locale-string">locale (String)<a class="heading-anchor" href="#locale-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines the locale key used by the anonymization pattern for this field. This is useful when you need localized fake data, for example <code>ru_RU</code> for Russian names and addresses. If omitted or invalid, the default casual locale is used.</p>
-<h3 id="excludedregex-string">excludedRegex (String)<a class="heading-anchor" href="#excludedregex-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> A regex pattern that specifies values which should not be anonymized. This is useful when certain data entries need to be preserved in their original form.</p>
-<h3 id="includedregex-string">includedRegex (String)<a class="heading-anchor" href="#includedregex-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> A regex pattern that specifies values which should exclusively be anonymized. This allows targeting specific data entries for anonymization.</p>
-<h3 id="excludenames-array-of-string">excludeNames (Array of String)<a class="heading-anchor" href="#excludenames-array-of-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Fields to exclude from anonymization, for example, when using the <code>all</code> keyword as <code>name</code>. This helps to selectively anonymize fields within an object while preserving specific field data.</p>
+<a class="heading-anchor" id="locale-string"></a>
+                <h3>
+                    locale (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Defines the locale key used by the anonymization pattern for this field. This is useful when you need localized fake data, for example <code>ru_RU</code> for Russian names and addresses. If omitted or invalid, the default casual locale is used.</p>
+<a class="heading-anchor" id="excludedregex-string"></a>
+                <h3>
+                    excludedRegex (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> A regex pattern that specifies values which should not be anonymized. This is useful when certain data entries need to be preserved in their original form.</p>
+<a class="heading-anchor" id="includedregex-string"></a>
+                <h3>
+                    includedRegex (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> A regex pattern that specifies values which should exclusively be anonymized. This allows targeting specific data entries for anonymization.</p>
+<a class="heading-anchor" id="excludenames-array-of-string"></a>
+                <h3>
+                    excludeNames (Array of String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Fields to exclude from anonymization, for example, when using the <code>all</code> keyword as <code>name</code>. This helps to selectively anonymize fields within an object while preserving specific field data.</p>
 <p><strong>Example of <code>export.json</code> Configuration:</strong></p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
@@ -315,10 +393,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -338,9 +413,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

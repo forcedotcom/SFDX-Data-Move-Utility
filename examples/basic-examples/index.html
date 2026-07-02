@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Basic examples | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Basic examples | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../favicon.png">
-  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../..";</script>
-  <link rel="stylesheet" href="../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../styles/custom.css">
+  <link rel="preload" href="../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,10 +255,28 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li class="toc-child"><a href="#example-1-handling-circular-references">Example 1. Handling circular references.</a></li><li class="toc-child"><a href="#example-2-transfer-accounts-related-to-specific-contacts">Example 2. Transfer Accounts related to specific Contacts.</a></li><li class="toc-child"><a href="#example-3-limit-contacts-to-specific-accounts-and-vice-versa">Example 3. Limit Contacts to Specific Accounts and Vice Versa</a></li><li class="toc-child"><a href="#example-4-exporting-objects-with-self-reference-fields">Example 4. Exporting Objects with Self-Reference Fields</a></li><li class="toc-child"><a href="#example-5-handling-geolocation-fields">Example 5: Handling Geolocation Fields</a></li></ul></nav>
-### Example 1. Handling circular references.
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<ul>
+<li><a href="#example-1-handling-circular-references">Example 1. Handling circular references.</a></li>
+<li><a href="#example-2-transfer-accounts-related-to-specific-contacts">Example 2. Transfer Accounts related to specific Contacts.</a></li>
+<li><a href="#example-3-limit-contacts-to-specific-accounts-and-vice-versa">Example 3. Limit Contacts to Specific Accounts and Vice Versa</a></li>
+<li><a href="#example-4-exporting-objects-with-self-reference-fields">Example 4. Exporting Objects with Self-Reference Fields</a></li>
+<li><a href="#example-5-handling-geolocation-fields">Example 5: Handling Geolocation Fields</a></li>
+</ul>
+</ul>
+<p><br /><br /></p>
 
-<p>One of the main advantages of SFDMU is that it enables us to migrate complex data models with circular references without any data loss.</p>
+
+<a class="heading-anchor" id="example-1-handling-circular-references"></a>
+                <h3>
+                    Example 1. Handling circular references.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>One of the main advantages of SFDMU is that it enables us to migrate complex data models with circular references without any data loss.</p>
 <p>Here is a simple example of how SFDMU can insert objects that have circular references between them.</p>
 <p>This configuration can be used for various data migration directions: org-to-org, org-to-csv, and csv-to-org.</p>
 <pre><code class="language-json">{
@@ -286,12 +305,26 @@ ACC_10001,Test User Account
 <pre><code class="language-json">Name,Account__r.Name
 Test User Account,ACC_10001
 </code></pre>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>We set the <code>Name</code> field as the External Id for both objects, so you should provide external ID columns like <code>User_Account__r.Name</code> and <code>Account__r.Name</code> to link records of these two objects.</li>
 <li>Set <strong>&quot;excludeIdsFromCSVFiles&quot;: true</strong> to avoid needing to provide explicit record IDs and lookup IDs in the source CSV file. Only values of external IDs are required.</li>
 <li>Setting <strong>&quot;master&quot;: false</strong> for <code>User_Account__c</code> will force SFDMU to select only those User Account records that have parent Account lookup fields set.</li>
 </ul>
-<h3 id="example-2-transfer-accounts-related-to-specific-contacts">Example 2. Transfer Accounts related to specific Contacts.<a class="heading-anchor" href="#example-2-transfer-accounts-related-to-specific-contacts" aria-label="Link to section">#</a></h3><p>The example below transfers Accounts related to specific Contacts that already exist in the target org.</p>
+<a class="heading-anchor" id="example-2-transfer-accounts-related-to-specific-contacts"></a>
+                <h3>
+                    Example 2. Transfer Accounts related to specific Contacts.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The example below transfers Accounts related to specific Contacts that already exist in the target org.</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -308,7 +341,14 @@ Test User Account,ACC_10001
     ]
 }
 </code></pre>
-<h3 id="example-3-limit-contacts-to-specific-accounts-and-vice-versa">Example 3. Limit Contacts to Specific Accounts and Vice Versa<a class="heading-anchor" href="#example-3-limit-contacts-to-specific-accounts-and-vice-versa" aria-label="Link to section">#</a></h3><p>The following configuration transfers only the Contacts related to 10 selected Account records. This is achieved by setting <code>&quot;master&quot;: false</code> for Contact, without limiting Contacts via a WHERE or LIMIT clause.</p>
+<a class="heading-anchor" id="example-3-limit-contacts-to-specific-accounts-and-vice-versa"></a>
+                <h3>
+                    Example 3. Limit Contacts to Specific Accounts and Vice Versa
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The following configuration transfers only the Contacts related to 10 selected Account records. This is achieved by setting <code>&quot;master&quot;: false</code> for Contact, without limiting Contacts via a WHERE or LIMIT clause.</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -342,7 +382,14 @@ Test User Account,ACC_10001
     ]
 }
 </code></pre>
-<h3 id="example-4-exporting-objects-with-self-reference-fields">Example 4. Exporting Objects with Self-Reference Fields<a class="heading-anchor" href="#example-4-exporting-objects-with-self-reference-fields" aria-label="Link to section">#</a></h3><p>To transfer self-reference fields, include the respective lookup field in your query as demonstrated below:</p>
+<a class="heading-anchor" id="example-4-exporting-objects-with-self-reference-fields"></a>
+                <h3>
+                    Example 4. Exporting Objects with Self-Reference Fields
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>To transfer self-reference fields, include the respective lookup field in your query as demonstrated below:</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -352,7 +399,14 @@ Test User Account,ACC_10001
     ]
 }
 </code></pre>
-<h3 id="example-5-handling-geolocation-fields">Example 5: Handling Geolocation Fields<a class="heading-anchor" href="#example-5-handling-geolocation-fields" aria-label="Link to section">#</a></h3><p>Geolocation fields end with <code>__s</code>. Here’s how you can manage these fields in a configuration:</p>
+<a class="heading-anchor" id="example-5-handling-geolocation-fields"></a>
+                <h3>
+                    Example 5: Handling Geolocation Fields
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Geolocation fields end with <code>__s</code>. Here’s how you can manage these fields in a configuration:</p>
 <pre><code class="language-json">{
     &quot;query&quot;: &quot;SELECT Name, Lat_and_Long__Latitude__s, Lat_and_Long__Longitude__s FROM Account&quot;,
     &quot;operation&quot;: &quot;Upsert&quot;,
@@ -365,10 +419,7 @@ Test User Account,ACC_10001
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -388,9 +439,11 @@ Test User Account,ACC_10001
   <script src="../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../scripts/ghostdown.js"></script>
+  <script src="../../scripts/raneto.js"></script>
   <script src="../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../assets/static-runtime.js"></script>
   <script src="../../scripts/custom.js"></script>
+  <script src="../../assets/lunr.min.js"></script>
   <script src="../../assets/static-search.js"></script>
 </body>
 </html>

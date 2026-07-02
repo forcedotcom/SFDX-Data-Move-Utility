@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Values Mapping | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Values Mapping | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,10 +255,29 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#configuration-and-basic-transformation">Configuration and Basic Transformation</a></li><li><a href="#advanced-transformations">Advanced Transformations</a></li><li class="toc-child"><a href="#regex-replacement">Regex Replacement</a></li><li class="toc-child"><a href="#js-eval-replacement">JS Eval Replacement</a></li><li class="toc-child"><a href="#rawvalue-keyword">RAWVALUE Keyword</a></li><li><a href="#key-considerations">Key Considerations</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#configuration-and-basic-transformation">Configuration and Basic Transformation</a></li>
+<li><a href="#advanced-transformations">Advanced Transformations</a><ul>
+<li><a href="#regex-replacement">Regex Replacement</a></li>
+<li><a href="#js-eval-replacement">JS Eval Replacement</a></li>
+<li><a href="#rawvalue-keyword">RAW_VALUE Keyword</a></li>
+</ul></li>
+<li><a href="#key-considerations">Key Considerations</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>: This feature facilitates the transformation of source field values based on predefined mappings before they are updated in the target system. This capability is crucial for scenarios where source data needs to be adjusted to fit target system requirements, such as data type compatibility, data integrity, or specific business rules.</p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>: This feature facilitates the transformation of source field values based on predefined mappings before they are updated in the target system. This capability is crucial for scenarios where source data needs to be adjusted to fit target system requirements, such as data type compatibility, data integrity, or specific business rules.</p>
 <p><strong>Use case:</strong> In data migration or synchronization, source field values sometimes require transformation to align with the target system&#39;s schema or business logic. For example, translated picklist labels in a source system might need to be mapped to their equivalent API values in the target system.</p>
 <p>This feature uses one active object-level switch:</p>
 <ul>
@@ -269,11 +289,25 @@ This design helps non-technical users maintain value conversions in one place wi
 <ul>
 <li><strong>useCSVValuesMapping</strong>: <strong>Deprecated.</strong> Kept only for backward compatibility of older script configurations. For new and current configurations, always use <code>useValuesMapping</code>.</li>
 </ul>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>If you have older scripts with <code>useCSVValuesMapping</code>, keep them running as-is if needed, but use <code>useValuesMapping</code> in all new configurations.</li>
 <li>During migration from old scripts, update one object at a time and compare output CSV/report results to validate mappings.</li>
 </ul>
-<h2 id="configuration-and-basic-transformation">Configuration and Basic Transformation<a class="heading-anchor" href="#configuration-and-basic-transformation" aria-label="Link to section">#</a></h2><p>Transformations are defined in the <code>ValueMapping.csv</code> file, which should be located in the same directory as the <code>export.json</code> file. This file specifies how source values should be transformed before being uploaded to the target system.</p>
+<a class="heading-anchor" id="configuration-and-basic-transformation"></a>
+                <h2>
+                    Configuration and Basic Transformation
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Transformations are defined in the <code>ValueMapping.csv</code> file, which should be located in the same directory as the <code>export.json</code> file. This file specifies how source values should be transformed before being uploaded to the target system.</p>
 <p><strong>Example of ValueMapping.csv Structure</strong>:</p>
 <table>
 <thead>
@@ -291,11 +325,32 @@ This design helps non-technical users maintain value conversions in one place wi
 <td>Question</td>
 </tr>
 </tbody></table>
-<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-1"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>Only the values listed in the <code>ValueMapping.csv</code> file will be transformed; all other values will remain unchanged. </li>
 <li>To reset a field value to null, use <code>#N/A</code> as the <code>Value</code>.</li>
 </ul>
-<h2 id="advanced-transformations">Advanced Transformations<a class="heading-anchor" href="#advanced-transformations" aria-label="Link to section">#</a></h2><h3 id="regex-replacement">Regex Replacement<a class="heading-anchor" href="#regex-replacement" aria-label="Link to section">#</a></h3><p>Regular expressions can be used for dynamic field value transformations. Below is an example configuration that employs JS RegExp for value replacement:</p>
+<a class="heading-anchor" id="advanced-transformations"></a>
+                <h2>
+                    Advanced Transformations
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="regex-replacement"></a>
+                <h3>
+                    Regex Replacement
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Regular expressions can be used for dynamic field value transformations. Below is an example configuration that employs JS RegExp for value replacement:</p>
 <table>
 <thead>
 <tr>
@@ -323,7 +378,14 @@ This design helps non-technical users maintain value conversions in one place wi
 <li>Ensure regex expressions are enclosed between slashes (e.g., <code>/YOUR_REGEX/</code>).</li>
 <li>You can combine regex expressions with other replacement definitions as needed.</li>
 </ul>
-<h3 id="js-eval-replacement">JS Eval Replacement<a class="heading-anchor" href="#js-eval-replacement" aria-label="Link to section">#</a></h3><p>The JS <code>eval()</code> function allows for executing JavaScript expressions to transform field values:</p>
+<a class="heading-anchor" id="js-eval-replacement"></a>
+                <h3>
+                    JS Eval Replacement
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The JS <code>eval()</code> function allows for executing JavaScript expressions to transform field values:</p>
 <table>
 <thead>
 <tr>
@@ -344,7 +406,14 @@ This design helps non-technical users maintain value conversions in one place wi
 <ul>
 <li>Output might be &#39;2807&#39; (assuming the date is July 28).</li>
 </ul>
-<h3 id="rawvalue-keyword">RAW_VALUE Keyword<a class="heading-anchor" href="#rawvalue-keyword" aria-label="Link to section">#</a></h3><p>To incorporate the original field value in your transformation, use the <code>RAW_VALUE</code> keyword within your <code>eval()</code> expression:</p>
+<a class="heading-anchor" id="rawvalue-keyword"></a>
+                <h3>
+                    RAW_VALUE Keyword
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>To incorporate the original field value in your transformation, use the <code>RAW_VALUE</code> keyword within your <code>eval()</code> expression:</p>
 <table>
 <thead>
 <tr>
@@ -373,16 +442,20 @@ This design helps non-technical users maintain value conversions in one place wi
 </ul>
 </li>
 </ul>
-<h2 id="key-considerations">Key Considerations<a class="heading-anchor" href="#key-considerations" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="key-considerations"></a>
+                <h2>
+                    Key Considerations
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li>When using the <a href="../fields-mapping/">Fields Mapping</a> feature along with Values Mapping, you must specify the field API name <strong>from the source organization</strong> as the FieldName, rather than a mapped one.</li>
 </ul>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -402,9 +475,11 @@ This design helps non-technical users maintain value conversions in one place wi
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

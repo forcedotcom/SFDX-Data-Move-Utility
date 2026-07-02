@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Field Multiselect | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Field Multiselect | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,14 +255,45 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#feature-description">Feature Description</a></li><li><a href="#supported-multiselect-keywords">Supported Multiselect Keywords</a></li><li class="toc-child"><a href="#examples-of-using-multiselect-keywords">Examples of Using Multiselect Keywords</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#feature-description">Feature Description</a></li>
+<li><a href="#supported-multiselect-keywords">Supported Multiselect Keywords</a><ul>
+<li><a href="#examples-of-using-multiselect-keywords">Examples of Using Multiselect Keywords</a></li>
+</ul></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>: This feature simplifies SOQL query construction by allowing the use of special keywords to automatically include multiple SObject fields based on specific criteria. It is designed to enhance efficiency and maintainability of queries involving large sets of fields.</p>
-<h2 id="feature-description">Feature Description<a class="heading-anchor" href="#feature-description" aria-label="Link to section">#</a></h2><p>Constructing SOQL queries with many fields can become cumbersome and difficult to maintain. To address this, we have introduced <em><strong>multiselect keywords</strong></em>. These keywords can be included in the SELECT clause of a query, and are dynamically replaced at runtime with the actual object fields as per the object&#39;s metadata. This functionality is analogous to using wildcards in file systems for selecting files.</p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>: This feature simplifies SOQL query construction by allowing the use of special keywords to automatically include multiple SObject fields based on specific criteria. It is designed to enhance efficiency and maintainability of queries involving large sets of fields.</p>
+<a class="heading-anchor" id="feature-description"></a>
+                <h2>
+                    Feature Description
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Constructing SOQL queries with many fields can become cumbersome and difficult to maintain. To address this, we have introduced <em><strong>multiselect keywords</strong></em>. These keywords can be included in the SELECT clause of a query, and are dynamically replaced at runtime with the actual object fields as per the object&#39;s metadata. This functionality is analogous to using wildcards in file systems for selecting files.</p>
 <p>Using multiple keywords together will result in the selection of a smaller subset of fields, as the keywords are combined using an AND logic. For instance, to select only custom lookup fields, you could use: <code>SELECT custom_true, lookup_true FROM Account</code>.</p>
 <p>Additionally, you can utilize the <strong>excludedFields</strong> property in the ScriptObject to exclude specific fields from the results even after they have been selected with multiselect keywords. This exclusion applies even if fields are explicitly included in the query not using multiselect keywords.</p>
-<h2 id="supported-multiselect-keywords">Supported Multiselect Keywords<a class="heading-anchor" href="#supported-multiselect-keywords" aria-label="Link to section">#</a></h2><p>Here is the complete list of supported multiselect keywords and their functions:</p>
+<a class="heading-anchor" id="supported-multiselect-keywords"></a>
+                <h2>
+                    Supported Multiselect Keywords
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Here is the complete list of supported multiselect keywords and their functions:</p>
 <ul>
 <li><strong>all</strong> - Selects all fields of the object.</li>
 <li><strong>readonly_true</strong> - Selects fields that are not creatable and not updatable (e.g., autonumber, formula).</li>
@@ -273,7 +305,14 @@
 <li><strong>lookup_true / lookup_false</strong> - Selects all lookup and master-detail fields or excludes them.</li>
 <li><strong>type_...</strong> - Selects fields of a specific type, such as <code>type_string</code> for textual fields. Type identifiers must start with a lowercase letter and match types in the <code>DisplayType</code> enum found in the Salesforce <a href="https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_enum_Schema_DisplayType.htm" target="_blank" rel="noopener noreferrer">Developer Documentation</a>.</li>
 </ul>
-<h3 id="examples-of-using-multiselect-keywords">Examples of Using Multiselect Keywords<a class="heading-anchor" href="#examples-of-using-multiselect-keywords" aria-label="Link to section">#</a></h3><p>Here are some example queries leveraging the multiselect keywords feature:</p>
+<a class="heading-anchor" id="examples-of-using-multiselect-keywords"></a>
+                <h3>
+                    Examples of Using Multiselect Keywords
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Here are some example queries leveraging the multiselect keywords feature:</p>
 <pre><code class="language-sql">-- Selects Id, Name, and all custom non-lookup fields of the Account
 SELECT Id, Name, custom_true, lookup_false FROM Account
 </code></pre>
@@ -288,7 +327,14 @@ SELECT Id, Name, createable_true FROM Account
 <pre><code class="language-sql">-- Selects all fields of the Boolean type
 SELECT type_boolean FROM Account
 </code></pre>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><p>The following SObjects&#39; lookup fields are not covered by the multiselect keywords and must be manually added to your query:</p>
 <ul>
 <li>RecordType</li>
@@ -303,7 +349,14 @@ SELECT type_boolean FROM Account
 <li><p>Fields auto-added by multiselect keywords are still processed, but they do not produce writeability warnings.</p>
 </li>
 </ul>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../composite-external-id-keys/">Composite External Id Keys</a></li>
 <li><a href="../compound-fields/">Compound Fields</a></li>
 <li><a href="../data-anonymization/">Data Anonymization</a></li>
@@ -311,10 +364,7 @@ SELECT type_boolean FROM Account
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -334,9 +384,11 @@ SELECT type_boolean FROM Account
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

@@ -4,7 +4,8 @@ This static documentation site includes only the runtime assets needed by the ge
 
 | Component | Usage | License |
 | --- | --- | --- |
-| Raneto-style theme assets | Page layout styles and documentation theme behavior derived from the local help theme | MIT |
+| Raneto theme templates and runtime scripts | Page layout, navigation, heading anchors, and documentation behavior derived from the local help theme | MIT |
+| Ghostdown / CodeMirror assets | Raneto editor runtime assets shipped to mirror the original help site bundle | MIT |
 | Bootswatch Lumen 4.6.2 | Bootstrap theme CSS | MIT |
 | Bootstrap 4.6.2 | Layout, components, and dropdown/collapse JavaScript | MIT |
 | jQuery 3.6.1 | Bootstrap and local documentation scripts | MIT |
@@ -18,7 +19,7 @@ This static documentation site includes only the runtime assets needed by the ge
 | Font Awesome Free 6.0.0-beta2 | Icons in the embedded custom add-on API docs | Icons: CC BY 4.0; Fonts: SIL OFL 1.1; Code: MIT |
 | Roboto webfont | Documentation text font | Apache-2.0 |
 | TypeDoc generated assets | Embedded custom add-on API documentation pages | Apache-2.0 |
-| lunr 2.3.9 | Search runtime bundled inside the TypeDoc API docs | MIT |
+| lunr 2.3.9 | Static help-site search runtime and TypeDoc API docs search runtime | MIT |
 | marked | Build-time Markdown rendering only; not shipped in the generated site | MIT |
 
 Where upstream license files are available in the source assets, the generated site keeps them next to the shipped library files under `site/lib/**`. The embedded TypeDoc API runtime also keeps its bundled license block in `custom-add-on-api/sfdmu-run/assets/main.js`.

@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Handling of record OwnerId | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Handling of record OwnerId | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,11 +255,35 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#basic-example-ownerid-assignment">Basic Example: OwnerId Assignment</a></li><li><a href="#advanced-example-overriding-the-default-external-id-for-the-user-sobject">Advanced Example: Overriding the Default External ID for the User sObject</a></li><li><a href="#filtering-user-records">Filtering User Records</a></li><li><a href="#support-of-group-sobject">Support of Group sObject</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#basic-example-ownerid-assignment">Basic Example: OwnerId Assignment</a></li>
+<li><a href="#advanced-example-overriding-the-default-external-id-for-the-user-sobject">Advanced Example: Overriding the Default External ID for the User sObject</a></li>
+<li><a href="#filtering-user-records">Filtering User Records</a></li>
+<li><a href="#support-of-group-sobject">Support of Group sObject</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose:</strong> This feature allows the assignment and reassignment of the <code>OwnerId</code> lookup values of the target records during data migration tasks.</p>
-<h2 id="basic-example-ownerid-assignment">Basic Example: OwnerId Assignment<a class="heading-anchor" href="#basic-example-ownerid-assignment" aria-label="Link to section">#</a></h2><p>To ensure that <code>OwnerId</code> is correctly maintained when inserting records, include <code>OwnerId</code> in your query string. Below is an example configuration that inserts Cases related to a specific Account while maintaining the correct <code>OwnerId</code> on the target:</p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose:</strong> This feature allows the assignment and reassignment of the <code>OwnerId</code> lookup values of the target records during data migration tasks.</p>
+<a class="heading-anchor" id="basic-example-ownerid-assignment"></a>
+                <h2>
+                    Basic Example: OwnerId Assignment
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>To ensure that <code>OwnerId</code> is correctly maintained when inserting records, include <code>OwnerId</code> in your query string. Below is an example configuration that inserts Cases related to a specific Account while maintaining the correct <code>OwnerId</code> on the target:</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -274,7 +299,14 @@
     ]
 }
 </code></pre>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><p>Ensure corresponding User and Group records exist in both the source and target organizations, as the default external ID for User objects is <code>Name</code>.</p>
 </li>
 <li><p>User and Group records are combined into a unified record set within the utility, treating both groups and users as User objects.</p>
@@ -285,7 +317,14 @@ SELECT Id FROM Group WHERE Type = &#39;Queue&#39;
 </code></pre>
 </li>
 </ul>
-<h2 id="advanced-example-overriding-the-default-external-id-for-the-user-sobject">Advanced Example: Overriding the Default External ID for the User sObject<a class="heading-anchor" href="#advanced-example-overriding-the-default-external-id-for-the-user-sobject" aria-label="Link to section">#</a></h2><p>It is possible to customize the external ID used for User objects. For example, to use <code>ExternalId__c</code> instead of the default setting:</p>
+<a class="heading-anchor" id="advanced-example-overriding-the-default-external-id-for-the-user-sobject"></a>
+                <h2>
+                    Advanced Example: Overriding the Default External ID for the User sObject
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>It is possible to customize the external ID used for User objects. For example, to use <code>ExternalId__c</code> instead of the default setting:</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -306,11 +345,25 @@ SELECT Id FROM Group WHERE Type = &#39;Queue&#39;
     ]
 }
 </code></pre>
-<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-1"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>Setting a custom external ID for users will apply the same field as the external ID for groups. Ensure this field exists in both User and Group object metadata.</li>
 <li>When overriding the User object&#39;s query, include only fields common to both User and Group objects, typically the Id field suffices.</li>
 </ul>
-<h2 id="filtering-user-records">Filtering User Records<a class="heading-anchor" href="#filtering-user-records" aria-label="Link to section">#</a></h2><p>In cases where an organization has many users, it may be necessary to filter which users are queried to manage performance and relevance. You can add custom <code>WHERE</code> clauses to the User object&#39;s query to refine the selection:</p>
+<a class="heading-anchor" id="filtering-user-records"></a>
+                <h2>
+                    Filtering User Records
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>In cases where an organization has many users, it may be necessary to filter which users are queried to manage performance and relevance. You can add custom <code>WHERE</code> clauses to the User object&#39;s query to refine the selection:</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -330,9 +383,23 @@ SELECT Id FROM Group WHERE Type = &#39;Queue&#39;
     ]
 }
 </code></pre>
-<h2 id="support-of-group-sobject">Support of Group sObject<a class="heading-anchor" href="#support-of-group-sobject" aria-label="Link to section">#</a></h2><p>Explicit configuration of Group objects is <strong>not</strong> supported in scripts. </p>
+<a class="heading-anchor" id="support-of-group-sobject"></a>
+                <h2>
+                    Support of Group sObject
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Explicit configuration of Group objects is <strong>not</strong> supported in scripts. </p>
 <p>Attempting to configure a group will result in it being automatically marked as excluded, with group management handled by the utility as described.</p>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../composite-external-id-keys/">Composite External Id Keys</a></li>
 <li><a href="../compound-fields/">Compound Fields</a></li>
 <li><a href="../data-anonymization/">Data Anonymization</a></li>
@@ -340,10 +407,7 @@ SELECT Id FROM Group WHERE Type = &#39;Queue&#39;
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -363,9 +427,11 @@ SELECT Id FROM Group WHERE Type = &#39;Queue&#39;
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

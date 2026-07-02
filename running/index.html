@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Running | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Running | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../favicon.png">
-  <link rel="stylesheet" href="../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "..";</script>
-  <link rel="stylesheet" href="../styles/raneto.min.css">
-  <link rel="stylesheet" href="../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../styles/custom.css">
+  <link rel="preload" href="../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,10 +255,53 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#simplest-way-to-run-the-sfdmu">Simplest Way to Run the SFDMU</a></li><li><a href="#run-the-sfdmu-as-an-sfdx-plugin">Run the SFDMU as an SFDX Plugin</a></li><li class="toc-child"><a href="#full-format-of-the-cli-command">Full Format of the CLI Command</a></li><li class="toc-child"><a href="#available-cli-command-flags">Available CLI Command flags</a></li><li class="toc-child"><a href="#additional-notes">Additional Notes:</a></li><li><a href="#run-the-sfdmu-on-one-org-only-one-directional-mode">Run the SFDMU on One Org Only (One-Directional Mode)</a></li><li><a href="#supported-execution-mode">Supported Execution Mode</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Simplest Way to Run the SFDMU
-
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
 <ul>
+<li><a href="#simplest-way-to-run-the-sfdmu">Simplest Way to Run the SFDMU</a></li>
+<li><a href="#run-the-sfdmu-as-an-sfdx-plugin">Run the SFDMU as an SFDX Plugin</a><ul>
+<li><a href="#full-format-of-the-cli-command">Full Format of the CLI Command</a></li>
+<li><a href="#available-cli-command-flags">Available CLI Command flags</a><ul>
+<li><a href="#sourceusername-s">--sourceusername, -s:</a></li>
+<li><a href="#targetusername-u">--targetusername, -u:</a></li>
+<li><a href="#apiversion">--apiversion:</a></li>
+<li><a href="#canmodify-c">--canmodify, -c:</a></li>
+<li><a href="#filelog-l">--filelog, -l:</a></li>
+<li><a href="#json">--json:</a></li>
+<li><a href="#diagnostic">--diagnostic:</a></li>
+<li><a href="#anonymise">--anonymise:</a></li>
+<li><a href="#logfullquery">--logfullquery:</a></li>
+<li><a href="#loglevel">--loglevel:</a></li>
+<li><a href="#noprompt-n">--noprompt, -n:</a></li>
+<li><a href="#nowarnings-w">--nowarnings, -w:</a></li>
+<li><a href="#failonwarning">--failonwarning:</a></li>
+<li><a href="#path-p">--path, -p:</a></li>
+<li><a href="#file">--file:</a></li>
+<li><a href="#verbose">--verbose:</a></li>
+<li><a href="#concise">--concise:</a></li>
+<li><a href="#quiet">--quiet:</a></li>
+<li><a href="#silent">--silent:</a></li>
+<li><a href="#usesf">--usesf:</a></li>
+<li><a href="#simulation-m">--simulation, -m:</a></li>
+<li><a href="#version-v">--version, -v:</a></li>
+</ul></li>
+<li><a href="#additional-notes">Additional Notes:</a></li>
+</ul></li>
+<li><a href="#run-the-sfdmu-on-one-org-only-one-directional-mode">Run the SFDMU on One Org Only (One-Directional Mode)</a></li>
+<li><a href="#supported-execution-mode">Supported Execution Mode</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
+
+
+<a class="heading-anchor" id="simplest-way-to-run-the-sfdmu"></a>
+                <h2>
+                    Simplest Way to Run the SFDMU
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li>Navigate to the directory containing your <strong>export.json</strong> file.</li>
 <li>Execute the following command to perform a direct <strong>migration between source and target Salesforce orgs</strong>:</li>
 </ul>
@@ -274,25 +318,74 @@
 <pre><code class="language-bash">$ sf sfdmu run --sourceusername source@name.com --targetusername csvfile
 </code></pre>
 <hr>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li>When importing or exporting from/to CSV files, ensure that the files are located in the directory containing the <code>export.json</code> file. 
 The files should be named according to the API name of the respective sObject in your export.json, for example: <code>Account.csv</code>, <code>Contact.csv</code>.<br>This naming convention helps in accurately mapping the data to the correct sObjects during the import or export process.</li>
 </ul>
-<h2 id="run-the-sfdmu-as-an-sfdx-plugin">Run the SFDMU as an SFDX Plugin<a class="heading-anchor" href="#run-the-sfdmu-as-an-sfdx-plugin" aria-label="Link to section">#</a></h2><p>The quickest way to run the SFDMU is using the <code>sf sfdmu run</code> CLI command, as previously explained.</p>
+<a class="heading-anchor" id="run-the-sfdmu-as-an-sfdx-plugin"></a>
+                <h2>
+                    Run the SFDMU as an SFDX Plugin
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The quickest way to run the SFDMU is using the <code>sf sfdmu run</code> CLI command, as previously explained.</p>
 <p>Below you will find the complete details about the format of the <code>sfdmu run</code> command.</p>
-<h3 id="full-format-of-the-cli-command">Full Format of the CLI Command<a class="heading-anchor" href="#full-format-of-the-cli-command" aria-label="Link to section">#</a></h3><pre><code class="language-bash">$ sf sfdmu run [--json] [-s &lt;value&gt;] [-u &lt;value&gt;] [-p &lt;value&gt;] [--file &lt;value&gt;] [--silent] [--quiet] [--diagnostic] [--anonymise] [--verbose] [--concise] [--logfullquery] [--apiversion &lt;value&gt;] [-l &lt;value&gt;] [-n] [-w] [--failonwarning] [-c &lt;value&gt;] [-m] [--loglevel &lt;value&gt;] [--usesf] [-v]
+<a class="heading-anchor" id="full-format-of-the-cli-command"></a>
+                <h3>
+                    Full Format of the CLI Command
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-bash">$ sf sfdmu run [--json] [-s &lt;value&gt;] [-u &lt;value&gt;] [-p &lt;value&gt;] [--file &lt;value&gt;] [--silent] [--quiet] [--diagnostic] [--anonymise] [--verbose] [--concise] [--logfullquery] [--apiversion &lt;value&gt;] [-l &lt;value&gt;] [-n] [-w] [--failonwarning] [-c &lt;value&gt;] [-m] [--loglevel &lt;value&gt;] [--usesf] [-v]
 </code></pre>
-<h3 id="available-cli-command-flags">Available CLI Command flags<a class="heading-anchor" href="#available-cli-command-flags" aria-label="Link to section">#</a></h3><h4 id="sourceusername-s">--sourceusername, -s:<a class="heading-anchor" href="#sourceusername-s" aria-label="Link to section">#</a></h4><p>Optionally, this CLI flag specifies the username for the source Salesforce organization in a data migration process. It can override the <strong>sourceUsername</strong> setting in <strong>export.json</strong>. For example:</p>
+<a class="heading-anchor" id="available-cli-command-flags"></a>
+                <h3>
+                    Available CLI Command flags
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><a class="heading-anchor" id="sourceusername-s"></a>
+                <h4>
+                    --sourceusername, -s:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Optionally, this CLI flag specifies the username for the source Salesforce organization in a data migration process. It can override the <strong>sourceUsername</strong> setting in <strong>export.json</strong>. For example:</p>
 <ul>
 <li>Using <code>--sourceusername &quot;source@example.com&quot;</code> sets the username for the source org, enabling the SFDMU tool to connect and interact with the specified Salesforce environment for data extraction. </li>
 <li>Using <code>--sourceusername csvfile</code> sets CSV files as the data source, allowing to import data from CSV files instead of Salesforce organization.</li>
 </ul>
-<h4 id="targetusername-u">--targetusername, -u:<a class="heading-anchor" href="#targetusername-u" aria-label="Link to section">#</a></h4><p>This mandatory CLI flag specifies the username for the target Salesforce organization or sets the target to CSV files in a data migration process. It can override the <strong>targetUsername</strong> setting in <strong>export.json</strong>. For example:</p>
+<a class="heading-anchor" id="targetusername-u"></a>
+                <h4>
+                    --targetusername, -u:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>This mandatory CLI flag specifies the username for the target Salesforce organization or sets the target to CSV files in a data migration process. It can override the <strong>targetUsername</strong> setting in <strong>export.json</strong>. For example:</p>
 <ul>
 <li>Using <code>--targetusername &quot;target@example.com&quot;</code> sets the username for the target org, enabling the SFDMU tool to connect and interact with the specified Salesforce environment for data import.</li>
 <li>Using <code>--targetusername csvfile</code> sets the data target to export into CSV files instead of a Salesforce organization, allowing data to be output in a structured file format for storage or further processing.</li>
 </ul>
-<h4 id="apiversion">--apiversion:<a class="heading-anchor" href="#apiversion" aria-label="Link to section">#</a></h4><p><strong>Type: Float (as String)</strong> </p>
+<a class="heading-anchor" id="apiversion"></a>
+                <h4>
+                    --apiversion:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Type: Float (as String)</strong> </p>
 <p>Optionally, this flag can override the <strong>apiVersion</strong> specified in <strong>export.json</strong>. For instance:</p>
 <ul>
 <li>Setting it to <code>&quot;65.0&quot;</code> directly specifies the API version, allowing precise control over which version of the Salesforce API the migration will utilize.</li>
@@ -302,25 +395,74 @@ The files should be named according to the API name of the respective sObject in
 <li><code>org -&gt; org</code>: lower of max source API version and max target API version.</li>
 <li><code>org -&gt; csvfile</code> or <code>csvfile -&gt; org</code>: max API version of that org.</li>
 </ul>
-<h4 id="canmodify-c">--canmodify, -c:<a class="heading-anchor" href="#canmodify-c" aria-label="Link to section">#</a></h4><p>Allows silent modifications to the target production organization without preliminary user prompting. </p>
+<a class="heading-anchor" id="canmodify-c"></a>
+                <h4>
+                    --canmodify, -c:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Allows silent modifications to the target production organization without preliminary user prompting. </p>
 <p>This is particularly relevant when the target environment is a production instance (e.g., prod-instance.my.salesforce.com), where the plugin will not request user approval for modifications, thereby streamlining processes. </p>
 <p>If not set, the user will be prompted to prevent accidental destruction of critical production data. This flag is ignored if the target is not a production Salesforce instance.</p>
-<h4 id="filelog-l">--filelog, -l:<a class="heading-anchor" href="#filelog-l" aria-label="Link to section">#</a></h4><p><strong>Type: Number, 0 or 1, Default 0</strong></p>
+<a class="heading-anchor" id="filelog-l"></a>
+                <h4>
+                    --filelog, -l:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Type: Number, 0 or 1, Default 0</strong></p>
 <p>Controls file logging. A setting of <code>0</code> disables <code>.log</code> output, while <code>1</code> enables <code>.log</code> output.
 When <code>--diagnostic</code> is set, file logging is enabled automatically.</p>
-<h4 id="json">--json:<a class="heading-anchor" href="#json" aria-label="Link to section">#</a></h4><p>Outputs a single JSON payload at the end of command execution and suppresses other stdout output.
+<a class="heading-anchor" id="json"></a>
+                <h4>
+                    --json:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Outputs a single JSON payload at the end of command execution and suppresses other stdout output.
 When <strong>--quiet</strong> or <strong>--silent</strong> is used, JSON output is also suppressed in stdout.</p>
-<h4 id="diagnostic">--diagnostic:<a class="heading-anchor" href="#diagnostic" aria-label="Link to section">#</a></h4><p>Enables diagnostic file logging. It writes additional diagnostic details to the <code>.log</code> file and
+<a class="heading-anchor" id="diagnostic"></a>
+                <h4>
+                    --diagnostic:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Enables diagnostic file logging. It writes additional diagnostic details to the <code>.log</code> file and
 forces file logging on. Stdout behavior remains unchanged.</p>
-<h4 id="anonymise">--anonymise:<a class="heading-anchor" href="#anonymise" aria-label="Link to section">#</a></h4><p>Enables anonymization for sensitive values in <code>.log</code> files by writing deterministic hash tokens
+<a class="heading-anchor" id="anonymise"></a>
+                <h4>
+                    --anonymise:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Enables anonymization for sensitive values in <code>.log</code> files by writing deterministic hash tokens
 instead of raw values (for example, <code>accessToken&lt;ABCDEF12AB34CD56&gt;</code> or <code>path&lt;11F2AA55CC77EE99&gt;</code>).</p>
 <p>This flag affects <strong>only <code>.log</code> files</strong> and does not change stdout or JSON output.</p>
 <p>Use it together with <code>--diagnostic</code> when sharing logs externally.</p>
 <p>For the complete masked/non-masked list, see:
 <a href="../full-documentation/reports/the-execution-log/#what-is-masked-and-what-is-not">/full-documentation/reports/the-execution-log#what-is-masked-and-what-is-not</a></p>
-<h4 id="logfullquery">--logfullquery:<a class="heading-anchor" href="#logfullquery" aria-label="Link to section">#</a></h4><p>Enables the full output of all selected fields when querying Salesforce data with SOQL, as opposed to the default shortened version. This detailed output is useful for comprehensive data analysis and troubleshooting. </p>
+<a class="heading-anchor" id="logfullquery"></a>
+                <h4>
+                    --logfullquery:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Enables the full output of all selected fields when querying Salesforce data with SOQL, as opposed to the default shortened version. This detailed output is useful for comprehensive data analysis and troubleshooting. </p>
 <p>The Plugin will still truncate the SOQL part after the <code>FROM</code> keyword if it exceeds a certain length, and this flag affects both stdout and file logs.</p>
-<h4 id="loglevel">--loglevel:<a class="heading-anchor" href="#loglevel" aria-label="Link to section">#</a></h4><p><strong>Type: String, Default TRACE</strong></p>
+<a class="heading-anchor" id="loglevel"></a>
+                <h4>
+                    --loglevel:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p><strong>Type: String, Default TRACE</strong></p>
 <p>Sets the logging level for this command invocation, controlling the type of messages that are written into the log file. Levels available include:</p>
 <ul>
 <li><strong>TRACE</strong> logs all messages, including stack traces in case of an unhandled exception.</li>
@@ -329,37 +471,149 @@ instead of raw values (for example, <code>accessToken&lt;ABCDEF12AB34CD56&gt;</c
 <li><strong>ERROR</strong> logs only exception messages but does not output stack traces.</li>
 <li><strong>FATAL</strong> is the same as <strong>ERROR</strong>. This flag allows for detailed control over the verbosity of file logs, independent of stdout settings.</li>
 </ul>
-<h4 id="noprompt-n">--noprompt, -n:<a class="heading-anchor" href="#noprompt-n" aria-label="Link to section">#</a></h4><p>Suppresses user prompts for inputs or confirmations, allowing the command to proceed using default settings. This is especially useful in situations where missing lookup references are detected in object records, preventing interruptions during the migration process.</p>
-<h4 id="nowarnings-w">--nowarnings, -w:<a class="heading-anchor" href="#nowarnings-w" aria-label="Link to section">#</a></h4><p>Suppresses warning messages in stdout, providing a cleaner and less cluttered output, which can be essential during large-scale migrations where numerous warnings might clutter the view.</p>
-<h4 id="failonwarning">--failonwarning:<a class="heading-anchor" href="#failonwarning" aria-label="Link to section">#</a></h4><p>Treats any warning as an error. On the first warning, SFDMU immediately aborts execution and returns exit code <code>8</code> (<code>WARNING_AS_ERROR</code>).</p>
-<h4 id="path-p">--path, -p:<a class="heading-anchor" href="#path-p" aria-label="Link to section">#</a></h4><p>Specifies the directory containing the <strong>export.json</strong>. If this flag is not provided, the plugin searches the current directory, ensuring that the migration configuration is correctly located and utilized.</p>
-<h4 id="file">--file:<a class="heading-anchor" href="#file" aria-label="Link to section">#</a></h4><p>Optionally specifies an explicit <code>export.json</code> file path to execute.</p>
+<a class="heading-anchor" id="noprompt-n"></a>
+                <h4>
+                    --noprompt, -n:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Suppresses user prompts for inputs or confirmations, allowing the command to proceed using default settings. This is especially useful in situations where missing lookup references are detected in object records, preventing interruptions during the migration process.</p>
+<a class="heading-anchor" id="nowarnings-w"></a>
+                <h4>
+                    --nowarnings, -w:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Suppresses warning messages in stdout, providing a cleaner and less cluttered output, which can be essential during large-scale migrations where numerous warnings might clutter the view.</p>
+<a class="heading-anchor" id="failonwarning"></a>
+                <h4>
+                    --failonwarning:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Treats any warning as an error. On the first warning, SFDMU immediately aborts execution and returns exit code <code>8</code> (<code>WARNING_AS_ERROR</code>).</p>
+<a class="heading-anchor" id="path-p"></a>
+                <h4>
+                    --path, -p:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Specifies the directory containing the <strong>export.json</strong>. If this flag is not provided, the plugin searches the current directory, ensuring that the migration configuration is correctly located and utilized.</p>
+<a class="heading-anchor" id="file"></a>
+                <h4>
+                    --file:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Optionally specifies an explicit <code>export.json</code> file path to execute.</p>
 <ul>
 <li>If relative, it is resolved against <code>--path</code>.</li>
 <li>If absolute, that exact file is used.</li>
 <li>Other runtime folders and relative resources still remain based on <code>--path</code>.</li>
 </ul>
 <p>When <code>--diagnostic</code> is enabled, the log includes the resolved export.json path and an additional line when it differs from <code>--path</code>.</p>
-<h4 id="verbose">--verbose:<a class="heading-anchor" href="#verbose" aria-label="Link to section">#</a></h4><p>Legacy flag. Deprecated and has no effect. It is kept only for compatibility with old command strings.</p>
-<h4 id="concise">--concise:<a class="heading-anchor" href="#concise" aria-label="Link to section">#</a></h4><p>Legacy flag. Deprecated and has no effect. It is kept only for compatibility with old command strings.</p>
-<h4 id="quiet">--quiet:<a class="heading-anchor" href="#quiet" aria-label="Link to section">#</a></h4><p>Suppresses stdout logging while still logging to a file. This option is useful in environments where console output needs to be minimized, such as in automated scripts or where output verbosity could obscure important information.</p>
-<h4 id="silent">--silent:<a class="heading-anchor" href="#silent" aria-label="Link to section">#</a></h4><p>Functionally equivalent to <strong>--quiet</strong>, this flag also suppresses stdout logging, ensuring quiet operation during migration tasks.</p>
-<h4 id="usesf">--usesf:<a class="heading-anchor" href="#usesf" aria-label="Link to section">#</a></h4><p>Legacy flag. Deprecated and has no effect. It is kept only for compatibility with old command
+<a class="heading-anchor" id="verbose"></a>
+                <h4>
+                    --verbose:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Legacy flag. Deprecated and has no effect. It is kept only for compatibility with old command strings.</p>
+<a class="heading-anchor" id="concise"></a>
+                <h4>
+                    --concise:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Legacy flag. Deprecated and has no effect. It is kept only for compatibility with old command strings.</p>
+<a class="heading-anchor" id="quiet"></a>
+                <h4>
+                    --quiet:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Suppresses stdout logging while still logging to a file. This option is useful in environments where console output needs to be minimized, such as in automated scripts or where output verbosity could obscure important information.</p>
+<a class="heading-anchor" id="silent"></a>
+                <h4>
+                    --silent:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Functionally equivalent to <strong>--quiet</strong>, this flag also suppresses stdout logging, ensuring quiet operation during migration tasks.</p>
+<a class="heading-anchor" id="usesf"></a>
+                <h4>
+                    --usesf:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Legacy flag. Deprecated and has no effect. It is kept only for compatibility with old command
 strings.</p>
-<h4 id="simulation-m">--simulation, -m:<a class="heading-anchor" href="#simulation-m" aria-label="Link to section">#</a></h4><p>This CLI flag enables a simulation mode in the SFDMU tool, allowing users to run a migration process without actually performing any data changes in the Salesforce organizations or files involved. </p>
+<a class="heading-anchor" id="simulation-m"></a>
+                <h4>
+                    --simulation, -m:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>This CLI flag enables a simulation mode in the SFDMU tool, allowing users to run a migration process without actually performing any data changes in the Salesforce organizations or files involved. </p>
 <p>It is particularly useful for testing migration configurations and understanding the behavior of the tool under specific conditions before committing to a real operation.</p>
-<h4 id="version-v">--version, -v:<a class="heading-anchor" href="#version-v" aria-label="Link to section">#</a></h4><p>This CLI flag, when used with the SFDMU tool, displays the current installed version of the software.</p>
-<h3 id="additional-notes">Additional Notes:<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="version-v"></a>
+                <h4>
+                    --version, -v:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>This CLI flag, when used with the SFDMU tool, displays the current installed version of the software.</p>
+<a class="heading-anchor" id="additional-notes"></a>
+                <h3>
+                    Additional Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li>For MacOS users: If you encounter permission issues, prepend your command with <code>sudo</code>, e.g., <code>$ sudo sf sfdmu run --targetusername MYTARGET</code>.</li>
 </ul>
-<h2 id="run-the-sfdmu-on-one-org-only-one-directional-mode">Run the SFDMU on One Org Only (One-Directional Mode)<a class="heading-anchor" href="#run-the-sfdmu-on-one-org-only-one-directional-mode" aria-label="Link to section">#</a></h2><p>In scenarios where no source org is available and you only need to modify certain records in</p>
+<a class="heading-anchor" id="run-the-sfdmu-on-one-org-only-one-directional-mode"></a>
+                <h2>
+                    Run the SFDMU on One Org Only (One-Directional Mode)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>In scenarios where no source org is available and you only need to modify certain records in</p>
 <p> the target org, provide only the <strong>--targetusername</strong>. The target org will act as both source and target.</p>
 <p>Records are compared using the specified external ID, but it&#39;s reasonable to use the Record Id field as an External ID key.</p>
-<h2 id="supported-execution-mode">Supported Execution Mode<a class="heading-anchor" href="#supported-execution-mode" aria-label="Link to section">#</a></h2><p>SFDMU is supported to run <strong>only as an SF CLI plugin command</strong>:</p>
+<a class="heading-anchor" id="supported-execution-mode"></a>
+                <h2>
+                    Supported Execution Mode
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>SFDMU is supported to run <strong>only as an SF CLI plugin command</strong>:</p>
 <pre><code class="language-bash">$ sf sfdmu run --sourceusername source@name.com --targetusername target@name.com
 </code></pre>
 <p>Standalone Node.js application mode and Node.js module/programmatic mode are not supported.</p>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../configuration/">Configuration</a></li>
 <li><a href="../debugging/">Debugging</a></li>
 <li><a href="../get-started/">Get Started</a></li>
@@ -367,10 +621,7 @@ strings.</p>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -390,9 +641,11 @@ strings.</p>
   <script src="../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../scripts/ghostdown.js"></script>
+  <script src="../scripts/raneto.js"></script>
   <script src="../lib/highlight.js/highlight.min.js"></script>
-  <script src="../assets/static-runtime.js"></script>
   <script src="../scripts/custom.js"></script>
+  <script src="../assets/lunr.min.js"></script>
   <script src="../assets/static-search.js"></script>
 </body>
 </html>

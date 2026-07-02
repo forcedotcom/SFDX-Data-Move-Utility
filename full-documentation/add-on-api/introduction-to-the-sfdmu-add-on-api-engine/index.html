@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Add-On API Overview | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Add-On API Overview | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,17 +255,48 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#why-do-you-need-the-add-on-api">Why Do You Need the Add-On API?</a></li><li><a href="#two-types-of-add-on-modules">Two Types of Add-On Modules</a></li><li><a href="#add-on-module-configuration-skeleton">Add-On Module Configuration Skeleton</a></li><li class="toc-child"><a href="#sample-configuration">Sample Configuration</a></li><li class="toc-child"><a href="#understanding-the-configuration">Understanding the Configuration</a></li><li><a href="#how-to-create-and-run-your-own-custom-add-on-module">How to Create and Run Your Own Custom Add-On Module</a></li><li><a href="#list-of-currently-available-core-sfdmu-add-on-modules">List of Currently Available Core SFDMU Add-On Modules</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#why-do-you-need-the-add-on-api">Why Do You Need the Add-On API?</a></li>
+<li><a href="#two-types-of-add-on-modules">Two Types of Add-On Modules</a></li>
+<li><a href="#add-on-module-configuration-skeleton">Add-On Module Configuration Skeleton</a><ul>
+<li><a href="#sample-configuration">Sample Configuration</a></li>
+<li><a href="#understanding-the-configuration">Understanding the Configuration</a><ul>
+<li><a href="#module-string"><code>module</code> (String)</a></li>
+<li><a href="#description-string"><code>description</code> (String)</a></li>
+<li><a href="#args-object"><code>args</code> (Object)</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#how-to-create-and-run-your-own-custom-add-on-module">How to Create and Run Your Own Custom Add-On Module</a></li>
+<li><a href="#list-of-currently-available-core-sfdmu-add-on-modules">List of Currently Available Core SFDMU Add-On Modules</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p>The SFDMU Add-On Engine is a powerful tool that enhances SFDMU functionality. It enables the use of custom and third-party Add-On modules to extend its capabilities.</p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The SFDMU Add-On Engine is a powerful tool that enhances SFDMU functionality. It enables the use of custom and third-party Add-On modules to extend its capabilities.</p>
 <p><strong>Additional Resources:</strong></p>
 <ul>
 <li><a href="../../../custom-add-on-api/sfdmu-run/">Add-On API Object Reference</a></li>
 <li><a href="../custom-sfdmu-add-on-api/">Custom Add-On API</a></li>
 <li><a href="../supported-events/">List of Supported Add-On API Events</a></li>
 </ul>
-<h2 id="why-do-you-need-the-add-on-api">Why Do You Need the Add-On API?<a class="heading-anchor" href="#why-do-you-need-the-add-on-api" aria-label="Link to section">#</a></h2><p>Sometimes, you may find the out-of-the-box (OOTB) functionality of SFDMU insufficient for your needs. For example:</p>
+<a class="heading-anchor" id="why-do-you-need-the-add-on-api"></a>
+                <h2>
+                    Why Do You Need the Add-On API?
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Sometimes, you may find the out-of-the-box (OOTB) functionality of SFDMU insufficient for your needs. For example:</p>
 <ul>
 <li>You want to trigger custom actions on the target records after the plugin has completed its data migration process.</li>
 <li>You want to send an email message containing a report about the failed tasks.</li>
@@ -272,7 +304,14 @@
 <li>You have other specific requirements...</li>
 </ul>
 <p><strong>With the SFDMU Add-On, you have a great opportunity to bridge these gaps and extend the SFDMU Plugin Core with unlimited additional features according to your needs.</strong></p>
-<h2 id="two-types-of-add-on-modules">Two Types of Add-On Modules<a class="heading-anchor" href="#two-types-of-add-on-modules" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="two-types-of-add-on-modules"></a>
+                <h2>
+                    Two Types of Add-On Modules
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><p><strong>&#39;Core SFDMU Add-On module&#39;</strong>: </p>
 <ul>
 <li>Provided by us and built using the standard <strong>Core SFDMU Add-On API</strong>.</li>
@@ -289,9 +328,23 @@
 </li>
 </ul>
 <p>The <strong>Custom Add-On API</strong> is derived from the <strong>Core Add-On API</strong> but is not exactly the same. The Custom API is a limited version of the Core API and exposes only the most crucial features that are useful and helpful for the end user.</p>
-<h2 id="add-on-module-configuration-skeleton">Add-On Module Configuration Skeleton<a class="heading-anchor" href="#add-on-module-configuration-skeleton" aria-label="Link to section">#</a></h2><p>The configuration skeleton below illustrates how to structure the setup for add-on modules within the SFDMU. 
+<a class="heading-anchor" id="add-on-module-configuration-skeleton"></a>
+                <h2>
+                    Add-On Module Configuration Skeleton
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The configuration skeleton below illustrates how to structure the setup for add-on modules within the SFDMU. 
 This setup is especially useful for defining actions or behaviors that are triggered by specific lifecycle events. Each component within the configuration allows for modular extensions of functionality, enhancing the SFDMU&#39;s flexibility and adaptability.</p>
-<h3 id="sample-configuration">Sample Configuration<a class="heading-anchor" href="#sample-configuration" aria-label="Link to section">#</a></h3><p>This sample structure provided in the <a href="../supported-events/#objectonafter"><code>Object.afterAddons</code></a> event array.</p>
+<a class="heading-anchor" id="sample-configuration"></a>
+                <h3>
+                    Sample Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>This sample structure provided in the <a href="../supported-events/#objectonafter"><code>Object.afterAddons</code></a> event array.</p>
 <pre><code class="language-json">{
   &quot;objects&quot;: [
     {
@@ -309,21 +362,63 @@ This setup is especially useful for defining actions or behaviors that are trigg
   ]
 }
 </code></pre>
-<h3 id="understanding-the-configuration">Understanding the Configuration<a class="heading-anchor" href="#understanding-the-configuration" aria-label="Link to section">#</a></h3><h4 id="module-string"><code>module</code> (String)<a class="heading-anchor" href="#module-string" aria-label="Link to section">#</a></h4><ul>
+<a class="heading-anchor" id="understanding-the-configuration"></a>
+                <h3>
+                    Understanding the Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><a class="heading-anchor" id="module-string"></a>
+                <h4>
+                    <code>module</code> (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ul>
 <li><strong>Definition</strong>: Specifies the name of the add-on module.</li>
 <li><strong>Purpose</strong>: Identifies the module to be loaded and executed by the SFDMU. This dynamic loading facilitates modular development and allows for easy updates and maintenance of the SFDMU&#39;s functionalities.</li>
 </ul>
-<h4 id="description-string"><code>description</code> (String)<a class="heading-anchor" href="#description-string" aria-label="Link to section">#</a></h4><ul>
+<a class="heading-anchor" id="description-string"></a>
+                <h4>
+                    <code>description</code> (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ul>
 <li><strong>Definition</strong>: A string that provides a detailed description of the add-on module.</li>
 <li><strong>Purpose</strong>: Helps explain the purpose, functionality, and usage of the module. This is particularly useful for documentation purposes and for developers or administrators who need to understand what the module does and how it fits into the overall SFDMU.</li>
 </ul>
-<h4 id="args-object"><code>args</code> (Object)<a class="heading-anchor" href="#args-object" aria-label="Link to section">#</a></h4><ul>
+<a class="heading-anchor" id="args-object"></a>
+                <h4>
+                    <code>args</code> (Object)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><ul>
 <li><strong>Definition</strong>: A dictionary that contains configuration settings or parameters needed by the module.</li>
 <li><strong>Purpose</strong>: Allows for the customization of the module&#39;s behavior by providing necessary parameters. This flexibility ensures that the module can perform its intended function in a variety of different scenarios or environments.</li>
 </ul>
-<h2 id="how-to-create-and-run-your-own-custom-add-on-module">How to Create and Run Your Own Custom Add-On Module<a class="heading-anchor" href="#how-to-create-and-run-your-own-custom-add-on-module" aria-label="Link to section">#</a></h2><p>All you need is to write a simple TypeScript module by implementing the set of special TS interfaces included in the distributed API package, or use an existing module. Then, configure your <strong>export.json</strong> to call your module at runtime.</p>
+<a class="heading-anchor" id="how-to-create-and-run-your-own-custom-add-on-module"></a>
+                <h2>
+                    How to Create and Run Your Own Custom Add-On Module
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>All you need is to write a simple TypeScript module by implementing the set of special TS interfaces included in the distributed API package, or use an existing module. Then, configure your <strong>export.json</strong> to call your module at runtime.</p>
 <p>See the quick tutorial here: <a href="../custom-sfdmu-add-on-api/">Creating and Running a Custom Add-On Module</a></p>
-<h2 id="list-of-currently-available-core-sfdmu-add-on-modules">List of Currently Available Core SFDMU Add-On Modules<a class="heading-anchor" href="#list-of-currently-available-core-sfdmu-add-on-modules" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="list-of-currently-available-core-sfdmu-add-on-modules"></a>
+                <h2>
+                    List of Currently Available Core SFDMU Add-On Modules
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li>The <a href="../export-file-core-add-on-module/">ExportFiles Core Add-On Module</a> allows you to transfer file-related data and binary content (<code>ContentVersion</code>, <code>ContentDocumentLink</code>, <code>Attachment</code>, <code>Note</code>) across org and csvfile modes while preserving links to parent records.</li>
 <li>The <a href="../records-transform-core-add-on-module/">RecordsTransform Core Add-On Module</a> enables complex transformations and mapping of the source records before they are uploaded to the Target.</li>
 <li>The <a href="../records-filter-core-add-on-module/">RecordsFilter Core Add-On Module</a> provides advanced filtering of source records before their upload to the Target.</li>
@@ -331,10 +426,7 @@ This setup is especially useful for defining actions or behaviors that are trigg
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -354,9 +446,11 @@ This setup is especially useful for defining actions or behaviors that are trigg
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

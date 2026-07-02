@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RecordsFilter Core Add-On Module | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>RecordsFilter Core Add-On Module | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,12 +255,38 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#example-of-module-setup">Example of Module Setup</a></li><li><a href="#recordsfilter-module-setup">RecordsFilter Module Setup</a></li><li class="toc-child"><a href="#filtertype-string">filterType (String)</a></li><li class="toc-child"><a href="#settings-object">settings (Object)</a></li><li><a href="#available-filters">Available Filters</a></li><li><a href="#additional-notes">Additional Notes</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#example-of-module-setup">Example of Module Setup</a></li>
+<li><a href="#recordsfilter-module-setup">RecordsFilter Module Setup</a><ul>
+<li><a href="#filtertype-string">filterType (String)</a></li>
+<li><a href="#settings-object">settings (Object)</a></li>
+</ul></li>
+<li><a href="#available-filters">Available Filters</a></li>
+<li><a href="#additional-notes">Additional Notes</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p>The <code>core:RecordsFilter</code> module enhances data transfer capabilities by offering advanced filtering options for source records before they are uploaded to the target system. </p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <code>core:RecordsFilter</code> module enhances data transfer capabilities by offering advanced filtering options for source records before they are uploaded to the target system. </p>
 <p>It enables precise selection and management of data, ensuring that only relevant records are transferred, optimizing both process efficiency and data integrity.</p>
-<h2 id="example-of-module-setup">Example of Module Setup<a class="heading-anchor" href="#example-of-module-setup" aria-label="Link to section">#</a></h2><p>To utilize the <strong>RecordsFilter Core Add-On Module</strong> within SFDMU, declare the module in your <strong>export.json</strong> as shown below:</p>
+<a class="heading-anchor" id="example-of-module-setup"></a>
+                <h2>
+                    Example of Module Setup
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>To utilize the <strong>RecordsFilter Core Add-On Module</strong> within SFDMU, declare the module in your <strong>export.json</strong> as shown below:</p>
 <pre><code class="language-json">{
      &quot;objects&quot;: [
      {
@@ -287,14 +314,49 @@
 }
 </code></pre>
 <p>This configuration employs the <a href="../records-filter-bad-words-filter/"><strong>BadWords</strong></a> filter, which is activated by the <a href="../supported-events/#objectonfilterrecords"><strong>OnFilterRecords</strong></a> event. </p>
-<h2 id="recordsfilter-module-setup">RecordsFilter Module Setup<a class="heading-anchor" href="#recordsfilter-module-setup" aria-label="Link to section">#</a></h2><p>Below is the full list of <strong>args</strong> properties relevant to the <strong>core:RecordsFilter</strong> module. </p>
-<h3 id="filtertype-string">filterType (String)<a class="heading-anchor" href="#filtertype-string" aria-label="Link to section">#</a></h3><p><strong>Mandatory</strong>. Specifies the type of filter to be applied within the <code>core:RecordsFilter</code> add-on module. This property determines the behavior of the filter and the required settings in the <code>settings</code> object.</p>
-<h3 id="settings-object">settings (Object)<a class="heading-anchor" href="#settings-object" aria-label="Link to section">#</a></h3><p><strong>Mandatory</strong>. Contains configuration specific to the <code>filterType</code> selected. The structure and contents of the <code>settings</code> object vary depending on the <code>filterType</code>. For example, in the provided configuration example, the settings are tailored for the &quot;BadWords&quot; filter, including properties like <code>badwordsFile</code>, <code>detectFields</code>, <code>highlightWords</code>, and <code>outputMatches</code>. However, these specific settings would differ if another filter type were used. Each filter type requires its unique configuration within this object to function correctly.</p>
-<h2 id="available-filters">Available Filters<a class="heading-anchor" href="#available-filters" aria-label="Link to section">#</a></h2><p>Below find the currently implemented filters.  New filters are expected to be released periodically.</p>
+<a class="heading-anchor" id="recordsfilter-module-setup"></a>
+                <h2>
+                    RecordsFilter Module Setup
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Below is the full list of <strong>args</strong> properties relevant to the <strong>core:RecordsFilter</strong> module. </p>
+<a class="heading-anchor" id="filtertype-string"></a>
+                <h3>
+                    filterType (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Mandatory</strong>. Specifies the type of filter to be applied within the <code>core:RecordsFilter</code> add-on module. This property determines the behavior of the filter and the required settings in the <code>settings</code> object.</p>
+<a class="heading-anchor" id="settings-object"></a>
+                <h3>
+                    settings (Object)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Mandatory</strong>. Contains configuration specific to the <code>filterType</code> selected. The structure and contents of the <code>settings</code> object vary depending on the <code>filterType</code>. For example, in the provided configuration example, the settings are tailored for the &quot;BadWords&quot; filter, including properties like <code>badwordsFile</code>, <code>detectFields</code>, <code>highlightWords</code>, and <code>outputMatches</code>. However, these specific settings would differ if another filter type were used. Each filter type requires its unique configuration within this object to function correctly.</p>
+<a class="heading-anchor" id="available-filters"></a>
+                <h2>
+                    Available Filters
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Below find the currently implemented filters.  New filters are expected to be released periodically.</p>
 <ul>
 <li><a href="../records-filter-bad-words-filter/">Bad Words Records Filter</a></li>
 </ul>
-<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="additional-notes"></a>
+                <h2>
+                    Additional Notes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><p>The only suitable event to incorporate the <code>core:RecordsFilter</code> module is the <a href="../supported-events/#objectonfilterrecords">Object OnFilterRecords Event</a>,  because its purpose is precisely to filter records. Binding the RecordsFilter Add-On to any other event will result in a runtime error.</p>
 <p>For additional details, see also <a href="../supported-events/">Supported Add-On Api Events</a></p>
 </li>
@@ -304,10 +366,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -327,9 +386,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

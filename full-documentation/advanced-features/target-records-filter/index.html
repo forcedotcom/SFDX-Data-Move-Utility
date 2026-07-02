@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Target Records Filter | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Target Records Filter | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,41 +255,102 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#examples-of-using-target-record-filter">Examples of Using Target Record Filter</a></li><li><a href="#understanding-the-targetrecordsfilter-syntax">Understanding the TargetRecordsFilter Syntax</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#examples-of-using-target-record-filter">Examples of Using Target Record Filter</a><ul>
+<li><a href="#example-1-exclude-records-with-null-values">Example 1: Exclude Records with Null Values</a></li>
+<li><a href="#example-2-include-only-records-with-null-values">Example 2: Include Only Records with Null Values</a></li>
+<li><a href="#example-3-include-records-based-on-multiple-conditions">Example 3: Include Records Based on Multiple Conditions</a></li>
+</ul></li>
+<li><a href="#understanding-the-targetrecordsfilter-syntax">Understanding the TargetRecordsFilter Syntax</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>:  This feature provides an additional method to filter out unwanted records <strong>just</strong> <strong>before</strong> they are sent to the Target, which is particularly useful when unable to apply the desired filters directly using a WHERE clause in SOQL queries.</p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>:  This feature provides an additional method to filter out unwanted records <strong>just</strong> <strong>before</strong> they are sent to the Target, which is particularly useful when unable to apply the desired filters directly using a WHERE clause in SOQL queries.</p>
 <p><strong>Use case:</strong> In some scenarios, the data fetched from the source includes records that you may not want to export to the target. For instance, when importing from a CSV file, the SOQL query may only define the columns to be processed, ignoring the WHERE clause. This is where the Target Record Filter feature comes into play, allowing further refinement of which records are sent to the target.</p>
 <p>During update/upsert runs, strict target-side filtering can increase &quot;no matching target&quot;
 skips for source rows. If you run with <code>--diagnostic</code>, review the line
 <code>[diagnostic] update skipped summary: ...</code> in the execution log to confirm this behavior.</p>
-<h2 id="examples-of-using-target-record-filter">Examples of Using Target Record Filter<a class="heading-anchor" href="#examples-of-using-target-record-filter" aria-label="Link to section">#</a></h2><p>Here are a few examples of how to implement the Target Record Filter:</p>
-<h4 id="example-1-exclude-records-with-null-values">Example 1: Exclude Records with Null Values<a class="heading-anchor" href="#example-1-exclude-records-with-null-values" aria-label="Link to section">#</a></h4><p>To exclude all records that do not have a value in the <code>Account__c</code> field:</p>
+<a class="heading-anchor" id="examples-of-using-target-record-filter"></a>
+                <h2>
+                    Examples of Using Target Record Filter
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Here are a few examples of how to implement the Target Record Filter:</p>
+<a class="heading-anchor" id="example-1-exclude-records-with-null-values"></a>
+                <h4>
+                    Example 1: Exclude Records with Null Values
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>To exclude all records that do not have a value in the <code>Account__c</code> field:</p>
 <pre><code class="language-json">{
   &quot;query&quot;: &quot;SELECT Id, Name, Account__c FROM MyObject__c&quot;,
   &quot;targetRecordsFilter&quot;: &quot;Account__c&quot;
 }
 </code></pre>
-<h4 id="example-2-include-only-records-with-null-values">Example 2: Include Only Records with Null Values<a class="heading-anchor" href="#example-2-include-only-records-with-null-values" aria-label="Link to section">#</a></h4><p>To include only the records where the <code>Account__c</code> field is empty:</p>
+<a class="heading-anchor" id="example-2-include-only-records-with-null-values"></a>
+                <h4>
+                    Example 2: Include Only Records with Null Values
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>To include only the records where the <code>Account__c</code> field is empty:</p>
 <pre><code class="language-json">{
  &quot;query&quot;: &quot;SELECT Id, Name, Account__c FROM MyObject__c&quot;,
  &quot;targetRecordsFilter&quot;: &quot;NOT Account__c&quot;
 }
 </code></pre>
-<h4 id="example-3-include-records-based-on-multiple-conditions">Example 3: Include Records Based on Multiple Conditions<a class="heading-anchor" href="#example-3-include-records-based-on-multiple-conditions" aria-label="Link to section">#</a></h4><p>To include only records where the <code>Account__c</code> and <code>Account2__c</code> fields are equal, and the <code>Contact__c</code> field is not null:</p>
+<a class="heading-anchor" id="example-3-include-records-based-on-multiple-conditions"></a>
+                <h4>
+                    Example 3: Include Records Based on Multiple Conditions
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>To include only records where the <code>Account__c</code> and <code>Account2__c</code> fields are equal, and the <code>Contact__c</code> field is not null:</p>
 <pre><code class="language-json">{
  &quot;query&quot;: &quot;SELECT Id, Name, Account__c, Account2__c, Contact__c FROM MyObject__c&quot;,
  &quot;targetRecordsFilter&quot;: &quot;Account__c = Account2__c AND Contact__c&quot;
 }
 </code></pre>
-<h2 id="understanding-the-targetrecordsfilter-syntax">Understanding the TargetRecordsFilter Syntax<a class="heading-anchor" href="#understanding-the-targetrecordsfilter-syntax" aria-label="Link to section">#</a></h2><p>The <code>targetRecordsFilter</code> uses a syntax similar to regular SOQL, with some specific exceptions:</p>
+<a class="heading-anchor" id="understanding-the-targetrecordsfilter-syntax"></a>
+                <h2>
+                    Understanding the TargetRecordsFilter Syntax
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <code>targetRecordsFilter</code> uses a syntax similar to regular SOQL, with some specific exceptions:</p>
 <ul>
 <li><p><strong>Non-null Values</strong>: To select records where a field is not null (e.g., <code>Account__c</code> is not empty), simply use <code>&quot;Account__c&quot;</code>. This is shorthand for <code>Account__c &lt;&gt; null</code> in standard SOQL syntax.</p>
 </li>
 <li><p><strong>Null Values</strong>: Conversely, to filter records where a field is null (e.g., <code>Account__c</code> is empty), use <code>&quot;NOT Account__c&quot;</code>. This substitutes for <code>Account__c = null</code> in traditional SOQL syntax.</p>
 </li>
 </ul>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../composite-external-id-keys/">Composite External Id Keys</a></li>
 <li><a href="../compound-fields/">Compound Fields</a></li>
 <li><a href="../data-anonymization/">Data Anonymization</a></li>
@@ -296,10 +358,7 @@ skips for source rows. If you run with <code>--diagnostic</code>, review the lin
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -319,9 +378,11 @@ skips for source rows. If you run with <code>--diagnostic</code>, review the lin
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

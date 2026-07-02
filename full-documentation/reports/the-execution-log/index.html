@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Log File Management in Plugin Migrations | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Log File Management in Plugin Migrations | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -265,13 +266,27 @@
    |- 2024-04-25__15_43_07.log
    |- ...
 </code></pre>
-<h2 id="anonymized-log-sharing-with-anonymise">Anonymized Log Sharing with --anonymise<a class="heading-anchor" href="#anonymized-log-sharing-with-anonymise" aria-label="Link to section">#</a></h2><p>When you run SFDMU with <code>--anonymise</code>, sensitive values in <code>.log</code> files are replaced with hash
+<a class="heading-anchor" id="anonymized-log-sharing-with-anonymise"></a>
+                <h2>
+                    Anonymized Log Sharing with --anonymise
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>When you run SFDMU with <code>--anonymise</code>, sensitive values in <code>.log</code> files are replaced with hash
 tokens instead of being written as plain text.</p>
 <p>Use this mode when you need to share logs in a public issue or with external teams.</p>
 <p>Example:</p>
 <pre><code class="language-bash">sf sfdmu run --sourceusername source@name.com --targetusername target@name.com --diagnostic --anonymise
 </code></pre>
-<h3 id="hash-token-format">Hash Token Format<a class="heading-anchor" href="#hash-token-format" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="hash-token-format"></a>
+                <h3>
+                    Hash Token Format
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li>Token format is <code>label&lt;HEX16&gt;</code>.</li>
 <li>Example token values:<ul>
 <li><code>accessToken&lt;ABCDEF12AB34CD56&gt;</code></li>
@@ -291,7 +306,21 @@ tokens instead of being written as plain text.</p>
 </ul>
 </li>
 </ul>
-<h2 id="what-is-masked-and-what-is-not">What Is Masked and What Is Not<a class="heading-anchor" href="#what-is-masked-and-what-is-not" aria-label="Link to section">#</a></h2><h3 id="masked-in-log-files-when-anonymise-is-enabled">Masked in .log files when --anonymise is enabled<a class="heading-anchor" href="#masked-in-log-files-when-anonymise-is-enabled" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="what-is-masked-and-what-is-not"></a>
+                <h2>
+                    What Is Masked and What Is Not
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="masked-in-log-files-when-anonymise-is-enabled"></a>
+                <h3>
+                    Masked in .log files when --anonymise is enabled
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li>Sensitive auth/secret values:<ul>
 <li>values of fields such as <code>accessToken</code>, <code>refreshToken</code>, <code>clientSecret</code>, <code>password</code>,
 <code>authorization</code>, <code>sessionId</code>, <code>token</code>.</li>
@@ -338,7 +367,14 @@ the relative path starting from the plugin root folder is preserved.</li>
 </ul>
 </li>
 </ul>
-<h3 id="not-masked">Not masked<a class="heading-anchor" href="#not-masked" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="not-masked"></a>
+                <h3>
+                    Not masked
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li>Stdout output and JSON command output.</li>
 <li>Any run where <code>--anonymise</code> is not set.</li>
 <li>Salesforce object names and field API names in logged queries/messages.</li>
@@ -347,12 +383,26 @@ the relative path starting from the plugin root folder is preserved.</li>
 <li>Stack trace details except masked absolute leading folder paths.</li>
 <li>Value-mapping rule definition lines.</li>
 </ul>
-<h3 id="important-clarification">Important Clarification<a class="heading-anchor" href="#important-clarification" aria-label="Link to section">#</a></h3><ul>
+<a class="heading-anchor" id="important-clarification"></a>
+                <h3>
+                    Important Clarification
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><ul>
 <li>SFDMU anonymization is focused on sensitive text values in logs.</li>
 <li>It does not act as a general redaction engine for every possible text shape.</li>
 <li>Always review the final <code>.log</code> file before public sharing.</li>
 </ul>
-<h2 id="skipped-records-reason-breakdown">Skipped Records Reason Breakdown<a class="heading-anchor" href="#skipped-records-reason-breakdown" aria-label="Link to section">#</a></h2><p>When the engine reports skipped target records during update/upsert processing, the warning now
+<a class="heading-anchor" id="skipped-records-reason-breakdown"></a>
+                <h2>
+                    Skipped Records Reason Breakdown
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>When the engine reports skipped target records during update/upsert processing, the warning now
 includes split counters by reason:</p>
 <ul>
 <li>skipped because source and target data are the same</li>
@@ -365,7 +415,14 @@ in the <code>.log</code> file:</p>
 <pre><code class="language-text">[diagnostic] update skipped summary: object=Account total=5 sameData=2 noMatchingTarget=1 other=2
 </code></pre>
 <p>Use this line for quick filtering while reviewing large logs.</p>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../issues-with-missing-parent-lookup-records/">Issues With Missing Parent Lookup Records</a></li>
 <li><a href="../issues-with-the-source-csv-files/">Issues With The Source Csv Files</a></li>
 <li><a href="../the-source-csv-files/">The Source Csv Files</a></li>
@@ -374,10 +431,7 @@ in the <code>.log</code> file:</p>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -397,9 +451,11 @@ in the <code>.log</code> file:</p>
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

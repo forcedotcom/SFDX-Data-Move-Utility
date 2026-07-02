@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Advanced examples | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Advanced examples | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../favicon.png">
-  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../..";</script>
-  <link rel="stylesheet" href="../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../styles/custom.css">
+  <link rel="preload" href="../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,10 +255,28 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li class="toc-child"><a href="#example-1-migration-of-accounts-and-contacts-with-accountcontactrelations">Example 1. Migration of Accounts and Contacts with AccountContactRelations.</a></li><li class="toc-child"><a href="#example-2-migration-of-feeditems-and-feedcomments">Example 2. Migration of FeedItems and FeedComments.</a></li><li class="toc-child"><a href="#example-3-locate-and-delete-the-same-target-records-which-are-already-deleted-in-the-source">Example 3. Locate and delete the same target records which are already deleted in the source.</a></li><li class="toc-child"><a href="#example-4-inserting-variation-attributes-and-product-variations">Example 4. Inserting Variation Attributes and Product Variations.</a></li><li class="toc-child"><a href="#example-5-upserting-variation-attributes-and-product-variations">Example 5. Upserting Variation Attributes and Product Variations.</a></li></ul></nav>
-### Example 1. Migration of Accounts and Contacts with AccountContactRelations. 
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<ul>
+<li><a href="#example-1-migration-of-accounts-and-contacts-with-accountcontactrelations">Example 1. Migration of Accounts and Contacts with AccountContactRelations.</a></li>
+<li><a href="#example-2-migration-of-feeditems-and-feedcomments">Example 2. Migration of FeedItems and FeedComments.</a></li>
+<li><a href="#example-3-locate-and-delete-the-same-target-records-which-are-already-deleted-in-the-source">Example 3. Locate and delete the same target records which are already deleted in the source.</a></li>
+<li><a href="#example-4-inserting-variation-attributes-and-product-variations">Example 4. Inserting Variation Attributes and Product Variations.</a></li>
+<li><a href="#example-5-upserting-variation-attributes-and-product-variations">Example 5. Upserting Variation Attributes and Product Variations.</a></li>
+</ul>
+</ul>
+<p><br /><br /></p>
 
-<pre><code class="language-json">{
+
+<a class="heading-anchor" id="example-1-migration-of-accounts-and-contacts-with-accountcontactrelations"></a>
+                <h3>
+                    Example 1. Migration of Accounts and Contacts with AccountContactRelations.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{
      &quot;objects&quot;: [
          {
               &quot;query&quot;: &quot;SELECT Id, Name FROM Contact&quot;,
@@ -279,7 +298,14 @@
      ]
 }
 </code></pre>
-<h3 id="example-2-migration-of-feeditems-and-feedcomments">Example 2. Migration of FeedItems and FeedComments.<a class="heading-anchor" href="#example-2-migration-of-feeditems-and-feedcomments" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+<a class="heading-anchor" id="example-2-migration-of-feeditems-and-feedcomments"></a>
+                <h3>
+                    Example 2. Migration of FeedItems and FeedComments.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{
   &quot;objects&quot;: [
     {
         &quot;operation&quot;: &quot;Readonly&quot;,
@@ -298,12 +324,26 @@
   ]
 }
 </code></pre>
-<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes"></a>
+                <h5>
+                    Notes:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><p>This example will not transfer FeedItems of &quot;<em>ContentPost</em>&quot; type along with their binary data. </p>
 <p>For that please refer to  <a href="../configuration/file-migration/">File data transfer examples</a></p>
 </li>
 </ul>
-<h3 id="example-3-locate-and-delete-the-same-target-records-which-are-already-deleted-in-the-source">Example 3. Locate and delete the same target records which are already deleted in the source.<a class="heading-anchor" href="#example-3-locate-and-delete-the-same-target-records-which-are-already-deleted-in-the-source" aria-label="Link to section">#</a></h3><pre><code class="language-json">{ 
+<a class="heading-anchor" id="example-3-locate-and-delete-the-same-target-records-which-are-already-deleted-in-the-source"></a>
+                <h3>
+                    Example 3. Locate and delete the same target records which are already deleted in the source.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{ 
   &quot;objects&quot;: [
         
         {
@@ -315,7 +355,14 @@
     ]
 }
 </code></pre>
-<h3 id="example-4-inserting-variation-attributes-and-product-variations">Example 4. Inserting Variation Attributes and Product Variations.<a class="heading-anchor" href="#example-4-inserting-variation-attributes-and-product-variations" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+<a class="heading-anchor" id="example-4-inserting-variation-attributes-and-product-variations"></a>
+                <h3>
+                    Example 4. Inserting Variation Attributes and Product Variations.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><pre><code class="language-json">{
     &quot;objects&quot;: [
         {
             &quot;query&quot;: &quot;SELECT Name, Type, IsActive, StockKeepingUnit, ProductClass, ProductCode FROM Product2 WHERE IsActive = true AND ProductClass IN (&#39;Variation&#39;, &#39;VariationParent&#39;)&quot;,
@@ -431,7 +478,14 @@
 <td>Bachelor i Finance</td>
 </tr>
 </tbody></table>
-<h5 id="notes-1">Notes.<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-1"></a>
+                <h5>
+                    Notes.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><p>In this example Product object has Variation Attribute <strong>&quot;Campus__c&quot;</strong>.</p>
 </li>
 <li><p>ProductAttributeSet object is Readonly. It can&#39;t be updated by the SFDMU and should be preconfigured using Commerce Setup UI.</p>
@@ -441,7 +495,14 @@
 <li><p>In CSV files we omit Record IDs and lookup IDs, but we need to provide external id values for all objects to let SFDMU know how to link target objects.</p>
 </li>
 </ul>
-<h3 id="example-5-upserting-variation-attributes-and-product-variations">Example 5. Upserting Variation Attributes and Product Variations.<a class="heading-anchor" href="#example-5-upserting-variation-attributes-and-product-variations" aria-label="Link to section">#</a></h3><p>The below configuration can be used to Upsert Product Attribute Sets and related Variation/VariationParent products. It should work both in org2org and csv2org migration directions:</p>
+<a class="heading-anchor" id="example-5-upserting-variation-attributes-and-product-variations"></a>
+                <h3>
+                    Example 5. Upserting Variation Attributes and Product Variations.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>The below configuration can be used to Upsert Product Attribute Sets and related Variation/VariationParent products. It should work both in org2org and csv2org migration directions:</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -565,7 +626,14 @@
 <td>BACH-F</td>
 </tr>
 </tbody></table>
-<h5 id="notes-2">Notes.<a class="heading-anchor" href="#notes-2" aria-label="Link to section">#</a></h5><ul>
+<a class="heading-anchor" id="notes-2"></a>
+                <h5>
+                    Notes.
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h5><ul>
 <li><p>In this example Product object has Variation Attribute <strong>&quot;Campus__c&quot;</strong>.</p>
 </li>
 <li><p>ProductAttributeSet object is Readonly. It can&#39;t be updated by the SFDMU and should be preconfigured using Commerce Setup UI.</p>
@@ -578,10 +646,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -601,9 +666,11 @@
   <script src="../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../scripts/ghostdown.js"></script>
+  <script src="../../scripts/raneto.js"></script>
   <script src="../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../assets/static-runtime.js"></script>
   <script src="../../scripts/custom.js"></script>
+  <script src="../../assets/lunr.min.js"></script>
   <script src="../../assets/static-search.js"></script>
 </body>
 </html>

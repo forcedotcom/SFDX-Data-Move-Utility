@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Fields Mapping | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>Fields Mapping | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,11 +255,45 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#example-scenario">Example Scenario</a></li><li class="toc-child"><a href="#use-case">Use case</a></li><li class="toc-child"><a href="#defining-the-field-mapping-in-the-export-configuration">Defining the Field Mapping in the Export Configuration</a></li><li><a href="#using-an-external-csv-file-for-field-mapping">Using an External CSV File for Field Mapping</a></li><li><a href="#mapping-external-id-field">Mapping External Id Field</a></li><li><a href="#additional-notes">Additional Notes</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#example-scenario">Example Scenario</a><ul>
+<li><a href="#use-case">Use case</a></li>
+<li><a href="#defining-the-field-mapping-in-the-export-configuration">Defining the Field Mapping in the Export Configuration</a></li>
+</ul></li>
+<li><a href="#using-an-external-csv-file-for-field-mapping">Using an External CSV File for Field Mapping</a></li>
+<li><a href="#mapping-external-id-field">Mapping External Id Field</a></li>
+<li><a href="#additional-notes">Additional Notes</a></li>
+<li><a href="#related-articles">Related Articles</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p><strong>Purpose</strong>: This feature simplifies data exports to different target data models by allowing the use of field mappings that accommodate differences in field names and structures between the source and target objects.</p>
-<h2 id="example-scenario">Example Scenario<a class="heading-anchor" href="#example-scenario" aria-label="Link to section">#</a></h2><h3 id="use-case">Use case<a class="heading-anchor" href="#use-case" aria-label="Link to section">#</a></h3><p>Suppose you want to export <strong>Account</strong> data into another object called <strong>TestObject__c</strong> in a target system where field names and structures differ from the source. The  Fields Mapping feature enables such cross-object data migration by defining a mapping scheme that translates source fields to their respective target fields.</p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p><strong>Purpose</strong>: This feature simplifies data exports to different target data models by allowing the use of field mappings that accommodate differences in field names and structures between the source and target objects.</p>
+<a class="heading-anchor" id="example-scenario"></a>
+                <h2>
+                    Example Scenario
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><a class="heading-anchor" id="use-case"></a>
+                <h3>
+                    Use case
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>Suppose you want to export <strong>Account</strong> data into another object called <strong>TestObject__c</strong> in a target system where field names and structures differ from the source. The  Fields Mapping feature enables such cross-object data migration by defining a mapping scheme that translates source fields to their respective target fields.</p>
 <p>Consider the following differences between the source object <strong>Account</strong> and the target object <strong>TestObject__c</strong>:</p>
 <ul>
 <li><strong>TestObject__c.ParentTestObject__c</strong> is a self-referenced lookup to <strong>TestObject__c</strong>, similar to how <strong>Account.ParentId</strong> references <strong>Account</strong>.</li>
@@ -294,7 +329,14 @@
 <td>TestObject__c.TEST__c</td>
 </tr>
 </tbody></table>
-<h3 id="defining-the-field-mapping-in-the-export-configuration">Defining the Field Mapping in the Export Configuration<a class="heading-anchor" href="#defining-the-field-mapping-in-the-export-configuration" aria-label="Link to section">#</a></h3><p>You can implement these mappings using the <code>fieldMapping</code> property in the <code>export.json</code> file as shown below:</p>
+<a class="heading-anchor" id="defining-the-field-mapping-in-the-export-configuration"></a>
+                <h3>
+                    Defining the Field Mapping in the Export Configuration
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p>You can implement these mappings using the <code>fieldMapping</code> property in the <code>export.json</code> file as shown below:</p>
 <pre><code class="language-json">{
     &quot;objects&quot;: [
         {
@@ -319,7 +361,14 @@
     ]
 }
 </code></pre>
-<h2 id="using-an-external-csv-file-for-field-mapping">Using an External CSV File for Field Mapping<a class="heading-anchor" href="#using-an-external-csv-file-for-field-mapping" aria-label="Link to section">#</a></h2><p>For extensive field mappings across multiple objects and fields, consider using a dedicated CSV file named <code>FieldMapping.csv</code>. This file should be placed in the same directory as your <code>export.json</code>:</p>
+<a class="heading-anchor" id="using-an-external-csv-file-for-field-mapping"></a>
+                <h2>
+                    Using an External CSV File for Field Mapping
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>For extensive field mappings across multiple objects and fields, consider using a dedicated CSV file named <code>FieldMapping.csv</code>. This file should be placed in the same directory as your <code>export.json</code>:</p>
 <p>Here is an example of the <code>FieldMapping.csv</code> content for the scenario described:</p>
 <table>
 <thead>
@@ -347,16 +396,37 @@
 </tbody></table>
 <p>To activate field mapping for an object, set the object&#39;s <code>useFieldMapping</code> property to <strong>true</strong>.</p>
 <p>Here&#39;s a corrected and improved version of your article:</p>
-<h2 id="mapping-external-id-field">Mapping External Id Field<a class="heading-anchor" href="#mapping-external-id-field" aria-label="Link to section">#</a></h2><p>You can map a field used as an External Id field to another field on the target side. In the current engine behavior, the matching logic for migration operations is resolved <strong>after</strong> the object mapping is prepared, so mapped values participate in record matching for Upsert.</p>
+<a class="heading-anchor" id="mapping-external-id-field"></a>
+                <h2>
+                    Mapping External Id Field
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>You can map a field used as an External Id field to another field on the target side. In the current engine behavior, the matching logic for migration operations is resolved <strong>after</strong> the object mapping is prepared, so mapped values participate in record matching for Upsert.</p>
 <p>For instance, in the <code>export.json</code> file described above, if you set <code>externalId</code> to <code>ExternalID__c</code> instead of <code>Name</code>, Upsert can still match target records when <code>ExternalID__c</code> is mapped to <code>External_ID__c</code>, because matching uses the mapped runtime values. This allows cross-object and cross-field matching scenarios where source and target external-id field names differ.</p>
-<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="additional-notes"></a>
+                <h2>
+                    Additional Notes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li>Ensure to include all fields specified in the <code>sourceField</code> in the object&#39;s query string. Fields mentioned in the mapping but omitted from the query will not be mapped. Fields included using the &quot;multiselect&quot; keyword will be ignored in the mapping schema.</li>
 <li>Field and object names in the mapping schema are <strong>CASE SENSITIVE</strong>.</li>
 <li>The mapping applies only to fields that directly belong to the sobject and does not extend to queries on reference fields.</li>
 <li>You cannot map the same field to multiple fields within the same object using Field Mapping.</li>
 <li>Ensure mapped external-id values remain unique in the target dataset. If multiple target rows resolve to the same mapped external-id value, Upsert matching can become ambiguous.</li>
 </ul>
-<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="related-articles"></a>
+                <h2>
+                    Related Articles
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><a href="../composite-external-id-keys/">Composite External Id Keys</a></li>
 <li><a href="../compound-fields/">Compound Fields</a></li>
 <li><a href="../data-anonymization/">Data Anonymization</a></li>
@@ -364,10 +434,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -387,9 +454,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>

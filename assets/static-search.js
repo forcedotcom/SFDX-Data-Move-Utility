@@ -1,97 +1,231 @@
 (function () {
   const root = document.documentElement.dataset.siteRoot || '';
   const forms = Array.from(document.querySelectorAll('.search-form'));
-  let indexPromise;
-
-  if (forms.length === 0) {
-    return;
-  }
+  const searchQuery = sanitizeQuery(new URLSearchParams(window.location.search).get('search') || '');
 
   forms.forEach(form => {
     const input = form.querySelector('input[type="search"]');
+
     if (!input) {
       return;
     }
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'static-search-wrapper';
-    input.parentNode.insertBefore(wrapper, input);
-    wrapper.appendChild(input);
-
-    const results = document.createElement('div');
-    results.className = 'static-search-results';
-    results.hidden = true;
-    wrapper.appendChild(results);
+    if (searchQuery) {
+      input.value = searchQuery;
+    }
 
     form.addEventListener('submit', event => {
-      event.preventDefault();
-      void searchAsync(input, results);
-    });
-
-    input.addEventListener('input', () => {
-      window.clearTimeout(input.dataset.staticSearchTimer);
-      input.dataset.staticSearchTimer = window.setTimeout(() => {
-        void searchAsync(input, results);
-      }, 160);
-    });
-  });
-
-  document.addEventListener('click', event => {
-    document.querySelectorAll('.static-search-results').forEach(results => {
-      if (!results.contains(event.target) && !results.previousElementSibling?.contains(event.target)) {
-        results.hidden = true;
+      if (!input.value.trim()) {
+        event.preventDefault();
       }
     });
   });
 
-  async function searchAsync(input, results) {
-    const query = input.value.trim().toLowerCase();
-    if (query.length < 2) {
-      results.hidden = true;
-      results.innerHTML = '';
+  if (searchQuery) {
+    void renderSearchPageAsync(searchQuery);
+  }
+
+  async function renderSearchPageAsync(query) {
+    const template = document.getElementById('static-search-page-template');
+    const main = getMainContainer();
+
+    if (!template || !main) {
+      window.location.href = root + '?search=' + encodeURIComponent(query);
       return;
     }
 
-    const index = await loadIndexAsync();
-    const tokens = query.split(/\s+/).filter(Boolean);
-    const matches = index
-      .filter(item => tokens.every(token => item.searchText.includes(token)))
-      .slice(0, 12);
+    document.body.className = 'page-search';
+    main.innerHTML = template.innerHTML;
+    const queryElement = document.getElementById('static-search-query');
 
-    renderResults(results, matches);
-  }
-
-  async function loadIndexAsync() {
-    if (!indexPromise) {
-      indexPromise = fetch(root + 'search-index.json')
-        .then(response => response.json())
-        .then(items => items.map(item => ({
-          ...item,
-          searchText: [item.title, item.description, item.path, item.text]
-            .join(' ')
-            .toLowerCase(),
-        })));
+    if (queryElement) {
+      queryElement.textContent = query;
     }
 
-    return indexPromise;
-  }
+    const placeholder = document.getElementById('static-search-results-placeholder');
 
-  function renderResults(results, matches) {
-    results.hidden = false;
-
-    if (matches.length === 0) {
-      results.innerHTML = '<div class="static-search-result"><strong>No results</strong><span>Try another query.</span></div>';
+    if (!placeholder) {
       return;
     }
 
-    results.innerHTML = matches.map(item => {
-      const href = root + item.url.replace(/^\//, '').replace(/\/?$/, '/');
-      const description = item.description || item.path;
-      return '<a class="static-search-result" href="' + escapeHtml(href) + '">' +
-        '<strong>' + escapeHtml(item.title) + '</strong>' +
-        '<span>' + escapeHtml(description) + '</span>' +
-        '</a>';
+    placeholder.outerHTML = '<p>Searching...</p>';
+
+    try {
+      const searchData = await loadSearchDataAsync();
+      const results = runRanetoSearch(searchData, query);
+      const resultsHost = document.querySelector('.content.search');
+
+      if (resultsHost) {
+        const title = resultsHost.querySelector('.title');
+        resultsHost.innerHTML = '';
+
+        if (title) {
+          resultsHost.appendChild(title);
+        }
+
+        resultsHost.insertAdjacentHTML('beforeend', renderResults(results, query));
+      }
+    } catch (error) {
+      const resultsHost = document.querySelector('.content.search');
+
+      if (resultsHost) {
+        resultsHost.insertAdjacentHTML(
+          'beforeend',
+          '<p class="static-search-failed">Search index could not be loaded.</p>',
+        );
+      }
+    }
+  }
+
+  async function loadSearchDataAsync() {
+    const response = await fetch(root + 'search-index.json');
+
+    if (!response.ok) {
+      throw new Error('Cannot load search-index.json');
+    }
+
+    return await response.json();
+  }
+
+  function runRanetoSearch(searchData, query) {
+    const cleanQuery = query
+      .replace(/[~*+\-^:]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!cleanQuery) {
+      return [];
+    }
+
+    const pagesById = new Map(searchData.pages.map(page => [page.id, page]));
+    const index = window.lunr && searchData.index
+      ? window.lunr.Index.load(searchData.index)
+      : null;
+    let matches = [];
+
+    if (index) {
+      matches = trySearch(index, cleanQuery);
+
+      if (matches.length === 0 && cleanQuery.includes(' ')) {
+        matches = trySearch(index, cleanQuery.split(/\s+/).join(' OR '));
+      }
+
+      if (matches.length === 0 && cleanQuery.length > 2) {
+        matches = trySearch(index, cleanQuery + '~1');
+      }
+
+      if (matches.length === 0) {
+        matches = trySearch(index, cleanQuery + '*');
+      }
+
+      if (matches.length === 0) {
+        const fuzzyQuery = cleanQuery
+          .split(/\s+/)
+          .filter(word => word.length > 2)
+          .map(word => word + '~1')
+          .join(' OR ');
+
+        if (fuzzyQuery) {
+          matches = trySearch(index, fuzzyQuery);
+        }
+      }
+    }
+
+    if (matches.length > 0) {
+      return matches
+        .map(match => pagesById.get(match.ref))
+        .filter(Boolean);
+    }
+
+    return runSubstringFallback(searchData.pages, cleanQuery);
+  }
+
+  function trySearch(index, query) {
+    try {
+      return index.search(query);
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  function runSubstringFallback(pages, cleanQuery) {
+    const tokens = cleanQuery.toLowerCase().split(/\s+/).filter(Boolean);
+
+    if (tokens.length === 0) {
+      return [];
+    }
+
+    return pages
+      .map(page => {
+        const searchText = page.searchText || '';
+
+        if (!tokens.every(token => searchText.includes(token))) {
+          return null;
+        }
+
+        const titleText = String(page.title || '').toLowerCase();
+        const titleScore = tokens.reduce(
+          (score, token) => score + (titleText.includes(token) ? 10 : 0),
+          0,
+        );
+
+        return { page, score: titleScore + tokens.length };
+      })
+      .filter(Boolean)
+      .sort((left, right) => right.score - left.score)
+      .map(result => result.page);
+  }
+
+  function renderResults(results, query) {
+    if (results.length === 0) {
+      return '<p class="nothing-found">Nothing found for "' + escapeHtml(query) + '"</p>';
+    }
+
+    return results.map(page => {
+      const href = root + page.slug.replace(/^\//, '').replace(/\/?$/, '/');
+      const category = page.category
+        ? '<span style="color: #DDD;">(' + escapeHtml(page.category) + ')</span>'
+        : '';
+      return '<div class="page">' +
+        '<h2 class="page-title">' +
+        '<a href="' + escapeHtml(href) + '">' +
+        escapeHtml(page.title) +
+        category +
+        '</a>' +
+        '</h2>' +
+        '<div class="page-excerpt">' + highlightExcerpt(page.excerpt || page.text || '', query) + '</div>' +
+        '</div>';
     }).join('');
+  }
+
+  function highlightExcerpt(excerpt, query) {
+    const escapedExcerpt = escapeHtml(excerpt);
+    const escapedQuery = escapeRegExp(query.trim());
+
+    if (!escapedQuery) {
+      return escapedExcerpt;
+    }
+
+    return escapedExcerpt.replace(
+      new RegExp('(' + escapedQuery + ')', 'gim'),
+      '<span class="search-query">$1</span>',
+    );
+  }
+
+  function sanitizeQuery(query) {
+    return String(query)
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function getMainContainer() {
+    return Array.from(document.body.children)
+      .find(element => element.classList && element.classList.contains('container-fluid'));
+  }
+
+  function escapeRegExp(value) {
+    return String(value).replace(/[.*+?^$\{\}()|[\]\\]/g, '\\$&');
   }
 
   function escapeHtml(value) {

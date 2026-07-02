@@ -1,21 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-site-root="../../../">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RecordsFilter - Bad Words Filter | SFDMU Help Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Haim Knokh,https://github.com/hknokh">
-  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:build-using" content="https://raneto.com">
   <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
   <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
-  <title>RecordsFilter - Bad Words Filter | SFDMU Help Center</title>
   <link rel="shortcut icon" href="../../../favicon.png">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
-  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/lumen.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/bootstrap/dist/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <script>var rn_base_url = "../../..";</script>
-  <link rel="stylesheet" href="../../../styles/raneto.min.css">
-  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
-  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="preload" href="../../../styles/raneto.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/ghostdown.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../lib/highlightjs/styles/night-owl.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="../../../styles/custom.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="stylesheet" href="../../../assets/static-site.css">
 </head>
 <body class="page">
@@ -57,10 +58,10 @@
               onsearch="quickSearch_OnSearch(this.value, '.page-content')"
               placeholder="Search on this page"/>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to next search result" onclick="quickSearchNext()">↓</button>
       </div>
       <div class="input-group-append">
-        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Scroll to prev search result" onclick="quickSearchPrev()">↑</button>
       </div>
       <div class="input-group-append">
         <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
@@ -254,14 +255,40 @@
           </div>
           <div class="col-sm-9">
             <section class="content page-content">
-              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#badwords-filter-setup">BadWords Filter Setup</a></li><li class="toc-child"><a href="#badwordsfile-string">badwordsFile (String)</a></li><li class="toc-child"><a href="#detectfields-string">detectFields (String[])</a></li><li class="toc-child"><a href="#highlightwords-boolean">highlightWords (Boolean)</a></li><li class="toc-child"><a href="#outputmatches-boolean">outputMatches (Boolean)</a></li><li><a href="#additional-notes">Additional Notes</a></li></ul></nav>
-## Overview
+              <hr>
+<h6 id="toc-section">Table of Contents</h6>
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#badwords-filter-setup">BadWords Filter Setup</a><ul>
+<li><a href="#badwordsfile-string">badwordsFile (String)</a></li>
+<li><a href="#detectfields-string">detectFields (String[])</a></li>
+<li><a href="#highlightwords-boolean">highlightWords (Boolean)</a></li>
+<li><a href="#outputmatches-boolean">outputMatches (Boolean)</a></li>
+</ul></li>
+<li><a href="#additional-notes">Additional Notes</a></li>
+</ul>
+<p><br /><br /></p>
 
-<p>The <strong>BadWords</strong> filter scans the object&#39;s fields listed in the <strong>detectFields</strong> for unwanted words, then can output the matched words to the console or even modify the source field value to highlight these words, then upload the modified value to the target (or write to the CSV file).</p>
+
+<a class="heading-anchor" id="overview"></a>
+                <h2>
+                    Overview
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>The <strong>BadWords</strong> filter scans the object&#39;s fields listed in the <strong>detectFields</strong> for unwanted words, then can output the matched words to the console or even modify the source field value to highlight these words, then upload the modified value to the target (or write to the CSV file).</p>
 <p>The <strong>BadWords</strong> filter can be very useful, for example, for GDPR requirements.</p>
 <p>This filter leverages the <a href="../records-filter-core-add-on-module/">RecordsFilter Core Add-On Module</a> features.</p>
 <p>This filter was implemented thanks to the contribution of the author of the amazing tool <a href="https://marketplace.visualstudio.com/items?itemName=NicolasVuillamy.vscode-sfdx-hardis" target="_blank" rel="noopener noreferrer">SFDX Hardis</a>.</p>
-<h2 id="badwords-filter-setup">BadWords Filter Setup<a class="heading-anchor" href="#badwords-filter-setup" aria-label="Link to section">#</a></h2><p>Below is the example configuration for the <strong>BadWords</strong> filter:</p>
+<a class="heading-anchor" id="badwords-filter-setup"></a>
+                <h2>
+                    BadWords Filter Setup
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>Below is the example configuration for the <strong>BadWords</strong> filter:</p>
 <pre><code class="language-json">{
    &quot;objects&quot;: [
      {
@@ -289,11 +316,46 @@
 }
 </code></pre>
 <p>And the specification of filter <code>settings</code> is:</p>
-<h3 id="badwordsfile-string">badwordsFile (String)<a class="heading-anchor" href="#badwordsfile-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &quot;badwords.json&quot;</strong>. The path to the json file where you can list bad words you want to detect. In the default case, the file should be placed in the same directory as the export.json.</p>
-<h3 id="detectfields-string">detectFields (String[])<a class="heading-anchor" href="#detectfields-string" aria-label="Link to section">#</a></h3><p><strong>Mandatory</strong>. Sets the list of object&#39;s fields to scan for bad words.</p>
-<h3 id="highlightwords-boolean">highlightWords (Boolean)<a class="heading-anchor" href="#highlightwords-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false</strong>. Set to true to modify the input record by highlighting the matched bad words with stars. For example, if you defined the bad word list as <strong>[&quot;bad&quot;, &quot;word&quot;]</strong> and the input record value is &quot;<strong>good word bad word</strong>&quot;, it will be replaced with &quot;<strong>good word ***bad*** ***word***</strong>&quot;.</p>
-<h3 id="outputmatches-boolean">outputMatches (Boolean)<a class="heading-anchor" href="#outputmatches-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false</strong>. Set to true to output matched bad words to the Console.</p>
-<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<a class="heading-anchor" id="badwordsfile-string"></a>
+                <h3>
+                    badwordsFile (String)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: &quot;badwords.json&quot;</strong>. The path to the json file where you can list bad words you want to detect. In the default case, the file should be placed in the same directory as the export.json.</p>
+<a class="heading-anchor" id="detectfields-string"></a>
+                <h3>
+                    detectFields (String[])
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Mandatory</strong>. Sets the list of object&#39;s fields to scan for bad words.</p>
+<a class="heading-anchor" id="highlightwords-boolean"></a>
+                <h3>
+                    highlightWords (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false</strong>. Set to true to modify the input record by highlighting the matched bad words with stars. For example, if you defined the bad word list as <strong>[&quot;bad&quot;, &quot;word&quot;]</strong> and the input record value is &quot;<strong>good word bad word</strong>&quot;, it will be replaced with &quot;<strong>good word ***bad*** ***word***</strong>&quot;.</p>
+<a class="heading-anchor" id="outputmatches-boolean"></a>
+                <h3>
+                    outputMatches (Boolean)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional, Default: false</strong>. Set to true to output matched bad words to the Console.</p>
+<a class="heading-anchor" id="additional-notes"></a>
+                <h2>
+                    Additional Notes
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><ul>
 <li><p>The JSON file is allowed to be placed in any location on the disk. You can name it differently, but the default name when you omit this property is <code>badwords.json</code>. Populate this property with the absolute path (or the path relative to the export.json).</p>
 </li>
 <li><p>If <code>badwords.json</code> does not exist or has an incorrect format, the module will throw an error.</p>
@@ -313,10 +375,7 @@
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated 2026
-                </div>
-                <div class="float-left">
-                  <a href="#top-anchor">Back to top</a>
+                  Last updated on 25th Feb 2026
                 </div>
               </div>
             </section>
@@ -336,9 +395,11 @@
   <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
   <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
   <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../scripts/ghostdown.js"></script>
+  <script src="../../../scripts/raneto.js"></script>
   <script src="../../../lib/highlight.js/highlight.min.js"></script>
-  <script src="../../../assets/static-runtime.js"></script>
   <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/lunr.min.js"></script>
   <script src="../../../assets/static-search.js"></script>
 </body>
 </html>
