@@ -14,8 +14,8 @@ This powerful tool supports migration from other Salesforce orgs or CSV files an
 
 - **[SFDMU GUI Desktop Application:](https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App)** **A straightforward and intuitive application for creating, managing, and executing data migrations.**
 - [**SFDMU Help Center:**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/) Comprehensive documentation available.
-- [**User Support Policy:**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/additional-information/support_policy) **Review guidelines before opening support cases.**
-- [**Contribution Policy:**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/additional-information/code_contribution_policy) Learn how to contribute to our project.
+- [**User Support Policy:**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/additional-information/support_policy/) **Review guidelines before opening support cases.**
+- [**Contribution Policy:**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/additional-information/code_contribution_policy/) Learn how to contribute to our project.
 
 ## Version Notice
 
@@ -28,7 +28,7 @@ Full migration guidance is available on [**Get Started**](https://forcedotcom.gi
 
 - **Comprehensive Migration Support:** Enables direct Org-to-Org data migration, eliminating the need for CSV intermediates, and supports CRUD operations: Insert, Upsert, Update, Delete.
 - **Multiple Objects and Relationships:** Manages migrations involving multiple object sets and handles complex relationships, including [circular references](https://forcedotcom.github.io/SFDX-Data-Move-Utility/examples/basic-examples#example-1-handling-circular-references).
-- **Ease of Use:** Simplifies the configuration process with a [single export.json file](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-configuration).
+- **Ease of Use:** Simplifies the configuration process with a [single export.json file](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/export-json-file-overview/).
 - **Secure and Local:** Ensures data security as all operations are performed locally without cloud interactions.
 - **High Performance:** Optimizes processing by focusing on necessary data subsets.
 - **Extended Functionality:** Provides advanced features such as [custom field mapping](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/advanced-features/fields-mapping), [data anonymization](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/advanced-features/data-anonymization), and supports [composite external ID keys](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/advanced-features/composite-external-id-keys) among others.
@@ -107,7 +107,7 @@ For detailed debugging guidance, see [**Debugging Steps**](https://forcedotcom.g
 
 ## Migration Configuration:
 
-Set up a migration job by creating an `export.json` file with specific data models and operations, as detailed in the [Full export.json Format Guide](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-configuration).
+Set up a migration job by creating an `export.json` file with specific data models and operations, as detailed in the [Full export.json Format Guide](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/export-json-file-overview/).
 
 Here is a basic `export.json` example for upserting Accounts and their related Contacts, assuming a unique Name for Accounts and a unique LastName for Contacts across source and target orgs:
 
@@ -129,7 +129,7 @@ Here is a basic `export.json` example for upserting Accounts and their related C
 }
 ```
 
-For full object model details, advanced parameters, and edge cases, use: [**Get Started**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/get-started) and [**Detailed export.json Format**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-configuration).
+For full object model details, advanced parameters, and edge cases, use: [**Get Started**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/get-started) and [**Detailed export.json Format**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/export-json-file-overview/).
 
 ## Migration Execution:
 
@@ -163,7 +163,7 @@ When importing or exporting from/to CSV files, ensure that the files are located
 - [**Configuration Tips**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/configuration)
 - [**How to Run Migrations**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/running)
 - [**Debugging Steps**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/debugging)
-- [**Detailed export.json Format**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-configuration)
+- [**Detailed export.json Format**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/export-json-file-overview/)
 - [**SFDMU GUI Application Detailed Documentation**](https://forcedotcom.github.io/SFDX-Data-Move-Utility/sfdmu-gui-app)
 
 ## Additional Notes
