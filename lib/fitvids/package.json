@@ -1,0 +1,51 @@
+{
+  "name": "fitvids",
+  "version": "2.1.1",
+  "description": "Makes your videos fluid-width.",
+  "main": "index.js",
+  "scripts": {
+    "build": "make build",
+    "test": "make test"
+  },
+  "devDependencies": {
+    "hihat": "^2.6.4",
+    "tap-dev-tool": "^1.3.0",
+    "tape": "^4.2.0",
+    "uglify-js": "^2.4.24",
+    "xo": "^0.25.3"
+  },
+  "keywords": [
+    "video",
+    "responsive",
+    "fluid",
+    "width",
+    "fitvids",
+    "wrapper"
+  ],
+  "xo": {
+    "env": [
+      "browser"
+    ],
+    "semicolon": false,
+    "rules": {
+      "space-before-function-paren": [
+        2,
+        "always"
+      ],
+      "curly": [
+        2,
+        "multi-line"
+      ]
+    }
+  },
+  "author": "Ross Zurowski <ross@rosszurowski.com>",
+  "license": "WTFPL",
+  "homepage": "https://github.com/rosszurowski/vanilla-fitvids#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosszurowski/vanilla-fitvids.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rosszurowski/vanilla-fitvids/issues"
+  }
+}

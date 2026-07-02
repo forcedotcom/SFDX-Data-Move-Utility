@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en" data-site-root="">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Haim Knokh,https://github.com/hknokh">
+  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
+  <meta name="description" content="The SFDX Data Move Utility (SFDMU) is the top-notch modern salesforce data migration solution. It will help you to populate your org with data in minutes.">
+  <title>SFDMU - Advanced Salesforce Data Migration Tool | SFDMU Help Center</title>
+  <link rel="shortcut icon" href="favicon.png">
+  <link rel="stylesheet" href="lib/bootstrap/dist/css/lumen.min.css">
+  <link rel="stylesheet" href="lib/bootstrap/dist/css/font-awesome.min.css">
+  <script>var rn_base_url = "";</script>
+  <link rel="stylesheet" href="styles/raneto.min.css">
+  <link rel="stylesheet" href="lib/highlightjs/styles/night-owl.min.css">
+  <link rel="stylesheet" href="styles/custom.css">
+  <link rel="stylesheet" href="assets/static-site.css">
+</head>
+<body class="page-home">
+  <a class="scroll-anchor" rel="nofollow" id="top-anchor"></a>
+  <header class="header">
+    <div class="container-fluid">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <a href="./" class="logo">
+            <img src="favicon.png" alt="SFDMU Help Center"/>
+            SFDMU Help Center</a>
+        </div>
+        <div class="col-md-5" id="search-and-login">
+          <form class="form-inline float-right"></form>
+          <ul class="nav navbar-nav navbar-right float-right mr-4 pr-2">
+            <li><a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility"><i class="fa fa-code"></i>&nbsp;View On GitHub</a></li>
+          </ul>
+          <form class="search-form pl-4 clearfix" action="./">
+            <div class="form-group">
+              <label class="sr-only" for="search">Search the knowledge base</label>
+              <input type="search" class="form-control float-right page-search-input" name="search" id="search"
+                size="30" value="" placeholder="Search the knowledge base">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="container-fluid">
+    <div class="home-search jumbotron row pb-5">
+  <div class="col col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <h1><img src="logo.png" alt="SFDX Data Move Utility" />SFDX Data Move Utility
+      <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
+        <div class="repo-card" data-repo="forcedotcom/SFDX-Data-Move-Utility"></div>
+      </a>
+    </h1>
+    <h2>The Advanced Salesforce Data Migration Tool</h2>
+    <form class="search-form form-inline home-search d-block" action="./">
+      <div class="form-group">
+        <label class="sr-only" for="home-search">Search the knowledge base</label>
+        <input type="search" class="form-control form-control-lg" name="search" id="home-search" size="50"
+          placeholder="Search the knowledge base">
+        <button type="submit" class="btn btn-secondary btn-lg fa fa-search d-none d-sm-inline-block" style="height:46px"></button>
+      </div>
+    </form>
+   
+    <div class="header-button pt-4">
+      <a href="get-started/" class="btn btn-lg btn-primary">Get Started Now</a>
+    </div>
+  </div>
+</div><div class="container pb-2 text-center">
+  <h3 class="pb-1">
+    The SFDX Data Move Utility (SFDMU) is a modern <strong>Salesforce data migration solution</strong>.
+  </h3>
+</div>
+
+<div class="container">
+
+  <h5>
+    <i class="check-mark">✔</i> The SFDMU will help you to fill your <b>Scratch / Dev / Sandbox /
+      Prod</b> org with records imported from another org or CSV files.
+  </h5>
+  <h5><i class="check-mark">✔</i> It can perform all CRUD operations
+    (<b>Insert</b> /
+    <b>Update</b> / <b>Upsert</b> / <b>Delete</b>) also for <b>multiple related
+      sObjects</b>.
+  </h5>
+  <h5><i class="check-mark">✔</i> It's the comprehensive <b>All-In-One data migration
+      solution</b> with a broad set of unique features not provided by other
+    existing tools.
+  </h5>
+  <h5>
+    <i class="check-mark">✔</i> This Plugin is <b>approved and digitally signed</b> by Salesforce.
+  </h5>
+
+</div>
+
+<br />
+
+<div class="container">
+  <div class="row justify-content-center text-center">
+    <a class="col-auto mb-1" href="get-started/">
+      <div class="thumbnail tile tile-medium tile-outline lg-ml-4">
+        <div class="fa-links">
+          <span>Get Started</span>
+          <i class="fa fa-3x fa-rocket"></i>
+        </div>
+      </div>
+    </a>
+    <a class="col-auto mb-1" href="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
+      <div class="thumbnail tile tile-medium tile-outline lg-ml-4">
+        <div class="fa-links">
+          <span>View On GitHub</span>
+          <i class="fa fa-3x fa-code"></i>
+        </div>
+      </div>
+    </a>
+    <a class="col-auto mb-1" href="sfdmu-gui-app/">
+      <div class="thumbnail tile tile-medium tile-outline lg-ml-4">
+        <div class="fa-links">
+          <span>GUI Application</span>
+          <i class="fa fa-3x fa-laptop"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<br />
+<div class="container">
+  <div class="row">
+    <div class="col-md-7">
+
+      <div class="pt-3">
+        <h3>Why do you need the SFDMU ?</h3>
+        <b>
+          Because the Plugin is equipped with an extended built-in functionality making migration of multiple related
+          objects
+          very handy:
+        </b>
+      </div>
+
+      <br />
+
+      <ul class="feature-highlights">
+        <li>It supports <b>direct Org-to-Org data migration</b> without having to deal with annoying
+          intermediate
+          CSV
+          files.</li>
+        <li>Full support of CRUD operations: <b>Insert</b> / <b>Update</b> / <b>Upsert</b>
+          /
+          <b>Delete.</b>
+        </li>
+        <li>Supports <b>import and export of CSV files</b>.</li>
+        <li>Supports <b>multiple object sets</b> allowing you to execute <b>multiple migration jobs in
+            one
+            run</b>.</li>
+        <li>Supports <b>simultaneous migration</b> <b>of multiple SObjects in one run.</b></li>
+        <li>Handles <b>complex circular references between multiple SObjects.</b></li>
+        <li><b>Simple and user-friendly configuration</b> just with a <a href="export-json-file-overview/">single
+            export.json file</a></li>
+        <li><b>Runs as an SF CLI plugin (<code>sf sfdmu run</code>) based on the latest SF CLI architecture and can
+            be integrated into DevOps pipelines.</b></li>
+        <li>Handles <b>self-referenced fields</b>, e.g. Account.ParentId.</li>
+        <li>Supports <b>External ID field of any type</b> even formula and auto-name fields, a field does not
+          need
+          to be defined as External ID.</li>
+        <li>Supports <a href="full-documentation/advanced-features/composite-external-id-keys/"><b>composite
+              external
+              Id keys.</b></a></li>
+        <li>Supports data <a href="full-documentation/advanced-features/handling-record-type/"><b>migration
+              preserving
+              Record Type</b></a> for each record.</li>
+        <li>Supports <a href="full-documentation/advanced-features/fields-mapping/"><b>fully</b>
+            <b>customized Fields and Object Mapping</b></a>.</li>
+        <li>Has the <b>built-in ETL features,</b> including <a
+            href="full-documentation/advanced-features/values-mapping/"><b>customized Values Mapping</b></a>,
+          <a href="full-documentation/add-on-api/records-transform-core-add-on-module/"><b>expression-based records
+              transformation</b></a>.
+        </li>
+        <li>Supports migration of <b>Person Accounts,</b> including <b>mixed account records of Business
+            and
+            Person type</b>.</li>
+        <li>Supports <b>migration of</b> <a
+            href="full-documentation/add-on-api/export-file-core-add-on-module/"><b>Salesforce Files</b></a>
+          as
+          well as old-fashioned <a
+            href="full-documentation/advanced-features/export-attachments-and-files/"><b>Notes</b> ,
+            <b>Attachments</b></a>, <b>including file binary data</b>.</li>
+        <li>Supports <b>record owner assignment,</b> including <b>option for a default owner
+            assignment.</b></li>
+        <li>Has the <a href="full-documentation/advanced-features/data-anonymization/"><b>built-in</b>
+            <b>data anonymization feature</b></a> to anonymize a sensitive source data (e.g. coming from
+          Production org).</li>
+        <li>Supports binding of <a href="full-documentation/advanced-features/polymorphic-lookup-fields/"><b>polymorphic
+              lookup
+              fields</b></a> (e.g. FeedItem.ParentId).</li>
+        <li><b>Secured and safe</b>. All operations are performed on the client&#39;s machine, there is no
+          cloud
+          interaction, so all is completely safe.</li>
+        <li><b>Fast performance.</b> Processes only a selected subset of records and fields that need to be
+          inserted or updated and does not touch others.</li>
+        <li><b>The core functionality can be extended by using the <a
+              href="full-documentation/add-on-api/custom-sfdmu-add-on-api/">Custom Add-On Api</a></b>. You can
+          create
+          your own Add-On for your special purposes.</li>
+      </ul>
+    </div>
+    <div class="col-md-5">
+      <div class="home-categories row">
+    <div class="col col-md-12">
+      <div class="card category-full-documentation">
+        <h2 class="card-heading">Full Documentation</h2>
+        <ul class="list-group pages">
+          
+    <li class="list-group-item page">Export.json File Specification
+      <ul>
+        <li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/export-json-file-overview/">Export.json File Overview</a></li><li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/script-object/">Script Object</a></li><li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/script-object-set-object/">ScriptObjectSet Object</a></li><li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/script-object-object/">ScriptObject Object</a></li><li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/script-org-object/">ScriptOrg Object</a></li><li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/mapping-item-object/">MappingItem Object</a></li><li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/mock-field-object/">MockField Object</a></li><li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/addon-manifest-definition-object/">AddonManifestDefinition Object</a></li><li class="list-group-item page"><a href="full-documentation/export-json-file-objects-specification/json-schema-for-export-json/">JSON Schema for export.json</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Advanced features
+      <ul>
+        <li class="list-group-item page"><a href="full-documentation/advanced-features/composite-external-id-keys/">Composite External ID keys</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/compound-fields/">Compound Fields</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/data-anonymization/">Data Anonymization</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/delete-by-hierarchy/">DeleteHierarchy operation</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/delete-source/">DeleteSource operation</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/export-attachments-and-files/">Export of the Notes, Attachments and Files</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/field-multiselect/">Field Multiselect</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/fields-mapping/">Fields Mapping</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/handling-record-ownerid/">Handling of record OwnerId</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/handling-record-type/">Handling of the RecordType</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/multiple-object-sets/">Multiple object sets</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/polymorphic-lookup-fields/">Polymorphic Lookup Fields</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/sfdmu-add-ons/">SFDMU Add-Ons</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/target-records-filter/">Target Records Filter</a></li><li class="list-group-item page"><a href="full-documentation/advanced-features/values-mapping/">Values Mapping</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Add-On API
+      <ul>
+        <li class="list-group-item page"><a href="full-documentation/add-on-api/introduction-to-the-sfdmu-add-on-api-engine/">Add-On API Overview</a></li><li class="list-group-item page"><a href="full-documentation/add-on-api/export-file-core-add-on-module/">ExportFiles Core Add-On Module</a></li><li class="list-group-item page"><a href="full-documentation/add-on-api/records-transform-core-add-on-module/">RecordsTransform Core Add-On Module</a></li><li class="list-group-item page"><a href="full-documentation/add-on-api/records-filter-core-add-on-module/">RecordsFilter Core Add-On Module</a></li><li class="list-group-item page"><a href="full-documentation/add-on-api/records-filter-bad-words-filter/">RecordsFilter - Bad Words Filter</a></li><li class="list-group-item page"><a href="full-documentation/add-on-api/supported-events/">Supported Add-On Api events</a></li><li class="list-group-item page"><a href="full-documentation/add-on-api/custom-sfdmu-add-on-api/">Custom Add-On Api</a></li><li class="list-group-item page"><a href="full-documentation/add-on-api/custom-sfdmu-add-on-object-reference/">Custom Add-On API Object Reference</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Reports
+      <ul>
+        <li class="list-group-item page"><a href="full-documentation/reports/issues-with-the-source-csv-files/">Identifying Issues in CSV Files with the Plugin</a></li><li class="list-group-item page"><a href="full-documentation/reports/issues-with-missing-parent-lookup-records/">Handling Missing Parent Records in Plugin Migrations</a></li><li class="list-group-item page"><a href="full-documentation/reports/the-target-csv-files/">Target CSV Files in SFDMU</a></li><li class="list-group-item page"><a href="full-documentation/reports/the-source-csv-files/">Source (Working Copy) CSV Files in SFDMU</a></li><li class="list-group-item page"><a href="full-documentation/reports/the-execution-log/">Log File Management in Plugin Migrations</a></li><li class="list-group-item page"><a href="full-documentation/reports/run-command-flags/">Run Command Flags</a></li>
+      </ul>
+    </li>
+  
+        </ul>
+      </div>
+    </div>
+  
+    <div class="col col-md-12">
+      <div class="card category-examples">
+        <h2 class="card-heading">Examples</h2>
+        <ul class="list-group pages">
+          <li class="list-group-item page"><a href="examples/basic-examples/">Basic examples</a></li><li class="list-group-item page"><a href="examples/advanced-examples/">Advanced examples</a></li><li class="list-group-item page"><a href="examples/csv-import-export/">CSV import-export examples</a></li><li class="list-group-item page"><a href="examples/file-migration/">File data transfer examples</a></li><li class="list-group-item page"><a href="examples/record-transformation/">Record transformation examples</a></li>
+        </ul>
+      </div>
+    </div>
+  
+    <div class="col col-md-12">
+      <div class="card category-faq">
+        <h2 class="card-heading">FAQ</h2>
+        <ul class="list-group pages">
+          
+    <li class="list-group-item page">Bulk Api Query Management
+      <ul>
+        <li class="list-group-item page"><a href="faq/bulk-api-query-management/what-are-the-limitations-on-data-volume-processing/">What are the limitations on data volume processing?</a></li><li class="list-group-item page"><a href="faq/bulk-api-query-management/how-do-i-adjust-the-batch-size-for-a-bulk-api-query/">How do I adjust the batch size for a Bulk API Query?</a></li><li class="list-group-item page"><a href="faq/bulk-api-query-management/why-doesnt-bulk-api-v1-parallel-mode-create-batches-asynchronously/">Why doesn&#39;t Bulk API v1 Parallel Mode create batches asynchronously?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Conceptual Definitions In Sfdmu
+      <ul>
+        <li class="list-group-item page"><a href="faq/conceptual-definitions-in-sfdmu/can-i-include-referenced-fields-like-accountname-into-the-query-string/">Can I include referenced fields, like Account.Name into the query string ?</a></li><li class="list-group-item page"><a href="faq/conceptual-definitions-in-sfdmu/is-there-a-limitation-on-fields-used-in-composite-external-ids-in-sfdmu/">Is there a limitation on fields used in composite external IDs in SFDMU?</a></li><li class="list-group-item page"><a href="faq/conceptual-definitions-in-sfdmu/what-is-master-and-what-is-slave/">What do master and slave objects mean?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Csv File And Encoding Specifications
+      <ul>
+        <li class="list-group-item page"><a href="faq/csv-file-and-encoding-specifications/what-encoding-is-supported-for-csv-files-by-the-plugin/">What encoding is supported for CSV files by the plugin?</a></li><li class="list-group-item page"><a href="faq/csv-file-and-encoding-specifications/what-encoding-type-should-be-used-for-the-export-json-file/">What encoding type should be used for the export.json file?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Data Migration With Plugin
+      <ul>
+        <li class="list-group-item page"><a href="faq/data-migration-with-plugin/can-csv-files-from-the-standard-salesforce-data-loader-be-used-with-this-plugin/">Can CSV files from the standard Salesforce Data Loader be used with this plugin?</a></li><li class="list-group-item page"><a href="faq/data-migration-with-plugin/can-i-override-the-default-query-for-the-user-or-group-objects/">Can I override the default query for the User or Group objects?</a></li><li class="list-group-item page"><a href="faq/data-migration-with-plugin/can-the-plugin-migrate-users-or-groups/">Can the plugin migrate Users or Groups?</a></li><li class="list-group-item page"><a href="faq/data-migration-with-plugin/does-the-plugin-support-exporting-object-metadata/">Does the plugin support exporting object metadata?</a></li><li class="list-group-item page"><a href="faq/data-migration-with-plugin/using-the-all-multiselect-keyword-with-the-product2-object/">Using the `all` multiselect keyword with the `Product2` object.</a></li><li class="list-group-item page"><a href="faq/data-migration-with-plugin/why-are-there-differences-in-failures-between-simulation-and-non-simulation-modes/">Why are there differences in failures between simulation and non-simulation modes?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Data Transfer And Field Exclusions
+      <ul>
+        <li class="list-group-item page"><a href="faq/data-transfer-and-field-exclusions/can-the-document-object-be-transferred-with-binary-data/">Can the Document object be transferred with binary data?</a></li><li class="list-group-item page"><a href="faq/data-transfer-and-field-exclusions/is-it-possible-to-use-multiple-csv-source-files-for-the-same-object/">Is it possible to use multiple CSV source files for the same object?</a></li><li class="list-group-item page"><a href="faq/data-transfer-and-field-exclusions/what-types-of-fields-can-be-excluded-using-the-excludefields-property/">What types of fields can be excluded using the &quot;excludedFields&quot; property?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Object And Field Handling In Soql Queries
+      <ul>
+        <li class="list-group-item page"><a href="faq/object-and-field-handling-in-soql-queries/are-field-names-and-object-names-in-a-soql-query-case-sensitive/">Are field names and object names in a SOQL query case sensitive?</a></li><li class="list-group-item page"><a href="faq/object-and-field-handling-in-soql-queries/can-autonumber-fields-be-used-as-external-ids/">Can autonumber fields be used as External IDs?</a></li><li class="list-group-item page"><a href="faq/object-and-field-handling-in-soql-queries/can-i-export-fields-from-parent-sobjects-using-a-child-object-query/">Can I export fields from parent sObjects using a child object query?</a></li><li class="list-group-item page"><a href="faq/object-and-field-handling-in-soql-queries/is-it-necessary-to-always-specify-the-parent-object-for-a-polymorphic-field/">Is it necessary to always specify the parent object for a polymorphic field?</a></li><li class="list-group-item page"><a href="faq/object-and-field-handling-in-soql-queries/should-the-id-field-always-be-included-in-my-query/">Should the Id field always be included in my query?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Plugin Usage And Extensions
+      <ul>
+        <li class="list-group-item page"><a href="faq/plugin-usage-and-extensions/can-i-modify-and-use-the-plugin-code-for-my-own-projects/">Can I modify and use the plugin code for my own projects?</a></li><li class="list-group-item page"><a href="faq/plugin-usage-and-extensions/can-the-plugin-be-used-in-production-environments/">Can the plugin be used in production environments?</a></li><li class="list-group-item page"><a href="faq/plugin-usage-and-extensions/how-to-address-ui-issues-and-field-selection-in-new-sfdmu-gui/">How to address UI issues and field selection in the new SFDMU GUI?</a></li><li class="list-group-item page"><a href="faq/plugin-usage-and-extensions/is-sfdmu-compatible-with-latest-sf-cli/">Is SFDMU compatible with the latest SF CLI?</a></li><li class="list-group-item page"><a href="faq/plugin-usage-and-extensions/why-does-sfdmu-command-fail-in-force-app-directory-with-sf-cli/">Why does SFDMU command fail in the force-app directory with SF CLI?</a></li><li class="list-group-item page"><a href="faq/plugin-usage-and-extensions/why-doesnt-fieldmapping-rename-csv-column-headers-in-my-configuration/">Why doesn&#39;t FieldMapping rename CSV column headers in my configuration?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Sfdmu Configuration And Pre Validation
+      <ul>
+        <li class="list-group-item page"><a href="faq/sfdmu-configuration-and-pre-validation/can-all-objects-be-defined-as-slave-objects-in-the-configuration/">Can all objects be defined as &quot;slave&quot; objects in the configuration?</a></li><li class="list-group-item page"><a href="faq/sfdmu-configuration-and-pre-validation/can-csv-files-be-used-for-csv-to-org-migration-in-simulation-mode/">Can CSV files be used for CSV-to-org migration in simulation mode?</a></li><li class="list-group-item page"><a href="faq/sfdmu-configuration-and-pre-validation/can-i-omit-the-definition-of-external-id-for-an-object/">Can I omit the definition of External ID for an object?</a></li><li class="list-group-item page"><a href="faq/sfdmu-configuration-and-pre-validation/how-to-modify-include-regex-option-in-sfdmu-configuration/">How to modify the include regex option in SFDMU configuration?</a></li><li class="list-group-item page"><a href="faq/sfdmu-configuration-and-pre-validation/how-to-prevent-resetting-checkboxes-using-sfdmu-with-multiselect-keyword/">How to prevent resetting checkboxes using SFDMU with multiselect keyword?</a></li><li class="list-group-item page"><a href="faq/sfdmu-configuration-and-pre-validation/what-pre-validation-options-does-sfdmu-offer-before-inserting-data/">What pre-validation options does SFDMU offer before inserting data?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Sfdmu Data Insertion And Limitations
+      <ul>
+        <li class="list-group-item page"><a href="faq/sfdmu-data-insertion-and-limitations/can-child-records-with-a-self-lookup-field-be-inserted-in-a-single-job/">Can child records with a self-lookup field be inserted in a single job?</a></li><li class="list-group-item page"><a href="faq/sfdmu-data-insertion-and-limitations/how-to-combine-multiple-account-extractions-into-one-csv-with-sfdmu/">How to combine multiple account extractions into one CSV with SFDMU?</a></li><li class="list-group-item page"><a href="faq/sfdmu-data-insertion-and-limitations/how-to-handle-checkbox-fields-during-csv-imports-in-sfdmu/">How to handle checkbox fields during CSV imports in SFDMU?</a></li><li class="list-group-item page"><a href="faq/sfdmu-data-insertion-and-limitations/how-to-handle-master-detail-relationships-with-sfdmu/">How to handle Master-Detail relationships with SFDMU?</a></li><li class="list-group-item page"><a href="faq/sfdmu-data-insertion-and-limitations/how-to-resolve-object-location-is-missing-in-the-target-error-in-sfdmu/">How to resolve &quot;Object Location is missing in the Target&quot; error in SFDMU?</a></li><li class="list-group-item page"><a href="faq/sfdmu-data-insertion-and-limitations/what-is-the-character-limit-for-the-where-clause-in-the-export-json-file/">What is the character limit for the WHERE clause in the export.json file?</a></li><li class="list-group-item page"><a href="faq/sfdmu-data-insertion-and-limitations/why-does-adding-person-account-records-not-respect-specified-record-types/">Why does adding person account records not respect specified record types?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Sfdmu Gui Application
+      <ul>
+        <li class="list-group-item page"><a href="faq/sfdmu-gui-application/i-cant-find-where-can-i-set-the-operation-for-the-object/">SFDMU GUI - I can&#39;t find where can I set the Operation for the object.</a></li><li class="list-group-item page"><a href="faq/sfdmu-gui-application/sf-cli-is-no-longer-detected/">SFDMU GUI - SF CLI is no longer detected.</a></li>
+      </ul>
+    </li>
+  
+        </ul>
+      </div>
+    </div>
+  
+    <div class="col col-md-12">
+      <div class="card category-troubleshooting">
+        <h2 class="card-heading">Troubleshooting</h2>
+        <ul class="list-group pages">
+          
+    <li class="list-group-item page">Data Import Export Problems
+      <ul>
+        <li class="list-group-item page"><a href="troubleshooting/data-import-export-problems/notes-and-attachments-migration-issues/">Notes and attachments migration issues</a></li><li class="list-group-item page"><a href="troubleshooting/data-import-export-problems/why-no-records-inserted/">Why no records inserted?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Data Mapping Issues
+      <ul>
+        <li class="list-group-item page"><a href="troubleshooting/data-mapping-issues/problem-of-values-mapping-with-regex/">Problem of values mapping with regex.</a></li><li class="list-group-item page"><a href="troubleshooting/data-mapping-issues/warning-about-missing-parent-lookup-records/">Warning about missing parent lookup records</a></li><li class="list-group-item page"><a href="troubleshooting/data-mapping-issues/why-data-anonymization-not-working/">Why data anonymization is not working?</a></li><li class="list-group-item page"><a href="troubleshooting/data-mapping-issues/why-does-the-values-mapping-not-work-for-me/">Why does the values mapping not work for me?</a></li><li class="list-group-item page"><a href="troubleshooting/data-mapping-issues/why-user-and-record-type-lookups-are-not-filled-on-insert/">Why user and record type lookups are not filled on insert?</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Gui Installation Problems
+      <ul>
+        <li class="list-group-item page"><a href="troubleshooting/gui-installation-problems/gui-app-installation-failed-or-showing-blank-screen/">GUI app installation failed or showing blank screen.</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Plugin Connectivity And Configuration
+      <ul>
+        <li class="list-group-item page"><a href="troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-connect-to-the-org/">Plugin cannot connect to the org</a></li><li class="list-group-item page"><a href="troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-locate-export-json-in-working-directory/">Plugin cannot locate export.json in working directory</a></li><li class="list-group-item page"><a href="troubleshooting/plugin-connectivity-and-configuration/plugin-error-no-fields-can-be-updated-or-inserted/">Plugin error: no fields can be updated or inserted</a></li><li class="list-group-item page"><a href="troubleshooting/plugin-connectivity-and-configuration/unable-to-run-plugin-due-to-nodejs-or-sfdx-cli-issue/">Unable to run plugin due to Node.js or SF CLI issue</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Security Authentication Issues
+      <ul>
+        <li class="list-group-item page"><a href="troubleshooting/security-authentication-issues/allow-disabling-ssl-and-hash-checks-for-plugin-linking/">Allow disabling SSL and hash checks for plugin linking</a></li><li class="list-group-item page"><a href="troubleshooting/security-authentication-issues/authentication-issues-with-sfdx-orgs/">Authentication issues with SF CLI orgs</a></li>
+      </ul>
+    </li>
+  
+    <li class="list-group-item page">Unexpected Behavior Errors
+      <ul>
+        <li class="list-group-item page"><a href="troubleshooting/unexpected-behavior-errors/javascript-heap-out-of-memory-error/">JavaScript heap out of memory error</a></li><li class="list-group-item page"><a href="troubleshooting/unexpected-behavior-errors/read-econnreset-error-during-source-retrieval/">Read ECONNRESET error during source retrieval</a></li><li class="list-group-item page"><a href="troubleshooting/unexpected-behavior-errors/sfdmu-finishing-abruptly-no-error-or-warning-whatsoeverd/">SFDMU finishing abruptly, no error or warning whatsoever</a></li><li class="list-group-item page"><a href="troubleshooting/unexpected-behavior-errors/unexpected-behavior-with-default-sfdx-target-org-configuration/">Unexpected behavior with default SFDX target org configuration</a></li><li class="list-group-item page"><a href="troubleshooting/unexpected-behavior-errors/why-do-i-get-the-error-invalid-record-hashcode-from-bulk-job/">Why do I get the error &quot;Invalid record hashcode from bulk job&quot;?</a></li><li class="list-group-item page"><a href="troubleshooting/unexpected-behavior-errors/why-the-deleting-from-the-target-always-runs-for-me/">Why the deleting from the target always runs for me?</a></li>
+      </ul>
+    </li>
+  
+        </ul>
+      </div>
+    </div>
+  
+    <div class="col col-md-12">
+      <div class="card category-additional-information">
+        <h2 class="card-heading">Additional Information</h2>
+        <ul class="list-group pages">
+          <li class="list-group-item page"><a href="additional-information/support_policy/">Support policy</a></li><li class="list-group-item page"><a href="additional-information/code_contribution_policy/">Code contribution policy</a></li><li class="list-group-item page"><a href="additional-information/license/">License Agreement</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+  <div class="row pt-2">
+    <div class="col-md-12">
+      <h3>Use case.</h3>
+        <p>
+          Creating scratch, dev, or sandbox organizations in Salesforce is quick and simple, but these newly created
+          orgs only come with metadata, lacking the real data critical for developing and debugging applications.
+          Traditionally, loading data manually for each new org using tools like Salesforce Data Loader is inefficient,
+          especially since data can be imported directly from production or another sandbox.
+        </p>
+        <p>
+          Often, the challenge is not just importing data but modifying specific records or fields within a complex data
+          model with many dependencies. Additionally, maintaining a clean data model without adding external ID fields
+          to SObjects requires creative solutions for updating records in your developer org.
+        </p>
+        <p>
+          A significant issue arises with the inconsistent IDs across environments when populating the RecordTypeId
+          field. Currently, there's no effective tool for inserting and updating dependent objects based on a unique
+          field used as an External ID. Typically, developers resort to using Excel to manage source tables, which can
+          be cumbersome and error-prone for even a small number of objects.
+        </p>
+        <p>
+          The SFDX Data Move Utility (SFDMU) offers a viable solution for these challenges.
+        </p>
+    </div>
+  </div>
+  <div class="row pt-2">
+    <div class="col-md-12">
+      <div class="text-center">
+        <h4 class="pb-4 pt-4">Watch the demo. The Plugin in action:</h4>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/KI_1vD93prA" title="SFDMU DEMO"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  </div>
+  <footer class="footer">
+    <div class="container-fluid">
+      <p class="copyright float-right">Copyrights &copy; 2026 - <a href="https://salesforce.com">Salesforce.com</a> under <a href="additional-information/license/">BSD-3-Clause</a></p>
+    </div>
+  </footer>
+  <script src="lib/jquery/dist/jquery.min.js"></script>
+  <script src="lib/popper.js/dist/umd/popper.min.js"></script>
+  <script src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="lib/highlightjs/highlight.pack.min.js"></script>
+  <script src="lib/fitvids/dist/fitvids.min.js"></script>
+  <script src="lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="lib/highlight.js/highlight.min.js"></script>
+  <script src="assets/static-runtime.js"></script>
+  <script src="lib/repo-card/repo-card.js"></script>
+  <script src="assets/static-search.js"></script>
+</body>
+</html>

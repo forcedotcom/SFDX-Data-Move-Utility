@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en" data-site-root="../">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Haim Knokh,https://github.com/hknokh">
+  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
+  <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
+  <title>SFDMU GUI Application | SFDMU Help Center</title>
+  <link rel="shortcut icon" href="../favicon.png">
+  <link rel="stylesheet" href="../lib/bootstrap/dist/css/lumen.min.css">
+  <link rel="stylesheet" href="../lib/bootstrap/dist/css/font-awesome.min.css">
+  <script>var rn_base_url = "..";</script>
+  <link rel="stylesheet" href="../styles/raneto.min.css">
+  <link rel="stylesheet" href="../lib/highlightjs/styles/night-owl.min.css">
+  <link rel="stylesheet" href="../styles/custom.css">
+  <link rel="stylesheet" href="../assets/static-site.css">
+</head>
+<body class="page">
+  <a class="scroll-anchor" rel="nofollow" id="top-anchor"></a>
+  <header class="header">
+    <div class="container-fluid">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <a href="../" class="logo">
+            <img src="../favicon.png" alt="SFDMU Help Center"/>
+            SFDMU Help Center</a>
+        </div>
+        <div class="col-md-5" id="search-and-login">
+          <form class="form-inline float-right"></form>
+          <ul class="nav navbar-nav navbar-right float-right mr-4 pr-2">
+            <li><a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility"><i class="fa fa-code"></i>&nbsp;View On GitHub</a></li>
+          </ul>
+          <form class="search-form pl-4 clearfix" action="../">
+            <div class="form-group">
+              <label class="sr-only" for="search">Search the knowledge base</label>
+              <input type="search" class="form-control float-right page-search-input" name="search" id="search"
+                size="30" value="" placeholder="Search the knowledge base">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="container-fluid">
+    
+      <div class="page-wrapper">
+        <div class="page-widgets row d-none d-md-block">
+          <div class="col-sm-9 offset-sm-3" style="padding-left: 32px;">
+            
+    <div class="input-group mv-3">
+      <input type="search" class="form-control quick-search-input"
+              onkeyup="quickSearch_OnKeyUp(event, this.value, '.page-content', 132)"
+              onkeydown="quickSearch_OnKeyDown(event)"
+              onsearch="quickSearch_OnSearch(this.value, '.page-content')"
+              placeholder="Search on this page"/>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+      </div>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+      </div>
+      <div class="input-group-append">
+        <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
+      </div>
+    </div>
+  
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3 d-sm-block d-none side-menu">
+            
+    <ul class="menu" aria-label="Documentation navigation">
+      
+    <li class="category" id="nav-full-documentation">
+      <h5 class="category-title">Full Documentation</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-full-documentation-export-json-file-objects-specification">
+      <a href="#nav-full-documentation-export-json-file-objects-specification-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Export.json File Specification</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-export-json-file-objects-specification-children">
+        <li class="page file"><a href="../full-documentation/export-json-file-objects-specification/export-json-file-overview/"><i class="fa fa-edit"></i>&nbsp;Export.json File Overview</a></li><li class="page file"><a href="../full-documentation/export-json-file-objects-specification/script-object/"><i class="fa fa-edit"></i>&nbsp;Script Object</a></li><li class="page file"><a href="../full-documentation/export-json-file-objects-specification/script-object-set-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObjectSet Object</a></li><li class="page file"><a href="../full-documentation/export-json-file-objects-specification/script-object-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObject Object</a></li><li class="page file"><a href="../full-documentation/export-json-file-objects-specification/script-org-object/"><i class="fa fa-edit"></i>&nbsp;ScriptOrg Object</a></li><li class="page file"><a href="../full-documentation/export-json-file-objects-specification/mapping-item-object/"><i class="fa fa-edit"></i>&nbsp;MappingItem Object</a></li><li class="page file"><a href="../full-documentation/export-json-file-objects-specification/mock-field-object/"><i class="fa fa-edit"></i>&nbsp;MockField Object</a></li><li class="page file"><a href="../full-documentation/export-json-file-objects-specification/addon-manifest-definition-object/"><i class="fa fa-edit"></i>&nbsp;AddonManifestDefinition Object</a></li><li class="page file"><a href="../full-documentation/export-json-file-objects-specification/json-schema-for-export-json/"><i class="fa fa-edit"></i>&nbsp;JSON Schema for export.json</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-advanced-features">
+      <a href="#nav-full-documentation-advanced-features-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Advanced features</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-advanced-features-children">
+        <li class="page file"><a href="../full-documentation/advanced-features/composite-external-id-keys/"><i class="fa fa-edit"></i>&nbsp;Composite External ID keys</a></li><li class="page file"><a href="../full-documentation/advanced-features/compound-fields/"><i class="fa fa-edit"></i>&nbsp;Compound Fields</a></li><li class="page file"><a href="../full-documentation/advanced-features/data-anonymization/"><i class="fa fa-edit"></i>&nbsp;Data Anonymization</a></li><li class="page file"><a href="../full-documentation/advanced-features/delete-by-hierarchy/"><i class="fa fa-edit"></i>&nbsp;DeleteHierarchy operation</a></li><li class="page file"><a href="../full-documentation/advanced-features/delete-source/"><i class="fa fa-edit"></i>&nbsp;DeleteSource operation</a></li><li class="page file"><a href="../full-documentation/advanced-features/export-attachments-and-files/"><i class="fa fa-edit"></i>&nbsp;Export of the Notes, Attachments and Files</a></li><li class="page file"><a href="../full-documentation/advanced-features/field-multiselect/"><i class="fa fa-edit"></i>&nbsp;Field Multiselect</a></li><li class="page file"><a href="../full-documentation/advanced-features/fields-mapping/"><i class="fa fa-edit"></i>&nbsp;Fields Mapping</a></li><li class="page file"><a href="../full-documentation/advanced-features/handling-record-ownerid/"><i class="fa fa-edit"></i>&nbsp;Handling of record OwnerId</a></li><li class="page file"><a href="../full-documentation/advanced-features/handling-record-type/"><i class="fa fa-edit"></i>&nbsp;Handling of the RecordType</a></li><li class="page file"><a href="../full-documentation/advanced-features/multiple-object-sets/"><i class="fa fa-edit"></i>&nbsp;Multiple object sets</a></li><li class="page file"><a href="../full-documentation/advanced-features/polymorphic-lookup-fields/"><i class="fa fa-edit"></i>&nbsp;Polymorphic Lookup Fields</a></li><li class="page file"><a href="../full-documentation/advanced-features/sfdmu-add-ons/"><i class="fa fa-edit"></i>&nbsp;SFDMU Add-Ons</a></li><li class="page file"><a href="../full-documentation/advanced-features/target-records-filter/"><i class="fa fa-edit"></i>&nbsp;Target Records Filter</a></li><li class="page file"><a href="../full-documentation/advanced-features/values-mapping/"><i class="fa fa-edit"></i>&nbsp;Values Mapping</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-add-on-api">
+      <a href="#nav-full-documentation-add-on-api-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Add-On API</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-add-on-api-children">
+        <li class="page file"><a href="../full-documentation/add-on-api/introduction-to-the-sfdmu-add-on-api-engine/"><i class="fa fa-edit"></i>&nbsp;Add-On API Overview</a></li><li class="page file"><a href="../full-documentation/add-on-api/export-file-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;ExportFiles Core Add-On Module</a></li><li class="page file"><a href="../full-documentation/add-on-api/records-transform-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsTransform Core Add-On Module</a></li><li class="page file"><a href="../full-documentation/add-on-api/records-filter-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter Core Add-On Module</a></li><li class="page file"><a href="../full-documentation/add-on-api/records-filter-bad-words-filter/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter - Bad Words Filter</a></li><li class="page file"><a href="../full-documentation/add-on-api/supported-events/"><i class="fa fa-edit"></i>&nbsp;Supported Add-On Api events</a></li><li class="page file"><a href="../full-documentation/add-on-api/custom-sfdmu-add-on-api/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On Api</a></li><li class="page file"><a href="../full-documentation/add-on-api/custom-sfdmu-add-on-object-reference/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On API Object Reference</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-reports">
+      <a href="#nav-full-documentation-reports-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Reports</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-reports-children">
+        <li class="page file"><a href="../full-documentation/reports/issues-with-the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Identifying Issues in CSV Files with the Plugin</a></li><li class="page file"><a href="../full-documentation/reports/issues-with-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Handling Missing Parent Records in Plugin Migrations</a></li><li class="page file"><a href="../full-documentation/reports/the-target-csv-files/"><i class="fa fa-edit"></i>&nbsp;Target CSV Files in SFDMU</a></li><li class="page file"><a href="../full-documentation/reports/the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Source (Working Copy) CSV Files in SFDMU</a></li><li class="page file"><a href="../full-documentation/reports/the-execution-log/"><i class="fa fa-edit"></i>&nbsp;Log File Management in Plugin Migrations</a></li><li class="page file"><a href="../full-documentation/reports/run-command-flags/"><i class="fa fa-edit"></i>&nbsp;Run Command Flags</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../key-features/"><i class="fa fa-edit"></i>&nbsp;Key Features of the SFDMU</a></li>
+    <li class="category" id="nav-examples">
+      <h5 class="category-title">Examples</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../examples/basic-examples/"><i class="fa fa-edit"></i>&nbsp;Basic examples</a></li><li class="page file"><a href="../examples/advanced-examples/"><i class="fa fa-edit"></i>&nbsp;Advanced examples</a></li><li class="page file"><a href="../examples/csv-import-export/"><i class="fa fa-edit"></i>&nbsp;CSV import-export examples</a></li><li class="page file"><a href="../examples/file-migration/"><i class="fa fa-edit"></i>&nbsp;File data transfer examples</a></li><li class="page file"><a href="../examples/record-transformation/"><i class="fa fa-edit"></i>&nbsp;Record transformation examples</a></li>
+      </ul>
+    </li>
+  <li class="page file"><a href="../get-started/"><i class="fa fa-edit"></i>&nbsp;Get Started</a></li><li class="page file"><a href="../installation/"><i class="fa fa-edit"></i>&nbsp;Installation</a></li><li class="page file"><a href="../configuration/"><i class="fa fa-edit"></i>&nbsp;Configuration</a></li>
+    <li class="category" id="nav-faq">
+      <h5 class="category-title">FAQ</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-faq-bulk-api-query-management">
+      <a href="#nav-faq-bulk-api-query-management-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Bulk Api Query Management</a>
+      <ul class="collapse list-unstyled" id="nav-faq-bulk-api-query-management-children">
+        <li class="page file"><a href="../faq/bulk-api-query-management/what-are-the-limitations-on-data-volume-processing/"><i class="fa fa-edit"></i>&nbsp;What are the limitations on data volume processing?</a></li><li class="page file"><a href="../faq/bulk-api-query-management/how-do-i-adjust-the-batch-size-for-a-bulk-api-query/"><i class="fa fa-edit"></i>&nbsp;How do I adjust the batch size for a Bulk API Query?</a></li><li class="page file"><a href="../faq/bulk-api-query-management/why-doesnt-bulk-api-v1-parallel-mode-create-batches-asynchronously/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t Bulk API v1 Parallel Mode create batches asynchronously?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-conceptual-definitions-in-sfdmu">
+      <a href="#nav-faq-conceptual-definitions-in-sfdmu-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Conceptual Definitions In Sfdmu</a>
+      <ul class="collapse list-unstyled" id="nav-faq-conceptual-definitions-in-sfdmu-children">
+        <li class="page file"><a href="../faq/conceptual-definitions-in-sfdmu/can-i-include-referenced-fields-like-accountname-into-the-query-string/"><i class="fa fa-edit"></i>&nbsp;Can I include referenced fields, like Account.Name into the query string ?</a></li><li class="page file"><a href="../faq/conceptual-definitions-in-sfdmu/is-there-a-limitation-on-fields-used-in-composite-external-ids-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;Is there a limitation on fields used in composite external IDs in SFDMU?</a></li><li class="page file"><a href="../faq/conceptual-definitions-in-sfdmu/what-is-master-and-what-is-slave/"><i class="fa fa-edit"></i>&nbsp;What do master and slave objects mean?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-csv-file-and-encoding-specifications">
+      <a href="#nav-faq-csv-file-and-encoding-specifications-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Csv File And Encoding Specifications</a>
+      <ul class="collapse list-unstyled" id="nav-faq-csv-file-and-encoding-specifications-children">
+        <li class="page file"><a href="../faq/csv-file-and-encoding-specifications/what-encoding-is-supported-for-csv-files-by-the-plugin/"><i class="fa fa-edit"></i>&nbsp;What encoding is supported for CSV files by the plugin?</a></li><li class="page file"><a href="../faq/csv-file-and-encoding-specifications/what-encoding-type-should-be-used-for-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What encoding type should be used for the export.json file?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-migration-with-plugin">
+      <a href="#nav-faq-data-migration-with-plugin-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Migration With Plugin</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-migration-with-plugin-children">
+        <li class="page file"><a href="../faq/data-migration-with-plugin/can-csv-files-from-the-standard-salesforce-data-loader-be-used-with-this-plugin/"><i class="fa fa-edit"></i>&nbsp;Can CSV files from the standard Salesforce Data Loader be used with this plugin?</a></li><li class="page file"><a href="../faq/data-migration-with-plugin/can-i-override-the-default-query-for-the-user-or-group-objects/"><i class="fa fa-edit"></i>&nbsp;Can I override the default query for the User or Group objects?</a></li><li class="page file"><a href="../faq/data-migration-with-plugin/can-the-plugin-migrate-users-or-groups/"><i class="fa fa-edit"></i>&nbsp;Can the plugin migrate Users or Groups?</a></li><li class="page file"><a href="../faq/data-migration-with-plugin/does-the-plugin-support-exporting-object-metadata/"><i class="fa fa-edit"></i>&nbsp;Does the plugin support exporting object metadata?</a></li><li class="page file"><a href="../faq/data-migration-with-plugin/using-the-all-multiselect-keyword-with-the-product2-object/"><i class="fa fa-edit"></i>&nbsp;Using the `all` multiselect keyword with the `Product2` object.</a></li><li class="page file"><a href="../faq/data-migration-with-plugin/why-are-there-differences-in-failures-between-simulation-and-non-simulation-modes/"><i class="fa fa-edit"></i>&nbsp;Why are there differences in failures between simulation and non-simulation modes?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-transfer-and-field-exclusions">
+      <a href="#nav-faq-data-transfer-and-field-exclusions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Transfer And Field Exclusions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-transfer-and-field-exclusions-children">
+        <li class="page file"><a href="../faq/data-transfer-and-field-exclusions/can-the-document-object-be-transferred-with-binary-data/"><i class="fa fa-edit"></i>&nbsp;Can the Document object be transferred with binary data?</a></li><li class="page file"><a href="../faq/data-transfer-and-field-exclusions/is-it-possible-to-use-multiple-csv-source-files-for-the-same-object/"><i class="fa fa-edit"></i>&nbsp;Is it possible to use multiple CSV source files for the same object?</a></li><li class="page file"><a href="../faq/data-transfer-and-field-exclusions/what-types-of-fields-can-be-excluded-using-the-excludefields-property/"><i class="fa fa-edit"></i>&nbsp;What types of fields can be excluded using the &quot;excludedFields&quot; property?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-object-and-field-handling-in-soql-queries">
+      <a href="#nav-faq-object-and-field-handling-in-soql-queries-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Object And Field Handling In Soql Queries</a>
+      <ul class="collapse list-unstyled" id="nav-faq-object-and-field-handling-in-soql-queries-children">
+        <li class="page file"><a href="../faq/object-and-field-handling-in-soql-queries/are-field-names-and-object-names-in-a-soql-query-case-sensitive/"><i class="fa fa-edit"></i>&nbsp;Are field names and object names in a SOQL query case sensitive?</a></li><li class="page file"><a href="../faq/object-and-field-handling-in-soql-queries/can-autonumber-fields-be-used-as-external-ids/"><i class="fa fa-edit"></i>&nbsp;Can autonumber fields be used as External IDs?</a></li><li class="page file"><a href="../faq/object-and-field-handling-in-soql-queries/can-i-export-fields-from-parent-sobjects-using-a-child-object-query/"><i class="fa fa-edit"></i>&nbsp;Can I export fields from parent sObjects using a child object query?</a></li><li class="page file"><a href="../faq/object-and-field-handling-in-soql-queries/is-it-necessary-to-always-specify-the-parent-object-for-a-polymorphic-field/"><i class="fa fa-edit"></i>&nbsp;Is it necessary to always specify the parent object for a polymorphic field?</a></li><li class="page file"><a href="../faq/object-and-field-handling-in-soql-queries/should-the-id-field-always-be-included-in-my-query/"><i class="fa fa-edit"></i>&nbsp;Should the Id field always be included in my query?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-plugin-usage-and-extensions">
+      <a href="#nav-faq-plugin-usage-and-extensions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Usage And Extensions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-plugin-usage-and-extensions-children">
+        <li class="page file"><a href="../faq/plugin-usage-and-extensions/can-i-modify-and-use-the-plugin-code-for-my-own-projects/"><i class="fa fa-edit"></i>&nbsp;Can I modify and use the plugin code for my own projects?</a></li><li class="page file"><a href="../faq/plugin-usage-and-extensions/can-the-plugin-be-used-in-production-environments/"><i class="fa fa-edit"></i>&nbsp;Can the plugin be used in production environments?</a></li><li class="page file"><a href="../faq/plugin-usage-and-extensions/how-to-address-ui-issues-and-field-selection-in-new-sfdmu-gui/"><i class="fa fa-edit"></i>&nbsp;How to address UI issues and field selection in the new SFDMU GUI?</a></li><li class="page file"><a href="../faq/plugin-usage-and-extensions/is-sfdmu-compatible-with-latest-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Is SFDMU compatible with the latest SF CLI?</a></li><li class="page file"><a href="../faq/plugin-usage-and-extensions/why-does-sfdmu-command-fail-in-force-app-directory-with-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Why does SFDMU command fail in the force-app directory with SF CLI?</a></li><li class="page file"><a href="../faq/plugin-usage-and-extensions/why-doesnt-fieldmapping-rename-csv-column-headers-in-my-configuration/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t FieldMapping rename CSV column headers in my configuration?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-configuration-and-pre-validation">
+      <a href="#nav-faq-sfdmu-configuration-and-pre-validation-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Configuration And Pre Validation</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-configuration-and-pre-validation-children">
+        <li class="page file"><a href="../faq/sfdmu-configuration-and-pre-validation/can-all-objects-be-defined-as-slave-objects-in-the-configuration/"><i class="fa fa-edit"></i>&nbsp;Can all objects be defined as &quot;slave&quot; objects in the configuration?</a></li><li class="page file"><a href="../faq/sfdmu-configuration-and-pre-validation/can-csv-files-be-used-for-csv-to-org-migration-in-simulation-mode/"><i class="fa fa-edit"></i>&nbsp;Can CSV files be used for CSV-to-org migration in simulation mode?</a></li><li class="page file"><a href="../faq/sfdmu-configuration-and-pre-validation/can-i-omit-the-definition-of-external-id-for-an-object/"><i class="fa fa-edit"></i>&nbsp;Can I omit the definition of External ID for an object?</a></li><li class="page file"><a href="../faq/sfdmu-configuration-and-pre-validation/how-to-modify-include-regex-option-in-sfdmu-configuration/"><i class="fa fa-edit"></i>&nbsp;How to modify the include regex option in SFDMU configuration?</a></li><li class="page file"><a href="../faq/sfdmu-configuration-and-pre-validation/how-to-prevent-resetting-checkboxes-using-sfdmu-with-multiselect-keyword/"><i class="fa fa-edit"></i>&nbsp;How to prevent resetting checkboxes using SFDMU with multiselect keyword?</a></li><li class="page file"><a href="../faq/sfdmu-configuration-and-pre-validation/what-pre-validation-options-does-sfdmu-offer-before-inserting-data/"><i class="fa fa-edit"></i>&nbsp;What pre-validation options does SFDMU offer before inserting data?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-data-insertion-and-limitations">
+      <a href="#nav-faq-sfdmu-data-insertion-and-limitations-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Data Insertion And Limitations</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-data-insertion-and-limitations-children">
+        <li class="page file"><a href="../faq/sfdmu-data-insertion-and-limitations/can-child-records-with-a-self-lookup-field-be-inserted-in-a-single-job/"><i class="fa fa-edit"></i>&nbsp;Can child records with a self-lookup field be inserted in a single job?</a></li><li class="page file"><a href="../faq/sfdmu-data-insertion-and-limitations/how-to-combine-multiple-account-extractions-into-one-csv-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to combine multiple account extractions into one CSV with SFDMU?</a></li><li class="page file"><a href="../faq/sfdmu-data-insertion-and-limitations/how-to-handle-checkbox-fields-during-csv-imports-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle checkbox fields during CSV imports in SFDMU?</a></li><li class="page file"><a href="../faq/sfdmu-data-insertion-and-limitations/how-to-handle-master-detail-relationships-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle Master-Detail relationships with SFDMU?</a></li><li class="page file"><a href="../faq/sfdmu-data-insertion-and-limitations/how-to-resolve-object-location-is-missing-in-the-target-error-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to resolve &quot;Object Location is missing in the Target&quot; error in SFDMU?</a></li><li class="page file"><a href="../faq/sfdmu-data-insertion-and-limitations/what-is-the-character-limit-for-the-where-clause-in-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What is the character limit for the WHERE clause in the export.json file?</a></li><li class="page file"><a href="../faq/sfdmu-data-insertion-and-limitations/why-does-adding-person-account-records-not-respect-specified-record-types/"><i class="fa fa-edit"></i>&nbsp;Why does adding person account records not respect specified record types?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-gui-application">
+      <a href="#nav-faq-sfdmu-gui-application-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Gui Application</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-gui-application-children">
+        <li class="page file"><a href="../faq/sfdmu-gui-application/i-cant-find-where-can-i-set-the-operation-for-the-object/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - I can&#39;t find where can I set the Operation for the object.</a></li><li class="page file"><a href="../faq/sfdmu-gui-application/sf-cli-is-no-longer-detected/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - SF CLI is no longer detected.</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../running/"><i class="fa fa-edit"></i>&nbsp;Running</a></li><li class="page file"><a href="../debugging/"><i class="fa fa-edit"></i>&nbsp;Debugging</a></li>
+    <li class="category" id="nav-troubleshooting">
+      <h5 class="category-title">Troubleshooting</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-troubleshooting-data-import-export-problems">
+      <a href="#nav-troubleshooting-data-import-export-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Import Export Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-import-export-problems-children">
+        <li class="page file"><a href="../troubleshooting/data-import-export-problems/notes-and-attachments-migration-issues/"><i class="fa fa-edit"></i>&nbsp;Notes and attachments migration issues</a></li><li class="page file"><a href="../troubleshooting/data-import-export-problems/why-no-records-inserted/"><i class="fa fa-edit"></i>&nbsp;Why no records inserted?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-data-mapping-issues">
+      <a href="#nav-troubleshooting-data-mapping-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Mapping Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-mapping-issues-children">
+        <li class="page file"><a href="../troubleshooting/data-mapping-issues/problem-of-values-mapping-with-regex/"><i class="fa fa-edit"></i>&nbsp;Problem of values mapping with regex.</a></li><li class="page file"><a href="../troubleshooting/data-mapping-issues/warning-about-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Warning about missing parent lookup records</a></li><li class="page file"><a href="../troubleshooting/data-mapping-issues/why-data-anonymization-not-working/"><i class="fa fa-edit"></i>&nbsp;Why data anonymization is not working?</a></li><li class="page file"><a href="../troubleshooting/data-mapping-issues/why-does-the-values-mapping-not-work-for-me/"><i class="fa fa-edit"></i>&nbsp;Why does the values mapping not work for me?</a></li><li class="page file"><a href="../troubleshooting/data-mapping-issues/why-user-and-record-type-lookups-are-not-filled-on-insert/"><i class="fa fa-edit"></i>&nbsp;Why user and record type lookups are not filled on insert?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-gui-installation-problems">
+      <a href="#nav-troubleshooting-gui-installation-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Gui Installation Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-gui-installation-problems-children">
+        <li class="page file"><a href="../troubleshooting/gui-installation-problems/gui-app-installation-failed-or-showing-blank-screen/"><i class="fa fa-edit"></i>&nbsp;GUI app installation failed or showing blank screen.</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-plugin-connectivity-and-configuration">
+      <a href="#nav-troubleshooting-plugin-connectivity-and-configuration-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Connectivity And Configuration</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-plugin-connectivity-and-configuration-children">
+        <li class="page file"><a href="../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-connect-to-the-org/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot connect to the org</a></li><li class="page file"><a href="../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-locate-export-json-in-working-directory/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot locate export.json in working directory</a></li><li class="page file"><a href="../troubleshooting/plugin-connectivity-and-configuration/plugin-error-no-fields-can-be-updated-or-inserted/"><i class="fa fa-edit"></i>&nbsp;Plugin error: no fields can be updated or inserted</a></li><li class="page file"><a href="../troubleshooting/plugin-connectivity-and-configuration/unable-to-run-plugin-due-to-nodejs-or-sfdx-cli-issue/"><i class="fa fa-edit"></i>&nbsp;Unable to run plugin due to Node.js or SF CLI issue</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-security-authentication-issues">
+      <a href="#nav-troubleshooting-security-authentication-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Security Authentication Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-security-authentication-issues-children">
+        <li class="page file"><a href="../troubleshooting/security-authentication-issues/allow-disabling-ssl-and-hash-checks-for-plugin-linking/"><i class="fa fa-edit"></i>&nbsp;Allow disabling SSL and hash checks for plugin linking</a></li><li class="page file"><a href="../troubleshooting/security-authentication-issues/authentication-issues-with-sfdx-orgs/"><i class="fa fa-edit"></i>&nbsp;Authentication issues with SF CLI orgs</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-unexpected-behavior-errors">
+      <a href="#nav-troubleshooting-unexpected-behavior-errors-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Unexpected Behavior Errors</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-unexpected-behavior-errors-children">
+        <li class="page file"><a href="../troubleshooting/unexpected-behavior-errors/javascript-heap-out-of-memory-error/"><i class="fa fa-edit"></i>&nbsp;JavaScript heap out of memory error</a></li><li class="page file"><a href="../troubleshooting/unexpected-behavior-errors/read-econnreset-error-during-source-retrieval/"><i class="fa fa-edit"></i>&nbsp;Read ECONNRESET error during source retrieval</a></li><li class="page file"><a href="../troubleshooting/unexpected-behavior-errors/sfdmu-finishing-abruptly-no-error-or-warning-whatsoeverd/"><i class="fa fa-edit"></i>&nbsp;SFDMU finishing abruptly, no error or warning whatsoever</a></li><li class="page file"><a href="../troubleshooting/unexpected-behavior-errors/unexpected-behavior-with-default-sfdx-target-org-configuration/"><i class="fa fa-edit"></i>&nbsp;Unexpected behavior with default SFDX target org configuration</a></li><li class="page file"><a href="../troubleshooting/unexpected-behavior-errors/why-do-i-get-the-error-invalid-record-hashcode-from-bulk-job/"><i class="fa fa-edit"></i>&nbsp;Why do I get the error &quot;Invalid record hashcode from bulk job&quot;?</a></li><li class="page file"><a href="../troubleshooting/unexpected-behavior-errors/why-the-deleting-from-the-target-always-runs-for-me/"><i class="fa fa-edit"></i>&nbsp;Why the deleting from the target always runs for me?</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page active file"><a href="./"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI Application</a></li>
+    <li class="category" id="nav-additional-information">
+      <h5 class="category-title">Additional Information</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../additional-information/support_policy/"><i class="fa fa-edit"></i>&nbsp;Support policy</a></li><li class="page file"><a href="../additional-information/code_contribution_policy/"><i class="fa fa-edit"></i>&nbsp;Code contribution policy</a></li><li class="page file"><a href="../additional-information/license/"><i class="fa fa-edit"></i>&nbsp;License Agreement</a></li>
+      </ul>
+    </li>
+  
+    </ul>
+  
+          </div>
+          <div class="col-sm-9">
+            <section class="content page-content">
+              <p><strong>👉 The Application GitHub repository can be found here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App" target="_blank" rel="noopener noreferrer">SFDMU GUI App Application Repository</a></strong></p>
+<nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#when-is-sfdmu-gui-application-useful">When is SFDMU GUI Application Useful?</a></li><li><a href="#supported-os">Supported OS</a></li><li><a href="#installation-of-the-release-version">Installation of the Release Version</a></li><li class="toc-child"><a href="#general-information">General Information</a></li><li class="toc-child"><a href="#prerequisites">Prerequisites</a></li><li class="toc-child"><a href="#installation-of-latest-release">Installation of Latest Release</a></li><li class="toc-child"><a href="#installation-of-specific-release">Installation of Specific Release</a></li><li class="toc-child"><a href="#running-the-installed-application">Running the Installed Application</a></li><li class="toc-child"><a href="#uninstallation-and-upgrades">Uninstallation and Upgrades</a></li><li><a href="#installation-of-the-source-code">Installation of the Source Code</a></li><li class="toc-child"><a href="#prerequisites-8201">Prerequisites&amp;8201;</a></li><li class="toc-child"><a href="#installation-on-windows">Installation on Windows</a></li><li class="toc-child"><a href="#installation-on-macos-and-linux">Installation on macOS and Linux</a></li><li class="toc-child"><a href="#creating-build-artifacts-from-source">Creating Build Artifacts from Source</a></li><li class="toc-child"><a href="#upgrading">Upgrading</a></li><li><a href="#debugging">Debugging</a></li><li class="toc-child"><a href="#start-the-debug-session">Start the Debug Session</a></li><li><a href="#application-configuration">Application Configuration</a></li><li class="toc-child"><a href="#setting-up-the-configuration">Setting Up the Configuration</a></li><li class="toc-child"><a href="#configuration-file-description">Configuration File Description</a></li><li class="toc-child"><a href="#configuration-file-properties">Configuration File Properties</a></li><li><a href="#translation">Translation</a></li><li><a href="#logging">Logging</a></li><li><a href="#backup">Backup</a></li><li><a href="#additional-notes">Additional Notes</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
+## Overview
+The SFDMU GUI Application is a desktop visual interface for creating, editing, validating, and running the SFDMU plugin configuration file (`export.json`). It makes SFDMU setup and execution simpler by replacing most manual JSON editing and command-line steps with a guided visual workflow.
+
+<p><strong>Version <code>5.0.0</code> is the recommended upgrade path.</strong><br>The <code>5.x</code> release line includes the current security dependency updates, substantial UI and engine refactoring, multiple bug fixes, and performance improvements.</p>
+<h2 id="when-is-sfdmu-gui-application-useful">When is SFDMU GUI Application Useful?<a class="heading-anchor" href="#when-is-sfdmu-gui-application-useful" aria-label="Link to section">#</a></h2><p>Beyond the basic setup, the <code>export.json</code> file contains numerous advanced properties useful for creating and executing intricate migration jobs. Consequently, in some situations, the JSON file may become lengthy and challenging to manually edit using standard Notepad.</p>
+<p>With this Desktop Application, there’s no need for Notepad and Console. All tasks are performed visually, significantly simplifying migration job management. Effortlessly add or remove organization connections, configure SObjects and fields, and run the Plugin directly from the application.</p>
+<h2 id="supported-os">Supported OS<a class="heading-anchor" href="#supported-os" aria-label="Link to section">#</a></h2><p>The Application is built using the <a href="https://www.electronjs.org/" target="_blank" rel="noopener noreferrer">ElectronJS</a> framework.</p>
+<ul>
+<li>All major OS (Win, Mac OS, Linux) are supported.</li>
+<li>For Windows, it requires Windows 10 or later.</li>
+</ul>
+<h2 id="installation-of-the-release-version">Installation of the Release Version<a class="heading-anchor" href="#installation-of-the-release-version" aria-label="Link to section">#</a></h2><p>Installing and running the release version of the SFDMU GUI App is a straightforward process.</p>
+<p>This guide provides a step-by-step explanation of how to download and install the SFDMU GUI App from GitHub, suitable for users with minimal technical skills.</p>
+<h3 id="general-information">General Information<a class="heading-anchor" href="#general-information" aria-label="Link to section">#</a></h3><p>The SFDMU GUI App releases are generated using <a href="https://www.electronforge.io/" target="_blank" rel="noopener noreferrer">Electron Forge</a>, with different makers tailored for each operating system:</p>
+<ul>
+<li>For Windows, releases are created using <a href="https://www.electronforge.io/config/makers/squirrel.windows" target="_blank" rel="noopener noreferrer">Squirrel.Windows</a>.</li>
+<li>For macOS, releases are packaged using <a href="https://www.electronforge.io/config/makers/zip" target="_blank" rel="noopener noreferrer">Zip</a>.</li>
+<li>For Linux, packages are available in <a href="https://www.electronforge.io/config/makers/deb" target="_blank" rel="noopener noreferrer">deb</a> and <a href="https://www.electronforge.io/config/makers/rpm" target="_blank" rel="noopener noreferrer">RPM</a> formats.</li>
+<li>Only the <strong>x64</strong> CPU architecture is supported.</li>
+</ul>
+<h3 id="prerequisites">Prerequisites<a class="heading-anchor" href="#prerequisites" aria-label="Link to section">#</a></h3><p>Before installing and using the SFDMU GUI App, ensure you have installed the <a href="https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/install.html" target="_blank" rel="noopener noreferrer">SF CLI</a>.</p>
+<h3 id="installation-of-latest-release">Installation of Latest Release<a class="heading-anchor" href="#installation-of-latest-release" aria-label="Link to section">#</a></h3><p>The recommended baseline is version <code>5.0.0</code> or later in the <code>5.x</code> release line.</p>
+<p>The latest release can be found in the <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release" target="_blank" rel="noopener noreferrer">release</a> branch of the SFDMU GUI App GitHub repository.</p>
+<p>You can find the MD5 hash sums in the respective <code>.md5</code> files located in the same repository folder as the setup file.</p>
+<h4 id="step-1-download">Step 1. Download<a class="heading-anchor" href="#step-1-download" aria-label="Link to section">#</a></h4><p>Download the latest release of the SFDMU GUI App for your operating system:</p>
+<ul>
+<li><strong>macOS</strong>: Access the <code>zip</code> installation file here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release/dist/darwin/x64/" target="_blank" rel="noopener noreferrer">macOS x64 setup</a>.</li>
+<li><strong>Linux (Debian-based systems)</strong>: Access the <code>deb</code> installation file here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release/dist/deb/x64/" target="_blank" rel="noopener noreferrer">Debian x64 setup</a>.</li>
+<li><strong>Linux (RPM-based systems)</strong>: Access the <code>rpm</code> installation file here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release/dist/rpm/x64/" target="_blank" rel="noopener noreferrer">RPM x64 setup</a>.</li>
+<li><strong>Windows</strong>: Access the <code>zip</code> file containing the setup executable here: <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release/dist/windows/x64/" target="_blank" rel="noopener noreferrer">Windows x64 setup</a>.</li>
+</ul>
+<h4 id="step-2-install">Step 2. Install<a class="heading-anchor" href="#step-2-install" aria-label="Link to section">#</a></h4><ol>
+<li>Click on the file link provided for your operating system to navigate to the download page.</li>
+<li>Once on the page, use the download link located at the top right to download the file.</li>
+<li>Follow the steps specific to your operating system for installation the application as detailed in <a href="./#step-4-install-the-application"><strong>Step 4</strong></a> below.</li>
+</ol>
+<h3 id="installation-of-specific-release">Installation of Specific Release<a class="heading-anchor" href="#installation-of-specific-release" aria-label="Link to section">#</a></h3><h4 id="step-1-select-the-release">Step 1: Select the Release<a class="heading-anchor" href="#step-1-select-the-release" aria-label="Link to section">#</a></h4><ol>
+<li>Go to the <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App" target="_blank" rel="noopener noreferrer">SFDMU GUI App Repository</a> on GitHub and locate the <code>Releases</code> link in the sidebar.</li>
+<li>Click on <code>Releases</code> to view all available versions of the SFDMU GUI App. The latest version always appears at the top of the list.</li>
+<li>Select the release you want to install by clicking on the corresponding link to navigate to its page.</li>
+</ol>
+<h4 id="step-2-select-the-release-tag">Step 2: Select the Release Tag<a class="heading-anchor" href="#step-2-select-the-release-tag" aria-label="Link to section">#</a></h4><ol>
+<li>On the release page, click on the version&#39;s tag (icon resembles a price tag) located at the top of the page. This action opens a page listing all files associated with that release.</li>
+</ol>
+<h4 id="step-3-download-the-setup-files">Step 3: Download the Setup Files<a class="heading-anchor" href="#step-3-download-the-setup-files" aria-label="Link to section">#</a></h4><p>In the code files view navigate to the specific subdirectories under <code>dist/</code> and click <code>Download File</code> for the setup file appropriate for your OS:</p>
+<ul>
+<li><strong>macOS</strong>: Navigate to <code>dist/darwin/x64/</code> and download the file, e.g., <code>sfdmu-gui-app-darwin-x64-X.X.X.zip</code>.</li>
+<li><strong>Linux (Debian-based systems)</strong>: Go to <code>dist/deb/x64/</code> and download <code>sfdmu-gui-app_X.X.X_amd64.deb</code>.</li>
+<li><strong>Linux (RPM-based systems)</strong>: Go to <code>dist/rpm/x64/</code> and download <code>SFDMU-GUI-App-X.X.X-1.x86_64.rpm</code>.</li>
+<li><strong>Windows</strong>: Go to <code>dist/windows/x64/</code> and download the zip package, e.g., <code>sfdmu-gui-app-X.X.X Setup.zip</code>.</li>
+</ul>
+<h4 id="step-4-install-the-application">Step 4: Install the Application<a class="heading-anchor" href="#step-4-install-the-application" aria-label="Link to section">#</a></h4><ul>
+<li><strong>macOS</strong>:</li>
+</ul>
+<ol>
+<li>Open your <code>Downloads</code> folder and find the <code>.zip</code> file.</li>
+<li>Double-click to extract it, revealing the <code>sfdmu-gui-app.app</code> file.</li>
+<li>Drag the application to your <code>Applications</code> folder.</li>
+</ol>
+<ul>
+<li><strong>Linux (Debian-based systems)</strong>:</li>
+</ul>
+<ol>
+<li>Open a terminal.</li>
+<li>Navigate to the <code>Downloads</code> directory:<pre><code class="language-bash">cd ~/Downloads
+</code></pre>
+</li>
+<li>Install the package:<pre><code class="language-bash">sudo dpkg -i sfdmu-gui-app_X.X.X_amd64.deb
+</code></pre>
+</li>
+</ol>
+<ul>
+<li><strong>Linux (RPM-based systems)</strong>:</li>
+</ul>
+<ol>
+<li>Open a terminal.</li>
+<li>Navigate to the <code>Downloads</code> directory:<pre><code class="language-bash">cd ~/Downloads
+</code></pre>
+</li>
+<li>Install the package:<pre><code class="language-bash">sudo rpm -i SFDMU-GUI-App-X.X.X-1.x86_64.rpm
+</code></pre>
+</li>
+</ol>
+<ul>
+<li><strong>Windows</strong>:</li>
+</ul>
+<ol>
+<li>Navigate to the folder where the <code>.zip</code> file was downloaded.</li>
+<li>Extract the contents.</li>
+<li>Run the file named<code>sfdmu-gui-app-X.X.X Setup.exe</code>. The installer shows a loader with &quot;SFDMU GUI App installation is in progress...&quot;.</li>
+<li>After installation, the app will automatically launch and create a new shortcut on your desktop and in the Start menu, typically under the folder &quot;Salesforce.com, inc&quot;.</li>
+</ol>
+<h3 id="running-the-installed-application">Running the Installed Application<a class="heading-anchor" href="#running-the-installed-application" aria-label="Link to section">#</a></h3><ul>
+<li><p><strong>macOS</strong>: </p>
+<ol>
+<li><p>Open a Terminal window.</p>
+</li>
+<li><p>Execute the following command to run the application:</p>
+<pre><code class="language-bash">/Applications/sfdmu-gui-app.app/Contents/MacOS/sfdmu-gui-app
+</code></pre>
+</li>
+</ol>
+</li>
+<li><p><strong>Linux:</strong> For both Debian and RPM-based systems, search for SFDMU GUI App in your application menu and launch it.</p>
+</li>
+<li><p><strong>Windows</strong>:  After installation, the app typically starts automatically. For subsequent launches, find the SFDMU GUI App shortcut on your desktop or search for it in the Start menu under &quot;Salesforce.com, inc&quot;.</p>
+</li>
+</ul>
+<h3 id="uninstallation-and-upgrades">Uninstallation and Upgrades<a class="heading-anchor" href="#uninstallation-and-upgrades" aria-label="Link to section">#</a></h3><h4 id="uninstalling-the-app">Uninstalling the App<a class="heading-anchor" href="#uninstalling-the-app" aria-label="Link to section">#</a></h4><ul>
+<li><strong>macOS</strong>: Drag the app from the <code>Applications</code> folder to the Trash.</li>
+<li><strong>Linux (Debian-based)</strong>: Use the command <code>sudo apt-get remove sfdmu-gui-app</code>.</li>
+<li><strong>Linux (RPM-based)</strong>: Use the command <code>sudo rpm -e SFDMU-GUI-App</code>.</li>
+<li><strong>Windows</strong>: Go to <code>Control Panel</code> &gt; <code>Uninstall a program</code>. Locate the SFDMU GUI App, right-click on it, and then select <code>Uninstall</code>.</li>
+</ul>
+<h4 id="upgrading-the-app">Upgrading the App<a class="heading-anchor" href="#upgrading-the-app" aria-label="Link to section">#</a></h4><p>When a new version is available, repeat the download and installation steps. </p>
+<p>For Linux and Windows, the new installation will overwrite the previous version.  For macOS, you may first need to delete the previous version from the <code>Applications</code> folder before installing the new one.</p>
+<h2 id="installation-of-the-source-code">Installation of the Source Code<a class="heading-anchor" href="#installation-of-the-source-code" aria-label="Link to section">#</a></h2><p>This guide details how to install the application&#39;s source code on various operating systems. </p>
+<p>It is intended for developers who wish to modify the original source code or prefer to run the application directly from the source, bypassing the release setup process.</p>
+<h3 id="prerequisites-8201">Prerequisites&#8201;<a class="heading-anchor" href="#prerequisites-8201" aria-label="Link to section">#</a></h3><p>Ensure you have installed <a href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">Node.js &gt;=22 LTS</a>, <a href="https://git-scm.com/downloads" target="_blank" rel="noopener noreferrer">Git</a>, and <a href="https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/install.html" target="_blank" rel="noopener noreferrer">SF CLI</a> before using the source code of the SFDMU GUI App.</p>
+<h3 id="installation-on-windows">Installation on Windows<a class="heading-anchor" href="#installation-on-windows" aria-label="Link to section">#</a></h3><p>For Windows machines, native Electron dependencies require Python and a current Visual C++ toolchain.</p>
+<h4 id="step-1-complete-the-following-prerequisites">Step 1:  Complete the following prerequisites:<a class="heading-anchor" href="#step-1-complete-the-following-prerequisites" aria-label="Link to section">#</a></h4><ol>
+<li><p><strong>Visual Studio Build Tools or Visual Studio Community:</strong> Install either <a href="https://visualstudio.microsoft.com/visual-cpp-build-tools/" target="_blank" rel="noopener noreferrer">Visual Studio Build Tools 2022</a> or <a href="https://visualstudio.microsoft.com/vs/community/" target="_blank" rel="noopener noreferrer">Visual Studio 2022 Community</a>. In the installer, enable <strong>Desktop development with C++</strong> and ensure the <strong>MSVC C++ x64/x86 build tools</strong> are selected.</p>
+</li>
+<li><p><strong>Python:</strong> Download and install the latest supported version of Python, ensuring <code>&quot;Add Python to PATH&quot;</code> is selected during the installation process.
+<a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer">Download Python</a></p>
+</li>
+</ol>
+<h4 id="step-2-clone-the-repository">Step 2: Clone the repository:<a class="heading-anchor" href="#step-2-clone-the-repository" aria-label="Link to section">#</a></h4><pre><code class="language-bash">git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App.git
+</code></pre>
+<h4 id="step-3-navigate-to-the-project-directory">Step 3: Navigate to the project directory:<a class="heading-anchor" href="#step-3-navigate-to-the-project-directory" aria-label="Link to section">#</a></h4><pre><code class="language-bash">cd SFDX-Data-Move-Utility-Desktop-App
+</code></pre>
+<h4 id="step-4-install-project-dependencies">Step 4: Install project dependencies:<a class="heading-anchor" href="#step-4-install-project-dependencies" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm install
+</code></pre>
+<h4 id="step-5-build-the-project">Step 5: Build the project:<a class="heading-anchor" href="#step-5-build-the-project" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm run build
+</code></pre>
+<h4 id="step-6-run-the-application-without-debugging">Step 6: Run the application without debugging:<a class="heading-anchor" href="#step-6-run-the-application-without-debugging" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm start
+</code></pre>
+<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><p>If <code>npm install</code> fails while compiling native modules, verify that Visual Studio still has the <strong>Desktop development with C++</strong> workload installed and that Python is available in <code>PATH</code>.</p>
+<h3 id="installation-on-macos-and-linux">Installation on macOS and Linux<a class="heading-anchor" href="#installation-on-macos-and-linux" aria-label="Link to section">#</a></h3><p>Installation on macOS and Linux is straightforward in most environments.</p>
+<h4 id="step-1-clone-the-repository">Step 1.  Clone the repository:<a class="heading-anchor" href="#step-1-clone-the-repository" aria-label="Link to section">#</a></h4><pre><code class="language-bash">git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App.git
+</code></pre>
+<h4 id="step-2-navigate-to-the-project-directory">Step 2. Navigate to the project directory:<a class="heading-anchor" href="#step-2-navigate-to-the-project-directory" aria-label="Link to section">#</a></h4><pre><code class="language-bash">cd SFDX-Data-Move-Utility-Desktop-App
+</code></pre>
+<h4 id="step-3-install-project-dependencies">Step 3. Install project dependencies:<a class="heading-anchor" href="#step-3-install-project-dependencies" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm install
+</code></pre>
+<h4 id="step-4-build-the-project">Step 4. Build the project:<a class="heading-anchor" href="#step-4-build-the-project" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm run build
+</code></pre>
+<h4 id="step-5-run-the-application">Step 5. Run the application:<a class="heading-anchor" href="#step-5-run-the-application" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm start
+</code></pre>
+<h3 id="creating-build-artifacts-from-source">Creating Build Artifacts from Source<a class="heading-anchor" href="#creating-build-artifacts-from-source" aria-label="Link to section">#</a></h3><p>The project supports different packaging flows depending on the host operating system.</p>
+<h4 id="windows-host">Windows host<a class="heading-anchor" href="#windows-host" aria-label="Link to section">#</a></h4><p>Use these commands on Windows:</p>
+<pre><code class="language-bash">npm install
+npm run make-win
+npm run make-mac
+npm run make-linux
+</code></pre>
+<p>What you get:</p>
+<ul>
+<li><code>npm run make-win</code> creates the Windows installer artifacts.</li>
+<li><code>npm run make-mac</code> creates a macOS <code>.zip</code> artifact.</li>
+<li><code>npm run make-linux</code> creates a <strong>portable Linux zip</strong>.</li>
+</ul>
+<p>Artifacts are written to:</p>
+<ul>
+<li>Windows installer: <code>out/make/squirrel.windows/x64</code></li>
+<li>Windows release zip and hash: <code>dist-temp/windows/x64</code></li>
+<li>macOS zip and hash: <code>dist-temp/darwin/x64</code></li>
+<li>portable Linux zip and hash: <code>dist-temp/linux/x64</code></li>
+</ul>
+<p>Artifact formats:</p>
+<ul>
+<li>Windows: <code>Setup.exe</code>, <code>.nupkg</code>, <code>.zip</code>, <code>.zip.md5</code></li>
+<li>macOS: <code>.zip</code>, <code>.zip.md5</code></li>
+<li>portable Linux: <code>.zip</code>, <code>.zip.md5</code></li>
+</ul>
+<p>When Linux packaging is initiated from Windows, the result is <strong>not</strong> a <code>.deb</code> or <code>.rpm</code> installer. It is a portable Linux x64 bundle packed as a zip archive.</p>
+<p>To run that portable Linux build on a Linux x64 machine:</p>
+<ol>
+<li><p>Extract the zip archive.</p>
+</li>
+<li><p>Open a terminal in the extracted folder.</p>
+</li>
+<li><p>Make the binary executable:</p>
+<pre><code class="language-bash">chmod +x ./sfdmu-gui-app
+</code></pre>
+</li>
+<li><p>Start the application:</p>
+<pre><code class="language-bash">./sfdmu-gui-app
+</code></pre>
+</li>
+</ol>
+<p>The target Linux machine must have the usual Electron desktop runtime libraries installed. For Debian or Ubuntu systems, install the common runtime packages first, for example:</p>
+<pre><code class="language-bash">sudo apt-get install -y libgtk-3-0 libnss3 libxss1 libasound2 libgbm1 libxshmfence1 libxrandr2 libatk-bridge2.0-0 libdrm2 libxkbcommon0
+</code></pre>
+<p>If your distribution uses different package names, install the equivalent GTK 3, NSS, X11/XScrnSaver, GBM, DRM, XKB, ATK bridge, and ALSA runtime libraries.</p>
+<h4 id="linux-host">Linux host<a class="heading-anchor" href="#linux-host" aria-label="Link to section">#</a></h4><p>Use these commands on a Linux machine when you want the standard Forge Linux packaging flow:</p>
+<pre><code class="language-bash">npm install
+npm run make-linux-native
+</code></pre>
+<p>Artifacts are written by Electron Forge under:</p>
+<ul>
+<li><code>out/make</code></li>
+</ul>
+<p>Formats depend on the enabled Linux makers for that host environment.</p>
+<h4 id="debian-or-ubuntu-host">Debian or Ubuntu host<a class="heading-anchor" href="#debian-or-ubuntu-host" aria-label="Link to section">#</a></h4><p>Use this command on a Debian-family Linux machine when you need a <code>.deb</code> package:</p>
+<pre><code class="language-bash">npm install
+npm run make-deb
+</code></pre>
+<p>Expected artifact location and format:</p>
+<ul>
+<li>folder: <code>out/make/deb/x64</code></li>
+<li>format: <code>.deb</code></li>
+</ul>
+<h4 id="rpm-based-linux-host">RPM-based Linux host<a class="heading-anchor" href="#rpm-based-linux-host" aria-label="Link to section">#</a></h4><p>Use this command on an RPM-based Linux machine when you need an <code>.rpm</code> package:</p>
+<pre><code class="language-bash">npm install
+npm run make-rpm
+</code></pre>
+<p>Expected artifact location and format:</p>
+<ul>
+<li>folder: <code>out/make/rpm/x64</code></li>
+<li>format: <code>.rpm</code></li>
+</ul>
+<h3 id="upgrading">Upgrading<a class="heading-anchor" href="#upgrading" aria-label="Link to section">#</a></h3><p>Upgrading the application is streamlined once the initial installation is complete.</p>
+<h4 id="step-1-navigate-to-the-project-directory-where-the-repository-is-cloned">Step 1. Navigate to the project directory where the repository is cloned.<a class="heading-anchor" href="#step-1-navigate-to-the-project-directory-where-the-repository-is-cloned" aria-label="Link to section">#</a></h4><h4 id="step-2-pull-the-latest-changes">Step 2. Pull the latest changes:<a class="heading-anchor" href="#step-2-pull-the-latest-changes" aria-label="Link to section">#</a></h4><pre><code class="language-bash">git pull
+</code></pre>
+<h4 id="step-3-install-any-updated-project-dependencies">Step 3. Install any updated project dependencies:<a class="heading-anchor" href="#step-3-install-any-updated-project-dependencies" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm install
+</code></pre>
+<h4 id="step-4-build-the-project-1">Step 4.  Build the project:<a class="heading-anchor" href="#step-4-build-the-project-1" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm run build
+</code></pre>
+<h4 id="step-5-run-the-application-1">Step 5.  Run the application:<a class="heading-anchor" href="#step-5-run-the-application-1" aria-label="Link to section">#</a></h4><pre><code class="language-bash">npm start
+</code></pre>
+<h2 id="debugging">Debugging<a class="heading-anchor" href="#debugging" aria-label="Link to section">#</a></h2><p>To debug the source code, it&#39;s necessary to have the entire source code cloned and installed locally.</p>
+<h3 id="start-the-debug-session">Start the Debug Session<a class="heading-anchor" href="#start-the-debug-session" aria-label="Link to section">#</a></h3><p>To start debugging the application, ensure the application&#39;s source code is installed as previously described, then execute the following command in a terminal window:</p>
+<pre><code class="language-bash">npm run debug
+</code></pre>
+<p>This command compiles the source code and initiates the debug session.</p>
+<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<li>You can set breakpoints directly in the source code to debug the Electron host context.</li>
+<li>To debug the browser context code, use the client-side debugger available in the Developer Tools of the Chromium browser. These tools will be displayed alongside the main application view when the application is running in debug mode.</li>
+</ul>
+<h2 id="application-configuration">Application Configuration<a class="heading-anchor" href="#application-configuration" aria-label="Link to section">#</a></h2><p>The application uses the <code>app-config.json</code> file, which is located in the standard <strong>configuration home</strong> folder based on the operating system (for example <code>/home/&lt;Username&gt;/.config</code>, <code>C:\Users\&lt;Username&gt;\AppData\Roaming</code>, <code>/Users/&lt;Username&gt;/Library/Application Support</code>). This file is stored under the <code>sfdmu-gui-app</code> directory.</p>
+<p>By default, the application&#39;s working data such as the database, workspaces, logs, and backups are stored separately under the user&#39;s <strong>Documents</strong> folder in the <code>sfdmu-gui-app</code> directory unless <code>appRoot</code> is explicitly overridden.</p>
+<p>The <code>app-config.json</code> file is automatically generated when the application is first launched on a device. After its creation, the file remains unchanged unless manually edited or modified through the application interface to meet specific requirements.</p>
+<h3 id="setting-up-the-configuration">Setting Up the Configuration<a class="heading-anchor" href="#setting-up-the-configuration" aria-label="Link to section">#</a></h3><p>The application configuration can be easily modified through the application interface. Navigate to <strong>File -&gt; Preferences</strong> in the main application menu to make changes.</p>
+<h3 id="configuration-file-description">Configuration File Description<a class="heading-anchor" href="#configuration-file-description" aria-label="Link to section">#</a></h3><p>The configuration file, <code>app-config.json</code>, contains several persisted user settings that customize the behavior of the application. Changes to this file will take effect after the application is restarted.</p>
+<p>Some locale-related defaults are also controlled by the bundled application configuration used at startup. Those values are described below as part of the complete runtime behavior, even when they are not persisted in the user <code>app-config.json</code> file.</p>
+<h3 id="configuration-file-properties">Configuration File Properties<a class="heading-anchor" href="#configuration-file-properties" aria-label="Link to section">#</a></h3><p>Below is the default <code>app-config.json</code> file and detailed description of each property in the JSON configuration:</p>
+<pre><code class="language-json">{
+    &quot;dataRoot&quot;: &quot;sfdmu-gui-app&quot;,
+    &quot;appRoot&quot;: &quot;&quot;,
+    &quot;databaseFilename&quot;: &quot;db.json&quot;,
+    &quot;logBufferFlushIntervalSeconds&quot;: 10,
+    &quot;backupOnApplicationStart&quot;: true,
+    &quot;backupEveryNMinutes&quot;: 5,
+    &quot;language&quot;: &quot;en&quot;
+}
+</code></pre>
+<h4 id="dataroot">dataRoot<a class="heading-anchor" href="#dataroot" aria-label="Link to section">#</a></h4><p>Specifies the name of the folder intended to hold all application data such as the database file, configuration files, migration data, etc. Default value is <code>&quot;sfdmu-gui-app&quot;</code>.</p>
+<h4 id="approot">appRoot<a class="heading-anchor" href="#approot" aria-label="Link to section">#</a></h4><p>Indicates the full path to the parent folder that contains <code>dataRoot</code>. If left blank, the application defaults to using the standard user Documents directory.</p>
+<h4 id="databasefilename">databaseFilename<a class="heading-anchor" href="#databasefilename" aria-label="Link to section">#</a></h4><p>Defines the filename of the database file. This allows for the maintenance of multiple databases with different names within the same directory. The default filename is <code>&quot;db.json&quot;</code>.</p>
+<h4 id="locales">locales<a class="heading-anchor" href="#locales" aria-label="Link to section">#</a></h4><p>Lists the UI languages exposed by the application at runtime. In current builds this list is controlled by the bundled application configuration rather than by the persisted user <code>app-config.json</code> file.</p>
+<h4 id="defaultlocale">defaultLocale<a class="heading-anchor" href="#defaultlocale" aria-label="Link to section">#</a></h4><p>Defines the bundled default locale used by the application on the first run and when hidden or unavailable locales must be normalized internally. In current builds this value is controlled by the bundled application configuration rather than by the persisted user <code>app-config.json</code> file.</p>
+<h4 id="logbufferflushintervalseconds">logBufferFlushIntervalSeconds<a class="heading-anchor" href="#logbufferflushintervalseconds" aria-label="Link to section">#</a></h4><p>Defines how often buffered log entries are flushed to disk. The default value is <code>10</code> seconds.</p>
+<h4 id="backuponapplicationstart">backupOnApplicationStart<a class="heading-anchor" href="#backuponapplicationstart" aria-label="Link to section">#</a></h4><p>Enables automatic backup of the database file each time the Application starts. The backup is always created in the <code>db_backup</code> folder relative to the <code>dataRoot</code>.</p>
+<h4 id="backupeverynminutes">backupEveryNMinutes<a class="heading-anchor" href="#backupeverynminutes" aria-label="Link to section">#</a></h4><p>If greater than 0, this setting enables automatic backup of the database file at specified intervals, in minutes. A setting of <code>0</code> disables this feature. The backup files are named in the format: <code>db-backup-yyyy-MM-dd-HH-mm-ss.json</code>.</p>
+<h4 id="language">language<a class="heading-anchor" href="#language" aria-label="Link to section">#</a></h4><p>Specifies the active UI language. The default value is <code>&quot;en&quot;</code>.</p>
+<h2 id="translation">Translation<a class="heading-anchor" href="#translation" aria-label="Link to section">#</a></h2><p>The Application UI can easily be translated into any language.</p>
+<p>Currently, the Application exposes translations in English, German, Spanish, French, and Hebrew.</p>
+<p>Translation is done in the standard i18n format using JSON files located in the <code>./i18n</code> directory.</p>
+<p><strong>To translate the Application:</strong></p>
+<ol>
+<li>Add a new file named <code>[locale].json</code> to the <code>./i18n</code> directory, for example, to translate to Japanese, add <code>./i18n/ja.json</code>.</li>
+<li>Translate all keys from the English version, which is the base language for the Application.</li>
+</ol>
+<p>After the file is ready, add a new value to the <code>appConfig.locales</code> array in <code>package.json</code>, then rebuild or restart the source installation:</p>
+<pre><code class="language-json">&quot;appConfig&quot;: {
+  &quot;locales&quot;: [
+    &quot;en&quot;,
+    &quot;he&quot;,
+    &quot;es&quot;,
+    &quot;fr&quot;,
+    &quot;de&quot;,
+    &quot;ja&quot; // &lt;- translated to Japanese
+  ]
+}
+</code></pre>
+<h5 id="notes-2">Notes:<a class="heading-anchor" href="#notes-2" aria-label="Link to section">#</a></h5><ul>
+<li><p>You can add or change translation only for the Application running as a source code.</p>
+</li>
+<li><p>If you want to improve the existing translation or provide translation to other languages, please submit a PR. 
+Your support is highly appreciated! :)</p>
+</li>
+</ul>
+<h2 id="logging">Logging<a class="heading-anchor" href="#logging" aria-label="Link to section">#</a></h2><ul>
+<li>The application provides comprehensive logs for all events, actions, and issues.</li>
+<li>Logs are stored in the <code>logs</code> subdirectory located at <strong>[appRoot]/[dataRoot]/logs</strong>. For example, based on the default configuration in <code>app-config.json</code>, the log files are located in the <code>[Documents Folder]/sfdmu-gui-app/logs/</code>.</li>
+<li>The format for log filenames is: <strong>yyyy-MM-dd-HH.log</strong>.</li>
+<li>Logs are automatically rotated and archived into zip files every two weeks to conserve disk space. </li>
+<li>The log file includes detailed information on all application events, which is essential for debugging. When reporting issues about the GUI App, please attach these logs as they help in identifying and resolving bugs. <strong>Before submitting, ensure that all sensitive information has been removed from the log files.</strong></li>
+</ul>
+<h2 id="backup">Backup<a class="heading-anchor" href="#backup" aria-label="Link to section">#</a></h2><ul>
+<li>The Application conducts automatic database file backups. Backups are performed silently in the background and are consistently stored in the <code>db_backup</code> folder relative to the <code>dataRoot</code> folder.</li>
+<li>Adjust <a href="./#backupeverynminutes"><code>backupEveryNMinutes</code></a> in <code>app-config.json</code> to set the backup interval. A setting of 5 triggers backups every 5 minutes.</li>
+<li>Backups are saved in the format <code>db-backup-yyyy-MM-dd-HH-mm-ss.json</code>.</li>
+<li>Set <a href="./#backupeverynminutes"><code>backupEveryNMinutes</code></a> to 0 to disable automatic backups.</li>
+<li>Enable <a href="./#backuponapplicationstart"><code>backupOnApplicationStart</code></a> for backups at each application start.</li>
+</ul>
+<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<li><strong>The final selection of the data source and target</strong>, including the option to use CSV files as either, should not be made during the Connection step but rather <strong>during the Preview step</strong>. Simply click on the <code>&quot;Command Line Setup&quot;</code> tab on the Preview page and use the dropdown selectors to choose your desired data source and target.<br />Contrastingly, the Connection step allows you to select only Salesforce orgs, enabling you to set up the <code>export.json</code> configuration based on the metadata available in these organizations.</li>
+<li>All query settings for the object, including <code>operation</code> (e.g., Insert, Update, Upsert, etc.) and <code>externalId</code> properties, can be configured under the <code>Queries and Filters</code> tab when the object is selected during the <strong>Configuration</strong> step.</li>
+<li>Since the <strong>release version</strong> of the SFDMU GUI App is stored in the Git repository using LFS, <strong>simply downloading the <code>.zip</code> or <code>tar.gz</code> files attached to the release is insufficient.</strong> <br />Instead, you must download the appropriate setup file directly from the tagged codebase as described above.</li>
+</ul>
+<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<li><a href="../get-started/">Get Started</a></li>
+<li><a href="../configuration/">Configuration</a></li>
+<li><a href="../running/">Running</a></li>
+</ul>
+
+              <div class="page-meta clearfix">
+                <div class="last-updated float-right">
+                  Last updated 2026
+                </div>
+                <div class="float-left">
+                  <a href="#top-anchor">Back to top</a>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    
+  </div>
+  <footer class="footer">
+    <div class="container-fluid">
+      <p class="copyright float-right">Copyrights &copy; 2026 - <a href="https://salesforce.com">Salesforce.com</a> under <a href="../additional-information/license/">BSD-3-Clause</a></p>
+    </div>
+  </footer>
+  <script src="../lib/jquery/dist/jquery.min.js"></script>
+  <script src="../lib/popper.js/dist/umd/popper.min.js"></script>
+  <script src="../lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../lib/highlightjs/highlight.pack.min.js"></script>
+  <script src="../lib/fitvids/dist/fitvids.min.js"></script>
+  <script src="../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../lib/highlight.js/highlight.min.js"></script>
+  <script src="../assets/static-runtime.js"></script>
+  <script src="../scripts/custom.js"></script>
+  <script src="../assets/static-search.js"></script>
+</body>
+</html>

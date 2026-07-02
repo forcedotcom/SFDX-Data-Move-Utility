@@ -1,0 +1,9 @@
+{
+    "objects": [
+        {
+            "query": "SELECT Id, FirstName, LastName, CPR__pc, PersonEmail,  RecordType.DeveloperName FROM Account WHERE Party_Id__c IN ('181009E')",
+            "operation": "Insert",
+            "externalId": "Id"
+       }
+    ]
+}

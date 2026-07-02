@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en" data-site-root="../../../">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Haim Knokh,https://github.com/hknokh">
+  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
+  <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
+  <title>ScriptObject Object | SFDMU Help Center</title>
+  <link rel="shortcut icon" href="../../../favicon.png">
+  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
+  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <script>var rn_base_url = "../../..";</script>
+  <link rel="stylesheet" href="../../../styles/raneto.min.css">
+  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
+  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="stylesheet" href="../../../assets/static-site.css">
+</head>
+<body class="page">
+  <a class="scroll-anchor" rel="nofollow" id="top-anchor"></a>
+  <header class="header">
+    <div class="container-fluid">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <a href="../../../" class="logo">
+            <img src="../../../favicon.png" alt="SFDMU Help Center"/>
+            SFDMU Help Center</a>
+        </div>
+        <div class="col-md-5" id="search-and-login">
+          <form class="form-inline float-right"></form>
+          <ul class="nav navbar-nav navbar-right float-right mr-4 pr-2">
+            <li><a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility"><i class="fa fa-code"></i>&nbsp;View On GitHub</a></li>
+          </ul>
+          <form class="search-form pl-4 clearfix" action="../../../">
+            <div class="form-group">
+              <label class="sr-only" for="search">Search the knowledge base</label>
+              <input type="search" class="form-control float-right page-search-input" name="search" id="search"
+                size="30" value="" placeholder="Search the knowledge base">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="container-fluid">
+    
+      <div class="page-wrapper">
+        <div class="page-widgets row d-none d-md-block">
+          <div class="col-sm-9 offset-sm-3" style="padding-left: 32px;">
+            
+    <div class="input-group mv-3">
+      <input type="search" class="form-control quick-search-input"
+              onkeyup="quickSearch_OnKeyUp(event, this.value, '.page-content', 132)"
+              onkeydown="quickSearch_OnKeyDown(event)"
+              onsearch="quickSearch_OnSearch(this.value, '.page-content')"
+              placeholder="Search on this page"/>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+      </div>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+      </div>
+      <div class="input-group-append">
+        <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
+      </div>
+    </div>
+  
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3 d-sm-block d-none side-menu">
+            
+    <ul class="menu" aria-label="Documentation navigation">
+      
+    <li class="category active" id="nav-full-documentation">
+      <h5 class="category-title active">Full Documentation</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory active" id="nav-full-documentation-export-json-file-objects-specification">
+      <a href="#nav-full-documentation-export-json-file-objects-specification-children" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle"><i class="fa fa-folder-open"></i>&nbsp;Export.json File Specification</a>
+      <ul class="collapse list-unstyled show" id="nav-full-documentation-export-json-file-objects-specification-children">
+        <li class="page file"><a href="../export-json-file-overview/"><i class="fa fa-edit"></i>&nbsp;Export.json File Overview</a></li><li class="page file"><a href="../script-object/"><i class="fa fa-edit"></i>&nbsp;Script Object</a></li><li class="page file"><a href="../script-object-set-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObjectSet Object</a></li><li class="page active file"><a href="./"><i class="fa fa-edit"></i>&nbsp;ScriptObject Object</a></li><li class="page file"><a href="../script-org-object/"><i class="fa fa-edit"></i>&nbsp;ScriptOrg Object</a></li><li class="page file"><a href="../mapping-item-object/"><i class="fa fa-edit"></i>&nbsp;MappingItem Object</a></li><li class="page file"><a href="../mock-field-object/"><i class="fa fa-edit"></i>&nbsp;MockField Object</a></li><li class="page file"><a href="../addon-manifest-definition-object/"><i class="fa fa-edit"></i>&nbsp;AddonManifestDefinition Object</a></li><li class="page file"><a href="../json-schema-for-export-json/"><i class="fa fa-edit"></i>&nbsp;JSON Schema for export.json</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-advanced-features">
+      <a href="#nav-full-documentation-advanced-features-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Advanced features</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-advanced-features-children">
+        <li class="page file"><a href="../../advanced-features/composite-external-id-keys/"><i class="fa fa-edit"></i>&nbsp;Composite External ID keys</a></li><li class="page file"><a href="../../advanced-features/compound-fields/"><i class="fa fa-edit"></i>&nbsp;Compound Fields</a></li><li class="page file"><a href="../../advanced-features/data-anonymization/"><i class="fa fa-edit"></i>&nbsp;Data Anonymization</a></li><li class="page file"><a href="../../advanced-features/delete-by-hierarchy/"><i class="fa fa-edit"></i>&nbsp;DeleteHierarchy operation</a></li><li class="page file"><a href="../../advanced-features/delete-source/"><i class="fa fa-edit"></i>&nbsp;DeleteSource operation</a></li><li class="page file"><a href="../../advanced-features/export-attachments-and-files/"><i class="fa fa-edit"></i>&nbsp;Export of the Notes, Attachments and Files</a></li><li class="page file"><a href="../../advanced-features/field-multiselect/"><i class="fa fa-edit"></i>&nbsp;Field Multiselect</a></li><li class="page file"><a href="../../advanced-features/fields-mapping/"><i class="fa fa-edit"></i>&nbsp;Fields Mapping</a></li><li class="page file"><a href="../../advanced-features/handling-record-ownerid/"><i class="fa fa-edit"></i>&nbsp;Handling of record OwnerId</a></li><li class="page file"><a href="../../advanced-features/handling-record-type/"><i class="fa fa-edit"></i>&nbsp;Handling of the RecordType</a></li><li class="page file"><a href="../../advanced-features/multiple-object-sets/"><i class="fa fa-edit"></i>&nbsp;Multiple object sets</a></li><li class="page file"><a href="../../advanced-features/polymorphic-lookup-fields/"><i class="fa fa-edit"></i>&nbsp;Polymorphic Lookup Fields</a></li><li class="page file"><a href="../../advanced-features/sfdmu-add-ons/"><i class="fa fa-edit"></i>&nbsp;SFDMU Add-Ons</a></li><li class="page file"><a href="../../advanced-features/target-records-filter/"><i class="fa fa-edit"></i>&nbsp;Target Records Filter</a></li><li class="page file"><a href="../../advanced-features/values-mapping/"><i class="fa fa-edit"></i>&nbsp;Values Mapping</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-add-on-api">
+      <a href="#nav-full-documentation-add-on-api-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Add-On API</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-add-on-api-children">
+        <li class="page file"><a href="../../add-on-api/introduction-to-the-sfdmu-add-on-api-engine/"><i class="fa fa-edit"></i>&nbsp;Add-On API Overview</a></li><li class="page file"><a href="../../add-on-api/export-file-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;ExportFiles Core Add-On Module</a></li><li class="page file"><a href="../../add-on-api/records-transform-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsTransform Core Add-On Module</a></li><li class="page file"><a href="../../add-on-api/records-filter-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter Core Add-On Module</a></li><li class="page file"><a href="../../add-on-api/records-filter-bad-words-filter/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter - Bad Words Filter</a></li><li class="page file"><a href="../../add-on-api/supported-events/"><i class="fa fa-edit"></i>&nbsp;Supported Add-On Api events</a></li><li class="page file"><a href="../../add-on-api/custom-sfdmu-add-on-api/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On Api</a></li><li class="page file"><a href="../../add-on-api/custom-sfdmu-add-on-object-reference/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On API Object Reference</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-reports">
+      <a href="#nav-full-documentation-reports-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Reports</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-reports-children">
+        <li class="page file"><a href="../../reports/issues-with-the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Identifying Issues in CSV Files with the Plugin</a></li><li class="page file"><a href="../../reports/issues-with-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Handling Missing Parent Records in Plugin Migrations</a></li><li class="page file"><a href="../../reports/the-target-csv-files/"><i class="fa fa-edit"></i>&nbsp;Target CSV Files in SFDMU</a></li><li class="page file"><a href="../../reports/the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Source (Working Copy) CSV Files in SFDMU</a></li><li class="page file"><a href="../../reports/the-execution-log/"><i class="fa fa-edit"></i>&nbsp;Log File Management in Plugin Migrations</a></li><li class="page file"><a href="../../reports/run-command-flags/"><i class="fa fa-edit"></i>&nbsp;Run Command Flags</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../key-features/"><i class="fa fa-edit"></i>&nbsp;Key Features of the SFDMU</a></li>
+    <li class="category" id="nav-examples">
+      <h5 class="category-title">Examples</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../../../examples/basic-examples/"><i class="fa fa-edit"></i>&nbsp;Basic examples</a></li><li class="page file"><a href="../../../examples/advanced-examples/"><i class="fa fa-edit"></i>&nbsp;Advanced examples</a></li><li class="page file"><a href="../../../examples/csv-import-export/"><i class="fa fa-edit"></i>&nbsp;CSV import-export examples</a></li><li class="page file"><a href="../../../examples/file-migration/"><i class="fa fa-edit"></i>&nbsp;File data transfer examples</a></li><li class="page file"><a href="../../../examples/record-transformation/"><i class="fa fa-edit"></i>&nbsp;Record transformation examples</a></li>
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../get-started/"><i class="fa fa-edit"></i>&nbsp;Get Started</a></li><li class="page file"><a href="../../../installation/"><i class="fa fa-edit"></i>&nbsp;Installation</a></li><li class="page file"><a href="../../../configuration/"><i class="fa fa-edit"></i>&nbsp;Configuration</a></li>
+    <li class="category" id="nav-faq">
+      <h5 class="category-title">FAQ</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-faq-bulk-api-query-management">
+      <a href="#nav-faq-bulk-api-query-management-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Bulk Api Query Management</a>
+      <ul class="collapse list-unstyled" id="nav-faq-bulk-api-query-management-children">
+        <li class="page file"><a href="../../../faq/bulk-api-query-management/what-are-the-limitations-on-data-volume-processing/"><i class="fa fa-edit"></i>&nbsp;What are the limitations on data volume processing?</a></li><li class="page file"><a href="../../../faq/bulk-api-query-management/how-do-i-adjust-the-batch-size-for-a-bulk-api-query/"><i class="fa fa-edit"></i>&nbsp;How do I adjust the batch size for a Bulk API Query?</a></li><li class="page file"><a href="../../../faq/bulk-api-query-management/why-doesnt-bulk-api-v1-parallel-mode-create-batches-asynchronously/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t Bulk API v1 Parallel Mode create batches asynchronously?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-conceptual-definitions-in-sfdmu">
+      <a href="#nav-faq-conceptual-definitions-in-sfdmu-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Conceptual Definitions In Sfdmu</a>
+      <ul class="collapse list-unstyled" id="nav-faq-conceptual-definitions-in-sfdmu-children">
+        <li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/can-i-include-referenced-fields-like-accountname-into-the-query-string/"><i class="fa fa-edit"></i>&nbsp;Can I include referenced fields, like Account.Name into the query string ?</a></li><li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/is-there-a-limitation-on-fields-used-in-composite-external-ids-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;Is there a limitation on fields used in composite external IDs in SFDMU?</a></li><li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/what-is-master-and-what-is-slave/"><i class="fa fa-edit"></i>&nbsp;What do master and slave objects mean?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-csv-file-and-encoding-specifications">
+      <a href="#nav-faq-csv-file-and-encoding-specifications-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Csv File And Encoding Specifications</a>
+      <ul class="collapse list-unstyled" id="nav-faq-csv-file-and-encoding-specifications-children">
+        <li class="page file"><a href="../../../faq/csv-file-and-encoding-specifications/what-encoding-is-supported-for-csv-files-by-the-plugin/"><i class="fa fa-edit"></i>&nbsp;What encoding is supported for CSV files by the plugin?</a></li><li class="page file"><a href="../../../faq/csv-file-and-encoding-specifications/what-encoding-type-should-be-used-for-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What encoding type should be used for the export.json file?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-migration-with-plugin">
+      <a href="#nav-faq-data-migration-with-plugin-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Migration With Plugin</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-migration-with-plugin-children">
+        <li class="page file"><a href="../../../faq/data-migration-with-plugin/can-csv-files-from-the-standard-salesforce-data-loader-be-used-with-this-plugin/"><i class="fa fa-edit"></i>&nbsp;Can CSV files from the standard Salesforce Data Loader be used with this plugin?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/can-i-override-the-default-query-for-the-user-or-group-objects/"><i class="fa fa-edit"></i>&nbsp;Can I override the default query for the User or Group objects?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/can-the-plugin-migrate-users-or-groups/"><i class="fa fa-edit"></i>&nbsp;Can the plugin migrate Users or Groups?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/does-the-plugin-support-exporting-object-metadata/"><i class="fa fa-edit"></i>&nbsp;Does the plugin support exporting object metadata?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/using-the-all-multiselect-keyword-with-the-product2-object/"><i class="fa fa-edit"></i>&nbsp;Using the `all` multiselect keyword with the `Product2` object.</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/why-are-there-differences-in-failures-between-simulation-and-non-simulation-modes/"><i class="fa fa-edit"></i>&nbsp;Why are there differences in failures between simulation and non-simulation modes?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-transfer-and-field-exclusions">
+      <a href="#nav-faq-data-transfer-and-field-exclusions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Transfer And Field Exclusions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-transfer-and-field-exclusions-children">
+        <li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/can-the-document-object-be-transferred-with-binary-data/"><i class="fa fa-edit"></i>&nbsp;Can the Document object be transferred with binary data?</a></li><li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/is-it-possible-to-use-multiple-csv-source-files-for-the-same-object/"><i class="fa fa-edit"></i>&nbsp;Is it possible to use multiple CSV source files for the same object?</a></li><li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/what-types-of-fields-can-be-excluded-using-the-excludefields-property/"><i class="fa fa-edit"></i>&nbsp;What types of fields can be excluded using the &quot;excludedFields&quot; property?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-object-and-field-handling-in-soql-queries">
+      <a href="#nav-faq-object-and-field-handling-in-soql-queries-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Object And Field Handling In Soql Queries</a>
+      <ul class="collapse list-unstyled" id="nav-faq-object-and-field-handling-in-soql-queries-children">
+        <li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/are-field-names-and-object-names-in-a-soql-query-case-sensitive/"><i class="fa fa-edit"></i>&nbsp;Are field names and object names in a SOQL query case sensitive?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/can-autonumber-fields-be-used-as-external-ids/"><i class="fa fa-edit"></i>&nbsp;Can autonumber fields be used as External IDs?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/can-i-export-fields-from-parent-sobjects-using-a-child-object-query/"><i class="fa fa-edit"></i>&nbsp;Can I export fields from parent sObjects using a child object query?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/is-it-necessary-to-always-specify-the-parent-object-for-a-polymorphic-field/"><i class="fa fa-edit"></i>&nbsp;Is it necessary to always specify the parent object for a polymorphic field?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/should-the-id-field-always-be-included-in-my-query/"><i class="fa fa-edit"></i>&nbsp;Should the Id field always be included in my query?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-plugin-usage-and-extensions">
+      <a href="#nav-faq-plugin-usage-and-extensions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Usage And Extensions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-plugin-usage-and-extensions-children">
+        <li class="page file"><a href="../../../faq/plugin-usage-and-extensions/can-i-modify-and-use-the-plugin-code-for-my-own-projects/"><i class="fa fa-edit"></i>&nbsp;Can I modify and use the plugin code for my own projects?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/can-the-plugin-be-used-in-production-environments/"><i class="fa fa-edit"></i>&nbsp;Can the plugin be used in production environments?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/how-to-address-ui-issues-and-field-selection-in-new-sfdmu-gui/"><i class="fa fa-edit"></i>&nbsp;How to address UI issues and field selection in the new SFDMU GUI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/is-sfdmu-compatible-with-latest-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Is SFDMU compatible with the latest SF CLI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/why-does-sfdmu-command-fail-in-force-app-directory-with-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Why does SFDMU command fail in the force-app directory with SF CLI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/why-doesnt-fieldmapping-rename-csv-column-headers-in-my-configuration/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t FieldMapping rename CSV column headers in my configuration?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-configuration-and-pre-validation">
+      <a href="#nav-faq-sfdmu-configuration-and-pre-validation-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Configuration And Pre Validation</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-configuration-and-pre-validation-children">
+        <li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-all-objects-be-defined-as-slave-objects-in-the-configuration/"><i class="fa fa-edit"></i>&nbsp;Can all objects be defined as &quot;slave&quot; objects in the configuration?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-csv-files-be-used-for-csv-to-org-migration-in-simulation-mode/"><i class="fa fa-edit"></i>&nbsp;Can CSV files be used for CSV-to-org migration in simulation mode?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-i-omit-the-definition-of-external-id-for-an-object/"><i class="fa fa-edit"></i>&nbsp;Can I omit the definition of External ID for an object?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/how-to-modify-include-regex-option-in-sfdmu-configuration/"><i class="fa fa-edit"></i>&nbsp;How to modify the include regex option in SFDMU configuration?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/how-to-prevent-resetting-checkboxes-using-sfdmu-with-multiselect-keyword/"><i class="fa fa-edit"></i>&nbsp;How to prevent resetting checkboxes using SFDMU with multiselect keyword?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/what-pre-validation-options-does-sfdmu-offer-before-inserting-data/"><i class="fa fa-edit"></i>&nbsp;What pre-validation options does SFDMU offer before inserting data?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-data-insertion-and-limitations">
+      <a href="#nav-faq-sfdmu-data-insertion-and-limitations-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Data Insertion And Limitations</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-data-insertion-and-limitations-children">
+        <li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/can-child-records-with-a-self-lookup-field-be-inserted-in-a-single-job/"><i class="fa fa-edit"></i>&nbsp;Can child records with a self-lookup field be inserted in a single job?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-combine-multiple-account-extractions-into-one-csv-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to combine multiple account extractions into one CSV with SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-handle-checkbox-fields-during-csv-imports-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle checkbox fields during CSV imports in SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-handle-master-detail-relationships-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle Master-Detail relationships with SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-resolve-object-location-is-missing-in-the-target-error-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to resolve &quot;Object Location is missing in the Target&quot; error in SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/what-is-the-character-limit-for-the-where-clause-in-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What is the character limit for the WHERE clause in the export.json file?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/why-does-adding-person-account-records-not-respect-specified-record-types/"><i class="fa fa-edit"></i>&nbsp;Why does adding person account records not respect specified record types?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-gui-application">
+      <a href="#nav-faq-sfdmu-gui-application-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Gui Application</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-gui-application-children">
+        <li class="page file"><a href="../../../faq/sfdmu-gui-application/i-cant-find-where-can-i-set-the-operation-for-the-object/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - I can&#39;t find where can I set the Operation for the object.</a></li><li class="page file"><a href="../../../faq/sfdmu-gui-application/sf-cli-is-no-longer-detected/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - SF CLI is no longer detected.</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../running/"><i class="fa fa-edit"></i>&nbsp;Running</a></li><li class="page file"><a href="../../../debugging/"><i class="fa fa-edit"></i>&nbsp;Debugging</a></li>
+    <li class="category" id="nav-troubleshooting">
+      <h5 class="category-title">Troubleshooting</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-troubleshooting-data-import-export-problems">
+      <a href="#nav-troubleshooting-data-import-export-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Import Export Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-import-export-problems-children">
+        <li class="page file"><a href="../../../troubleshooting/data-import-export-problems/notes-and-attachments-migration-issues/"><i class="fa fa-edit"></i>&nbsp;Notes and attachments migration issues</a></li><li class="page file"><a href="../../../troubleshooting/data-import-export-problems/why-no-records-inserted/"><i class="fa fa-edit"></i>&nbsp;Why no records inserted?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-data-mapping-issues">
+      <a href="#nav-troubleshooting-data-mapping-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Mapping Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-mapping-issues-children">
+        <li class="page file"><a href="../../../troubleshooting/data-mapping-issues/problem-of-values-mapping-with-regex/"><i class="fa fa-edit"></i>&nbsp;Problem of values mapping with regex.</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/warning-about-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Warning about missing parent lookup records</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-data-anonymization-not-working/"><i class="fa fa-edit"></i>&nbsp;Why data anonymization is not working?</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-does-the-values-mapping-not-work-for-me/"><i class="fa fa-edit"></i>&nbsp;Why does the values mapping not work for me?</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-user-and-record-type-lookups-are-not-filled-on-insert/"><i class="fa fa-edit"></i>&nbsp;Why user and record type lookups are not filled on insert?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-gui-installation-problems">
+      <a href="#nav-troubleshooting-gui-installation-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Gui Installation Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-gui-installation-problems-children">
+        <li class="page file"><a href="../../../troubleshooting/gui-installation-problems/gui-app-installation-failed-or-showing-blank-screen/"><i class="fa fa-edit"></i>&nbsp;GUI app installation failed or showing blank screen.</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-plugin-connectivity-and-configuration">
+      <a href="#nav-troubleshooting-plugin-connectivity-and-configuration-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Connectivity And Configuration</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-plugin-connectivity-and-configuration-children">
+        <li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-connect-to-the-org/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot connect to the org</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-locate-export-json-in-working-directory/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot locate export.json in working directory</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-error-no-fields-can-be-updated-or-inserted/"><i class="fa fa-edit"></i>&nbsp;Plugin error: no fields can be updated or inserted</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/unable-to-run-plugin-due-to-nodejs-or-sfdx-cli-issue/"><i class="fa fa-edit"></i>&nbsp;Unable to run plugin due to Node.js or SF CLI issue</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-security-authentication-issues">
+      <a href="#nav-troubleshooting-security-authentication-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Security Authentication Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-security-authentication-issues-children">
+        <li class="page file"><a href="../../../troubleshooting/security-authentication-issues/allow-disabling-ssl-and-hash-checks-for-plugin-linking/"><i class="fa fa-edit"></i>&nbsp;Allow disabling SSL and hash checks for plugin linking</a></li><li class="page file"><a href="../../../troubleshooting/security-authentication-issues/authentication-issues-with-sfdx-orgs/"><i class="fa fa-edit"></i>&nbsp;Authentication issues with SF CLI orgs</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-unexpected-behavior-errors">
+      <a href="#nav-troubleshooting-unexpected-behavior-errors-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Unexpected Behavior Errors</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-unexpected-behavior-errors-children">
+        <li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/javascript-heap-out-of-memory-error/"><i class="fa fa-edit"></i>&nbsp;JavaScript heap out of memory error</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/read-econnreset-error-during-source-retrieval/"><i class="fa fa-edit"></i>&nbsp;Read ECONNRESET error during source retrieval</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/sfdmu-finishing-abruptly-no-error-or-warning-whatsoeverd/"><i class="fa fa-edit"></i>&nbsp;SFDMU finishing abruptly, no error or warning whatsoever</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/unexpected-behavior-with-default-sfdx-target-org-configuration/"><i class="fa fa-edit"></i>&nbsp;Unexpected behavior with default SFDX target org configuration</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/why-do-i-get-the-error-invalid-record-hashcode-from-bulk-job/"><i class="fa fa-edit"></i>&nbsp;Why do I get the error &quot;Invalid record hashcode from bulk job&quot;?</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/why-the-deleting-from-the-target-always-runs-for-me/"><i class="fa fa-edit"></i>&nbsp;Why the deleting from the target always runs for me?</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../sfdmu-gui-app/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI Application</a></li>
+    <li class="category" id="nav-additional-information">
+      <h5 class="category-title">Additional Information</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../../../additional-information/support_policy/"><i class="fa fa-edit"></i>&nbsp;Support policy</a></li><li class="page file"><a href="../../../additional-information/code_contribution_policy/"><i class="fa fa-edit"></i>&nbsp;Code contribution policy</a></li><li class="page file"><a href="../../../additional-information/license/"><i class="fa fa-edit"></i>&nbsp;License Agreement</a></li>
+      </ul>
+    </li>
+  
+    </ul>
+  
+          </div>
+          <div class="col-sm-9">
+            <section class="content page-content">
+              <p><strong>🡨  Go Back to <a href="../export-json-file-overview/">Export.json File Overview</a></strong></p>
+<nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#scriptobject-object-overview">ScriptObject Object Overview</a></li><li><a href="#usage-of-scriptobjects">Usage of ScriptObjects</a></li><li><a href="#scriptobject-object-properties">ScriptObject Object Properties</a></li><li class="toc-child"><a href="#afteraddons-array-of-addonmanifestdefinition">afterAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#afterupdateaddons-array-of-addonmanifestdefinition">afterUpdateAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#beforeaddons-array-of-addonmanifestdefinition">beforeAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#beforeupdateaddons-array-of-addonmanifestdefinition">beforeUpdateAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#bulkapiv1batchsize-integer">bulkApiV1BatchSize (Integer)</a></li><li class="toc-child"><a href="#respectorderbyondeleterecords-boolean">respectOrderByOnDeleteRecords (Boolean)</a></li><li class="toc-child"><a href="#alwaysusebulkapitoupdaterecords-boolean">alwaysUseBulkApiToUpdateRecords (Boolean)</a></li><li class="toc-child"><a href="#alwaysuserestapi-boolean">alwaysUseRestApi (Boolean)</a></li><li class="toc-child"><a href="#alwaysusebulkapi-boolean">alwaysUseBulkApi (Boolean)</a></li><li class="toc-child"><a href="#deletebyhierarchy-boolean">deleteByHierarchy (Boolean)</a></li><li class="toc-child"><a href="#deletefromsource-boolean">deleteFromSource (Boolean)</a></li><li class="toc-child"><a href="#deleteolddata-boolean">deleteOldData (Boolean)</a></li><li class="toc-child"><a href="#deletequery-string">deleteQuery (String)</a></li><li class="toc-child"><a href="#excluded-boolean">excluded (Boolean)</a></li><li class="toc-child"><a href="#excludedfields-array-of-string">excludedFields (Array of string)</a></li><li class="toc-child"><a href="#excludedfromupdatefields-array-of-string">excludedFromUpdateFields (Array of string)</a></li><li class="toc-child"><a href="#externalid-string">externalId (String)</a></li><li class="toc-child"><a href="#fieldmapping-array-of-mappingitem">fieldMapping (Array of MappingItem)</a></li><li class="toc-child"><a href="#filterrecordsaddons-array-of-addonmanifestdefinition">filterRecordsAddons (Array of AddonManifestDefinition)</a></li><li class="toc-child"><a href="#harddelete-boolean">hardDelete (Boolean)</a></li><li class="toc-child"><a href="#master-boolean">master (Boolean)</a></li><li class="toc-child"><a href="#mockfields-array-of-mockfield">mockFields (Array of MockField)</a></li><li class="toc-child"><a href="#operation-string">operation (String)</a></li><li class="toc-child"><a href="#parallelbulkjobs-integer">parallelBulkJobs (Integer)</a></li><li class="toc-child"><a href="#parallelrestjobs-integer">parallelRestJobs (Integer)</a></li><li class="toc-child"><a href="#query-string">query (String)</a></li><li class="toc-child"><a href="#queryalltarget-boolean">queryAllTarget (Boolean)</a></li><li class="toc-child"><a href="#restapibatchsize-integer">restApiBatchSize (Integer)</a></li><li class="toc-child"><a href="#skipexistingrecords-boolean">skipExistingRecords (Boolean)</a></li><li class="toc-child"><a href="#skiprecordscomparison-boolean">skipRecordsComparison (Boolean)</a></li><li class="toc-child"><a href="#sourcerecordsfilter-string">sourceRecordsFilter (String)</a></li><li class="toc-child"><a href="#targetrecordsfilter-string">targetRecordsFilter (String)</a></li><li class="toc-child"><a href="#updatewithmockdata-boolean">updateWithMockData (Boolean)</a></li><li class="toc-child"><a href="#usecsvvaluesmapping-boolean">useCSVValuesMapping (Boolean)</a></li><li class="toc-child"><a href="#usefieldmapping-boolean">useFieldMapping (Boolean)</a></li><li class="toc-child"><a href="#usequeryall-boolean">useQueryAll (Boolean)</a></li><li class="toc-child"><a href="#usevaluesmapping-boolean">useValuesMapping (Boolean)</a></li><li class="toc-child"><a href="#usesourcecsvfile-boolean">useSourceCSVFile (Boolean)</a></li></ul></nav>
+## ScriptObject Object Overview
+
+<p>Within the SFDMU&#39;s <strong>export.json</strong> file, the <strong>ScriptObject</strong> object functions as a child element of the global  <strong><a href="../script-object/">Script</a></strong> object. This structure allows for specific configuration settings tailored to individual Salesforce objects (sObjects).</p>
+<p>Properties defined within a <strong>ScriptObject</strong> are designed to override equivalent properties at higher levels in the configuration hierarchy. This capability ensures that settings can be customized for each sObject, providing precise control over the migration parameters for those particular objects.</p>
+<h2 id="usage-of-scriptobjects">Usage of ScriptObjects<a class="heading-anchor" href="#usage-of-scriptobjects" aria-label="Link to section">#</a></h2><p>The <strong>objects</strong> property of the <strong>Script</strong> object is utilized to declare an array of <strong>ScriptObjects</strong> that are processed during the migration. Below is how they can be configured:</p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    
+    // ScriptObject for upserting Accounts
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      // Additional ScriptObject properties
+    },
+    
+    // ScriptObject for upserting Contacts
+    {
+      &quot;query&quot;: &quot;SELECT Id, AccountId FROM Contact&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;LastName&quot;,
+      // Additional ScriptObject properties
+    }
+  ]
+}
+</code></pre>
+<h2 id="scriptobject-object-properties">ScriptObject Object Properties<a class="heading-anchor" href="#scriptobject-object-properties" aria-label="Link to section">#</a></h2><h3 id="afteraddons-array-of-addonmanifestdefinition">afterAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#afteraddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines add-ons that are executed after the migration operation. For detailed information on the events that can be utilized, see: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<p><strong>Item Type:</strong> <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT all FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;afterAddons&quot;: [
+        {
+          &quot;module&quot;: &quot;PostMigrationCleanup&quot;,
+          &quot;args&quot;: {
+            &quot;cleanupType&quot;: &quot;Remove Temporary Data&quot;
+          }
+        }
+      ]
+      // Additional ScriptObject properties
+    }
+  ]
+  // ... other export.json properties
+}
+</code></pre>
+<h3 id="afterupdateaddons-array-of-addonmanifestdefinition">afterUpdateAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#afterupdateaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> The <code>afterUpdateAddons</code> property in the <code>export.json</code> file specifies add-ons that are activated after each update operation during a migration job. For further details on the types of add-on events supported, refer to: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<p><strong>Item Type:</strong> <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT all FROM Contact&quot;,
+      &quot;operation&quot;: &quot;Update&quot;,
+      &quot;externalId&quot;: &quot;Email&quot;,
+      &quot;afterUpdateAddons&quot;: [
+        {
+          &quot;module&quot;: &quot;PostUpdateTasks&quot;,
+          &quot;args&quot;: {
+            &quot;task&quot;: &quot;Verify Contact Data&quot;
+          }
+        }
+      ]
+      // Additional ScriptObject properties
+    }
+  ]
+  // ... other export.json properties
+}
+</code></pre>
+<h3 id="beforeaddons-array-of-addonmanifestdefinition">beforeAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#beforeaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines events that trigger before the migration operation. More details are available at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<p><strong>Item Type:</strong>   <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT all FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;beforeAddons&quot;: [
+        {
+          &quot;module&quot;: &quot;PreMigrationAudit&quot;,
+          &quot;args&quot;: {
+            &quot;checkDuplicates&quot;: true,
+            &quot;logLevel&quot;: &quot;verbose&quot;
+          }
+        }
+      ]
+      // Additional ScriptObject properties        
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="beforeupdateaddons-array-of-addonmanifestdefinition">beforeUpdateAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#beforeupdateaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies add-ons to be invoked before each update operation within the migration job. Detailed information can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<p><strong>Item Type:</strong>   <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT all FROM Account&quot;,
+      &quot;operation&quot;: &quot;Update&quot;,
+      &quot;externalId&quot;: &quot;AccountId&quot;,
+      &quot;beforeUpdateAddons&quot;: [
+        {
+          &quot;module&quot;: &quot;DataValidationModule&quot;,
+          &quot;args&quot;: {
+            &quot;validateFields&quot;: [&quot;Email&quot;, &quot;Phone&quot;],
+            &quot;errorHandling&quot;: &quot;log&quot;
+          }
+        }
+      ]
+      // Additional ScriptObject properties        
+    }   
+  ] 
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="bulkapiv1batchsize-integer">bulkApiV1BatchSize (Integer)<a class="heading-anchor" href="#bulkapiv1batchsize-integer" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies the batch size for Bulk API V1 operations at the object level, overriding the global setting if provided.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;bulkApiV1BatchSize&quot;: 9500
+      // Additional ScriptObject properties        
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="respectorderbyondeleterecords-boolean">respectOrderByOnDeleteRecords (Boolean)<a class="heading-anchor" href="#respectorderbyondeleterecords-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Enables order-preserving delete mode for this object.<br>When set to <code>true</code>, SFDMU forces delete-like DML operations for this object to REST with one record per request (<code>alwaysUseRestApiToUpdateRecords=true</code>, <code>restApiBatchSize=1</code>), while keeping the rest of the delete flow unchanged.</p>
+<p>This applies to delete scenarios:</p>
+<ul>
+<li><code>deleteOldData=true</code></li>
+<li><code>operation=Delete</code></li>
+<li><code>deleteByHierarchy=true</code> (<code>DeleteHierarchy</code>)</li>
+<li><code>deleteFromSource=true</code> (<code>DeleteSource</code>)</li>
+</ul>
+<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<li>This mode can significantly slow down execution.</li>
+<li>This mode consumes more REST API limits because one request is sent per record.</li>
+<li>This is required to keep delete processing aligned with query ordering intent, because Salesforce APIs do not provide a strict ordered-delete guarantee in bulk-style execution.</li>
+</ul>
+<h3 id="alwaysusebulkapitoupdaterecords-boolean">alwaysUseBulkApiToUpdateRecords (Boolean)<a class="heading-anchor" href="#alwaysusebulkapitoupdaterecords-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Forces Bulk API for DML operations of this object when REST DML override is not active.</p>
+<p>When enabled, runtime treats this object as bulk-preferred for update/delete/upsert/insert DML selection.</p>
+<h3 id="alwaysuserestapi-boolean">alwaysUseRestApi (Boolean)<a class="heading-anchor" href="#alwaysuserestapi-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Forces REST API for both query and DML operations of this object.</p>
+<h3 id="alwaysusebulkapi-boolean">alwaysUseBulkApi (Boolean)<a class="heading-anchor" href="#alwaysusebulkapi-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Forces Bulk API for both query and DML operations of this object.</p>
+<h3 id="deletebyhierarchy-boolean">deleteByHierarchy (Boolean)<a class="heading-anchor" href="#deletebyhierarchy-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false</strong> The <code>deleteByHierarchy</code> property in the SFDMU Plugin&#39;s ScriptObject activates hierarchical deletion behavior. When set to <code>true</code>, it modifies the typical &quot;Delete&quot; operation to remove not only the records specified by the query but also related records in the hierarchy.</p>
+<p>In common scenarios, this behavior is used to clean target-side hierarchies in a controlled way when relationships must be removed together rather than record-by-record.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Delete&quot;, // Default target is the destination
+      &quot;deleteByHierarchy&quot;: true // Enables hierarchical delete behavior
+      // Additional ScriptObject properties                
+    }    
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p>This setup ensures a thorough cleanup of selected records together with related hierarchy links, according to the configured delete flow. For more details, refer to <a href="../../advanced-features/delete-by-hierarchy/">Advanced Features: Delete by Hierarchy</a>.</p>
+<h3 id="deletefromsource-boolean">deleteFromSource (Boolean)<a class="heading-anchor" href="#deletefromsource-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false</strong> The <code>deleteFromSource</code> property in the SFDMU Plugin&#39;s ScriptObject specifies whether records selected by the object&#39;s query should be deleted exclusively from the source organization. When set to <code>true</code> in conjunction with the &quot;Delete&quot; operation, it ensures that only source data is removed, and no operations are performed on the destination.</p>
+<p>Without setting <code>deleteFromSource</code> to <code>true</code>, the &quot;Delete&quot; operation targets the destination organization, removing records there instead. This property is critical for precise data management, especially when the aim is to clean the source environment without affecting the target.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Opportunity&quot;,
+      &quot;operation&quot;: &quot;Delete&quot;,        // Default target is the destination
+      &quot;deleteFromSource&quot;: true      // Alters target to the source
+      // Additional ScriptObject properties                
+    }    
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p>This configuration ensures deletion occurs only in the source organization, thereby leaving the destination data intact. For complete details on this functionality, refer to the section on <a href="../../advanced-features/delete-source/">Advanced Features: Delete from Source</a> in the SFDMU documentation.</p>
+<h3 id="deleteolddata-boolean">deleteOldData (Boolean)<a class="heading-anchor" href="#deleteolddata-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, old target records are deleted before performing any further operation. This acts similarly to the <strong>Delete</strong> operation but allows for additional operations like insert or update to be performed concurrently.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;deleteOldData&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="deletequery-string">deleteQuery (String)<a class="heading-anchor" href="#deletequery-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: none.</strong> Defines a SOQL query string used to select old records from the target organization for deletion. If omitted, the main <strong>ScriptObject.query</strong> is used for both deleting and updating records.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;deleteQuery&quot;: &quot;SELECT Id FROM Account WHERE LastModifiedDate &lt; LAST_YEAR&quot;
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="excluded-boolean">excluded (Boolean)<a class="heading-anchor" href="#excluded-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> Setting this property to <strong>true</strong> excludes the corresponding sObject from the migration process. This is useful for documentation purposes or when certain sObjects need to be temporarily disabled without removing their configuration.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;excluded&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="excludedfields-array-of-string">excludedFields (Array of string)<a class="heading-anchor" href="#excludedfields-array-of-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies field names to be excluded from the data migration process. These fields are omitted from the original SOQL query and do not participate in the migration.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT all FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;excludedFields&quot;: [&quot;Phone&quot;, &quot;Name&quot;]
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p><strong>Details:</strong></p>
+<ul>
+<li><strong>Function</strong>: The <code>excludedFields</code> array ensures specified fields are not retrieved during SOQL query execution, effectively omitting them from the migration.</li>
+<li><strong>Usage</strong>: Useful when using <a href="../../advanced-features/field-multiselect/">multiselect keywords</a> to exclude fields due to access restrictions or irrelevance.</li>
+</ul>
+<h3 id="excludedfromupdatefields-array-of-string">excludedFromUpdateFields (Array of string)<a class="heading-anchor" href="#excludedfromupdatefields-array-of-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> This parameter specifies field names that should be excluded from being updated in the target organization. While these fields are retrieved from both the source and target organizations, they are not updated in the target.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT all FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;excludedFromUpdateFields&quot;: [&quot;Phone&quot;, &quot;Name&quot;]
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p><strong>Details:</strong></p>
+<ul>
+<li><strong>Functionality</strong>: The <code>excludedFromUpdateFields</code> array allows fields to be included in SOQL queries and retrieved from both source and target organizations, but ensures these fields are not updated in the target organization.</li>
+<li><strong>Use Case</strong>: This setting is particularly useful when fields need to be accessed for purposes such as data transformation or validation (via <a href="../../add-on-api/records-transform-core-add-on-module/">TransformRecords Core Add-On</a>) but should not be altered in the target. </li>
+<li><strong>Comparison</strong>: Unlike the <code>excludedFields</code> property, which completely omits fields from the migration process, <code>excludedFromUpdateFields</code> retrieves but does not update them in the target org.</li>
+</ul>
+<h3 id="externalid-string">externalId (String)<a class="heading-anchor" href="#externalid-string" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: &quot;Name&quot; or different name field according to the sObject type</strong> Defines the external ID field for the sObject, which is used to map child records and manage relationships during migration operations other than &quot;Insert&quot; and &quot;Readonly&quot;. It&#39;s crucial that the field name is spelled correctly as this setting is case-sensitive.</p>
+<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<li>You can use a parent relationship field such as <code>Account__r.Name</code> as the matching key. During org and CSV migrations, SFDMU compares flat CSV columns and nested Salesforce API relationship values by the same dotted path, so existing target records can be matched by parent external ID values.</li>
+</ul>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;UniqueField__c&quot;
+      // Additional ScriptObject properties                
+    }    
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="fieldmapping-array-of-mappingitem">fieldMapping (Array of MappingItem)<a class="heading-anchor" href="#fieldmapping-array-of-mappingitem" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Provides field mappings as defined in the <a href="../../advanced-features/fields-mapping/">Fields Mapping documentation</a>. </p>
+<p><strong>Item Type:</strong>   <a href="../mapping-item-object/">MappingItem</a></p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Name FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;fieldMapping&quot;: [
+        {
+          &quot;sourceField&quot;: &quot;Name&quot;,
+          &quot;targetField&quot;: &quot;NewName__c&quot;,
+          &quot;targetObject&quot;: &quot;Account__c&quot;  
+        }
+      ]
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="filterrecordsaddons-array-of-addonmanifestdefinition">filterRecordsAddons (Array of AddonManifestDefinition)<a class="heading-anchor" href="#filterrecordsaddons-array-of-addonmanifestdefinition" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies add-ons to filter records during the migration process. Further details can be found at: <a href="../../add-on-api/supported-events/">Supported Add-On Api events</a>.</p>
+<p><strong>Item Type:</strong>   <a href="../addon-manifest-definition-object/">AddonManifestDefinition</a></p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT all FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;filterRecordsAddons&quot;: [
+        {
+          &quot;module&quot;: &quot;AdvancedFiltering&quot;,
+          &quot;args&quot;: {
+            &quot;criteria&quot;: &quot;Active Accounts Only&quot;,
+            &quot;excludeFields&quot;: [&quot;InactiveDate&quot;]
+          }
+        }
+      ]
+      // Additional ScriptObject properties                
+    }    
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="harddelete-boolean">hardDelete (Boolean)<a class="heading-anchor" href="#harddelete-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, records are hard deleted from the target org, bypassing the Recycle Bin. This option can be used in conjunction with other deletion operations such as <strong>Delete</strong>, <strong>DeleteSource</strong>, and <strong>DeleteHierarchy</strong>, or when <code>deleteOldData=true</code> is set and the Bulk API is in use.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;hardDelete&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="master-boolean">master (Boolean)<a class="heading-anchor" href="#master-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: true.</strong> Controls whether the object is processed in master mode or slave mode within the data model hierarchy.</p>
+<p>Setting this property to <code>true</code> designates the object as a &quot;master,&quot; so SFDMU processes the records returned by the object&#39;s query as defined. Setting it to <code>false</code> marks the object as a &quot;slave,&quot; where SFDMU selects only the subset of records required to preserve relationships with records already selected by master objects. In slave mode, the WHERE clause is preserved, while the LIMIT clause can be ignored when additional related records must be selected.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+    &quot;query&quot;: &quot;SELECT Id, AccountId FROM Contact&quot;,
+    &quot;operation&quot;: &quot;Upsert&quot;,
+    &quot;externalId&quot;: &quot;Name&quot;,
+    &quot;master&quot;: false
+    // Additional ScriptObject properties                
+  }
+  // ... other export.json properties
+}
+</code></pre>
+<p><strong>Details:</strong></p>
+<ul>
+<li><p><strong>Master Setting (<code>true</code>)</strong>: Assigns the object as a &quot;master&quot; in the data model hierarchy. The Plugin processes all records for this object, adhering to any specified limitations or conditions, such as a <code>LIMIT</code> clause in the SOQL query.</p>
+</li>
+<li><p><strong>Slave Setting (<code>false</code>)</strong>: Converts the object to a &quot;slave&quot; role relative to &quot;master&quot; objects in the configuration. This setting directs the Plugin to determine and process only the essential subset of records required to preserve relationships between objects. The actual number of records processed may vary, potentially ignoring the <code>LIMIT</code> clause depending on relational requirements.</p>
+</li>
+</ul>
+<h3 id="mockfields-array-of-mockfield">mockFields (Array of MockField)<a class="heading-anchor" href="#mockfields-array-of-mockfield" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Defines fields that should be updated with anonymized data during the migration process. Details on how to configure data anonymization are available in the <a href="../../advanced-features/data-anonymization/">Data Anonymization documentation</a>.</p>
+<p><strong>Item Type:</strong>   <a href="../mock-field-object/">MockField</a></p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Name FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;mockFields&quot;: [
+        {
+           &quot;name&quot;: &quot;Name&quot;,
+           &quot;pattern&quot;: &quot;name&quot;,
+           &quot;locale&quot;: &quot;ru_RU&quot;,
+           &quot;excludedRegex&quot;: &quot;^DummyAccount$&quot;,
+           &quot;includedRegex&quot;: &quot;Account\\sTo\\sMask&quot;
+        }
+      ]
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<h3 id="operation-string">operation (String)<a class="heading-anchor" href="#operation-string" aria-label="Link to section">#</a></h3><p><strong>Optional, default &quot;Readonly&quot;</strong> This parameter specifies the type of operation to be executed on the Salesforce Object (sObject) during the migration process. It defines how records will be handled, with each operation tailored to specific use cases.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p><strong>Details:</strong>
+The <code>operation</code> setting determines how data is processed for the current sObject:</p>
+<ul>
+<li><strong>&quot;Insert&quot;</strong>: Creates new records in the target organization, regardless of whether previous versions exist.</li>
+<li><strong>&quot;Update&quot;</strong>: Updates existing records only, overwriting all fields.</li>
+<li><strong>&quot;Upsert&quot;</strong>: Performs an insert or update operation based on the presence of the record, overriding existing values.</li>
+<li><strong>&quot;Readonly&quot;</strong>: Retrieves records without making any changes; useful for including sObjects that are referenced from another sObject but are not to be modified.</li>
+<li><strong>&quot;Delete&quot;</strong>: Removes records from the target organization; does not update or alter them.</li>
+<li><strong>&quot;HardDelete&quot;</strong>: Legacy alias. Normalized to <code>Delete</code> with <code>hardDelete=true</code>.</li>
+<li><strong>&quot;DeleteSource&quot;</strong>: Legacy alias. Normalized to <code>Delete</code> with <code>deleteFromSource=true</code>. For more details, see <a href="../../advanced-features/delete-source/">DeleteSource operation</a>.</li>
+<li><strong>&quot;DeleteHierarchy&quot;</strong>: Legacy alias. Normalized to <code>Delete</code> with <code>deleteByHierarchy=true</code>. For further information, see <a href="../../advanced-features/delete-by-hierarchy/">DeleteHierarchy operation</a>.</li>
+</ul>
+<h3 id="parallelbulkjobs-integer">parallelBulkJobs (Integer)<a class="heading-anchor" href="#parallelbulkjobs-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 1.</strong> Defines the number of Bulk API jobs that can be run in parallel for this specific sObject, potentially overriding the global setting.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;parallelBulkJobs&quot;: 2
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="parallelrestjobs-integer">parallelRestJobs (Integer)<a class="heading-anchor" href="#parallelrestjobs-integer" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: 1.</strong> Similar to <code>parallelBulkJobs</code>, this property defines the number of REST API jobs that can be executed concurrently for this specific sObject.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;parallelRestJobs&quot;: 2
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="query-string">query (String)<a class="heading-anchor" href="#query-string" aria-label="Link to section">#</a></h3><p><strong>Mandatory.</strong> This parameter specifies the SOQL (Salesforce Object Query Language) query string that is used to export fields from the specified Salesforce Object (sObject). The query should encompass all necessary fields for the operation, although nested queries and complex field relationships are not supported. Subqueries for filtering purposes are permitted.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Name FROM Account WHERE CreatedDate &gt; LAST_N_DAYS:30&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p><strong>Details:</strong></p>
+<ul>
+<li><strong>Query Composition</strong>: The SOQL query should list all fields required for export from the sObject, including any referenced fields. The plugin automatically resolves and processes all references between objects, simplifying data handling.</li>
+<li><strong>Field Inclusion</strong>: Only the fields listed in the query will be exported. Omitting a field from the query means it will not be part of the export.</li>
+<li><strong>Writeability Warnings</strong>: Warnings about <code>createable</code> or <code>updateable</code> restrictions apply only to fields that are explicitly listed in the <code>query</code>.</li>
+<li><strong>Multiselect Expansion</strong>: Fields auto-added by <a href="../../advanced-features/field-multiselect/">multiselect keywords</a> are not included in those writeability warnings.</li>
+<li><strong>Query Flexibility</strong>: You can refine your data selection using SQL-like clauses such as <code>WHERE</code>, <code>LIMIT</code>, <code>OFFSET</code>, etc., to filter the records according to specific criteria.</li>
+<li><strong>Support for Subqueries</strong>: While nested queries and complex fields like <code>Account__r.Name</code> are not supported, you can still utilize subqueries within the <code>WHERE</code> clause (e.g., <code>WHERE Id IN (SELECT Id FROM ...)</code>) to enhance query specificity and data relevance.</li>
+</ul>
+<h3 id="queryalltarget-boolean">queryAllTarget (Boolean)<a class="heading-anchor" href="#queryalltarget-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> This setting determines whether all records from the target organization are queried, overriding any limitations (such as <code>WHERE</code>, <code>LIMIT</code>, <code>OFFSET</code>, or <code>ORDER BY</code> clauses) specified in the object&#39;s SOQL query. This is particularly useful for ensuring complete synchronization of recent records from the source with all corresponding records in the target.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Name FROM Account WHERE LastModifiedDate = LAST_N_DAYS:2&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;queryAllTarget&quot;: true
+      // Additional ScriptObject properties                
+    },
+    {
+      &quot;query&quot;: &quot;SELECT Id, Email FROM Contact WHERE CreatedDate &gt; LAST_N_DAYS:30&quot;,
+      &quot;operation&quot;: &quot;Update&quot;,
+      &quot;externalId&quot;: &quot;Email&quot;,
+      &quot;queryAllTarget&quot;: true
+      // Additional ScriptObject properties
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p><strong>Details:</strong></p>
+<ul>
+<li><strong>Functionality</strong>: When <code>queryAllTarget</code> is set to <code>true</code>, the plugin queries all records from the target organization, bypassing any constraints defined in the SOQL query for the target org. The full query string remains applicable for retrieving records from the source organization.</li>
+<li><strong>Use Case</strong>: This feature is crucial when you need to synchronize recently modified records from the source organization with all corresponding records in the target organization, irrespective of when those target records were last updated. </li>
+<li><strong>Default Behavior</strong>: With <code>queryAllTarget</code> set to <code>false</code>, the plugin adheres to the query string&#39;s restrictions, retrieving the latest records defined by conditions like <code>LAST_N_DAYS</code>. This might lead to mismatches in source-to-target synchronization if different records have been modified within the specified period in the source and target organizations.</li>
+<li><strong>Enhanced Synchronization</strong>: Activating <code>queryAllTarget</code> ensures that while recent records are queried from the source, all records from the target are considered for updating. This approach enhances the potential for updated source records to find matching counterparts in the target, thus improving data consistency and synchronization effectiveness.</li>
+</ul>
+<h3 id="restapibatchsize-integer">restApiBatchSize (Integer)<a class="heading-anchor" href="#restapibatchsize-integer" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Specifies the batch size for REST API operations at the object level, potentially overriding the global setting.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;restApiBatchSize&quot;: 500
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="skipexistingrecords-boolean">skipExistingRecords (Boolean)<a class="heading-anchor" href="#skipexistingrecords-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> When set to <strong>true</strong>, updates are skipped for records that already exist in the target. This is useful when wanting to insert new records without updating existing ones during an upsert operation.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;skipExistingRecords&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="skiprecordscomparison-boolean">skipRecordsComparison (Boolean)<a class="heading-anchor" href="#skiprecordscomparison-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> When set to <strong>true</strong>, SFDMU skips comparing source and target records during update operations, thereby updating records regardless of whether their data matches.</p>
+<p>When this option is enabled, &quot;same data&quot; skip counts are expected to decrease because matching
+records are updated instead of being left untouched.</p>
+<p>If <code>--diagnostic</code> is enabled, the execution log prints a split skipped summary line:
+<code>[diagnostic] update skipped summary: object=... total=... sameData=... noMatchingTarget=... other=...</code>.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;skipRecordsComparison&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="sourcerecordsfilter-string">sourceRecordsFilter (String)<a class="heading-anchor" href="#sourcerecordsfilter-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Allows filtering of source records before DML processing.</p>
+<p>This filter is useful for narrowing down runtime-processed rows after source retrieval.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Name FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;sourceRecordsFilter&quot;: &quot;Name LIKE &#39;ACC_%&#39;&quot;
+      // Additional ScriptObject properties
+    }
+  ]
+  // ... other export.json properties
+}
+</code></pre>
+<p><strong>Details:</strong></p>
+<ul>
+<li>This filter is applied after source retrieval and before final write processing.</li>
+<li>It is useful for staged rollouts where only a subset of retrieved records should proceed.</li>
+</ul>
+<h3 id="targetrecordsfilter-string">targetRecordsFilter (String)<a class="heading-anchor" href="#targetrecordsfilter-string" aria-label="Link to section">#</a></h3><p><strong>Optional.</strong> Allows the use of an AlaSQL filter expression to filter target records just before they are updated, ensuring only the desired records are affected.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;targetRecordsFilter&quot;: &quot;CreatedDate &gt; LAST_N_DAYS:30&quot;
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<p>Refer for the details: <a href="../../advanced-features/target-records-filter/">Target Records Filter</a></p>
+<h3 id="updatewithmockdata-boolean">updateWithMockData (Boolean)<a class="heading-anchor" href="#updatewithmockdata-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, enables the <a href="../../advanced-features/data-anonymization/">data anonymization feature</a> for the sObject, allowing sensitive data to be replaced with anonymized values.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;updateWithMockData&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="usecsvvaluesmapping-boolean">useCSVValuesMapping (Boolean)<a class="heading-anchor" href="#usecsvvaluesmapping-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Deprecated, Default: false.</strong> Legacy values-mapping flag from older configuration versions.</p>
+<p>Use <code>useValuesMapping</code> for current engine behavior. Keep <code>useCSVValuesMapping</code> only for backward compatibility of old scripts.</p>
+<p><strong>Details:</strong></p>
+<ul>
+<li>Do not use this flag in new scripts unless you are preserving strict backward compatibility.</li>
+<li>During migration of old scripts, switch to <code>useValuesMapping</code> and validate output on a test dataset first.</li>
+</ul>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;useCSVValuesMapping&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="usefieldmapping-boolean">useFieldMapping (Boolean)<a class="heading-anchor" href="#usefieldmapping-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, it enables <a href="../../advanced-features/fields-mapping/">field mapping</a> for this object, allowing custom mappings between source and target fields.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;useFieldMapping&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="usequeryall-boolean">useQueryAll (Boolean)<a class="heading-anchor" href="#usequeryall-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, it uses the <code>/queryAll</code> API endpoint instead of <code>/query</code> when querying source records, allowing inclusion of deleted records in the query result.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account WHERE IsDeleted = true&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;useQueryAll&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="usevaluesmapping-boolean">useValuesMapping (Boolean)<a class="heading-anchor" href="#usevaluesmapping-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to <strong>true</strong>, enables <a href="../../advanced-features/values-mapping/">value mapping</a> for this object via <code>ValueMapping.csv</code>.</p>
+<p>This is the active values-mapping switch in the current engine for object-level mapping behavior.</p>
+<p><strong>Details:</strong></p>
+<ul>
+<li>This property is the recommended way to activate value mapping in current configurations.</li>
+<li>Keep mapping rules centralized in <code>ValueMapping.csv</code> to simplify maintenance across objects and runs.</li>
+</ul>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;useValuesMapping&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+<h3 id="usesourcecsvfile-boolean">useSourceCSVFile (Boolean)<a class="heading-anchor" href="#usesourcecsvfile-boolean" aria-label="Link to section">#</a></h3><p><strong>Optional, Default: false.</strong> When set to true and Salesforce org is set as the data source, it uses a specific CSV file as the source instead of querying the org. This is useful when data needs to be imported from a CSV file into the Salesforce environment for this specific object, while other objects are populated from the source org.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;Name&quot;,
+      &quot;useSourceCSVFile&quot;: true
+      // Additional ScriptObject properties                
+    }
+  ]
+    // ... other export.json properties    
+}
+</code></pre>
+
+              <div class="page-meta clearfix">
+                <div class="last-updated float-right">
+                  Last updated 2026
+                </div>
+                <div class="float-left">
+                  <a href="#top-anchor">Back to top</a>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    
+  </div>
+  <footer class="footer">
+    <div class="container-fluid">
+      <p class="copyright float-right">Copyrights &copy; 2026 - <a href="https://salesforce.com">Salesforce.com</a> under <a href="../../../additional-information/license/">BSD-3-Clause</a></p>
+    </div>
+  </footer>
+  <script src="../../../lib/jquery/dist/jquery.min.js"></script>
+  <script src="../../../lib/popper.js/dist/umd/popper.min.js"></script>
+  <script src="../../../lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
+  <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
+  <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../lib/highlight.js/highlight.min.js"></script>
+  <script src="../../../assets/static-runtime.js"></script>
+  <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/static-search.js"></script>
+</body>
+</html>

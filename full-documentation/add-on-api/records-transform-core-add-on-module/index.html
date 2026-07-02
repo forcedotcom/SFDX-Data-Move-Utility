@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en" data-site-root="../../../">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Haim Knokh,https://github.com/hknokh">
+  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
+  <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
+  <title>RecordsTransform Core Add-On Module | SFDMU Help Center</title>
+  <link rel="shortcut icon" href="../../../favicon.png">
+  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
+  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <script>var rn_base_url = "../../..";</script>
+  <link rel="stylesheet" href="../../../styles/raneto.min.css">
+  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
+  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="stylesheet" href="../../../assets/static-site.css">
+</head>
+<body class="page">
+  <a class="scroll-anchor" rel="nofollow" id="top-anchor"></a>
+  <header class="header">
+    <div class="container-fluid">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <a href="../../../" class="logo">
+            <img src="../../../favicon.png" alt="SFDMU Help Center"/>
+            SFDMU Help Center</a>
+        </div>
+        <div class="col-md-5" id="search-and-login">
+          <form class="form-inline float-right"></form>
+          <ul class="nav navbar-nav navbar-right float-right mr-4 pr-2">
+            <li><a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility"><i class="fa fa-code"></i>&nbsp;View On GitHub</a></li>
+          </ul>
+          <form class="search-form pl-4 clearfix" action="../../../">
+            <div class="form-group">
+              <label class="sr-only" for="search">Search the knowledge base</label>
+              <input type="search" class="form-control float-right page-search-input" name="search" id="search"
+                size="30" value="" placeholder="Search the knowledge base">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="container-fluid">
+    
+      <div class="page-wrapper">
+        <div class="page-widgets row d-none d-md-block">
+          <div class="col-sm-9 offset-sm-3" style="padding-left: 32px;">
+            
+    <div class="input-group mv-3">
+      <input type="search" class="form-control quick-search-input"
+              onkeyup="quickSearch_OnKeyUp(event, this.value, '.page-content', 132)"
+              onkeydown="quickSearch_OnKeyDown(event)"
+              onsearch="quickSearch_OnSearch(this.value, '.page-content')"
+              placeholder="Search on this page"/>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+      </div>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+      </div>
+      <div class="input-group-append">
+        <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
+      </div>
+    </div>
+  
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3 d-sm-block d-none side-menu">
+            
+    <ul class="menu" aria-label="Documentation navigation">
+      
+    <li class="category active" id="nav-full-documentation">
+      <h5 class="category-title active">Full Documentation</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-full-documentation-export-json-file-objects-specification">
+      <a href="#nav-full-documentation-export-json-file-objects-specification-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Export.json File Specification</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-export-json-file-objects-specification-children">
+        <li class="page file"><a href="../../export-json-file-objects-specification/export-json-file-overview/"><i class="fa fa-edit"></i>&nbsp;Export.json File Overview</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object/"><i class="fa fa-edit"></i>&nbsp;Script Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object-set-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObjectSet Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObject Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-org-object/"><i class="fa fa-edit"></i>&nbsp;ScriptOrg Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/mapping-item-object/"><i class="fa fa-edit"></i>&nbsp;MappingItem Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/mock-field-object/"><i class="fa fa-edit"></i>&nbsp;MockField Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/addon-manifest-definition-object/"><i class="fa fa-edit"></i>&nbsp;AddonManifestDefinition Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/json-schema-for-export-json/"><i class="fa fa-edit"></i>&nbsp;JSON Schema for export.json</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-advanced-features">
+      <a href="#nav-full-documentation-advanced-features-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Advanced features</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-advanced-features-children">
+        <li class="page file"><a href="../../advanced-features/composite-external-id-keys/"><i class="fa fa-edit"></i>&nbsp;Composite External ID keys</a></li><li class="page file"><a href="../../advanced-features/compound-fields/"><i class="fa fa-edit"></i>&nbsp;Compound Fields</a></li><li class="page file"><a href="../../advanced-features/data-anonymization/"><i class="fa fa-edit"></i>&nbsp;Data Anonymization</a></li><li class="page file"><a href="../../advanced-features/delete-by-hierarchy/"><i class="fa fa-edit"></i>&nbsp;DeleteHierarchy operation</a></li><li class="page file"><a href="../../advanced-features/delete-source/"><i class="fa fa-edit"></i>&nbsp;DeleteSource operation</a></li><li class="page file"><a href="../../advanced-features/export-attachments-and-files/"><i class="fa fa-edit"></i>&nbsp;Export of the Notes, Attachments and Files</a></li><li class="page file"><a href="../../advanced-features/field-multiselect/"><i class="fa fa-edit"></i>&nbsp;Field Multiselect</a></li><li class="page file"><a href="../../advanced-features/fields-mapping/"><i class="fa fa-edit"></i>&nbsp;Fields Mapping</a></li><li class="page file"><a href="../../advanced-features/handling-record-ownerid/"><i class="fa fa-edit"></i>&nbsp;Handling of record OwnerId</a></li><li class="page file"><a href="../../advanced-features/handling-record-type/"><i class="fa fa-edit"></i>&nbsp;Handling of the RecordType</a></li><li class="page file"><a href="../../advanced-features/multiple-object-sets/"><i class="fa fa-edit"></i>&nbsp;Multiple object sets</a></li><li class="page file"><a href="../../advanced-features/polymorphic-lookup-fields/"><i class="fa fa-edit"></i>&nbsp;Polymorphic Lookup Fields</a></li><li class="page file"><a href="../../advanced-features/sfdmu-add-ons/"><i class="fa fa-edit"></i>&nbsp;SFDMU Add-Ons</a></li><li class="page file"><a href="../../advanced-features/target-records-filter/"><i class="fa fa-edit"></i>&nbsp;Target Records Filter</a></li><li class="page file"><a href="../../advanced-features/values-mapping/"><i class="fa fa-edit"></i>&nbsp;Values Mapping</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory active" id="nav-full-documentation-add-on-api">
+      <a href="#nav-full-documentation-add-on-api-children" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle"><i class="fa fa-folder-open"></i>&nbsp;Add-On API</a>
+      <ul class="collapse list-unstyled show" id="nav-full-documentation-add-on-api-children">
+        <li class="page file"><a href="../introduction-to-the-sfdmu-add-on-api-engine/"><i class="fa fa-edit"></i>&nbsp;Add-On API Overview</a></li><li class="page file"><a href="../export-file-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;ExportFiles Core Add-On Module</a></li><li class="page active file"><a href="./"><i class="fa fa-edit"></i>&nbsp;RecordsTransform Core Add-On Module</a></li><li class="page file"><a href="../records-filter-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter Core Add-On Module</a></li><li class="page file"><a href="../records-filter-bad-words-filter/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter - Bad Words Filter</a></li><li class="page file"><a href="../supported-events/"><i class="fa fa-edit"></i>&nbsp;Supported Add-On Api events</a></li><li class="page file"><a href="../custom-sfdmu-add-on-api/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On Api</a></li><li class="page file"><a href="../custom-sfdmu-add-on-object-reference/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On API Object Reference</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-reports">
+      <a href="#nav-full-documentation-reports-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Reports</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-reports-children">
+        <li class="page file"><a href="../../reports/issues-with-the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Identifying Issues in CSV Files with the Plugin</a></li><li class="page file"><a href="../../reports/issues-with-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Handling Missing Parent Records in Plugin Migrations</a></li><li class="page file"><a href="../../reports/the-target-csv-files/"><i class="fa fa-edit"></i>&nbsp;Target CSV Files in SFDMU</a></li><li class="page file"><a href="../../reports/the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Source (Working Copy) CSV Files in SFDMU</a></li><li class="page file"><a href="../../reports/the-execution-log/"><i class="fa fa-edit"></i>&nbsp;Log File Management in Plugin Migrations</a></li><li class="page file"><a href="../../reports/run-command-flags/"><i class="fa fa-edit"></i>&nbsp;Run Command Flags</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../key-features/"><i class="fa fa-edit"></i>&nbsp;Key Features of the SFDMU</a></li>
+    <li class="category" id="nav-examples">
+      <h5 class="category-title">Examples</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../../../examples/basic-examples/"><i class="fa fa-edit"></i>&nbsp;Basic examples</a></li><li class="page file"><a href="../../../examples/advanced-examples/"><i class="fa fa-edit"></i>&nbsp;Advanced examples</a></li><li class="page file"><a href="../../../examples/csv-import-export/"><i class="fa fa-edit"></i>&nbsp;CSV import-export examples</a></li><li class="page file"><a href="../../../examples/file-migration/"><i class="fa fa-edit"></i>&nbsp;File data transfer examples</a></li><li class="page file"><a href="../../../examples/record-transformation/"><i class="fa fa-edit"></i>&nbsp;Record transformation examples</a></li>
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../get-started/"><i class="fa fa-edit"></i>&nbsp;Get Started</a></li><li class="page file"><a href="../../../installation/"><i class="fa fa-edit"></i>&nbsp;Installation</a></li><li class="page file"><a href="../../../configuration/"><i class="fa fa-edit"></i>&nbsp;Configuration</a></li>
+    <li class="category" id="nav-faq">
+      <h5 class="category-title">FAQ</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-faq-bulk-api-query-management">
+      <a href="#nav-faq-bulk-api-query-management-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Bulk Api Query Management</a>
+      <ul class="collapse list-unstyled" id="nav-faq-bulk-api-query-management-children">
+        <li class="page file"><a href="../../../faq/bulk-api-query-management/what-are-the-limitations-on-data-volume-processing/"><i class="fa fa-edit"></i>&nbsp;What are the limitations on data volume processing?</a></li><li class="page file"><a href="../../../faq/bulk-api-query-management/how-do-i-adjust-the-batch-size-for-a-bulk-api-query/"><i class="fa fa-edit"></i>&nbsp;How do I adjust the batch size for a Bulk API Query?</a></li><li class="page file"><a href="../../../faq/bulk-api-query-management/why-doesnt-bulk-api-v1-parallel-mode-create-batches-asynchronously/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t Bulk API v1 Parallel Mode create batches asynchronously?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-conceptual-definitions-in-sfdmu">
+      <a href="#nav-faq-conceptual-definitions-in-sfdmu-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Conceptual Definitions In Sfdmu</a>
+      <ul class="collapse list-unstyled" id="nav-faq-conceptual-definitions-in-sfdmu-children">
+        <li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/can-i-include-referenced-fields-like-accountname-into-the-query-string/"><i class="fa fa-edit"></i>&nbsp;Can I include referenced fields, like Account.Name into the query string ?</a></li><li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/is-there-a-limitation-on-fields-used-in-composite-external-ids-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;Is there a limitation on fields used in composite external IDs in SFDMU?</a></li><li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/what-is-master-and-what-is-slave/"><i class="fa fa-edit"></i>&nbsp;What do master and slave objects mean?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-csv-file-and-encoding-specifications">
+      <a href="#nav-faq-csv-file-and-encoding-specifications-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Csv File And Encoding Specifications</a>
+      <ul class="collapse list-unstyled" id="nav-faq-csv-file-and-encoding-specifications-children">
+        <li class="page file"><a href="../../../faq/csv-file-and-encoding-specifications/what-encoding-is-supported-for-csv-files-by-the-plugin/"><i class="fa fa-edit"></i>&nbsp;What encoding is supported for CSV files by the plugin?</a></li><li class="page file"><a href="../../../faq/csv-file-and-encoding-specifications/what-encoding-type-should-be-used-for-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What encoding type should be used for the export.json file?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-migration-with-plugin">
+      <a href="#nav-faq-data-migration-with-plugin-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Migration With Plugin</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-migration-with-plugin-children">
+        <li class="page file"><a href="../../../faq/data-migration-with-plugin/can-csv-files-from-the-standard-salesforce-data-loader-be-used-with-this-plugin/"><i class="fa fa-edit"></i>&nbsp;Can CSV files from the standard Salesforce Data Loader be used with this plugin?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/can-i-override-the-default-query-for-the-user-or-group-objects/"><i class="fa fa-edit"></i>&nbsp;Can I override the default query for the User or Group objects?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/can-the-plugin-migrate-users-or-groups/"><i class="fa fa-edit"></i>&nbsp;Can the plugin migrate Users or Groups?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/does-the-plugin-support-exporting-object-metadata/"><i class="fa fa-edit"></i>&nbsp;Does the plugin support exporting object metadata?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/using-the-all-multiselect-keyword-with-the-product2-object/"><i class="fa fa-edit"></i>&nbsp;Using the `all` multiselect keyword with the `Product2` object.</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/why-are-there-differences-in-failures-between-simulation-and-non-simulation-modes/"><i class="fa fa-edit"></i>&nbsp;Why are there differences in failures between simulation and non-simulation modes?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-transfer-and-field-exclusions">
+      <a href="#nav-faq-data-transfer-and-field-exclusions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Transfer And Field Exclusions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-transfer-and-field-exclusions-children">
+        <li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/can-the-document-object-be-transferred-with-binary-data/"><i class="fa fa-edit"></i>&nbsp;Can the Document object be transferred with binary data?</a></li><li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/is-it-possible-to-use-multiple-csv-source-files-for-the-same-object/"><i class="fa fa-edit"></i>&nbsp;Is it possible to use multiple CSV source files for the same object?</a></li><li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/what-types-of-fields-can-be-excluded-using-the-excludefields-property/"><i class="fa fa-edit"></i>&nbsp;What types of fields can be excluded using the &quot;excludedFields&quot; property?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-object-and-field-handling-in-soql-queries">
+      <a href="#nav-faq-object-and-field-handling-in-soql-queries-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Object And Field Handling In Soql Queries</a>
+      <ul class="collapse list-unstyled" id="nav-faq-object-and-field-handling-in-soql-queries-children">
+        <li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/are-field-names-and-object-names-in-a-soql-query-case-sensitive/"><i class="fa fa-edit"></i>&nbsp;Are field names and object names in a SOQL query case sensitive?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/can-autonumber-fields-be-used-as-external-ids/"><i class="fa fa-edit"></i>&nbsp;Can autonumber fields be used as External IDs?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/can-i-export-fields-from-parent-sobjects-using-a-child-object-query/"><i class="fa fa-edit"></i>&nbsp;Can I export fields from parent sObjects using a child object query?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/is-it-necessary-to-always-specify-the-parent-object-for-a-polymorphic-field/"><i class="fa fa-edit"></i>&nbsp;Is it necessary to always specify the parent object for a polymorphic field?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/should-the-id-field-always-be-included-in-my-query/"><i class="fa fa-edit"></i>&nbsp;Should the Id field always be included in my query?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-plugin-usage-and-extensions">
+      <a href="#nav-faq-plugin-usage-and-extensions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Usage And Extensions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-plugin-usage-and-extensions-children">
+        <li class="page file"><a href="../../../faq/plugin-usage-and-extensions/can-i-modify-and-use-the-plugin-code-for-my-own-projects/"><i class="fa fa-edit"></i>&nbsp;Can I modify and use the plugin code for my own projects?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/can-the-plugin-be-used-in-production-environments/"><i class="fa fa-edit"></i>&nbsp;Can the plugin be used in production environments?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/how-to-address-ui-issues-and-field-selection-in-new-sfdmu-gui/"><i class="fa fa-edit"></i>&nbsp;How to address UI issues and field selection in the new SFDMU GUI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/is-sfdmu-compatible-with-latest-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Is SFDMU compatible with the latest SF CLI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/why-does-sfdmu-command-fail-in-force-app-directory-with-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Why does SFDMU command fail in the force-app directory with SF CLI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/why-doesnt-fieldmapping-rename-csv-column-headers-in-my-configuration/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t FieldMapping rename CSV column headers in my configuration?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-configuration-and-pre-validation">
+      <a href="#nav-faq-sfdmu-configuration-and-pre-validation-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Configuration And Pre Validation</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-configuration-and-pre-validation-children">
+        <li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-all-objects-be-defined-as-slave-objects-in-the-configuration/"><i class="fa fa-edit"></i>&nbsp;Can all objects be defined as &quot;slave&quot; objects in the configuration?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-csv-files-be-used-for-csv-to-org-migration-in-simulation-mode/"><i class="fa fa-edit"></i>&nbsp;Can CSV files be used for CSV-to-org migration in simulation mode?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-i-omit-the-definition-of-external-id-for-an-object/"><i class="fa fa-edit"></i>&nbsp;Can I omit the definition of External ID for an object?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/how-to-modify-include-regex-option-in-sfdmu-configuration/"><i class="fa fa-edit"></i>&nbsp;How to modify the include regex option in SFDMU configuration?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/how-to-prevent-resetting-checkboxes-using-sfdmu-with-multiselect-keyword/"><i class="fa fa-edit"></i>&nbsp;How to prevent resetting checkboxes using SFDMU with multiselect keyword?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/what-pre-validation-options-does-sfdmu-offer-before-inserting-data/"><i class="fa fa-edit"></i>&nbsp;What pre-validation options does SFDMU offer before inserting data?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-data-insertion-and-limitations">
+      <a href="#nav-faq-sfdmu-data-insertion-and-limitations-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Data Insertion And Limitations</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-data-insertion-and-limitations-children">
+        <li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/can-child-records-with-a-self-lookup-field-be-inserted-in-a-single-job/"><i class="fa fa-edit"></i>&nbsp;Can child records with a self-lookup field be inserted in a single job?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-combine-multiple-account-extractions-into-one-csv-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to combine multiple account extractions into one CSV with SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-handle-checkbox-fields-during-csv-imports-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle checkbox fields during CSV imports in SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-handle-master-detail-relationships-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle Master-Detail relationships with SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-resolve-object-location-is-missing-in-the-target-error-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to resolve &quot;Object Location is missing in the Target&quot; error in SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/what-is-the-character-limit-for-the-where-clause-in-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What is the character limit for the WHERE clause in the export.json file?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/why-does-adding-person-account-records-not-respect-specified-record-types/"><i class="fa fa-edit"></i>&nbsp;Why does adding person account records not respect specified record types?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-gui-application">
+      <a href="#nav-faq-sfdmu-gui-application-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Gui Application</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-gui-application-children">
+        <li class="page file"><a href="../../../faq/sfdmu-gui-application/i-cant-find-where-can-i-set-the-operation-for-the-object/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - I can&#39;t find where can I set the Operation for the object.</a></li><li class="page file"><a href="../../../faq/sfdmu-gui-application/sf-cli-is-no-longer-detected/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - SF CLI is no longer detected.</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../running/"><i class="fa fa-edit"></i>&nbsp;Running</a></li><li class="page file"><a href="../../../debugging/"><i class="fa fa-edit"></i>&nbsp;Debugging</a></li>
+    <li class="category" id="nav-troubleshooting">
+      <h5 class="category-title">Troubleshooting</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-troubleshooting-data-import-export-problems">
+      <a href="#nav-troubleshooting-data-import-export-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Import Export Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-import-export-problems-children">
+        <li class="page file"><a href="../../../troubleshooting/data-import-export-problems/notes-and-attachments-migration-issues/"><i class="fa fa-edit"></i>&nbsp;Notes and attachments migration issues</a></li><li class="page file"><a href="../../../troubleshooting/data-import-export-problems/why-no-records-inserted/"><i class="fa fa-edit"></i>&nbsp;Why no records inserted?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-data-mapping-issues">
+      <a href="#nav-troubleshooting-data-mapping-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Mapping Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-mapping-issues-children">
+        <li class="page file"><a href="../../../troubleshooting/data-mapping-issues/problem-of-values-mapping-with-regex/"><i class="fa fa-edit"></i>&nbsp;Problem of values mapping with regex.</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/warning-about-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Warning about missing parent lookup records</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-data-anonymization-not-working/"><i class="fa fa-edit"></i>&nbsp;Why data anonymization is not working?</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-does-the-values-mapping-not-work-for-me/"><i class="fa fa-edit"></i>&nbsp;Why does the values mapping not work for me?</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-user-and-record-type-lookups-are-not-filled-on-insert/"><i class="fa fa-edit"></i>&nbsp;Why user and record type lookups are not filled on insert?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-gui-installation-problems">
+      <a href="#nav-troubleshooting-gui-installation-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Gui Installation Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-gui-installation-problems-children">
+        <li class="page file"><a href="../../../troubleshooting/gui-installation-problems/gui-app-installation-failed-or-showing-blank-screen/"><i class="fa fa-edit"></i>&nbsp;GUI app installation failed or showing blank screen.</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-plugin-connectivity-and-configuration">
+      <a href="#nav-troubleshooting-plugin-connectivity-and-configuration-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Connectivity And Configuration</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-plugin-connectivity-and-configuration-children">
+        <li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-connect-to-the-org/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot connect to the org</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-locate-export-json-in-working-directory/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot locate export.json in working directory</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-error-no-fields-can-be-updated-or-inserted/"><i class="fa fa-edit"></i>&nbsp;Plugin error: no fields can be updated or inserted</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/unable-to-run-plugin-due-to-nodejs-or-sfdx-cli-issue/"><i class="fa fa-edit"></i>&nbsp;Unable to run plugin due to Node.js or SF CLI issue</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-security-authentication-issues">
+      <a href="#nav-troubleshooting-security-authentication-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Security Authentication Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-security-authentication-issues-children">
+        <li class="page file"><a href="../../../troubleshooting/security-authentication-issues/allow-disabling-ssl-and-hash-checks-for-plugin-linking/"><i class="fa fa-edit"></i>&nbsp;Allow disabling SSL and hash checks for plugin linking</a></li><li class="page file"><a href="../../../troubleshooting/security-authentication-issues/authentication-issues-with-sfdx-orgs/"><i class="fa fa-edit"></i>&nbsp;Authentication issues with SF CLI orgs</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-unexpected-behavior-errors">
+      <a href="#nav-troubleshooting-unexpected-behavior-errors-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Unexpected Behavior Errors</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-unexpected-behavior-errors-children">
+        <li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/javascript-heap-out-of-memory-error/"><i class="fa fa-edit"></i>&nbsp;JavaScript heap out of memory error</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/read-econnreset-error-during-source-retrieval/"><i class="fa fa-edit"></i>&nbsp;Read ECONNRESET error during source retrieval</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/sfdmu-finishing-abruptly-no-error-or-warning-whatsoeverd/"><i class="fa fa-edit"></i>&nbsp;SFDMU finishing abruptly, no error or warning whatsoever</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/unexpected-behavior-with-default-sfdx-target-org-configuration/"><i class="fa fa-edit"></i>&nbsp;Unexpected behavior with default SFDX target org configuration</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/why-do-i-get-the-error-invalid-record-hashcode-from-bulk-job/"><i class="fa fa-edit"></i>&nbsp;Why do I get the error &quot;Invalid record hashcode from bulk job&quot;?</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/why-the-deleting-from-the-target-always-runs-for-me/"><i class="fa fa-edit"></i>&nbsp;Why the deleting from the target always runs for me?</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../sfdmu-gui-app/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI Application</a></li>
+    <li class="category" id="nav-additional-information">
+      <h5 class="category-title">Additional Information</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../../../additional-information/support_policy/"><i class="fa fa-edit"></i>&nbsp;Support policy</a></li><li class="page file"><a href="../../../additional-information/code_contribution_policy/"><i class="fa fa-edit"></i>&nbsp;Code contribution policy</a></li><li class="page file"><a href="../../../additional-information/license/"><i class="fa fa-edit"></i>&nbsp;License Agreement</a></li>
+      </ul>
+    </li>
+  
+    </ul>
+  
+          </div>
+          <div class="col-sm-9">
+            <section class="content page-content">
+              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#sample-of-record-transformation">Sample of Record Transformation</a></li><li class="toc-child"><a href="#configuration-file">Configuration File</a></li><li class="toc-child"><a href="#object-model">Object Model</a></li><li class="toc-child"><a href="#requirements">Requirements</a></li><li class="toc-child"><a href="#solution">Solution</a></li><li><a href="#full-specification-of-args-properties">Full Specification of args Properties</a></li><li class="toc-child"><a href="#fields-array-of-field-objects">fields (Array of Field objects)</a></li><li class="toc-child"><a href="#transformations-array-of-transformation-objects">transformations (Array of Transformation objects)</a></li><li><a href="#additional-notes">Additional Notes</a></li></ul></nav>
+## Overview
+
+<p>The <code>core:RecordsTransform</code> module provides advanced functionality for applying custom transformations and mappings to source records before they are uploaded to the target system. It significantly enhances capabilities beyond the <a href="../../advanced-features/values-mapping/">Values Mapping</a> feature by allowing updates to fields using multiple different sObjects as data sources. This enables complex transformations that utilize customized expressions to fine-tune data according to specific needs.</p>
+<h2 id="sample-of-record-transformation">Sample of Record Transformation<a class="heading-anchor" href="#sample-of-record-transformation" aria-label="Link to section">#</a></h2><h3 id="configuration-file">Configuration File<a class="heading-anchor" href="#configuration-file" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+    &quot;objects&quot;: [
+        {
+            &quot;operation&quot;: &quot;Upsert&quot;,
+            &quot;externalId&quot;: &quot;Name&quot;,
+            &quot;query&quot;: &quot;SELECT Id FROM Account&quot;
+        }
+    ],
+    &quot;dataRetrievedAddons&quot; : [
+        {
+            &quot;module&quot; : &quot;core:RecordsTransform&quot;,
+            &quot;args&quot;: {
+                &quot;fields&quot;: [
+                    {
+                        &quot;alias&quot;: &quot;accountCategory&quot;,
+                        &quot;sourceObject&quot;: &quot;Account&quot;,
+                        &quot;sourceField&quot;: &quot;Category__r.Name&quot;
+                    },
+                    {
+                        &quot;alias&quot;: &quot;accountRegion&quot;,
+                        &quot;sourceObject&quot;: &quot;Country__c&quot;,
+                        &quot;sourceField&quot;: &quot;Region__r.Name&quot;,
+                        &quot;includeFields&quot;: [
+                            &quot;BusinessAccount__c&quot;
+                        ]
+                    }
+                ],
+                &quot;transformations&quot;: [
+                    {
+                        &quot;targetObject&quot;: &quot;Account&quot;,
+                        &quot;targetField&quot;: &quot;CategoryName__c&quot;,
+                        &quot;formula&quot;: &quot;formula.accountCategory&quot;
+                    },
+                    {
+                        &quot;targetObject&quot;: &quot;Account&quot;,
+                        &quot;targetField&quot;: &quot;CategoryAndRegionName__c&quot;,
+                        &quot;expressions&quot;: [
+                            &quot;formula.exists = formula.accountCategory &amp;&amp; formula.accountRegion&quot;
+                        ],
+                        &quot;formula&quot;: &quot;formula.exists ? formula.accountCategory + &#39; (&#39; + formula.accountRegion + &#39;)&#39; : null&quot;
+                    }
+                ]
+            }
+        }
+    ]
+}
+</code></pre>
+<h3 id="object-model">Object Model<a class="heading-anchor" href="#object-model" aria-label="Link to section">#</a></h3><table>
+<thead>
+<tr>
+<th>sObject</th>
+<th>Field (Field type)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Account</td>
+<td>Name (Account name field)</td>
+</tr>
+<tr>
+<td>Account</td>
+<td>Category__c (lookup to Category__c)</td>
+</tr>
+<tr>
+<td>Account</td>
+<td>CategoryName__c (Picklist)</td>
+</tr>
+<tr>
+<td>Account</td>
+<td>CategoryAndRegionName__c (String)</td>
+</tr>
+<tr>
+<td>Country__c</td>
+<td>Name (Country name field)</td>
+</tr>
+<tr>
+<td>Country__c</td>
+<td>BusinessAccount__c (lookup to Account)</td>
+</tr>
+<tr>
+<td>Country__c</td>
+<td>Region__c (lookup to Region__c)</td>
+</tr>
+<tr>
+<td>Region__c</td>
+<td>Name (Region name field)</td>
+</tr>
+</tbody></table>
+<h3 id="requirements">Requirements<a class="heading-anchor" href="#requirements" aria-label="Link to section">#</a></h3><p>Our task involves extracting values from various source fields, conducting a series of calculations, and subsequently updating two target account fields with the outcomes.</p>
+<p>The transformations needed are as follows:</p>
+<ul>
+<li><strong>Account</strong>.<strong>CategoryName__c</strong> should be set to the value of <strong>Account</strong>.<strong>Category__r.Name</strong>.</li>
+<li><strong>Account</strong>.<strong>CategoryAndRegionName__c</strong> should combine the values of <strong>Account</strong>.<strong>Category__r.Name</strong> and <strong>Country__c</strong>.<strong>Region__r.Name</strong>, formatted as <code>Account.Category__r.Name + &#39; (&#39; + Country__c.Region__r.Name + &#39;)&#39;</code>.</li>
+</ul>
+<h3 id="solution">Solution<a class="heading-anchor" href="#solution" aria-label="Link to section">#</a></h3><h4 id="step-1-define-the-source-fields"><strong>Step 1:</strong> Define the Source Fields<a class="heading-anchor" href="#step-1-define-the-source-fields" aria-label="Link to section">#</a></h4><p>We specify two source fields (categorized under the <code>Field</code> object type) with the designated aliases:</p>
+<ul>
+<li><strong>accountCategory</strong>: This sources its value from <strong>Account.Category__r.Name</strong>.</li>
+<li><strong>accountRegion</strong>: This retrieves its value from <strong>Country__c.Region__r.Name</strong>.</li>
+</ul>
+<p>But, how does the Add-On pinpoint the <strong>Country</strong> record to evaluate <strong>Region__r.Name</strong> for it?</p>
+<p>With the <strong>BusinessAccount__c</strong> lookup field at its disposal, it efficiently locates the child <strong>Country</strong> that references the <strong>Account</strong>, leveraging its data for the transformation. </p>
+<h4 id="step-2-setup-lookup-relationships"><strong>Step 2</strong> Setup lookup relationships.<a class="heading-anchor" href="#step-2-setup-lookup-relationships" aria-label="Link to section">#</a></h4><p>As mentioned above, to select the child <strong>Country</strong> record by its parent <strong>Account</strong>, we use the <strong>Country__c.BusinessAccount__c</strong> as a parent-child lookup field. Therefore, <strong>BusinessAccount__c</strong> should be included in the query string of <strong>Country__c</strong>.</p>
+<p>The method for including the <strong>BusinessAccount__c</strong> field in the query string of <strong>Country__c</strong> is by utilizing the <code>includeFields</code> property in the <strong>accountRegion</strong> definition. This allows the Add-On to link between Account and Country:</p>
+<pre><code class="language-json">{
+  &quot;includeFields&quot;: [
+    &quot;BusinessAccount__c&quot;
+  ]
+}
+</code></pre>
+<p>This configuration incorporates the <strong>BusinessAccount__c</strong> lookup into the query string of <strong>Country__c</strong> as it&#39;s defined as the source sObject for this <code>Field</code>.</p>
+<p>The Add-On automatically determines which SObject (<strong>Account</strong> or <strong>Country</strong>) is the parent and which is the child, so you don&#39;t need to manage their relationship details.</p>
+<p>The benefit of using the <strong>includeFields</strong> property to add extra fields is that it eliminates the need to include extra <code>Readonly</code> object definitions in your <strong>export.json</strong> which is used only in the <code>export:RecordTransform</code> module and nowhere else.</p>
+<p>However, if you prefer to directly add <strong>Country__c.BusinessAccount__c</strong> to the <strong>export.json</strong>, the <code>includeFields</code> array can be omitted, see the example below: </p>
+<pre><code class="language-json">{
+    &quot;operation&quot;: &quot;Readonly&quot;,
+    &quot;externalId&quot;: &quot;Name&quot;,
+    &quot;query&quot;: &quot;SELECT BusinessAccount__c FROM Country__c&quot;
+}
+//..... 
+                {
+                    &quot;alias&quot;: &quot;accountRegion&quot;,
+                    &quot;sourceObject&quot;: &quot;Country__c&quot;,
+                    &quot;sourceField&quot;: &quot;Region__r.Name&quot;                    
+                    // The &quot;includeFields&quot; definition is omitted here, 
+                    //  since it&#39;s explicitly included in the query string of the Country__c
+                }
+//.....
+</code></pre>
+<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<li><p>To include a field in the SOQL query of an object other than the one defined as the <code>sourceObject</code>, use the following syntax:<br><code>[Object Name].[Field Name]</code>. For example:</p>
+<pre><code class="language-json">{
+    &quot;alias&quot;: &quot;accountRegion&quot;,
+    &quot;sourceObject&quot;: &quot;Country__c&quot;,
+    &quot;sourceField&quot;: &quot;Region__r.Name&quot;,
+    &quot;includeFields&quot;: [
+        &quot;BusinessAccount__c&quot;,
+        &quot;Account.Website&quot;
+    ]
+}
+</code></pre>
+<p>This will include both <code>BusinessAccount__c</code> in the query for <code>Country__c</code> and <code>Website</code> in the query for <code>Account</code>.</p>
+</li>
+</ul>
+<h4 id="step-3-define-the-target-fields-and-transformation-expressions"><strong>Step 3</strong> Define the Target Fields and Transformation Expressions<a class="heading-anchor" href="#step-3-define-the-target-fields-and-transformation-expressions" aria-label="Link to section">#</a></h4><p>In the <code>transformations</code> array, specify two <code>Transformation</code> objects containing logic to update two fields of the <strong>Account</strong>: <strong>CategoryName__c</strong> and <strong>CategoryAndRegionName__c</strong>.</p>
+<p>Each <code>Transformation</code> object includes:</p>
+<ul>
+<li><p><strong>formula</strong>: A mandatory expression used to update the target field. Source <strong>aliases</strong> like <code>formula.[ALIAS]</code>, e.g., <code>formula.accountCategory</code>, are used within this expression. 
+<code>Formula</code> is a temporary JavaScript object defined within the current target record&#39;s scope.</p>
+</li>
+<li><p><strong>expressions</strong>: An optional list of expressions executed for each target record <strong>before</strong> the main <code>formula</code>. This augments the <strong>formula</strong> object with additional properties needed for the primary formula expression. 
+For example, <code>formula.exists = formula.accountCategory &amp;&amp; formula.accountRegion</code> creates a new property <code>exists</code> based on a JavaScript expression using field values via their aliases. The <code>formula.exists</code> value is then used in the final <code>formula</code> expression to compute and fill the <strong>CategoryAndRegionName__c</strong> field.</p>
+</li>
+</ul>
+<h2 id="full-specification-of-args-properties">Full Specification of <code>args</code> Properties<a class="heading-anchor" href="#full-specification-of-args-properties" aria-label="Link to section">#</a></h2><h3 id="fields-array-of-field-objects">fields (Array of <code>Field</code> objects)<a class="heading-anchor" href="#fields-array-of-field-objects" aria-label="Link to section">#</a></h3><p><strong>Mandatory</strong>. List of the data sources to transform.</p>
+<h4 id="field-alias-string">Field.alias (String)<a class="heading-anchor" href="#field-alias-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. Variable name (akin to JavaScript variable naming), allows for the inclusion of this <code>Field</code> in the transformation expression.</p>
+<h4 id="field-sourceobject-string">Field.sourceObject (String)<a class="heading-anchor" href="#field-sourceobject-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. SObject used as the data source for the transformation.</p>
+<h4 id="field-sourcefield-string">Field.sourceField (String)<a class="heading-anchor" href="#field-sourcefield-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. Field belonging to the <code>sourceObject</code> which is used as the value source for the transformation.</p>
+<h4 id="field-includefields-array-of-strings">Field.includeFields (Array of strings)<a class="heading-anchor" href="#field-includefields-array-of-strings" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>. A list of sObject fields to include in the original query of the <code>sourceObject</code> (e.g., selecting a parent object in a relationship). The format for this definition is <code>[sObject API Name].[Field Name]</code>, where <code>sObject API Name</code> is the optional name of the sObject to which you want to add the <code>Field Name</code> in its query string. Use this format when you want to include the field from a different sObject than the current <code>sourceObject</code>.</p>
+<h4 id="field-valuesource-string">Field.valueSource (String)<a class="heading-anchor" href="#field-valuesource-string" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>, <strong>Default: &#39;source&#39;</strong>. Specifies whether the value for this field should be taken from the <strong>Data Source</strong> or <strong>Data Target</strong>.</p>
+<ul>
+<li><strong>source</strong>: Takes the value from the current <strong>data source</strong> (such as a Salesforce org or a CSV file).</li>
+<li><strong>target</strong>: Takes the value from the current <strong>data target</strong>. Note that the target value may not always be the original field value from the target Salesforce org, as it may have been modified by previous updates or data manipulation operations.</li>
+</ul>
+<h4 id="field-lookupsource-string">Field.lookupSource (String)<a class="heading-anchor" href="#field-lookupsource-string" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>, <strong>Default: &#39;source&#39;</strong>. Defines whether the <strong>lookupExpression</strong> should be run in a loop over the records from the <strong>Data Source</strong> or <strong>Data Target</strong>.</p>
+<ul>
+<li><strong>source</strong>: It iterates over all <strong>data source</strong> records. In this case, the given field finally selects and evaluates the record from the Data Source.</li>
+<li><strong>target</strong>: It iterates over all <strong>data target</strong> records. In this case, the given field finally selects and evaluates the record from the Data Target.</li>
+</ul>
+<h4 id="field-isconstant-boolean">Field.isConstant (Boolean)<a class="heading-anchor" href="#field-isconstant-boolean" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>, <strong>Default: false</strong>. Setting this property to <code>true</code> ensures that the <code>formula</code> expression for this <code>Field.alias</code> (for example <code>formula.accountCategory</code>) is calculated <strong>only once</strong> <strong>per job</strong>, functioning similarly to a cached value for each <strong>expression</strong> in the <code>Transformation.expressions</code> for all rest records use this cached formula value. So, the first non-null (non-empty string) result is then utilized in <strong>all</strong> subsequent transformations.</p>
+<h4 id="field-lookupexpression-string">Field.lookupExpression (String)<a class="heading-anchor" href="#field-lookupexpression-string" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>. If you prefer a <strong>customized</strong> search for evaluating the current <code>Field</code> value instead of using a regular lookup, you can use the <code>lookupExpression</code> feature.</p>
+<p>Unlike finding records through regular lookup relationships, <code>lookupExpression</code> enables <strong>dynamic comparison</strong> of source or target records <strong>against the record currently being modified as a result of the transformation</strong>.</p>
+<p><code>lookupExpression</code> is a JavaScript expression that uses two constants, <strong>source</strong> and <strong>target</strong>:</p>
+<ul>
+<li><strong>source</strong> refers to the record from either the Data Source or Data Target, depending on the <code>lookupSource</code> setting.</li>
+<li><strong>target</strong> consistently represents the record <strong>intended for transformation</strong>. Note that: <ul>
+<li>In this case, it does NOT refer to the record on the data target side and typically refers to the source record, as it is used to update the target org. </li>
+<li>The <code>target</code> field values are not always the original ones from the data source, as they may have already been altered previously, for example, by using <a href="../../advanced-features/values-mapping/">Values Mapping</a> or as a result of other data transformations.</li>
+</ul>
+</li>
+</ul>
+<p>For example, if there is no <strong>BusinessAccount__c</strong> lookup field to directly link <strong>Country__c</strong> to <strong>Account</strong>, but <strong>Country__c</strong> includes fields like <strong>BusinessAccountFirstName__c</strong> and <strong>BusinessAccountLastName__c</strong>, these can be used to locate a linked account record. </p>
+<p>Here’s an example of how you might configure this in your <code>export.json</code>:</p>
+<pre><code class="language-json">{
+    &quot;objects&quot;: [
+        {
+            &quot;operation&quot;: &quot;Upsert&quot;,
+            &quot;externalId&quot;: &quot;Name&quot;,
+            &quot;query&quot;: &quot;SELECT Id FROM Account&quot; 
+        }
+    ],
+    &quot;dataRetrievedAddons&quot; : [
+        {
+            &quot;module&quot; : &quot;core:RecordsTransform&quot;,
+            &quot;args&quot;: {
+                &quot;fields&quot;: [
+                    {
+                        &quot;alias&quot;: &quot;accountCategory&quot;,
+                        &quot;sourceObject&quot;: &quot;Account&quot;,
+                        &quot;sourceField&quot;: &quot;Category__r.Name&quot;,
+                        &quot;includeFields&quot;: [
+                            // Need to include these fields into query to Account, since they are used 
+                            // in the lookupExpression of the &#39;accountRegion&#39; Field for the `target` Account record.
+                            &quot;FirstName&quot;,
+                            &quot;LastName&quot;
+                        ]
+                    },
+                    {
+                        &quot;alias&quot;: &quot;accountRegion&quot;,
+                        &quot;sourceObject&quot;: &quot;Country__c&quot;,
+                        &quot;sourceField&quot;: &quot;Region__r.Name&quot;,
+                        &quot;lookupExpression&quot;: &quot;source.BusinessAccountFirstName__c == target.FirstName &amp;&amp; source.BusinessAccountLastName__c == target.LastName&quot;,
+                        &quot;includeFields&quot;: [
+                            // Need to include these fields into query to Country__c, since they are used 
+                            // in the lookupExpression of this Field for the `source` Country__c record.
+                            &quot;BusinessAccountFirstName__c&quot;,
+                            &quot;BusinessAccountLastName__c&quot;
+                        ]
+                    }
+                ],
+                &quot;transformations&quot;: [
+                    {
+                        &quot;targetObject&quot;: &quot;Account&quot;,
+                        &quot;targetField&quot;: &quot;CategoryName__c&quot;,
+                        &quot;formula&quot;: &quot;formula.accountCategory&quot;
+                    },
+                    {
+                        &quot;targetObject&quot;: &quot;Account&quot;,
+                        &quot;targetField&quot;: &quot;CategoryAndRegionName__c&quot;,
+                        &quot;expressions&quot;: [
+                            &quot;formula.exists = formula.accountCategory &amp;&amp; formula.accountRegion&quot;
+                        ],
+                        &quot;formula&quot;: &quot;formula.exists ? formula.accountCategory + &#39; (&#39; + formula.accountRegion + &#39;)&#39; : null&quot;
+                    }
+                ]
+            }
+        }
+    ]
+}
+</code></pre>
+<h3 id="transformations-array-of-transformation-objects">transformations (Array of <code>Transformation</code> objects)<a class="heading-anchor" href="#transformations-array-of-transformation-objects" aria-label="Link to section">#</a></h3><p><strong>Mandatory</strong>. List of the sObject fields to update, including expressions to transform them.</p>
+<h4 id="transformation-targetobject-string">Transformation.targetObject (String)<a class="heading-anchor" href="#transformation-targetobject-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. sObject to update.</p>
+<h4 id="transformation-targetfield-string">Transformation.targetField (String)<a class="heading-anchor" href="#transformation-targetfield-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. <code>Transformation.targetObject</code>&#39;s field to update.</p>
+<h4 id="transformation-expressions-array-of-strings">Transformation.expressions (Array of strings)<a class="heading-anchor" href="#transformation-expressions-array-of-strings" aria-label="Link to section">#</a></h4><p><strong>Optional</strong>. A collection of JavaScript expressions, all evaluated before the main <code>Transformation.formula</code> expression is executed. This feature enables you to augment the <code>formula</code> object with additional properties, assisting in the construction of the final <code>formula</code> expression.</p>
+<h4 id="transformation-formula-string">Transformation.formula (String)<a class="heading-anchor" href="#transformation-formula-string" aria-label="Link to section">#</a></h4><p><strong>Mandatory</strong>. Final JavaScript expression, which is running for each target record to update the <strong>targetField</strong>.</p>
+<h2 id="additional-notes">Additional Notes<a class="heading-anchor" href="#additional-notes" aria-label="Link to section">#</a></h2><ul>
+<li><p>The <code>RecordsTransform Module</code> is designed <strong>to transform source records</strong> <strong>after they have been fetched from the data source</strong> and <strong>right before they are saved in the target org</strong>. However, this module <strong>cannot be used</strong> in any way <strong>to modify target records</strong> after they have been saved in the target org. </p>
+</li>
+<li><p>The object defined as a <code>targetObject</code> in a <code>Transformation</code> item <strong>must be listed</strong> in the <code>export.json</code> <strong>for editing</strong>, either with <code>Insert</code>, <code>Update</code>, or another operation within <code>objects</code> or <code>objectSets</code>. Conversely, a <code>sourceObject</code> can be set with a <code>Readonly</code> operation.</p>
+</li>
+<li><p>The <code>sourceField</code> property must be set to a field that is queryable using SOQL on the source object. 
+For instance, if you define <code>Category__r.Name</code> for the Account, the Add-On internally generates a query similar to: 
+<code>SELECT Id, Category__r.Name FROM Account</code>, etc.</p>
+</li>
+<li><p>Fields defined as the <code>sourceField</code>, along with those specified in <code>includeFields</code>, are always included in the SOQL query for the sObject, just as if you were manually constructing the query.<br>As a result, these fields may <strong>also be migrated to the Target org</strong> during the query process, like other fields. To prevent this and ensure these fields are only used for transformation purposes, consider using the <a href="../../export-json-file-objects-specification/script-object-object/#excludedfromupdatefields-array-of-string">excludedFromUpdateFields</a> property, which prevents these fields from being uploaded to the Target org.</p>
+</li>
+<li><p>This Add-On executes <strong>after</strong> the <a href="../../advanced-features/values-mapping/">Values Mapping</a> process has been completed.</p>
+</li>
+<li><p>There are two options for incorporating this Add-On into your <code>export.json</code>:</p>
+<ul>
+<li><p><a href="../supported-events/#objectonbeforeupdate">Object OnBeforeUpdate Event</a>  In this scenario, the Add-On transforms the <strong>final version</strong> of the records just before they are uploaded to the target org including lookup fields.</p>
+</li>
+<li><p><a href="../supported-events/#ondataretrieved">Global OnDataRetrieved Event</a>. In this case, it operates on <strong>not the final version</strong> of the records, meaning the lookup fields are not yet populated.</p>
+</li>
+</ul>
+<p>For additional details, see also <a href="../supported-events/">Supported Add-On Api Events</a></p>
+</li>
+<li><p>The <code>Transformations</code> are <strong>executed in the order in which they appear in the <code>transformations</code> array</strong>, ensuring that modifications to the target records are applied sequentially.</p>
+</li>
+</ul>
+
+              <div class="page-meta clearfix">
+                <div class="last-updated float-right">
+                  Last updated 2026
+                </div>
+                <div class="float-left">
+                  <a href="#top-anchor">Back to top</a>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    
+  </div>
+  <footer class="footer">
+    <div class="container-fluid">
+      <p class="copyright float-right">Copyrights &copy; 2026 - <a href="https://salesforce.com">Salesforce.com</a> under <a href="../../../additional-information/license/">BSD-3-Clause</a></p>
+    </div>
+  </footer>
+  <script src="../../../lib/jquery/dist/jquery.min.js"></script>
+  <script src="../../../lib/popper.js/dist/umd/popper.min.js"></script>
+  <script src="../../../lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
+  <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
+  <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../lib/highlight.js/highlight.min.js"></script>
+  <script src="../../../assets/static-runtime.js"></script>
+  <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/static-search.js"></script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en" data-site-root="../../../">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Haim Knokh,https://github.com/hknokh">
+  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
+  <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
+  <title>Multiple object sets | SFDMU Help Center</title>
+  <link rel="shortcut icon" href="../../../favicon.png">
+  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
+  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <script>var rn_base_url = "../../..";</script>
+  <link rel="stylesheet" href="../../../styles/raneto.min.css">
+  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
+  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="stylesheet" href="../../../assets/static-site.css">
+</head>
+<body class="page">
+  <a class="scroll-anchor" rel="nofollow" id="top-anchor"></a>
+  <header class="header">
+    <div class="container-fluid">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <a href="../../../" class="logo">
+            <img src="../../../favicon.png" alt="SFDMU Help Center"/>
+            SFDMU Help Center</a>
+        </div>
+        <div class="col-md-5" id="search-and-login">
+          <form class="form-inline float-right"></form>
+          <ul class="nav navbar-nav navbar-right float-right mr-4 pr-2">
+            <li><a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility"><i class="fa fa-code"></i>&nbsp;View On GitHub</a></li>
+          </ul>
+          <form class="search-form pl-4 clearfix" action="../../../">
+            <div class="form-group">
+              <label class="sr-only" for="search">Search the knowledge base</label>
+              <input type="search" class="form-control float-right page-search-input" name="search" id="search"
+                size="30" value="" placeholder="Search the knowledge base">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="container-fluid">
+    
+      <div class="page-wrapper">
+        <div class="page-widgets row d-none d-md-block">
+          <div class="col-sm-9 offset-sm-3" style="padding-left: 32px;">
+            
+    <div class="input-group mv-3">
+      <input type="search" class="form-control quick-search-input"
+              onkeyup="quickSearch_OnKeyUp(event, this.value, '.page-content', 132)"
+              onkeydown="quickSearch_OnKeyDown(event)"
+              onsearch="quickSearch_OnSearch(this.value, '.page-content')"
+              placeholder="Search on this page"/>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+      </div>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+      </div>
+      <div class="input-group-append">
+        <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
+      </div>
+    </div>
+  
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3 d-sm-block d-none side-menu">
+            
+    <ul class="menu" aria-label="Documentation navigation">
+      
+    <li class="category active" id="nav-full-documentation">
+      <h5 class="category-title active">Full Documentation</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-full-documentation-export-json-file-objects-specification">
+      <a href="#nav-full-documentation-export-json-file-objects-specification-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Export.json File Specification</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-export-json-file-objects-specification-children">
+        <li class="page file"><a href="../../export-json-file-objects-specification/export-json-file-overview/"><i class="fa fa-edit"></i>&nbsp;Export.json File Overview</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object/"><i class="fa fa-edit"></i>&nbsp;Script Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object-set-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObjectSet Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObject Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-org-object/"><i class="fa fa-edit"></i>&nbsp;ScriptOrg Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/mapping-item-object/"><i class="fa fa-edit"></i>&nbsp;MappingItem Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/mock-field-object/"><i class="fa fa-edit"></i>&nbsp;MockField Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/addon-manifest-definition-object/"><i class="fa fa-edit"></i>&nbsp;AddonManifestDefinition Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/json-schema-for-export-json/"><i class="fa fa-edit"></i>&nbsp;JSON Schema for export.json</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory active" id="nav-full-documentation-advanced-features">
+      <a href="#nav-full-documentation-advanced-features-children" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle"><i class="fa fa-folder-open"></i>&nbsp;Advanced features</a>
+      <ul class="collapse list-unstyled show" id="nav-full-documentation-advanced-features-children">
+        <li class="page file"><a href="../composite-external-id-keys/"><i class="fa fa-edit"></i>&nbsp;Composite External ID keys</a></li><li class="page file"><a href="../compound-fields/"><i class="fa fa-edit"></i>&nbsp;Compound Fields</a></li><li class="page file"><a href="../data-anonymization/"><i class="fa fa-edit"></i>&nbsp;Data Anonymization</a></li><li class="page file"><a href="../delete-by-hierarchy/"><i class="fa fa-edit"></i>&nbsp;DeleteHierarchy operation</a></li><li class="page file"><a href="../delete-source/"><i class="fa fa-edit"></i>&nbsp;DeleteSource operation</a></li><li class="page file"><a href="../export-attachments-and-files/"><i class="fa fa-edit"></i>&nbsp;Export of the Notes, Attachments and Files</a></li><li class="page file"><a href="../field-multiselect/"><i class="fa fa-edit"></i>&nbsp;Field Multiselect</a></li><li class="page file"><a href="../fields-mapping/"><i class="fa fa-edit"></i>&nbsp;Fields Mapping</a></li><li class="page file"><a href="../handling-record-ownerid/"><i class="fa fa-edit"></i>&nbsp;Handling of record OwnerId</a></li><li class="page file"><a href="../handling-record-type/"><i class="fa fa-edit"></i>&nbsp;Handling of the RecordType</a></li><li class="page active file"><a href="./"><i class="fa fa-edit"></i>&nbsp;Multiple object sets</a></li><li class="page file"><a href="../polymorphic-lookup-fields/"><i class="fa fa-edit"></i>&nbsp;Polymorphic Lookup Fields</a></li><li class="page file"><a href="../sfdmu-add-ons/"><i class="fa fa-edit"></i>&nbsp;SFDMU Add-Ons</a></li><li class="page file"><a href="../target-records-filter/"><i class="fa fa-edit"></i>&nbsp;Target Records Filter</a></li><li class="page file"><a href="../values-mapping/"><i class="fa fa-edit"></i>&nbsp;Values Mapping</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-add-on-api">
+      <a href="#nav-full-documentation-add-on-api-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Add-On API</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-add-on-api-children">
+        <li class="page file"><a href="../../add-on-api/introduction-to-the-sfdmu-add-on-api-engine/"><i class="fa fa-edit"></i>&nbsp;Add-On API Overview</a></li><li class="page file"><a href="../../add-on-api/export-file-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;ExportFiles Core Add-On Module</a></li><li class="page file"><a href="../../add-on-api/records-transform-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsTransform Core Add-On Module</a></li><li class="page file"><a href="../../add-on-api/records-filter-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter Core Add-On Module</a></li><li class="page file"><a href="../../add-on-api/records-filter-bad-words-filter/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter - Bad Words Filter</a></li><li class="page file"><a href="../../add-on-api/supported-events/"><i class="fa fa-edit"></i>&nbsp;Supported Add-On Api events</a></li><li class="page file"><a href="../../add-on-api/custom-sfdmu-add-on-api/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On Api</a></li><li class="page file"><a href="../../add-on-api/custom-sfdmu-add-on-object-reference/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On API Object Reference</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-reports">
+      <a href="#nav-full-documentation-reports-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Reports</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-reports-children">
+        <li class="page file"><a href="../../reports/issues-with-the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Identifying Issues in CSV Files with the Plugin</a></li><li class="page file"><a href="../../reports/issues-with-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Handling Missing Parent Records in Plugin Migrations</a></li><li class="page file"><a href="../../reports/the-target-csv-files/"><i class="fa fa-edit"></i>&nbsp;Target CSV Files in SFDMU</a></li><li class="page file"><a href="../../reports/the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Source (Working Copy) CSV Files in SFDMU</a></li><li class="page file"><a href="../../reports/the-execution-log/"><i class="fa fa-edit"></i>&nbsp;Log File Management in Plugin Migrations</a></li><li class="page file"><a href="../../reports/run-command-flags/"><i class="fa fa-edit"></i>&nbsp;Run Command Flags</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../key-features/"><i class="fa fa-edit"></i>&nbsp;Key Features of the SFDMU</a></li>
+    <li class="category" id="nav-examples">
+      <h5 class="category-title">Examples</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../../../examples/basic-examples/"><i class="fa fa-edit"></i>&nbsp;Basic examples</a></li><li class="page file"><a href="../../../examples/advanced-examples/"><i class="fa fa-edit"></i>&nbsp;Advanced examples</a></li><li class="page file"><a href="../../../examples/csv-import-export/"><i class="fa fa-edit"></i>&nbsp;CSV import-export examples</a></li><li class="page file"><a href="../../../examples/file-migration/"><i class="fa fa-edit"></i>&nbsp;File data transfer examples</a></li><li class="page file"><a href="../../../examples/record-transformation/"><i class="fa fa-edit"></i>&nbsp;Record transformation examples</a></li>
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../get-started/"><i class="fa fa-edit"></i>&nbsp;Get Started</a></li><li class="page file"><a href="../../../installation/"><i class="fa fa-edit"></i>&nbsp;Installation</a></li><li class="page file"><a href="../../../configuration/"><i class="fa fa-edit"></i>&nbsp;Configuration</a></li>
+    <li class="category" id="nav-faq">
+      <h5 class="category-title">FAQ</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-faq-bulk-api-query-management">
+      <a href="#nav-faq-bulk-api-query-management-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Bulk Api Query Management</a>
+      <ul class="collapse list-unstyled" id="nav-faq-bulk-api-query-management-children">
+        <li class="page file"><a href="../../../faq/bulk-api-query-management/what-are-the-limitations-on-data-volume-processing/"><i class="fa fa-edit"></i>&nbsp;What are the limitations on data volume processing?</a></li><li class="page file"><a href="../../../faq/bulk-api-query-management/how-do-i-adjust-the-batch-size-for-a-bulk-api-query/"><i class="fa fa-edit"></i>&nbsp;How do I adjust the batch size for a Bulk API Query?</a></li><li class="page file"><a href="../../../faq/bulk-api-query-management/why-doesnt-bulk-api-v1-parallel-mode-create-batches-asynchronously/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t Bulk API v1 Parallel Mode create batches asynchronously?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-conceptual-definitions-in-sfdmu">
+      <a href="#nav-faq-conceptual-definitions-in-sfdmu-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Conceptual Definitions In Sfdmu</a>
+      <ul class="collapse list-unstyled" id="nav-faq-conceptual-definitions-in-sfdmu-children">
+        <li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/can-i-include-referenced-fields-like-accountname-into-the-query-string/"><i class="fa fa-edit"></i>&nbsp;Can I include referenced fields, like Account.Name into the query string ?</a></li><li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/is-there-a-limitation-on-fields-used-in-composite-external-ids-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;Is there a limitation on fields used in composite external IDs in SFDMU?</a></li><li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/what-is-master-and-what-is-slave/"><i class="fa fa-edit"></i>&nbsp;What do master and slave objects mean?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-csv-file-and-encoding-specifications">
+      <a href="#nav-faq-csv-file-and-encoding-specifications-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Csv File And Encoding Specifications</a>
+      <ul class="collapse list-unstyled" id="nav-faq-csv-file-and-encoding-specifications-children">
+        <li class="page file"><a href="../../../faq/csv-file-and-encoding-specifications/what-encoding-is-supported-for-csv-files-by-the-plugin/"><i class="fa fa-edit"></i>&nbsp;What encoding is supported for CSV files by the plugin?</a></li><li class="page file"><a href="../../../faq/csv-file-and-encoding-specifications/what-encoding-type-should-be-used-for-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What encoding type should be used for the export.json file?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-migration-with-plugin">
+      <a href="#nav-faq-data-migration-with-plugin-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Migration With Plugin</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-migration-with-plugin-children">
+        <li class="page file"><a href="../../../faq/data-migration-with-plugin/can-csv-files-from-the-standard-salesforce-data-loader-be-used-with-this-plugin/"><i class="fa fa-edit"></i>&nbsp;Can CSV files from the standard Salesforce Data Loader be used with this plugin?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/can-i-override-the-default-query-for-the-user-or-group-objects/"><i class="fa fa-edit"></i>&nbsp;Can I override the default query for the User or Group objects?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/can-the-plugin-migrate-users-or-groups/"><i class="fa fa-edit"></i>&nbsp;Can the plugin migrate Users or Groups?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/does-the-plugin-support-exporting-object-metadata/"><i class="fa fa-edit"></i>&nbsp;Does the plugin support exporting object metadata?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/using-the-all-multiselect-keyword-with-the-product2-object/"><i class="fa fa-edit"></i>&nbsp;Using the `all` multiselect keyword with the `Product2` object.</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/why-are-there-differences-in-failures-between-simulation-and-non-simulation-modes/"><i class="fa fa-edit"></i>&nbsp;Why are there differences in failures between simulation and non-simulation modes?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-transfer-and-field-exclusions">
+      <a href="#nav-faq-data-transfer-and-field-exclusions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Transfer And Field Exclusions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-transfer-and-field-exclusions-children">
+        <li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/can-the-document-object-be-transferred-with-binary-data/"><i class="fa fa-edit"></i>&nbsp;Can the Document object be transferred with binary data?</a></li><li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/is-it-possible-to-use-multiple-csv-source-files-for-the-same-object/"><i class="fa fa-edit"></i>&nbsp;Is it possible to use multiple CSV source files for the same object?</a></li><li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/what-types-of-fields-can-be-excluded-using-the-excludefields-property/"><i class="fa fa-edit"></i>&nbsp;What types of fields can be excluded using the &quot;excludedFields&quot; property?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-object-and-field-handling-in-soql-queries">
+      <a href="#nav-faq-object-and-field-handling-in-soql-queries-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Object And Field Handling In Soql Queries</a>
+      <ul class="collapse list-unstyled" id="nav-faq-object-and-field-handling-in-soql-queries-children">
+        <li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/are-field-names-and-object-names-in-a-soql-query-case-sensitive/"><i class="fa fa-edit"></i>&nbsp;Are field names and object names in a SOQL query case sensitive?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/can-autonumber-fields-be-used-as-external-ids/"><i class="fa fa-edit"></i>&nbsp;Can autonumber fields be used as External IDs?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/can-i-export-fields-from-parent-sobjects-using-a-child-object-query/"><i class="fa fa-edit"></i>&nbsp;Can I export fields from parent sObjects using a child object query?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/is-it-necessary-to-always-specify-the-parent-object-for-a-polymorphic-field/"><i class="fa fa-edit"></i>&nbsp;Is it necessary to always specify the parent object for a polymorphic field?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/should-the-id-field-always-be-included-in-my-query/"><i class="fa fa-edit"></i>&nbsp;Should the Id field always be included in my query?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-plugin-usage-and-extensions">
+      <a href="#nav-faq-plugin-usage-and-extensions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Usage And Extensions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-plugin-usage-and-extensions-children">
+        <li class="page file"><a href="../../../faq/plugin-usage-and-extensions/can-i-modify-and-use-the-plugin-code-for-my-own-projects/"><i class="fa fa-edit"></i>&nbsp;Can I modify and use the plugin code for my own projects?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/can-the-plugin-be-used-in-production-environments/"><i class="fa fa-edit"></i>&nbsp;Can the plugin be used in production environments?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/how-to-address-ui-issues-and-field-selection-in-new-sfdmu-gui/"><i class="fa fa-edit"></i>&nbsp;How to address UI issues and field selection in the new SFDMU GUI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/is-sfdmu-compatible-with-latest-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Is SFDMU compatible with the latest SF CLI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/why-does-sfdmu-command-fail-in-force-app-directory-with-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Why does SFDMU command fail in the force-app directory with SF CLI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/why-doesnt-fieldmapping-rename-csv-column-headers-in-my-configuration/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t FieldMapping rename CSV column headers in my configuration?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-configuration-and-pre-validation">
+      <a href="#nav-faq-sfdmu-configuration-and-pre-validation-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Configuration And Pre Validation</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-configuration-and-pre-validation-children">
+        <li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-all-objects-be-defined-as-slave-objects-in-the-configuration/"><i class="fa fa-edit"></i>&nbsp;Can all objects be defined as &quot;slave&quot; objects in the configuration?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-csv-files-be-used-for-csv-to-org-migration-in-simulation-mode/"><i class="fa fa-edit"></i>&nbsp;Can CSV files be used for CSV-to-org migration in simulation mode?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-i-omit-the-definition-of-external-id-for-an-object/"><i class="fa fa-edit"></i>&nbsp;Can I omit the definition of External ID for an object?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/how-to-modify-include-regex-option-in-sfdmu-configuration/"><i class="fa fa-edit"></i>&nbsp;How to modify the include regex option in SFDMU configuration?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/how-to-prevent-resetting-checkboxes-using-sfdmu-with-multiselect-keyword/"><i class="fa fa-edit"></i>&nbsp;How to prevent resetting checkboxes using SFDMU with multiselect keyword?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/what-pre-validation-options-does-sfdmu-offer-before-inserting-data/"><i class="fa fa-edit"></i>&nbsp;What pre-validation options does SFDMU offer before inserting data?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-data-insertion-and-limitations">
+      <a href="#nav-faq-sfdmu-data-insertion-and-limitations-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Data Insertion And Limitations</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-data-insertion-and-limitations-children">
+        <li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/can-child-records-with-a-self-lookup-field-be-inserted-in-a-single-job/"><i class="fa fa-edit"></i>&nbsp;Can child records with a self-lookup field be inserted in a single job?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-combine-multiple-account-extractions-into-one-csv-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to combine multiple account extractions into one CSV with SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-handle-checkbox-fields-during-csv-imports-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle checkbox fields during CSV imports in SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-handle-master-detail-relationships-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle Master-Detail relationships with SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-resolve-object-location-is-missing-in-the-target-error-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to resolve &quot;Object Location is missing in the Target&quot; error in SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/what-is-the-character-limit-for-the-where-clause-in-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What is the character limit for the WHERE clause in the export.json file?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/why-does-adding-person-account-records-not-respect-specified-record-types/"><i class="fa fa-edit"></i>&nbsp;Why does adding person account records not respect specified record types?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-gui-application">
+      <a href="#nav-faq-sfdmu-gui-application-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Gui Application</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-gui-application-children">
+        <li class="page file"><a href="../../../faq/sfdmu-gui-application/i-cant-find-where-can-i-set-the-operation-for-the-object/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - I can&#39;t find where can I set the Operation for the object.</a></li><li class="page file"><a href="../../../faq/sfdmu-gui-application/sf-cli-is-no-longer-detected/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - SF CLI is no longer detected.</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../running/"><i class="fa fa-edit"></i>&nbsp;Running</a></li><li class="page file"><a href="../../../debugging/"><i class="fa fa-edit"></i>&nbsp;Debugging</a></li>
+    <li class="category" id="nav-troubleshooting">
+      <h5 class="category-title">Troubleshooting</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-troubleshooting-data-import-export-problems">
+      <a href="#nav-troubleshooting-data-import-export-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Import Export Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-import-export-problems-children">
+        <li class="page file"><a href="../../../troubleshooting/data-import-export-problems/notes-and-attachments-migration-issues/"><i class="fa fa-edit"></i>&nbsp;Notes and attachments migration issues</a></li><li class="page file"><a href="../../../troubleshooting/data-import-export-problems/why-no-records-inserted/"><i class="fa fa-edit"></i>&nbsp;Why no records inserted?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-data-mapping-issues">
+      <a href="#nav-troubleshooting-data-mapping-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Mapping Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-mapping-issues-children">
+        <li class="page file"><a href="../../../troubleshooting/data-mapping-issues/problem-of-values-mapping-with-regex/"><i class="fa fa-edit"></i>&nbsp;Problem of values mapping with regex.</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/warning-about-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Warning about missing parent lookup records</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-data-anonymization-not-working/"><i class="fa fa-edit"></i>&nbsp;Why data anonymization is not working?</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-does-the-values-mapping-not-work-for-me/"><i class="fa fa-edit"></i>&nbsp;Why does the values mapping not work for me?</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-user-and-record-type-lookups-are-not-filled-on-insert/"><i class="fa fa-edit"></i>&nbsp;Why user and record type lookups are not filled on insert?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-gui-installation-problems">
+      <a href="#nav-troubleshooting-gui-installation-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Gui Installation Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-gui-installation-problems-children">
+        <li class="page file"><a href="../../../troubleshooting/gui-installation-problems/gui-app-installation-failed-or-showing-blank-screen/"><i class="fa fa-edit"></i>&nbsp;GUI app installation failed or showing blank screen.</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-plugin-connectivity-and-configuration">
+      <a href="#nav-troubleshooting-plugin-connectivity-and-configuration-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Connectivity And Configuration</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-plugin-connectivity-and-configuration-children">
+        <li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-connect-to-the-org/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot connect to the org</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-locate-export-json-in-working-directory/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot locate export.json in working directory</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-error-no-fields-can-be-updated-or-inserted/"><i class="fa fa-edit"></i>&nbsp;Plugin error: no fields can be updated or inserted</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/unable-to-run-plugin-due-to-nodejs-or-sfdx-cli-issue/"><i class="fa fa-edit"></i>&nbsp;Unable to run plugin due to Node.js or SF CLI issue</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-security-authentication-issues">
+      <a href="#nav-troubleshooting-security-authentication-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Security Authentication Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-security-authentication-issues-children">
+        <li class="page file"><a href="../../../troubleshooting/security-authentication-issues/allow-disabling-ssl-and-hash-checks-for-plugin-linking/"><i class="fa fa-edit"></i>&nbsp;Allow disabling SSL and hash checks for plugin linking</a></li><li class="page file"><a href="../../../troubleshooting/security-authentication-issues/authentication-issues-with-sfdx-orgs/"><i class="fa fa-edit"></i>&nbsp;Authentication issues with SF CLI orgs</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-unexpected-behavior-errors">
+      <a href="#nav-troubleshooting-unexpected-behavior-errors-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Unexpected Behavior Errors</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-unexpected-behavior-errors-children">
+        <li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/javascript-heap-out-of-memory-error/"><i class="fa fa-edit"></i>&nbsp;JavaScript heap out of memory error</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/read-econnreset-error-during-source-retrieval/"><i class="fa fa-edit"></i>&nbsp;Read ECONNRESET error during source retrieval</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/sfdmu-finishing-abruptly-no-error-or-warning-whatsoeverd/"><i class="fa fa-edit"></i>&nbsp;SFDMU finishing abruptly, no error or warning whatsoever</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/unexpected-behavior-with-default-sfdx-target-org-configuration/"><i class="fa fa-edit"></i>&nbsp;Unexpected behavior with default SFDX target org configuration</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/why-do-i-get-the-error-invalid-record-hashcode-from-bulk-job/"><i class="fa fa-edit"></i>&nbsp;Why do I get the error &quot;Invalid record hashcode from bulk job&quot;?</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/why-the-deleting-from-the-target-always-runs-for-me/"><i class="fa fa-edit"></i>&nbsp;Why the deleting from the target always runs for me?</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../sfdmu-gui-app/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI Application</a></li>
+    <li class="category" id="nav-additional-information">
+      <h5 class="category-title">Additional Information</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../../../additional-information/support_policy/"><i class="fa fa-edit"></i>&nbsp;Support policy</a></li><li class="page file"><a href="../../../additional-information/code_contribution_policy/"><i class="fa fa-edit"></i>&nbsp;Code contribution policy</a></li><li class="page file"><a href="../../../additional-information/license/"><i class="fa fa-edit"></i>&nbsp;License Agreement</a></li>
+      </ul>
+    </li>
+  
+    </ul>
+  
+          </div>
+          <div class="col-sm-9">
+            <section class="content page-content">
+              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#example-configuration-using-objectsets">Example Configuration Using ObjectSets</a></li><li><a href="#combined-configuration-with-main-objects-set">Combined Configuration with Main objects Set</a></li><li><a href="#key-considerations">Key Considerations</a></li></ul></nav>
+## Overview
+
+<p><strong>Purpose</strong>: This feature is designed to enhance flexibility in operations by allowing the processing of multiple sub-jobs under one main job. </p>
+<p>This is especially useful when multiple operations need to be performed on the same sObject, which is not possible using the standard &quot;objects&quot; array as each object can be specified only once.</p>
+<h2 id="example-configuration-using-objectsets">Example Configuration Using ObjectSets<a class="heading-anchor" href="#example-configuration-using-objectsets" aria-label="Link to section">#</a></h2><p>In the following example, there are two object subsets defined:</p>
+<ol>
+<li><strong>First Subset</strong> - Deletes all Accounts and Opportunities.</li>
+<li><strong>Second Subset</strong> - Inserts one Account record.</li>
+</ol>
+<p>This configuration demonstrates handling the same Account object in different operations:</p>
+<pre><code class="language-json">{
+  &quot;objectSets&quot;: [
+    {
+      &quot;objects&quot;: [
+        {
+          &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+          &quot;operation&quot;: &quot;DeleteHierarchy&quot;
+        },
+        {
+          &quot;query&quot;: &quot;SELECT Id FROM Opportunity&quot;,
+          &quot;operation&quot;: &quot;DeleteHierarchy&quot;
+        }
+      ]
+    },
+    {
+      &quot;objects&quot;: [
+        {
+          &quot;query&quot;: &quot;SELECT Name FROM Account LIMIT 1&quot;,
+          &quot;operation&quot;: &quot;Insert&quot;
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<h2 id="combined-configuration-with-main-objects-set">Combined Configuration with Main <code>objects</code> Set<a class="heading-anchor" href="#combined-configuration-with-main-objects-set" aria-label="Link to section">#</a></h2><p>It is possible to use both the main &quot;objects&quot; set and the &quot;objectSets&quot; subset in the same configuration. In such cases, the operations defined in the &quot;objects&quot; set will run <strong>before</strong> those defined in the &quot;objectSets&quot;:</p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Account&quot;,
+      &quot;operation&quot;: &quot;DeleteHierarchy&quot;
+    },
+    {
+      &quot;query&quot;: &quot;SELECT Id FROM Opportunity&quot;,
+      &quot;operation&quot;: &quot;DeleteHierarchy&quot;
+    }
+  ],
+  &quot;objectSets&quot;: [
+    {
+      &quot;objects&quot;: [
+        {
+          &quot;query&quot;: &quot;SELECT Name FROM Account LIMIT 1&quot;,
+          &quot;operation&quot;: &quot;Insert&quot;
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<h2 id="key-considerations">Key Considerations<a class="heading-anchor" href="#key-considerations" aria-label="Link to section">#</a></h2><ul>
+<li><strong>Use of a Single CSV File as Data Source and Target</strong>: When using CSV files as the source or target for the migration job, all Object Sets by default export to or import from the same CSV files located in the working directory.</li>
+<li><strong>Separate CSV Files</strong>: If the <strong>useSeparatedCSVFiles</strong> setting is enabled (set to true), distinct CSV source files must be provided for each Object Set during the data import:<ul>
+<li>For Object Set #1 or objects specified in the root &quot;objects&quot; array of the script, files should be placed in the working directory.</li>
+<li>For subsequent Object Sets, files must be placed in respective sub-directories, for example, <strong>[working directory]/objectset_source/object-set-2</strong>, <strong>[working directory]/objectset_source/object-set-3</strong>, etc.</li>
+<li>Similarly, during data export to CSV files, if <strong>useSeparatedCSVFiles</strong> is true, the Plugin will export data to <code>objectset_source/...</code> subdirectories instead of overwriting the target CSV files in the root directory for each object set.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>For more detailed configuration options, refer to the <a href="../../../export-json-file-overview/">Export.json File Specification</a>.</p>
+
+              <div class="page-meta clearfix">
+                <div class="last-updated float-right">
+                  Last updated 2026
+                </div>
+                <div class="float-left">
+                  <a href="#top-anchor">Back to top</a>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    
+  </div>
+  <footer class="footer">
+    <div class="container-fluid">
+      <p class="copyright float-right">Copyrights &copy; 2026 - <a href="https://salesforce.com">Salesforce.com</a> under <a href="../../../additional-information/license/">BSD-3-Clause</a></p>
+    </div>
+  </footer>
+  <script src="../../../lib/jquery/dist/jquery.min.js"></script>
+  <script src="../../../lib/popper.js/dist/umd/popper.min.js"></script>
+  <script src="../../../lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
+  <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
+  <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../lib/highlight.js/highlight.min.js"></script>
+  <script src="../../../assets/static-runtime.js"></script>
+  <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/static-search.js"></script>
+</body>
+</html>

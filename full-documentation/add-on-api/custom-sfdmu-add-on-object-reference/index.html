@@ -1,0 +1,1968 @@
+<!doctype html>
+<html lang="en" data-site-root="../../../">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Haim Knokh,https://github.com/hknokh">
+  <meta name="site:build-using" content="static pages generated from Raneto-style articles">
+  <meta name="site:git-repo" content="https://github.com/forcedotcom/SFDX-Data-Move-Utility">
+  <meta name="description" content="Static documentation for the SFDX Data Move Utility.">
+  <title>Custom Add-On API Object Reference | SFDMU Help Center</title>
+  <link rel="shortcut icon" href="../../../favicon.png">
+  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/lumen.min.css">
+  <link rel="stylesheet" href="../../../lib/bootstrap/dist/css/font-awesome.min.css">
+  <script>var rn_base_url = "../../..";</script>
+  <link rel="stylesheet" href="../../../styles/raneto.min.css">
+  <link rel="stylesheet" href="../../../lib/highlightjs/styles/night-owl.min.css">
+  <link rel="stylesheet" href="../../../styles/custom.css">
+  <link rel="stylesheet" href="../../../assets/static-site.css">
+</head>
+<body class="page">
+  <a class="scroll-anchor" rel="nofollow" id="top-anchor"></a>
+  <header class="header">
+    <div class="container-fluid">
+      <div class="row justify-content-between">
+        <div class="col-auto">
+          <a href="../../../" class="logo">
+            <img src="../../../favicon.png" alt="SFDMU Help Center"/>
+            SFDMU Help Center</a>
+        </div>
+        <div class="col-md-5" id="search-and-login">
+          <form class="form-inline float-right"></form>
+          <ul class="nav navbar-nav navbar-right float-right mr-4 pr-2">
+            <li><a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility"><i class="fa fa-code"></i>&nbsp;View On GitHub</a></li>
+          </ul>
+          <form class="search-form pl-4 clearfix" action="../../../">
+            <div class="form-group">
+              <label class="sr-only" for="search">Search the knowledge base</label>
+              <input type="search" class="form-control float-right page-search-input" name="search" id="search"
+                size="30" value="" placeholder="Search the knowledge base">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="container-fluid">
+    
+      <div class="page-wrapper">
+        <div class="page-widgets row d-none d-md-block">
+          <div class="col-sm-9 offset-sm-3" style="padding-left: 32px;">
+            
+    <div class="input-group mv-3">
+      <input type="search" class="form-control quick-search-input"
+              onkeyup="quickSearch_OnKeyUp(event, this.value, '.page-content', 132)"
+              onkeydown="quickSearch_OnKeyDown(event)"
+              onsearch="quickSearch_OnSearch(this.value, '.page-content')"
+              placeholder="Search on this page"/>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Next result" onclick="quickSearchNext()">↓</button>
+      </div>
+      <div class="input-group-append">
+        <button disabled="disabled" class="btn btn-info nav-button search-button" title="Previous result" onclick="quickSearchPrev()">↑</button>
+      </div>
+      <div class="input-group-append">
+        <button class="btn btn-info search-button" title="Scroll to page top" onclick="quickSearchTop_OnMoveTop()">⇧</button>
+      </div>
+    </div>
+  
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3 d-sm-block d-none side-menu">
+            
+    <ul class="menu" aria-label="Documentation navigation">
+      
+    <li class="category active" id="nav-full-documentation">
+      <h5 class="category-title active">Full Documentation</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-full-documentation-export-json-file-objects-specification">
+      <a href="#nav-full-documentation-export-json-file-objects-specification-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Export.json File Specification</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-export-json-file-objects-specification-children">
+        <li class="page file"><a href="../../export-json-file-objects-specification/export-json-file-overview/"><i class="fa fa-edit"></i>&nbsp;Export.json File Overview</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object/"><i class="fa fa-edit"></i>&nbsp;Script Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object-set-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObjectSet Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-object-object/"><i class="fa fa-edit"></i>&nbsp;ScriptObject Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/script-org-object/"><i class="fa fa-edit"></i>&nbsp;ScriptOrg Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/mapping-item-object/"><i class="fa fa-edit"></i>&nbsp;MappingItem Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/mock-field-object/"><i class="fa fa-edit"></i>&nbsp;MockField Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/addon-manifest-definition-object/"><i class="fa fa-edit"></i>&nbsp;AddonManifestDefinition Object</a></li><li class="page file"><a href="../../export-json-file-objects-specification/json-schema-for-export-json/"><i class="fa fa-edit"></i>&nbsp;JSON Schema for export.json</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-advanced-features">
+      <a href="#nav-full-documentation-advanced-features-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Advanced features</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-advanced-features-children">
+        <li class="page file"><a href="../../advanced-features/composite-external-id-keys/"><i class="fa fa-edit"></i>&nbsp;Composite External ID keys</a></li><li class="page file"><a href="../../advanced-features/compound-fields/"><i class="fa fa-edit"></i>&nbsp;Compound Fields</a></li><li class="page file"><a href="../../advanced-features/data-anonymization/"><i class="fa fa-edit"></i>&nbsp;Data Anonymization</a></li><li class="page file"><a href="../../advanced-features/delete-by-hierarchy/"><i class="fa fa-edit"></i>&nbsp;DeleteHierarchy operation</a></li><li class="page file"><a href="../../advanced-features/delete-source/"><i class="fa fa-edit"></i>&nbsp;DeleteSource operation</a></li><li class="page file"><a href="../../advanced-features/export-attachments-and-files/"><i class="fa fa-edit"></i>&nbsp;Export of the Notes, Attachments and Files</a></li><li class="page file"><a href="../../advanced-features/field-multiselect/"><i class="fa fa-edit"></i>&nbsp;Field Multiselect</a></li><li class="page file"><a href="../../advanced-features/fields-mapping/"><i class="fa fa-edit"></i>&nbsp;Fields Mapping</a></li><li class="page file"><a href="../../advanced-features/handling-record-ownerid/"><i class="fa fa-edit"></i>&nbsp;Handling of record OwnerId</a></li><li class="page file"><a href="../../advanced-features/handling-record-type/"><i class="fa fa-edit"></i>&nbsp;Handling of the RecordType</a></li><li class="page file"><a href="../../advanced-features/multiple-object-sets/"><i class="fa fa-edit"></i>&nbsp;Multiple object sets</a></li><li class="page file"><a href="../../advanced-features/polymorphic-lookup-fields/"><i class="fa fa-edit"></i>&nbsp;Polymorphic Lookup Fields</a></li><li class="page file"><a href="../../advanced-features/sfdmu-add-ons/"><i class="fa fa-edit"></i>&nbsp;SFDMU Add-Ons</a></li><li class="page file"><a href="../../advanced-features/target-records-filter/"><i class="fa fa-edit"></i>&nbsp;Target Records Filter</a></li><li class="page file"><a href="../../advanced-features/values-mapping/"><i class="fa fa-edit"></i>&nbsp;Values Mapping</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory active" id="nav-full-documentation-add-on-api">
+      <a href="#nav-full-documentation-add-on-api-children" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle"><i class="fa fa-folder-open"></i>&nbsp;Add-On API</a>
+      <ul class="collapse list-unstyled show" id="nav-full-documentation-add-on-api-children">
+        <li class="page file"><a href="../introduction-to-the-sfdmu-add-on-api-engine/"><i class="fa fa-edit"></i>&nbsp;Add-On API Overview</a></li><li class="page file"><a href="../export-file-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;ExportFiles Core Add-On Module</a></li><li class="page file"><a href="../records-transform-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsTransform Core Add-On Module</a></li><li class="page file"><a href="../records-filter-core-add-on-module/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter Core Add-On Module</a></li><li class="page file"><a href="../records-filter-bad-words-filter/"><i class="fa fa-edit"></i>&nbsp;RecordsFilter - Bad Words Filter</a></li><li class="page file"><a href="../supported-events/"><i class="fa fa-edit"></i>&nbsp;Supported Add-On Api events</a></li><li class="page file"><a href="../custom-sfdmu-add-on-api/"><i class="fa fa-edit"></i>&nbsp;Custom Add-On Api</a></li><li class="page active file"><a href="./"><i class="fa fa-edit"></i>&nbsp;Custom Add-On API Object Reference</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-full-documentation-reports">
+      <a href="#nav-full-documentation-reports-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Reports</a>
+      <ul class="collapse list-unstyled" id="nav-full-documentation-reports-children">
+        <li class="page file"><a href="../../reports/issues-with-the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Identifying Issues in CSV Files with the Plugin</a></li><li class="page file"><a href="../../reports/issues-with-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Handling Missing Parent Records in Plugin Migrations</a></li><li class="page file"><a href="../../reports/the-target-csv-files/"><i class="fa fa-edit"></i>&nbsp;Target CSV Files in SFDMU</a></li><li class="page file"><a href="../../reports/the-source-csv-files/"><i class="fa fa-edit"></i>&nbsp;Source (Working Copy) CSV Files in SFDMU</a></li><li class="page file"><a href="../../reports/the-execution-log/"><i class="fa fa-edit"></i>&nbsp;Log File Management in Plugin Migrations</a></li><li class="page file"><a href="../../reports/run-command-flags/"><i class="fa fa-edit"></i>&nbsp;Run Command Flags</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../key-features/"><i class="fa fa-edit"></i>&nbsp;Key Features of the SFDMU</a></li>
+    <li class="category" id="nav-examples">
+      <h5 class="category-title">Examples</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../../../examples/basic-examples/"><i class="fa fa-edit"></i>&nbsp;Basic examples</a></li><li class="page file"><a href="../../../examples/advanced-examples/"><i class="fa fa-edit"></i>&nbsp;Advanced examples</a></li><li class="page file"><a href="../../../examples/csv-import-export/"><i class="fa fa-edit"></i>&nbsp;CSV import-export examples</a></li><li class="page file"><a href="../../../examples/file-migration/"><i class="fa fa-edit"></i>&nbsp;File data transfer examples</a></li><li class="page file"><a href="../../../examples/record-transformation/"><i class="fa fa-edit"></i>&nbsp;Record transformation examples</a></li>
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../get-started/"><i class="fa fa-edit"></i>&nbsp;Get Started</a></li><li class="page file"><a href="../../../installation/"><i class="fa fa-edit"></i>&nbsp;Installation</a></li><li class="page file"><a href="../../../configuration/"><i class="fa fa-edit"></i>&nbsp;Configuration</a></li>
+    <li class="category" id="nav-faq">
+      <h5 class="category-title">FAQ</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-faq-bulk-api-query-management">
+      <a href="#nav-faq-bulk-api-query-management-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Bulk Api Query Management</a>
+      <ul class="collapse list-unstyled" id="nav-faq-bulk-api-query-management-children">
+        <li class="page file"><a href="../../../faq/bulk-api-query-management/what-are-the-limitations-on-data-volume-processing/"><i class="fa fa-edit"></i>&nbsp;What are the limitations on data volume processing?</a></li><li class="page file"><a href="../../../faq/bulk-api-query-management/how-do-i-adjust-the-batch-size-for-a-bulk-api-query/"><i class="fa fa-edit"></i>&nbsp;How do I adjust the batch size for a Bulk API Query?</a></li><li class="page file"><a href="../../../faq/bulk-api-query-management/why-doesnt-bulk-api-v1-parallel-mode-create-batches-asynchronously/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t Bulk API v1 Parallel Mode create batches asynchronously?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-conceptual-definitions-in-sfdmu">
+      <a href="#nav-faq-conceptual-definitions-in-sfdmu-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Conceptual Definitions In Sfdmu</a>
+      <ul class="collapse list-unstyled" id="nav-faq-conceptual-definitions-in-sfdmu-children">
+        <li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/can-i-include-referenced-fields-like-accountname-into-the-query-string/"><i class="fa fa-edit"></i>&nbsp;Can I include referenced fields, like Account.Name into the query string ?</a></li><li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/is-there-a-limitation-on-fields-used-in-composite-external-ids-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;Is there a limitation on fields used in composite external IDs in SFDMU?</a></li><li class="page file"><a href="../../../faq/conceptual-definitions-in-sfdmu/what-is-master-and-what-is-slave/"><i class="fa fa-edit"></i>&nbsp;What do master and slave objects mean?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-csv-file-and-encoding-specifications">
+      <a href="#nav-faq-csv-file-and-encoding-specifications-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Csv File And Encoding Specifications</a>
+      <ul class="collapse list-unstyled" id="nav-faq-csv-file-and-encoding-specifications-children">
+        <li class="page file"><a href="../../../faq/csv-file-and-encoding-specifications/what-encoding-is-supported-for-csv-files-by-the-plugin/"><i class="fa fa-edit"></i>&nbsp;What encoding is supported for CSV files by the plugin?</a></li><li class="page file"><a href="../../../faq/csv-file-and-encoding-specifications/what-encoding-type-should-be-used-for-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What encoding type should be used for the export.json file?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-migration-with-plugin">
+      <a href="#nav-faq-data-migration-with-plugin-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Migration With Plugin</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-migration-with-plugin-children">
+        <li class="page file"><a href="../../../faq/data-migration-with-plugin/can-csv-files-from-the-standard-salesforce-data-loader-be-used-with-this-plugin/"><i class="fa fa-edit"></i>&nbsp;Can CSV files from the standard Salesforce Data Loader be used with this plugin?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/can-i-override-the-default-query-for-the-user-or-group-objects/"><i class="fa fa-edit"></i>&nbsp;Can I override the default query for the User or Group objects?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/can-the-plugin-migrate-users-or-groups/"><i class="fa fa-edit"></i>&nbsp;Can the plugin migrate Users or Groups?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/does-the-plugin-support-exporting-object-metadata/"><i class="fa fa-edit"></i>&nbsp;Does the plugin support exporting object metadata?</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/using-the-all-multiselect-keyword-with-the-product2-object/"><i class="fa fa-edit"></i>&nbsp;Using the `all` multiselect keyword with the `Product2` object.</a></li><li class="page file"><a href="../../../faq/data-migration-with-plugin/why-are-there-differences-in-failures-between-simulation-and-non-simulation-modes/"><i class="fa fa-edit"></i>&nbsp;Why are there differences in failures between simulation and non-simulation modes?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-data-transfer-and-field-exclusions">
+      <a href="#nav-faq-data-transfer-and-field-exclusions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Transfer And Field Exclusions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-data-transfer-and-field-exclusions-children">
+        <li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/can-the-document-object-be-transferred-with-binary-data/"><i class="fa fa-edit"></i>&nbsp;Can the Document object be transferred with binary data?</a></li><li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/is-it-possible-to-use-multiple-csv-source-files-for-the-same-object/"><i class="fa fa-edit"></i>&nbsp;Is it possible to use multiple CSV source files for the same object?</a></li><li class="page file"><a href="../../../faq/data-transfer-and-field-exclusions/what-types-of-fields-can-be-excluded-using-the-excludefields-property/"><i class="fa fa-edit"></i>&nbsp;What types of fields can be excluded using the &quot;excludedFields&quot; property?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-object-and-field-handling-in-soql-queries">
+      <a href="#nav-faq-object-and-field-handling-in-soql-queries-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Object And Field Handling In Soql Queries</a>
+      <ul class="collapse list-unstyled" id="nav-faq-object-and-field-handling-in-soql-queries-children">
+        <li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/are-field-names-and-object-names-in-a-soql-query-case-sensitive/"><i class="fa fa-edit"></i>&nbsp;Are field names and object names in a SOQL query case sensitive?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/can-autonumber-fields-be-used-as-external-ids/"><i class="fa fa-edit"></i>&nbsp;Can autonumber fields be used as External IDs?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/can-i-export-fields-from-parent-sobjects-using-a-child-object-query/"><i class="fa fa-edit"></i>&nbsp;Can I export fields from parent sObjects using a child object query?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/is-it-necessary-to-always-specify-the-parent-object-for-a-polymorphic-field/"><i class="fa fa-edit"></i>&nbsp;Is it necessary to always specify the parent object for a polymorphic field?</a></li><li class="page file"><a href="../../../faq/object-and-field-handling-in-soql-queries/should-the-id-field-always-be-included-in-my-query/"><i class="fa fa-edit"></i>&nbsp;Should the Id field always be included in my query?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-plugin-usage-and-extensions">
+      <a href="#nav-faq-plugin-usage-and-extensions-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Usage And Extensions</a>
+      <ul class="collapse list-unstyled" id="nav-faq-plugin-usage-and-extensions-children">
+        <li class="page file"><a href="../../../faq/plugin-usage-and-extensions/can-i-modify-and-use-the-plugin-code-for-my-own-projects/"><i class="fa fa-edit"></i>&nbsp;Can I modify and use the plugin code for my own projects?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/can-the-plugin-be-used-in-production-environments/"><i class="fa fa-edit"></i>&nbsp;Can the plugin be used in production environments?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/how-to-address-ui-issues-and-field-selection-in-new-sfdmu-gui/"><i class="fa fa-edit"></i>&nbsp;How to address UI issues and field selection in the new SFDMU GUI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/is-sfdmu-compatible-with-latest-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Is SFDMU compatible with the latest SF CLI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/why-does-sfdmu-command-fail-in-force-app-directory-with-sf-cli/"><i class="fa fa-edit"></i>&nbsp;Why does SFDMU command fail in the force-app directory with SF CLI?</a></li><li class="page file"><a href="../../../faq/plugin-usage-and-extensions/why-doesnt-fieldmapping-rename-csv-column-headers-in-my-configuration/"><i class="fa fa-edit"></i>&nbsp;Why doesn&#39;t FieldMapping rename CSV column headers in my configuration?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-configuration-and-pre-validation">
+      <a href="#nav-faq-sfdmu-configuration-and-pre-validation-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Configuration And Pre Validation</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-configuration-and-pre-validation-children">
+        <li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-all-objects-be-defined-as-slave-objects-in-the-configuration/"><i class="fa fa-edit"></i>&nbsp;Can all objects be defined as &quot;slave&quot; objects in the configuration?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-csv-files-be-used-for-csv-to-org-migration-in-simulation-mode/"><i class="fa fa-edit"></i>&nbsp;Can CSV files be used for CSV-to-org migration in simulation mode?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/can-i-omit-the-definition-of-external-id-for-an-object/"><i class="fa fa-edit"></i>&nbsp;Can I omit the definition of External ID for an object?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/how-to-modify-include-regex-option-in-sfdmu-configuration/"><i class="fa fa-edit"></i>&nbsp;How to modify the include regex option in SFDMU configuration?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/how-to-prevent-resetting-checkboxes-using-sfdmu-with-multiselect-keyword/"><i class="fa fa-edit"></i>&nbsp;How to prevent resetting checkboxes using SFDMU with multiselect keyword?</a></li><li class="page file"><a href="../../../faq/sfdmu-configuration-and-pre-validation/what-pre-validation-options-does-sfdmu-offer-before-inserting-data/"><i class="fa fa-edit"></i>&nbsp;What pre-validation options does SFDMU offer before inserting data?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-data-insertion-and-limitations">
+      <a href="#nav-faq-sfdmu-data-insertion-and-limitations-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Data Insertion And Limitations</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-data-insertion-and-limitations-children">
+        <li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/can-child-records-with-a-self-lookup-field-be-inserted-in-a-single-job/"><i class="fa fa-edit"></i>&nbsp;Can child records with a self-lookup field be inserted in a single job?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-combine-multiple-account-extractions-into-one-csv-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to combine multiple account extractions into one CSV with SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-handle-checkbox-fields-during-csv-imports-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle checkbox fields during CSV imports in SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-handle-master-detail-relationships-with-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to handle Master-Detail relationships with SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/how-to-resolve-object-location-is-missing-in-the-target-error-in-sfdmu/"><i class="fa fa-edit"></i>&nbsp;How to resolve &quot;Object Location is missing in the Target&quot; error in SFDMU?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/what-is-the-character-limit-for-the-where-clause-in-the-export-json-file/"><i class="fa fa-edit"></i>&nbsp;What is the character limit for the WHERE clause in the export.json file?</a></li><li class="page file"><a href="../../../faq/sfdmu-data-insertion-and-limitations/why-does-adding-person-account-records-not-respect-specified-record-types/"><i class="fa fa-edit"></i>&nbsp;Why does adding person account records not respect specified record types?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-faq-sfdmu-gui-application">
+      <a href="#nav-faq-sfdmu-gui-application-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Sfdmu Gui Application</a>
+      <ul class="collapse list-unstyled" id="nav-faq-sfdmu-gui-application-children">
+        <li class="page file"><a href="../../../faq/sfdmu-gui-application/i-cant-find-where-can-i-set-the-operation-for-the-object/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - I can&#39;t find where can I set the Operation for the object.</a></li><li class="page file"><a href="../../../faq/sfdmu-gui-application/sf-cli-is-no-longer-detected/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI - SF CLI is no longer detected.</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../running/"><i class="fa fa-edit"></i>&nbsp;Running</a></li><li class="page file"><a href="../../../debugging/"><i class="fa fa-edit"></i>&nbsp;Debugging</a></li>
+    <li class="category" id="nav-troubleshooting">
+      <h5 class="category-title">Troubleshooting</h5>
+      <ul class="pages" id="sidebarmenu">
+        
+    <li class="page directory" id="nav-troubleshooting-data-import-export-problems">
+      <a href="#nav-troubleshooting-data-import-export-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Import Export Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-import-export-problems-children">
+        <li class="page file"><a href="../../../troubleshooting/data-import-export-problems/notes-and-attachments-migration-issues/"><i class="fa fa-edit"></i>&nbsp;Notes and attachments migration issues</a></li><li class="page file"><a href="../../../troubleshooting/data-import-export-problems/why-no-records-inserted/"><i class="fa fa-edit"></i>&nbsp;Why no records inserted?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-data-mapping-issues">
+      <a href="#nav-troubleshooting-data-mapping-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Data Mapping Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-data-mapping-issues-children">
+        <li class="page file"><a href="../../../troubleshooting/data-mapping-issues/problem-of-values-mapping-with-regex/"><i class="fa fa-edit"></i>&nbsp;Problem of values mapping with regex.</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/warning-about-missing-parent-lookup-records/"><i class="fa fa-edit"></i>&nbsp;Warning about missing parent lookup records</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-data-anonymization-not-working/"><i class="fa fa-edit"></i>&nbsp;Why data anonymization is not working?</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-does-the-values-mapping-not-work-for-me/"><i class="fa fa-edit"></i>&nbsp;Why does the values mapping not work for me?</a></li><li class="page file"><a href="../../../troubleshooting/data-mapping-issues/why-user-and-record-type-lookups-are-not-filled-on-insert/"><i class="fa fa-edit"></i>&nbsp;Why user and record type lookups are not filled on insert?</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-gui-installation-problems">
+      <a href="#nav-troubleshooting-gui-installation-problems-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Gui Installation Problems</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-gui-installation-problems-children">
+        <li class="page file"><a href="../../../troubleshooting/gui-installation-problems/gui-app-installation-failed-or-showing-blank-screen/"><i class="fa fa-edit"></i>&nbsp;GUI app installation failed or showing blank screen.</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-plugin-connectivity-and-configuration">
+      <a href="#nav-troubleshooting-plugin-connectivity-and-configuration-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Plugin Connectivity And Configuration</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-plugin-connectivity-and-configuration-children">
+        <li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-connect-to-the-org/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot connect to the org</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-cannot-locate-export-json-in-working-directory/"><i class="fa fa-edit"></i>&nbsp;Plugin cannot locate export.json in working directory</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/plugin-error-no-fields-can-be-updated-or-inserted/"><i class="fa fa-edit"></i>&nbsp;Plugin error: no fields can be updated or inserted</a></li><li class="page file"><a href="../../../troubleshooting/plugin-connectivity-and-configuration/unable-to-run-plugin-due-to-nodejs-or-sfdx-cli-issue/"><i class="fa fa-edit"></i>&nbsp;Unable to run plugin due to Node.js or SF CLI issue</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-security-authentication-issues">
+      <a href="#nav-troubleshooting-security-authentication-issues-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Security Authentication Issues</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-security-authentication-issues-children">
+        <li class="page file"><a href="../../../troubleshooting/security-authentication-issues/allow-disabling-ssl-and-hash-checks-for-plugin-linking/"><i class="fa fa-edit"></i>&nbsp;Allow disabling SSL and hash checks for plugin linking</a></li><li class="page file"><a href="../../../troubleshooting/security-authentication-issues/authentication-issues-with-sfdx-orgs/"><i class="fa fa-edit"></i>&nbsp;Authentication issues with SF CLI orgs</a></li>
+      </ul>
+    </li>
+  
+    <li class="page directory" id="nav-troubleshooting-unexpected-behavior-errors">
+      <a href="#nav-troubleshooting-unexpected-behavior-errors-children" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-folder"></i>&nbsp;Unexpected Behavior Errors</a>
+      <ul class="collapse list-unstyled" id="nav-troubleshooting-unexpected-behavior-errors-children">
+        <li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/javascript-heap-out-of-memory-error/"><i class="fa fa-edit"></i>&nbsp;JavaScript heap out of memory error</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/read-econnreset-error-during-source-retrieval/"><i class="fa fa-edit"></i>&nbsp;Read ECONNRESET error during source retrieval</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/sfdmu-finishing-abruptly-no-error-or-warning-whatsoeverd/"><i class="fa fa-edit"></i>&nbsp;SFDMU finishing abruptly, no error or warning whatsoever</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/unexpected-behavior-with-default-sfdx-target-org-configuration/"><i class="fa fa-edit"></i>&nbsp;Unexpected behavior with default SFDX target org configuration</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/why-do-i-get-the-error-invalid-record-hashcode-from-bulk-job/"><i class="fa fa-edit"></i>&nbsp;Why do I get the error &quot;Invalid record hashcode from bulk job&quot;?</a></li><li class="page file"><a href="../../../troubleshooting/unexpected-behavior-errors/why-the-deleting-from-the-target-always-runs-for-me/"><i class="fa fa-edit"></i>&nbsp;Why the deleting from the target always runs for me?</a></li>
+      </ul>
+    </li>
+  
+      </ul>
+    </li>
+  <li class="page file"><a href="../../../sfdmu-gui-app/"><i class="fa fa-edit"></i>&nbsp;SFDMU GUI Application</a></li>
+    <li class="category" id="nav-additional-information">
+      <h5 class="category-title">Additional Information</h5>
+      <ul class="pages" id="sidebarmenu">
+        <li class="page file"><a href="../../../additional-information/support_policy/"><i class="fa fa-edit"></i>&nbsp;Support policy</a></li><li class="page file"><a href="../../../additional-information/code_contribution_policy/"><i class="fa fa-edit"></i>&nbsp;Code contribution policy</a></li><li class="page file"><a href="../../../additional-information/license/"><i class="fa fa-edit"></i>&nbsp;License Agreement</a></li>
+      </ul>
+    </li>
+  
+    </ul>
+  
+          </div>
+          <div class="col-sm-9">
+            <section class="content page-content">
+              <nav class="toc" aria-label="On this page"><strong>On this page</strong><ul><li><a href="#overview">Overview</a></li><li><a href="#quick-start">Quick Start</a></li><li><a href="#add-on-declaration-model">Add-On Declaration Model</a></li><li class="toc-child"><a href="#addonmanifestdefinition">AddOnManifestDefinition</a></li><li class="toc-child"><a href="#locator-rules-module-vs-path">Locator Rules (module vs path)</a></li><li class="toc-child"><a href="#module-resolution-behavior">Module Resolution Behavior</a></li><li class="toc-child"><a href="#event-values">Event Values</a></li><li><a href="#module-contract">Module Contract</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonmodule">ISfdmuRunCustomAddonModule</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonresult">ISfdmuRunCustomAddonResult</a></li><li><a href="#runtime-context-model">Runtime Context Model</a></li><li class="toc-child"><a href="#isfdmuruncustomaddoncontext">ISfdmuRunCustomAddonContext</a></li><li><a href="#runtime-api-model">Runtime API Model</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonruntime">ISfdmuRunCustomAddonRuntime</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonapiservice">ISfdmuRunCustomAddonApiService</a></li><li><a href="#script-model">Script Model</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscript">ISfdmuRunCustomAddonScript</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptobject">ISfdmuRunCustomAddonScriptObject</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptorg">ISfdmuRunCustomAddonScriptOrg</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptaddonmanifestdefinition">ISfdmuRunCustomAddonScriptAddonManifestDefinition</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptmappingitem">ISfdmuRunCustomAddonScriptMappingItem</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonscriptmockfield">ISfdmuRunCustomAddonScriptMockField</a></li><li><a href="#job-and-task-models">Job and Task Models</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonjob">ISFdmuRunCustomAddonJob</a></li><li class="toc-child"><a href="#isfdmuruncustomaddontask">ISFdmuRunCustomAddonTask</a></li><li class="toc-child"><a href="#isfdmuruncustomaddontaskdata">ISfdmuRunCustomAddonTaskData</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonprocesseddata">ISfdmuRunCustomAddonProcessedData</a></li><li><a href="#metadata-models">Metadata Models</a></li><li class="toc-child"><a href="#isfdmuruncustomaddonsfielddescribe">ISfdmuRunCustomAddonSFieldDescribe</a></li><li class="toc-child"><a href="#run-and-plugin-metadata">Run and Plugin Metadata</a></li><li><a href="#core-enums-available-in-sdk">Core Enums Available in SDK</a></li><li class="toc-child"><a href="#operation">OPERATION</a></li><li class="toc-child"><a href="#datamediatype">DATAMEDIATYPE</a></li><li class="toc-child"><a href="#datacachetypes">DATACACHETYPES</a></li><li><a href="#how-to-use-the-sdk">How to Use the SDK</a></li><li class="toc-child"><a href="#install-sdk-in-your-add-on-project">Install SDK in Your Add-On Project</a></li><li class="toc-child"><a href="#recommended-project-layout">Recommended Project Layout</a></li><li class="toc-child"><a href="#create-from-template">Create from Template</a></li><li class="toc-child"><a href="#compile-and-build">Compile and Build</a></li><li><a href="#calling-and-running-custom-add-ons">Calling and Running Custom Add-Ons</a></li><li class="toc-child"><a href="#global-level-registration-export-json">Global-Level Registration (export.json)</a></li><li class="toc-child"><a href="#object-level-registration-export-json">Object-Level Registration (export.json)</a></li><li class="toc-child"><a href="#external-manifest-addons-json">External Manifest (addons.json)</a></li><li><a href="#debugging-custom-add-ons">Debugging Custom Add-Ons</a></li><li class="toc-child"><a href="#debug-from-typescript-source">Debug from TypeScript Source</a></li><li class="toc-child"><a href="#attach-debugger">Attach Debugger</a></li><li class="toc-child"><a href="#debug-checklist">Debug Checklist</a></li><li><a href="#deployment-and-distribution">Deployment and Distribution</a></li><li class="toc-child"><a href="#local-file-deployment">Local File Deployment</a></li><li class="toc-child"><a href="#npm-package-deployment">NPM Package Deployment</a></li><li class="toc-child"><a href="#message-bundles">Message Bundles</a></li><li><a href="#best-practices">Best Practices</a></li><li><a href="#common-pitfalls">Common Pitfalls</a></li><li><a href="#related-articles">Related Articles</a></li></ul></nav>
+## Overview
+
+<p>This page is a practical reference for developers who want to build and run <strong>Custom SFDMU Add-On modules</strong>.
+It documents:</p>
+<ul>
+<li>the Add-On declaration model in <code>export.json</code> and <code>addons.json</code>;</li>
+<li>the SDK object model and interfaces exposed to custom modules;</li>
+<li>execution lifecycle and event behavior;</li>
+<li>how to create, debug, package, and run custom add-ons.</li>
+</ul>
+<p>This document is detailed on purpose and assumes you are a programmer, but new to SFDMU Add-On internals.</p>
+<h2 id="quick-start">Quick Start<a class="heading-anchor" href="#quick-start" aria-label="Link to section">#</a></h2><p>If you need the shortest path from zero to a running add-on, use this flow:</p>
+<ol>
+<li>Create a template:
+<code>node scripts/create-custom-addon-template.js my-addon</code></li>
+<li>Open:
+<code>custom-addon-sdk/custom-modules/my-addon</code></li>
+<li>Install and compile:
+<code>npm install</code>
+<code>npm run compile</code></li>
+<li>Register the module in <code>export.json</code> using <code>module</code>.</li>
+<li>Run SFDMU and verify the add-on logs.</li>
+</ol>
+<p>Example <code>export.json</code> snippet:</p>
+<pre><code class="language-json">{
+  &quot;addons&quot;: [
+    {
+      &quot;event&quot;: &quot;onBefore&quot;,
+      &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/my-addon/dist/index.js&quot;
+    }
+  ]
+}
+</code></pre>
+<h5 id="notes">Notes:<a class="heading-anchor" href="#notes" aria-label="Link to section">#</a></h5><ul>
+<li><code>args</code> is optional and can be omitted when your module does not need parameters.</li>
+<li>At least one locator must exist: <code>module</code> or <code>path</code>.</li>
+<li>Relative paths are resolved from the directory where <code>export.json</code> is located.</li>
+</ul>
+<h2 id="add-on-declaration-model">Add-On Declaration Model<a class="heading-anchor" href="#add-on-declaration-model" aria-label="Link to section">#</a></h2><h3 id="addonmanifestdefinition">AddOnManifestDefinition<a class="heading-anchor" href="#addonmanifestdefinition" aria-label="Link to section">#</a></h3><p>Custom add-ons are declared as manifest entries in:</p>
+<ul>
+<li>script-level arrays inside <code>export.json</code>;</li>
+<li>object-level arrays inside <code>export.json</code>;</li>
+<li>optional external <code>addons.json</code> file in the run folder.</li>
+</ul>
+<p>Each entry is normalized into the runtime Add-On manifest object.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>event</code></td>
+<td><code>string</code></td>
+<td>Yes</td>
+<td>Add-on event, for example <code>onBeforeUpdate</code>.</td>
+</tr>
+<tr>
+<td><code>module</code></td>
+<td><code>string</code></td>
+<td>No*</td>
+<td>Preferred locator (package name or file path).</td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td><code>string</code></td>
+<td>No*</td>
+<td>Legacy locator, still supported.</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>string</code></td>
+<td>No</td>
+<td>Human-readable module description shown in context.</td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td><code>Record&lt;string, unknown&gt;</code></td>
+<td>No</td>
+<td>Arbitrary config object passed to module methods.</td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td><code>string</code></td>
+<td>No</td>
+<td>Command scope filter. Defaults to <code>sfdmu:run</code>.</td>
+</tr>
+<tr>
+<td><code>excluded</code></td>
+<td><code>boolean</code></td>
+<td>No</td>
+<td>Skips this entry when <code>true</code>.</td>
+</tr>
+<tr>
+<td><code>objects</code></td>
+<td><code>string[]</code></td>
+<td>No</td>
+<td>Optional object filter for global declarations.</td>
+</tr>
+<tr>
+<td><code>objectName</code></td>
+<td><code>string</code></td>
+<td>No</td>
+<td>Single-object shortcut.</td>
+</tr>
+</tbody></table>
+<p>* At least one locator must be present: <code>module</code> or <code>path</code>.</p>
+<p>Property cross-links (Manifest -&gt; Runtime):</p>
+<table>
+<thead>
+<tr>
+<th>Manifest Property</th>
+<th>Used In Runtime/SDK</th>
+<th>Main Documentation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>event</code></td>
+<td><a href="#isfdmuruncustomaddoncontext"><code>context.eventName</code></a>, <a href="#event-values">Event Values</a></td>
+<td><a href="../supported-events/">Supported Add-On API Events</a></td>
+</tr>
+<tr>
+<td><code>module</code></td>
+<td><a href="#module-resolution-behavior">Module Resolution Behavior</a>, <a href="#isfdmuruncustomaddonmodule">ISfdmuRunCustomAddonModule</a></td>
+<td><a href="../custom-sfdmu-add-on-api/">Custom Add-On API</a></td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td><a href="#locator-rules-module-vs-path">Locator Rules (<code>module</code> vs <code>path</code>)</a></td>
+<td><a href="../custom-sfdmu-add-on-api/">Custom Add-On API</a></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><a href="#isfdmuruncustomaddoncontext"><code>context.description</code></a></td>
+<td><a href="../introduction-to-the-sfdmu-add-on-api-engine/">Add-On API Overview</a></td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td><a href="#isfdmuruncustomaddonmodule"><code>onExecute(context, args)</code></a>, <a href="#isfdmuruncustomaddonmodule"><code>onInit(context, args)</code></a></td>
+<td><a href="../custom-sfdmu-add-on-api/">Custom Add-On API</a></td>
+</tr>
+<tr>
+<td><code>objects</code></td>
+<td><a href="#isfdmuruncustomaddoncontext"><code>context.objectName</code></a>, <a href="#isfdmuruncustomaddontask"><code>task.sObjectName</code></a></td>
+<td><a href="../../export-json-file-objects-specification/script-object-object/">ScriptObject</a></td>
+</tr>
+<tr>
+<td><code>objectName</code></td>
+<td><a href="#isfdmuruncustomaddoncontext"><code>context.objectName</code></a></td>
+<td><a href="../../export-json-file-objects-specification/script-object-object/">ScriptObject</a></td>
+</tr>
+<tr>
+<td><code>command</code></td>
+<td>Command filter in add-on loader pipeline</td>
+<td><a href="../../../running/">Running the Plugin</a></td>
+</tr>
+<tr>
+<td><code>excluded</code></td>
+<td>Entry is skipped before invocation</td>
+<td><a href="../introduction-to-the-sfdmu-add-on-api-engine/">Add-On API Overview</a></td>
+</tr>
+</tbody></table>
+<p>Example of a complete manifest entry (object-level):</p>
+<pre><code class="language-json">{
+  &quot;beforeUpdateAddons&quot;: [
+    {
+      &quot;event&quot;: &quot;onBeforeUpdate&quot;,
+      &quot;command&quot;: &quot;sfdmu:run&quot;,
+      &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/my-addon/dist/index.js&quot;,
+      &quot;path&quot;: &quot;./custom-addon-sdk/custom-modules/my-addon/dist/index.js&quot;,
+      &quot;description&quot;: &quot;Normalize Account fields before update&quot;,
+      &quot;objects&quot;: [&quot;Account&quot;],
+      &quot;objectName&quot;: &quot;Account&quot;,
+      &quot;excluded&quot;: false,
+      &quot;args&quot;: {
+        &quot;trimFields&quot;: [&quot;Name&quot;, &quot;BillingCity&quot;],
+        &quot;schemaVersion&quot;: 1
+      }
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li><code>module</code> is used as the effective locator.</li>
+<li><code>args</code> is passed to <code>onExecute(context, args)</code> as-is.</li>
+<li><code>objects</code> and <code>objectName</code> allow strict targeting.</li>
+<li><code>excluded: true</code> disables the add-on without removing configuration.</li>
+</ul>
+<h3 id="locator-rules-module-vs-path">Locator Rules (<code>module</code> vs <code>path</code>)<a class="heading-anchor" href="#locator-rules-module-vs-path" aria-label="Link to section">#</a></h3><ul>
+<li><code>module</code> has priority when both <code>module</code> and <code>path</code> are provided.</li>
+<li><code>module</code> can be:<ul>
+<li>package name (<code>my-sfdmu-addon</code>);</li>
+<li>relative file path (<code>./custom-addon-sdk/custom-modules/demo/dist/index.js</code>);</li>
+<li>absolute file path (<code>C:/.../index.js</code>).</li>
+</ul>
+</li>
+<li><code>path</code> is supported for backward compatibility with older configs.</li>
+</ul>
+<p>Example with both fields present:</p>
+<pre><code class="language-json">{
+  &quot;addons&quot;: [
+    {
+      &quot;event&quot;: &quot;onBefore&quot;,
+      &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/demo/dist/index.js&quot;,
+      &quot;path&quot;: &quot;./legacy/path/that-will-be-ignored.js&quot;
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>runtime normalizes locator fields and uses the <code>module</code> value;</li>
+<li><code>path</code> remains legacy-compatible but does not override <code>module</code>.</li>
+</ul>
+<h3 id="module-resolution-behavior">Module Resolution Behavior<a class="heading-anchor" href="#module-resolution-behavior" aria-label="Link to section">#</a></h3><p>At runtime, SFDMU resolves custom add-ons with this strategy:</p>
+<ol>
+<li>Try dynamic ESM import for the requested locator.</li>
+<li>Try alternate extension (<code>.ts</code> &lt;-&gt; <code>.js</code>) when relevant.</li>
+<li>For package-like locators, try global <code>node_modules</code> resolution.</li>
+<li>Fallback to CommonJS <code>require</code>.</li>
+</ol>
+<p>This is why both ESM and CommonJS add-ons are supported.</p>
+<p>Examples:</p>
+<pre><code class="language-json">{
+  &quot;addons&quot;: [
+    {
+      &quot;event&quot;: &quot;onBefore&quot;,
+      &quot;module&quot;: &quot;my-company-sfdmu-addon&quot;
+    },
+    {
+      &quot;event&quot;: &quot;onAfter&quot;,
+      &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/demo/index.ts&quot;
+    },
+    {
+      &quot;event&quot;: &quot;onBeforeUpdate&quot;,
+      &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/demo/dist/index.js&quot;
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>package specifier tries local install first, then global module locations;</li>
+<li><code>.ts</code>/<code>.js</code> file paths can be resolved as alternative entry points;</li>
+<li>if ESM import fails, loader can fallback to CommonJS <code>require</code>.</li>
+</ul>
+<h3 id="event-values">Event Values<a class="heading-anchor" href="#event-values" aria-label="Link to section">#</a></h3><p>Supported event names:</p>
+<ul>
+<li><code>onBefore</code></li>
+<li><code>onAfter</code></li>
+<li><code>onDataRetrieved</code></li>
+<li><code>onBeforeUpdate</code></li>
+<li><code>onAfterUpdate</code></li>
+<li><code>filterRecordsAddons</code></li>
+</ul>
+<p>For event timing, use:
+<a href="../supported-events/">Supported Add-On API Events</a></p>
+<p>Example event usage patterns:</p>
+<pre><code class="language-json">{
+  &quot;beforeAddons&quot;: [{ &quot;module&quot;: &quot;./addons/global-before.js&quot; }],
+  &quot;dataRetrievedAddons&quot;: [{ &quot;module&quot;: &quot;./addons/global-data-retrieved.js&quot; }],
+  &quot;afterAddons&quot;: [{ &quot;module&quot;: &quot;./addons/global-after.js&quot; }],
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Name FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;beforeAddons&quot;: [{ &quot;module&quot;: &quot;./addons/object-before.js&quot; }],
+      &quot;filterRecordsAddons&quot;: [{ &quot;module&quot;: &quot;./addons/filter.js&quot; }],
+      &quot;beforeUpdateAddons&quot;: [{ &quot;module&quot;: &quot;./addons/before-update.js&quot; }],
+      &quot;afterUpdateAddons&quot;: [{ &quot;module&quot;: &quot;./addons/after-update.js&quot; }],
+      &quot;afterAddons&quot;: [{ &quot;module&quot;: &quot;./addons/object-after.js&quot; }]
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>global arrays fire at script-level lifecycle points;</li>
+<li>object arrays fire in object processing loops;</li>
+<li>choose event by data availability and intended mutation moment.</li>
+</ul>
+<p>Event-to-data quick links:</p>
+<ul>
+<li><code>onBefore</code> -&gt; script-level setup: <a href="#isfdmuruncustomaddonscript">ISfdmuRunCustomAddonScript</a></li>
+<li><code>onDataRetrieved</code> -&gt; full dataset phase: <a href="#isfdmuruncustomaddonapiservice">ISfdmuRunCustomAddonApiService</a></li>
+<li><code>filterRecordsAddons</code> -&gt; pre-update filtering: <a href="#isfdmuruncustomaddontask">ISFdmuRunCustomAddonTask.tempRecords</a></li>
+<li><code>onBeforeUpdate</code> -&gt; final mutation point: <a href="#isfdmuruncustomaddonprocesseddata">ISfdmuRunCustomAddonProcessedData</a></li>
+<li><code>onAfterUpdate</code> -&gt; post-update integration: <a href="#isfdmuruncustomaddontask">ISFdmuRunCustomAddonTask</a></li>
+</ul>
+<h2 id="module-contract">Module Contract<a class="heading-anchor" href="#module-contract" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonmodule">ISfdmuRunCustomAddonModule<a class="heading-anchor" href="#isfdmuruncustomaddonmodule" aria-label="Link to section">#</a></h3><p>Every custom module implements this interface.</p>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>runtime</code></td>
+<td><code>ISfdmuRunCustomAddonRuntime</code></td>
+<td>Yes</td>
+<td>Runtime bridge to script, API service, logging, and helpers.</td>
+</tr>
+<tr>
+<td><code>onExecute(context, args)</code></td>
+<td><code>Promise&lt;ISfdmuRunCustomAddonResult&gt;</code></td>
+<td>Yes</td>
+<td>Main execution entry point when an event fires.</td>
+</tr>
+<tr>
+<td><code>onInit(context, args)</code></td>
+<td><code>Promise&lt;ISfdmuRunCustomAddonResult&gt;</code></td>
+<td>No</td>
+<td>One-time initialization hook after script load and before job execution.</td>
+</tr>
+</tbody></table>
+<p>Minimal implementation:</p>
+<pre><code class="language-ts">import type {
+  ISfdmuRunCustomAddonContext,
+  ISfdmuRunCustomAddonModule,
+  ISfdmuRunCustomAddonResult,
+  ISfdmuRunCustomAddonRuntime
+} from &#39;sfdmu-addon-sdk&#39;;
+
+export default class MyAddon implements ISfdmuRunCustomAddonModule {
+  public runtime: ISfdmuRunCustomAddonRuntime;
+
+  public constructor(runtime: ISfdmuRunCustomAddonRuntime) {
+    this.runtime = runtime;
+  }
+
+  public async onInit(
+    context: ISfdmuRunCustomAddonContext,
+    args: Record&lt;string, unknown&gt;
+  ): Promise&lt;ISfdmuRunCustomAddonResult&gt; {
+    this.runtime.service.log(this, `Init ${context.moduleDisplayName}`, &#39;INFO&#39;);
+    this.runtime.service.log(this, args, &#39;JSON&#39;);
+    return { cancel: false };
+  }
+
+  public async onExecute(
+    context: ISfdmuRunCustomAddonContext,
+    args: Record&lt;string, unknown&gt;
+  ): Promise&lt;ISfdmuRunCustomAddonResult&gt; {
+    this.runtime.service.log(this, `Execute ${context.eventName}`, &#39;INFO&#39;);
+    this.runtime.service.log(this, args, &#39;JSON&#39;);
+    return { cancel: false };
+  }
+}
+</code></pre>
+<h3 id="isfdmuruncustomaddonresult">ISfdmuRunCustomAddonResult<a class="heading-anchor" href="#isfdmuruncustomaddonresult" aria-label="Link to section">#</a></h3><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cancel</code></td>
+<td><code>boolean</code></td>
+<td>When <code>true</code>, stops the current SFDMU job after add-on execution.</td>
+</tr>
+</tbody></table>
+<p>Example of controlled abort:</p>
+<pre><code class="language-ts">public async onExecute(
+  context: ISfdmuRunCustomAddonContext,
+  args: Record&lt;string, unknown&gt;
+): Promise&lt;ISfdmuRunCustomAddonResult&gt; {
+  const enabled = Boolean(args[&#39;enabled&#39;]);
+  if (!enabled) {
+    this.runtime.service.log(this, &#39;Add-on disabled by args.enabled=false&#39;, &#39;WARNING&#39;);
+    return { cancel: false };
+  }
+
+  const safetyFlag = Boolean(args[&#39;confirmDestructiveAction&#39;]);
+  if (!safetyFlag) {
+    this.runtime.service.log(this, &#39;Missing safety flag. Aborting by add-on policy.&#39;, &#39;ERROR&#39;);
+    return { cancel: true };
+  }
+
+  return { cancel: false };
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>return <code>{ cancel: true }</code> only for explicit stop conditions;</li>
+<li>use log messages so operators can understand why job was aborted.</li>
+</ul>
+<h2 id="runtime-context-model">Runtime Context Model<a class="heading-anchor" href="#runtime-context-model" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddoncontext">ISfdmuRunCustomAddonContext<a class="heading-anchor" href="#isfdmuruncustomaddoncontext" aria-label="Link to section">#</a></h3><p>Context is passed to <code>onInit</code> and <code>onExecute</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>eventName</code></td>
+<td><code>string</code></td>
+<td>Triggered event name, for example <code>onBeforeUpdate</code>.</td>
+</tr>
+<tr>
+<td><code>moduleDisplayName</code></td>
+<td><code>string</code></td>
+<td>Runtime name with prefix, for example <code>custom:my-addon</code>.</td>
+</tr>
+<tr>
+<td><code>objectName</code></td>
+<td><code>string</code></td>
+<td>API name of the object currently being processed.</td>
+</tr>
+<tr>
+<td><code>objectDisplayName</code></td>
+<td><code>string</code></td>
+<td>User-facing object display label.</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>string</code></td>
+<td>Description from the add-on declaration.</td>
+</tr>
+<tr>
+<td><code>objectSetIndex</code></td>
+<td><code>number | undefined</code></td>
+<td>Zero-based object set index in multi-set runs.</td>
+</tr>
+<tr>
+<td><code>passNumber</code></td>
+<td><code>number | undefined</code></td>
+<td>Zero-based pass index for multi-pass events.</td>
+</tr>
+<tr>
+<td><code>isFirstPass</code></td>
+<td><code>boolean | undefined</code></td>
+<td><code>true</code> only for the first pass in current object set.</td>
+</tr>
+</tbody></table>
+<p>Example context-aware behavior:</p>
+<pre><code class="language-ts">public async onExecute(
+  context: ISfdmuRunCustomAddonContext,
+  args: Record&lt;string, unknown&gt;
+): Promise&lt;ISfdmuRunCustomAddonResult&gt; {
+  this.runtime.service.log(this, `event=${context.eventName}`, &#39;INFO&#39;);
+  this.runtime.service.log(this, `object=${context.objectName}`, &#39;INFO&#39;);
+  this.runtime.service.log(this, `set=${String(context.objectSetIndex ?? 0)}`, &#39;INFO&#39;);
+  this.runtime.service.log(this, `pass=${String(context.passNumber ?? 0)}`, &#39;INFO&#39;);
+
+  if (context.isFirstPass) {
+    this.runtime.service.log(this, &#39;Executing first-pass initialization logic&#39;, &#39;INFO&#39;);
+  }
+  return { cancel: false };
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>same module can react differently depending on event/object/pass;</li>
+<li>pass metadata is useful in multi-pass update pipelines.</li>
+</ul>
+<h2 id="runtime-api-model">Runtime API Model<a class="heading-anchor" href="#runtime-api-model" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonruntime">ISfdmuRunCustomAddonRuntime<a class="heading-anchor" href="#isfdmuruncustomaddonruntime" aria-label="Link to section">#</a></h3><p>This runtime is exposed as <code>this.runtime</code> in your module.</p>
+<h4 id="paths-and-script">Paths and Script<a class="heading-anchor" href="#paths-and-script" aria-label="Link to section">#</a></h4><table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>basePath</code></td>
+<td><code>string</code></td>
+<td>Base directory of current run.</td>
+</tr>
+<tr>
+<td><code>sourcePath</code></td>
+<td><code>string</code></td>
+<td>Runtime source folder for current object-set scope.</td>
+</tr>
+<tr>
+<td><code>targetPath</code></td>
+<td><code>string</code></td>
+<td>Runtime target folder for current object-set scope.</td>
+</tr>
+<tr>
+<td><code>getScript()</code></td>
+<td><code>ISfdmuRunCustomAddonScript</code></td>
+<td>Returns the active script model (<code>export.json</code> in runtime form).</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const script = this.runtime.getScript();
+this.runtime.service.log(this, `basePath=${this.runtime.basePath}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `sourcePath=${this.runtime.sourcePath}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `targetPath=${this.runtime.targetPath}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `objectCount=${String(script.getAllObjects().length)}`, &#39;INFO&#39;);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>runtime paths point to the current run scope;</li>
+<li><code>getScript()</code> gives access to live script config and helper methods.</li>
+</ul>
+<h4 id="logging-helpers">Logging Helpers<a class="heading-anchor" href="#logging-helpers" aria-label="Link to section">#</a></h4><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>logFormattedInfo</code></td>
+<td>Formatted info logging.</td>
+</tr>
+<tr>
+<td><code>logFormattedInfoVerbose</code></td>
+<td>Verbose info logging.</td>
+</tr>
+<tr>
+<td><code>logFormattedWarning</code></td>
+<td>Warning logging.</td>
+</tr>
+<tr>
+<td><code>logFormattedError</code></td>
+<td>Error logging.</td>
+</tr>
+<tr>
+<td><code>logFormatted</code></td>
+<td>Generic formatted logging with explicit type.</td>
+</tr>
+<tr>
+<td><code>logAddonExecutionStarted</code></td>
+<td>Start marker for execution logs.</td>
+</tr>
+<tr>
+<td><code>logAddonExecutionFinished</code></td>
+<td>End marker for execution logs.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">this.runtime.logAddonExecutionStarted(this);
+this.runtime.logFormattedInfo(this, &#39;Addon started for object %s&#39;, context.objectName);
+this.runtime.logFormattedInfoVerbose(this, &#39;args=%s&#39;, JSON.stringify(args));
+this.runtime.logFormattedWarning(this, &#39;Running in validation mode only&#39;);
+this.runtime.logAddonExecutionFinished(this);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>formatted logs support token replacement;</li>
+<li>start/finish markers improve traceability in long runs.</li>
+</ul>
+<h4 id="data-helpers">Data Helpers<a class="heading-anchor" href="#data-helpers" aria-label="Link to section">#</a></h4><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>validateSupportedEvents</code></td>
+<td>Validates current event against allowed events list.</td>
+</tr>
+<tr>
+<td><code>queryMultiAsync</code></td>
+<td>Runs multiple SOQL queries and returns combined records.</td>
+</tr>
+<tr>
+<td><code>createFieldInQueries</code></td>
+<td>Builds chunked SOQL <code>IN</code> queries safely.</td>
+</tr>
+<tr>
+<td><code>updateTargetRecordsAsync</code></td>
+<td>Applies <code>Insert/Update/Upsert/Delete</code> style operations to target side.</td>
+</tr>
+<tr>
+<td><code>transferContentVersions</code></td>
+<td>Transfers ContentVersion payloads and metadata.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const queries = this.runtime.createFieldInQueries(
+  [&#39;Id&#39;, &#39;Name&#39;],
+  &#39;Id&#39;,
+  &#39;Account&#39;,
+  [&#39;001AAA&#39;, &#39;001AAB&#39;, &#39;001AAC&#39;]
+);
+
+const sourceRows = await this.runtime.queryMultiAsync(true, queries);
+const toUpdate = sourceRows.map((row) =&gt; ({
+  ...row,
+  Name: String(row[&#39;Name&#39;] ?? &#39;&#39;).trim(),
+}));
+
+await this.runtime.updateTargetRecordsAsync(&#39;Account&#39;, OPERATION.Update, toUpdate);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li><code>createFieldInQueries</code> avoids oversized <code>IN</code> clauses;</li>
+<li><code>queryMultiAsync</code> returns merged results from generated queries;</li>
+<li><code>updateTargetRecordsAsync</code> applies DML/engine logic via runtime.</li>
+</ul>
+<h3 id="isfdmuruncustomaddonapiservice">ISfdmuRunCustomAddonApiService<a class="heading-anchor" href="#isfdmuruncustomaddonapiservice" aria-label="Link to section">#</a></h3><p>This service is exposed as <code>this.runtime.service</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Returns</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>log(module, message, type, ...tokens)</code></td>
+<td><code>void</code></td>
+<td>General-purpose logging. Supports string/object payloads.</td>
+</tr>
+<tr>
+<td><code>getProcessedData(context)</code></td>
+<td><code>ISfdmuRunCustomAddonProcessedData</code></td>
+<td>Live data for the current processing step.</td>
+</tr>
+<tr>
+<td><code>getPluginRunInfo()</code></td>
+<td><code>ISfdmuRunCustomAddonCommandRunInfo</code></td>
+<td>Run-level command and plugin metadata.</td>
+</tr>
+<tr>
+<td><code>getPluginJob()</code></td>
+<td><code>ISFdmuRunCustomAddonJob</code></td>
+<td>Current migration job model.</td>
+</tr>
+<tr>
+<td><code>getPluginTask(context)</code></td>
+<td><code>ISFdmuRunCustomAddonTask | null</code></td>
+<td>Current object task by context.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const runInfo = this.runtime.service.getPluginRunInfo();
+this.runtime.service.log(this, `command=${runInfo.pinfo.commandString}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `source=${runInfo.sourceUsername}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `target=${runInfo.targetUsername}`, &#39;INFO&#39;);
+
+const task = this.runtime.service.getPluginTask(context);
+if (task) {
+  this.runtime.service.log(this, `task=${task.sObjectName}`, &#39;INFO&#39;);
+  const processed = this.runtime.service.getProcessedData(context);
+  this.runtime.service.log(this, `toInsert=${processed.recordsToInsert.length}`, &#39;INFO&#39;);
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>run info is ideal for diagnostics and environment-aware logic;</li>
+<li>task + processed data expose live migration state for mutation.</li>
+</ul>
+<h5 id="notes-1">Notes:<a class="heading-anchor" href="#notes-1" aria-label="Link to section">#</a></h5><ul>
+<li><code>getProcessedData()</code> is most useful in update/filter-oriented events.</li>
+<li>In events where no task is active, the service can return empty/default structures.</li>
+</ul>
+<h2 id="script-model">Script Model<a class="heading-anchor" href="#script-model" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonscript">ISfdmuRunCustomAddonScript<a class="heading-anchor" href="#isfdmuruncustomaddonscript" aria-label="Link to section">#</a></h3><p>Represents the active runtime view of <code>export.json</code> with runtime links.</p>
+<p>Main groups of properties:</p>
+<ul>
+<li>orgs and selected source/target orgs (<code>orgs</code>, <code>sourceOrg</code>, <code>targetOrg</code>);</li>
+<li>object configuration (<code>objects</code>, <code>getAllObjects()</code>, <code>addObjectToFirstSet()</code>);</li>
+<li>object structure helpers (<code>objectSets</code>, <code>objectsMap</code>);</li>
+<li>runtime tuning and CSV options (<code>bulkThreshold</code>, <code>csvFileDelimiter</code>, <code>csvFileEncoding</code>, etc.);</li>
+<li>object selection and safety controls (<code>excludedObjects</code>, <code>groupQuery</code>, <code>canModify</code>);</li>
+<li>global add-on arrays (<code>beforeAddons</code>, <code>afterAddons</code>, <code>dataRetrievedAddons</code>);</li>
+<li>job link (<code>job</code>), object-set runtime position (<code>objectSetIndex</code>), and
+mapping helper (<code>sourceTargetFieldMapping</code>).</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-ts">const script = this.runtime.getScript();
+if (script.csvFileDelimiter === &#39;;&#39;) {
+  this.runtime.service.log(this, &#39;Semicolon CSV mode detected&#39;, &#39;INFO&#39;);
+}
+
+const allObjects = script.getAllObjects();
+const hasAccount = allObjects.some((obj) =&gt; obj.name === &#39;Account&#39;);
+this.runtime.service.log(this, `hasAccount=${String(hasAccount)}`, &#39;INFO&#39;);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>script-level options allow add-on behavior to align with runtime configuration;</li>
+<li><code>getAllObjects()</code> gives full object scope beyond current task.</li>
+</ul>
+<p>Property cross-links (Script -&gt; Related Models):</p>
+<table>
+<thead>
+<tr>
+<th>Script Property</th>
+<th>Related Model</th>
+<th>Main Documentation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>orgs</code> / <code>sourceOrg</code> / <code>targetOrg</code></td>
+<td><a href="#isfdmuruncustomaddonscriptorg">ISfdmuRunCustomAddonScriptOrg</a></td>
+<td><a href="../../export-json-file-objects-specification/script-org-object/">ScriptOrg Object</a></td>
+</tr>
+<tr>
+<td><code>objects</code></td>
+<td><a href="#isfdmuruncustomaddonscriptobject">ISfdmuRunCustomAddonScriptObject</a></td>
+<td><a href="../../export-json-file-objects-specification/script-object-object/">ScriptObject</a></td>
+</tr>
+<tr>
+<td><code>beforeAddons</code> / <code>afterAddons</code> / <code>dataRetrievedAddons</code></td>
+<td><a href="#addonmanifestdefinition">AddOnManifestDefinition</a></td>
+<td><a href="../../export-json-file-objects-specification/script-object/">Script Object</a></td>
+</tr>
+<tr>
+<td><code>job</code></td>
+<td><a href="#isfdmuruncustomaddonjob">ISFdmuRunCustomAddonJob</a></td>
+<td><a href="../introduction-to-the-sfdmu-add-on-api-engine/">Add-On API Overview</a></td>
+</tr>
+<tr>
+<td><code>csvFileDelimiter</code> / <code>csvFileEncoding</code></td>
+<td>Runtime CSV behavior</td>
+<td><a href="../../export-json-file-objects-specification/script-object/">Script Object</a></td>
+</tr>
+<tr>
+<td><code>excludedObjects</code> / <code>groupQuery</code> / <code>canModify</code></td>
+<td>Runtime object scope and org-modification controls</td>
+<td><a href="../../export-json-file-objects-specification/script-object/">Script Object</a></td>
+</tr>
+<tr>
+<td><code>objectSets</code> / <code>objectsMap</code> / <code>sourceTargetFieldMapping</code></td>
+<td>Runtime structure and mapping helpers</td>
+<td><a href="../../export-json-file-objects-specification/script-object/">Script Object</a></td>
+</tr>
+</tbody></table>
+<h3 id="isfdmuruncustomaddonscriptobject">ISfdmuRunCustomAddonScriptObject<a class="heading-anchor" href="#isfdmuruncustomaddonscriptobject" aria-label="Link to section">#</a></h3><p>Represents one object-level migration config plus runtime markers.</p>
+<p>Important fields:</p>
+<ul>
+<li>operation and delete flags (<code>operation</code>, <code>deleteOldData</code>, <code>deleteFromSource</code>, etc.);</li>
+<li>mapping and transform config (<code>fieldMapping</code>, <code>useFieldMapping</code>, <code>useValuesMapping</code>);</li>
+<li>API mode and delete-order controls (<code>alwaysUseRestApi</code>, <code>alwaysUseBulkApi</code>, <code>alwaysUseBulkApiToUpdateRecords</code>, <code>respectOrderByOnDeleteRecords</code>);</li>
+<li>query scope controls (<code>useQueryAll</code>, <code>queryAllTarget</code>, <code>skipExistingRecords</code>);</li>
+<li>event arrays (<code>beforeAddons</code>, <code>afterAddons</code>, <code>beforeUpdateAddons</code>, <code>afterUpdateAddons</code>, <code>filterRecordsAddons</code>);</li>
+<li>query/filter controls (<code>query</code>, <code>deleteQuery</code>, <code>sourceRecordsFilter</code>, <code>targetRecordsFilter</code>);</li>
+<li>runtime identity (<code>name</code>, <code>objectName</code>, <code>isAutoAdded</code>);</li>
+<li>external-id and exclusion helpers (<code>originalExternalId</code>, <code>originalExternalIdIsEmpty</code>, <code>excludedFieldsFromUpdate</code>);</li>
+<li>runtime metadata links (<code>processAllSource</code>, <code>processAllTarget</code>, <code>isFromOriginalScript</code>, <code>sourceSObjectDescribe</code>, <code>targetSObjectDescribe</code>, <code>isExtraObject</code>).</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-ts">const task = this.runtime.service.getPluginTask(context);
+if (!task) {
+  return { cancel: false };
+}
+
+const scriptObject = task.scriptObject;
+this.runtime.service.log(this, `operation=${String(scriptObject.operation)}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `externalId=${String(scriptObject.externalId ?? &#39;&#39;)}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `useValuesMapping=${String(scriptObject.useValuesMapping ?? false)}`, &#39;INFO&#39;);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li><code>scriptObject</code> reflects current object-level migration behavior;</li>
+<li>useful for branching logic by operation or mapping mode.</li>
+</ul>
+<p>Related property links in main docs:</p>
+<ul>
+<li><code>operation</code> -&gt; <a href="../../export-json-file-objects-specification/script-object-object/">ScriptObject.operation</a></li>
+<li><code>query</code> / <code>deleteQuery</code> -&gt; <a href="../../export-json-file-objects-specification/script-object-object/">ScriptObject.query/deleteQuery</a></li>
+<li><code>useFieldMapping</code> / <code>fieldMapping</code> -&gt; <a href="../../advanced-features/fields-mapping/">Fields Mapping</a></li>
+<li><code>useValuesMapping</code> -&gt; <a href="../../advanced-features/values-mapping/">Values Mapping</a></li>
+<li><code>updateWithMockData</code> / <code>mockFields</code> -&gt; <a href="../../advanced-features/data-anonymization/">Data Anonymization</a></li>
+<li><code>respectOrderByOnDeleteRecords</code> -&gt; <a href="../../export-json-file-objects-specification/script-object-object/#respectorderbyondeleterecords-boolean">ScriptObject.respectOrderByOnDeleteRecords</a></li>
+<li><code>alwaysUseBulkApiToUpdateRecords</code> -&gt; <a href="../../export-json-file-objects-specification/script-object-object/#alwaysusebulkapitoupdaterecords-boolean">ScriptObject.alwaysUseBulkApiToUpdateRecords</a></li>
+<li><code>alwaysUseRestApi</code> -&gt; <a href="../../export-json-file-objects-specification/script-object-object/#alwaysuserestapi-boolean">ScriptObject.alwaysUseRestApi</a></li>
+<li><code>alwaysUseBulkApi</code> -&gt; <a href="../../export-json-file-objects-specification/script-object-object/#alwaysusebulkapi-boolean">ScriptObject.alwaysUseBulkApi</a></li>
+<li>delete flags -&gt; <a href="../../advanced-features/delete-source/">Delete Source</a>,
+<a href="../../advanced-features/delete-by-hierarchy/">Delete by Hierarchy</a></li>
+</ul>
+<h3 id="isfdmuruncustomaddonscriptorg">ISfdmuRunCustomAddonScriptOrg<a class="heading-anchor" href="#isfdmuruncustomaddonscriptorg" aria-label="Link to section">#</a></h3><p>Represents resolved source/target org info in runtime.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>Alias/name from script context.</td>
+</tr>
+<tr>
+<td><code>orgUserName</code></td>
+<td>Effective org username/alias used for connection.</td>
+</tr>
+<tr>
+<td><code>orgId</code></td>
+<td>Salesforce org Id resolved for the connected org.</td>
+</tr>
+<tr>
+<td><code>instanceUrl</code></td>
+<td>Optional instance URL for token-based auth.</td>
+</tr>
+<tr>
+<td><code>accessToken</code></td>
+<td>Optional access token for token-based auth.</td>
+</tr>
+<tr>
+<td><code>media</code></td>
+<td>Runtime media type (<code>Org</code> or <code>File</code>).</td>
+</tr>
+<tr>
+<td><code>isSource</code></td>
+<td>True when this org is used as source in the current run.</td>
+</tr>
+<tr>
+<td><code>orgDescribe</code></td>
+<td>Runtime org metadata map keyed by object API name.</td>
+</tr>
+<tr>
+<td><code>isPersonAccountEnabled</code></td>
+<td>True when Person Accounts are available in this org.</td>
+</tr>
+<tr>
+<td><code>organizationType</code></td>
+<td>Organization type returned by Salesforce.</td>
+</tr>
+<tr>
+<td><code>isSandbox</code></td>
+<td>True when Salesforce reports this org as sandbox.</td>
+</tr>
+<tr>
+<td><code>isScratch</code></td>
+<td>True when current org is detected as scratch org.</td>
+</tr>
+<tr>
+<td><code>connectionData</code></td>
+<td>Runtime connection payload with instanceUrl, token, apiVersion, proxyUrl.</td>
+</tr>
+<tr>
+<td><code>isConnected</code></td>
+<td>True when access token is available for this org entry.</td>
+</tr>
+<tr>
+<td><code>isDescribed</code></td>
+<td>True when org metadata was already described.</td>
+</tr>
+<tr>
+<td><code>objectNamesList</code></td>
+<td>Runtime list of described object API names.</td>
+</tr>
+<tr>
+<td><code>isProduction</code></td>
+<td>True when org is production according to Salesforce metadata.</td>
+</tr>
+<tr>
+<td><code>isDeveloper</code></td>
+<td>True when org is Developer Edition.</td>
+</tr>
+<tr>
+<td><code>instanceDomain</code></td>
+<td>Runtime domain extracted from <code>instanceUrl</code>.</td>
+</tr>
+<tr>
+<td><code>isFileMedia</code></td>
+<td>True for csvfile mode.</td>
+</tr>
+<tr>
+<td><code>isOrgMedia</code></td>
+<td>True for org mode.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const script = this.runtime.getScript();
+const sourceOrg = script.sourceOrg;
+const targetOrg = script.targetOrg;
+
+this.runtime.service.log(this, `source=${String(sourceOrg?.name ?? &#39;&#39;)}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `target=${String(targetOrg?.name ?? &#39;&#39;)}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `sourceIsFile=${String(sourceOrg?.isFileMedia ?? false)}`, &#39;INFO&#39;);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>org metadata allows different logic for org-to-org vs csvfile scenarios.</li>
+</ul>
+<h3 id="isfdmuruncustomaddonscriptaddonmanifestdefinition">ISfdmuRunCustomAddonScriptAddonManifestDefinition<a class="heading-anchor" href="#isfdmuruncustomaddonscriptaddonmanifestdefinition" aria-label="Link to section">#</a></h3><p>The SDK view of add-on declaration as seen from object/script models.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>path</code></td>
+<td>Legacy locator path.</td>
+</tr>
+<tr>
+<td><code>module</code></td>
+<td>Preferred module locator (path or package).</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>User-facing description.</td>
+</tr>
+<tr>
+<td><code>excluded</code></td>
+<td>Skip switch.</td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td>Raw argument object passed to module methods.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const script = this.runtime.getScript();
+const before = script.beforeAddons ?? [];
+before.forEach((addon) =&gt; {
+  this.runtime.service.log(this, `module=${String(addon.module ?? addon.path ?? &#39;&#39;)}`, &#39;INFO&#39;);
+  this.runtime.service.log(this, `excluded=${String(addon.excluded)}`, &#39;INFO&#39;);
+});
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>you can inspect declared add-ons to implement validation/reporting logic.</li>
+</ul>
+<h3 id="isfdmuruncustomaddonscriptmappingitem">ISfdmuRunCustomAddonScriptMappingItem<a class="heading-anchor" href="#isfdmuruncustomaddonscriptmappingitem" aria-label="Link to section">#</a></h3><p>Field mapping item.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>targetObject</code></td>
+<td>Target object name for cross-object mapping.</td>
+</tr>
+<tr>
+<td><code>sourceField</code></td>
+<td>Source field API name.</td>
+</tr>
+<tr>
+<td><code>targetField</code></td>
+<td>Target field API name.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const task = this.runtime.service.getPluginTask(context);
+const mappings = task?.scriptObject.fieldMapping ?? [];
+for (const mapItem of mappings) {
+  this.runtime.service.log(
+    this,
+    `${mapItem.sourceField} -&gt; ${mapItem.targetObject}.${mapItem.targetField}`,
+    &#39;INFO&#39;
+  );
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>mapping items explain how source fields are projected to target schema.</li>
+</ul>
+<h3 id="isfdmuruncustomaddonscriptmockfield">ISfdmuRunCustomAddonScriptMockField<a class="heading-anchor" href="#isfdmuruncustomaddonscriptmockfield" aria-label="Link to section">#</a></h3><p>Mock/anonymization field rule item.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>Field API name.</td>
+</tr>
+<tr>
+<td><code>excludeNames</code></td>
+<td>Excluded field names.</td>
+</tr>
+<tr>
+<td><code>pattern</code></td>
+<td>Mock generation pattern.</td>
+</tr>
+<tr>
+<td><code>locale</code></td>
+<td>Optional casual locale key, for example <code>ru_RU</code>.</td>
+</tr>
+<tr>
+<td><code>excludedRegex</code></td>
+<td>Regex exclusion rule.</td>
+</tr>
+<tr>
+<td><code>includedRegex</code></td>
+<td>Regex inclusion rule.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const task = this.runtime.service.getPluginTask(context);
+const mockFields = task?.scriptObject.mockFields ?? [];
+mockFields.forEach((field) =&gt; {
+  this.runtime.service.log(
+    this,
+    `mock field=${field.name} pattern=${field.pattern} locale=${String(field.locale ?? &#39;&#39;)}`,
+    &#39;INFO&#39;
+  );
+});
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>this metadata is useful when add-on logic must coordinate with anonymization rules.</li>
+</ul>
+<h2 id="job-and-task-models">Job and Task Models<a class="heading-anchor" href="#job-and-task-models" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonjob">ISFdmuRunCustomAddonJob<a class="heading-anchor" href="#isfdmuruncustomaddonjob" aria-label="Link to section">#</a></h3><p>Represents the active migration job.</p>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tasks</code></td>
+<td>Array of all object tasks in current job.</td>
+</tr>
+<tr>
+<td><code>getTaskByFieldPath(fieldPath)</code></td>
+<td>Resolves a task by lookup path and returns <code>{ task, field }</code>.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const job = this.runtime.service.getPluginJob();
+this.runtime.service.log(this, `taskCount=${job.tasks.length}`, &#39;INFO&#39;);
+
+const resolved = job.getTaskByFieldPath(&#39;Account.Owner.Manager.Name&#39;);
+if (resolved.task) {
+  this.runtime.service.log(
+    this,
+    `fieldPath mapped to task=${resolved.task.sObjectName}, field=${resolved.field}`,
+    &#39;INFO&#39;
+  );
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li><code>tasks</code> lets you inspect the whole job graph;</li>
+<li><code>getTaskByFieldPath</code> helps locate lookup-driven dependencies.</li>
+</ul>
+<h3 id="isfdmuruncustomaddontask">ISFdmuRunCustomAddonTask<a class="heading-anchor" href="#isfdmuruncustomaddontask" aria-label="Link to section">#</a></h3><p>Represents one object task in current job pipeline.</p>
+<p>Useful properties:</p>
+<ul>
+<li>task identity and operation (<code>sObjectName</code>, <code>targetSObjectName</code>, <code>operation</code>);</li>
+<li>source/target maps (<code>sourceToTargetRecordMap</code>, <code>sourceToTargetFieldNameMap</code>);</li>
+<li>task data (<code>sourceTaskData</code>, <code>targetTaskData</code>, <code>sourceData</code>, <code>targetData</code>);</li>
+<li>current working sets (<code>processedData</code>, <code>tempRecords</code>, <code>fieldsInQuery</code>, <code>fieldsToUpdate</code>);</li>
+<li>helpers (<code>mapRecords(records)</code> for values mapping).</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-ts">const task = this.runtime.service.getPluginTask(context);
+if (!task) {
+  return { cancel: false };
+}
+
+this.runtime.service.log(this, `sObject=${task.sObjectName}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `operation=${String(task.operation)}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `updateMode=${task.updateMode}`, &#39;INFO&#39;);
+
+if (context.eventName === &#39;filterRecordsAddons&#39;) {
+  task.tempRecords = task.tempRecords.filter((record) =&gt; String(record[&#39;Name&#39;] ?? &#39;&#39;).length &gt; 0);
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li><code>tempRecords</code> is designed for filtering transformations in filter events;</li>
+<li>operation/update mode allow precise event-phase logic.</li>
+</ul>
+<p>Property flow cross-links:</p>
+<ul>
+<li><code>task.scriptObject</code> -&gt; <a href="#isfdmuruncustomaddonscriptobject">ISfdmuRunCustomAddonScriptObject</a></li>
+<li><code>task.processedData</code> -&gt; <a href="#isfdmuruncustomaddonprocesseddata">ISfdmuRunCustomAddonProcessedData</a></li>
+<li><code>task.sourceData</code> / <code>task.targetData</code> -&gt; <a href="#isfdmuruncustomaddontaskdata">ISfdmuRunCustomAddonTaskData</a></li>
+<li><code>task.operation</code> -&gt; <a href="#operation">OPERATION enum</a></li>
+<li><code>task.data.fieldsInQueryMap</code> / <code>processedData.fields</code> -&gt; <a href="#isfdmuruncustomaddonsfielddescribe">ISfdmuRunCustomAddonSFieldDescribe</a></li>
+</ul>
+<h3 id="isfdmuruncustomaddontaskdata">ISfdmuRunCustomAddonTaskData<a class="heading-anchor" href="#isfdmuruncustomaddontaskdata" aria-label="Link to section">#</a></h3><p>Represents source-side or target-side data state for the task.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mediaType</code></td>
+<td>Org or File media type.</td>
+</tr>
+<tr>
+<td><code>isSource</code></td>
+<td>True for source-side task data.</td>
+</tr>
+<tr>
+<td><code>idRecordsMap</code></td>
+<td>Record Id to record map.</td>
+</tr>
+<tr>
+<td><code>extIdRecordsMap</code></td>
+<td>ExternalId value to record Id map.</td>
+</tr>
+<tr>
+<td><code>records</code></td>
+<td>Records array.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const task = this.runtime.service.getPluginTask(context);
+if (!task) {
+  return { cancel: false };
+}
+
+const sourceCount = task.sourceData.records.length;
+const targetCount = task.targetData.records.length;
+this.runtime.service.log(this, `source=${sourceCount}, target=${targetCount}`, &#39;INFO&#39;);
+
+const knownId = [...task.sourceData.idRecordsMap.keys()][0];
+if (knownId) {
+  const row = task.sourceData.idRecordsMap.get(knownId);
+  this.runtime.service.log(this, `sampleSourceId=${knownId}`, &#39;INFO&#39;);
+  this.runtime.service.log(this, row ?? {}, &#39;JSON&#39;);
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>maps provide fast lookups by Id/externalId without scanning full arrays.</li>
+</ul>
+<h3 id="isfdmuruncustomaddonprocesseddata">ISfdmuRunCustomAddonProcessedData<a class="heading-anchor" href="#isfdmuruncustomaddonprocesseddata" aria-label="Link to section">#</a></h3><p>Live dataset for current update/filter cycle.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fieldNames</code></td>
+<td>API names of fields in current update scope.</td>
+</tr>
+<tr>
+<td><code>fields</code></td>
+<td>Field describe objects for current update scope.</td>
+</tr>
+<tr>
+<td><code>recordsToInsert</code></td>
+<td>Mutable array of records scheduled for insert.</td>
+</tr>
+<tr>
+<td><code>recordsToUpdate</code></td>
+<td>Mutable array of records scheduled for update.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const processed = this.runtime.service.getProcessedData(context);
+processed.recordsToInsert.forEach((record) =&gt; {
+  record[&#39;Migration_Source__c&#39;] = &#39;SFDMU&#39;;
+});
+processed.recordsToUpdate.forEach((record) =&gt; {
+  record[&#39;Last_Migrated_By__c&#39;] = &#39;CustomAddon&#39;;
+});
+
+this.runtime.service.log(
+  this,
+  `insert=${processed.recordsToInsert.length}, update=${processed.recordsToUpdate.length}`,
+  &#39;INFO&#39;
+);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>this is the most direct place to mutate records before DML in update events.</li>
+</ul>
+<p>See mutation timing in:</p>
+<ul>
+<li><a href="../supported-events/">Supported Add-On API Events</a></li>
+<li><a href="../../export-json-file-objects-specification/script-object-object/">ScriptObject and update cycle</a></li>
+</ul>
+<h2 id="metadata-models">Metadata Models<a class="heading-anchor" href="#metadata-models" aria-label="Link to section">#</a></h2><h3 id="isfdmuruncustomaddonsfielddescribe">ISfdmuRunCustomAddonSFieldDescribe<a class="heading-anchor" href="#isfdmuruncustomaddonsfielddescribe" aria-label="Link to section">#</a></h3><p>Describe metadata for one Salesforce field.</p>
+<p>Includes:</p>
+<ul>
+<li>identity (<code>objectName</code>, <code>name</code>, <code>label</code>, <code>type</code>);</li>
+<li>write capabilities (<code>creatable</code>, <code>updateable</code>, <code>readonly</code>);</li>
+<li>relationship metadata (<code>lookup</code>, <code>referencedObjectType</code>, <code>isMasterDetail</code>, polymorphic flags);</li>
+<li>technical flags (<code>custom</code>, <code>calculated</code>, <code>autoNumber</code>, <code>unique</code>, etc.).</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-ts">const task = this.runtime.service.getPluginTask(context);
+if (!task) {
+  return { cancel: false };
+}
+
+for (const field of task.processedData.fields) {
+  if (!field.updateable) {
+    this.runtime.service.log(this, `Skip non-updateable field ${field.name}`, &#39;INFO&#39;);
+  }
+  if (field.lookup) {
+    this.runtime.service.log(this, `Lookup field ${field.name} -&gt; ${field.referencedObjectType}`, &#39;INFO&#39;);
+  }
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>field describe metadata helps enforce safe transformation rules.</li>
+</ul>
+<h3 id="run-and-plugin-metadata">Run and Plugin Metadata<a class="heading-anchor" href="#run-and-plugin-metadata" aria-label="Link to section">#</a></h3><h4 id="isfdmuruncustomaddoncommandruninfo">ISfdmuRunCustomAddonCommandRunInfo<a class="heading-anchor" href="#isfdmuruncustomaddoncommandruninfo" aria-label="Link to section">#</a></h4><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sourceUsername</code></td>
+<td>Value from <code>--sourceusername</code>.</td>
+</tr>
+<tr>
+<td><code>targetUsername</code></td>
+<td>Value from <code>--targetusername</code>.</td>
+</tr>
+<tr>
+<td><code>apiVersion</code></td>
+<td>Effective API version used for run.</td>
+</tr>
+<tr>
+<td><code>basePath</code></td>
+<td>Runtime base path.</td>
+</tr>
+<tr>
+<td><code>pinfo</code></td>
+<td>Plugin metadata object.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const run = this.runtime.service.getPluginRunInfo();
+this.runtime.service.log(this, `apiVersion=${run.apiVersion}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `basePath=${run.basePath}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `source=${run.sourceUsername}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `target=${run.targetUsername}`, &#39;INFO&#39;);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>use this object for environment-dependent behavior and diagnostics.</li>
+</ul>
+<h4 id="isfdmuruncustomaddonplugininfo">ISfdmuRunCustomAddonPluginInfo<a class="heading-anchor" href="#isfdmuruncustomaddonplugininfo" aria-label="Link to section">#</a></h4><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>pluginName</code></td>
+<td>Usually <code>sfdmu</code>.</td>
+</tr>
+<tr>
+<td><code>commandName</code></td>
+<td>Usually <code>run</code>.</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>Running plugin version.</td>
+</tr>
+<tr>
+<td><code>path</code></td>
+<td>Installation path of plugin package.</td>
+</tr>
+<tr>
+<td><code>commandString</code></td>
+<td>Full command line string.</td>
+</tr>
+<tr>
+<td><code>argv</code></td>
+<td>Parsed argument array.</td>
+</tr>
+<tr>
+<td><code>runAddOnApiInfo</code></td>
+<td>Add-On API version metadata.</td>
+</tr>
+</tbody></table>
+<p>Example:</p>
+<pre><code class="language-ts">const run = this.runtime.service.getPluginRunInfo();
+const plugin = run.pinfo;
+this.runtime.service.log(this, `plugin=${plugin.pluginName}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `version=${plugin.version}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `command=${plugin.commandString}`, &#39;INFO&#39;);
+this.runtime.service.log(this, `addonApi=${plugin.runAddOnApiInfo.version}`, &#39;INFO&#39;);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>use plugin metadata to guard features by API version.</li>
+</ul>
+<h2 id="core-enums-available-in-sdk">Core Enums Available in SDK<a class="heading-anchor" href="#core-enums-available-in-sdk" aria-label="Link to section">#</a></h2><h3 id="operation">OPERATION<a class="heading-anchor" href="#operation" aria-label="Link to section">#</a></h3><p>Supported values:</p>
+<ul>
+<li><code>Insert</code></li>
+<li><code>Update</code></li>
+<li><code>Upsert</code></li>
+<li><code>Readonly</code></li>
+<li><code>Delete</code></li>
+<li><code>DeleteSource</code></li>
+<li><code>DeleteHierarchy</code></li>
+<li><code>HardDelete</code></li>
+<li><code>Unknown</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-ts">const task = this.runtime.service.getPluginTask(context);
+switch (task?.operation) {
+  case OPERATION.Insert:
+    this.runtime.service.log(this, &#39;Insert mode&#39;, &#39;INFO&#39;);
+    break;
+  case OPERATION.Upsert:
+    this.runtime.service.log(this, &#39;Upsert mode&#39;, &#39;INFO&#39;);
+    break;
+  case OPERATION.Update:
+    this.runtime.service.log(this, &#39;Update mode&#39;, &#39;INFO&#39;);
+    break;
+  default:
+    this.runtime.service.log(this, &#39;Other operation mode&#39;, &#39;INFO&#39;);
+    break;
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>enum-based branching is safer than string comparisons.</li>
+</ul>
+<h3 id="datamediatype">DATA_MEDIA_TYPE<a class="heading-anchor" href="#datamediatype" aria-label="Link to section">#</a></h3><ul>
+<li><code>Org</code></li>
+<li><code>File</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-ts">const task = this.runtime.service.getPluginTask(context);
+if (task?.sourceData.mediaType === DATA_MEDIA_TYPE.File) {
+  this.runtime.service.log(this, &#39;Source is csvfile media&#39;, &#39;INFO&#39;);
+}
+if (task?.targetData.mediaType === DATA_MEDIA_TYPE.Org) {
+  this.runtime.service.log(this, &#39;Target is org media&#39;, &#39;INFO&#39;);
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>media checks are important for add-ons that mix CSV and org behavior.</li>
+</ul>
+<h3 id="datacachetypes">DATA_CACHE_TYPES<a class="heading-anchor" href="#datacachetypes" aria-label="Link to section">#</a></h3><ul>
+<li><code>InMemory</code></li>
+<li><code>CleanFileCache</code></li>
+<li><code>FileCache</code></li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-ts">const script = this.runtime.getScript();
+if (script.binaryDataCache === DATA_CACHE_TYPES.FileCache) {
+  this.runtime.service.log(this, &#39;Binary cache uses persistent files&#39;, &#39;INFO&#39;);
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>cache mode helps explain runtime performance and I/O behavior in logs.</li>
+</ul>
+<h2 id="how-to-use-the-sdk">How to Use the SDK<a class="heading-anchor" href="#how-to-use-the-sdk" aria-label="Link to section">#</a></h2><h3 id="install-sdk-in-your-add-on-project">Install SDK in Your Add-On Project<a class="heading-anchor" href="#install-sdk-in-your-add-on-project" aria-label="Link to section">#</a></h3><pre><code class="language-bash">npm install &lt;absolute-path-to&gt;/custom-addon-sdk
+</code></pre>
+<p>Then import types:</p>
+<pre><code class="language-ts">import type { ISfdmuRunCustomAddonModule } from &#39;sfdmu-addon-sdk&#39;;
+</code></pre>
+<p>Example with full imports:</p>
+<pre><code class="language-ts">import type {
+  ISfdmuRunCustomAddonContext,
+  ISfdmuRunCustomAddonModule,
+  ISfdmuRunCustomAddonResult,
+  ISfdmuRunCustomAddonRuntime,
+  OPERATION,
+} from &#39;sfdmu-addon-sdk&#39;;
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>use <code>import type</code> for interface-only imports and cleaner build output.</li>
+</ul>
+<h3 id="recommended-project-layout">Recommended Project Layout<a class="heading-anchor" href="#recommended-project-layout" aria-label="Link to section">#</a></h3><pre><code class="language-plaintext">my-addon/
+|- index.ts
+|- package.json
+|- tsconfig.json
+|- resources/
+   |- messages.md
+|- dist/
+   |- index.js
+</code></pre>
+<p>Example <code>package.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;my-sfdmu-addon&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;main&quot;: &quot;./dist/index.js&quot;,
+  &quot;types&quot;: &quot;./index.ts&quot;,
+  &quot;scripts&quot;: {
+    &quot;compile&quot;: &quot;tsc -p . --pretty&quot;,
+    &quot;build&quot;: &quot;npm run compile&quot;
+  }
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li><code>main</code> points to compiled runtime entry;</li>
+<li><code>types</code> points to source typings for editor support.</li>
+</ul>
+<h3 id="create-from-template">Create from Template<a class="heading-anchor" href="#create-from-template" aria-label="Link to section">#</a></h3><p>From repository root:</p>
+<pre><code class="language-bash">node scripts/create-custom-addon-template.js &lt;addon-name&gt;
+</code></pre>
+<p>Template location:</p>
+<p><code>custom-addon-sdk/custom-modules/&lt;addon-name&gt;</code></p>
+<p>Example generated entry file (short form):</p>
+<pre><code class="language-ts">export default class MyAddon implements ISfdmuRunCustomAddonModule {
+  public runtime: ISfdmuRunCustomAddonRuntime;
+  public constructor(runtime: ISfdmuRunCustomAddonRuntime) {
+    this.runtime = runtime;
+  }
+  public async onExecute(
+    context: ISfdmuRunCustomAddonContext,
+    args: Record&lt;string, unknown&gt;
+  ): Promise&lt;ISfdmuRunCustomAddonResult&gt; {
+    this.runtime.service.log(this, &#39;Hello from template&#39;, &#39;INFO&#39;);
+    this.runtime.service.log(this, args, &#39;JSON&#39;);
+    return { cancel: false };
+  }
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>template gives you a valid contract with runtime already injected.</li>
+</ul>
+<h3 id="compile-and-build">Compile and Build<a class="heading-anchor" href="#compile-and-build" aria-label="Link to section">#</a></h3><p>Standalone add-on:</p>
+<pre><code class="language-bash">npm install
+npm run compile
+npm run build
+</code></pre>
+<p>Compile with entire repository:</p>
+<pre><code class="language-bash">npm run compile
+npm run build
+</code></pre>
+<p>Example <code>tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;target&quot;: &quot;ES2022&quot;,
+    &quot;module&quot;: &quot;NodeNext&quot;,
+    &quot;moduleResolution&quot;: &quot;NodeNext&quot;,
+    &quot;outDir&quot;: &quot;./dist&quot;,
+    &quot;rootDir&quot;: &quot;.&quot;,
+    &quot;sourceMap&quot;: true,
+    &quot;strict&quot;: true
+  },
+  &quot;include&quot;: [&quot;./index.ts&quot;]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li><code>NodeNext</code> keeps compatibility with runtime loader for modern module formats.</li>
+</ul>
+<h2 id="calling-and-running-custom-add-ons">Calling and Running Custom Add-Ons<a class="heading-anchor" href="#calling-and-running-custom-add-ons" aria-label="Link to section">#</a></h2><h3 id="global-level-registration-export-json">Global-Level Registration (<code>export.json</code>)<a class="heading-anchor" href="#global-level-registration-export-json" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+  &quot;beforeAddons&quot;: [
+    {
+      &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/demo/dist/index.js&quot;,
+      &quot;args&quot;: {
+        &quot;mode&quot;: &quot;dry-check&quot;
+      }
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>this hook runs once per job before object processing starts;</li>
+<li>useful for setup, script validation, and global feature toggles.</li>
+</ul>
+<h3 id="object-level-registration-export-json">Object-Level Registration (<code>export.json</code>)<a class="heading-anchor" href="#object-level-registration-export-json" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Name FROM Account&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;beforeUpdateAddons&quot;: [
+        {
+          &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/demo/dist/index.js&quot;,
+          &quot;args&quot;: {
+            &quot;fieldName&quot;: &quot;Name&quot;
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>this hook runs in the context of a specific object task;</li>
+<li>best for record-level transformations tied to that object.</li>
+</ul>
+<h3 id="external-manifest-addons-json">External Manifest (<code>addons.json</code>)<a class="heading-anchor" href="#external-manifest-addons-json" aria-label="Link to section">#</a></h3><pre><code class="language-json">{
+  &quot;addons&quot;: [
+    {
+      &quot;event&quot;: &quot;onBefore&quot;,
+      &quot;command&quot;: &quot;sfdmu:run&quot;,
+      &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/demo/dist/index.js&quot;,
+      &quot;objects&quot;: [&quot;Account&quot;],
+      &quot;args&quot;: {
+        &quot;enabled&quot;: true
+      }
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>external manifests are useful when you want reusable add-on packages across projects;</li>
+<li>you can keep <code>export.json</code> focused on data migration config and move add-on catalog to <code>addons.json</code>.</li>
+</ul>
+<h5 id="notes-2">Notes:<a class="heading-anchor" href="#notes-2" aria-label="Link to section">#</a></h5><ul>
+<li><code>command</code> is optional; default scope is <code>sfdmu:run</code>.</li>
+<li><code>objects</code> can be used to narrow execution without duplicating declarations.</li>
+<li>If both <code>module</code> and <code>path</code> are absent, SFDMU logs a warning and skips that entry.</li>
+</ul>
+<h2 id="debugging-custom-add-ons">Debugging Custom Add-Ons<a class="heading-anchor" href="#debugging-custom-add-ons" aria-label="Link to section">#</a></h2><h3 id="debug-from-typescript-source">Debug from TypeScript Source<a class="heading-anchor" href="#debug-from-typescript-source" aria-label="Link to section">#</a></h3><p>For fast development feedback, point <code>module</code> to the <code>.ts</code> file:</p>
+<pre><code class="language-json">{
+  &quot;addons&quot;: [
+    {
+      &quot;event&quot;: &quot;onBefore&quot;,
+      &quot;module&quot;: &quot;./custom-addon-sdk/custom-modules/demo/index.ts&quot;
+    }
+  ]
+}
+</code></pre>
+<p>Run in debug mode with the cross-platform runner:</p>
+<p><code>./sfdmu-run-debug.cmd --sourceusername source@mail.com --targetusername target@mail.com --path .</code></p>
+<p>Example debug-oriented logging:</p>
+<pre><code class="language-ts">this.runtime.service.log(this, &#39;Debug marker: before map step&#39;, &#39;INFO&#39;);
+const data = this.runtime.service.getProcessedData(context);
+this.runtime.service.log(this, `recordsToInsert=${data.recordsToInsert.length}`, &#39;INFO&#39;);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>these logs help verify that breakpoints and event timing align with expectations.</li>
+</ul>
+<h3 id="attach-debugger">Attach Debugger<a class="heading-anchor" href="#attach-debugger" aria-label="Link to section">#</a></h3><ol>
+<li>Start plugin with the universal debug runner <code>./sfdmu-run-debug.cmd</code>.</li>
+<li>Attach your IDE debugger to Node process.</li>
+<li>Set breakpoints in add-on <code>index.ts</code>.</li>
+<li>Execute run; breakpoints should hit when event is fired.</li>
+</ol>
+<p>Example launch command (Windows):</p>
+<pre><code class="language-bash">sfdmu-run-debug.cmd --sourceusername DEMO-SOURCE --targetusername DEMO-TARGET --path &quot;.\\path\\to\\migration-folder&quot;
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>inspector-enabled run allows IDE attachment before add-on methods execute.</li>
+</ul>
+<h3 id="debug-checklist">Debug Checklist<a class="heading-anchor" href="#debug-checklist" aria-label="Link to section">#</a></h3><ul>
+<li>Confirm event name in config matches expected hook.</li>
+<li>Confirm module path is resolved from <code>export.json</code> directory.</li>
+<li>Confirm add-on is not <code>excluded</code>.</li>
+<li>Confirm return object is <code>{ cancel: false }</code> unless intentional stop.</li>
+<li>Confirm logs appear through <code>runtime.service.log(...)</code>.</li>
+</ul>
+<h2 id="deployment-and-distribution">Deployment and Distribution<a class="heading-anchor" href="#deployment-and-distribution" aria-label="Link to section">#</a></h2><h3 id="local-file-deployment">Local File Deployment<a class="heading-anchor" href="#local-file-deployment" aria-label="Link to section">#</a></h3><p>Best for development and internal automation:</p>
+<ul>
+<li>compile add-on to <code>dist/index.js</code>;</li>
+<li>reference local file path via <code>module</code>.</li>
+</ul>
+<p>Example:</p>
+<pre><code class="language-json">{
+  &quot;addons&quot;: [
+    {
+      &quot;event&quot;: &quot;onBefore&quot;,
+      &quot;module&quot;: &quot;C:/addons/my-addon/dist/index.js&quot;
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>this approach is fastest for internal projects and CI with fixed workspace paths.</li>
+</ul>
+<h3 id="npm-package-deployment">NPM Package Deployment<a class="heading-anchor" href="#npm-package-deployment" aria-label="Link to section">#</a></h3><p>Best for versioned team distribution:</p>
+<ol>
+<li>set package name/version;</li>
+<li>build package;</li>
+<li>publish to npm (or private registry);</li>
+<li>install where SFDMU runs;</li>
+<li>reference package name via <code>module</code>.</li>
+</ol>
+<p>Example:</p>
+<pre><code class="language-bash">npm install my-company-sfdmu-addon
+</code></pre>
+<pre><code class="language-json">{
+  &quot;addons&quot;: [
+    {
+      &quot;event&quot;: &quot;onAfter&quot;,
+      &quot;module&quot;: &quot;my-company-sfdmu-addon&quot;
+    }
+  ]
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>package-based deployment is better for semantic versioning and reuse across teams.</li>
+</ul>
+<h3 id="message-bundles">Message Bundles<a class="heading-anchor" href="#message-bundles" aria-label="Link to section">#</a></h3><p>Custom add-ons can provide local message keys in:</p>
+<p><code>resources/messages.md</code></p>
+<p>Resolution is isolated per add-on module, so local keys do not leak between modules.</p>
+<p>Example <code>resources/messages.md</code>:</p>
+<pre><code class="language-md"># hello_world
+Hello world from custom add-on!
+
+# records_count
+Processed records: %s
+</code></pre>
+<p>Example usage:</p>
+<pre><code class="language-ts">this.runtime.logFormattedInfo(this, &#39;hello_world&#39;);
+this.runtime.logFormattedInfo(this, &#39;records_count&#39;, String(42));
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>keep message keys stable and local to the module for safer upgrades.</li>
+</ul>
+<h2 id="best-practices">Best Practices<a class="heading-anchor" href="#best-practices" aria-label="Link to section">#</a></h2><ol>
+<li>Keep business logic deterministic and idempotent where possible.</li>
+<li>Treat context/script metadata as configuration; mutate only when required.</li>
+<li>Prefer editing <code>recordsToInsert</code> and <code>recordsToUpdate</code> in update-phase events.</li>
+<li>Use <code>filterRecordsAddons</code> + <code>tempRecords</code> for filtering scenarios.</li>
+<li>Avoid unbounded SOQL loops; prefer <code>createFieldInQueries</code>.</li>
+<li>Log decision points clearly for troubleshooting.</li>
+<li>Keep <code>args</code> stable and versioned (for example <code>schemaVersion</code> argument).</li>
+<li>Fail fast on invalid configuration and return <code>cancel: true</code> only intentionally.</li>
+</ol>
+<p>Example pattern (idempotent and schema-aware):</p>
+<pre><code class="language-ts">const schemaVersion = Number(args[&#39;schemaVersion&#39;] ?? 1);
+if (schemaVersion !== 1) {
+  this.runtime.service.log(this, `Unsupported schemaVersion=${String(schemaVersion)}`, &#39;ERROR&#39;);
+  return { cancel: true };
+}
+
+const processed = this.runtime.service.getProcessedData(context);
+for (const record of processed.recordsToInsert) {
+  if (!record[&#39;MigrationTag__c&#39;]) {
+    record[&#39;MigrationTag__c&#39;] = &#39;my-addon-v1&#39;;
+  }
+}
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>version checks protect contract changes;</li>
+<li>idempotent writes avoid unstable repeated transformations.</li>
+</ul>
+<h2 id="common-pitfalls">Common Pitfalls<a class="heading-anchor" href="#common-pitfalls" aria-label="Link to section">#</a></h2><ol>
+<li>Registering add-on under a wrong event and expecting unavailable data context.</li>
+<li>Using only <code>path</code> in new configs instead of <code>module</code>.</li>
+<li>Forgetting to compile add-on before running in non-dev mode.</li>
+<li>Assuming all events run once; object-level events run per object and can be multi-pass.</li>
+<li>Depending on shared mutable state between separate add-on instances.</li>
+</ol>
+<p>Example of a problematic pattern and fix:</p>
+<pre><code class="language-ts">// Problematic: module-global mutable state shared across invocations.
+let globalCounter = 0;
+
+// Better: derive state from context or task per invocation.
+const task = this.runtime.service.getPluginTask(context);
+const currentCount = task?.processedData.recordsToInsert.length ?? 0;
+this.runtime.service.log(this, `currentInsertBatch=${String(currentCount)}`, &#39;INFO&#39;);
+</code></pre>
+<p>How it works:</p>
+<ul>
+<li>avoid hidden state between events; use runtime-provided context/task data instead.</li>
+</ul>
+<h2 id="related-articles">Related Articles<a class="heading-anchor" href="#related-articles" aria-label="Link to section">#</a></h2><ul>
+<li><a href="../introduction-to-the-sfdmu-add-on-api-engine/">Add-On API Overview</a></li>
+<li><a href="../custom-sfdmu-add-on-api/">Custom Add-On API</a></li>
+<li><a href="../supported-events/">Supported Add-On API Events</a></li>
+<li><a href="../../export-json-file-objects-specification/export-json-file-overview/">Export.json File Overview</a></li>
+<li><a href="../../export-json-file-objects-specification/script-object/">Script Object</a></li>
+<li><a href="../../export-json-file-objects-specification/script-object-object/">ScriptObject</a></li>
+<li><a href="../../export-json-file-objects-specification/script-org-object/">ScriptOrg Object</a></li>
+<li><a href="../../../running/">Running the Plugin</a></li>
+<li><a href="../../../debugging/">Debugging</a></li>
+</ul>
+
+              <div class="page-meta clearfix">
+                <div class="last-updated float-right">
+                  Last updated 2026
+                </div>
+                <div class="float-left">
+                  <a href="#top-anchor">Back to top</a>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    
+  </div>
+  <footer class="footer">
+    <div class="container-fluid">
+      <p class="copyright float-right">Copyrights &copy; 2026 - <a href="https://salesforce.com">Salesforce.com</a> under <a href="../../../additional-information/license/">BSD-3-Clause</a></p>
+    </div>
+  </footer>
+  <script src="../../../lib/jquery/dist/jquery.min.js"></script>
+  <script src="../../../lib/popper.js/dist/umd/popper.min.js"></script>
+  <script src="../../../lib/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../../../lib/highlightjs/highlight.pack.min.js"></script>
+  <script src="../../../lib/fitvids/dist/fitvids.min.js"></script>
+  <script src="../../../lib/masonry-layout/dist/masonry.pkgd.min.js"></script>
+  <script src="../../../lib/highlight.js/highlight.min.js"></script>
+  <script src="../../../assets/static-runtime.js"></script>
+  <script src="../../../scripts/custom.js"></script>
+  <script src="../../../assets/static-search.js"></script>
+</body>
+</html>
