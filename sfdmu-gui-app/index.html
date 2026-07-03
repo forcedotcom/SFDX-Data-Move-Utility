@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-site-root="../" data-search-index-version="1783024423015">
+<html lang="en" data-site-root="../" data-search-index-version="1783068361288">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -294,30 +294,25 @@
 <li><a href="#prerequisites-8201">Prerequisites&#8201;</a></li>
 <li><a href="#installation-on-windows">Installation on Windows</a><ul>
 <li><a href="#step-1-complete-the-following-prerequisites">Step 1:  Complete the following prerequisites:</a></li>
-<li><a href="#step-2-clone-the-repository">Step 2: Clone the repository:</a></li>
-<li><a href="#step-3-navigate-to-the-project-directory">Step 3: Navigate to the project directory:</a></li>
-<li><a href="#step-4-install-project-dependencies">Step 4: Install project dependencies:</a></li>
-<li><a href="#step-5-build-the-project">Step 5: Build the project:</a></li>
-<li><a href="#step-6-run-the-application-without-debugging">Step 6: Run the application without debugging:</a></li>
+<li><a href="#step-2-open-the-command-prompt-and-install-node-gyp-globally">Step 2: Open the Command Prompt and install <code>node-gyp</code> globally:</a></li>
+<li><a href="#step-3-clone-the-repository">Step 3: Clone the repository:</a></li>
+<li><a href="#step-4-navigate-to-the-project-directory">Step 4: Navigate to the project directory:</a></li>
+<li><a href="#step-5-install-project-dependencies">Step 5: Install project dependencies:</a></li>
+<li><a href="#step-6-optionally-build-the-project-omit-if-you-have-downloaded-a-pre-compiled-version">Step 6: Optionally, build the project (omit if you have downloaded a pre-compiled version):</a></li>
+<li><a href="#step-7-run-the-application-without-debugging">Step 7: Run the application without debugging:</a></li>
 </ul></li>
 <li><a href="#installation-on-macos-and-linux">Installation on macOS and Linux</a><ul>
 <li><a href="#step-1-clone-the-repository">Step 1.  Clone the repository:</a></li>
 <li><a href="#step-2-navigate-to-the-project-directory">Step 2. Navigate to the project directory:</a></li>
 <li><a href="#step-3-install-project-dependencies">Step 3. Install project dependencies:</a></li>
-<li><a href="#step-4-build-the-project">Step 4. Build the project:</a></li>
+<li><a href="#step-4-optionally-build-the-project-omit-if-you-have-downloaded-a-pre-compiled-version">Step 4.  Optionally, build the project (omit if you have downloaded a pre-compiled version):</a></li>
 <li><a href="#step-5-run-the-application">Step 5. Run the application:</a></li>
-</ul></li>
-<li><a href="#creating-build-artifacts-from-source">Creating Build Artifacts from Source</a><ul>
-<li><a href="#windows-host">Windows host</a></li>
-<li><a href="#linux-host">Linux host</a></li>
-<li><a href="#debian-or-ubuntu-host">Debian or Ubuntu host</a></li>
-<li><a href="#rpm-based-linux-host">RPM-based Linux host</a></li>
 </ul></li>
 <li><a href="#upgrading">Upgrading</a><ul>
 <li><a href="#step-1-navigate-to-the-project-directory-where-the-repository-is-cloned">Step 1. Navigate to the project directory where the repository is cloned.</a></li>
 <li><a href="#step-2-pull-the-latest-changes">Step 2. Pull the latest changes:</a></li>
 <li><a href="#step-3-install-any-updated-project-dependencies">Step 3. Install any updated project dependencies:</a></li>
-<li><a href="#step-4-build-the-project-1">Step 4.  Build the project:</a></li>
+<li><a href="#step-4-build-the-project">Step 4.  Build the project:</a></li>
 <li><a href="#step-5-run-the-application-1">Step 5.  Run the application:</a></li>
 </ul></li>
 </ul></li>
@@ -333,13 +328,15 @@
 <li><a href="#databasefilename">databaseFilename</a></li>
 <li><a href="#locales">locales</a></li>
 <li><a href="#defaultlocale">defaultLocale</a></li>
-<li><a href="#logbufferflushintervalseconds">logBufferFlushIntervalSeconds</a></li>
+<li><a href="#fallbacklocale">fallbackLocale</a></li>
 <li><a href="#backuponapplicationstart">backupOnApplicationStart</a></li>
 <li><a href="#backupeverynminutes">backupEveryNMinutes</a></li>
-<li><a href="#language">language</a></li>
+<li><a href="#usesfclicommands">useSfCliCommands</a></li>
+<li><a href="#theme">theme</a></li>
 </ul></li>
 </ul></li>
 <li><a href="#translation">Translation</a></li>
+<li><a href="#theming">Theming</a></li>
 <li><a href="#logging">Logging</a></li>
 <li><a href="#backup">Backup</a></li>
 <li><a href="#additional-notes">Additional Notes</a></li>
@@ -355,8 +352,7 @@
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h2><p>The SFDMU GUI Application is a desktop visual interface for creating, editing, validating, and running the SFDMU plugin configuration file (<code>export.json</code>). It makes SFDMU setup and execution simpler by replacing most manual JSON editing and command-line steps with a guided visual workflow.</p>
-<p><strong>Version <code>5.0.0</code> is the recommended upgrade path.</strong><br>The <code>5.x</code> release line includes the current security dependency updates, substantial UI and engine refactoring, multiple bug fixes, and performance improvements.</p>
+                </h2><p>The SFDMU GUI Application assists in creating SFDMU plugin configuration file (<code>export.json</code>) through its simple and intuitive UI.</p>
 <a class="heading-anchor" id="when-is-sfdmu-gui-application-useful"></a>
                 <h2>
                     When is SFDMU GUI Application Useful?
@@ -408,7 +404,7 @@
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h3><p>Before installing and using the SFDMU GUI App, ensure you have installed the <a href="https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/install.html" target="_blank" rel="noopener noreferrer">SF CLI</a>.</p>
+                </h3><p>Before installing and using the SFDMU GUI App, ensure you have installed the <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm" target="_blank" rel="noopener noreferrer">SF CLI</a>.</p>
 <a class="heading-anchor" id="installation-of-latest-release"></a>
                 <h3>
                     Installation of Latest Release
@@ -416,8 +412,7 @@
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h3><p>The recommended baseline is version <code>5.0.0</code> or later in the <code>5.x</code> release line.</p>
-<p>The latest release can be found in the <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release" target="_blank" rel="noopener noreferrer">release</a> branch of the SFDMU GUI App GitHub repository.</p>
+                </h3><p>The latest release can be found in the <a href="https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App/tree/release" target="_blank" rel="noopener noreferrer">release</a> branch of the SFDMU GUI App GitHub repository.</p>
 <p>You can find the MD5 hash sums in the respective <code>.md5</code> files located in the same repository folder as the setup file.</p>
 <a class="heading-anchor" id="step-1-download"></a>
                 <h4>
@@ -604,7 +599,7 @@
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h3><p>Ensure you have installed <a href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">Node.js &gt;=22 LTS</a>, <a href="https://git-scm.com/downloads" target="_blank" rel="noopener noreferrer">Git</a>, and <a href="https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/install.html" target="_blank" rel="noopener noreferrer">SF CLI</a> before using the source code of the SFDMU GUI App.</p>
+                </h3><p>Ensure you have installed <a href="https://nodejs.org/en/download" target="_blank" rel="noopener noreferrer">Node.Js</a>, <a href="https://git-scm.com/downloads" target="_blank" rel="noopener noreferrer">Git</a> and  <a href="https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm" target="_blank" rel="noopener noreferrer">SF CLI</a> before using the source code of the SFDMU GUI App.</p>
 <a class="heading-anchor" id="installation-on-windows"></a>
                 <h3>
                     Installation on Windows
@@ -612,7 +607,7 @@
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h3><p>For Windows machines, native Electron dependencies require Python and a current Visual C++ toolchain.</p>
+                </h3><p>For Windows machines, installing Electron necessitates specific components like Python and Visual C++.</p>
 <a class="heading-anchor" id="step-1-complete-the-following-prerequisites"></a>
                 <h4>
                     Step 1:  Complete the following prerequisites:
@@ -621,51 +616,64 @@
             <span class="header-back-link">⇧</span>
           </a>
                 </h4><ol>
-<li><p><strong>Visual Studio Build Tools or Visual Studio Community:</strong> Install either <a href="https://visualstudio.microsoft.com/visual-cpp-build-tools/" target="_blank" rel="noopener noreferrer">Visual Studio Build Tools 2022</a> or <a href="https://visualstudio.microsoft.com/vs/community/" target="_blank" rel="noopener noreferrer">Visual Studio 2022 Community</a>. In the installer, enable <strong>Desktop development with C++</strong> and ensure the <strong>MSVC C++ x64/x86 build tools</strong> are selected.</p>
+<li><p><strong>Visual Studio Community:</strong> Install only the Visual C++ Desktop Development components from the free version of Visual Studio Community Edition, if not already installed.
+<a href="https://visualstudio.microsoft.com/vs/community/" target="_blank" rel="noopener noreferrer">Visual Studio Community Edition</a></p>
+<p>Alternatively, use npm to install <code>windows-build-tools</code>:</p>
+<pre><code class="language-bash">npm install --global windows-build-tools
+</code></pre>
 </li>
-<li><p><strong>Python:</strong> Download and install the latest supported version of Python, ensuring <code>&quot;Add Python to PATH&quot;</code> is selected during the installation process.
+<li><p><strong>Python:</strong> Download and install the latest version of Python, ensuring <code>&quot;Add Python to PATH&quot;</code> is selected during the installation process.
 <a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer">Download Python</a></p>
 </li>
 </ol>
-<a class="heading-anchor" id="step-2-clone-the-repository"></a>
+<a class="heading-anchor" id="step-2-open-the-command-prompt-and-install-node-gyp-globally"></a>
                 <h4>
-                    Step 2: Clone the repository:
+                    Step 2: Open the Command Prompt and install <code>node-gyp</code> globally:
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><pre><code class="language-bash">npm install --global node-gyp
+</code></pre>
+<a class="heading-anchor" id="step-3-clone-the-repository"></a>
+                <h4>
+                    Step 3: Clone the repository:
                     
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
                 </h4><pre><code class="language-bash">git clone https://github.com/forcedotcom/SFDX-Data-Move-Utility-Desktop-App.git
 </code></pre>
-<a class="heading-anchor" id="step-3-navigate-to-the-project-directory"></a>
+<a class="heading-anchor" id="step-4-navigate-to-the-project-directory"></a>
                 <h4>
-                    Step 3: Navigate to the project directory:
+                    Step 4: Navigate to the project directory:
                     
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
                 </h4><pre><code class="language-bash">cd SFDX-Data-Move-Utility-Desktop-App
 </code></pre>
-<a class="heading-anchor" id="step-4-install-project-dependencies"></a>
+<a class="heading-anchor" id="step-5-install-project-dependencies"></a>
                 <h4>
-                    Step 4: Install project dependencies:
+                    Step 5: Install project dependencies:
                     
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
                 </h4><pre><code class="language-bash">npm install
 </code></pre>
-<a class="heading-anchor" id="step-5-build-the-project"></a>
+<a class="heading-anchor" id="step-6-optionally-build-the-project-omit-if-you-have-downloaded-a-pre-compiled-version"></a>
                 <h4>
-                    Step 5: Build the project:
+                    Step 6: Optionally, build the project (omit if you have downloaded a pre-compiled version):
                     
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
                 </h4><pre><code class="language-bash">npm run build
 </code></pre>
-<a class="heading-anchor" id="step-6-run-the-application-without-debugging"></a>
+<a class="heading-anchor" id="step-7-run-the-application-without-debugging"></a>
                 <h4>
-                    Step 6: Run the application without debugging:
+                    Step 7: Run the application without debugging:
                     
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
@@ -679,7 +687,7 @@
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h5><p>If <code>npm install</code> fails while compiling native modules, verify that Visual Studio still has the <strong>Desktop development with C++</strong> workload installed and that Python is available in <code>PATH</code>.</p>
+                </h5><p>Installation of the source code for Windows can be problematic due to version compatibility issues between VC++ build tools, Python, and Electron. If you encounter issues, please consult relevant forums for solutions.</p>
 <a class="heading-anchor" id="installation-on-macos-and-linux"></a>
                 <h3>
                     Installation on macOS and Linux
@@ -687,7 +695,7 @@
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h3><p>Installation on macOS and Linux is straightforward in most environments.</p>
+                </h3><p>Installation on macOS and Linux is straightforward and generally executes without issues.</p>
 <a class="heading-anchor" id="step-1-clone-the-repository"></a>
                 <h4>
                     Step 1.  Clone the repository:
@@ -715,9 +723,9 @@
           </a>
                 </h4><pre><code class="language-bash">npm install
 </code></pre>
-<a class="heading-anchor" id="step-4-build-the-project"></a>
+<a class="heading-anchor" id="step-4-optionally-build-the-project-omit-if-you-have-downloaded-a-pre-compiled-version"></a>
                 <h4>
-                    Step 4. Build the project:
+                    Step 4.  Optionally, build the project (omit if you have downloaded a pre-compiled version):
                     
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
@@ -733,114 +741,6 @@
           </a>
                 </h4><pre><code class="language-bash">npm start
 </code></pre>
-<a class="heading-anchor" id="creating-build-artifacts-from-source"></a>
-                <h3>
-                    Creating Build Artifacts from Source
-                    
-                    <a href="#top-anchor" title="Back to the top of the page">
-            <span class="header-back-link">⇧</span>
-          </a>
-                </h3><p>The project supports different packaging flows depending on the host operating system.</p>
-<a class="heading-anchor" id="windows-host"></a>
-                <h4>
-                    Windows host
-                    
-                    <a href="#top-anchor" title="Back to the top of the page">
-            <span class="header-back-link">⇧</span>
-          </a>
-                </h4><p>Use these commands on Windows:</p>
-<pre><code class="language-bash">npm install
-npm run make-win
-npm run make-mac
-npm run make-linux
-</code></pre>
-<p>What you get:</p>
-<ul>
-<li><code>npm run make-win</code> creates the Windows installer artifacts.</li>
-<li><code>npm run make-mac</code> creates a macOS <code>.zip</code> artifact.</li>
-<li><code>npm run make-linux</code> creates a <strong>portable Linux zip</strong>.</li>
-</ul>
-<p>Artifacts are written to:</p>
-<ul>
-<li>Windows installer: <code>out/make/squirrel.windows/x64</code></li>
-<li>Windows release zip and hash: <code>dist-temp/windows/x64</code></li>
-<li>macOS zip and hash: <code>dist-temp/darwin/x64</code></li>
-<li>portable Linux zip and hash: <code>dist-temp/linux/x64</code></li>
-</ul>
-<p>Artifact formats:</p>
-<ul>
-<li>Windows: <code>Setup.exe</code>, <code>.nupkg</code>, <code>.zip</code>, <code>.zip.md5</code></li>
-<li>macOS: <code>.zip</code>, <code>.zip.md5</code></li>
-<li>portable Linux: <code>.zip</code>, <code>.zip.md5</code></li>
-</ul>
-<p>When Linux packaging is initiated from Windows, the result is <strong>not</strong> a <code>.deb</code> or <code>.rpm</code> installer. It is a portable Linux x64 bundle packed as a zip archive.</p>
-<p>To run that portable Linux build on a Linux x64 machine:</p>
-<ol>
-<li><p>Extract the zip archive.</p>
-</li>
-<li><p>Open a terminal in the extracted folder.</p>
-</li>
-<li><p>Make the binary executable:</p>
-<pre><code class="language-bash">chmod +x ./sfdmu-gui-app
-</code></pre>
-</li>
-<li><p>Start the application:</p>
-<pre><code class="language-bash">./sfdmu-gui-app
-</code></pre>
-</li>
-</ol>
-<p>The target Linux machine must have the usual Electron desktop runtime libraries installed. For Debian or Ubuntu systems, install the common runtime packages first, for example:</p>
-<pre><code class="language-bash">sudo apt-get install -y libgtk-3-0 libnss3 libxss1 libasound2 libgbm1 libxshmfence1 libxrandr2 libatk-bridge2.0-0 libdrm2 libxkbcommon0
-</code></pre>
-<p>If your distribution uses different package names, install the equivalent GTK 3, NSS, X11/XScrnSaver, GBM, DRM, XKB, ATK bridge, and ALSA runtime libraries.</p>
-<a class="heading-anchor" id="linux-host"></a>
-                <h4>
-                    Linux host
-                    
-                    <a href="#top-anchor" title="Back to the top of the page">
-            <span class="header-back-link">⇧</span>
-          </a>
-                </h4><p>Use these commands on a Linux machine when you want the standard Forge Linux packaging flow:</p>
-<pre><code class="language-bash">npm install
-npm run make-linux-native
-</code></pre>
-<p>Artifacts are written by Electron Forge under:</p>
-<ul>
-<li><code>out/make</code></li>
-</ul>
-<p>Formats depend on the enabled Linux makers for that host environment.</p>
-<a class="heading-anchor" id="debian-or-ubuntu-host"></a>
-                <h4>
-                    Debian or Ubuntu host
-                    
-                    <a href="#top-anchor" title="Back to the top of the page">
-            <span class="header-back-link">⇧</span>
-          </a>
-                </h4><p>Use this command on a Debian-family Linux machine when you need a <code>.deb</code> package:</p>
-<pre><code class="language-bash">npm install
-npm run make-deb
-</code></pre>
-<p>Expected artifact location and format:</p>
-<ul>
-<li>folder: <code>out/make/deb/x64</code></li>
-<li>format: <code>.deb</code></li>
-</ul>
-<a class="heading-anchor" id="rpm-based-linux-host"></a>
-                <h4>
-                    RPM-based Linux host
-                    
-                    <a href="#top-anchor" title="Back to the top of the page">
-            <span class="header-back-link">⇧</span>
-          </a>
-                </h4><p>Use this command on an RPM-based Linux machine when you need an <code>.rpm</code> package:</p>
-<pre><code class="language-bash">npm install
-npm run make-rpm
-</code></pre>
-<p>Expected artifact location and format:</p>
-<ul>
-<li>folder: <code>out/make/rpm/x64</code></li>
-<li>format: <code>.rpm</code></li>
-</ul>
 <a class="heading-anchor" id="upgrading"></a>
                 <h3>
                     Upgrading
@@ -874,7 +774,7 @@ npm run make-rpm
           </a>
                 </h4><pre><code class="language-bash">npm install
 </code></pre>
-<a class="heading-anchor" id="step-4-build-the-project-1"></a>
+<a class="heading-anchor" id="step-4-build-the-project"></a>
                 <h4>
                     Step 4.  Build the project:
                     
@@ -929,8 +829,7 @@ npm run make-rpm
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h2><p>The application uses the <code>app-config.json</code> file, which is located in the standard <strong>configuration home</strong> folder based on the operating system (for example <code>/home/&lt;Username&gt;/.config</code>, <code>C:\Users\&lt;Username&gt;\AppData\Roaming</code>, <code>/Users/&lt;Username&gt;/Library/Application Support</code>). This file is stored under the <code>sfdmu-gui-app</code> directory.</p>
-<p>By default, the application&#39;s working data such as the database, workspaces, logs, and backups are stored separately under the user&#39;s <strong>Documents</strong> folder in the <code>sfdmu-gui-app</code> directory unless <code>appRoot</code> is explicitly overridden.</p>
+                </h2><p>The application uses the <code>app-config.json</code> file, which is located in the standard <strong>User App Data</strong> folder based on the operating system (e.g., <code>/home/&lt;Username&gt;/.config</code>, <code>C:\Users\&lt;Username&gt;\AppData\Roaming</code>, <code>/Users/&lt;Username&gt;/Library/Application Support</code>). This file is stored under the &quot;<strong>sfdmu-gui-app</strong>&quot; directory.</p>
 <p>The <code>app-config.json</code> file is automatically generated when the application is first launched on a device. After its creation, the file remains unchanged unless manually edited or modified through the application interface to meet specific requirements.</p>
 <a class="heading-anchor" id="setting-up-the-configuration"></a>
                 <h3>
@@ -947,8 +846,7 @@ npm run make-rpm
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h3><p>The configuration file, <code>app-config.json</code>, contains several persisted user settings that customize the behavior of the application. Changes to this file will take effect after the application is restarted.</p>
-<p>Some locale-related defaults are also controlled by the bundled application configuration used at startup. Those values are described below as part of the complete runtime behavior, even when they are not persisted in the user <code>app-config.json</code> file.</p>
+                </h3><p>The configuration file, <code>app-config.json</code>, contains several settings to customize the behavior of an application. Changes to this file will take effect after the application is restarted. </p>
 <a class="heading-anchor" id="configuration-file-properties"></a>
                 <h3>
                     Configuration File Properties
@@ -961,10 +859,15 @@ npm run make-rpm
     &quot;dataRoot&quot;: &quot;sfdmu-gui-app&quot;,
     &quot;appRoot&quot;: &quot;&quot;,
     &quot;databaseFilename&quot;: &quot;db.json&quot;,
-    &quot;logBufferFlushIntervalSeconds&quot;: 10,
+    &quot;locales&quot;: [
+        &quot;en&quot;, &quot;he&quot;, &quot;ru&quot;, &quot;es&quot;, &quot;fr&quot;, &quot;de&quot;, &quot;it&quot;, &quot;ar&quot;
+    ],
+    &quot;defaultLocale&quot;: &quot;en&quot;,
+    &quot;fallbackLocale&quot;: &quot;en&quot;,
     &quot;backupOnApplicationStart&quot;: true,
     &quot;backupEveryNMinutes&quot;: 5,
-    &quot;language&quot;: &quot;en&quot;
+    &quot;useSfCliCommands&quot;: true,
+    &quot;theme&quot;: &quot;cosmo&quot;
 }
 </code></pre>
 <a class="heading-anchor" id="dataroot"></a>
@@ -982,7 +885,7 @@ npm run make-rpm
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h4><p>Indicates the full path to the parent folder that contains <code>dataRoot</code>. If left blank, the application defaults to using the standard user Documents directory.</p>
+                </h4><p>Indicates the full path to the <code>dataRoot</code> folder. If left blank, the application defaults to using the standard user Documents directory. Example paths are shown in the configuration for both specified and default settings.</p>
 <a class="heading-anchor" id="databasefilename"></a>
                 <h4>
                     databaseFilename
@@ -998,7 +901,7 @@ npm run make-rpm
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h4><p>Lists the UI languages exposed by the application at runtime. In current builds this list is controlled by the bundled application configuration rather than by the persisted user <code>app-config.json</code> file.</p>
+                </h4><p>Lists the available languages for the Application UI. Languages added here will be available from the next start of the application.</p>
 <a class="heading-anchor" id="defaultlocale"></a>
                 <h4>
                     defaultLocale
@@ -1006,15 +909,15 @@ npm run make-rpm
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h4><p>Defines the bundled default locale used by the application on the first run and when hidden or unavailable locales must be normalized internally. In current builds this value is controlled by the bundled application configuration rather than by the persisted user <code>app-config.json</code> file.</p>
-<a class="heading-anchor" id="logbufferflushintervalseconds"></a>
+                </h4><p>Sets the default application locale upon the first start of the Application. Default is <code>&quot;en&quot;</code>.</p>
+<a class="heading-anchor" id="fallbacklocale"></a>
                 <h4>
-                    logBufferFlushIntervalSeconds
+                    fallbackLocale
                     
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h4><p>Defines how often buffered log entries are flushed to disk. The default value is <code>10</code> seconds.</p>
+                </h4><p>Specifies a fallback language to be used when certain texts are not translated in the current language. Default is <code>&quot;en&quot;</code>.</p>
 <a class="heading-anchor" id="backuponapplicationstart"></a>
                 <h4>
                     backupOnApplicationStart
@@ -1031,14 +934,22 @@ npm run make-rpm
             <span class="header-back-link">⇧</span>
           </a>
                 </h4><p>If greater than 0, this setting enables automatic backup of the database file at specified intervals, in minutes. A setting of <code>0</code> disables this feature. The backup files are named in the format: <code>db-backup-yyyy-MM-dd-HH-mm-ss.json</code>.</p>
-<a class="heading-anchor" id="language"></a>
+<a class="heading-anchor" id="usesfclicommands"></a>
                 <h4>
-                    language
+                    useSfCliCommands
                     
                     <a href="#top-anchor" title="Back to the top of the page">
             <span class="header-back-link">⇧</span>
           </a>
-                </h4><p>Specifies the active UI language. The default value is <code>&quot;en&quot;</code>.</p>
+                </h4><p>Allows the application to use the latest <code>@salesforce/cli</code> commands instead of the deprecated <code>sfdx-cli</code> commands for running Salesforce DX from the command line. This setting is particularly useful for users transitioning to new CLI tools.</p>
+<a class="heading-anchor" id="theme"></a>
+                <h4>
+                    theme
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h4><p>Specifies the name of the active UI theme. To view available themes, users can list the directories within the <code>./themes</code> folder. Default theme set is <code>&quot;cosmo&quot;</code>.</p>
 <a class="heading-anchor" id="translation"></a>
                 <h2>
                     Translation
@@ -1047,24 +958,25 @@ npm run make-rpm
             <span class="header-back-link">⇧</span>
           </a>
                 </h2><p>The Application UI can easily be translated into any language.</p>
-<p>Currently, the Application exposes translations in English, German, Spanish, French, and Hebrew.</p>
+<p>Currently, the Application is shipped with translations in English, German, Spanish, French, Hebrew, Arabic, Russian, and Italian.</p>
 <p>Translation is done in the standard i18n format using JSON files located in the <code>./i18n</code> directory.</p>
 <p><strong>To translate the Application:</strong></p>
 <ol>
 <li>Add a new file named <code>[locale].json</code> to the <code>./i18n</code> directory, for example, to translate to Japanese, add <code>./i18n/ja.json</code>.</li>
 <li>Translate all keys from the English version, which is the base language for the Application.</li>
 </ol>
-<p>After the file is ready, add a new value to the <code>appConfig.locales</code> array in <code>package.json</code>, then rebuild or restart the source installation:</p>
-<pre><code class="language-json">&quot;appConfig&quot;: {
-  &quot;locales&quot;: [
-    &quot;en&quot;,
-    &quot;he&quot;,
-    &quot;es&quot;,
-    &quot;fr&quot;,
-    &quot;de&quot;,
-    &quot;ja&quot; // &lt;- translated to Japanese
-  ]
-}
+<p>After the file is ready, add a new value to the array of <a href="./#locales"><code>locales</code></a> in <code>app-config.json</code> file:</p>
+<pre><code class="language-json">&quot;locales&quot;: [
+      &quot;en&quot;,
+      &quot;he&quot;,
+      &quot;ru&quot;,
+      &quot;es&quot;,
+      &quot;fr&quot;,
+      &quot;de&quot;,
+      &quot;it&quot;,
+      &quot;ar&quot;,
+      &quot;ja&quot;    // &lt;- translated to Japanese
+    ],
 </code></pre>
 <a class="heading-anchor" id="notes-2"></a>
                 <h5>
@@ -1080,6 +992,18 @@ npm run make-rpm
 Your support is highly appreciated! :)</p>
 </li>
 </ul>
+<a class="heading-anchor" id="theming"></a>
+                <h2>
+                    Theming
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h2><p>You can easily switch between UI themes, allowing you to customize the application&#39;s look and feel to your preference.</p>
+<p>The application comes with 26 built-in themes.</p>
+<p>To switch between themes, simply set the <a href="./#theme"><code>theme</code></a> property in the <code>app-config.json</code> file to your desired UI theme or use the application interface to select the theme.</p>
+<p>To find the available theme names, open the <code>./themes</code> folder (when running from the source code) or choose the preferred theme from the list in the application interface.</p>
+<p>The theme will be applied after the next application restart.</p>
 <a class="heading-anchor" id="logging"></a>
                 <h2>
                     Logging
@@ -1089,7 +1013,7 @@ Your support is highly appreciated! :)</p>
           </a>
                 </h2><ul>
 <li>The application provides comprehensive logs for all events, actions, and issues.</li>
-<li>Logs are stored in the <code>logs</code> subdirectory located at <strong>[appRoot]/[dataRoot]/logs</strong>. For example, based on the default configuration in <code>app-config.json</code>, the log files are located in the <code>[Documents Folder]/sfdmu-gui-app/logs/</code>.</li>
+<li>Logs are stored in the <code>log</code> subdirectory located at <strong>[appRoot]/[dataRoot]/logs</strong>. For example, based on the default configuration in <code>app-config.json</code>, the log files are located in the <code>[Documents Folder]/sfdmu-gui-app/logs/</code>.</li>
 <li>The format for log filenames is: <strong>yyyy-MM-dd-HH.log</strong>.</li>
 <li>Logs are automatically rotated and archived into zip files every two weeks to conserve disk space. </li>
 <li>The log file includes detailed information on all application events, which is essential for debugging. When reporting issues about the GUI App, please attach these logs as they help in identifying and resolving bugs. <strong>Before submitting, ensure that all sensitive information has been removed from the log files.</strong></li>
@@ -1135,7 +1059,7 @@ Your support is highly appreciated! :)</p>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated on 12th Mar 2026
+                  Last updated on 7th May 2026
                 </div>
               </div>
             </section>
@@ -1161,6 +1085,6 @@ Your support is highly appreciated! :)</p>
   <script src="../lib/repo-card/repo-card.js"></script>
   <script src="../scripts/custom.js"></script>
   <script src="../assets/lunr.min.js"></script>
-  <script src="../assets/static-search.js?v=1783024423015"></script>
+  <script src="../assets/static-search.js?v=1783068361288"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-site-root="../../../" data-search-index-version="1783024423015">
+<html lang="en" data-site-root="../../../" data-search-index-version="1783068361288">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -287,6 +287,8 @@
 <li><a href="#excluded-boolean">excluded (Boolean)</a></li>
 <li><a href="#excludedfields-array-of-string">excludedFields (Array of string)</a></li>
 <li><a href="#excludedfromupdatefields-array-of-string">excludedFromUpdateFields (Array of string)</a></li>
+<li><a href="#includedinclausefields-array-of-string">includedInClauseFields (Array of string)</a></li>
+<li><a href="#excludedfrominclausefields-array-of-string">excludedFromInClauseFields (Array of string)</a></li>
 <li><a href="#externalid-string">externalId (String)</a></li>
 <li><a href="#fieldmapping-array-of-mappingitem">fieldMapping (Array of MappingItem)</a></li>
 <li><a href="#filterrecordsaddons-array-of-addonmanifestdefinition">filterRecordsAddons (Array of AddonManifestDefinition)</a></li>
@@ -720,6 +722,68 @@
 <li><strong>Functionality</strong>: The <code>excludedFromUpdateFields</code> array allows fields to be included in SOQL queries and retrieved from both source and target organizations, but ensures these fields are not updated in the target organization.</li>
 <li><strong>Use Case</strong>: This setting is particularly useful when fields need to be accessed for purposes such as data transformation or validation (via <a href="../../add-on-api/records-transform-core-add-on-module/">TransformRecords Core Add-On</a>) but should not be altered in the target. </li>
 <li><strong>Comparison</strong>: Unlike the <code>excludedFields</code> property, which completely omits fields from the migration process, <code>excludedFromUpdateFields</code> retrieves but does not update them in the target org.</li>
+</ul>
+<a class="heading-anchor" id="includedinclausefields-array-of-string"></a>
+                <h3>
+                    includedInClauseFields (Array of string)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Defines a strict allow-list of lookup fields that may be used as filtered-query <code>IN</code> clause pivots when SFDMU builds relationship-scoped source queries for a slave object.</p>
+<p>This setting does not remove fields from the SELECT clause, does not exclude fields from migration, and does not change lookup value resolution. It only controls which lookup fields can drive additional filtered queries such as <code>WHERE Parent__c IN (...)</code>.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Parent_Offer__c, Product__c FROM Offer_Line_Item__c&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;External_Id__c&quot;,
+      &quot;master&quot;: false,
+      &quot;includedInClauseFields&quot;: [&quot;Parent_Offer__c&quot;]
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p><strong>Details:</strong></p>
+<ul>
+<li><strong>Functionality</strong>: When this list is set, only listed lookup fields can be used by the filtered-query planner as <code>IN</code> clause pivots.</li>
+<li><strong>Scope</strong>: The setting affects source filtered queries for relationship-scoped object processing. The listed lookup fields still remain available for SELECT, DML payload generation, relationship binding, and reports.</li>
+<li><strong>Field names</strong>: Use lookup field API names such as <code>Parent_Offer__c</code> or <code>AccountId</code>. Field matching is case-insensitive.</li>
+<li><strong>Combination with <code>excludedFromInClauseFields</code></strong>: When both settings are configured, <code>excludedFromInClauseFields</code> removes fields from this allow-list.</li>
+</ul>
+<a class="heading-anchor" id="excludedfrominclausefields-array-of-string"></a>
+                <h3>
+                    excludedFromInClauseFields (Array of string)
+                    
+                    <a href="#top-anchor" title="Back to the top of the page">
+            <span class="header-back-link">⇧</span>
+          </a>
+                </h3><p><strong>Optional.</strong> Defines lookup fields that must not be used as filtered-query <code>IN</code> clause pivots when SFDMU builds relationship-scoped source queries for a slave object.</p>
+<p>This setting keeps the lookup fields in the SELECT clause and keeps their values available for migration and relationship resolution.</p>
+<p><strong>Example of <code>export.json</code> Configuration:</strong></p>
+<pre><code class="language-json">{
+  &quot;objects&quot;: [
+    {
+      &quot;query&quot;: &quot;SELECT Id, Parent_Offer__c, Product__c FROM Offer_Line_Item__c&quot;,
+      &quot;operation&quot;: &quot;Upsert&quot;,
+      &quot;externalId&quot;: &quot;External_Id__c&quot;,
+      &quot;master&quot;: false,
+      &quot;excludedFromInClauseFields&quot;: [&quot;Product__c&quot;]
+      // Additional ScriptObject properties                
+    }
+  ]
+  // ... other export.json properties    
+}
+</code></pre>
+<p><strong>Details:</strong></p>
+<ul>
+<li><strong>Functionality</strong>: Fields in this list are skipped by the filtered-query planner when it chooses lookup fields for <code>IN</code> clause queries.</li>
+<li><strong>Scope</strong>: This setting does not remove the field from the query and does not prevent the field value from being migrated.</li>
+<li><strong>Field names</strong>: Use lookup field API names such as <code>Product__c</code> or <code>OwnerId</code>. Field matching is case-insensitive.</li>
+<li><strong>Default behavior</strong>: If neither <code>includedInClauseFields</code> nor <code>excludedFromInClauseFields</code> is set, SFDMU keeps the existing behavior and may use any eligible lookup field as a filtered-query pivot.</li>
 </ul>
 <a class="heading-anchor" id="externalid-string"></a>
                 <h3>
@@ -1305,7 +1369,7 @@ records are updated instead of being left untouched.</p>
 
               <div class="page-meta clearfix">
                 <div class="last-updated float-right">
-                  Last updated on 17th Apr 2026
+                  Last updated on 3rd Jul 2026
                 </div>
               </div>
             </section>
@@ -1331,6 +1395,6 @@ records are updated instead of being left untouched.</p>
   <script src="../../../lib/repo-card/repo-card.js"></script>
   <script src="../../../scripts/custom.js"></script>
   <script src="../../../assets/lunr.min.js"></script>
-  <script src="../../../assets/static-search.js?v=1783024423015"></script>
+  <script src="../../../assets/static-search.js?v=1783068361288"></script>
 </body>
 </html>
