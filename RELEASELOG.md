@@ -1,3 +1,16 @@
+## [5.7.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.0...5.7.1) (2026-07-03)
+
+###### Fixes:
+
+- Fixed Bulk API Query null handling for org source and target reads. Empty cells returned by Bulk Query are now normalized with Salesforce field metadata before DML, so null Date and DateTime values are sent to Salesforce as real null values instead of empty strings.
+- Reused the same CSV null-token and field-type casting rules for Bulk Query output and CSV input, keeping `#N/A` null behavior consistent in target CSV reports.
+
+**See the related articles:**
+
+- [Script Object - queryBulkApiThreshold](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object#querybulkapithreshold-integer)
+- [ScriptObject Object - alwaysUseBulkApi](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object-object#alwaysusebulkapi-boolean)
+- [The Target CSV Files](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/reports/the-target-csv-files)
+
 ## [5.7.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.4...5.7.0) (2026-07-03)
 
 ###### New features:
