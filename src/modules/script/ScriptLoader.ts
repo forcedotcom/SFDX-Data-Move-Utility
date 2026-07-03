@@ -414,6 +414,22 @@ export default class ScriptLoader {
       },
       (value) => this._normalizeStringArray(value)
     );
+    this._assignArrayPropertyFromRaw<string>(
+      rawObject,
+      'includedInClauseFields',
+      (value) => {
+        object.includedInClauseFields = value as string[];
+      },
+      (value) => this._normalizeStringArray(value)
+    );
+    this._assignArrayPropertyFromRaw<string>(
+      rawObject,
+      'excludedFromInClauseFields',
+      (value) => {
+        object.excludedFromInClauseFields = value as string[];
+      },
+      (value) => this._normalizeStringArray(value)
+    );
     const operation = this._resolveOperation(rawObject.operation);
     if (typeof operation !== 'undefined') {
       object.operation = operation;

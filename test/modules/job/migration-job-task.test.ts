@@ -36,6 +36,13 @@ type TaskFixtureType = {
   task: MigrationJobTask;
 };
 
+type InClauseFixtureType = {
+  childTask: MigrationJobTask;
+  parentTask: MigrationJobTask;
+  productTask: MigrationJobTask;
+  relatedProductTask: MigrationJobTask;
+};
+
 const createTempDir = (): string => fs.mkdtempSync(path.join(os.tmpdir(), 'sfdmu-task-'));
 
 type FieldInitType = Partial<SFieldDescribe> & { name: string };
@@ -72,6 +79,70 @@ const createTaskFixture = (): TaskFixtureType => {
 
 const createMap = (pairs: Array<[string, string]>): LookupIdMapType => new Map(pairs);
 
+const hasFilteredInClause = (queries: string[], fieldName: string): boolean =>
+  queries.some((query) => query.includes(`WHERE ${fieldName} IN (`) || query.includes(`AND ${fieldName} IN (`));
+
+const createInClauseFixture = (): InClauseFixtureType => {
+  const script = new Script();
+  const job = new MigrationJob({ script });
+  const parentObject = new ScriptObject('Parent_Offer__c');
+  const productObject = new ScriptObject('Product__c');
+  const relatedProductObject = new ScriptObject('Related_Product__c');
+  const childObject = new ScriptObject('Offer_Line_Item__c');
+  childObject.query = 'SELECT Id, Parent_Offer__c, Product__c, Related_Product__c FROM Offer_Line_Item__c';
+
+  const parentTask = new MigrationJobTask({ job, scriptObject: parentObject });
+  const productTask = new MigrationJobTask({ job, scriptObject: productObject });
+  const relatedProductTask = new MigrationJobTask({ job, scriptObject: relatedProductObject });
+  const childTask = new MigrationJobTask({ job, scriptObject: childObject });
+
+  job.tasks = [childTask, parentTask, productTask, relatedProductTask];
+  parentTask.sourceData.idRecordsMap.set('a01000000000001AAA', { Id: 'a01000000000001AAA' });
+  productTask.sourceData.idRecordsMap.set('a02000000000001AAA', { Id: 'a02000000000001AAA' });
+  relatedProductTask.sourceData.idRecordsMap.set('a03000000000001AAA', { Id: 'a03000000000001AAA' });
+
+  childTask.data.fieldsInQueryMap = new Map([
+    [
+      'Parent_Offer__c',
+      new SFieldDescribe({
+        name: 'Parent_Offer__c',
+        objectName: childObject.name,
+        type: 'reference',
+        lookup: true,
+        referencedObjectType: parentObject.name,
+        parentLookupObject: parentObject,
+        isDescribed: true,
+      }),
+    ],
+    [
+      'Product__c',
+      new SFieldDescribe({
+        name: 'Product__c',
+        objectName: childObject.name,
+        type: 'reference',
+        lookup: true,
+        referencedObjectType: productObject.name,
+        parentLookupObject: productObject,
+        isDescribed: true,
+      }),
+    ],
+    [
+      'Related_Product__c',
+      new SFieldDescribe({
+        name: 'Related_Product__c',
+        objectName: childObject.name,
+        type: 'reference',
+        lookup: true,
+        referencedObjectType: relatedProductObject.name,
+        parentLookupObject: relatedProductObject,
+        isDescribed: true,
+      }),
+    ],
+  ]);
+
+  return { childTask, parentTask, productTask, relatedProductTask };
+};
+
 describe('MigrationJobTask relationship external id matching', () => {
   it('links target records by nested relationship external id values', () => {
     const { task } = createTaskFixture();
@@ -94,6 +165,55 @@ describe('MigrationJobTask relationship external id matching', () => {
     assert.equal(task.sourceData.extIdToRecordIdMap.get('Acme Corp'), 'a1B000000000001AAA');
     assert.equal(task.targetData.extIdToRecordIdMap.get('Acme Corp'), 'a1B000000000002AAA');
     assert.equal(task.sourceToTargetRecordMap.get(sourceRecord), targetRecord);
+  });
+});
+
+describe('MigrationJobTask filtered IN-clause fields', () => {
+  it('uses every eligible lookup field when no IN-clause field filter is configured', () => {
+    const { childTask } = createInClauseFixture();
+
+    const queries = childTask.createFilteredQueries('forwards', false);
+
+    assert.equal(queries.length, 3);
+    assert.ok(hasFilteredInClause(queries, 'Parent_Offer__c'));
+    assert.ok(hasFilteredInClause(queries, 'Product__c'));
+    assert.ok(hasFilteredInClause(queries, 'Related_Product__c'));
+  });
+
+  it('uses only included lookup fields as filtered IN-clause pivots', () => {
+    const { childTask } = createInClauseFixture();
+    childTask.scriptObject.includedInClauseFields = ['Parent_Offer__c'];
+
+    const queries = childTask.createFilteredQueries('forwards', false);
+
+    assert.equal(queries.length, 1);
+    assert.ok(hasFilteredInClause(queries, 'Parent_Offer__c'));
+    assert.ok(!hasFilteredInClause(queries, 'Product__c'));
+    assert.ok(!hasFilteredInClause(queries, 'Related_Product__c'));
+  });
+
+  it('skips excluded lookup fields as filtered IN-clause pivots', () => {
+    const { childTask } = createInClauseFixture();
+    childTask.scriptObject.excludedFromInClauseFields = ['Product__c', 'Related_Product__c'];
+
+    const queries = childTask.createFilteredQueries('forwards', false);
+
+    assert.equal(queries.length, 1);
+    assert.ok(hasFilteredInClause(queries, 'Parent_Offer__c'));
+    assert.ok(!hasFilteredInClause(queries, 'Product__c'));
+    assert.ok(!hasFilteredInClause(queries, 'Related_Product__c'));
+  });
+
+  it('subtracts excluded lookup fields from the IN-clause allow-list case-insensitively', () => {
+    const { childTask } = createInClauseFixture();
+    childTask.scriptObject.includedInClauseFields = ['parent_offer__c', 'PRODUCT__C'];
+    childTask.scriptObject.excludedFromInClauseFields = ['product__c'];
+
+    const queries = childTask.createFilteredQueries('forwards', false);
+
+    assert.equal(queries.length, 1);
+    assert.ok(hasFilteredInClause(queries, 'Parent_Offer__c'));
+    assert.ok(!hasFilteredInClause(queries, 'Product__c'));
   });
 });
 

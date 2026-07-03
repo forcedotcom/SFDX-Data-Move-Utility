@@ -3974,6 +3974,7 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
           if (
             field.isSimpleReference &&
             field.parentLookupObject &&
+            this._isFieldAllowedForInClause(field) &&
             !excludedObjects.includes(field.referencedObjectType.toLowerCase())
           ) {
             const parentTask = this.job.getTaskBySObjectName(field.parentLookupObject.name);
@@ -4023,6 +4024,25 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       )}).`
     );
     return queries;
+  }
+
+  /**
+   * Checks whether a lookup field can drive filtered IN-clause source queries.
+   *
+   * @param field - Lookup field metadata.
+   * @returns True when field is allowed as a filtered-query pivot.
+   */
+  private _isFieldAllowedForInClause(field: SFieldDescribe): boolean {
+    const normalize = (fieldName: string): string => fieldName.trim().toLowerCase();
+    const fieldNames = new Set([field.name, field.nameId].map(normalize).filter((fieldName) => fieldName.length > 0));
+    const included = new Set(this.scriptObject.includedInClauseFields.map(normalize));
+    const excluded = new Set(this.scriptObject.excludedFromInClauseFields.map(normalize));
+    const hasIncluded = included.size > 0;
+    const isIncluded = !hasIncluded || [...fieldNames].some((fieldName) => included.has(fieldName));
+    if (!isIncluded) {
+      return false;
+    }
+    return ![...fieldNames].some((fieldName) => excluded.has(fieldName));
   }
 
   /**

@@ -75,6 +75,8 @@ describe('ScriptLoader', () => {
             {
               name: 'Account',
               query: 'SELECT Id, Name FROM Account',
+              includedInClauseFields: ['Parent_Offer__c', 'Product__c'],
+              excludedFromInClauseFields: ['Related_Product__c'],
               fieldMapping: [
                 {
                   targetObject: 'Account',
@@ -108,6 +110,8 @@ describe('ScriptLoader', () => {
       assert.ok(script.objectSets[0].objects[0] instanceof ScriptObject);
       assert.ok(script.objectSets[0].objects[0].fieldMapping[0] instanceof ScriptMappingItem);
       assert.equal(script.objectSets[0].objects[0].name, '');
+      assert.deepEqual(script.objectSets[0].objects[0].includedInClauseFields, ['Parent_Offer__c', 'Product__c']);
+      assert.deepEqual(script.objectSets[0].objects[0].excludedFromInClauseFields, ['Related_Product__c']);
       assert.ok(script.orgs[0] instanceof ScriptOrg);
       assert.ok(script.workingJson);
     } finally {
@@ -264,6 +268,8 @@ describe('ScriptLoader', () => {
           master: null,
           beforeAddons: null,
           excludedFields: null,
+          includedInClauseFields: null,
+          excludedFromInClauseFields: null,
         },
       ],
     };
@@ -305,6 +311,8 @@ describe('ScriptLoader', () => {
       assert.equal(object.master, null);
       assert.equal(object.beforeAddons, null);
       assert.equal(object.excludedFields, null);
+      assert.equal(object.includedInClauseFields, null);
+      assert.equal(object.excludedFromInClauseFields, null);
     } finally {
       Common.csvReadFileDelimiter = previousReadDelimiter;
       Common.csvWriteFileDelimiter = previousWriteDelimiter;
@@ -344,6 +352,8 @@ describe('ScriptLoader', () => {
           deleteOldData: undefined,
           beforeAddons: undefined,
           excludedFields: undefined,
+          includedInClauseFields: undefined,
+          excludedFromInClauseFields: undefined,
         },
       ],
     } as unknown as ScriptPayloadType;
@@ -372,6 +382,8 @@ describe('ScriptLoader', () => {
     assert.equal(object.master, false);
     assert.deepEqual(object.beforeAddons, []);
     assert.deepEqual(object.excludedFields, []);
+    assert.deepEqual(object.includedInClauseFields, []);
+    assert.deepEqual(object.excludedFromInClauseFields, []);
   });
 
   it('prepends flat objects to objectSets index 0 when both are present', async () => {

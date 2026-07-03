@@ -323,6 +323,18 @@
             "type": "string"
           }
         },
+        "includedInClauseFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludedFromInClauseFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "fieldMapping": {
           "type": "array",
           "items": {

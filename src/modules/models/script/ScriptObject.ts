@@ -364,6 +364,16 @@ export default class ScriptObject {
   public excludedFromUpdateFields: string[] = [];
 
   /**
+   * Lookup fields explicitly allowed as filtered-query IN-clause pivots.
+   */
+  public includedInClauseFields: string[] = [];
+
+  /**
+   * Lookup fields excluded from filtered-query IN-clause pivots.
+   */
+  public excludedFromInClauseFields: string[] = [];
+
+  /**
    * Runtime excluded fields from update operations.
    */
   public excludedFieldsFromUpdate: string[] = [];
