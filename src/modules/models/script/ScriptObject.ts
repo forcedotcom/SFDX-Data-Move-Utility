@@ -570,7 +570,10 @@ export default class ScriptObject {
     const expanded = this._expandCompoundFieldNames(baseFields);
     const describe = this.sourceSObjectDescribe ?? this.targetSObjectDescribe;
     const multiselectFields = describe ? this._resolveMultiselectFieldNames(describe) : [];
-    return Common.distinctStringArray([...expanded, ...multiselectFields]);
+    const excludedFields = this._getExcludedQueryFields(false);
+    return Common.distinctStringArray([...expanded, ...multiselectFields]).filter(
+      (fieldName) => !excludedFields.has(fieldName.toLowerCase())
+    );
   }
 
   /**

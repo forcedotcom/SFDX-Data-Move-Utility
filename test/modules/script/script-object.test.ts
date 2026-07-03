@@ -68,6 +68,27 @@ describe('Script object multiselect', () => {
     assert.ok(!object.excludedFromUpdateFields.includes('Custom__c'));
   });
 
+  it('excludes multiselect fields from expanded original query fields', () => {
+    const script = new Script();
+    const object = new ScriptObject('Account');
+    object.query = 'SELECT all FROM Account';
+    object.excludedFields = ['Type'];
+    object.setup(script);
+
+    const describe = createDescribe('Account', [
+      { name: 'Id', type: 'id', updateable: false, creatable: false },
+      { name: 'Name', type: 'string', updateable: true, creatable: true, nameField: true },
+      { name: 'Type', type: 'string', updateable: true, creatable: true },
+    ]);
+
+    object.applyDescribe(describe);
+
+    assert.ok(object.fieldsInQuery.includes('Name'));
+    assert.ok(!object.fieldsInQuery.includes('Type'));
+    assert.ok(object.expandedOriginalQueryFields.includes('Name'));
+    assert.ok(!object.expandedOriginalQueryFields.includes('Type'));
+  });
+
   it('applies keyword AND logic', () => {
     const script = new Script();
     const object = new ScriptObject('Contact');
