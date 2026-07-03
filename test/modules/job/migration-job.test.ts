@@ -11,6 +11,7 @@ import { Common } from '../../../src/modules/common/Common.js';
 import LoggingContext from '../../../src/modules/logging/LoggingContext.js';
 import LoggingService from '../../../src/modules/logging/LoggingService.js';
 import { ADDON_EVENTS, DATA_MEDIA_TYPE, OPERATION } from '../../../src/modules/common/Enumerations.js';
+import { TARGET_FULL_QUERY_RECORDS_THRESHOLD } from '../../../src/modules/constants/Constants.js';
 import { UnresolvableWarning } from '../../../src/modules/models/common/UnresolvableWarning.js';
 import MigrationJob from '../../../src/modules/models/job/MigrationJob.js';
 import type { IMetadataProvider } from '../../../src/modules/models/job/IMetadataProvider.js';
@@ -22,6 +23,7 @@ import ScriptOrg from '../../../src/modules/models/script/ScriptOrg.js';
 import SFieldDescribe from '../../../src/modules/models/sf/SFieldDescribe.js';
 import SObjectDescribe from '../../../src/modules/models/sf/SObjectDescribe.js';
 import OrgConnectionAdapter from '../../../src/modules/org/OrgConnectionAdapter.js';
+import OrgDataService from '../../../src/modules/org/OrgDataService.js';
 
 type FieldInitType = Partial<SFieldDescribe> & { name: string };
 type OrgConnectionStubType = {
@@ -97,6 +99,162 @@ describe('MigrationJob', () => {
 
   afterEach(() => {
     Common.logger = originalLogger;
+  });
+
+  const prepareSingleObjectStrategyJobAsync = async (
+    object: ScriptObject,
+    describe: SObjectDescribe,
+    targetCount: number
+  ): Promise<MigrationJob> => {
+    const script = new Script();
+    script.objectSets = [new ScriptObjectSet([object])];
+
+    const sourceOrg = new ScriptOrg();
+    sourceOrg.name = 'source';
+    sourceOrg.media = DATA_MEDIA_TYPE.Org;
+    sourceOrg.script = script;
+    const targetOrg = new ScriptOrg();
+    targetOrg.name = 'target';
+    targetOrg.media = DATA_MEDIA_TYPE.Org;
+    targetOrg.script = script;
+    script.sourceOrg = sourceOrg;
+    script.targetOrg = targetOrg;
+
+    const metadataProvider = createMetadataProvider(new Map([[object.name, describe]]));
+    const job = new MigrationJob({ script, metadataProvider });
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    const queryOrgAsyncDescriptor = Object.getOwnPropertyDescriptor(OrgDataService.prototype, 'queryOrgAsync');
+    if (typeof queryOrgAsyncDescriptor?.value !== 'function') {
+      throw new Error('OrgDataService.queryOrgAsync descriptor was not found.');
+    }
+    const originalQueryOrgAsync = queryOrgAsyncDescriptor.value as OrgDataService['queryOrgAsync'];
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => createOrgConnectionStub() as never;
+    OrgDataService.prototype.queryOrgAsync = async (
+      query: string,
+      org: ScriptOrg
+    ): Promise<Array<Record<string, unknown>>> => {
+      if (!query.includes('COUNT')) {
+        return [];
+      }
+      return [{ CNT: org.name === 'target' ? targetCount : 1 }];
+    };
+
+    try {
+      await job.loadAsync();
+      await job.setupAsync();
+      await job.prepareAsync();
+    } finally {
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+      OrgDataService.prototype.queryOrgAsync = originalQueryOrgAsync;
+    }
+
+    return job;
+  };
+
+  it('uses filtered target queries for master objects with simple external id above the target threshold', async () => {
+    const account = new ScriptObject('Account');
+    account.operation = OPERATION.Upsert;
+    account.query = 'SELECT Id, External_Key__c FROM Account';
+    account.externalId = 'External_Key__c';
+
+    const job = await prepareSingleObjectStrategyJobAsync(
+      account,
+      createDescribe('Account', [{ name: 'Id' }, { name: 'External_Key__c', updateable: true, creatable: true }]),
+      TARGET_FULL_QUERY_RECORDS_THRESHOLD + 1
+    );
+
+    const task = job.getTaskBySObjectName('Account');
+    assert.equal(task?.scriptObject.processAllSource, true);
+    assert.equal(task?.scriptObject.processAllTarget, false);
+  });
+
+  it('uses full target query for simple external id below the target threshold', async () => {
+    const account = new ScriptObject('Account');
+    account.operation = OPERATION.Upsert;
+    account.query = 'SELECT Id, External_Key__c FROM Account';
+    account.externalId = 'External_Key__c';
+
+    const job = await prepareSingleObjectStrategyJobAsync(
+      account,
+      createDescribe('Account', [{ name: 'Id' }, { name: 'External_Key__c', updateable: true, creatable: true }]),
+      TARGET_FULL_QUERY_RECORDS_THRESHOLD - 1
+    );
+
+    const task = job.getTaskBySObjectName('Account');
+    assert.equal(task?.scriptObject.processAllTarget, true);
+  });
+
+  it('uses the object target full-query threshold override', async () => {
+    const account = new ScriptObject('Account');
+    account.operation = OPERATION.Upsert;
+    account.query = 'SELECT Id, External_Key__c FROM Account';
+    account.externalId = 'External_Key__c';
+    account.targetFullQueryRecordsThreshold = TARGET_FULL_QUERY_RECORDS_THRESHOLD + 10;
+
+    const job = await prepareSingleObjectStrategyJobAsync(
+      account,
+      createDescribe('Account', [{ name: 'Id' }, { name: 'External_Key__c', updateable: true, creatable: true }]),
+      TARGET_FULL_QUERY_RECORDS_THRESHOLD + 1
+    );
+
+    const task = job.getTaskBySObjectName('Account');
+    assert.equal(task?.scriptObject.processAllTarget, true);
+  });
+
+  it('keeps queryAllTarget on full target query regardless of target count', async () => {
+    const account = new ScriptObject('Account');
+    account.operation = OPERATION.Upsert;
+    account.query = 'SELECT Id, External_Key__c FROM Account';
+    account.externalId = 'External_Key__c';
+    account.queryAllTarget = true;
+
+    const job = await prepareSingleObjectStrategyJobAsync(
+      account,
+      createDescribe('Account', [{ name: 'Id' }, { name: 'External_Key__c', updateable: true, creatable: true }]),
+      TARGET_FULL_QUERY_RECORDS_THRESHOLD + 1
+    );
+
+    const task = job.getTaskBySObjectName('Account');
+    assert.equal(task?.scriptObject.processAllTarget, true);
+  });
+
+  it('uses full target query for complex external id regardless of target count', async () => {
+    const account = new ScriptObject('Account');
+    account.operation = OPERATION.Upsert;
+    account.query = 'SELECT Id, External_Key__c, Name FROM Account';
+    account.externalId = 'External_Key__c;Name';
+
+    const job = await prepareSingleObjectStrategyJobAsync(
+      account,
+      createDescribe('Account', [
+        { name: 'Id' },
+        { name: 'External_Key__c', updateable: true, creatable: true },
+        { name: 'Name', nameField: true, updateable: true, creatable: true },
+      ]),
+      TARGET_FULL_QUERY_RECORDS_THRESHOLD + 1
+    );
+
+    const task = job.getTaskBySObjectName('Account');
+    assert.equal(task?.scriptObject.processAllTarget, true);
+  });
+
+  it('uses full target query for special objects regardless of target count', async () => {
+    const recordType = new ScriptObject('RecordType');
+    recordType.query = 'SELECT Id, DeveloperName, NamespacePrefix, SobjectType FROM RecordType';
+
+    const job = await prepareSingleObjectStrategyJobAsync(
+      recordType,
+      createDescribe('RecordType', [
+        { name: 'Id' },
+        { name: 'DeveloperName' },
+        { name: 'NamespacePrefix' },
+        { name: 'SobjectType' },
+      ]),
+      TARGET_FULL_QUERY_RECORDS_THRESHOLD + 1
+    );
+
+    const task = job.getTaskBySObjectName('RecordType');
+    assert.equal(task?.scriptObject.processAllTarget, true);
   });
 
   it('orders tasks by RecordType, readonly, and lookup parents', async () => {

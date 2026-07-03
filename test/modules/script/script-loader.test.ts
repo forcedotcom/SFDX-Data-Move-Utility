@@ -234,6 +234,31 @@ describe('ScriptLoader', () => {
     }
   });
 
+  it('loads object target full-query threshold from export.json', async () => {
+    const rootPath = createTempDir();
+    const payload: ScriptPayloadType = {
+      objects: [
+        {
+          query: 'SELECT Id, Name FROM Account',
+          operation: 'Upsert',
+          externalId: 'Name',
+          targetFullQueryRecordsThreshold: 125,
+        },
+      ],
+    };
+    writeExportJson(rootPath, payload);
+    const logger = createLogger(rootPath);
+
+    try {
+      const script = await ScriptLoader.loadFromPathAsync(rootPath, logger);
+      const object = script.objectSets[0].objects[0];
+
+      assert.equal(object.targetFullQueryRecordsThreshold, 125);
+    } finally {
+      fs.rmSync(rootPath, { recursive: true, force: true });
+    }
+  });
+
   it('preserves explicit null or empty values from export.json', async () => {
     const rootPath = createTempDir();
     const previousReadDelimiter = Common.csvReadFileDelimiter;

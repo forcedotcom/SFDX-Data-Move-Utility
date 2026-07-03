@@ -279,6 +279,11 @@ export default class ScriptObject {
   public queryAllTarget = false;
 
   /**
+   * Target record count threshold for using full target query instead of filtered IN queries.
+   */
+  public targetFullQueryRecordsThreshold: number | undefined;
+
+  /**
    * Skips source records that already exist in target.
    */
   public skipExistingRecords = false;

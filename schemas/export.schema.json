@@ -286,6 +286,10 @@
         "queryAllTarget": {
           "type": "boolean"
         },
+        "targetFullQueryRecordsThreshold": {
+          "type": "integer",
+          "minimum": 0
+        },
         "skipExistingRecords": {
           "type": "boolean"
         },

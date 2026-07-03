@@ -36,6 +36,7 @@ import {
   GROUP_OBJECT_NAME,
   VALUE_MAPPING_CSV_FILENAME,
   USER_AND_GROUP_FILENAME,
+  TARGET_FULL_QUERY_RECORDS_THRESHOLD,
 } from '../../constants/Constants.js';
 import type { LoggerType } from '../../logging/LoggerType.js';
 import MappingResolver from '../../mapping/MappingResolver.js';
@@ -454,6 +455,7 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
     this._createTasks();
     this.tasks.forEach((task) => task.refreshPreflightState());
     await this._calculateRecordCountsAsync();
+    this._resolveTargetQueryStrategies();
   }
 
   /**
@@ -2122,17 +2124,42 @@ export default class MigrationJob implements ISFdmuRunCustomAddonJob {
 
       const shouldProcessAll =
         Boolean(updatedObject.master) || updatedObject.isSpecialObject || updatedObject.isObjectWithoutRelationships;
-      if (shouldProcessAll) {
-        updatedObject.processAllSource = true;
-        updatedObject.processAllTarget = true;
-      } else {
-        updatedObject.processAllSource = false;
-        updatedObject.processAllTarget = updatedObject.hasComplexExternalId || updatedObject.hasAutonumberExternalId;
-      }
+      updatedObject.processAllSource = shouldProcessAll;
+      updatedObject.processAllTarget = this._requiresFullTargetQuery(updatedObject, 0);
 
       map.set(updatedObject, task);
     });
     return map;
+  }
+
+  /**
+   * Resolves target query strategies after target record counts are available.
+   */
+  private _resolveTargetQueryStrategies(): void {
+    this.tasks.forEach((task) => {
+      const targetTotalRecords = task.targetData.totalRecordCount;
+      const { scriptObject } = task;
+      scriptObject.processAllTarget = this._requiresFullTargetQuery(scriptObject, targetTotalRecords);
+    });
+  }
+
+  /**
+   * Returns true when target records must be read with the full target query.
+   *
+   * @param object - Script object to inspect.
+   * @param targetTotalRecords - Effective target record count for the object query.
+   * @returns True when the full target query should be used.
+   */
+  private _requiresFullTargetQuery(object: ScriptObject, targetTotalRecords: number): boolean {
+    void this;
+    const threshold = object.targetFullQueryRecordsThreshold ?? TARGET_FULL_QUERY_RECORDS_THRESHOLD;
+    return (
+      object.queryAllTarget ||
+      object.hasComplexExternalId ||
+      object.hasAutonumberExternalId ||
+      object.isSpecialObject ||
+      targetTotalRecords < threshold
+    );
   }
 
   /**
