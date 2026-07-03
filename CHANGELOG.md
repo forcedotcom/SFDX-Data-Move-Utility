@@ -1,3 +1,12 @@
+# [5.7.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.4...5.7.0) (2026-07-03)
+
+
+### Features
+
+* add filtered query IN-clause field controls ([fff1578](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/fff1578e70f86eaac1d6f0e84b06f1e940eef487))
+
+
+
 ## [5.6.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.3...5.6.4) (2026-04-16)
 
 
