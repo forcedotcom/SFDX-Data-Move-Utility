@@ -243,9 +243,12 @@ export default class OrgDataService {
       this._script.logger?.info(useBulk ? 'usingBulkAPIQuery' : 'usingRestApi', sObjectName, apiVersion);
       this._logQueryApiVersionDiagnostics(sObjectName, apiVersion, useBulk);
     }
-    const records = useBulk
+    const queriedRecords = useBulk
       ? await this._queryBulkAsync(connection, query)
       : await this._queryRestAsync(connection, query, useQueryAll);
+    const records = useBulk
+      ? Common.normalizeCsvRecordValues(queriedRecords, options.csvColumnDataTypeMap)
+      : queriedRecords;
     this._writeSourceRecordsCache(query, org, records);
     return records;
   }

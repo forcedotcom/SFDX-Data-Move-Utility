@@ -805,6 +805,38 @@ export class Common {
   }
 
   /**
+   * Normalizes CSV-like record values using the same null-token and type casting rules as CSV input.
+   *
+   * @param records - Records to normalize.
+   * @param columnToColumnDataTypeMap - Optional column-to-type mapping.
+   * @param preserveRawNullTokens - Keeps null tokens as raw string values when true.
+   * @returns Normalized record copies.
+   */
+  public static normalizeCsvRecordValues(
+    records: Array<Record<string, unknown>>,
+    columnToColumnDataTypeMap?: Map<string, string>,
+    preserveRawNullTokens = false
+  ): Array<Record<string, unknown>> {
+    if (!records.length) {
+      return records;
+    }
+    const normalizedColumnDataTypeMap = Common._normalizeCsvColumnDataTypeMap(columnToColumnDataTypeMap);
+    return records.map((record) => {
+      const normalized: Record<string, unknown> = {};
+      Object.keys(record).forEach((columnName) => {
+        normalized[columnName] = Common._normalizeCsvCellValue(
+          record[columnName],
+          columnName,
+          columnToColumnDataTypeMap,
+          normalizedColumnDataTypeMap,
+          preserveRawNullTokens
+        );
+      });
+      return normalized;
+    });
+  }
+
+  /**
    * Reads CSV file from the disk.
    *
    * @param filePath - Full path to the CSV file.
@@ -824,55 +856,25 @@ export class Common {
     const readDelimiter = useInternalCsvFormat ? Common.INTERNAL_CSV_FILE_DELIMITER : Common.csvReadFileDelimiter;
     const readEncoding = useInternalCsvFormat ? Common.INTERNAL_CSV_FILE_ENCODING : Common.csvFileEncoding;
     const shouldStripUtf8Bom = useInternalCsvFormat || (Common.csvUseUtf8Bom && Common._isUtf8Encoding(readEncoding));
-    const normalizedColumnDataTypeMap = new Map<string, string>();
-    columnToColumnDataTypeMap?.forEach((fieldType, columnName) => {
-      const normalizedName = columnName.trim().toLowerCase();
-      if (!normalizedName) {
-        return;
-      }
-      if (!normalizedColumnDataTypeMap.has(normalizedName)) {
-        normalizedColumnDataTypeMap.set(normalizedName, fieldType);
-      }
-    });
+    const normalizedColumnDataTypeMap = Common._normalizeCsvColumnDataTypeMap(columnToColumnDataTypeMap);
     function csvCast(value: string, context: CastingContext): unknown {
       if (context.header || typeof context.column === 'undefined') {
         return value;
       }
 
-      const rawValue = typeof value === 'string' ? value : String(value ?? '');
-      const normalizedRawValue = rawValue.replace(/\r+$/g, '');
-      const trimmedValue = normalizedRawValue.trim();
-      if (!trimmedValue.length) {
-        if (preserveRawNullTokens) {
-          return normalizedRawValue;
-        }
-        return Common.csvInsertNulls ? null : '';
-      }
-
-      if (!preserveRawNullTokens && Common._isCsvNullToken(trimmedValue)) {
-        return null;
-      }
-
       const columnName = typeof context.column === 'string' ? context.column : String(context.column);
-      const fieldType = resolveFieldType(columnName)?.toLowerCase();
-      if (!fieldType) {
-        return normalizedRawValue;
-      }
-
-      return Common._castCsvValueByFieldType(normalizedRawValue, trimmedValue, fieldType);
+      return Common._normalizeCsvCellValue(
+        value,
+        columnName,
+        columnToColumnDataTypeMap,
+        normalizedColumnDataTypeMap,
+        preserveRawNullTokens
+      );
     }
 
     function resolveColumns(header: string[]): Array<string | undefined> {
       void columnToColumnDataTypeMap;
       return header;
-    }
-
-    function resolveFieldType(columnName: string): string | undefined {
-      const directFieldType = columnToColumnDataTypeMap?.get(columnName);
-      if (directFieldType) {
-        return directFieldType;
-      }
-      return normalizedColumnDataTypeMap.get(columnName.trim().toLowerCase());
     }
 
     return new Promise<Array<Record<string, unknown>>>((resolve, reject) => {
@@ -2072,6 +2074,89 @@ export class Common {
    */
   private static _isCsvNullToken(value: string): boolean {
     return this._CSV_NULL_TOKENS.has(value.trim().toLowerCase());
+  }
+
+  /**
+   * Normalizes column type map keys for case-insensitive lookups.
+   *
+   * @param columnToColumnDataTypeMap - Source column-to-type map.
+   * @returns Normalized type map.
+   */
+  private static _normalizeCsvColumnDataTypeMap(columnToColumnDataTypeMap?: Map<string, string>): Map<string, string> {
+    const normalizedColumnDataTypeMap = new Map<string, string>();
+    columnToColumnDataTypeMap?.forEach((fieldType, columnName) => {
+      const normalizedName = columnName.trim().toLowerCase();
+      if (!normalizedName) {
+        return;
+      }
+      if (!normalizedColumnDataTypeMap.has(normalizedName)) {
+        normalizedColumnDataTypeMap.set(normalizedName, fieldType);
+      }
+    });
+    return normalizedColumnDataTypeMap;
+  }
+
+  /**
+   * Normalizes a CSV-like cell value using null-token and type casting rules.
+   *
+   * @param value - Raw value.
+   * @param columnName - Column name.
+   * @param columnToColumnDataTypeMap - Optional direct column type map.
+   * @param normalizedColumnDataTypeMap - Normalized column type map.
+   * @param preserveRawNullTokens - Keeps null tokens as raw string values when true.
+   * @returns Normalized value.
+   */
+  private static _normalizeCsvCellValue(
+    value: unknown,
+    columnName: string,
+    columnToColumnDataTypeMap?: Map<string, string>,
+    normalizedColumnDataTypeMap: Map<string, string> = new Map<string, string>(),
+    preserveRawNullTokens = false
+  ): unknown {
+    const rawValue = typeof value === 'string' ? value : String(value ?? '');
+    const normalizedRawValue = rawValue.replace(/\r+$/g, '');
+    const trimmedValue = normalizedRawValue.trim();
+    if (!trimmedValue.length) {
+      if (preserveRawNullTokens) {
+        return normalizedRawValue;
+      }
+      return Common.csvInsertNulls ? null : '';
+    }
+
+    if (!preserveRawNullTokens && Common._isCsvNullToken(trimmedValue)) {
+      return null;
+    }
+
+    const fieldType = Common._resolveCsvColumnFieldType(
+      columnName,
+      columnToColumnDataTypeMap,
+      normalizedColumnDataTypeMap
+    )?.toLowerCase();
+    if (!fieldType) {
+      return normalizedRawValue;
+    }
+
+    return Common._castCsvValueByFieldType(normalizedRawValue, trimmedValue, fieldType);
+  }
+
+  /**
+   * Resolves a CSV column type by exact or normalized column name.
+   *
+   * @param columnName - Column name.
+   * @param columnToColumnDataTypeMap - Optional direct column type map.
+   * @param normalizedColumnDataTypeMap - Normalized column type map.
+   * @returns Field type when found.
+   */
+  private static _resolveCsvColumnFieldType(
+    columnName: string,
+    columnToColumnDataTypeMap?: Map<string, string>,
+    normalizedColumnDataTypeMap: Map<string, string> = new Map<string, string>()
+  ): string | undefined {
+    const directFieldType = columnToColumnDataTypeMap?.get(columnName);
+    if (directFieldType) {
+      return directFieldType;
+    }
+    return normalizedColumnDataTypeMap.get(columnName.trim().toLowerCase());
   }
 
   /**

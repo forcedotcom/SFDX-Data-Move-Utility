@@ -329,6 +329,57 @@ describe('OrgDataService', () => {
     }
   });
 
+  it('normalizes empty bulk query values using column type metadata', async () => {
+    const script = new Script();
+
+    const org = new ScriptOrg();
+    org.name = 'source';
+    org.media = DATA_MEDIA_TYPE.Org;
+    org.script = script;
+
+    const connection = {
+      query: async (query: string) => {
+        void query;
+        throw new Error('REST query should not be used when bulk is requested.');
+      },
+      bulk: {
+        pollInterval: 0,
+        pollTimeout: 0,
+        query: async (query: string) => {
+          void query;
+          const stream = new EventEmitter();
+          setImmediate(() => {
+            stream.emit('record', { Id: '003', LastName: 'Smith', Birthdate: '' });
+            stream.emit('end');
+          });
+          return stream;
+        },
+      },
+    };
+
+    const originalConnection = OrgConnectionAdapter.getConnectionForAliasAsync.bind(OrgConnectionAdapter);
+    OrgConnectionAdapter.getConnectionForAliasAsync = async () => connection as never;
+
+    try {
+      const service = new OrgDataService(script);
+      const records = await service.queryOrgAsync('SELECT Id, LastName, Birthdate FROM Contact', org, {
+        useBulk: true,
+        csvColumnDataTypeMap: new Map<string, string>([
+          ['Id', 'id'],
+          ['LastName', 'string'],
+          ['Birthdate', 'date'],
+        ]),
+      });
+
+      assert.equal(records.length, 1);
+      assert.equal(records[0].Id, '003');
+      assert.equal(records[0].LastName, 'Smith');
+      assert.equal(records[0].Birthdate, null);
+    } finally {
+      OrgConnectionAdapter.getConnectionForAliasAsync = originalConnection;
+    }
+  });
+
   it('returns cached source records without querying the org', async () => {
     const tempDir = createTempDir();
     const script = new Script();

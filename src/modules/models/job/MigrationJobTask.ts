@@ -521,9 +521,11 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     logger.verboseFile(`[diagnostic] delete query: ${deleteQuery}`);
 
     const orgDataService = new OrgDataService(this.job.script);
+    const csvColumnDataTypeMap = this._createSourceCsvColumnDataTypeMap();
     const records = await orgDataService.queryOrgAsync(deleteQuery, this.targetData.org, {
       useBulk: this.targetData.useBulkQueryApi,
       useQueryAll: this.scriptObject.queryAllTarget || this.scriptObject.hardDelete,
+      csvColumnDataTypeMap: csvColumnDataTypeMap.size > 0 ? csvColumnDataTypeMap : undefined,
     });
 
     if (records.length === 0) {
@@ -1706,9 +1708,11 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     contactTask.targetData.queryCount += queries.length;
 
     const orgDataService = new OrgDataService(this.job.script);
+    const csvColumnDataTypeMap = contactTask._createSourceCsvColumnDataTypeMap();
     const records = await contactTask._retrieveFilteredRecordsAsync(queries, targetOrg, orgDataService, {
       useBulk: contactTask.targetData.useBulkQueryApi,
       useQueryAll: contactTask.scriptObject.queryAllTarget,
+      csvColumnDataTypeMap: csvColumnDataTypeMap.size > 0 ? csvColumnDataTypeMap : undefined,
     });
 
     if (records.length === 0) {
@@ -4485,7 +4489,7 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     queries: string[],
     org: NonNullable<TaskOrgData['org']>,
     orgDataService: OrgDataService,
-    options: { useBulk?: boolean; useQueryAll?: boolean }
+    options: { useBulk?: boolean; useQueryAll?: boolean; csvColumnDataTypeMap?: Map<string, string> }
   ): Promise<Array<Record<string, unknown>>> {
     let records: Array<Record<string, unknown>> = [];
     await Common.serialExecAsync(
@@ -4544,12 +4548,14 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
     }
     this.sourceData.queryCount += queries.length;
     let records: Array<Record<string, unknown>> = [];
+    const csvColumnDataTypeMap = this._createSourceCsvColumnDataTypeMap();
     await Common.serialExecAsync(
       queries.map((query) => async () => {
         this._logQueryString(query);
         const batch = await orgDataService.queryOrgAsync(query, sourceOrg, {
           useBulk: this.sourceData.useBulkQueryApi,
           useQueryAll: this.scriptObject.useQueryAll,
+          csvColumnDataTypeMap: csvColumnDataTypeMap.size > 0 ? csvColumnDataTypeMap : undefined,
         });
         records = records.concat(batch);
         return undefined;
@@ -4673,9 +4679,11 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
         this._logQueryStart('queryingAll', 'source', 'org', queryMode);
         this._logQueryString(query);
         this.sourceData.queryCount += 1;
+        const csvColumnDataTypeMap = this._createSourceCsvColumnDataTypeMap();
         const records = await orgDataService.queryOrgAsync(query, sourceOrg, {
           useBulk: this.sourceData.useBulkQueryApi,
           useQueryAll: this.scriptObject.useQueryAll,
+          csvColumnDataTypeMap: csvColumnDataTypeMap.size > 0 ? csvColumnDataTypeMap : undefined,
         });
         hasRecords = true;
         this._finalizeRetrievedRecords(records, this.sourceData, 'source', false);
@@ -4684,9 +4692,11 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
         if (queries.length > 0) {
           this._logQueryStart('queryingIn', 'source', 'org', queryMode);
           this.sourceData.queryCount += queries.length;
+          const csvColumnDataTypeMap = this._createSourceCsvColumnDataTypeMap();
           const records = await this._retrieveFilteredRecordsAsync(queries, sourceOrg, orgDataService, {
             useBulk: this.sourceData.useBulkQueryApi,
             useQueryAll: this.scriptObject.useQueryAll,
+            csvColumnDataTypeMap: csvColumnDataTypeMap.size > 0 ? csvColumnDataTypeMap : undefined,
           });
           hasRecords = true;
           this._finalizeRetrievedRecords(records, this.sourceData, 'source', false);
@@ -4760,9 +4770,11 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       this._logQueryStart('queryingAll', 'target', 'org', queryMode);
       this._logQueryString(query);
       this.targetData.queryCount += 1;
+      const csvColumnDataTypeMap = this._createSourceCsvColumnDataTypeMap();
       records = await orgDataService.queryOrgAsync(query, targetOrg, {
         useBulk: this.targetData.useBulkQueryApi,
         useQueryAll: this.scriptObject.queryAllTarget,
+        csvColumnDataTypeMap: csvColumnDataTypeMap.size > 0 ? csvColumnDataTypeMap : undefined,
       });
       hasRecords = true;
     } else {
@@ -4770,9 +4782,11 @@ export default class MigrationJobTask implements ISFdmuRunCustomAddonTask {
       if (queries.length > 0) {
         this._logQueryStart('queryingIn', 'target', 'org', queryMode);
         this.targetData.queryCount += queries.length;
+        const csvColumnDataTypeMap = this._createSourceCsvColumnDataTypeMap();
         records = await this._retrieveFilteredRecordsAsync(queries, targetOrg, orgDataService, {
           useBulk: this.targetData.useBulkQueryApi,
           useQueryAll: this.scriptObject.queryAllTarget,
+          csvColumnDataTypeMap: csvColumnDataTypeMap.size > 0 ? csvColumnDataTypeMap : undefined,
         });
         hasRecords = true;
       }
