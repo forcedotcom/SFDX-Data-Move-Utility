@@ -1,3 +1,15 @@
+## [5.7.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.1...5.7.2) (2026-07-03)
+
+###### Fixes:
+
+- Fixed `excludedFields` handling for multiselect queries such as `SELECT all`. Fields excluded after metadata expansion are now also removed from the expanded original field list used for generated service CSV columns, so target CSV reports no longer include columns that were excluded from migration.
+
+**See the related articles:**
+
+- [ScriptObject Object - excludedFields](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object-object#excludedfields-array-of-string)
+- [Field Multiselect](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/advanced-features/field-multiselect)
+- [The Target CSV Files](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/reports/the-target-csv-files)
+
 ## [5.7.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.0...5.7.1) (2026-07-03)
 
 ###### Fixes:
