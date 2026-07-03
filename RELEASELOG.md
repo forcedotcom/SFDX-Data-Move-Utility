@@ -1,3 +1,19 @@
+## [5.7.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.4...5.7.0) (2026-07-03)
+
+###### New features:
+
+- Added `includedInClauseFields` and `excludedFromInClauseFields` for `ScriptObject` configuration. These properties control which lookup fields may be used as filtered-query `IN` clause pivots for relationship-scoped source queries while keeping those fields selected, exported, and available for normal migration processing.
+
+###### Other changes:
+
+- Updated public README Help Center links to point to the current GitHub Pages documentation site.
+
+**See the related articles:**
+
+- [ScriptObject Object - includedInClauseFields](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object-object#includedinclausefields-array-of-string)
+- [ScriptObject Object - excludedFromInClauseFields](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object-object#excludedfrominclausefields-array-of-string)
+- [ScriptObject Object - query](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object-object#query-string)
+
 ## [5.6.4](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.3...5.6.4) (2026-04-16)
 
 ###### Fixes:
