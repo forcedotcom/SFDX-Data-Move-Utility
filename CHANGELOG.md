@@ -1,3 +1,12 @@
+# [5.8.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.2...5.8.0) (2026-07-03)
+
+
+### Features
+
+* add adaptive target query threshold ([da981fd](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/da981fd401bcbec25ffc514bec1731821bdd9fae))
+
+
+
 ## [5.7.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.1...5.7.2) (2026-07-03)
 
 
