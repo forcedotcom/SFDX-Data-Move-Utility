@@ -1,3 +1,17 @@
+## [v5.8.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.2...5.8.0) (2026-07-03)
+
+###### New features:
+
+- Added adaptive target query strategy for simple external ID matching. SFDMU now decides the target-side full-query mode independently from the source-side full-processing mode, using the effective target record count to avoid unnecessary full target scans on large target datasets.
+- Added `targetFullQueryRecordsThreshold` for `ScriptObject`. The default threshold is `30000`; below this value SFDMU keeps the full target query, while target scopes at or above the threshold use filtered `IN` target queries when simple external IDs are used.
+- Kept full target query behavior for explicit `queryAllTarget`, complex external IDs, autonumber external IDs, and special objects.
+
+**See the related articles:**
+
+- [ScriptObject Object - targetFullQueryRecordsThreshold](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object-object#targetfullqueryrecordsthreshold-integer)
+- [ScriptObject Object - queryAllTarget](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object-object#queryalltarget-boolean)
+- [ScriptObject Object - externalId](https://forcedotcom.github.io/SFDX-Data-Move-Utility/full-documentation/export-json-file-objects-specification/script-object-object#externalid-string)
+
 ## [5.7.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.1...5.7.2) (2026-07-03)
 
 ###### Fixes:
