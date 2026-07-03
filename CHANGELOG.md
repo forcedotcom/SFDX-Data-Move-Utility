@@ -1,3 +1,12 @@
+## [5.7.2](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.1...5.7.2) (2026-07-03)
+
+
+### Bug Fixes
+
+* omit excluded multiselect fields from CSV columns ([e947a51](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/e947a51169d86bbf0d4cd20c7400f32a987d3012))
+
+
+
 ## [5.7.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.0...5.7.1) (2026-07-03)
 
 
