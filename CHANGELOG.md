@@ -1,3 +1,12 @@
+## [5.7.1](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.7.0...5.7.1) (2026-07-03)
+
+
+### Bug Fixes
+
+* normalize Bulk Query null values by field metadata ([84dd41f](https://github.com/forcedotcom/SFDX-Data-Move-Utility/commit/84dd41f82c64fa7a13dc4d272d6b0f0264e4d5d6))
+
+
+
 # [5.7.0](https://github.com/forcedotcom/SFDX-Data-Move-Utility/compare/5.6.4...5.7.0) (2026-07-03)
 
 
