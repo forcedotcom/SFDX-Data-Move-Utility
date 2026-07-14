@@ -12,13 +12,13 @@
     "@oclif/core": "^4",
     "@salesforce/core": "^8",
     "@salesforce/sf-plugins-core": "^12",
-    "alasql": "^4.17.0",
+    "alasql": "^4.17.2",
     "casual": "^1.6.2",
     "class-transformer": "^0.5.1",
-    "csv-parse": "^6.1.0",
+    "csv-parse": "^6.2.1",
     "csv-writer": "^1.6.0",
     "es6-shim": "^0.35.8",
-    "glob": "^13.0.3",
+    "glob": "^13.0.6",
     "promise-parallel-throttle": "^3.5.0",
     "reflect-metadata": "^0.2.2",
     "soql-parser-js": "npm:@jetstreamapp/soql-parser-js@^6.3.1"
@@ -47,7 +47,7 @@
     "typescript": "^5.4.5"
   },
   "overrides": {
-    "glob": "^13.0.3",
+    "glob": "^13.0.6",
     "shelljs": "^0.10.0"
   },
   "resolutions": {
